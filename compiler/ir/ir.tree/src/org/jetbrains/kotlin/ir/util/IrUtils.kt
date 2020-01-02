@@ -347,8 +347,7 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     val vParent = (this as? IrDeclaration)?.parent
     return when (vParent) {
         is IrPackageFragment -> vParent
-        is IrClass -> vParent.getPackageFragment()
-        else -> null
+        else -> vParent?.getPackageFragment()
     }
 }
 
@@ -500,20 +499,23 @@ fun irCall(
     call: IrFunctionAccessExpression,
     newFunction: IrFunction,
     receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
+    argumentsAsReceivers: Boolean = false,
+    newSuperQualifierSymbol: IrClassSymbol? = null
 ): IrCall =
     irCall(
         call,
         newFunction.symbol,
         receiversAsArguments,
-        argumentsAsReceivers
+        argumentsAsReceivers,
+        newSuperQualifierSymbol
     )
 
 fun irCall(
     call: IrFunctionAccessExpression,
     newSymbol: IrFunctionSymbol,
     receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
+    argumentsAsReceivers: Boolean = false,
+    newSuperQualifierSymbol: IrClassSymbol? = null
 ): IrCall =
     call.run {
         IrCallImpl(
@@ -522,7 +524,8 @@ fun irCall(
             type,
             newSymbol,
             typeArgumentsCount,
-            origin
+            origin,
+            newSuperQualifierSymbol
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,

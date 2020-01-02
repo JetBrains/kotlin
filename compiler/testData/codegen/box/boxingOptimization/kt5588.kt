@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun box() : String {
     val s = "notA"
     val id = when (s) {

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.debugger.coroutines
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.openapi.util.Key
 import com.sun.jdi.*
-import com.sun.tools.jdi.StringReferenceImpl
 import javaslang.control.Either
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -93,7 +92,7 @@ object CoroutinesDebugProbesProxy {
             coroutineName,
             refs.getName,
             emptyList()
-        ) as StringReferenceImpl).value() else "coroutine"
+        ) as StringReference).value() else "coroutine"
         val id = (info.getValue(refs.idField) as LongValue).value()
         return "$name#$id"
     }
@@ -105,7 +104,7 @@ object CoroutinesDebugProbesProxy {
     ): String {
         // equals to `stringState = coroutineInfo.state.toString()`
         val state = context.invokeMethod(info, refs.getState, emptyList()) as ObjectReference
-        return (context.invokeMethod(state, refs.toString, emptyList()) as StringReferenceImpl).value()
+        return (context.invokeMethod(state, refs.toString, emptyList()) as StringReference).value()
     }
 
     private fun getLastObservedThread(

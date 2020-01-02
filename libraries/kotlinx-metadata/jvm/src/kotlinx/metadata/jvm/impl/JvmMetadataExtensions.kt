@@ -109,6 +109,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readTypeAliasExtensions(v: KmTypeAliasVisitor, proto: ProtoBuf.TypeAlias, c: ReadContext) {}
 
+    override fun readValueParameterExtensions(v: KmValueParameterVisitor, proto: ProtoBuf.ValueParameter, c: ReadContext) {}
+
     override fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor? {
         if (type != JvmClassExtensionVisitor.TYPE) return null
         return object : JvmClassExtensionVisitor() {
@@ -276,6 +278,12 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         c: WriteContext
     ): KmTypeAliasExtensionVisitor? = null
 
+    override fun writeValueParameterExtensions(
+        type: KmExtensionType,
+        proto: ProtoBuf.ValueParameter.Builder,
+        c: WriteContext
+    ): KmValueParameterExtensionVisitor? = null
+
     override fun createClassExtension(): KmClassExtension = JvmClassExtension()
 
     override fun createPackageExtension(): KmPackageExtension = JvmPackageExtension()
@@ -294,6 +302,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     override fun createTypeExtension(): KmTypeExtension = JvmTypeExtension()
 
     override fun createTypeAliasExtension(): KmTypeAliasExtension = JvmTypeAliasExtension()
+
+    override fun createValueParameterExtension(): KmValueParameterExtension = JvmValueParameterExtension()
 
     private fun JvmMemberSignature.toJvmMethodSignature(c: WriteContext): JvmProtoBuf.JvmMethodSignature =
         JvmProtoBuf.JvmMethodSignature.newBuilder().apply {

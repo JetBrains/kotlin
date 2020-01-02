@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,10 +47,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
-class KotlinPackageContentModificationListener(private val project: Project) {
-    init {
-        val connection = project.messageBus.connect()
+class KotlinPackageContentModificationListener(private val project: Project) : Disposable {
+    val connection = project.messageBus.connect()
 
+    init {
         connection.subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
             override fun before(events: MutableList<out VFileEvent>) = onEvents(events)
             override fun after(events: List<VFileEvent>) = onEvents(events)
@@ -63,13 +63,19 @@ class KotlinPackageContentModificationListener(private val project: Project) {
                 if (events.size >= FULL_DROP_THRESHOLD) {
                     service.onTooComplexChange()
                 } else {
-                    events
-                        .asSequence()
+                    events.asSequence()
                         .filter(::isRelevant)
                         .filter { (it.isValid || it !is VFileCreateEvent) && it.file != null }
                         .filter {
                             val vFile = it.file!!
-                            vFile.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(vFile.nameSequence) == KotlinFileType.INSTANCE
+                            vFile.isDirectory || vFile.fileType == KotlinFileType.INSTANCE
+                        }
+                        .filter {
+                            when (val origin = it.requestor) {
+                                is Project -> origin == project
+                                is PsiManager -> origin.project == project
+                                else -> true
+                            }
                         }
                         .forEach { event -> service.notifyPackageChange(event) }
                 }
@@ -81,6 +87,10 @@ class KotlinPackageContentModificationListener(private val project: Project) {
                 PerModulePackageCacheService.getInstance(project).onTooComplexChange()
             }
         })
+    }
+
+    override fun dispose() {
+        connection.disconnect()
     }
 }
 
@@ -211,7 +221,7 @@ class ImplicitPackagePrefixCache(private val project: Project) {
     }
 
     internal fun update(ktFile: KtFile) {
-        val parent = ktFile.virtualFile.parent
+        val parent = ktFile.virtualFile?.parent ?: return
         if (ktFile.sourceRoot == parent) {
             implicitPackageCache[parent]?.updateFile(ktFile)
         }
@@ -292,7 +302,9 @@ class PerModulePackageCacheService(private val project: Project) : Disposable {
 
             pendingKtFileChanges.processPending { file ->
                 if (file.virtualFile != null && file.virtualFile !in projectScope) {
-                    LOG.debugIfEnabled(project) { "Skip $file without vFile, or not in scope: ${file.virtualFile?.let { it !in projectScope }}" }
+                    LOG.debugIfEnabled(project) {
+                        "Skip $file without vFile, or not in scope: ${file.virtualFile?.let { it !in projectScope }}"
+                    }
                     return@processPending
                 }
                 val nullableModuleInfo = file.getNullableModuleInfo()

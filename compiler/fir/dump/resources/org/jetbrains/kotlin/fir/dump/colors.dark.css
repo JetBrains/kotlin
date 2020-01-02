@@ -82,6 +82,17 @@ body.dark {
 
 .dark .error-counter {
     color: #ff1010;
+    padding-left: 15px;
+}
+
+.dark .implicit-counter {
+    color: aqua;
+    padding-left: 15px;
+}
+
+.dark .unresolved-counter {
+    color: #d42eff;
+    padding-left: 15px;
 }
 
 .dark .diagnostic-hover {

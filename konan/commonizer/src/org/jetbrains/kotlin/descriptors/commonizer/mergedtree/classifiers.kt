@@ -31,9 +31,9 @@ internal fun mergeClasses(
     classes.forEachIndexed { index, clazz ->
         clazz?.constructors?.forEach { constructorsMap[ConstructorApproximationKey(it)][index] = it }
         clazz?.unsubstitutedMemberScope?.collectMembers(
-            CallableMemberCollector<PropertyDescriptor> { propertiesMap[PropertyApproximationKey(it)][index] = it },
-            CallableMemberCollector<SimpleFunctionDescriptor> { functionsMap[FunctionApproximationKey(it)][index] = it },
-            Collector<ClassDescriptor> { classesMap[it.name][index] = it }
+            PropertyCollector { propertiesMap[PropertyApproximationKey(it)][index] = it },
+            FunctionCollector { functionsMap[FunctionApproximationKey(it)][index] = it },
+            ClassCollector { classesMap[it.name][index] = it }
         )
     }
 

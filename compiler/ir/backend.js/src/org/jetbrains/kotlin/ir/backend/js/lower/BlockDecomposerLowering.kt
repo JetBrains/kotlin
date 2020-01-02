@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -50,6 +52,49 @@ abstract class AbstractBlockDecomposerLowering(context: CommonBackendContext) : 
                 is IrField -> lower(declaration, irDeclarationContainer)
                 else -> listOf(declaration)
             }
+        }
+
+        irDeclarationContainer.transformChildrenVoid(CodeCleaner())
+    }
+
+    private inner class CodeCleaner : IrElementTransformerVoid() {
+
+        private fun IrStatementContainer.cleanUpStatements() {
+            var unreachable = false
+
+            val newStatements = statements.filter {
+                when {
+                    unreachable -> false
+                    it.isPure(true) -> false
+                    it is IrGetField -> it.receiver?.let { !it.isPure(true) } ?: false
+                    else -> {
+                        unreachable = it is IrExpression && it.type.isNothing()
+                        true
+                    }
+                }
+            }
+
+            statements.clear()
+
+            statements += newStatements
+        }
+
+        override fun visitBlock(expression: IrBlock): IrExpression {
+            expression.transformChildrenVoid(this)
+            expression.cleanUpStatements()
+            return expression
+        }
+
+        override fun visitBlockBody(body: IrBlockBody): IrBody {
+            body.transformChildrenVoid(this)
+            body.cleanUpStatements()
+            return body
+        }
+
+        override fun visitComposite(expression: IrComposite): IrExpression {
+            expression.transformChildrenVoid(this)
+            expression.cleanUpStatements()
+            return expression
         }
     }
 
@@ -527,6 +572,7 @@ class BlockDecomposerTransformer(
                     compositesLeft == 0 -> value
                     index == 0 && dontDetachFirstArgument -> value
                     value == null -> value
+                    value.isPure(false) -> value
                     else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
                         val irVar = makeTempVar(value.type, value)

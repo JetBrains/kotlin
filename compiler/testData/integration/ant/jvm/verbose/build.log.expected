@@ -5,6 +5,7 @@ build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
   [kotlinc] logging: using Kotlin home directory [KotlinProjectHome]/dist/kotlinc
   [kotlinc] logging: configuring the compilation environment
+  [kotlinc] logging: configure scripting: Added template org.jetbrains.kotlin.mainKts.MainKtsScript from [[CompilerLib]/kotlin-main-kts.jar, [CompilerLib]/kotlin-reflect.jar, [CompilerLib]/kotlin-script-runtime.jar, [CompilerLib]/kotlin-stdlib.jar]
 
 BUILD SUCCESSFUL
 Total time: [time]

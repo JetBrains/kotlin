@@ -257,11 +257,11 @@ class KotlinLanguageInjector(
         }.firstOrNull()
     }
 
-    private fun injectWithCall(host: KtElement): InjectionInfo? {
-        val ktHost: KtElement = host
-        val argument = ktHost.parent as? KtValueArgument ?: return null
+    private tailrec fun injectWithCall(host: KtElement): InjectionInfo? {
+        val argument = getArgument(host) ?: return null
+        val callExpression = PsiTreeUtil.getParentOfType(argument, KtCallElement::class.java) ?: return null
 
-        val callExpression = PsiTreeUtil.getParentOfType(ktHost, KtCallElement::class.java) ?: return null
+        if (getCallableShortName(callExpression) == "arrayOf") return injectWithCall(callExpression)
         val callee = getNameReference(callExpression.calleeExpression) ?: return null
 
         if (isAnalyzeOff()) return null
@@ -292,10 +292,21 @@ class KotlinLanguageInjector(
         return callee as? KtNameReferenceExpression
     }
 
-    private fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
-        val argument = host.parent as? KtValueArgument ?: return null
+    private fun getArgument(host: KtElement): KtValueArgument? = when (val parent = host.parent) {
+        is KtValueArgument -> parent
+        is KtCollectionLiteralExpression, is KtCallElement -> parent.parent as? KtValueArgument
+        else -> null
+    }
+
+    private tailrec fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
+        val argument = getArgument(host) ?: return null
         val annotationEntry = argument.parent.parent as? KtCallElement ?: return null
-        if (!fastCheckInjectionsExists(annotationEntry)) return null
+
+        val callableShortName = getCallableShortName(annotationEntry) ?: return null
+        if (callableShortName == "arrayOf") return injectInAnnotationCall(annotationEntry)
+
+        if (!fastCheckInjectionsExists(callableShortName)) return null
+
         val calleeExpression = annotationEntry.calleeExpression ?: return null
         val callee = getNameReference(calleeExpression)?.mainReference?.let { reference ->
             allowResolveInDispatchThread { reference.resolve() }
@@ -400,10 +411,11 @@ class KotlinLanguageInjector(
 
     private val injectableTargetClassShortNames = CachedValuesManager.getManager(project).createCachedValue(::createCachedValue, false)
 
-    private fun fastCheckInjectionsExists(annotationEntry: KtCallElement): Boolean {
-        val referencedName = getNameReference(annotationEntry.calleeExpression)?.getReferencedName() ?: return false
-        val annotationShortName = annotationEntry.containingKtFile.aliasImportMap()[referencedName].singleOrNull() ?: referencedName
-        return annotationShortName in injectableTargetClassShortNames.value
+    private fun fastCheckInjectionsExists(annotationShortName: String) = annotationShortName in injectableTargetClassShortNames.value
+
+    private fun getCallableShortName(annotationEntry: KtCallElement): String? {
+        val referencedName = getNameReference(annotationEntry.calleeExpression)?.getReferencedName() ?: return null
+        return annotationEntry.containingKtFile.aliasImportMap()[referencedName].singleOrNull() ?: referencedName
     }
 
     private fun retrieveJavaPlaceTargetClassesFQNs(place: InjectionPlace): Collection<String> {

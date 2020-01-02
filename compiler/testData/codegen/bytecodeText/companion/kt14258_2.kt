@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // Checks that methods 'access$getMy$p' and 'getMy' are not generated and
 // that backed field 'my' is accessed through 'access$getMy$cp'
 

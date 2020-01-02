@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 inline fun bar(x: Int) : Int {
     return x
 }

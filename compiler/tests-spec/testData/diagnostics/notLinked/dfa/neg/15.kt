@@ -54,7 +54,7 @@ fun case_3() {
 /*
  * TESTCASE NUMBER: 4
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-28369
+ * ISSUES: KT-28369, KT-35668
  */
 fun case_4() {
     var x: Int? = null

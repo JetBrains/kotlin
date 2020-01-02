@@ -1,13 +1,13 @@
 FILE: annotations.kt
     @R|kotlin/annotation/Target|(Q|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final annotation class Simple : R|kotlin/Annotation| {
         public constructor(): R|annotations/Simple| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
     }
     public final annotation class WithInt : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/Int|): R|annotations/WithInt| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public final val value: R|kotlin/Int| = R|<local>/value|
@@ -16,7 +16,7 @@ FILE: annotations.kt
     }
     public final annotation class WithString : R|kotlin/Annotation| {
         public constructor(s: R|kotlin/String|): R|annotations/WithString| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public final val s: R|kotlin/String| = R|<local>/s|
@@ -25,7 +25,7 @@ FILE: annotations.kt
     }
     public final annotation class Complex : R|kotlin/Annotation| {
         public constructor(wi: R|annotations/WithInt|, ws: R|annotations/WithString|): R|annotations/Complex| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public final val wi: R|annotations/WithInt| = R|<local>/wi|
@@ -37,7 +37,7 @@ FILE: annotations.kt
     }
     public final annotation class VeryComplex : R|kotlin/Annotation| {
         public constructor(f: R|kotlin/Float|, d: R|kotlin/Double|, b: R|kotlin/Boolean|, l: R|kotlin/Long|, n: R|kotlin/Int?|): R|annotations/VeryComplex| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public final val f: R|kotlin/Float| = R|<local>/f|
@@ -69,9 +69,9 @@ FILE: main.kt
             public get(): R|kotlin/String|
 
     }
-    @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(Int(0)) R|test/First| {
+    @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(IntegerLiteral(0)) R|test/First| {
         public constructor(y: R|kotlin/Char|): R|test/Second| {
-            super<@R|annotations/WithInt|(Int(0)) R|test/First|>()
+            super<@R|annotations/WithInt|(IntegerLiteral(0)) R|test/First|>()
         }
 
         public final val y: R|kotlin/Char| = R|<local>/y|

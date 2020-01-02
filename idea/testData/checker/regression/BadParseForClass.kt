@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun main(args: Array<String>) {
     String.class<EOLError descr="Name expected"></EOLError>
 }

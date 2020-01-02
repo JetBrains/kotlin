@@ -176,6 +176,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var useExperimental: Array<String>? by FreezableVar(null)
 
     @Argument(
+        value = "-Xopt-in",
+        valueDescription = "<fq.name>",
+        description = "Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name"
+    )
+    var optIn: Array<String>? by FreezableVar(null)
+
+    @Argument(
         value = "-Xproper-ieee754-comparisons",
         description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types"
     )
@@ -313,6 +320,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var useMixedNamedArguments: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xklib-mpp",
+        description = "Enable experimental support for multi-platform klib libraries"
+    )
+    var klibBasedMpp: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
@@ -328,8 +341,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
-            put(AnalysisFlags.experimental, experimental?.toList().orEmpty())
-            put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty())
+            val experimentalFqNames = experimental?.toList().orEmpty()
+            if (experimentalFqNames.isNotEmpty()) {
+                put(AnalysisFlags.experimental, experimentalFqNames)
+                collector.report(CompilerMessageSeverity.WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
+            }
+            put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty() + optIn?.toList().orEmpty())
+            put(AnalysisFlags.klibBasedMpp, klibBasedMpp)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(

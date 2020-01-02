@@ -68,7 +68,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
         if (fieldParent is IrClass && field.isEffectivelyExternal()) {
             // External fields are only allowed in external enums
-            assert(fieldParent.isEnumClass)
+            assert(fieldParent.isEnumClass) {
+                "${field.render()} in non-external class ${fieldParent.render()}"
+            }
             return JsNameRef(
                 field.getJsNameOrKotlinName().identifier,
                 context.getNameForClass(fieldParent).makeRef()

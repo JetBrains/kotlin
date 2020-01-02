@@ -20,10 +20,11 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_HOME
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -43,13 +44,16 @@ internal val Project.konanHome: String
         file(it).absolutePath
     } ?: NativeCompilerDownloader(project).compilerDirectory.absolutePath
 
-internal val Project.konanVersion: KonanVersion
+internal val Project.konanVersion: CompilerVersion
     get() = PropertiesProvider(this).nativeVersion?.let {
-        KonanVersion.fromString(it.toString())
+        CompilerVersion.fromString(it.toString())
     } ?: NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
 internal val Project.disableKonanDaemon: Boolean
     get() = PropertiesProvider(this).nativeDisableCompilerDaemon == true
+
+internal val Project.konanCacheKind: NativeCacheKind
+    get() = PropertiesProvider(this).nativeCacheKind
 
 internal interface KonanToolRunner : Named {
     val mainClass: String

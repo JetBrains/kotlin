@@ -33,6 +33,8 @@ abstract class AbstractInlineSuspendTests : BorrowedInlineTest("suspend/")
 
 abstract class AbstractJsInlineContractsTests : BorrowedInlineTest("contracts/")
 
+abstract class AbstractJsInlineMultiModuleTests : BorrowedInlineTest("multiModule/")
+
 abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         "box/"

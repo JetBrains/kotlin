@@ -310,7 +310,8 @@ open class KotlinIntroduceParameterHandler(
                             callable = targetParent,
                             callableDescriptor = functionDescriptor,
                             newParameterName = suggestedNames.first().quoteIfNeeded(),
-                            newParameterTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(replacementType),
+                            newParameterTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
+                                .renderType(replacementType),
                             argumentValue = originalExpression,
                             withDefaultValue = false,
                             parametersUsages = parametersUsages,

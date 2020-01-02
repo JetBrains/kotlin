@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 
 private class SimpleFlow(
     val approvedInfos: MutableApprovedInfos = mutableMapOf(),
@@ -30,7 +31,7 @@ private class SimpleFlow(
     }
 }
 
-abstract class SimpleLogicSystem(context: DataFlowInferenceContext) : LogicSystem(context) {
+abstract class SimpleLogicSystem(context: ConeInferenceContext) : LogicSystem(context) {
     override val Flow.approvedInfos: MutableApprovedInfos
         get() = (this as SimpleFlow).approvedInfos
 

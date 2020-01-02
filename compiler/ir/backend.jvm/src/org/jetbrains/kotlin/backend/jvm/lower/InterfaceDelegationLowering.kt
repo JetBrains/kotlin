@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -79,7 +80,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             || Visibilities.isPrivate(implementation.visibility)
             || implementation.isDefinitelyNotDefaultImplsMethod()
             || implementation.isMethodOfAny()
-            || (!context.state.jvmDefaultMode.isCompatibility && implementation.hasJvmDefault())
+            || implementation.hasJvmDefault()
         ) {
             return null
         }
@@ -126,10 +127,10 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             super.visitSimpleFunction(declaration)
         }
     }
-
-    private fun IrSimpleFunction.hasInterfaceParent() =
-        (parent as? IrClass)?.isInterface == true
 }
+
+private fun IrSimpleFunction.hasInterfaceParent() =
+    (parent as? IrClass)?.isInterface == true
 
 internal val interfaceSuperCallsPhase = makeIrFilePhase(
     lowering = ::InterfaceSuperCallsLowering,
@@ -144,7 +145,7 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.superQualifierSymbol?.owner?.isInterface != true) {
+        if (expression.superQualifierSymbol?.owner?.isInterface != true || expression.isSuperToAny()) {
             return super.visitCall(expression)
         }
 
@@ -164,7 +165,7 @@ internal val interfaceDefaultCallsPhase = makeIrFilePhase(
     description = "Redirect interface calls with default arguments to DefaultImpls"
 )
 
-private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     // TODO If there are no default _implementations_ we can avoid generating defaultImpls class entirely by moving default arg dispatchers to the interface class
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -181,6 +182,12 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
         }
 
         val redirectTarget = context.declarationFactory.getDefaultImplsFunction(callee as IrSimpleFunction)
+
+        // InterfaceLowering bridges from DefaultImpls in compatibility mode -- if that's the case,
+        // this phase will inadvertently cause a recursive loop as the bridge on the DefaultImpls
+        // gets redirected to call itself.
+        if (redirectTarget == currentFunction?.irElement) return super.visitCall(expression)
+
         val newCall = irCall(expression, redirectTarget, receiversAsArguments = true)
 
         return super.visitCall(newCall)
@@ -194,3 +201,26 @@ private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
             (name.asString() == "clone" &&
                     parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
                     valueParameters.isEmpty())
+
+internal val interfaceObjectCallsPhase = makeIrFilePhase(
+    lowering = ::InterfaceObjectCallsLowering,
+    name = "InterfaceObjectCalls",
+    description = "Resolve calls to Object methods on interface types to virtual methods"
+)
+
+private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.superQualifierSymbol != null && !expression.isSuperToAny())
+            return super.visitCall(expression)
+        val callee = expression.symbol.owner
+        if (callee !is IrSimpleFunction || !callee.hasInterfaceParent())
+            return super.visitCall(expression)
+        val resolved = callee.resolveFakeOverride()
+        if (resolved?.isMethodOfAny() != true)
+            return super.visitCall(expression)
+        val newSuperQualifierSymbol = context.irBuiltIns.anyClass.takeIf { expression.superQualifierSymbol != null }
+        return super.visitCall(irCall(expression, resolved, newSuperQualifierSymbol = newSuperQualifierSymbol))
+    }
+}

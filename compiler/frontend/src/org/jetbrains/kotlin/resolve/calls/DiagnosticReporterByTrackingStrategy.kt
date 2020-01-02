@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticReporterByTrackingStrategy(
@@ -132,8 +133,8 @@ class DiagnosticReporterByTrackingStrategy(
                 trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
 
             NoneCallableReferenceCandidates::class.java -> {
-                val expression =
-                    (diagnostic as NoneCallableReferenceCandidates).argument.psiExpression.safeAs<KtCallableReferenceExpression>()
+                val expression = diagnostic.cast<NoneCallableReferenceCandidates>()
+                    .argument.safeAs<CallableReferenceKotlinCallArgumentImpl>()?.ktCallableReferenceExpression
                 reportIfNonNull(expression) {
                     trace.report(UNRESOLVED_REFERENCE.on(it.callableReference, it.callableReference))
                 }
@@ -173,6 +174,10 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 }
 
+            }
+
+            ResolvedToSamWithVarargDiagnostic::class.java -> {
+                trace.report(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG.on(callArgument.psiCallArgument.valueArgument.asElement()))
             }
         }
     }
@@ -260,8 +265,13 @@ class DiagnosticReporterByTrackingStrategy(
             NewConstraintError::class.java -> {
                 val constraintError = diagnostic as NewConstraintError
                 val position = constraintError.position.from
-                val argument = (position as? ArgumentConstraintPosition)?.argument
-                    ?: (position as? ReceiverConstraintPosition)?.argument
+                val argument =
+                    when (position) {
+                        is ArgumentConstraintPosition -> position.argument
+                        is ReceiverConstraintPosition -> position.argument
+                        is LHSArgumentConstraintPosition -> position.argument
+                        else -> null
+                    }
                 argument?.let {
                     it.safeAs<LambdaKotlinCallArgument>()?.let lambda@{ lambda ->
                         val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
@@ -356,10 +366,13 @@ class DiagnosticReporterByTrackingStrategy(
             }
 
             NotEnoughInformationForTypeParameter::class.java -> {
-                if (allDiagnostics.any {it is ConstrainingTypeIsError || it is NewConstraintError || it is WrongCountOfTypeArguments})
-                    return
-
                 val error = diagnostic as NotEnoughInformationForTypeParameter
+                if (allDiagnostics.any {
+                        (it is ConstrainingTypeIsError && it.typeVariable == error.typeVariable)
+                                || it is NewConstraintError || it is WrongCountOfTypeArguments
+                    }
+                ) return
+
                 val call = error.resolvedAtom.atom?.safeAs<PSIKotlinCall>()?.psiCall ?: call
                 val expression = call.calleeExpression ?: return
                 val typeVariableName = when (val typeVariable = error.typeVariable) {

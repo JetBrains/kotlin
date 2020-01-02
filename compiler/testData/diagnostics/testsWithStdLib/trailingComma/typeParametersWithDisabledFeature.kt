@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_TYPEALIAS_PARAMETER
+// !LANGUAGE: -TrailingCommas
 
 @Target(AnnotationTarget.TYPE)
 annotation class Anno

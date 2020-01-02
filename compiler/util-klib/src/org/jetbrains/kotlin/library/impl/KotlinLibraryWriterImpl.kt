@@ -18,7 +18,7 @@ open class KotlinLibraryLayoutForWriter(
 open class BaseWriterImpl(
     val libraryLayout: KotlinLibraryLayoutForWriter,
     moduleName: String,
-    override val versions: KonanLibraryVersioning,
+    override val versions: KotlinLibraryVersioning,
     val nopack: Boolean = false
 ) : BaseWriter {
 
@@ -74,12 +74,12 @@ open class BaseWriterImpl(
 class KoltinLibraryWriterImpl(
     libDir: File,
     moduleName: String,
-    versions: KonanLibraryVersioning,
+    versions: KotlinLibraryVersioning,
     nopack: Boolean = false,
 
     val layout: KotlinLibraryLayoutForWriter = KotlinLibraryLayoutForWriter(libDir),
 
-    base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, nopack),
+    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, nopack),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout)
 //    ir: IrWriter = IrPerFileWriterImpl(layout)
@@ -89,8 +89,8 @@ class KoltinLibraryWriterImpl(
 fun buildKoltinLibrary(
     linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
-    ir: SerializedIrModule,
-    versions: KonanLibraryVersioning,
+    ir: SerializedIrModule?,
+    versions: KotlinLibraryVersioning,
     output: String,
     moduleName: String,
     nopack: Boolean,
@@ -101,7 +101,10 @@ fun buildKoltinLibrary(
     val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, nopack)
 
     library.addMetadata(metadata)
-    library.addIr(ir)
+
+    if (ir != null) {
+        library.addIr(ir)
+    }
 
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)

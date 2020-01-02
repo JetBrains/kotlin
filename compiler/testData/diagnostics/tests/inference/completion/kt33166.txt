@@ -1,0 +1,37 @@
+package
+
+public fun f1(/*0*/ future: OurFuture<kotlin.String>, /*1*/ e: Either.Left<kotlin.String>): kotlin.Unit
+public fun f2(/*0*/ future: OurFuture<kotlin.String>, /*1*/ e: Either.Left<kotlin.String>): kotlin.Unit
+
+public open class Either</*0*/ out L> {
+    public constructor Either</*0*/ out L>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Left</*0*/ out L> : Either<L> {
+        public constructor Left</*0*/ out L>(/*0*/ a: L)
+        public final val a: L
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface GenericRunnable</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun invoke(): T!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class OurFuture</*0*/ T : kotlin.Any!> {
+    public constructor OurFuture</*0*/ T : kotlin.Any!>()
+    public open fun </*0*/ U : kotlin.Any!> compose(/*0*/ mapper: GenericRunnable<OurFuture<U!>!>!): OurFuture<U!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open fun </*0*/ T : kotlin.Any!> createOurFuture(/*0*/ result: T!): OurFuture<T!>!
+}

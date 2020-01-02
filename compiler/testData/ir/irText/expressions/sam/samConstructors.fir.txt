@@ -20,14 +20,16 @@ FILE fqName:<root> fileName:/samConstructors.kt
       RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'
         CALL 'public final fun Runnable (block: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in java.lang' type=java.lang.Runnable origin=null
           block: FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
-  FUN name:test4 visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:java.util.Comparator<kotlin.Int>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: Comparator>#' type=IrErrorType
-          FUN_EXPR type=kotlin.Function2<IrErrorType, IrErrorType, IrErrorType> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:IrErrorType, b:IrErrorType) returnType:IrErrorType
-              VALUE_PARAMETER name:a index:0 type:IrErrorType
-              VALUE_PARAMETER name:b index:1 type:IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test4 (): java.util.Comparator<kotlin.Int> declared in <root>'
+        CALL 'public final fun Comparator <T> (block: kotlin.Function2<T of java.util.Comparator?, T of java.util.Comparator?, kotlin.Int>): java.util.Comparator<T of java.util.Comparator> declared in java.util' type=java.util.Comparator<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          block: FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int
+              VALUE_PARAMETER name:a index:0 type:kotlin.Int
+              VALUE_PARAMETER name:b index:1 type:kotlin.Int
               BLOCK_BODY
-                ERROR_CALL 'Unresolved reference: <Unresolved name: minus>#' type=IrErrorType
-                  GET_VAR 'b: IrErrorType declared in <root>.test4.<anonymous>' type=IrErrorType origin=null
+                CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'a: kotlin.Int declared in <root>.test4.<anonymous>' type=kotlin.Int origin=null
+                  other: GET_VAR 'b: kotlin.Int declared in <root>.test4.<anonymous>' type=kotlin.Int origin=null

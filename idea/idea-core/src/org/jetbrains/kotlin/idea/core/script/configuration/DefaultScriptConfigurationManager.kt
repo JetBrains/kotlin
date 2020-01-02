@@ -9,7 +9,6 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -18,30 +17,29 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LOADER
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LISTENER
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.DefaultScriptChangeListener
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.BackgroundExecutor
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.*
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgroundExecutor
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.TestingBackgroundExecutor
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.isUnitTestModeWithoutScriptLoadingNotification
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
+import kotlin.script.experimental.jvm.jdkHome
+import kotlin.script.experimental.jvm.jvm
 
 /**
  * Standard implementation of scripts configuration loading and caching
@@ -119,21 +117,14 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             yield(defaultLoader)
         }
 
-    private val defaultListener = DefaultScriptChangeListener()
-    private val listeners: Sequence<ScriptChangeListener>
-        get() = sequence {
-            yieldAll(LISTENER.getPoint(project).extensionList)
-            yield(defaultListener)
-        }
-
-    private val notifier = ScriptChangesNotifier(project, updater, listeners)
+    private val notifier = ScriptChangesNotifier(project, updater)
 
     private val saveLock = ReentrantLock()
 
     override fun createCache() = object : ScriptConfigurationMemoryCache(project) {
         override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
             super.setLoaded(file, configurationSnapshot)
-            fileAttributeCache.save(file, configurationSnapshot.configuration)
+            fileAttributeCache.save(file, configurationSnapshot)
         }
     }
 
@@ -255,7 +246,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             } else {
                 val old = getCachedConfigurationState(file)
                 val oldConfiguration = old?.applied?.configuration
-                if (oldConfiguration == newConfiguration) {
+                if (oldConfiguration != null && areSimilar(oldConfiguration, newConfiguration)) {
                     saveReports(file, newResult.reports)
                     file.removeScriptDependenciesNotificationPanel(project)
                 } else {
@@ -322,9 +313,6 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 object DefaultScriptConfigurationManagerExtensions {
     val LOADER: ExtensionPointName<ScriptConfigurationLoader> =
         ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.loader")
-
-    val LISTENER: ExtensionPointName<ScriptChangeListener> =
-        ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.listener")
 }
 
 val ScriptConfigurationManager.testingBackgroundExecutor

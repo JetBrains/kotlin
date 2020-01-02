@@ -30,21 +30,24 @@ class CandidateFactory(
 
     fun createCandidate(
         symbol: AbstractFirBasedSymbol<*>,
-        dispatchReceiverValue: ClassDispatchReceiverValue?,
-        implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-        explicitReceiverKind: ExplicitReceiverKind
+        explicitReceiverKind: ExplicitReceiverKind,
+        dispatchReceiverValue: ReceiverValue? = null,
+        implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
+        builtInExtensionFunctionReceiverValue: ReceiverValue? = null
     ): Candidate {
-        val candidate = Candidate(
+        return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
-            explicitReceiverKind, bodyResolveComponents, baseSystem, callInfo
+            explicitReceiverKind, bodyResolveComponents, baseSystem,
+            builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
+                callInfo.withReceiverAsArgument(it)
+            } ?: callInfo
         )
-        return candidate
     }
 }
 
 fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(statement: FirStatement) {
     when (statement) {
-        is FirFunctionCall, is FirQualifiedAccessExpression, is FirWhenExpression, is FirTryExpression, is FirCallableReferenceAccess ->
+        is FirFunctionCall, is FirQualifiedAccessExpression, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall, is FirCallableReferenceAccess ->
             (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
         is FirWrappedArgumentExpression -> addSubsystemFromExpression(statement.expression)
         is FirBlock -> statement.returnExpressions().forEach { addSubsystemFromExpression(it) }

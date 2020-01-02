@@ -1,37 +1,22 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.idea.codeInsight.gradle;
 
 import com.google.common.collect.Multimap;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.testFramework.IdeaTestUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
 import org.gradle.tooling.BuildActionExecuter;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.internal.consumer.DefaultGradleConnector;
-import org.gradle.tooling.model.DomainObjectSet;
-import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.model.ClassSetProjectImportExtraModelProvider;
+import org.jetbrains.plugins.gradle.model.ClassSetProjectImportModelProvider;
 import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
@@ -49,7 +34,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,7 +129,7 @@ public abstract class AbstractModelBuilderTest {
 
         try {
             ProjectImportAction projectImportAction = new ProjectImportAction(false);
-            projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(getModels()));
+            projectImportAction.addProjectImportModelProvider(new ClassSetProjectImportModelProvider(getModels()));
             BuildActionExecuter<ProjectImportAction.AllModels> buildActionExecutor = connection.action(projectImportAction);
             File initScript = GradleExecutionHelper.generateInitScript(false, getToolingExtensionClasses());
             assertNotNull(initScript);
@@ -188,23 +176,6 @@ public abstract class AbstractModelBuilderTest {
 
     protected abstract Set<Class> getModels();
 
-
-    private <T> Map<String, T> getModulesMap(final Class<T> aClass) {
-        DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getIdeaProject().getModules();
-
-        final String filterKey = "to_filter";
-        Map<String, T> map = ContainerUtil.map2Map(ideaModules, new Function<IdeaModule, Pair<String, T>>() {
-            @Override
-            public Pair<String, T> fun(IdeaModule module) {
-                T value = allModels.getExtraProject(module, aClass);
-                String key = value != null ? module.getGradleProject().getPath() : filterKey;
-                return Pair.create(key, value);
-            }
-        });
-
-        map.remove(filterKey);
-        return map;
-    }
 
     private static void ensureTempDirCreated() throws IOException {
         if (ourTempDir != null) return;

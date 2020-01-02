@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.formatter;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 
 import java.io.File;
 
-public abstract class AbstractTypingIndentationTestBase extends LightCodeInsightTestCase {
+@SuppressWarnings("deprecation")
+public abstract class AbstractTypingIndentationTestBase extends KotlinLightCodeInsightTestCase {
     public void doNewlineTest(String afterFilePath) throws Exception {
         doNewlineTest(afterFilePath, false);
     }
@@ -34,7 +34,7 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
         String originalFileText = FileUtil.loadFile(new File(originFilePath), true);
 
         try {
-            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, getProject());
+            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(getProject_()));
             if (!inverted) {
                 configurator.configureSettings();
             }
@@ -45,7 +45,7 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
             doNewlineTest(originFilePath, afterFilePath);
         }
         finally {
-            getSettings().clearCodeStyleSettings();
+            CodeStyle.getSettings(getProject_()).clearCodeStyleSettings();
         }
     }
 
@@ -58,10 +58,6 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
         String actualTextWithCaret = new StringBuilder(getEditor().getDocument().getText()).insert(offset, EditorTestUtil.CARET_TAG).toString();
 
         KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), actualTextWithCaret);
-    }
-
-    public static CodeStyleSettings getSettings() {
-        return CodeStyle.getSettings(getProject());
     }
 
     @NotNull

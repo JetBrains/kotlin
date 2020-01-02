@@ -1,3 +1,5 @@
+// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
+
 import kotlin.reflect.KProperty
 
 annotation class AnnProp

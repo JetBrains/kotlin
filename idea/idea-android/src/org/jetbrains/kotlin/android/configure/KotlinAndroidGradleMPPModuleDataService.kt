@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -91,11 +91,13 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
 
             val androidModel = getAndroidModuleModel(nodeToImport) ?: continue
             val variantName = androidModel.selectedVariant.name
-            val activeSourceSetInfos = nodeToImport.kotlinAndroidSourceSets?.filter { it.kotlinModule.name.startsWith(variantName) } ?: emptyList()
+            val activeSourceSetInfos = nodeToImport.kotlinAndroidSourceSets?.filter {
+                it.kotlinModule.name.startsWith(variantName)
+            } ?: emptyList()
             for (activeSourceSetInfo in activeSourceSetInfos) {
                 val activeCompilation = activeSourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
                 for (sourceSet in activeCompilation.sourceSets) {
-                    if (! sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) {
+                    if (!sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) {
                         val sourceSetId = activeSourceSetInfo.sourceSetIdsByName[sourceSet.name] ?: continue
                         val sourceSetNode = ExternalSystemApiUtil.findFirstRecursively(projectNode) {
                             (it.data as? ModuleData)?.id == sourceSetId
@@ -192,7 +194,8 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                     )
                     addIfNotNull(
                         relevantNodes.firstOrNull {
-                            (it.kotlinSourceSet?.actualPlatforms?.supports(KotlinPlatform.COMMON) ?: false) && it.kotlinSourceSet?.kotlinModule?.name == commonSourceSetName
+                            (it.kotlinSourceSet?.actualPlatforms?.supports(KotlinPlatform.COMMON) ?: false) && it.kotlinSourceSet
+                                ?.kotlinModule?.name == commonSourceSetName
                         }
                     )
                 } else {
@@ -204,15 +207,16 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                     }
                     addAll(
                         relevantNodes.filter {
-                            (it.kotlinSourceSet?.actualPlatforms?.supports(KotlinPlatform.COMMON) ?: false) && it.kotlinSourceSet?.kotlinModule?.name == commonSourceSetName
+                            (it.kotlinSourceSet?.actualPlatforms?.supports(KotlinPlatform.COMMON) ?: false) && it.kotlinSourceSet
+                                ?.kotlinModule?.name == commonSourceSetName
                         }
                     )
                 }
             }
 
-        val testKotlinModules =
-            gradleSourceSetDataNodes.filter { it.kotlinSourceSet?.isTestModule ?: false }.mapNotNull { modelsProvider.findIdeModule(it.data) }
-                .toSet()
+        val testKotlinModules = gradleSourceSetDataNodes.filter { it.kotlinSourceSet?.isTestModule ?: false }
+            .mapNotNull { modelsProvider.findIdeModule(it.data) }
+            .toSet()
 
         gradleSourceSetDataNodes.forEach { node ->
             val module = modelsProvider.findIdeModule(node.data) ?: return

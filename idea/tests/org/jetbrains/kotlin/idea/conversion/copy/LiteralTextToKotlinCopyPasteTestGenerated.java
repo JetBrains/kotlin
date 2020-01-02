@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,7 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
     }
 
     public void testAllFilesPresentInPlainTextLiteral() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/plainTextLiteral"), Pattern.compile("^([^\\.]+)\\.txt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/plainTextLiteral"), Pattern.compile("^([^\\.]+)\\.txt$"), null, true);
     }
 
     @TestMetadata("BrokenEntries.txt")
@@ -71,6 +71,11 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
     @TestMetadata("TrimIndent2.txt")
     public void testTrimIndent2() throws Exception {
         runTest("idea/testData/copyPaste/plainTextLiteral/TrimIndent2.txt");
+    }
+
+    @TestMetadata("TrimIndent3.txt")
+    public void testTrimIndent3() throws Exception {
+        runTest("idea/testData/copyPaste/plainTextLiteral/TrimIndent3.txt");
     }
 
     @TestMetadata("WithBackslashes.txt")

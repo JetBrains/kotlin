@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirCheckNotNullCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirTryExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -36,7 +38,11 @@ fun FirFunctionCall.copy(
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
-    return FirFunctionCallImpl(source).apply {
+    return if (this is FirIntegerOperatorCall) {
+        FirIntegerOperatorCall(source)
+    } else {
+        FirFunctionCallImpl(source)
+    }.apply {
         this.safe = safe
         this.annotations.addAll(annotations)
         this.arguments.addAll(arguments)
@@ -112,6 +118,17 @@ fun FirTryExpression.copy(
 ): FirTryExpressionImpl = FirTryExpressionImpl(source, tryBlock, finallyBlock).apply {
     this.calleeReference = calleeReference
     this@apply.catches.addAll(this@copy.catches)
+    this.typeRef = resultType
+    this.annotations += annotations
+}
+
+fun FirCheckNotNullCall.copy(
+    resultType: FirTypeRef = this.typeRef,
+    calleeReference: FirReference = this.calleeReference,
+    annotations: List<FirAnnotationCall> = this.annotations
+): FirCheckNotNullCallImpl = FirCheckNotNullCallImpl(source).apply {
+    this.calleeReference = calleeReference
+    this@apply.arguments.addAll(this@copy.arguments)
     this.typeRef = resultType
     this.annotations += annotations
 }

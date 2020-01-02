@@ -445,6 +445,7 @@ object CheckerTestUtil {
         }
 
         val diagnosticDescriptors = getSortedDiagnosticDescriptors(diagnosticsFiltered, uncheckedDiagnostics)
+        if (diagnosticDescriptors.isEmpty()) return result
         val opened = Stack<AbstractDiagnosticDescriptor>()
         val iterator = diagnosticDescriptors.listIterator()
         var currentDescriptor: AbstractDiagnosticDescriptor? = iterator.next()

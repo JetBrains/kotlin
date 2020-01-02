@@ -1,6 +1,6 @@
 UFile (package = org.jetbrains.uast.kotlin)
     UClass (name = LambdaReturnKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = lam1)
@@ -130,7 +130,7 @@ UFile (package = org.jetbrains.uast.kotlin)
                                     UIdentifier (Identifier (listOf))
                                     USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
                                     ULiteralExpression (value = 1)
-        UAnnotationMethod (name = bar)
+        UMethod (name = bar)
             UParameter (name = lmbd)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression

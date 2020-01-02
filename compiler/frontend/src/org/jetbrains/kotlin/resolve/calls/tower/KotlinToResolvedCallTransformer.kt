@@ -138,8 +138,8 @@ class KotlinToResolvedCallTransformer(
                     typeApproximator, missingSupertypesResolver
                 )
 
-                if (!ErrorUtils.isError(candidate.candidateDescriptor)) {
-                    for (subKtPrimitive in candidate.subResolvedAtoms) {
+                if (context.inferenceSession.shouldCompleteResolvedSubAtomsOf(candidate)) {
+                    candidate.subResolvedAtoms?.forEach { subKtPrimitive ->
                         ktPrimitiveCompleter.completeAll(subKtPrimitive)
                     }
                 }

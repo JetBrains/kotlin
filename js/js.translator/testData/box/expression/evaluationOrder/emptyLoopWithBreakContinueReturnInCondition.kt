@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1236
+// EXPECTED_REACHABLE_NODES: 1421
 package foo
 
 fun whileReturn(): String {

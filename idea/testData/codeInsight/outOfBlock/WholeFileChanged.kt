@@ -1,5 +1,6 @@
 // OUT_OF_CODE_BLOCK: TRUE
 // SKIP_ANALYZE_CHECK
+// ERROR: Function declaration must have a name
 
 fun test() {<caret>
 

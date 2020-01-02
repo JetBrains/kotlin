@@ -39,6 +39,8 @@ public class SingleClassTestModel extends TestClassModel {
     @NotNull
     private final Pattern filenamePattern;
     @Nullable
+    private final Pattern excludePattern;
+    @Nullable
     private final Boolean checkFilenameStartsLowerCase;
     @NotNull
     private final String doTestMethodName;
@@ -59,6 +61,7 @@ public class SingleClassTestModel extends TestClassModel {
     public SingleClassTestModel(
             @NotNull File rootFile,
             @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludePattern,
             @Nullable Boolean checkFilenameStartsLowerCase,
             @NotNull String doTestMethodName,
             @NotNull String testClassName,
@@ -70,6 +73,7 @@ public class SingleClassTestModel extends TestClassModel {
     ) {
         this.rootFile = rootFile;
         this.filenamePattern = filenamePattern;
+        this.excludePattern = excludePattern;
         this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
@@ -157,16 +161,23 @@ public class SingleClassTestModel extends TestClassModel {
         public void generateBody(@NotNull Printer p) {
             String assertTestsPresentStr;
 
+            String excludedArgument;
+            if (excludePattern != null) {
+                excludedArgument = String.format("Pattern.compile(\"%s\")", StringUtil.escapeStringCharacters(excludePattern.pattern()));
+            } else {
+                excludedArgument = null;
+            }
+
             if (targetBackend != TargetBackend.ANY) {
                 assertTestsPresentStr = String.format(
-                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s);",
+                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s);",
                         KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                        TargetBackend.class.getSimpleName(), targetBackend.toString()
+                        excludedArgument, TargetBackend.class.getSimpleName(), targetBackend.toString()
                 );
             } else {
                 assertTestsPresentStr = String.format(
-                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
+                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument
                 );
             }
             p.println(assertTestsPresentStr);

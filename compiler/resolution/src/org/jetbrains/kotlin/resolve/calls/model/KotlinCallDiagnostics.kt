@@ -203,3 +203,9 @@ class OnlyInputTypesDiagnostic(val typeVariable: NewTypeVariable) : KotlinCallDi
         reporter.onCall(this)
     }
 }
+
+class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RESOLVED_TO_SAM_WITH_VARARG) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
+    }
+}

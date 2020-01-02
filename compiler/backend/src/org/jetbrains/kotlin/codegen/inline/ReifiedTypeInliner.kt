@@ -222,7 +222,11 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, languageVersionSettings)
 
         instructions.insert(insn, newMethodNode.instructions)
-        instructions.remove(stubCheckcast)
+        // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
+        // it's safe to remove cast to Object as FrameMap will use it as default value for merged branches
+        if (stubCheckcast.desc == AsmTypes.OBJECT_TYPE.internalName) {
+            instructions.remove(stubCheckcast)
+        }
 
         // TODO: refine max stack calculation (it's not always as big as +4)
         maxStackSize = max(maxStackSize, 4)

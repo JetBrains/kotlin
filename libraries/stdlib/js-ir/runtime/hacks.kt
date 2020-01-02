@@ -21,5 +21,8 @@ fun THROW_CCE(): Nothing {
 fun THROW_NPE(): Nothing {
     throw NullPointerException()
 }
+fun THROW_IAE(msg: String): Nothing {
+    throw IllegalArgumentException(msg)
+}
 
 fun <T:Any> ensureNotNull(v: T?): T = if (v == null) THROW_NPE() else v

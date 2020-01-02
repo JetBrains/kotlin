@@ -53,19 +53,22 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                 dispatchReceiverParameter != null
 
 
-    private fun getOperandsIfCallToEqeqOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? {
-        if (call.symbol == context.irBuiltIns.eqeqSymbol) {
-            val left = call.getValueArgument(0)!!
-            val right = call.getValueArgument(1)!!
-            return left to right
-        } else if (call.symbol.owner.isObjectEquals) {
-            val left = call.dispatchReceiver!!
-            val right = call.getValueArgument(0)!!
-            return left to right
-        } else {
-            return null;
+    private fun getOperandsIfCallToEqeqOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? =
+        when {
+            call.symbol == context.irBuiltIns.eqeqSymbol -> {
+                val left = call.getValueArgument(0)!!
+                val right = call.getValueArgument(1)!!
+                left to right
+            }
+
+            call.symbol.owner.isObjectEquals -> {
+                val left = call.dispatchReceiver!!
+                val right = call.getValueArgument(0)!!
+                left to right
+            }
+
+            else -> null
         }
-    }
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -116,7 +119,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                 val isCompilerGenerated = expression.origin == null
                 expression.transformChildrenVoid(this)
                 // Remove all branches with constant false condition.
-                expression.branches.removeIf() {
+                expression.branches.removeIf {
                     it.condition.isFalseConst() && isCompilerGenerated
                 }
                 if (expression.origin == IrStatementOrigin.ANDAND) {
@@ -248,7 +251,8 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                     if (first is IrVariable
                         && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
                         && second is IrGetValue
-                        && first.symbol == second.symbol) {
+                        && first.symbol == second.symbol
+                    ) {
                         statements.clear()
                         first.initializer?.let { statements.add(it) }
                     }

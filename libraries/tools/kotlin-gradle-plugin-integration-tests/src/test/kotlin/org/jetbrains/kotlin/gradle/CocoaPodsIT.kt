@@ -58,6 +58,7 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.module_name              = "#{spec.name}_umbrella"
 
                     spec.dependency 'pod_dependency', '1.0'
+                    spec.dependency 'subspec_dependency/Core', '1.0'
 
                     spec.pod_target_xcconfig = {
                         'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
@@ -102,15 +103,16 @@ class CocoaPodsIT : BaseGradleIT() {
             // Check that a project with CocoaPods interop fails to be built from command line.
             build(":kotlin-library:build") {
                 assertFailed()
-                assertContains("Cannot perform cinterop processing for pod_dependency: cannot determine headers location.")
+                assertContains("Cannot perform cinterop processing for module pod_dependency: cannot determine headers location.")
             }
 
             // Check that a project without CocoaPods interop can be built from command line.
             gradleBuildScript("kotlin-library").modify {
-                it.replace("""pod("pod_dependency", "1.0")""", "")
+                it.replace("""pod("pod_dependency", "1.0")""", "").replace("""pod("subspec_dependency/Core", "1.0")""", "")
             }
             projectDir.resolve("kotlin-library/src/iosMain/kotlin/A.kt").modify {
                 it.replace("import cocoapods.pod_dependency.*", "").replace("println(foo())", "")
+                    .replace("import cocoapods.subspec_dependency.*", "").replace("println(baz())", "")
             }
             build(":kotlin-library:linkReleaseFrameworkIOS") {
                 assertSuccessful()

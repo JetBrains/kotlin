@@ -10,11 +10,14 @@ import com.intellij.codeInsight.folding.impl.JavaCodeFoldingSettingsImpl;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,27 +26,52 @@ import java.util.function.Consumer;
 
 public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFixtureTestCase {
     protected void doTest(@NotNull String path) {
-        myFixture.testFolding(path);
+        try {
+            myFixture.testFolding(path);
+        } catch (FileComparisonFailure e) {
+            throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(), new File(e.getFilePath()).getAbsolutePath());
+        }
     }
 
-    protected void doSettingsFoldingTest(@NotNull String path) throws IOException{
-        String fileText = FileUtil.loadFile(new File(path), true);
+    protected void doSettingsFoldingTest(@NotNull String path) throws IOException {
+        File file = new File(path);
+        String fileText = FileUtil.loadFile(file, true);
 
         String directText = fileText.replaceAll("~true~", "true").replaceAll("~false~", "false");
-        directText += "\n\n// Generated from: " + path;
+        String suffix = "\n\n// Generated from: " + path;
+        directText += suffix;
 
         Consumer<String> doExpandSettingsTestFunction = this::doExpandSettingsTest;
 
-        doTestWithSettings(directText, doExpandSettingsTestFunction);
+        try {
+            doTestWithSettings(directText, doExpandSettingsTestFunction);
+        } catch (ComparisonFailure e) {
+            KotlinTestUtils.assertEqualsToFile(
+                    file,
+                    e.getActual().replace(suffix, "")
+            );
+        }
 
         String invertedText = fileText
                 .replaceAll("~false~", "true").replaceAll("~true~", "false")
                 .replaceAll(SettingsConfigurator.SET_TRUE_DIRECTIVE, "~TEMP_TRUE_DIRECTIVE~")
                 .replaceAll(SettingsConfigurator.SET_FALSE_DIRECTIVE, SettingsConfigurator.SET_TRUE_DIRECTIVE)
                 .replaceAll("~TEMP_TRUE_DIRECTIVE~", SettingsConfigurator.SET_FALSE_DIRECTIVE);
-        invertedText += "\n\n// Generated from: " + path + " with !INVERTED! settings";
+        String invertedSuffix = "\n\n// Generated from: " + path + " with !INVERTED! settings";
+        invertedText += invertedSuffix;
 
-        doTestWithSettings(invertedText, doExpandSettingsTestFunction);
+        try {
+            doTestWithSettings(invertedText, doExpandSettingsTestFunction);
+        } catch (ComparisonFailure e) {
+            KotlinTestUtils.assertEqualsToFile(
+                    file,
+                    e.getActual()
+                            .replaceAll(SettingsConfigurator.SET_FALSE_DIRECTIVE, "~TEMP_TRUE_DIRECTIVE~")
+                            .replaceAll(SettingsConfigurator.SET_TRUE_DIRECTIVE, SettingsConfigurator.SET_FALSE_DIRECTIVE)
+                            .replaceAll("~TEMP_TRUE_DIRECTIVE~", SettingsConfigurator.SET_TRUE_DIRECTIVE)
+                            .replace(invertedSuffix, "")
+            );
+        }
     }
 
     protected static void doTestWithSettings(@NotNull String fileText, @NotNull Consumer<String> runnable) {

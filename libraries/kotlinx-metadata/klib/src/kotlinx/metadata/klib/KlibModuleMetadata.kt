@@ -83,12 +83,13 @@ class KlibModuleMetadata(
             readStrategy: KlibModuleFragmentReadStrategy = KlibModuleFragmentReadStrategy.DEFAULT
         ): KlibModuleMetadata {
             val moduleHeaderProto = parseModuleHeader(library.moduleHeaderData)
-            val nameResolver = NameResolverImpl(moduleHeaderProto.strings, moduleHeaderProto.qualifiedNames)
-            val moduleHeader = moduleHeaderProto.readHeader(nameResolver)
+            val headerNameResolver = NameResolverImpl(moduleHeaderProto.strings, moduleHeaderProto.qualifiedNames)
+            val moduleHeader = moduleHeaderProto.readHeader(headerNameResolver)
             val fileIndex = SourceFileIndexReadExtension(moduleHeader.file)
             val moduleFragments = moduleHeader.packageFragmentName.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
+                    val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
                     KmModuleFragment().apply { packageFragment.accept(this, nameResolver, listOf(fileIndex)) }
                 }.let(readStrategy::processModuleParts)
             }

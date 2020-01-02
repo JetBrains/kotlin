@@ -504,6 +504,14 @@ abstract class KmValueParameterVisitor @JvmOverloads constructor(private val del
         delegate?.visitVarargElementType(flags)
 
     /**
+     * Visits the extensions of the given type on the value parameter.
+     *
+     * @param type the type of extension visitor to be returned
+     */
+    open fun visitExtensions(type: KmExtensionType): KmValueParameterExtensionVisitor? =
+        delegate?.visitExtensions(type)
+
+    /**
      * Visits the end of the value parameter.
      */
     open fun visitEnd() {

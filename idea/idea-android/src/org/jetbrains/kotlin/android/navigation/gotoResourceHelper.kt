@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.navigation
@@ -37,8 +26,8 @@ fun getReferenceExpression(element: PsiElement?): KtSimpleNameExpression? {
 
 // given 'R.a.b' returns info for all three parts of the expression 'a', 'b', 'R'
 fun getInfo(
-        referenceExpression: KtSimpleNameExpression,
-        facet: AndroidFacet
+    referenceExpression: KtSimpleNameExpression,
+    facet: AndroidFacet
 ): AndroidResourceUtil.MyReferredResourceFieldInfo? {
     val info = getReferredInfo(referenceExpression, facet)
     if (info != null) return info
@@ -54,8 +43,8 @@ private fun KtExpression?.getParentQualified(): KtDotQualifiedExpression? {
 
 // returns info if passed expression is 'b' in 'R.a.b'
 private fun getReferredInfo(
-        lastPart: KtSimpleNameExpression,
-        facet: AndroidFacet
+    lastPart: KtSimpleNameExpression,
+    facet: AndroidFacet
 ): AndroidResourceUtil.MyReferredResourceFieldInfo? {
     val resFieldName = lastPart.getReferencedName()
     if (resFieldName.isEmpty()) return null
@@ -87,9 +76,10 @@ private fun getReferredInfo(
     }
     val containingFile = resolvedClass.containingFile ?: return null
 
-    val isFromCorrectFile =
-            if (fromManifest) AndroidResourceUtil.isManifestJavaFile(facet, containingFile)
-            else AndroidResourceUtil.isRJavaFile(facet, containingFile)
+    val isFromCorrectFile = if (fromManifest)
+        AndroidResourceUtil.isManifestJavaFile(facet, containingFile)
+    else
+        AndroidResourceUtil.isRJavaFile(facet, containingFile)
 
     if (!isFromCorrectFile) {
         return null
@@ -98,9 +88,8 @@ private fun getReferredInfo(
     return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, resolvedModule, false, fromManifest)
 }
 
-private fun getReceiverAsSimpleNameExpression(exp: KtSimpleNameExpression): KtSimpleNameExpression? {
-    val receiver = exp.getReceiverExpression()
-    return when (receiver) {
+private fun getReceiverAsSimpleNameExpression(exp: KtSimpleNameExpression): KtSimpleNameExpression? =
+    when (val receiver = exp.getReceiverExpression()) {
         is KtSimpleNameExpression -> {
             receiver
         }
@@ -109,5 +98,3 @@ private fun getReceiverAsSimpleNameExpression(exp: KtSimpleNameExpression): KtSi
         }
         else -> null
     }
-
-}

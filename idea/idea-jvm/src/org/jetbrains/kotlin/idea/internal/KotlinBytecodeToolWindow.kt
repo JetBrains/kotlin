@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -38,14 +37,13 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.join
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -243,7 +241,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             val state: GenerationState
             try {
                 state = compileSingleFile(ktFile, configuration)
-                        ?: return BytecodeGenerationResult.Error("Cannot compile ${ktFile.name} to bytecode.")
+                    ?: return BytecodeGenerationResult.Error("Cannot compile ${ktFile.name} to bytecode.")
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Exception) {
@@ -287,7 +285,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
 
             val resolutionFacade = KotlinCacheService.getInstance(ktFile.project)
                 .getResolutionFacadeByFile(ktFile, JvmPlatforms.unspecifiedJvmPlatform)
-                    ?: return null
+                ?: return null
 
             val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext
 
@@ -317,9 +315,9 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             }
 
             val state = GenerationState.Builder(
-                ktFile.project, ClassBuilderFactories.TEST, resolutionFacade.moduleDescriptor, bindingContext, toProcess,
-                configuration
-            )
+                    ktFile.project, ClassBuilderFactories.TEST, resolutionFacade.moduleDescriptor, bindingContext, toProcess,
+                    configuration
+                )
                 .generateDeclaredClassFilter(generateClassFilter)
                 .codegenFactory(
                     if (configuration.getBoolean(JVMConfigurationKeys.IR))
@@ -329,7 +327,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 )
                 .build()
 
-            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+            KotlinCodegenFacade.compileCorrectFiles(state)
 
             return state
         }

@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/catchParameterAccess.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (f: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>'
         TRY type=kotlin.Unit
-          try: CALL 'public abstract fun invoke (): kotlin.Unit declared in kotlin.Function0' type=kotlin.Unit origin=null
+          try: CALL 'public abstract fun invoke (): kotlin.Unit [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
             $this: GET_VAR 'f: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
           CATCH parameter=val e: java.lang.Exception [val] declared in <root>.test
             VAR name:e type:java.lang.Exception [val]

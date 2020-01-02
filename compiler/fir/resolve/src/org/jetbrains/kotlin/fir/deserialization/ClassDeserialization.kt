@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -34,6 +35,7 @@ fun deserializeClassToSymbol(
     nameResolver: NameResolver,
     session: FirSession,
     defaultAnnotationDeserializer: AbstractAnnotationDeserializer?,
+    scopeProvider: KotlinScopeProvider,
     parentContext: FirDeserializationContext? = null,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
 ) {
@@ -59,6 +61,7 @@ fun deserializeClassToSymbol(
             classId.shortClassName,
             status,
             ProtoEnumFlags.classKind(kind),
+            scopeProvider,
             symbol
         )
     } else {
@@ -68,6 +71,7 @@ fun deserializeClassToSymbol(
             classId.shortClassName,
             status,
             ProtoEnumFlags.classKind(kind),
+            scopeProvider,
             symbol
         )
     }
@@ -120,7 +124,7 @@ fun deserializeClassToSymbol(
                 val enumEntryId = classId.createNestedClassId(enumEntryName)
 
                 val symbol = FirRegularClassSymbol(enumEntryId)
-                FirEnumEntryImpl(null, session, enumEntryId.shortClassName, symbol).apply {
+                FirEnumEntryImpl(null, session, enumEntryId.shortClassName, scopeProvider, symbol).apply {
                     resolvePhase = FirResolvePhase.DECLARATIONS
                     superTypeRefs += FirResolvedTypeRefImpl(
                         null,

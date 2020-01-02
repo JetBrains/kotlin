@@ -5,24 +5,31 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.declarations.visibility
+import org.jetbrains.kotlin.fir.generateValueOfFunction
+import org.jetbrains.kotlin.fir.generateValuesFunction
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteMemberScope
-import org.jetbrains.kotlin.fir.java.scopes.JavaSuperTypeScope
+import org.jetbrains.kotlin.fir.java.scopes.JavaOverrideChecker
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirSourceElement
@@ -47,6 +54,8 @@ class JavaSymbolProvider(
     private val searchScope: GlobalSearchScope
 ) : AbstractFirSymbolProvider<FirRegularClassSymbol>() {
 
+    private val scopeProvider = JavaScopeProvider(::wrapScopeWithJvmMapped, this)
+
     private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
 
     private fun findClass(
@@ -57,65 +66,17 @@ class JavaSymbolProvider(
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
         emptyList()
 
-    // NB: looks like it's better not to use this function at all...
-    override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
-        val classSymbol = getClassLikeSymbolByFqName(classId) ?: return null
-        return declaredMemberScope(classSymbol.fir)
-    }
-
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, mutableSetOf())
-    }
-
-    private fun buildJavaEnhancementScope(
-        useSiteSession: FirSession,
-        symbol: FirRegularClassSymbol,
-        scopeSession: ScopeSession,
-        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
-    ): JavaClassEnhancementScope {
-        return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
-            JavaClassEnhancementScope(
-                useSiteSession,
-                buildJavaUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession, visitedSymbols)
+        val regularClass = symbol.fir
+        return if (regularClass is FirJavaClass) {
+            lazyNestedClassifierScope(
+                classId,
+                existingNames = regularClass.existingNestedClassifierNames,
+                symbolProvider = this
             )
-        }
-    }
-
-    private fun buildJavaUseSiteMemberScope(
-        regularClass: FirRegularClass,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession,
-        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
-    ): JavaClassUseSiteMemberScope {
-        return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = declaredMemberScope(
-                regularClass,
-                useLazyNestedClassifierScope = regularClass is FirJavaClass,
-                existingNames = (regularClass as? FirJavaClass)?.existingNestedClassifierNames
-            )
-            val superTypeEnhancementScopes =
-                lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-                    .mapNotNull { useSiteSuperType ->
-                        if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
-                        val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                        if (symbol is FirRegularClassSymbol && visitedSymbols.add(symbol)) {
-                            // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
-                            val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
-                            visitedSymbols.remove(symbol)
-                            useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, scope, symbol.fir, scopeSession)
-                        } else {
-                            null
-                        }
-                    }
-            JavaClassUseSiteMemberScope(
-                regularClass, useSiteSession,
-                JavaSuperTypeScope(regularClass, useSiteSession, superTypeEnhancementScopes), declaredScope
-            )
+        } else {
+            nestedClassifierScope(regularClass)
         }
     }
 
@@ -158,7 +119,13 @@ class JavaSymbolProvider(
             }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? = getFirJavaClass(classId)
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
+        return try {
+            getFirJavaClass(classId)
+        } catch (e: ProcessCanceledException) {
+            null
+        }
+    }
 
     fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirRegularClassSymbol? {
         if (!hasTopLevelClassOf(classId)) return null
@@ -189,7 +156,8 @@ class JavaSymbolProvider(
                     javaClass.classKind, isTopLevel = isTopLevel,
                     isStatic = javaClass.isStatic,
                     javaTypeParameterStack = javaTypeParameterStack,
-                    existingNestedClassifierNames = javaClass.innerClassNames.toList()
+                    existingNestedClassifierNames = javaClass.innerClassNames.toList(),
+                    scopeProvider = scopeProvider
                 ).apply {
                     this.typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
@@ -284,6 +252,11 @@ class JavaSymbolProvider(
                             }
                         }
                     }
+
+                    if (classKind == ClassKind.ENUM_CLASS) {
+                        generateValuesFunction(session, classId.packageFqName, classId.relativeClassName)
+                        generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
+                    }
                 }
             }
         }
@@ -291,9 +264,13 @@ class JavaSymbolProvider(
 
     override fun getPackage(fqName: FqName): FqName? {
         return packageCache.lookupCacheOrCalculate(fqName) {
-            val facade = KotlinJavaPsiFacade.getInstance(project)
-            val javaPackage = facade.findPackage(fqName.asString(), searchScope) ?: return@lookupCacheOrCalculate null
-            FqName(javaPackage.qualifiedName)
+            try {
+                val facade = KotlinJavaPsiFacade.getInstance(project)
+                val javaPackage = facade.findPackage(fqName.asString(), searchScope) ?: return@lookupCacheOrCalculate null
+                FqName(javaPackage.qualifiedName)
+            } catch (e: ProcessCanceledException) {
+                return@lookupCacheOrCalculate null
+            }
         }
     }
 
@@ -318,5 +295,3 @@ fun FqName.topLevelName() =
     asString().substringBefore(".")
 
 
-private val JAVA_ENHANCEMENT = scopeSessionKey<JavaClassEnhancementScope>()
-private val JAVA_USE_SITE = scopeSessionKey<JavaClassUseSiteMemberScope>()

@@ -1,11 +1,11 @@
 FILE: arrayAssignment.kt
     public? final? fun test(): R|kotlin/Unit| {
-        lval x: <implicit> = intArrayOf#(Int(1), Int(2), Int(3))
-        x#.set#(Int(1), Int(0))
+        lval x: <implicit> = intArrayOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3))
+        x#.set#(IntegerLiteral(1), IntegerLiteral(0))
     }
     public? final? fun foo(): <implicit> {
-        ^foo Int(1)
+        ^foo IntegerLiteral(1)
     }
     public? final? fun test2(): R|kotlin/Unit| {
-        intArrayOf#(Int(1), Int(2), Int(3)).set#(foo#(), Int(1))
+        intArrayOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)).set#(foo#(), IntegerLiteral(1))
     }

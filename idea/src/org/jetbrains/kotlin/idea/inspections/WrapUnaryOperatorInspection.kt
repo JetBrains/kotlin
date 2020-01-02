@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,11 +29,14 @@ class WrapUnaryOperatorInspection : AbstractKotlinInspection() {
                 if (baseExpression is KtDotQualifiedExpression) {
                     val receiverExpression = baseExpression.receiverExpression
                     if (receiverExpression is KtConstantExpression &&
-                        receiverExpression.node.elementType in numberTypes) {
-                        holder.registerProblem(expression,
-                                               "Wrap unary operator and value with ()",
-                                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                               WrapUnaryOperatorQuickfix())
+                        receiverExpression.node.elementType in numberTypes
+                    ) {
+                        holder.registerProblem(
+                            expression,
+                            "Wrap unary operator and value with ()",
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                            WrapUnaryOperatorQuickfix()
+                        )
                     }
                 }
             }
@@ -51,7 +54,11 @@ class WrapUnaryOperatorInspection : AbstractKotlinInspection() {
             val expression = descriptor.psiElement as? KtPrefixExpression ?: return
             val dotQualifiedExpression = expression.baseExpression as? KtDotQualifiedExpression ?: return
             val factory = KtPsiFactory(project)
-            val newReceiver = factory.createExpressionByPattern("($0$1)", expression.operationReference.text, dotQualifiedExpression.getLeftMostReceiverExpression())
+            val newReceiver = factory.createExpressionByPattern(
+                "($0$1)",
+                expression.operationReference.text,
+                dotQualifiedExpression.getLeftMostReceiverExpression()
+            )
             val newExpression = dotQualifiedExpression.replaceFirstReceiver(factory, newReceiver)
             expression.replace(newExpression)
         }

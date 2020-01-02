@@ -42,8 +42,7 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = JvmIdePlatformKind
 
-    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo): BuiltInsCacheKey {
-        val sdkInfo = moduleInfo.findSdkAcrossDependencies()
+    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?): BuiltInsCacheKey {
         return if (sdkInfo != null) CacheKeyBySdk(sdkInfo.sdk) else BuiltInsCacheKey.DefaultBuiltInsKey
     }
 

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.actions.generate
@@ -57,7 +46,7 @@ import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.utils.ifEmpty
 
 abstract class KotlinGenerateTestSupportActionBase(
-        private val methodKind : MethodKind
+    private val methodKind: MethodKind
 ) : KotlinGenerateActionBase(), GenerateActionPopupTemplateInjector {
     companion object {
         private fun findTargetClass(editor: Editor, file: PsiFile): KtClassOrObject? {
@@ -74,13 +63,12 @@ abstract class KotlinGenerateTestSupportActionBase(
             val list = JBList<TestFramework>(*frameworks.toTypedArray())
             list.cellRenderer = TestFrameworkListCellRenderer()
 
-            PopupChooserBuilder<TestFramework>(list)
-                    .setFilteringEnabled { (it as TestFramework).name }
-                    .setTitle("Choose Framework")
-                    .setItemChoosenCallback { consumer(list.selectedValue as TestFramework) }
-                    .setMovable(true)
-                    .createPopup()
-                    .showInBestPositionFor(editor)
+            PopupChooserBuilder<TestFramework>(list).setFilteringEnabled { (it as TestFramework).name }
+                .setTitle("Choose Framework")
+                .setItemChoosenCallback { consumer(list.selectedValue as TestFramework) }
+                .setMovable(true)
+                .createPopup()
+                .showInBestPositionFor(editor)
         }
 
         private val BODY_VAR = "\${BODY}"
@@ -133,10 +121,10 @@ abstract class KotlinGenerateTestSupportActionBase(
             if (isApplicableTo(frameworkToUse, klass)) {
                 doGenerate(editor, file, klass, frameworkToUse)
             }
-        }
-        else {
-            val frameworks = findSuitableFrameworks(klass)
-                    .filter { methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass) }
+        } else {
+            val frameworks = findSuitableFrameworks(klass).filter {
+                methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass)
+            }
 
             chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
         }
@@ -158,7 +146,7 @@ abstract class KotlinGenerateTestSupportActionBase(
             name = if (templateText.contains("test$NAME_VAR")) "Name" else "name"
             if (!ApplicationManager.getApplication().isUnitTestMode) {
                 name = Messages.showInputDialog("Choose test name: ", commandName, null, name, NAME_VALIDATOR)
-                       ?: return
+                    ?: return
             }
 
             templateText = fileTemplate.text.replace(NAME_VAR, DUMMY_NAME)
@@ -198,8 +186,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 setupEditorSelection(editor, functionInPlace)
             }
             errorHint?.let { HintManager.getInstance().showErrorHint(editor, it) }
-        }
-        catch (e: IncorrectOperationException) {
+        } catch (e: IncorrectOperationException) {
             HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
         }
     }
@@ -210,23 +197,23 @@ abstract class KotlinGenerateTestSupportActionBase(
         // First replace all DUMMY_NAME occurrences in names as they need special treatment due to quotation
         var function1 = function
         function1.accept(
-                object : KtTreeVisitorVoid() {
-                    private fun getNewId(currentId: String): String? {
-                        if (!currentId.contains(DUMMY_NAME)) return null
-                        return currentId.replace(DUMMY_NAME, name).quoteIfNeeded()
-                    }
-
-                    override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
-                        val nameIdentifier = declaration.nameIdentifier ?: return
-                        val newId = getNewId(nameIdentifier.text) ?: return
-                        declaration.setName(newId)
-                    }
-
-                    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                        val newId = getNewId(expression.text) ?: return
-                        expression.replace(psiFactory.createSimpleName(newId))
-                    }
+            object : KtTreeVisitorVoid() {
+                private fun getNewId(currentId: String): String? {
+                    if (!currentId.contains(DUMMY_NAME)) return null
+                    return currentId.replace(DUMMY_NAME, name).quoteIfNeeded()
                 }
+
+                override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+                    val nameIdentifier = declaration.nameIdentifier ?: return
+                    val newId = getNewId(nameIdentifier.text) ?: return
+                    declaration.setName(newId)
+                }
+
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+                    val newId = getNewId(expression.text) ?: return
+                    expression.replace(psiFactory.createSimpleName(newId))
+                }
+            }
         )
         // Then text-replace remaining occurrences (if any)
         val functionText = function1.text

@@ -1,0 +1,9 @@
+package
+
+public fun testElvis(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testExclExcl(): kotlin.Unit
+public fun testIf(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testIfWithBraces(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testTry(): kotlin.Unit
+public fun testWhen(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testWhenWithBraces(/*0*/ x: kotlin.Any?): kotlin.Unit

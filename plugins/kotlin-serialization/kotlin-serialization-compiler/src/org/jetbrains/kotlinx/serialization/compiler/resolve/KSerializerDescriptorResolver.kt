@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -130,7 +131,7 @@ object KSerializerDescriptorResolver {
             thisDescriptor.declaredTypeParameters.mapIndexed { index, param ->
                 TypeParameterDescriptorImpl.createWithDefaultBound(
                     serializerDescriptor, Annotations.EMPTY, false, Variance.INVARIANT,
-                    param.name, index
+                    param.name, index, LockBasedStorageManager.NO_LOCKS
                 )
             }
         serializerDescriptor.initialize(typeParameters)
@@ -378,7 +379,7 @@ object KSerializerDescriptorResolver {
         serializableClass.declaredTypeParameters.forEach { _ ->
             val targ = TypeParameterDescriptorImpl.createWithDefaultBound(
                 parentFunction, Annotations.EMPTY, false, Variance.INVARIANT,
-                Name.identifier("T$i"), i
+                Name.identifier("T$i"), i, LockBasedStorageManager.NO_LOCKS
             )
 
             val pType =

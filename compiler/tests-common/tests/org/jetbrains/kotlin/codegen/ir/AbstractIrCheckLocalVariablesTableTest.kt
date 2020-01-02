@@ -30,15 +30,16 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
 
     private fun getActualVariablesAsList(list: List<LocalVariable>): List<String> {
         return list.map { it.toString() }
-            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") } // Ignore index
+            // Ignore local index.
+            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
             .sorted()
     }
 
     private fun getExpectedVariablesAsList(testFile: File): List<String> {
         return testFile.readLines()
             .filter { line -> line.startsWith("// VARIABLE ") }
-            .filter { !it.contains("NAME=\$i\$") }
-            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") } // Ignore index
+            // Ignore local index.
+            .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
             .sorted()
     }
 

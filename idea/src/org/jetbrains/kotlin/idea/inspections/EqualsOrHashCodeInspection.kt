@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -73,14 +73,14 @@ class EqualsOrHashCodeInspection : AbstractKotlinInspection() {
                 ClassKind.CLASS -> {
                     if (hasEquals && hasHashCode) return
                     val description = InspectionsBundle.message(
-                            "inspection.equals.hashcode.only.one.defined.problem.descriptor",
-                            if (hasEquals) "<code>equals()</code>" else "<code>hashCode()</code>",
-                            if (hasEquals) "<code>hashCode()</code>" else "<code>equals()</code>"
+                        "inspection.equals.hashcode.only.one.defined.problem.descriptor",
+                        if (hasEquals) "<code>equals()</code>" else "<code>hashCode()</code>",
+                        if (hasEquals) "<code>hashCode()</code>" else "<code>equals()</code>"
                     )
                     holder.registerProblem(
-                            nameIdentifier,
-                            description,
-                            if (hasEquals) GenerateEqualsOrHashCodeFix.HashCode else GenerateEqualsOrHashCodeFix.Equals
+                        nameIdentifier,
+                        description,
+                        if (hasEquals) GenerateEqualsOrHashCodeFix.HashCode else GenerateEqualsOrHashCodeFix.Equals
                     )
                 }
                 else -> return

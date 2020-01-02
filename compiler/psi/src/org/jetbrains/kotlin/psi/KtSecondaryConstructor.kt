@@ -35,6 +35,8 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
 
     fun getDelegationCall(): KtConstructorDelegationCall = findNotNullChildByClass(KtConstructorDelegationCall::class.java)
 
+    fun getDelegationCallOrNull(): KtConstructorDelegationCall? = findChildByClass(KtConstructorDelegationCall::class.java)
+
     fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit
 
     fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall {

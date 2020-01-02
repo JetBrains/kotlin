@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 /**
  * This pass removes all declarations with `isExpect == true`.
  */
-class ExpectDeclarationsRemoveLowering(val context: BackendContext) : FileLoweringPass {
+class ExpectDeclarationsRemoveLowering(val context: BackendContext, keepOptionalAnnotations: Boolean = false) : FileLoweringPass {
 
-    val visitor = ExpectDeclarationRemover(context.ir.symbols.externalSymbolTable, true)
+    val visitor = ExpectDeclarationRemover(context.ir.symbols.externalSymbolTable, doRemove = true, keepOptionalAnnotations)
 
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(visitor)

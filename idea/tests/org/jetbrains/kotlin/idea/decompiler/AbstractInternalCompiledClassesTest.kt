@@ -15,26 +15,29 @@ import org.jetbrains.kotlin.name.ClassId
 import org.junit.Assert
 
 abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
-    private fun isFileWithHeader(predicate: (IDEKotlinBinaryClassCache.KotlinBinaryClassHeaderData, ClassId) -> Boolean) : VirtualFile.() -> Boolean = {
-        val info = IDEKotlinBinaryClassCache.getInstance().getKotlinBinaryClassHeaderData(this)
-        info != null && predicate(info, info.classId)
-    }
+    private fun isFileWithHeader(predicate: (IDEKotlinBinaryClassCache.KotlinBinaryClassHeaderData, ClassId) -> Boolean): VirtualFile.() -> Boolean =
+        {
+            val info = IDEKotlinBinaryClassCache.getInstance().getKotlinBinaryClassHeaderData(this)
+            info != null && predicate(info, info.classId)
+        }
 
     protected fun isSyntheticClass(): VirtualFile.() -> Boolean =
-            isFileWithHeader { header, _ -> header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
+        isFileWithHeader { header, _ -> header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
 
     protected fun doTestNoPsiFilesAreBuiltForLocalClass(): Unit =
-            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { _, classId -> classId.isLocal })
+        doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { _, classId -> classId.isLocal })
 
     protected fun doTestNoPsiFilesAreBuiltForSyntheticClasses(): Unit =
-            doTestNoPsiFilesAreBuiltFor("synthetic", isSyntheticClass())
+        doTestNoPsiFilesAreBuiltFor("synthetic", isSyntheticClass())
 
     protected fun doTestNoPsiFilesAreBuiltFor(fileKind: String, acceptFile: VirtualFile.() -> Boolean) {
         val project = project
         doTest(fileKind, acceptFile) {
             val psiFile = PsiManager.getInstance(project).findFile(this)
-            Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.presentableName}",
-                              psiFile)
+            Assert.assertNull(
+                "PSI files for $fileKind classes should not be build, is was build for: ${this.presentableName}",
+                psiFile
+            )
         }
     }
 
@@ -47,16 +50,17 @@ abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtu
                 performTest()
             }
         }
-        Assert.assertTrue("Should find at least one file of kind ($fileKind). This assertion can fail in following scenarios:\n" +
-                          "1. Test data is bad and doesn't cover this case.\n2. ABI has changed and test no longer checks anything.",
-                          foundAtLeastOneFile)
+        Assert.assertTrue(
+            "Should find at least one file of kind ($fileKind). This assertion can fail in following scenarios:\n" +
+                    "1. Test data is bad and doesn't cover this case.\n2. ABI has changed and test no longer checks anything.",
+            foundAtLeastOneFile
+        )
     }
 
     protected fun VirtualFile.checkRecursively(body: VirtualFile.() -> Unit) {
         if (!isDirectory) {
             body()
-        }
-        else {
+        } else {
             for (file in children!!) {
                 file.checkRecursively(body)
             }

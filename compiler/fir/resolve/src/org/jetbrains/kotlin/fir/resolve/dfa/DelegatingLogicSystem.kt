@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 
 class DelegatingFlow(
     val previousFlow: DelegatingFlow?,
@@ -122,7 +123,7 @@ private class ImmutableMultimap<K, V>(private val original: Multimap<K, V>) : Mu
     }
 }
 
-abstract class DelegatingLogicSystem(context: DataFlowInferenceContext) : LogicSystem(context) {
+abstract class DelegatingLogicSystem(context: ConeInferenceContext) : LogicSystem(context) {
     override val Flow.approvedInfos: MutableApprovedInfos
         get() = (this as DelegatingFlow).approvedInfos
 

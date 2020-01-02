@@ -80,7 +80,11 @@ fun case_5(x: Any?) {
     }
 }
 
-// TESTCASE NUMBER: 6
+/*
+ * TESTCASE NUMBER: 6
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_6(x: Any?) {
     var y = x ?: null!!
     while (false || y is Number) {
@@ -90,7 +94,11 @@ fun case_6(x: Any?) {
     }
 }
 
-// TESTCASE NUMBER: 7
+/*
+ * TESTCASE NUMBER: 7
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_7(x: Any?, z: Any) {
     var y = x ?: null!!
     while (false || y === z) {
@@ -100,7 +108,11 @@ fun case_7(x: Any?, z: Any) {
     }
 }
 
-// TESTCASE NUMBER: 8
+/*
+ * TESTCASE NUMBER: 8
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_8(x: Any?, z: Any) {
     var y = x ?: null!!
     y == z || return
@@ -111,20 +123,24 @@ fun case_8(x: Any?, z: Any) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: Any?, z: Any) {
-    var y = select(x) ?: return null!!
-    z == y || throw null!!
+    var y = select(x) ?: <!UNREACHABLE_CODE!>return<!> null!!
+    z == y || <!UNREACHABLE_CODE!>throw<!> null!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }
 
-// TESTCASE NUMBER: 10
+/*
+ * TESTCASE NUMBER: 6
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_10(x: Any?, z: Any, b: Boolean?) {
-    var y = x ?: <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (b) {
+    var y = x ?: when (b) {
         true -> null!!
         false -> return
         null -> throw Exception()
-    }<!>
+    }
     z === y || if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!! else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>

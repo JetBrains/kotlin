@@ -1,0 +1,3 @@
+import<!SYNTAX!><!>
+
+fun firstFun() {}

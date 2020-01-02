@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
@@ -15,16 +16,19 @@ import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.DiagnosticDiffCallbacks
 import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.PositionalTextDiagnostic
+import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
@@ -32,6 +36,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.io.File
@@ -56,7 +62,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
     }
 
-    protected open fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>) {
+    open fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>, useLightTree: Boolean = false) {
         val groupedByModule = files.groupBy(TestFile::module)
 
         val modules = createModules(groupedByModule)
@@ -78,7 +84,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             FirJavaModuleBasedSession(info, sessionProvider, scope)
         }
 
-        val firFiles = mutableListOf<FirFile>()
+        val firFilesPerSession = mutableMapOf<FirSession, List<FirFile>>()
 
         // TODO: make module/session/transformer handling like in AbstractFirMultiModuleTest (IDE)
         for ((testModule, testFilesInModule) in groupedByModule) {
@@ -86,22 +92,34 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
             val session = configToSession.getValue(testModule)
 
+            val firFiles = mutableListOf<FirFile>()
+            mapKtFilesToFirFiles(session, ktFiles, firFiles, useLightTree)
+            firFilesPerSession[session] = firFiles
+        }
 
-            val firBuilder = RawFirBuilder(session, false)
+        runAnalysis(testDataFile, files, firFilesPerSession)
+    }
 
+    private fun mapKtFilesToFirFiles(session: FirSession, ktFiles: List<KtFile>, firFiles: MutableList<FirFile>, useLightTree: Boolean) {
+        val firProvider = (session.firProvider as FirProviderImpl)
+        if (useLightTree) {
+            val lightTreeBuilder = LightTree2Fir(session, firProvider.kotlinScopeProvider, stubMode = false)
+            ktFiles.mapTo(firFiles) {
+                val firFile = lightTreeBuilder.buildFirFile(it.text, it.name)
+                (session.firProvider as FirProviderImpl).recordFile(firFile)
+                firFile
+            }
+        } else {
+            val firBuilder = RawFirBuilder(session, firProvider.kotlinScopeProvider, false)
             ktFiles.mapTo(firFiles) {
                 val firFile = firBuilder.buildFirFile(it)
-
-                (session.firProvider as FirProviderImpl).recordFile(firFile)
-
+                firProvider.recordFile(firFile)
                 firFile
             }
         }
-
-        runAnalysis(testDataFile, files, firFiles)
     }
 
-    protected abstract fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>)
+    protected abstract fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>)
 
     private fun createModules(
         groupedByModule: Map<TestModule?, List<TestFile>>
@@ -192,7 +210,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         // TODO: report JVM signature diagnostics also for implementing modules
 
         val ok = booleanArrayOf(true)
-        val diagnostics = coneDiagnostics.toActualDiagnostic()
+        val diagnostics = coneDiagnostics.toActualDiagnostic(ktFile)
         val filteredDiagnostics = diagnostics // TODO
 
         actualDiagnostics.addAll(filteredDiagnostics)
@@ -289,7 +307,12 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         return ok[0]
     }
 
-    private fun Iterable<ConeDiagnostic>.toActualDiagnostic(): Collection<ActualDiagnostic> {
-        return map { ActualDiagnostic(it.diagnostic, null, true) }
+    private fun Iterable<ConeDiagnostic>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
+        val result = mutableListOf<ActualDiagnostic>()
+        filter { it.diagnostic.factory != FirErrors.SYNTAX_ERROR }.mapTo(result) { ActualDiagnostic(it.diagnostic, null, true) }
+        for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
+            result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null, true))
+        }
+        return result
     }
 }

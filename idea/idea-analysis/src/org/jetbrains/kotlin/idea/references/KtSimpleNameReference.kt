@@ -98,9 +98,11 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
                     expression.replace(qualifiedElement.receiverExpression)
                     qualifiedElement.replaced(qualifiedElement.selectorExpression!!)
                 }
-                is KtUserType -> {
-                    expression.replaced(KtPsiFactory(expression).createSimpleName(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString()))
-                }
+                is KtUserType -> expression.replaced(
+                    KtPsiFactory(expression).createSimpleName(
+                        SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString()
+                    )
+                )
                 else -> expression
             }
         }
@@ -296,7 +298,9 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         val importDirective = file.findImportByAlias(name) ?: return null
         val fqName = importDirective.importedFqName ?: return null
         val importedDescriptors = file.resolveImportReference(fqName).map { it.unwrap() }
-        if (getTargetDescriptors(element.analyze(BodyResolveMode.PARTIAL)).any { it.unwrap().getImportableDescriptor() in importedDescriptors }) {
+        if (getTargetDescriptors(element.analyze(BodyResolveMode.PARTIAL)).any {
+                it.unwrap().getImportableDescriptor() in importedDescriptors
+            }) {
             return importDirective.alias
         }
         return null

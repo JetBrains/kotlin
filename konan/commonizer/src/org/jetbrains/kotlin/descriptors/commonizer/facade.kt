@@ -83,7 +83,7 @@ fun runCommonization(parameters: CommonizationParameters): CommonizationResult {
         val target = it.target
         check(target !in modulesByTargets)
 
-        modulesByTargets[target] = components.cache.getCachedModules(it.index)
+        modulesByTargets[target] = components.cache.getAllModules(it.index)
     }
 
     return CommonizationPerformed(modulesByTargets)

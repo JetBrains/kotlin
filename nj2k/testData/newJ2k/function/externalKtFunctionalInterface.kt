@@ -8,7 +8,8 @@ internal class Test {
         return x.toDouble()
     }
 
-    fun nya(): Double { //TODO explicitlly call apply here
+    fun nya(): Double {
+        //TODO explicitlly call apply here
         return foo(1, FunctionalI<Int, Double> { x: Int -> this.toDouble(x) })
     }
 }

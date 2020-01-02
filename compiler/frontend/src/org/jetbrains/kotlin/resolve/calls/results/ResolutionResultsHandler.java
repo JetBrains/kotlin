@@ -41,10 +41,11 @@ public class ResolutionResultsHandler {
     public ResolutionResultsHandler(
             @NotNull KotlinBuiltIns builtIns,
             @NotNull ModuleDescriptor module,
-            @NotNull TypeSpecificityComparator specificityComparator
+            @NotNull TypeSpecificityComparator specificityComparator,
+            @NotNull PlatformOverloadsSpecificityComparator platformOverloadsSpecificityComparator
     ) {
         overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(
-                builtIns, module, specificityComparator
+                builtIns, module, specificityComparator, platformOverloadsSpecificityComparator
         );
     }
 

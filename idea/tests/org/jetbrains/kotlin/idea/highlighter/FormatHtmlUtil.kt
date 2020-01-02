@@ -24,6 +24,6 @@ fun formatHtml(html: String): String {
     }
     message = message.replace("<br/>", "<br/>\n").replace("&nbsp;", " ")
     message = message.replace("&lt;", "<`").replace("&gt;", ">")
-    message = message.lines().map { it.trimEnd() }.filterNot { it.isEmpty () }.joinToString("\n")
+    message = message.lines().map { it.trimEnd() }.filterNot { it.isEmpty() }.joinToString("\n")
     return message
 }

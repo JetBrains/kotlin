@@ -1,4 +1,4 @@
-// FILE B.kt
+// FILE: B.kt
 
 package b
 
@@ -10,7 +10,7 @@ fun I() {}
 interface I {}
 
 
-// FILE A.kt
+// FILE: A.kt
 
 package a
 import b.MyClass

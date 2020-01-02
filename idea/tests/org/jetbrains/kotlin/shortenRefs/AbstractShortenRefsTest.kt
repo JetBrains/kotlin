@@ -13,8 +13,11 @@ abstract class AbstractShortenRefsTest : AbstractImportsTest() {
     override fun doTest(file: KtFile): String? {
         val selectionModel = myFixture.editor.selectionModel
         if (!selectionModel.hasSelection()) error("No selection in input file")
-        ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }
-                .process(file, selectionModel.selectionStart, selectionModel.selectionEnd)
+        ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }.process(
+            file,
+            selectionModel.selectionStart,
+            selectionModel.selectionEnd
+        )
         selectionModel.removeSelection()
         return null
     }

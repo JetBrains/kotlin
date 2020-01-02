@@ -1,6 +1,6 @@
 UFile (package = ) [public final class InKt {...]
     UClass (name = InKt) [public final class InKt {...}]
-        UAnnotationMethod (name = foo) [public static final fun foo() : boolean {...}]
+        UMethod (name = foo) [public static final fun foo() : boolean {...}]
             UBlockExpression [{...}] = Nothing
                 UDeclarationsExpression [var x: int = 1] = Undetermined
                     ULocalVariable (name = x) [var x: int = 1]

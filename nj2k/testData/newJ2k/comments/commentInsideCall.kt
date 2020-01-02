@@ -5,7 +5,7 @@ object Test {
     fun main(args: Array<String>) {
         println() // Comment
         foo() // Comment1
-// Comment2
+                // Comment2
                 .indexOf("s")
     }
 

@@ -1,0 +1,5 @@
+// !DIAGNOSTICS: -MUST_BE_INITIALIZED_OR_BE_ABSTRACT -TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER
+class My {
+    fun <T: T?> foo() {}
+    val <T: T?> prop: T
+}

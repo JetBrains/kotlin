@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -84,20 +82,31 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         )
                     }
 
-                val getterRef = property.getter?.accessorRef()
-                val setterRef = property.setter?.accessorRef()
-                classBlock.statements += JsExpressionStatement(
-                    defineProperty(
-                        classPrototypeRef,
-                        context.getNameForProperty(property).ident,
-                        getter = getterRef,
-                        setter = setterRef
+                if (irClass.isExported(context.staticContext.backendContext) ||
+                    property.getter?.overridesExternal() == true ||
+                    property.getJsName() != null
+                ) {
+                    val getterRef = property.getter?.accessorRef()
+                    val setterRef = property.setter?.accessorRef()
+                    classBlock.statements += JsExpressionStatement(
+                        defineProperty(
+                            classPrototypeRef,
+                            context.getNameForProperty(property).ident,
+                            getter = getterRef,
+                            setter = setterRef
+                        )
                     )
-                )
+                }
             }
         }
         context.staticContext.classModels[irClass.symbol] = classModel
         return classBlock
+    }
+
+    private fun IrSimpleFunction.overridesExternal(): Boolean {
+        if (this.isEffectivelyExternal()) return true
+
+        return this.overriddenSymbols.any { it.owner.overridesExternal() }
     }
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): JsStatement? {

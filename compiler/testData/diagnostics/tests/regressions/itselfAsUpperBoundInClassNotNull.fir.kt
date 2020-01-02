@@ -1,0 +1,1 @@
+class MyClass<T: T>

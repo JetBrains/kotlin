@@ -20,11 +20,11 @@ class B : A() {
 
     fun test() {
         // should be CommandExecutor
-        val e = <!AMBIGUITY!>executor<!>
+        val e = executor
     }
 }
 
 fun test(b: B) {
     // should be CommandExecutor
-    b.<!AMBIGUITY!>executor<!>
+    b.executor
 }

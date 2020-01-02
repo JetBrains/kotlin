@@ -5,4 +5,10 @@ public final enum class EnumConstructorParameter : R|kotlin/Enum<test/EnumConstr
 
     private constructor(x: R|kotlin/Int|): R|test/EnumConstructorParameter|
 
+    public final static fun values(): R|kotlin/Array<test/EnumConstructorParameter>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/EnumConstructorParameter| {
+    }
+
 }

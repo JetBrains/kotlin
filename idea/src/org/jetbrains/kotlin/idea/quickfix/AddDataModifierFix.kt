@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -46,13 +35,12 @@ class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModi
 
             val callableDescriptor = if (element is KtDestructuringDeclarationEntry) {
                 context[BindingContext.DECLARATION_TO_DESCRIPTOR, element.parent.parent] as? CallableDescriptor
-            }
-            else {
+            } else {
                 element.getResolvedCall(context)?.resultingDescriptor
             }
 
             val constructor = callableDescriptor?.returnType?.arguments?.firstOrNull()?.type?.constructor
-                              ?: callableDescriptor?.returnType?.constructor
+                ?: callableDescriptor?.returnType?.constructor
 
             val classDescriptor = constructor?.declarationDescriptor as? ClassDescriptor ?: return null
 
@@ -62,12 +50,13 @@ class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModi
             if (ctorParams.isEmpty()) return null
 
             if (!ctorParams.all {
-                if (it.varargElementType != null) return@all false
-                val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, it] ?: return@all false
-                // NB: we use element as receiver because element is a constructor call
-                // which is effectively used as receiver by destructuring declaration
-                property.isVisible(element, element, context, element.getResolutionFacade())
-            }) return null
+                    if (it.varargElementType != null) return@all false
+                    val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, it] ?: return@all false
+                    // NB: we use element as receiver because element is a constructor call
+                    // which is effectively used as receiver by destructuring declaration
+                    property.isVisible(element, element, context, element.getResolutionFacade())
+                }
+            ) return null
 
             val klass = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
             val fqName = DescriptorUtils.getFqName(classDescriptor).asString()

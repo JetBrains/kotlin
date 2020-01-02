@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
@@ -294,7 +296,7 @@ fun IrType.remapTypeParameters(source: IrTypeParametersContainer, target: IrType
             val classifier = classifier.owner
             when {
                 classifier is IrTypeParameter && classifier.parent == source ->
-                    target.typeParameters[classifier.index + shift].defaultType
+                    IrSimpleTypeImpl(target.typeParameters[classifier.index + shift].symbol, hasQuestionMark, arguments, annotations)
 
                 classifier is IrClass ->
                     IrSimpleTypeImpl(
@@ -486,12 +488,14 @@ fun IrClass.addFakeOverrides() {
                 isTailrec = irFunction.isTailrec,
                 isSuspend = irFunction.isSuspend,
                 isExpect = irFunction.isExpect,
-                isFakeOverride = true
+                isFakeOverride = true,
+                isOperator = irFunction.isOperator
             ).apply {
                 descriptor.bind(this)
                 parent = this@addFakeOverrides
                 overriddenSymbols += overriddenFunctions.map { it.symbol }
                 copyParameterDeclarationsFrom(irFunction)
+                copyAttributes(irFunction)
             }
         }
 
@@ -528,7 +532,8 @@ fun createStaticFunctionWithReceivers(
         isTailrec = false,
         isSuspend = oldFunction.isSuspend,
         isExpect = oldFunction.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isOperator = oldFunction is IrSimpleFunction && oldFunction.isOperator
     ).apply {
         descriptor.bind(this)
         parent = irParent
@@ -542,12 +547,14 @@ fun createStaticFunctionWithReceivers(
             this,
             name = Name.identifier("this"),
             index = offset++,
-            type = dispatchReceiverType!!
+            type = dispatchReceiverType!!,
+            origin = IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER
         )
         val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
             this,
             name = Name.identifier("receiver"),
-            index = offset++
+            index = offset++,
+            origin = IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER
         )
         valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
                                        oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
@@ -561,9 +568,17 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
     val mapping: Map<IrValueParameter, IrValueParameter> =
         (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
             .zip(staticFunction.valueParameters).toMap()
-    staticFunction.body = oldFunction.body
+    copyBodyWithParametersMapping(staticFunction, oldFunction, mapping)
+}
+
+fun copyBodyWithParametersMapping(
+    newFunction: IrFunction,
+    oldFunction: IrFunction,
+    mapping: Map<IrValueParameter, IrValueParameter>
+) {
+    newFunction.body = oldFunction.body?.deepCopyWithSymbols(oldFunction)
         ?.transform(
-            object: IrElementTransformerVoid() {
+            object : IrElementTransformerVoid() {
                 // Remap return targets to the static method so they do not appear to be
                 // non-local returns.
                 override fun visitReturn(expression: IrReturn): IrExpression {
@@ -573,8 +588,9 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
                             expression.startOffset,
                             expression.endOffset,
                             expression.type,
-                            staticFunction.symbol,
-                            expression.value)
+                            newFunction.symbol,
+                            expression.value
+                        )
                     } else expression
                 }
 
@@ -584,8 +600,9 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
                         IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
                     } ?: expression
 
-            }, null)
-        ?.patchDeclarationParents(staticFunction)
+            }, null
+        )
+        ?.patchDeclarationParents(newFunction)
 }
 
 val IrSymbol.isSuspend: Boolean

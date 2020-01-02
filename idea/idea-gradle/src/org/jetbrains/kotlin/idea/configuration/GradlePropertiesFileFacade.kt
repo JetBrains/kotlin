@@ -65,3 +65,7 @@ internal class GradlePropertiesFileFacade(private val baseDir: String) {
         private val GRADLE_PROPERTY_FILES = listOf(GRADLE_PROPERTIES_LOCAL_FILE_NAME, GRADLE_PROPERTIES_FILE_NAME)
     }
 }
+
+fun readGradleProperty(project: Project, key: String): String? {
+    return GradlePropertiesFileFacade.forProject(project).readProperty(key)
+}

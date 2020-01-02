@@ -1,0 +1,24 @@
+FILE: noSmartcast.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun takeA(a: R|A|): R|kotlin/Boolean| {
+        ^takeA Boolean(true)
+    }
+    public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            R|/takeA|(when (lval <elvis>: R|A?| = (R|<local>/a| as? R|A|)) {
+                ==($subj$, Null(null)) ->  {
+                    ^test Unit
+                }
+                else ->  {
+                    R|<local>/<elvis>|
+                }
+            }
+            ) ->  {
+                R|<local>/a|.<Unresolved name: foo>#()
+            }
+        }
+
+    }

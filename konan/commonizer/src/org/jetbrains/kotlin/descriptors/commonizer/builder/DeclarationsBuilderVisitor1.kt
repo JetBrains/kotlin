@@ -41,12 +41,6 @@ internal class DeclarationsBuilderVisitor1(
             }
         }
 
-        // set cross-module dependencies:
-        modulesByTargets.values.forEach { modulesSameTarget ->
-            for (module in modulesSameTarget)
-                module.setDependencies(modulesSameTarget)
-        }
-
         // return result (preserving order of targets):
         allTargets.forEachIndexed { index, target ->
             components.cache.cache(index, modulesByTargets.getValue(target))

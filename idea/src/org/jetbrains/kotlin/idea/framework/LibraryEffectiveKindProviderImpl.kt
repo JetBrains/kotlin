@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,24 +21,21 @@ class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindP
 
     init {
         project.messageBus.connect(project).subscribe(
-                ProjectTopics.PROJECT_ROOTS,
-                object : ModuleRootListener {
-                    override fun rootsChanged(event: ModuleRootEvent) {
-                        synchronized(effectiveKindMap) {
-                            effectiveKindMap.clear()
-                        }
+            ProjectTopics.PROJECT_ROOTS,
+            object : ModuleRootListener {
+                override fun rootsChanged(event: ModuleRootEvent) {
+                    synchronized(effectiveKindMap) {
+                        effectiveKindMap.clear()
                     }
                 }
+            }
         )
     }
 
-    override fun getEffectiveKind(library: LibraryEx): PersistentLibraryKind<*>? {
-        val kind = library.kind
-        return when (kind) {
-            is KotlinLibraryKind -> kind
-            else -> synchronized(effectiveKindMap) {
-                effectiveKindMap.get(library)
-            }
+    override fun getEffectiveKind(library: LibraryEx): PersistentLibraryKind<*>? = when (val kind = library.kind) {
+        is KotlinLibraryKind -> kind
+        else -> synchronized(effectiveKindMap) {
+            effectiveKindMap.get(library)
         }
     }
 }

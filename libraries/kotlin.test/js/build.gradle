@@ -7,6 +7,7 @@ configurePublishing(project)
 configurations {
     sources
     distJs
+    distLibrary
 }
 
 dependencies {
@@ -19,7 +20,6 @@ compileKotlin2Js {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-            "-Xir-produce-klib-dir"
     ]
     kotlinOptions {
         moduleKind = "umd"
@@ -42,7 +42,28 @@ compileTestKotlin2Js {
 archivesBaseName = 'kotlin-test-js'
 
 jar {
+    enabled false
+}
+
+task libraryJarWithoutIr(type: Jar, dependsOn: compileKotlin2Js) {
+    classifier = null
+    destinationDirectory = file("$buildDir/lib/dist")
+    from("$buildDir/classes/main")
     manifestAttributes(manifest, project, 'Test')
+}
+
+task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
+    archiveExtension = "jar"
+    destinationDirectory = file("$buildDir/libs")
+
+    duplicatesStrategy DuplicatesStrategy.FAIL
+
+    from zipTree(libraryJarWithoutIr.archiveFile)
+    if (rootProject.includeStdlibJsIr) {
+        def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:generateKotlinTestKLib")
+        dependsOn(irKlib)
+        from fileTree("${irKlib.outputs.files.singleFile.path}/klib")
+    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -51,6 +72,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 artifacts {
+    runtime libraryJarWithoutIr
+    archives libraryJarWithIr
+    distLibrary libraryJarWithoutIr
     archives sourcesJar
     sources sourcesJar
     distJs(file(compileKotlin2Js.kotlinOptions.outputFile)) {

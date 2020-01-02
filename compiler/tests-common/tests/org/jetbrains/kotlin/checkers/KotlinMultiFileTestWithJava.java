@@ -131,8 +131,13 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         return false;
     }
 
+    @NotNull
+    protected File createTestFileFromPath(@NotNull String filePath) {
+        return new File(filePath);
+    }
+
     protected void doTest(String filePath) throws Exception {
-        File file = new File(filePath);
+        File file = createTestFileFromPath(filePath);
         String expectedText = KotlinTestUtils.doLoadFile(file);
 
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "// SKIP_JAVAC")) return;

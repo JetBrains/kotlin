@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.idea.filters
 
@@ -30,8 +19,8 @@ import javax.swing.JList
 import javax.swing.ListCellRenderer
 
 class InlineFunctionHyperLinkInfo(
-        private val project: Project,
-        private val inlineInfo: List<InlineInfo>
+    private val project: Project,
+    private val inlineInfo: List<InlineInfo>
 ) : HyperlinkInfoBase(), FileHyperlinkInfo {
 
     override fun navigate(project: Project, hyperlinkLocationPoint: RelativePoint?) {
@@ -39,22 +28,20 @@ class InlineFunctionHyperLinkInfo(
 
         if (inlineInfo.size == 1) {
             OpenFileHyperlinkInfo(project, inlineInfo.first().file, inlineInfo.first().line).navigate(project)
-        }
-        else {
+        } else {
             val list = JBList(inlineInfo)
             list.cellRenderer = InlineInfoCellRenderer()
             val popup = JBPopupFactory.getInstance().createListPopupBuilder(list)
-                    .setTitle("Navigate to")
-                    .setItemChoosenCallback {
-                        val fileInfo = list.selectedValue as InlineInfo
-                        OpenFileHyperlinkInfo(project, fileInfo.file, fileInfo.line).navigate(project)
-                    }
-                    .createPopup()
+                .setTitle("Navigate to")
+                .setItemChoosenCallback {
+                    val fileInfo = list.selectedValue as InlineInfo
+                    OpenFileHyperlinkInfo(project, fileInfo.file, fileInfo.line).navigate(project)
+                }
+                .createPopup()
 
             if (hyperlinkLocationPoint != null) {
                 popup.show(hyperlinkLocationPoint)
-            }
-            else {
+            } else {
                 popup.showInFocusCenter()
             }
         }
@@ -66,8 +53,8 @@ class InlineFunctionHyperLinkInfo(
     }
 
     sealed class InlineInfo(val prefix: String, val file: VirtualFile, val line: Int) {
-        class CallSiteInfo(file: VirtualFile, line: Int): InlineInfo("inline function call site", file, line)
-        class InlineFunctionBodyInfo(file: VirtualFile, line: Int): InlineInfo("inline function body", file, line)
+        class CallSiteInfo(file: VirtualFile, line: Int) : InlineInfo("inline function call site", file, line)
+        class InlineFunctionBodyInfo(file: VirtualFile, line: Int) : InlineInfo("inline function body", file, line)
     }
 
     private class InlineInfoCellRenderer : SimpleColoredComponent(), ListCellRenderer<InlineInfo> {
@@ -76,11 +63,11 @@ class InlineFunctionHyperLinkInfo(
         }
 
         override fun getListCellRendererComponent(
-                list: JList<out InlineInfo>?,
-                value: InlineInfo?,
-                index: Int,
-                isSelected: Boolean,
-                cellHasFocus: Boolean
+            list: JList<out InlineInfo>?,
+            value: InlineInfo?,
+            index: Int,
+            isSelected: Boolean,
+            cellHasFocus: Boolean
         ): Component {
 
             clear()
@@ -92,8 +79,7 @@ class InlineFunctionHyperLinkInfo(
             if (isSelected) {
                 background = list?.selectionBackground
                 foreground = list?.selectionForeground
-            }
-            else {
+            } else {
                 background = list?.background
                 foreground = list?.foreground
             }

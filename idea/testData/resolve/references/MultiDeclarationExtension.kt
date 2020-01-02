@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 package a
 
 class A() {

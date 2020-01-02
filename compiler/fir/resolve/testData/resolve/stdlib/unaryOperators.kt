@@ -1,4 +1,4 @@
-7class U {
+class U {
     operator fun contains(g: String): Boolean {
         return false
     }

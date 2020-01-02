@@ -114,6 +114,11 @@ public final class IrFunction extends
             isFakeOverride_ = input.readBool();
             break;
           }
+          case 72: {
+            bitField0_ |= 0x00000020;
+            isOperator_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -256,6 +261,21 @@ public final class IrFunction extends
     return isFakeOverride_;
   }
 
+  public static final int IS_OPERATOR_FIELD_NUMBER = 9;
+  private boolean isOperator_;
+  /**
+   * <code>required bool is_operator = 9;</code>
+   */
+  public boolean hasIsOperator() {
+    return ((bitField0_ & 0x00000020) == 0x00000020);
+  }
+  /**
+   * <code>required bool is_operator = 9;</code>
+   */
+  public boolean getIsOperator() {
+    return isOperator_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase.getDefaultInstance();
     modality_ = org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind.FINAL_MODALITY;
@@ -263,6 +283,7 @@ public final class IrFunction extends
     isSuspend_ = false;
     overridden_ = java.util.Collections.emptyList();
     isFakeOverride_ = false;
+    isOperator_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -287,6 +308,10 @@ public final class IrFunction extends
       return false;
     }
     if (!hasIsFakeOverride()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasIsOperator()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -318,6 +343,9 @@ public final class IrFunction extends
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeBool(8, isFakeOverride_);
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      output.writeBool(9, isOperator_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -356,6 +384,10 @@ public final class IrFunction extends
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(8, isFakeOverride_);
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(9, isOperator_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -463,6 +495,8 @@ public final class IrFunction extends
       bitField0_ = (bitField0_ & ~0x00000010);
       isFakeOverride_ = false;
       bitField0_ = (bitField0_ & ~0x00000020);
+      isOperator_ = false;
+      bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
 
@@ -511,6 +545,10 @@ public final class IrFunction extends
         to_bitField0_ |= 0x00000010;
       }
       result.isFakeOverride_ = isFakeOverride_;
+      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+        to_bitField0_ |= 0x00000020;
+      }
+      result.isOperator_ = isOperator_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -542,6 +580,9 @@ public final class IrFunction extends
       if (other.hasIsFakeOverride()) {
         setIsFakeOverride(other.getIsFakeOverride());
       }
+      if (other.hasIsOperator()) {
+        setIsOperator(other.getIsOperator());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -565,6 +606,10 @@ public final class IrFunction extends
         return false;
       }
       if (!hasIsFakeOverride()) {
+        
+        return false;
+      }
+      if (!hasIsOperator()) {
         
         return false;
       }
@@ -863,6 +908,38 @@ public final class IrFunction extends
     public Builder clearIsFakeOverride() {
       bitField0_ = (bitField0_ & ~0x00000020);
       isFakeOverride_ = false;
+      
+      return this;
+    }
+
+    private boolean isOperator_ ;
+    /**
+     * <code>required bool is_operator = 9;</code>
+     */
+    public boolean hasIsOperator() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>required bool is_operator = 9;</code>
+     */
+    public boolean getIsOperator() {
+      return isOperator_;
+    }
+    /**
+     * <code>required bool is_operator = 9;</code>
+     */
+    public Builder setIsOperator(boolean value) {
+      bitField0_ |= 0x00000040;
+      isOperator_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required bool is_operator = 9;</code>
+     */
+    public Builder clearIsOperator() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      isOperator_ = false;
       
       return this;
     }

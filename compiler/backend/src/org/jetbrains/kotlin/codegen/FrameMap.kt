@@ -31,21 +31,21 @@ open class FrameMapBase<T : Any> {
     var currentSize = 0
         private set
 
-    open fun enter(descriptor: T, type: Type): Int {
+    open fun enter(key: T, type: Type): Int {
         val index = currentSize
-        myVarIndex.put(descriptor, index)
+        myVarIndex.put(key, index)
         currentSize += type.size
-        myVarSizes.put(descriptor, type.size)
+        myVarSizes.put(key, type.size)
         return index
     }
 
-    open fun leave(descriptor: T): Int {
-        val size = myVarSizes.get(descriptor)
+    open fun leave(key: T): Int {
+        val size = myVarSizes.get(key)
         currentSize -= size
-        myVarSizes.remove(descriptor)
-        val oldIndex = myVarIndex.remove(descriptor)
+        myVarSizes.remove(key)
+        val oldIndex = myVarIndex.remove(key)
         if (oldIndex != currentSize) {
-            throw IllegalStateException("Descriptor can be left only if it is last: $descriptor")
+            throw IllegalStateException("Descriptor can be left only if it is last: $key")
         }
         return oldIndex
     }

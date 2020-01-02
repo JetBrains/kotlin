@@ -44,8 +44,12 @@ interface KotlinDependencyHandler {
 
     fun project(notation: Map<String, Any?>): ProjectDependency
 
-    fun npm(packageName: String, version: String = "*"): Dependency
-    fun npm(org: String, packageName: String, version: String = "*"): Dependency
+    fun npm(name: String, version: String = "*"): Dependency
+
+    @Deprecated(
+        message = "Use npm(name, version) instead. Name like in package.json"
+    )
+    fun npm(org: String? = null, packageName: String, version: String = "*"): Dependency
 }
 
 interface HasKotlinDependencies {

@@ -1,0 +1,59 @@
+package
+
+public val topLevelAnonymousFunction: (kotlin.Boolean) -> kotlin.Unit
+public val topLevelLambda: (kotlin.Boolean) -> kotlin.Unit
+public var topLevelPropertyAccessors: kotlin.Int?
+public inline fun inlineTopLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x
+
+public suspend fun suspendTopLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x
+
+public fun test(): kotlin.Unit
+public fun topLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x
+
+public operator fun kotlin.Boolean.plus(/*0*/ x: kotlin.Boolean): kotlin.Boolean
+
+public open class Class {
+    public constructor Class()
+    public abstract fun abstractMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline fun inlineMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public final fun member(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public open fun openMemeber(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public final suspend fun suspendMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Inheritor : Class {
+    public constructor Inheritor()
+    public final override /*1*/ fun abstractMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ inline /*fake_override*/ fun inlineMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public final override /*1*/ /*fake_override*/ fun member(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public open override /*1*/ fun openMemeber(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public final override /*1*/ suspend /*fake_override*/ fun suspendMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Interface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun implicitlyOpenMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

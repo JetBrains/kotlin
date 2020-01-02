@@ -8,7 +8,7 @@ buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.3.70-dev-1416", cacheRedirectorEnabled))
+    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.3.70-dev-1806", cacheRedirectorEnabled))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
@@ -35,8 +35,11 @@ buildscript {
     }
 }
 
+if (kotlinBuildProperties.buildScanServer != null) {
+    apply(from = "gradle/buildScanUserData.gradle")
+}
+
 plugins {
-    `build-scan`
     idea
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
@@ -51,10 +54,10 @@ pill {
     )
 }
 
-buildScan {
-    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
-    setTermsOfServiceAgree("yes")
-}
+val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+val includeStdlibJsIr by extra(
+    findProperty("include.stdlib.js.ir")?.let { it.toString().toBoolean() } ?: isTeamcityBuild
+)
 
 val configuredJdks: List<JdkId> =
     getConfiguredJdks().also {
@@ -113,8 +116,13 @@ extra["isSonatypeRelease"] = false
 // Work-around necessary to avoid setting null javaHome. Will be removed after support of lazy task configuration
 val jdkNotFoundConst = "JDK NOT FOUND"
 
-extra["JDK_16"] = jdkPath("1.6")
-extra["JDK_17"] = jdkPath("1.7")
+if (isTeamcityBuild) {
+    extra["JDK_16"] = jdkPath("1.6")
+    extra["JDK_17"] = jdkPath("1.7")
+} else {
+    extra["JDK_16"] = jdkPath("1.6", "1.8")
+    extra["JDK_17"] = jdkPath("1.7", "1.8")
+}
 extra["JDK_18"] = jdkPath("1.8")
 extra["JDK_9"] = jdkPath("9")
 extra["JDK_10"] = jdkPath("10")
@@ -142,7 +150,7 @@ rootProject.apply {
     from(rootProject.file("gradle/jps.gradle.kts"))
 }
 
-IdeVersionConfigurator.setCurrentIde(this)
+IdeVersionConfigurator.setCurrentIde(project)
 
 extra["versions.protobuf"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
@@ -170,10 +178,9 @@ extra["versions.completion-ranking-kotlin"] = "0.0.2"
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.3.70-dev-13235"
+    extra["versions.kotlin-native"] = "1.3.70-dev-13747"
 }
 
-val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
 val effectSystemEnabled by extra(project.getBooleanProperty("kotlin.compiler.effectSystemEnabled") ?: false)
 val newInferenceEnabled by extra(project.getBooleanProperty("kotlin.compiler.newInferenceEnabled") ?: false)
@@ -214,6 +221,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:backend.wasm",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
+    ":compiler:ir.serialization.jvm",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
@@ -246,14 +254,17 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:psi2fir",
     ":compiler:fir:lightTree",
     ":compiler:fir:fir2ir",
-    ":compiler:fir:java"
+    ":compiler:fir:java",
+    ":compiler:fir:jvm"
 )
 
 val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib-js",
-    ":kotlin-stdlib-js-ir",
+    // Exclude JS IR from core libs because it depends on local compiler build, which
+    // in turn depends on local JVM stdlib. It slows down library testing.
+    ":kotlin-stdlib-js-ir".takeIf { includeStdlibJsIr },
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-test:kotlin-test-common",
@@ -620,11 +631,20 @@ tasks {
         )
     }
 
+    register("idea-new-project-wizard-tests") {
+        dependsOn("dist")
+        dependsOn(
+            ":libraries:tools:new-project-wizard:test",
+            ":libraries:tools:new-project-wizard:new-project-wizard-cli:test"
+        )
+    }
+
     register("idea-plugin-tests") {
         dependsOn("dist")
         dependsOn(
             "idea-plugin-main-tests",
-            "idea-plugin-additional-tests"
+            "idea-plugin-additional-tests",
+            "idea-new-project-wizard-tests"
         )
     }
 
@@ -751,17 +771,23 @@ configure<IdeaModel> {
             commonLocalDataDir,
             ".gradle",
             "dependencies",
-            "dist"
+            "dist",
+            "tmp"
         ).toSet()
     }
 }
 
-fun jdkPath(version: String): String {
+fun jdkPathOrNull(version: String): String? {
     val jdkName = "JDK_${version.replace(".", "")}"
     val jdkMajorVersion = JdkMajorVersion.valueOf(jdkName)
-    return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath ?: jdkNotFoundConst
+    return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath
 }
 
+fun jdkPath(version: String, vararg replacementVersions: String): String {
+    return jdkPathOrNull(version) ?: run {
+        replacementVersions.asSequence().map { jdkPathOrNull(it) }.find { it != null }
+    } ?: jdkNotFoundConst
+}
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     val currentJavaHome = File(System.getProperty("java.home")!!).canonicalPath

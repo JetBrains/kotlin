@@ -52,9 +52,9 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
             $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
       BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
               VAR name:y type:kotlin.Int [val]
                 CALL 'public final fun component2 (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
                   $this: GET_VAR '<destruct>: <root>.A declared in <root>.fn.<anonymous>' type=<root>.A origin=null
-              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
                 $this: CONST Int type=kotlin.Int value=42
                 other: GET_VAR 'val y: kotlin.Int [val] declared in <root>.fn.<anonymous>' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:kotlin.Function1<<root>.A, kotlin.Int>

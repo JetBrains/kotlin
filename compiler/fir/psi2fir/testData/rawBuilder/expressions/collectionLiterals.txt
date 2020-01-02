@@ -1,7 +1,7 @@
 FILE: collectionLiterals.kt
     public? final? annotation class Ann1 : R|kotlin/Annotation| {
         public? constructor(arr: IntArray): R|Ann1| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val arr: IntArray = R|<local>/arr|
@@ -10,7 +10,7 @@ FILE: collectionLiterals.kt
     }
     public? final? annotation class Ann2 : R|kotlin/Annotation| {
         public? constructor(arr: DoubleArray): R|Ann2| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val arr: DoubleArray = R|<local>/arr|
@@ -19,7 +19,7 @@ FILE: collectionLiterals.kt
     }
     public? final? annotation class Ann3 : R|kotlin/Annotation| {
         public? constructor(arr: Array<String>): R|Ann3| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val arr: Array<String> = R|<local>/arr|
@@ -32,7 +32,7 @@ FILE: collectionLiterals.kt
         }
 
     }
-    @Ann1(<implicitArrayOf>(Int(1), Int(2))) public? final? class First : R|kotlin/Any| {
+    @Ann1(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2))) public? final? class First : R|kotlin/Any| {
         public? constructor(): R|First| {
             super<R|kotlin/Any|>()
         }

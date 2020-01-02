@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
@@ -190,6 +191,8 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 
+    private fun KotlinType.isUnsupportedInlineType() = isInlineClassType() && !KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(this)
+
     private fun AbstractSerialGenerator.checkType(
         module: ModuleDescriptor,
         type: KotlinType,
@@ -199,7 +202,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     ) {
         if (type.genericIndex != null) return // type arguments always have serializer stored in class' field
         val element = ktType?.typeElement
-        if (type.isInlineClassType()) {
+        if (type.isUnsupportedInlineType()) {
             trace.reportFromPlugin(
                 SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(element ?: fallbackElement),
                 SerializationPluginErrorsRendering

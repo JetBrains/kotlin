@@ -30,10 +30,10 @@ INCOMING <- BB 1
     CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
 CONTENT
       1 GET_VAR 'c: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      2 CALL 'public final fun unaryMinus (): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=UMINUS
+      2 CALL 'public final fun unaryMinus (): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=UMINUS
       3 GET_VAR 'b: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      4 CALL 'public final fun div (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=DIV
-      5 VAR name:bc type:kotlin.Double [val] 
+      4 CALL 'public final fun div (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=DIV
+      5 VAR name:bc type:kotlin.Double [val]
       6 WHEN type=kotlin.Unit origin=IF
       7 GET_VAR 'val bc: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
       8 CONST Double type=kotlin.Double value=0.0
@@ -52,7 +52,7 @@ INCOMING <- BB 3
     CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
 CONTENT
       1 GET_VAR 'val bc: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      2 CALL 'public final fun unaryMinus (): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=UMINUS
+      2 CALL 'public final fun unaryMinus (): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=UMINUS
       3 RETURN type=kotlin.Nothing from='public final fun minBiRoot (a: kotlin.Double, b: kotlin.Double, c: kotlin.Double): kotlin.Double declared in <root>'
 OUTGOING -> NONE
     Function exit: FUN name:minBiRoot visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double, c:kotlin.Double) returnType:kotlin.Double 
@@ -62,14 +62,14 @@ INCOMING <- BB 0
 CONTENT
       1 GET_VAR 'b: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
       2 GET_VAR 'b: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      3 CALL 'public final fun times (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=MUL
+      3 CALL 'public final fun times (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=MUL
       4 CONST Int type=kotlin.Int value=4
       5 GET_VAR 'a: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      6 CALL 'public final fun times (other: kotlin.Double): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=MUL
+      6 CALL 'public final fun times (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Int' type=kotlin.Double origin=MUL
       7 GET_VAR 'c: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      8 CALL 'public final fun times (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=MUL
-      9 CALL 'public final fun minus (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=MINUS
-     10 VAR name:d type:kotlin.Double [val] 
+      8 CALL 'public final fun times (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=MUL
+      9 CALL 'public final fun minus (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=MINUS
+     10 VAR name:d type:kotlin.Double [val]
      11 WHEN type=kotlin.Unit origin=IF
      12 GET_VAR 'val d: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
      13 CONST Double type=kotlin.Double value=0.0
@@ -88,23 +88,23 @@ INCOMING <- BB 6
     CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
 CONTENT
       1 GET_VAR 'b: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      2 CALL 'public final fun unaryMinus (): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=UMINUS
+      2 CALL 'public final fun unaryMinus (): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=UMINUS
       3 GET_VAR 'val d: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      4 CALL 'public final fun plus (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=PLUS
+      4 CALL 'public final fun plus (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=PLUS
       5 CONST Int type=kotlin.Int value=2
       6 GET_VAR 'a: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      7 CALL 'public final fun times (other: kotlin.Double): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=MUL
-      8 CALL 'public final fun div (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=DIV
-      9 VAR name:y1 type:kotlin.Double [val] 
+      7 CALL 'public final fun times (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Int' type=kotlin.Double origin=MUL
+      8 CALL 'public final fun div (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=DIV
+      9 VAR name:y1 type:kotlin.Double [val]
      10 GET_VAR 'b: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-     11 CALL 'public final fun unaryMinus (): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=UMINUS
+     11 CALL 'public final fun unaryMinus (): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=UMINUS
      12 GET_VAR 'val d: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
-     13 CALL 'public final fun minus (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=MINUS
+     13 CALL 'public final fun minus (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=MINUS
      14 CONST Int type=kotlin.Int value=2
      15 GET_VAR 'a: kotlin.Double declared in <root>.minBiRoot' type=kotlin.Double origin=null
-     16 CALL 'public final fun times (other: kotlin.Double): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=MUL
-     17 CALL 'public final fun div (other: kotlin.Double): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=DIV
-     18 VAR name:y2 type:kotlin.Double [val] 
+     16 CALL 'public final fun times (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Int' type=kotlin.Double origin=MUL
+     17 CALL 'public final fun div (other: kotlin.Double): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=DIV
+     18 VAR name:y2 type:kotlin.Double [val]
      19 WHEN type=kotlin.Double origin=IF
      20 GET_VAR 'val y1: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
      21 GET_VAR 'val y2: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
@@ -158,7 +158,7 @@ INCOMING <- BB 13
     CONST Boolean type=kotlin.Boolean value=true
 CONTENT
       1 GET_VAR 'val y3: kotlin.Double [val] declared in <root>.minBiRoot' type=kotlin.Double origin=null
-      2 CALL 'public final fun unaryMinus (): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=UMINUS
+      2 CALL 'public final fun unaryMinus (): kotlin.Double [operator] declared in kotlin.Double' type=kotlin.Double origin=UMINUS
 OUTGOING -> BB 16
     When exit: WHEN type=kotlin.Double origin=IF
 BB 16

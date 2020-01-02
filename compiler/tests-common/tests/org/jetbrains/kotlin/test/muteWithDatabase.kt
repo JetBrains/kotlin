@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.test
 
 import junit.framework.TestCase
+import org.junit.runner.Runner
+import org.junit.runners.model.FrameworkMethod
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters
+import org.junit.runners.parameterized.ParametersRunnerFactory
+import org.junit.runners.parameterized.TestWithParameters
 import java.io.File
 
 private class AutoMute(
@@ -31,27 +36,47 @@ private class MutedTest(
     @Suppress("unused") val issue: String?,
     val hasFailFile: Boolean
 ) {
-    val methodName = key.substringAfterLast(".", "").replace("`", "").also {
-        if (it.isEmpty()) throw IllegalArgumentException("Can't get method name")
+    val methodKey: String
+    val classNameKey: String
+    val simpleClassName: String
+
+    init {
+        val noQuoteKey = key.replace("`", "")
+        val beforeParamsKey = noQuoteKey.substringBefore("[")
+        val params = noQuoteKey.substringAfterWithDelimiter("[", "")
+
+        methodKey = (beforeParamsKey.substringAfterLast(".", "") + params)
+            .also {
+                if (it.isEmpty()) throw IllegalArgumentException("Can't get method name: '$key'")
+            }
+
+        classNameKey = beforeParamsKey.substringBeforeLast(".", "").also {
+            if (it.isEmpty()) throw IllegalArgumentException("Can't get class name: '$key'")
+        }
+
+        simpleClassName = classNameKey.substringAfterLast(".")
     }
-    val classNameKey = key.substringBeforeLast(".", "").also {
-        if (it.isEmpty()) throw IllegalArgumentException("Can't get class name")
+
+    companion object {
+        fun String.substringAfterWithDelimiter(delimiter: String, missingDelimiterValue: String = this): String {
+            val index = indexOf(delimiter)
+            return if (index == -1) missingDelimiterValue else (delimiter + substring(index + 1, length))
+        }
     }
-    val simpleClassName = classNameKey.substringAfterLast(".")
 }
 
 private class MutedSet(muted: List<MutedTest>) {
-    // Method name -> Simple class name -> List of muted tests
+    // Method key -> Simple class name -> List of muted tests
     private val cache: Map<String, Map<String, List<MutedTest>>> =
         muted
-            .groupBy { it.methodName } // Method name -> List of muted tests
+            .groupBy { it.methodKey } // Method key -> List of muted tests
             .mapValues { (_, tests) -> tests.groupBy { it.simpleClassName } }
 
-    fun mutedTest(testCase: TestCase): MutedTest? {
-        val mutedTests = cache[testCase.name]?.get(testCase.javaClass.simpleName) ?: return null
+    fun mutedTest(testClass: Class<*>, methodKey: String): MutedTest? {
+        val mutedTests = cache[methodKey]?.get(testClass.simpleName) ?: return null
 
         return mutedTests.firstOrNull { mutedTest ->
-            testCase.javaClass.canonicalName.endsWith(mutedTest.classNameKey)
+            testClass.canonicalName.endsWith(mutedTest.classNameKey)
         }
     }
 }
@@ -79,14 +104,21 @@ private fun loadMutedTests(file: File): List<MutedTest> {
     }
 }
 
+private val MUTE_LINE_PARSE_REGEXP = Regex("^([^,\\[]+)(\\[[^]]+])?(,\\s*)?([^,]+)?(,\\s*)?([^,]+)?$")
+
 private fun parseMutedTest(str: String): MutedTest {
-    val components = str.splitToSequence(",").map { it.trim() }.toList()
+    val matchResult = MUTE_LINE_PARSE_REGEXP.matchEntire(str) ?: throw ParseError("Can't parse the line: $str")
 
-    val key = components.getOrNull(0) ?: throw ParseError("Test key is absent (1 column): $str")
+    val methodFull = matchResult.groups[1]?.value ?: throw ParseError("Test key is absent (1 column): $str")
+    val params = matchResult.groups[2]?.value ?: ""
 
-    val issue = components.getOrNull(1)
+    val key = methodFull + params
 
-    val hasFailFile = when (val stateStr = components.getOrNull(2)) {
+    val issue = matchResult.groups[4]?.value
+
+    val stateStr = matchResult.groups[6]?.value
+
+    val hasFailFile = when (stateStr) {
         "MUTE", "", null -> false
         "FAIL" -> true
         else -> throw ParseError("Invalid state (`$stateStr`), MUTE, FAIL or empty are expected: $str")
@@ -100,19 +132,26 @@ private class ParseError(message: String, override val cause: Throwable? = null)
 private val mutedSet by lazy {
     loadMutedSet(
         listOf(
-            File("tests/mute.csv")
+            File("tests/mute-common.csv"),
+            File("tests/mute-platform.csv")
         )
     )
 }
 
 internal fun isMutedInDatabase(testCase: TestCase): Boolean {
-    val mutedTest = mutedSet.mutedTest(testCase)
+    return isMutedInDatabase(testCase.javaClass, testCase.name)
+}
+
+fun isMutedInDatabase(testClass: Class<*>, methodKey: String): Boolean {
+    val mutedTest = mutedSet.mutedTest(testClass, methodKey)
     return mutedTest != null && !mutedTest.hasFailFile
 }
 
 internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> Unit)? {
     if (isMutedInDatabase(testCase)) {
-        return { MUTED_DO_TEST_LAMBDA(testCase) }
+        return {
+            System.err.println(mutedMessage(testKey(testCase)))
+        }
     }
 
     val doAutoMute = DO_AUTO_MUTE ?: return null
@@ -134,11 +173,44 @@ internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> U
     }
 }
 
-internal val MUTED_DO_TEST_LAMBDA = { testCase: TestCase ->
-    System.err.println("MUTED TEST: ${testKey(testCase)}")
+private fun mutedMessage(key: String) = "MUTED TEST: $key"
+
+private fun testKey(klass: Class<*>, methodKey: String) = "${klass.canonicalName}.$methodKey"
+private fun testKey(testCase: TestCase) = testKey(testCase::class.java, testCase.name)
+
+class RunnerFactoryWithMuteInDatabase: ParametersRunnerFactory {
+    override fun createRunnerForTestWithParameters(test: TestWithParameters?): Runner {
+        return object : BlockJUnit4ClassRunnerWithParameters(test) {
+            override fun isIgnored(child: FrameworkMethod): Boolean {
+                return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child, name)
+            }
+        }
+    }
 }
 
-private fun testKey(testCase: TestCase) = "${testCase::class.java.canonicalName}.${testCase.name}"
+fun isIgnoredInDatabaseWithLog(child: FrameworkMethod, parametersName: String): Boolean {
+    if (isMutedInDatabase(child.declaringClass, child.name)) {
+        System.err.println(mutedMessage(testKey(child.declaringClass, child.name)))
+        return true
+    }
+
+    val methodWithParametersKey = child.method.name + parametersName
+    if (isMutedInDatabase(child.declaringClass, methodWithParametersKey)) {
+        System.err.println(mutedMessage(testKey(child.declaringClass, methodWithParametersKey)))
+        return true
+    }
+
+    return false
+}
+
+fun isIgnoredInDatabaseWithLog(testCase: TestCase): Boolean {
+    if (isMutedInDatabase(testCase)) {
+        System.err.println(mutedMessage(testKey(testCase)))
+        return true
+    }
+
+    return false
+}
 
 fun TestCase.runTest(test: () -> Unit) {
     (wrapWithMuteInDatabase(this, test) ?: test).invoke()

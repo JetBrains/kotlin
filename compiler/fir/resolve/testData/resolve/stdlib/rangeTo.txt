@@ -1,0 +1,11 @@
+FILE: rangeTo.kt
+    public final fun test(b: R|kotlin/Byte|, s: R|kotlin/Short|, i: R|kotlin/Int|, l: R|kotlin/Long|): R|kotlin/Unit| {
+        lval x1: R|kotlin/ranges/IntRange| = Int(1).R|kotlin/Int.rangeTo|(R|<local>/b|)
+        lval x2: R|kotlin/ranges/IntRange| = Int(1).R|kotlin/Int.rangeTo|(R|<local>/s|)
+        lval x3: R|kotlin/ranges/IntRange| = Int(1).R|kotlin/Int.rangeTo|(R|<local>/i|)
+        lval x4: R|kotlin/ranges/LongRange| = Int(1).R|kotlin/Int.rangeTo|(R|<local>/l|)
+        lval x5: R|kotlin/ranges/IntRange| = R|<local>/b|.R|kotlin/Byte.rangeTo|(Int(1))
+        lval x6: R|kotlin/ranges/IntRange| = R|<local>/s|.R|kotlin/Short.rangeTo|(Int(1))
+        lval x7: R|kotlin/ranges/IntRange| = R|<local>/i|.R|kotlin/Int.rangeTo|(Int(1))
+        lval x8: R|kotlin/ranges/LongRange| = R|<local>/l|.R|kotlin/Long.rangeTo|(Int(1))
+    }

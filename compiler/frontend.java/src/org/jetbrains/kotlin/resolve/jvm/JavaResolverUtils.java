@@ -51,7 +51,8 @@ public class JavaResolverUtils {
                                typeParameter.getVariance(),
                                typeParameter.getName(),
                                typeParameter.getIndex(),
-                               SourceElement.NO_SOURCE
+                               SourceElement.NO_SOURCE,
+                               typeParameter.getStorageManager()
                        )
             );
         }

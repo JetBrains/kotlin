@@ -13,6 +13,7 @@ class E
 
 class F
 
+// test
 fun some() = 1
 class G
 

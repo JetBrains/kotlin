@@ -1,24 +1,24 @@
 FILE: annotated.kt
     @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : R|kotlin/Annotation| {
         public? constructor(): R|Ann| {
-            super<R|kotlin/Annotation|>()
+            super<R|kotlin/Any|>()
         }
 
     }
     public? final? fun foo(arg: Int): Int {
         when () {
-            ==(@Ann() arg#, Int(0)) ->  {
-                @Ann() ^foo Int(1)
+            ==(@Ann() arg#, IntegerLiteral(0)) ->  {
+                @Ann() ^foo IntegerLiteral(1)
             }
         }
 
         @Ann() when () {
-            ==(arg#, Int(1)) ->  {
-                ^foo @Ann() Int(1)
+            ==(arg#, IntegerLiteral(1)) ->  {
+                ^foo @Ann() IntegerLiteral(1)
             }
         }
 
-        ^foo Int(42)
+        ^foo IntegerLiteral(42)
     }
     public? final? data class Two : R|kotlin/Any| {
         public? constructor(x: Int, y: Int): R|Two| {

@@ -1,6 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: JVM_IR, JS_IR, NATIVE
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+// IGNORE_BACKEND: NATIVE
 
 // FILE: 1.kt
 

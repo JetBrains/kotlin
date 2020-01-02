@@ -128,8 +128,9 @@ sealed class MoveDeclarationsDelegate {
 
                     if (outerInstanceParameterName != null) {
                         val type = (containingClassOrObject!!.unsafeResolveToDescriptor() as ClassDescriptor).defaultType
-                        val parameter = KtPsiFactory(project)
-                            .createParameter("private val $outerInstanceParameterName: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(type)}")
+                        val parameter = KtPsiFactory(project).createParameter(
+                            "private val $outerInstanceParameterName: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(type)}"
+                        )
                         createPrimaryConstructorParameterListIfAbsent().addParameter(parameter).isToBeShortened = true
                     }
                 }

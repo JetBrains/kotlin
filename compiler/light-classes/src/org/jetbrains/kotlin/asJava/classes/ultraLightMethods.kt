@@ -27,11 +27,19 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
+internal const val METHOD_INDEX_FOR_GETTER = 1
+internal const val METHOD_INDEX_FOR_SETTER = 2
+internal const val METHOD_INDEX_FOR_DEFAULT_CTOR = 3
+internal const val METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR = 4
+internal const val METHOD_INDEX_FOR_NON_ORIGIN_METHOD = 5
+internal const val METHOD_INDEX_BASE = 6
+
 internal abstract class KtUltraLightMethod(
     internal val delegate: PsiMethod,
     lightMemberOrigin: LightMemberOrigin?,
     protected val support: KtUltraLightSupport,
-    containingClass: KtLightClass
+    containingClass: KtLightClass,
+    private val methodIndex: Int
 ) : KtLightMethodImpl(
     { delegate },
     lightMemberOrigin,
@@ -104,7 +112,15 @@ internal abstract class KtUltraLightMethod(
     override fun findSuperMethods(parentClass: PsiClass?): Array<out PsiMethod> =
         PsiSuperMethodImplUtil.findSuperMethods(this, parentClass)
 
-    override fun equals(other: Any?): Boolean = this === other
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KtUltraLightMethod) return false
+        if (methodIndex != other.methodIndex) return false
+        if (this.javaClass != other.javaClass) return false
+        if (containingClass != other.containingClass) return false
+        if (kotlinOrigin === null || other.kotlinOrigin === null) return false
+        return kotlinOrigin == other.kotlinOrigin
+    }
 
     override fun hashCode(): Int = name.hashCode()
 
@@ -116,19 +132,29 @@ internal class KtUltraLightMethodForSourceDeclaration(
     lightMemberOrigin: LightMemberOrigin?,
     support: KtUltraLightSupport,
     containingClass: KtLightClass,
-    private val forceToSkipNullabilityAnnotation: Boolean = false
+    private val forceToSkipNullabilityAnnotation: Boolean = false,
+    methodIndex: Int
 ) : KtUltraLightMethod(
     delegate,
     lightMemberOrigin,
     support,
-    containingClass
+    containingClass,
+    methodIndex
 ) {
     constructor(
         delegate: PsiMethod,
         declaration: KtDeclaration,
         support: KtUltraLightSupport,
-        containingClass: KtLightClass
-    ) : this(delegate, LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER), support, containingClass)
+        containingClass: KtLightClass,
+        methodIndex: Int
+    ) : this(
+        delegate,
+        LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER),
+        support,
+        containingClass,
+        forceToSkipNullabilityAnnotation = false,
+        methodIndex
+    )
 
     override val qualifiedNameForNullabilityAnnotation: String?
         get() {
@@ -161,7 +187,8 @@ internal class KtUltraLightMethodForDescriptor(
     delegate,
     lightMemberOrigin,
     support,
-    containingClass
+    containingClass,
+    METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 ) {
     // This is greedy realization of UL class.
     // This means that all data that depends on descriptor evaluated in ctor so the descriptor will be released on the end.

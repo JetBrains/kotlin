@@ -123,13 +123,14 @@ class IdeaResolverForProject(
         private val cache = mutableMapOf<BuiltInsCacheKey, KotlinBuiltIns>()
 
         fun getOrCreateIfNeeded(module: IdeaModuleInfo): KotlinBuiltIns = projectContextFromSdkResolver.storageManager.compute {
-            val key = module.platform.idePlatformKind.resolution.getKeyForBuiltIns(module)
+            val sdk = resolverForSdk.sdkDependency(module)
+
+            val key = module.platform.idePlatformKind.resolution.getKeyForBuiltIns(module, sdk)
             val cachedBuiltIns = cache[key]
             if (cachedBuiltIns != null) return@compute cachedBuiltIns
 
             // Note #1: we can't use .getOrPut, because we have to put builtIns into map *before* initialization
             // Note #2: it's OK to put not-initialized built-ins into public map, because access to [cache] is guarded by storageManager.lock
-            val sdk = resolverForSdk.sdkDependency(module)
             val newBuiltIns = module.platform.idePlatformKind.resolution.createBuiltIns(module, projectContextFromSdkResolver, sdk)
             cache[key] = newBuiltIns
 

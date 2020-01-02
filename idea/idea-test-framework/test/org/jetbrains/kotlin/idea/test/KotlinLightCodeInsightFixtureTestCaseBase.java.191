@@ -37,6 +37,8 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
+import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWithLog;
+
 public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override
@@ -61,6 +63,11 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
 
     protected final Collection<File> myFilesToDelete = new THashSet<>();
     private final TempFiles myTempFiles = new TempFiles(myFilesToDelete);
+
+    @Override
+    protected boolean shouldRunTest() {
+        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this);
+    }
 
     @Override
     protected void tearDown() throws Exception {

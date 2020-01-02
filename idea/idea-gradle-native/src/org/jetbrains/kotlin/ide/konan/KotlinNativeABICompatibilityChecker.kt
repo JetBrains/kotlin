@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.ProjectTopics
-import com.intellij.notification.*
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryNameUtil
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
 class KotlinNativeABICompatibilityChecker(private val project: Project) : ProjectComponent, Disposable {
@@ -84,7 +84,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> = synchronized(this) {
         val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
             .filterIsInstance<NativeLibraryInfo>()
-            .filter { it.safeAbiVersion != KotlinAbiVersion.CURRENT }
+            .filter { !it.metadataInfo.isCompatible }
             .associateBy { it.libraryRoot }
 
         val newEntries = if (cachedIncompatibleLibraries.isNotEmpty())
@@ -104,23 +104,23 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         val librariesByGroups = HashMap<Pair<LibraryGroup, Boolean>, MutableList<Pair<String, String>>>()
         librariesToNotify.forEach { (libraryRoot, libraryInfo) ->
-            val isOldAbi = (libraryInfo.safeAbiVersion?.version ?: 0) < KotlinAbiVersion.CURRENT.version
+            val isOldMetadata = (libraryInfo.metadataInfo as? NativeLibraryInfo.MetadataInfo.Incompatible)?.isOlder ?: true
             val (libraryName, libraryGroup) = parseIDELibraryName(libraryInfo)
-            librariesByGroups.computeIfAbsent(libraryGroup to isOldAbi) { mutableListOf() } += libraryName to libraryRoot
+            librariesByGroups.computeIfAbsent(libraryGroup to isOldMetadata) { mutableListOf() } += libraryName to libraryRoot
         }
 
         return librariesByGroups.keys.sortedWith(
             compareBy(
                 { (libraryGroup, _) -> libraryGroup },
-                { (_, isOldAbi) -> isOldAbi }
+                { (_, isOldMetadata) -> isOldMetadata }
             )
         ).map { key ->
 
-            val (libraryGroup, isOldAbi) = key
+            val (libraryGroup, isOldMetadata) = key
             val libraries =
                 librariesByGroups.getValue(key).sortedWith(compareBy(LIBRARY_NAME_COMPARATOR) { (libraryName, _) -> libraryName })
 
-            val compilerVersionText = if (isOldAbi) "an older" else "a newer"
+            val compilerVersionText = if (isOldMetadata) "an older" else "a newer"
 
             val message = when (libraryGroup) {
                 is LibraryGroup.FromDistribution -> {
@@ -136,7 +136,8 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
                 is LibraryGroup.ThirdParty -> {
                     if (libraries.size == 1) {
                         """
-                        |There is a third-party library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE: ${libraries.single().first}
+                        |There is a third-party library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE: ${libraries.single()
+                            .first}
                         |
                         |Please edit Gradle buildfile(s) and specify library version compatible with Kotlin/Native ${bundledRuntimeVersion()}. Then re-import the project in IDE.
                         """.trimMargin()

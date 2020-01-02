@@ -17,7 +17,7 @@ fun stringArg(number: String) {}
 /*
  * TESTCASE NUMBER: 1
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-27464
+ * ISSUES: KT-27464, KT-35668
  */
 fun case_1(x: Int?) {
     if (x == null) {
@@ -29,7 +29,7 @@ fun case_1(x: Int?) {
 /*
  * TESTCASE NUMBER: 2
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-27464
+ * ISSUES: KT-27464, KT-35668
  */
 fun case_2(x: Int?, y: Nothing?) {
     if (x == <!DEBUG_INFO_CONSTANT!>y<!>) {

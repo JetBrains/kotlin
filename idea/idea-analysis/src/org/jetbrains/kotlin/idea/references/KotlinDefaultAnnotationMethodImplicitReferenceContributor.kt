@@ -70,8 +70,7 @@ internal class KotlinDefaultAnnotationMethodImplicitReferenceContributor : Kotli
     override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         registrar.registerProvider<KtValueArgument> {
             if (it.isNamed()) return@registerProvider null
-            val annotationEntry = it.getParentOfTypeAndBranch<KtAnnotationEntry> { valueArgumentList }
-                                  ?: return@registerProvider null
+            val annotationEntry = it.getParentOfTypeAndBranch<KtAnnotationEntry> { valueArgumentList } ?: return@registerProvider null
             if (annotationEntry.valueArguments.size != 1) return@registerProvider null
 
             ReferenceImpl(it)

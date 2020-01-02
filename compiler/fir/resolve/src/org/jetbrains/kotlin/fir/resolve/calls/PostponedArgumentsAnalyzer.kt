@@ -7,18 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds.Unit
-import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
@@ -44,7 +38,6 @@ interface LambdaAnalyzer {
 
 class PostponedArgumentsAnalyzer(
     private val lambdaAnalyzer: LambdaAnalyzer,
-    private val typeProvider: (FirExpression) -> FirTypeRef?,
     private val components: InferenceComponents,
     private val candidate: Candidate,
     private val replacements: MutableMap<FirExpression, FirExpression>,
@@ -109,7 +102,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom//,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ) {
-        val unitType = Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
+        val unitType = components.session.builtinTypes.unitType.type//Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 
@@ -153,8 +146,7 @@ class PostponedArgumentsAnalyzer(
                 checkerSink,
                 isReceiver = false,
                 isDispatch = false,
-                isSafeCall = false,
-                typeProvider = typeProvider
+                isSafeCall = false
             )
 //            resolveKtPrimitive(
 //                c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false
@@ -177,6 +169,7 @@ class PostponedArgumentsAnalyzer(
         }
 
         lambda.analyzed = true
+        lambda.returnStatements = returnArguments
         //lambda.setAnalyzedResults(returnArguments, subResolvedKtPrimitives)
 
 //        if (inferenceSession != null) {

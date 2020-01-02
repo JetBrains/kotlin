@@ -1,0 +1,10 @@
+FILE: doubleBrackets.kt
+    public final fun R|kotlin/String|.k(): R|() -> kotlin/String| {
+        ^k fun <anonymous>(): R|kotlin/String| {
+            this@R|/k|
+        }
+
+    }
+    public final fun test(): R|kotlin/String| {
+        ^test String(hello).R|/k|().R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+    }

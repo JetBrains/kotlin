@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -59,17 +61,19 @@ sealed class ExpressionInfo
 
 class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label) : ExpressionInfo()
 
-class TryInfo(val onExit: IrExpression) : ExpressionInfo() {
+open class TryInfo : ExpressionInfo() {
     // Regions corresponding to copy-pasted contents of the `finally` block.
     // These should not be covered by `catch` clauses.
     val gaps = mutableListOf<Pair<Label, Label>>()
 }
 
+class TryWithFinallyInfo(val onExit: IrExpression) : TryInfo()
+
 class BlockInfo(val parent: BlockInfo? = null) {
     val variables = mutableListOf<VariableInfo>()
     private val infos: Stack<ExpressionInfo> = parent?.infos ?: Stack()
 
-    fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryInfo>() != null
+    fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryWithFinallyInfo>() != null
 
     internal inline fun <T : ExpressionInfo, R> withBlock(info: T, f: (T) -> R): R {
         infos.add(info)
@@ -190,6 +194,7 @@ class ExpressionCodegen(
         val info = BlockInfo()
         val body = irFunction.body!!
         generateNonNullAssertions()
+        generateFakeContinuationConstructorIfNeeded()
         val result = body.accept(this, info)
         // If this function has an expression body, return the result of that expression.
         // Otherwise, if it does not end in a return statement, it must be void-returning,
@@ -210,12 +215,25 @@ class ExpressionCodegen(
         writeParameterInLocalVariableTable(startLabel, endLabel)
     }
 
+    private fun generateFakeContinuationConstructorIfNeeded() {
+        if (irFunction.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW) return
+        val continuationClass = classCodegen.irClass.functions.find {
+            it.name.asString() == irFunction.name.asString().removeSuffix(FOR_INLINE_SUFFIX)
+        }?.body?.statements?.get(0) ?: error("could not find continuation for ${irFunction.render()}")
+        generateFakeContinuationConstructorCall(
+            mv,
+            classCodegen.visitor,
+            context.continuationClassBuilders[(continuationClass as IrClass).attributeOwnerId]!!,
+            irFunction
+        )
+    }
+
     private fun generateNonNullAssertions() {
         if (state.isParamAssertionsDisabled)
             return
 
         val notCallableFromJava = inlinedInto != null ||
-                Visibilities.isPrivate(irFunction.visibility) ||
+                (Visibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
                 irFunction.origin.isSynthetic ||
                 // TODO: refine this condition to not generate nullability assertions on parameters
                 //       corresponding to captured variables and anonymous object super constructor arguments
@@ -226,14 +244,17 @@ class ExpressionCodegen(
                 irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
+                irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE ||
+                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
         if (notCallableFromJava)
             return
 
         // Do not generate non-null checks for suspend function views. When resumed the arguments
         // will be null and the actual values are taken from the continuation.
-        val isSuspendFunctionView = irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW
+        val isSuspendFunctionView = irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW ||
+                irFunction.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
 
         if (isSuspendFunctionView)
             return
@@ -378,7 +399,7 @@ class ExpressionCodegen(
             }
             expression.symbol.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-            callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers(classCodegen.context) ->
+            callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers() ->
                 addInlineMarker(mv, isStartNotEnd = true)
         }
 
@@ -404,13 +425,13 @@ class ExpressionCodegen(
         expression.markLineNumber(true)
 
         // Do not generate redundant markers in continuation class.
-        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers(classCodegen.context)) {
+        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers()) {
             addSuspendMarker(mv, isStartNotEnd = true)
         }
 
         callGenerator.genCall(callable, this, expression)
 
-        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers(classCodegen.context)) {
+        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers()) {
             addSuspendMarker(mv, isStartNotEnd = false)
             addInlineMarker(mv, isStartNotEnd = false)
         }
@@ -443,8 +464,8 @@ class ExpressionCodegen(
 
         declaration.initializer?.let {
             it.accept(this, data).coerce(varType, declaration.type).materialize()
-            mv.store(index, varType)
             it.markLineNumber(startOffset = true)
+            mv.store(index, varType)
         }
 
         data.variables.add(VariableInfo(declaration, index, varType, markNewLabel()))
@@ -463,14 +484,9 @@ class ExpressionCodegen(
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
         val callee = expression.symbol.owner
-        callee.constantValue()?.let {
-            if (context.state.shouldInlineConstVals) {
-                // Handling const reads before codegen is important for constant folding.
-                assert(expression is IrSetField) { "read of const val ${callee.name} not inlined by ConstLowering" }
-                // This can only be the field's initializer; JVM implementations are required
-                // to generate those for ConstantValue-marked fields automatically, so this is redundant.
-                return defaultValue(expression.type)
-            }
+        if (context.state.shouldInlineConstVals) {
+            // Const fields should only have reads, and those should have been transformed by ConstLowering.
+            assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
         }
 
         val realField = callee.resolveFakeOverride()!!
@@ -740,11 +756,20 @@ class ExpressionCodegen(
         return immaterialUnitValue
     }
 
-    private fun unwindBlockStack(endLabel: Label, data: BlockInfo, stop: (ExpressionInfo) -> Boolean = { false }): ExpressionInfo? {
+    private fun unwindBlockStack(
+        endLabel: Label,
+        data: BlockInfo,
+        nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf(),
+        stop: (ExpressionInfo) -> Boolean = { false }
+    ): ExpressionInfo? {
         return data.handleBlock {
-            if (it is TryInfo)
-                genFinallyBlock(it, null, endLabel, data)
-            return if (stop(it)) it else unwindBlockStack(endLabel, data, stop)
+            if (it is TryWithFinallyInfo) {
+                genFinallyBlock(it, null, endLabel, data, nestedTryWithoutFinally)
+                nestedTryWithoutFinally.clear()
+            } else if (it is TryInfo) {
+                nestedTryWithoutFinally.add(it)
+            }
+            return if (stop(it)) it else unwindBlockStack(endLabel, data, nestedTryWithoutFinally, stop)
         }
     }
 
@@ -760,13 +785,13 @@ class ExpressionCodegen(
 
     override fun visitTry(aTry: IrTry, data: BlockInfo): PromisedValue {
         aTry.markLineNumber(startOffset = true)
-        return if (aTry.finallyExpression != null)
-            data.withBlock(TryInfo(aTry.finallyExpression!!)) { visitTryWithInfo(aTry, data, it) }
-        else
-            visitTryWithInfo(aTry, data, null)
+        return data.withBlock(if (aTry.finallyExpression != null) TryWithFinallyInfo(aTry.finallyExpression!!) else TryInfo()) {
+            visitTryWithInfo(aTry, data, it)
+        }
+
     }
 
-    private fun visitTryWithInfo(aTry: IrTry, data: BlockInfo, tryInfo: TryInfo?): PromisedValue {
+    private fun visitTryWithInfo(aTry: IrTry, data: BlockInfo, tryInfo: TryInfo): PromisedValue {
         val tryBlockStart = markNewLabel()
         mv.nop()
         val tryAsmType = aTry.asmType
@@ -782,9 +807,9 @@ class ExpressionCodegen(
         }
 
         val tryBlockEnd = markNewLabel()
-        val tryBlockGaps = tryInfo?.gaps?.toList() ?: listOf()
+        val tryBlockGaps = tryInfo.gaps.toList()
         val tryCatchBlockEnd = Label()
-        if (tryInfo != null) {
+        if (tryInfo is TryWithFinallyInfo) {
             data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
         } else {
             mv.goTo(tryCatchBlockEnd)
@@ -796,10 +821,10 @@ class ExpressionCodegen(
             val parameter = clause.catchParameter
             val descriptorType = parameter.asmType
             val index = frameMap.enter(clause.catchParameter, descriptorType)
+            clause.markLineNumber(true)
             mv.store(index, descriptorType)
 
             val catchBody = clause.result
-            catchBody.markLineNumber(true)
             val catchResult = catchBody.accept(this, data)
             if (savedValue != null) {
                 catchResult.coerce(tryAsmType, aTry.type).materialize()
@@ -817,7 +842,7 @@ class ExpressionCodegen(
                 index
             )
 
-            if (tryInfo != null) {
+            if (tryInfo is TryWithFinallyInfo) {
                 data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
             } else if (clause != catches.last()) {
                 mv.goTo(tryCatchBlockEnd)
@@ -826,7 +851,7 @@ class ExpressionCodegen(
             genTryCatchCover(clauseStart, tryBlockStart, tryBlockEnd, tryBlockGaps, descriptorType.internalName)
         }
 
-        if (tryInfo != null) {
+        if (tryInfo is TryWithFinallyInfo) {
             // Generate `try { ... } catch (e: Any?) { <finally>; throw e }` around every part of
             // the try-catch that is not a copy-pasted `finally` block.
             val defaultCatchStart = markNewLabel()
@@ -865,22 +890,34 @@ class ExpressionCodegen(
         mv.visitTryCatchBlock(lastRegionStart, tryEnd, catchStart, type)
     }
 
-    private fun genFinallyBlock(tryInfo: TryInfo, tryCatchBlockEnd: Label?, afterJumpLabel: Label?, data: BlockInfo) {
+    private fun genFinallyBlock(
+        tryWithFinallyInfo: TryWithFinallyInfo,
+        tryCatchBlockEnd: Label?,
+        afterJumpLabel: Label?,
+        data: BlockInfo,
+        nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf()
+    ) {
         val gapStart = markNewLabel()
         finallyDepth++
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, true)
         }
-        tryInfo.onExit.accept(this, data).discard()
+        tryWithFinallyInfo.onExit.accept(this, data).discard()
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, false)
         }
         finallyDepth--
         if (tryCatchBlockEnd != null) {
-            tryInfo.onExit.markLineNumber(startOffset = false)
+            tryWithFinallyInfo.onExit.markLineNumber(startOffset = false)
             mv.goTo(tryCatchBlockEnd)
         }
-        tryInfo.gaps.add(gapStart to (afterJumpLabel ?: markNewLabel()))
+        val gapEnd = afterJumpLabel ?: markNewLabel()
+        tryWithFinallyInfo.gaps.add(gapStart to gapEnd)
+        if (state.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)) {
+            for (it in nestedTryWithoutFinally) {
+                it.gaps.add(gapStart to gapEnd)
+            }
+        }
     }
 
     fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {

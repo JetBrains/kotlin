@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.declarationVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
@@ -42,7 +43,9 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
             val redundantVisibility = when {
                 visibilityModifier.node.elementType == implicitVisibility ->
                     implicitVisibility
-                declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) && declaration.containingClassOrObject?.isLocal == true ->
+                declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) && declaration.containingClassOrObject?.let {
+                    it.isLocal || it.isPrivate()
+                } == true ->
                     KtTokens.INTERNAL_KEYWORD
                 else ->
                     null

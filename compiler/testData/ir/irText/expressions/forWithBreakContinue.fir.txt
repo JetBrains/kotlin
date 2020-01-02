@@ -5,14 +5,14 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.collections.List<kotlin.String> [val]
         GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForBreak1' type=kotlin.collections.List<kotlin.String> origin=null
       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.collections.Iterator<kotlin.String> [val]
-        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
           $this: GET_VAR 'val tmp_0: kotlin.collections.List<kotlin.String> [val] declared in <root>.testForBreak1' type=kotlin.collections.List<kotlin.String> origin=null
       WHILE label=null origin=FOR_LOOP_INNER_WHILE
-        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val tmp_1: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak1' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_1: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak1' type=kotlin.collections.Iterator<kotlin.String> origin=null
           BREAK label=null loop.label=null
   FUN name:testForBreak2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
@@ -21,26 +21,26 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
       VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.collections.List<kotlin.String> [val]
         GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForBreak2' type=kotlin.collections.List<kotlin.String> origin=null
       VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.Iterator<kotlin.String> [val]
-        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
           $this: GET_VAR 'val tmp_2: kotlin.collections.List<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.List<kotlin.String> origin=null
       WHILE label=OUTER origin=FOR_LOOP_INNER_WHILE
-        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val tmp_3: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s1 type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_3: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.collections.List<kotlin.String> [val]
             GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForBreak2' type=kotlin.collections.List<kotlin.String> origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.collections.Iterator<kotlin.String> [val]
-            CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+            CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
               $this: GET_VAR 'val tmp_4: kotlin.collections.List<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.List<kotlin.String> origin=null
           WHILE label=INNER origin=FOR_LOOP_INNER_WHILE
-            condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+            condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
               $this: GET_VAR 'val tmp_5: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
             body: BLOCK type=kotlin.Nothing origin=null
               VAR name:s2 type:kotlin.String [val]
-                CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+                CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
                   $this: GET_VAR 'val tmp_5: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
               BREAK label=OUTER loop.label=OUTER
               BREAK label=INNER loop.label=INNER
@@ -52,14 +52,14 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
       VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.collections.List<kotlin.String> [val]
         GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForContinue1' type=kotlin.collections.List<kotlin.String> origin=null
       VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.collections.Iterator<kotlin.String> [val]
-        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
           $this: GET_VAR 'val tmp_6: kotlin.collections.List<kotlin.String> [val] declared in <root>.testForContinue1' type=kotlin.collections.List<kotlin.String> origin=null
       WHILE label=null origin=FOR_LOOP_INNER_WHILE
-        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val tmp_7: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue1' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_7: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue1' type=kotlin.collections.Iterator<kotlin.String> origin=null
           CONTINUE label=null loop.label=null
   FUN name:testForContinue2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
@@ -68,26 +68,26 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
       VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.collections.List<kotlin.String> [val]
         GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForContinue2' type=kotlin.collections.List<kotlin.String> origin=null
       VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.collections.Iterator<kotlin.String> [val]
-        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
           $this: GET_VAR 'val tmp_8: kotlin.collections.List<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.List<kotlin.String> origin=null
       WHILE label=OUTER origin=FOR_LOOP_INNER_WHILE
-        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val tmp_9: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s1 type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_9: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.collections.List<kotlin.String> [val]
             GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForContinue2' type=kotlin.collections.List<kotlin.String> origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.collections.Iterator<kotlin.String> [val]
-            CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+            CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
               $this: GET_VAR 'val tmp_10: kotlin.collections.List<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.List<kotlin.String> origin=null
           WHILE label=INNER origin=FOR_LOOP_INNER_WHILE
-            condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+            condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
               $this: GET_VAR 'val tmp_11: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
             body: BLOCK type=kotlin.Nothing origin=null
               VAR name:s2 type:kotlin.String [val]
-                CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+                CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
                   $this: GET_VAR 'val tmp_11: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
               CONTINUE label=OUTER loop.label=OUTER
               CONTINUE label=INNER loop.label=INNER

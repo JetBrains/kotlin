@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         }
 
         public void testAllFilesPresentInBinaryAndSource() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava/binaryAndSource"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/referenceInJava/binaryAndSource"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("Class.java")
@@ -100,7 +100,7 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         }
 
         public void testAllFilesPresentInSourceOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava/sourceOnly"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/referenceInJava/sourceOnly"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("AnnotationParameterReference.java")

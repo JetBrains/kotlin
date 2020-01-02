@@ -47,6 +47,7 @@ import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclarationOrElement
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
+import org.jetbrains.uast.kotlin.declarations.KotlinUMethodWithFakeLightDelegate
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
@@ -513,8 +514,11 @@ internal object KotlinConverter {
                         }
                     } else {
                         el<UMethod> {
-                            val lightMethod = LightClassUtil.getLightClassMethod(original) ?: return null
-                            convertDeclaration(lightMethod, givenParent, expectedTypes)
+                            val lightMethod = LightClassUtil.getLightClassMethod(original)
+                            if (lightMethod != null)
+                                convertDeclaration(lightMethod, givenParent, expectedTypes)
+                            else
+                                KotlinUMethodWithFakeLightDelegate(original, givenParent)
                         }
                     }
 

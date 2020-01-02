@@ -1,0 +1,36 @@
+FILE fqName:<root> fileName:/enhancedNullability.kt
+  FUN name:use visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY
+  FUN name:testUse visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun use (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          CALL 'public open fun s (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+  FUN name:testLocalVal visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:local type:kotlin.String [val]
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          CALL 'public open fun s (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+  FUN name:testReturnValue visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testReturnValue (): kotlin.String declared in <root>'
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          CALL 'public open fun s (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+  PROPERTY name:testGlobalVal visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:testGlobalVal type:kotlin.String visibility:private [final,static]
+      EXPRESSION_BODY
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          CALL 'public open fun s (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testGlobalVal> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:testGlobalVal visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testGlobalVal> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testGlobalVal type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  PROPERTY name:testGlobalValGetter visibility:public modality:FINAL [val]
+    FUN name:<get-testGlobalValGetter> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:testGlobalValGetter visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testGlobalValGetter> (): kotlin.String declared in <root>'
+          TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+            CALL 'public open fun s (): kotlin.String declared in <root>.J' type=kotlin.String origin=null

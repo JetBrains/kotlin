@@ -1,0 +1,22 @@
+// FILE: file1.kt
+private class C {
+    companion object
+}
+
+private typealias TA = C
+
+private val test1: C = <!INAPPLICABLE_CANDIDATE!>C<!>()
+private val test1co: C.Companion = C
+
+private val test2: TA = <!INAPPLICABLE_CANDIDATE!>TA<!>()
+private val test2co = TA
+
+// FILE: file2.kt
+private val test1: C = C()
+private val test1co: C.Companion = C
+
+private val test2: TA = <!INAPPLICABLE_CANDIDATE!>TA<!>()
+private val test2co = TA
+
+private class C
+private typealias TA = Int

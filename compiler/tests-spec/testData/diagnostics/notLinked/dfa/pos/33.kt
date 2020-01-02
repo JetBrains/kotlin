@@ -81,7 +81,11 @@ fun case_5() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double"), DEBUG_INFO_SMARTCAST!>x<!>.minus(10.0)
 }
 
-// TESTCASE NUMBER: 6
+/*
+ * TESTCASE NUMBER: 6
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_6() {
     val x: Any?
 

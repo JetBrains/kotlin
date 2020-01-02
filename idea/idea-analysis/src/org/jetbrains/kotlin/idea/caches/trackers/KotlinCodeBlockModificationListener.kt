@@ -17,6 +17,7 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import com.intellij.pom.tree.events.impl.ChangeInfoImpl
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -25,7 +26,9 @@ import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.CHILD_MOVED
 import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.PROPERTY_CHANGED
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -92,6 +95,7 @@ class KotlinCodeBlockModificationListener(
                 if (changedElements.isNotEmpty() &&
                     // ignore formatting (whitespaces etc)
                     (isFormattingChange(changeSet) ||
+                            isCommentChange(changeSet) ||
                             changedElements.all { !it.psi.isPhysical })
                 ) return
 
@@ -193,9 +197,22 @@ class KotlinCodeBlockModificationListener(
             return inBlockElements.isNotEmpty()
         }
 
-        fun isFormattingChange(changeSet: TreeChangeEvent): Boolean =
+        private fun isCommentChange(changeSet: TreeChangeEvent): Boolean =
+            changeSet.changedElements.all { changedElement ->
+                val changesByElement = changeSet.getChangesByElement(changedElement)
+                changesByElement.affectedChildren.all { affectedChild ->
+                    if (!(affectedChild is PsiComment || affectedChild is KDoc)) return@all false
+                    val changeByChild = changesByElement.getChangeByChild(affectedChild)
+                    return@all if (changeByChild is ChangeInfoImpl) {
+                        val oldChild = changeByChild.oldChild
+                        oldChild is PsiComment || oldChild is KDoc
+                    } else false
+                }
+            }
+
+        private fun isFormattingChange(changeSet: TreeChangeEvent): Boolean =
             changeSet.changedElements.all {
-                changeSet.getChangesByElement(it).affectedChildren.all { c -> (c is PsiWhiteSpace || c is PsiComment) }
+                changeSet.getChangesByElement(it).affectedChildren.all { c -> c is PsiWhiteSpace }
             }
 
         fun getInsideCodeBlockModificationScope(element: PsiElement): BlockModificationScopeElement? {
@@ -238,7 +255,19 @@ class KotlinCodeBlockModificationListener(
                                         // adding annotations to accessor is the same as change contract of property
                                         (element !is KtAnnotated || element.annotationEntries.isEmpty())
                             }
-                                ?.let { return BlockModificationScopeElement(blockDeclaration, it) }
+                                ?.let { expression ->
+                                    val declaration = if (blockDeclaration.initializer != null)
+                                        blockDeclaration
+                                    else
+                                        KtPsiUtil.getTopmostParentOfTypes(
+                                            blockDeclaration,
+                                            // property could be initialized on a class level
+                                            KtClass::class.java,
+                                            // ktFile to check top level property declarations
+                                            KtFile::class.java
+                                        ) as KtElement
+                                    return BlockModificationScopeElement(declaration, expression)
+                                }
                         }
                     }
                 }
@@ -256,8 +285,20 @@ class KotlinCodeBlockModificationListener(
                     blockDeclaration
                         .takeIf { it.isAncestor(element) }
                         ?.let { ktClassInitializer ->
-                            (KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
+                            (PsiTreeUtil.getParentOfType(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
                                 return BlockModificationScopeElement(it, ktClassInitializer)
+                            }
+                        }
+                }
+
+                is KtSecondaryConstructor -> {
+                    blockDeclaration
+                        ?.takeIf {
+                            it.bodyExpression?.isAncestor(element) ?: false || it.getDelegationCallOrNull()?.isAncestor(element) ?: false
+                        }
+                        ?.let { ktConstructor ->
+                            (PsiTreeUtil.getParentOfType(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
+                                return BlockModificationScopeElement(it, ktConstructor)
                             }
                         }
                 }
@@ -288,6 +329,7 @@ class KotlinCodeBlockModificationListener(
             KtProperty::class.java,
             KtNamedFunction::class.java,
             KtClassInitializer::class.java,
+            KtSecondaryConstructor::class.java,
             KtScriptInitializer::class.java
         )
 

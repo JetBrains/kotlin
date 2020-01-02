@@ -18,6 +18,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:backend-common",
         ":compiler:backend.jvm",
         ":compiler:ir.backend.common",
+        ":compiler:ir.serialization.jvm",
         ":kotlin-build-common",
         ":compiler:cli-common",
         ":compiler:container",
@@ -36,11 +37,15 @@ val projectsToShadow by extra(listOf(
         ":idea:scripting-support",
         ":idea:idea-j2k",
         ":idea:formatter",
+        ":libraries:tools:new-project-wizard",
+        ":idea:idea-new-project-wizard",
+        ":libraries:tools:new-project-wizard:new-project-wizard-cli",
         ":compiler:psi",
         ":compiler:fir:cones",
         ":compiler:fir:resolve",
         ":compiler:fir:tree",
         ":compiler:fir:java",
+        ":compiler:fir:jvm",
         ":compiler:fir:psi2fir",
         ":compiler:fir:fir2ir",
         ":idea:fir-view",
@@ -140,6 +145,10 @@ dependencies {
     libraries(commonDep("io.javaslang", "javaslang"))
 
     libraries(kotlinStdlib("jdk8"))
+
+    Platform[193].orHigher {
+        libraries(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
+    }
 
     libraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }

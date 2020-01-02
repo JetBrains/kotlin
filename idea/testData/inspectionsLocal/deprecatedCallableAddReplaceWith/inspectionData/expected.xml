@@ -125,4 +125,13 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@Deprecated annotation without 'replaceWith' argument</problem_class>
         <description>@Deprecated annotation without 'replaceWith' argument</description>
     </problem>
+
+    <problem>
+        <file>ReplaceWithHasNamedArgument.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="ReplaceWithHasNamedArgument.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@Deprecated annotation without 'replaceWith' argument</problem_class>
+        <description>@Deprecated annotation without 'replaceWith' argument</description>
+    </problem>
 </problems>

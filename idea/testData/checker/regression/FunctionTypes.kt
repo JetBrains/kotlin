@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun <K, V> intercept(<warning>block</warning>: (key: K, next: (K) -> V, K) -> V) {
 }
 

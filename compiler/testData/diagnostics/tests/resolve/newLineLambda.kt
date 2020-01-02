@@ -100,13 +100,13 @@ fun testTwoLambdas() {
         {}
         <!MANY_LAMBDA_EXPRESSION_ARGUMENTS, UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 
-        return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (true) {
+        return <!NI;TYPE_MISMATCH!>if (true) {
             <!OI;TYPE_MISMATCH!>twoLambdaArgs({})
             {}
             <!MANY_LAMBDA_EXPRESSION_ARGUMENTS, UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!><!>
-        } else <!NI;TYPE_MISMATCH!>{
+        } else {
             {}
-        }<!><!>
+        }<!>
     }
 }
 

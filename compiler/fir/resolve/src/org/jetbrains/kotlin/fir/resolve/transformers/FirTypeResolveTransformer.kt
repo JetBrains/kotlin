@@ -30,7 +30,7 @@ class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         return withScopeCleanup {
             towerScope.addImportingScopes(file, session, scopeSession)
             typeResolverTransformer = FirSpecificTypeResolverTransformer(towerScope, session)
-            transformElement(file, data)
+            super.transformFile(file, data)
         }
     }
 

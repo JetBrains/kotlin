@@ -72,11 +72,9 @@ fun createFunctionConsumer(
         bodyResolveComponents.session,
         callInfo.containingFile,
         callInfo.implicitReceiverStack,
-        callInfo.containingDeclaration,
         callInfo.expectedType,
         callInfo.outerCSBuilder,
-        callInfo.lhs,
-        callInfo.typeProvider
+        callInfo.lhs
     )
     return PrioritizedTowerDataConsumer(
         resultCollector,
@@ -118,7 +116,7 @@ fun createSimpleConsumer(
     val factory = CandidateFactory(bodyResolveComponents, callInfo)
     val explicitReceiver = callInfo.explicitReceiver
     return if (explicitReceiver != null) {
-        val receiverValue = ExpressionReceiverValue(explicitReceiver, callInfo.typeProvider)
+        val receiverValue = ExpressionReceiverValue(explicitReceiver)
         if (explicitReceiver is FirResolvedQualifier) {
             val qualified =
                 QualifiedReceiverTowerDataConsumer(session, name, token, receiverValue, factory, resultCollector)

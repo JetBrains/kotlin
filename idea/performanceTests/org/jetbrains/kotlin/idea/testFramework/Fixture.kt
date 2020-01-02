@@ -167,10 +167,10 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             val projectBaseName = baseName(project.name)
 
             val virtualFiles = FilenameIndex.getVirtualFilesByName(
-                project,
-                baseFileName, true,
-                GlobalSearchScope.projectScope(project)
-            )
+                    project,
+                    baseFileName, true,
+                    GlobalSearchScope.projectScope(project)
+                )
                 .filter { it.canonicalPath?.contains("/$projectBaseName/$name") ?: false }.toList()
 
             assertEquals(

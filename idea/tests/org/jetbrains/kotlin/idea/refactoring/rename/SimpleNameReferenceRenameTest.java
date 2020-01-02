@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.idea.refactoring.rename;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
-public class SimpleNameReferenceRenameTest extends LightCodeInsightTestCase {
+@SuppressWarnings("deprecation")
+public class SimpleNameReferenceRenameTest extends KotlinLightCodeInsightTestCase {
 
     @NotNull
     @Override
@@ -51,7 +52,7 @@ public class SimpleNameReferenceRenameTest extends LightCodeInsightTestCase {
     private void doTest(String newName) throws Exception {
         configureByFile(getTestName(true) + ".kt");
         PsiElement element = TargetElementUtil
-                .findTargetElement(myEditor,
+                .findTargetElement(getEditor_(),
                                    TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
         assertNotNull(element);
         new RenameProcessor(getProject(), element, newName, true, true).run();

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.annotations
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.arguments
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.body
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.calleeReference
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.classKind
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.controlFlowGraphReferenceField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declarations
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.modality
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.receivers
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.returnTypeRef
+import org.jetbrains.kotlin.fir.tree.generator.FieldSets.scopeProvider
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.status
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.superTypeRefs
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.symbol
@@ -69,7 +69,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         }
 
         typedDeclaration.configure {
-            +field("returnTypeRef", typeRef).withTransform()
+            +field("returnTypeRef", typeRef, withReplace = true).withTransform()
         }
 
         callableDeclaration.configure {
@@ -139,7 +139,8 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         returnExpression.configure {
             parentArg(jump, "E", function.withArgs("F" to "*"))
-            +field("result", expression)
+            +field("result", expression).withTransform()
+            needTransformOtherChildren()
         }
 
         label.configure {
@@ -179,7 +180,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         constExpression.configure {
             withArg("T")
-            +field("kind", constKindType.withArgs("T"))
+            +field("kind", constKindType.withArgs("T"), withReplace = true)
             +field("value", "T", null)
         }
 
@@ -216,6 +217,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +superTypeRefs(withReplace = true)
             +declarations
             +annotations
+            +scopeProvider
         }
 
         regularClass.configure {
@@ -324,7 +326,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         delegatedConstructorCall.configure {
             +field("constructedTypeRef", typeRef)
             generateBooleanFields("this", "super")
-            +calleeReference.withTransform()
         }
 
         valueParameter.configure {
@@ -337,7 +338,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             withArg("F", variable)
             parentArg(callableDeclaration, "F", "F")
             +symbol("FirVariableSymbol", "F")
-            +initializer
+            +initializer.withTransform()
             +field("delegate", expression, nullable = true)
             +field("delegateFieldSymbol", delegateFieldSymbolType, "F", nullable = true)
             generateBooleanFields("var", "val")
@@ -431,6 +432,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +typeArguments.withTransform()
         }
 
+        resolvedReifiedParameterReference.configure {
+            +field("symbol", typeParameterSymbolType)
+        }
+
         stringConcatenationCall.configure {
         }
 
@@ -491,6 +496,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
+            +field("delegatedTypeRef", typeRef, nullable = true)
         }
 
         delegatedTypeRef.configure {

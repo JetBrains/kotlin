@@ -1,0 +1,1 @@
+// project without sources sets to check that import also works

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -68,11 +69,41 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         private lateinit var valueOfFunction: IrFunction
 
         fun run() {
+            insertInstanceInitializer()
             assignOrdinalsToEnumEntries()
             lowerEnumConstructors(irClass)
             lowerEnumEntries()
             setupSynthesizedEnumClassMembers()
             lowerEnumClassBody()
+        }
+
+        // Make sure that an instance initializer call exists, so that field initialization code will be generated.
+        // TODO: This function is identical to the one used in the JS lowerings. Share them.
+        private fun insertInstanceInitializer() {
+            irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+                override fun visitClass(declaration: IrClass) = declaration
+
+                override fun visitConstructor(declaration: IrConstructor): IrStatement {
+                    declaration.transformChildrenVoid(this)
+
+                    val blockBody = declaration.body as IrBlockBody
+
+                    if (!blockBody.statements.any { it is IrInstanceInitializerCall }) {
+                        blockBody.statements.transformFlat {
+                            if (it is IrEnumConstructorCall)
+                                listOf(
+                                    it, IrInstanceInitializerCallImpl(
+                                        declaration.startOffset, declaration.startOffset,
+                                        irClass.symbol, context.irBuiltIns.unitType
+                                    )
+                                )
+                            else null
+                        }
+                    }
+
+                    return declaration
+                }
+            })
         }
 
         private fun assignOrdinalsToEnumEntries() {
@@ -139,9 +170,9 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             val descriptor = WrappedValueParameterDescriptor()
             return IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                IrDeclarationOrigin.DEFINED,
+                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER,
                 IrValueParameterSymbolImpl(descriptor),
-                Name.identifier("name"),
+                Name.identifier("\$enum\$name"),
                 index = 0,
                 type = context.irBuiltIns.stringType,
                 varargElementType = null,
@@ -157,9 +188,9 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             val descriptor = WrappedValueParameterDescriptor()
             return IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                IrDeclarationOrigin.DEFINED,
+                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER,
                 IrValueParameterSymbolImpl(descriptor),
-                Name.identifier("ordinal"),
+                Name.identifier("\$enum\$ordinal"),
                 index = 1,
                 type = context.irBuiltIns.intType,
                 varargElementType = null,

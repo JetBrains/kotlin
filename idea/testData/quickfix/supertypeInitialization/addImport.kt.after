@@ -2,4 +2,4 @@
 import java.io.DataInputStream
 import java.io.InputStream
 
-class C(`in`: InputStream?) : DataInputStream(`in`)
+class C(`in`: InputStream) : DataInputStream(`in`)

@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun Any.<warning>equals</warning>(<warning>other</warning> : Any?) : Boolean = true
 
 fun main(args: Array<String>) {

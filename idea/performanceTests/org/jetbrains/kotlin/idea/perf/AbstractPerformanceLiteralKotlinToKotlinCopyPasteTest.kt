@@ -46,25 +46,26 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
 
     private fun doWarmUpPerfTest() {
         val fileEditorManager = FileEditorManagerEx.getInstance(project)
-        stats.perfTest<Pair<PsiFile, PsiFile>, Unit>(
-            testName = WARM_UP,
-            iterations = 1,
-            setUp = {
+        performanceTest<Pair<PsiFile, PsiFile>, Unit> {
+            name(WARM_UP)
+            stats(stats)
+            iterations(1)
+            setUp {
                 val file1 = myFixture.configureByText(
                     "src.kt",
                     "class Foo {\n    <selection>private val value: String? = n<caret></selection>\n}"
                 )
                 val file2 = myFixture.configureByText("target.kt", "<caret>")
                 it.setUpValue = Pair(file1, file2)
-            },
-            test = {
+            }
+            test {
                 fileEditorManager.setSelectedEditor(it.setUpValue!!.first.virtualFile, "")
                 myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
                 fileEditorManager.setSelectedEditor(it.setUpValue!!.second.virtualFile, "")
                 myFixture.performEditorAction(IdeActions.ACTION_PASTE)
-            },
-            tearDown = {
+            }
+            tearDown {
                 assertEquals("private val value: String? = n", it.setUpValue!!.second.text)
 
                 // to avoid VFS refresh
@@ -75,7 +76,7 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
                     it.setUpValue!!.second.delete()
                 }
             }
-        )
+        }
     }
 
     fun doPerfTest(unused: String) {
@@ -85,19 +86,20 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
         val expectedPath = File(testPath.replace(".kt", ".expected.kt"))
 
         val fileEditorManager = FileEditorManagerEx.getInstance(project)
-        stats.perfTest<Array<PsiFile>, Unit>(
-            testName = testName,
-            setUp = {
+        performanceTest<Array<PsiFile>, Unit> {
+            name(testName)
+            stats(stats)
+            setUp {
                 it.setUpValue = myFixture.configureByFiles(fileName, fileName.replace(".kt", ".to.kt"))
-            },
-            test = {
+            }
+            test {
                 fileEditorManager.setSelectedEditor(it.setUpValue!![0].virtualFile, "")
                 myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
                 fileEditorManager.setSelectedEditor(it.setUpValue!![1].virtualFile, "")
                 myFixture.performEditorAction(IdeActions.ACTION_PASTE)
-            },
-            tearDown = {
+            }
+            tearDown {
                 KotlinTestUtils.assertEqualsToFile(expectedPath, it.setUpValue!![1].text)
 
                 // to avoid VFS refresh
@@ -107,6 +109,6 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
                     it.setUpValue!!.forEach { f -> f.delete() }
                 }
             }
-        )
+        }
     }
 }

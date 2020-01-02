@@ -272,6 +272,7 @@ internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private
 
     private val progressionHandlers = listOf(
         CollectionIndicesHandler(context),
+        ArrayIndicesHandler(context),
         CharSequenceIndicesHandler(context),
         UntilHandler(context, progressionElementTypes),
         DownToHandler(context, progressionElementTypes),

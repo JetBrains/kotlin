@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
@@ -97,7 +100,7 @@ private val arrayConstructorPhase = makeJsModulePhase(
 
 private val functionInliningPhase = makeCustomJsModulePhase(
     { context, module ->
-        FunctionInlining(context, false).inline(module)
+        FunctionInlining(context).inline(module)
         module.patchDeclarationParents()
     },
     name = "FunctionInliningPhase",
@@ -155,6 +158,25 @@ private val returnableBlockLoweringPhase = makeJsModulePhase(
     name = "ReturnableBlockLowering",
     description = "Replace returnable block with do-while loop",
     prerequisite = setOf(functionInliningPhase)
+)
+
+private val forLoopsLoweringPhase = makeJsModulePhase(
+    ::ForLoopsLowering,
+    name = "ForLoopsLowering",
+    description = "[Optimization] For loops lowering"
+)
+
+private val propertyAccessorInlinerLoweringPhase = makeJsModulePhase(
+    ::PropertyAccessorInlineLowering,
+    name = "PropertyAccessorInlineLowering",
+    description = "[Optimization] Inline property accessors"
+)
+
+private val foldConstantLoweringPhase = makeJsModulePhase(
+    { FoldConstantLowering(it, true) },
+    name = "FoldConstantLowering",
+    description = "[Optimization] Constant Folding",
+    prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
 )
 
 private val localDelegatedPropertiesLoweringPhase = makeJsModulePhase(
@@ -410,6 +432,10 @@ val jsPhases = namedIrModulePhase(
             enumUsageLoweringPhase then
             suspendFunctionsLoweringPhase then
             returnableBlockLoweringPhase then
+            forLoopsLoweringPhase then
+            primitiveCompanionLoweringPhase then
+            propertyAccessorInlinerLoweringPhase then
+            foldConstantLoweringPhase then
             privateMembersLoweringPhase then
             callableReferenceLoweringPhase then
             defaultArgumentStubGeneratorPhase then
@@ -428,7 +454,6 @@ val jsPhases = namedIrModulePhase(
             inlineClassLoweringPhase then
             autoboxingTransformerPhase then
             blockDecomposerLoweringPhase then
-            primitiveCompanionLoweringPhase then
             constLoweringPhase then
             objectDeclarationLoweringPhase then
             objectUsageLoweringPhase then

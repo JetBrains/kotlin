@@ -12,6 +12,7 @@ import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBui
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
@@ -31,6 +33,8 @@ val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, AN
 
 val EXTEND_COLON_ELEMENTS =
     TokenSet.create(TYPE_CONSTRAINT, CLASS, OBJECT_DECLARATION, TYPE_PARAMETER, ENUM_ENTRY, SECONDARY_CONSTRUCTOR)
+
+val DECLARATIONS = TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR, CLASS_INITIALIZER)
 
 fun SpacingBuilder.beforeInside(element: IElementType, tokenSet: TokenSet, spacingFun: RuleBuilder.() -> Unit) {
     tokenSet.types.forEach { inType -> beforeInside(element, inType).spacingFun() }
@@ -47,14 +51,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
     val kotlinCommonSettings = settings.kotlinCommonSettings
     val kotlinCustomSettings = settings.kotlinCustomSettings
     return rules(kotlinCommonSettings, builderUtil) {
-        val DECLARATIONS =
-            TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR, CLASS_INITIALIZER)
-
         simple {
             before(FILE_ANNOTATION_LIST).lineBreakInCode()
-            after(FILE_ANNOTATION_LIST).blankLines(1)
-
-            after(PACKAGE_DIRECTIVE).blankLines(1)
             between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
             after(IMPORT_LIST).blankLines(1)
         }
@@ -87,8 +85,39 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     null
                 }
             }
+
             inPosition(right = BLOCK_COMMENT).spacing(commentSpacing(0))
             inPosition(right = EOL_COMMENT).spacing(commentSpacing(1))
+            inPosition(parent = FUNCTION_LITERAL, right = BLOCK).customRule { _, _, right ->
+                when (right.node?.children()?.firstOrNull()?.elementType) {
+                    BLOCK_COMMENT -> commentSpacing(0)
+                    EOL_COMMENT -> commentSpacing(1)
+                    else -> null
+                }
+            }
+        }
+
+        simple {
+            after(FILE_ANNOTATION_LIST).blankLines(1)
+            after(PACKAGE_DIRECTIVE).blankLines(1)
+        }
+
+        custom {
+            inPosition(leftSet = DECLARATIONS, rightSet = DECLARATIONS).customRule(fun(
+                _: ASTBlock,
+                _: ASTBlock,
+                right: ASTBlock
+            ): Spacing? {
+                val node = right.node ?: return null
+                val elementStart = node.startOfDeclaration() ?: return null
+                return if (StringUtil.containsLineBreak(
+                        node.text.subSequence(0, elementStart.startOffset - node.startOffset).trimStart()
+                    )
+                )
+                    createSpacing(0, minLineFeeds = 2)
+                else
+                    null
+            })
 
             inPosition(left = CLASS, right = CLASS).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = CLASS, right = OBJECT_DECLARATION).emptyLinesIfLineBreakInLeft(1)
@@ -587,7 +616,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 val prevSibling = rightParenthesis?.prevSibling
                 val spaces = if (kotlinCustomSettings.SPACE_BEFORE_EXTEND_COLON) 1 else 0
                 // TODO This should use DependentSpacingRule, but it doesn't set keepLineBreaks to false if max LFs is 0
-                if ((prevSibling as? PsiWhiteSpace)?.textContains('\n') == true || kotlinCommonSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE) {
+                if ((prevSibling as? PsiWhiteSpace)?.textContains('\n') == true || kotlinCommonSettings
+                        .METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE
+                ) {
                     createSpacing(spaces, keepLineBreaks = false)
                 } else {
                     createSpacing(spaces)

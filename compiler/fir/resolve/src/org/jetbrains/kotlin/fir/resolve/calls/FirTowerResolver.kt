@@ -9,16 +9,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.TowerDataKind.EMPTY
-import org.jetbrains.kotlin.fir.resolve.calls.TowerDataKind.TOWER_LEVEL
+import org.jetbrains.kotlin.fir.resolve.calls.TowerDataKind.*
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NONE
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 
 enum class TowerDataKind {
-    EMPTY,
-    TOWER_LEVEL
+    EMPTY,       // Corresponds to stub tower level which is replaced by receiver-related level
+    TOWER_LEVEL  // Corresponds to real tower level which may process elements itself
 }
 
 class FirTowerResolver(
@@ -46,9 +45,22 @@ class FirTowerResolver(
         // }
         towerDataConsumer.consume(
             TOWER_LEVEL,
-            MemberScopeTowerLevel(session, components, implicitReceiverValue, scopeSession = components.scopeSession),
+            MemberScopeTowerLevel(session, components, dispatchReceiver = implicitReceiverValue, scopeSession = components.scopeSession),
             group++
         )
+
+        // class Foo {
+        //     fun foo(block: Foo.() -> Unit) {
+        //         block()
+        //     }
+        // }
+        // invokeExtension on local variable
+        towerDataConsumer.consume(
+            EMPTY,
+            TowerScopeLevel.OnlyImplicitReceiver(implicitReceiverValue),
+            group++
+        )
+        //TowerData.OnlyImplicitReceiver(implicitReceiver).process()?.let { return it }
 
         // Same receiver is dispatch & extension
 //        class Foo {
@@ -57,18 +69,23 @@ class FirTowerResolver(
 //        }
         towerDataConsumer.consume(
             TOWER_LEVEL,
-            MemberScopeTowerLevel(session, components, implicitReceiverValue, implicitReceiverValue, components.scopeSession),
+            MemberScopeTowerLevel(
+                session, components,
+                dispatchReceiver = implicitReceiverValue,
+                implicitExtensionReceiver = implicitReceiverValue,
+                scopeSession = components.scopeSession
+            ),
             group++
         )
 
-        // Local scope extensions via implicit receiver
-        // class Foo {
-        //     fun test() {
-        //         fun Foo.bar() {}
-        //         bar()
-        //     }
-        // }
         for (scope in nonEmptyLocalScopes) {
+            // Local scope extensions via implicit receiver
+            // class Foo {
+            //     fun test() {
+            //         fun Foo.bar() {}
+            //         bar()
+            //     }
+            // }
             towerDataConsumer.consume(
                 TOWER_LEVEL,
                 ScopeTowerLevel(session, components, scope, implicitExtensionReceiver = implicitReceiverValue),
@@ -140,6 +157,39 @@ class FirTowerResolver(
         return group
     }
 
+    private fun processTopLevelScope(
+        towerDataConsumer: TowerDataConsumer,
+        topLevelScope: FirScope,
+        oldGroup: Int,
+        extensionsOnly: Boolean = false
+    ): Int {
+        var group = oldGroup
+        // Top-level extensions via implicit receiver
+        // fun Foo.bar() {}
+        // class Foo {
+        //     fun test() { bar() }
+        // }
+        for (implicitReceiverValue in implicitReceiverValues) {
+            if (towerDataConsumer.consume(
+                    TOWER_LEVEL,
+                    ScopeTowerLevel(
+                        session, components, topLevelScope,
+                        implicitExtensionReceiver = implicitReceiverValue,
+                        extensionsOnly = extensionsOnly
+                    ),
+                    group++
+                ) == NONE
+            ) {
+                return group
+            }
+        }
+        // Member of top-level scope & importing scope
+        // val x = 0
+        // fun test() { x }
+        towerDataConsumer.consume(TOWER_LEVEL, ScopeTowerLevel(session, components, topLevelScope), group++)
+        return group
+    }
+
     fun reset() {
         collector.newDataSet()
     }
@@ -148,15 +198,32 @@ class FirTowerResolver(
     private lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 
-    fun runResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue<*>>): CandidateCollector {
+    fun runResolver(
+        consumer: TowerDataConsumer,
+        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
+        shouldProcessExtensionsBeforeMembers: Boolean = false,
+        shouldProcessExplicitReceiverScopeOnly: Boolean = false
+    ): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
         towerDataConsumer = consumer
 
         var group = 0
+
+        // Specific case when extension should be processed before members (Kotlin forEach vs Java forEach)
+        if (shouldProcessExtensionsBeforeMembers) {
+            for (topLevelScope in topLevelScopes) {
+                group = processTopLevelScope(towerDataConsumer, topLevelScope, group, extensionsOnly = true)
+            }
+        }
+
         // Member of explicit receiver' type (this stage does nothing without explicit receiver)
         // class Foo(val x: Int)
         // fun test(f: Foo) { f.x }
         towerDataConsumer.consume(EMPTY, TowerScopeLevel.Empty, group++)
+
+        if (shouldProcessExplicitReceiverScopeOnly) {
+            return collector
+        }
 
         // Member of local scope
         // fun test(x: Int) = x
@@ -177,7 +244,7 @@ class FirTowerResolver(
             }
             val implicitScope = implicitReceiverValue.implicitScope
             if (implicitScope != null) {
-                // Regular implicit receiver scope (outer objects only?)
+                // Regular implicit receiver scope (outer objects, statics)
                 // object Outer {
                 //     val x = 0
                 //     class Nested { val y = x }
@@ -200,26 +267,8 @@ class FirTowerResolver(
             }
         }
 
-        topLevelScopeLoop@ for (scope in topLevelScopes) {
-            // Top-level extensions via implicit receiver
-            // fun Foo.bar() {}
-            // class Foo {
-            //     fun test() { bar() }
-            // }
-            for (implicitReceiverValue in implicitReceiverValues) {
-                if (towerDataConsumer.consume(
-                        TOWER_LEVEL,
-                        ScopeTowerLevel(session, components, scope, implicitExtensionReceiver = implicitReceiverValue),
-                        group++
-                    ) == NONE
-                ) {
-                    continue@topLevelScopeLoop
-                }
-            }
-            // Member of top-level scope & importing scope
-            // val x = 0
-            // fun test() { x }
-            towerDataConsumer.consume(TOWER_LEVEL, ScopeTowerLevel(session, components, scope), group++)
+        for (topLevelScope in topLevelScopes) {
+            group = processTopLevelScope(towerDataConsumer, topLevelScope, group)
         }
 
         return collector

@@ -17,7 +17,8 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.lexer.KtTokens
-import java.util.*
+import org.jetbrains.kotlin.psi.psiUtil.children
+import org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType
 import kotlin.math.max
 
 fun CommonCodeStyleSettings.createSpaceBeforeRBrace(numSpacesOtherwise: Int, textRange: TextRange): Spacing? {
@@ -103,13 +104,19 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
                 val lastChild = left.node?.psi?.lastChild
                 val leftEndsWithComment = lastChild is PsiComment && lastChild.tokenType == KtTokens.EOL_COMMENT
                 val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
+                val textRange = left.node
+                    ?.startOfDeclaration()
+                    ?.startOffset
+                    ?.let { TextRange.create(it, left.textRange.endOffset) }
+                    ?: left.textRange
+
                 spacingBuilderUtil.createLineFeedDependentSpacing(
                     numSpacesOtherwise,
                     numSpacesOtherwise,
                     if (leftEndsWithComment) max(1, numberOfLineFeedsOtherwise) else numberOfLineFeedsOtherwise,
                     commonCodeStyleSettings.KEEP_LINE_BREAKS,
                     commonCodeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
-                    left.textRange,
+                    textRange,
                     dependentSpacingRule
                 )
             }
@@ -142,7 +149,8 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
                 // TODO: it's a severe hack but I don't know how to implement it in other way
                 if (child1.requireNode().elementType == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
                     val isBeforeBlock =
-                        child2.requireNode().elementType == KtNodeTypes.BLOCK || child2.requireNode().firstChildNode?.elementType == KtNodeTypes.BLOCK
+                        child2.requireNode().elementType == KtNodeTypes.BLOCK || child2.requireNode().firstChildNode
+                            ?.elementType == KtNodeTypes.BLOCK
                     val keepBlankLines = if (isBeforeBlock) 0 else commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE
                     return createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = keepBlankLines)
                 }
@@ -199,4 +207,9 @@ fun rules(
     val builder = KotlinSpacingBuilder(commonCodeStyleSettings, builderUtil)
     builder.init()
     return builder
+}
+
+internal fun ASTNode.startOfDeclaration(): ASTNode? = children().firstOrNull {
+    val elementType = it.elementType
+    elementType !is KtModifierListElementType<*> && elementType !in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
 }

@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testGeneric1 (x: kotlin.String): T of <uninitialized parent> declared in <root>'
-        CALL 'public abstract fun invoke (): T of <uninitialized parent> declared in kotlin.Function0' type=T of <uninitialized parent> origin=null
+        CALL 'public abstract fun invoke (): T of <uninitialized parent> [operator] declared in kotlin.Function0' type=T of <uninitialized parent> origin=null
           $this: CALL 'public final fun <get-gk> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
   PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
     FUN name:<get-kt26531Val> visibility:public modality:FINAL <> () returnType:kotlin.Function0<T of <uninitialized parent>>
@@ -27,5 +27,5 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
   FUN name:kt26531 visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun kt26531 (): T of <uninitialized parent> declared in <root>'
-        CALL 'public abstract fun invoke (): T of <uninitialized parent> declared in kotlin.Function0' type=T of <uninitialized parent> origin=null
+        CALL 'public abstract fun invoke (): T of <uninitialized parent> [operator] declared in kotlin.Function0' type=T of <uninitialized parent> origin=null
           $this: CALL 'public final fun <get-kt26531Val> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>' type=kotlin.Function0<kotlin.Int> origin=null

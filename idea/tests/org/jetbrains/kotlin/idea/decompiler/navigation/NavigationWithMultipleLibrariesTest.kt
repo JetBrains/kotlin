@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.util.projectLibrary
 import org.junit.Assert
 import org.junit.runner.RunWith
 import java.io.File
+
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDecompiledTest() {
 
@@ -73,7 +74,8 @@ class NavigationWithMultipleRuntimesTest : AbstractNavigationToSourceOrDecompile
             val modifiableModel = library.modifiableModel
             modifiableModel.addRoot(jarUrl, OrderRootType.CLASSES)
             if (withSources) {
-                val sourcesJar = ForTestCompileRuntime.runtimeSourcesJarForTests().copyTo(File(createTempDirectory(), "$libraryName-sources.jar"))
+                val sourcesJar =
+                    ForTestCompileRuntime.runtimeSourcesJarForTests().copyTo(File(createTempDirectory(), "$libraryName-sources.jar"))
                 modifiableModel.addRoot(sourcesJar.jarRoot, OrderRootType.SOURCES)
             }
             modifiableModel.commit()
@@ -82,7 +84,7 @@ class NavigationWithMultipleRuntimesTest : AbstractNavigationToSourceOrDecompile
     }
 }
 
-abstract class AbstractNavigationToSourceOrDecompiledTest: AbstractNavigationWithMultipleLibrariesTest() {
+abstract class AbstractNavigationToSourceOrDecompiledTest : AbstractNavigationWithMultipleLibrariesTest() {
     fun doTest(withSources: Boolean, expectedFileName: String) {
         val srcPath = testDataPath + "src"
         val moduleA = module("moduleA", srcPath)

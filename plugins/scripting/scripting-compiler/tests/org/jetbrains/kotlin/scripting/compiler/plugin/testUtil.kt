@@ -112,15 +112,26 @@ fun runWithK2JVMCompiler(
         add("-script")
         add(scriptPath)
     }
+    runWithK2JVMCompiler(args.toTypedArray(), expectedOutPatterns, expectedExitCode)
+}
+
+fun runWithK2JVMCompiler(
+    args: Array<String>,
+    expectedOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0
+) {
     val (out, err, ret) = captureOutErrRet {
         CLITool.doMainNoExit(
             K2JVMCompiler(),
-            args.toTypedArray()
+            args
         )
     }
     try {
         val outLines = out.lines()
-        Assert.assertEquals(expectedOutPatterns.size, outLines.size)
+        Assert.assertEquals(
+            "Expecting pattern:\n  ${expectedOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
+            expectedOutPatterns.size, outLines.size
+        )
         for ((expectedPattern, actualLine) in expectedOutPatterns.zip(outLines)) {
             Assert.assertTrue(
                 "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",

@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.refactoring.move.MoveCallback
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,7 +40,7 @@ internal interface MoveKotlinDeclarationsHandlerActions {
     fun invokeKotlinSelectNestedClassChooser(nestedClass: KtClassOrObject, targetContainer: PsiElement?)
 
     fun invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
-        project: Project, initialDirectory: PsiDirectory?, elements: Array<out PsiElement>, moveCallback: MoveCallback?
+        project: Project, initialDirectory: PsiDirectory?, elements: List<PsiFileSystemItem>, moveCallback: MoveCallback?
     )
 
     fun showErrorHint(project: Project, editor: Editor?, message: String, title: String, helpId: String?)

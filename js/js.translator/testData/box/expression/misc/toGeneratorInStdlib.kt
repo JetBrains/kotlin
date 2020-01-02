@@ -1,5 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1548
+// EXPECTED_REACHABLE_NODES: 1706
 package foo
 
 fun sequenceFromFunctionWithInitialValue() {

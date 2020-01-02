@@ -129,24 +129,23 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
     }
 
     private data class ResolveData(
-            val target: DeclarationDescriptor?,
-            val type: KotlinType?,
-            val processedStatements: Collection<KtExpression>
+        val target: DeclarationDescriptor?,
+        val type: KotlinType?,
+        val processedStatements: Collection<KtExpression>
     )
 
     private fun doResolve(expression: KtExpression, bindingContext: BindingContext): ResolveData {
         val target = if (expression is KtReferenceExpression) bindingContext[BindingContext.REFERENCE_TARGET, expression] else null
 
         val processedStatements = bindingContext.getSliceContents(BindingContext.PROCESSED)
-                .filter { it.value }
-                .map { it.key }
-                .filter { it.parent is KtBlockExpression }
+            .filter { it.value }
+            .map { it.key }
+            .filter { it.parent is KtBlockExpression }
 
         val receiver = (expression as? KtSimpleNameExpression)?.getReceiverExpression()
         val expressionWithType = if (receiver != null) {
             expression.parent as? KtExpression ?: expression
-        }
-        else {
+        } else {
             expression
         }
         val type = bindingContext.getType(expressionWithType)
@@ -164,8 +163,7 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
         return "$s smart-cast to ${type.presentation()}"
     }
 
-    private fun KotlinType?.presentation()
-            = if (this != null) DescriptorRenderer.COMPACT.renderType(this) else "unknown type"
+    private fun KotlinType?.presentation() = if (this != null) DescriptorRenderer.COMPACT.renderType(this) else "unknown type"
 
     private fun KtExpression.compactPresentation(): String {
         val text = text

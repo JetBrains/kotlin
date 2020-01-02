@@ -84,9 +84,9 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeOperatorCall = element("TypeOperatorCall", Expression, expression, call)
     val whenExpression = element("WhenExpression", Expression, expression, resolvable)
     val whenBranch = element("WhenBranch", Expression)
-    val delegatedConstructorCall = element("DelegatedConstructorCall", Expression, call)
     val qualifiedAccessWithoutCallee = element("QualifiedAccessWithoutCallee", Expression, statement)
     val qualifiedAccess = element("QualifiedAccess", Expression, qualifiedAccessWithoutCallee, resolvable)
+    val checkNotNullCall = element("CheckNotNullCall", Expression, expression, call, resolvable)
 
     val arrayOfCall = element("ArrayOfCall", Expression, expression, call)
     val arraySetCall = element("ArraySetCall", Expression, qualifiedAccess, call)
@@ -95,6 +95,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorFunction = element("ErrorFunction", Declaration, function, diagnosticHolder)
     val qualifiedAccessExpression = element("QualifiedAccessExpression", Expression, expression, qualifiedAccess)
     val functionCall = element("FunctionCall", Expression, qualifiedAccessExpression, call)
+    val delegatedConstructorCall = element("DelegatedConstructorCall", Expression, resolvable, call)
     val componentCall = element("ComponentCall", Expression, functionCall)
     val callableReferenceAccess = element("CallableReferenceAccess", Expression, qualifiedAccessExpression)
     val thisReceiverExpression = element("ThisReceiverExpression", Expression, qualifiedAccessExpression)
@@ -107,6 +108,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val namedArgumentExpression = element("NamedArgumentExpression", Expression, wrappedArgumentExpression)
 
     val resolvedQualifier = element("ResolvedQualifier", Expression, expression)
+    val resolvedReifiedParameterReference = element("ResolvedReifiedParameterReference", Expression, expression)
     val returnExpression = element("ReturnExpression", Expression, jump)
     val stringConcatenationCall = element("StringConcatenationCall", Expression, call, expression)
     val throwExpression = element("ThrowExpression", Expression, expression)

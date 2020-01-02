@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class KlibMetadataClassDataFinder(
-    private val fragment: org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment,
+    private val fragment: PackageFragment,
     private val nameResolver: NameResolver
 ) : ClassDataFinder {
     val nameList = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()

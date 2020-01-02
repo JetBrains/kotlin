@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.junit.runner.RunWith
@@ -23,14 +23,16 @@ import org.junit.runner.RunWith
 class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
         val foreignAnnotationsJar = MockLibraryUtil.compileJvmLibraryToJar("third-party/annotations", "foreign-annotations")
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar("idea/testData/highlighterJsr305/library", "jsr305-library",
-                                                                extraClasspath = listOf(foreignAnnotationsJar.absolutePath))
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
+            "idea/testData/highlighterJsr305/library", "jsr305-library",
+            extraClasspath = listOf(foreignAnnotationsJar.absolutePath)
+        )
         return object : KotlinJdkAndLibraryProjectDescriptor(
-                listOf(
-                        ForTestCompileRuntime.runtimeJarForTests(),
-                        foreignAnnotationsJar,
-                        libraryJar
-                )
+            listOf(
+                ForTestCompileRuntime.runtimeJarForTests(),
+                foreignAnnotationsJar,
+                libraryJar
+            )
         ) {
             override fun configureModule(module: Module, model: ModifiableRootModel) {
                 super.configureModule(module, model)
@@ -39,7 +41,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 facetSettings?.apply {
                     val jsrStateByTestName =
-                            ReportLevel.findByDescription(getTestName(true)) ?: return@apply
+                        ReportLevel.findByDescription(getTestName(true)) ?: return@apply
 
                     compilerSettings!!.additionalArguments += " -Xjsr305=${jsrStateByTestName.description}"
                     updateMergedArguments()

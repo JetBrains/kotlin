@@ -165,14 +165,11 @@ private fun <T> matchElementsToConditions(elements: Collection<T>, conditions: L
 
     while (checkList.isNotEmpty()) {
         val condition = checkList.removeAt(0)
-        val matched = elementsToCheck.find { condition(it) }
-                ?: return MatchResult.UnmatchedCondition(condition)
-        if (!elementsToCheck.remove(matched))
-            throw IllegalStateException("cant remove matched element: $matched")
+        val matched = elementsToCheck.find { condition(it) } ?: return MatchResult.UnmatchedCondition(condition)
+        if (!elementsToCheck.remove(matched)) throw IllegalStateException("cant remove matched element: $matched")
     }
-    if (elementsToCheck.isEmpty())
-        return MatchResult.Matched
-    return MatchResult.UnmatchedElements(elementsToCheck)
+    return if (elementsToCheck.isEmpty()) MatchResult.Matched
+    else MatchResult.UnmatchedElements(elementsToCheck)
 }
 
 private sealed class MatchResult<out T>(val succeed: Boolean) {

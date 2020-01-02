@@ -187,7 +187,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
         val name = if (path == "mockRuntime106") "kotlin-runtime.jar" else "kotlin-stdlib.jar"
         val tempFile = File(FileUtil.createTempDirectory("kotlin-update-configuration", null), name)
         FileUtil.copy(File("idea/testData/configuration/$path/$name"), tempFile)
-        val tempVFile = LocalFileSystem.getInstance().findFileByIoFile(tempFile)!!
+        val tempVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tempFile) ?: error("Can't find file: $tempFile")
 
         updateModel(myFixture.module) { model ->
             val editor = NewLibraryEditor()

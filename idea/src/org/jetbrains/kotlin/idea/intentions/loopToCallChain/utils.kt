@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain
@@ -49,8 +38,8 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
     val psiFactory = KtPsiFactory(expression)
 
     val lambdaExpression = psiFactory.createExpressionByPattern(
-            "{ $0 -> $1 }", inputVariable.nameAsSafeName, expression,
-            reformat = reformat
+        "{ $0 -> $1 }", inputVariable.nameAsSafeName, expression,
+        reformat = reformat
     ) as KtLambdaExpression
 
     val isItUsedInside = expression.anyDescendantOfType<KtNameReferenceExpression> {
@@ -74,10 +63,10 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
 }
 
 fun generateLambda(
-        inputVariable: KtCallableDeclaration,
-        indexVariable: KtCallableDeclaration?,
-        expression: KtExpression,
-        reformat: Boolean
+    inputVariable: KtCallableDeclaration,
+    indexVariable: KtCallableDeclaration?,
+    expression: KtExpression,
+    reformat: Boolean
 ): KtLambdaExpression {
     if (indexVariable == null) {
         return generateLambda(inputVariable, expression, reformat)
@@ -93,8 +82,7 @@ fun generateLambda(
             val parameter = lambdaExpression.valueParameters[0]
             val parameterDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parameter]
             operand.mainReference.resolveToDescriptors(bindingContext).singleOrNull() == parameterDescriptor
-        }
-        else {
+        } else {
             false
         }
     }
@@ -147,14 +135,15 @@ private fun KtLambdaExpression.analyzeInContext(context: KtExpression): BindingC
 }
 
 data class VariableInitialization(
-        val variable: KtProperty,
-        val initializationStatement: KtExpression,
-        val initializer: KtExpression)
+    val variable: KtProperty,
+    val initializationStatement: KtExpression,
+    val initializer: KtExpression
+)
 
 //TODO: we need more correctness checks (if variable is non-local or is local but can be changed by some local functions)
 fun KtExpression?.findVariableInitializationBeforeLoop(
-        loop: KtForExpression,
-        checkNoOtherUsagesInLoop: Boolean
+    loop: KtForExpression,
+    checkNoOtherUsagesInLoop: Boolean
 ): VariableInitialization? {
     if (this !is KtNameReferenceExpression) return null
     if (getQualifiedExpressionForSelector() != null) return null
@@ -166,8 +155,8 @@ fun KtExpression?.findVariableInitializationBeforeLoop(
     val unwrapped = loop.unwrapIfLabeled()
     if (unwrapped.parent !is KtBlockExpression) return null
     val prevStatements = unwrapped
-            .siblings(forward = false, withItself = false)
-            .filterIsInstance<KtExpression>()
+        .siblings(forward = false, withItself = false)
+        .filterIsInstance<KtExpression>()
 
     val statementsBetween = ArrayList<KtExpression>()
     for (statement in prevStatements) {
@@ -206,13 +195,11 @@ fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
     if (callExpression.valueArguments.isNotEmpty()) return null
 
     val resolvedCall = callExpression.resolveToCall() ?: return null
-    val descriptor = resolvedCall.resultingDescriptor
 
-    when (descriptor) {
+    return when (val descriptor = resolvedCall.resultingDescriptor) {
         is ConstructorDescriptor -> {
             val classDescriptor = descriptor.containingDeclaration
-            val classFqName = classDescriptor.importableFqName?.asString()
-            return when (classFqName) {
+            when (classDescriptor.importableFqName?.asString()) {
                 "java.util.ArrayList" -> CollectionKind.LIST
                 "java.util.HashSet", "java.util.LinkedHashSet" -> CollectionKind.SET
                 else -> null
@@ -220,15 +207,14 @@ fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
         }
 
         is FunctionDescriptor -> {
-            val fqName = descriptor.importableFqName?.asString()
-            return when (fqName) {
+            when (descriptor.importableFqName?.asString()) {
                 "kotlin.collections.arrayListOf", "kotlin.collections.mutableListOf" -> CollectionKind.LIST
                 "kotlin.collections.hashSetOf", "kotlin.collections.mutableSetOf" -> CollectionKind.SET
                 else -> null
             }
         }
 
-        else -> return null
+        else -> null
     }
 }
 
@@ -239,17 +225,17 @@ fun canChangeLocalVariableType(variable: KtProperty, newTypeText: String, loop: 
 }
 
 fun <TExpression : KtExpression> tryChangeAndCheckErrors(
-        expressionToChange: TExpression,
-        scopeToExclude: KtElement? = null,
-        performChange: (TExpression) -> Unit
+    expressionToChange: TExpression,
+    scopeToExclude: KtElement? = null,
+    performChange: (TExpression) -> Unit
 ): Boolean {
     val bindingContext = expressionToChange.analyze(BodyResolveMode.FULL)
 
     // analyze the closest block whose value is not used
     val block = expressionToChange.parents
-                        .filterIsInstance<KtBlockExpression>()
-                        .firstOrNull { !it.isUsedAsExpression(bindingContext) }
-                ?: return true
+        .filterIsInstance<KtBlockExpression>()
+        .firstOrNull { !it.isUsedAsExpression(bindingContext) }
+        ?: return true
 
     // we declare these keys locally to avoid possible race-condition problems if this code is executed in 2 threads simultaneously
     val EXPRESSION = Key<Unit>("EXPRESSION")
@@ -261,7 +247,7 @@ fun <TExpression : KtExpression> tryChangeAndCheckErrors(
 
     block.forEachDescendantOfType<PsiElement> { element ->
         val errors = bindingContext.diagnostics.forElement(element)
-                .filter { it.severity == Severity.ERROR }
+            .filter { it.severity == Severity.ERROR }
         if (errors.isNotEmpty()) {
             element.putCopyableUserData(ERRORS_BEFORE, errors.map { it.factory })
         }
@@ -274,8 +260,7 @@ fun <TExpression : KtExpression> tryChangeAndCheckErrors(
     try {
         expressionCopy = blockCopy.findDescendantOfType<KtExpression> { it.getCopyableUserData(EXPRESSION) != null } as TExpression
         scopeToExcludeCopy = blockCopy.findDescendantOfType<KtElement> { it.getCopyableUserData(SCOPE_TO_EXCLUDE) != null }
-    }
-    finally {
+    } finally {
         expressionToChange.putCopyableUserData(EXPRESSION, null)
         scopeToExclude?.putCopyableUserData(SCOPE_TO_EXCLUDE, null)
     }
@@ -285,18 +270,18 @@ fun <TExpression : KtExpression> tryChangeAndCheckErrors(
     val newBindingContext = blockCopy.analyzeAsReplacement(block, bindingContext)
     return newBindingContext.diagnostics.none {
         it.severity == Severity.ERROR
-            && !scopeToExcludeCopy.isAncestor(it.psiElement)
-            && it.factory !in (it.psiElement.getCopyableUserData(ERRORS_BEFORE) ?: emptyList())
+                && !scopeToExcludeCopy.isAncestor(it.psiElement)
+                && it.factory !in (it.psiElement.getCopyableUserData(ERRORS_BEFORE) ?: emptyList())
     }
 }
 
 private val NO_SIDE_EFFECT_STANDARD_CLASSES = setOf(
-        "java.util.ArrayList",
-        "java.util.LinkedList",
-        "java.util.HashSet",
-        "java.util.LinkedHashSet",
-        "java.util.HashMap",
-        "java.util.LinkedHashMap"
+    "java.util.ArrayList",
+    "java.util.LinkedList",
+    "java.util.HashSet",
+    "java.util.LinkedHashSet",
+    "java.util.HashMap",
+    "java.util.LinkedHashMap"
 )
 
 fun KtExpression.hasNoSideEffect(): Boolean {
@@ -384,8 +369,7 @@ fun KtExpression.countEmbeddedBreaksAndContinues(): Int {
 
 private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolean {
     if (expression !is KtBreakExpression && expression !is KtContinueExpression) return false
-    val parent = expression.parent
-    return when (parent) {
+    return when (val parent = expression.parent) {
         is KtBlockExpression -> false
 
         is KtContainerNode -> {

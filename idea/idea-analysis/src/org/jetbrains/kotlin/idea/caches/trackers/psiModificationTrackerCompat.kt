@@ -9,4 +9,5 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 
 // BUNCH: 191
 @Suppress("unused")
-val PsiModificationTrackerImpl.isEnableLanguageTrackerCompat get() = true
+val PsiModificationTrackerImpl.isEnableLanguageTrackerCompat
+    get() = true

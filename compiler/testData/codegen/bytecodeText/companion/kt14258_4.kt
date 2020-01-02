@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // Checks that accessor 'I$Companion.access$getBar\$p' is always used because the property is kept
 // into the companion object.
 

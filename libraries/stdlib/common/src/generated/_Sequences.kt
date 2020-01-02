@@ -580,6 +580,8 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
  * The returned map preserves the entry iteration order of the original sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.associate
  */
 public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     return associateTo(LinkedHashMap<K, V>(), transform)
@@ -594,6 +596,8 @@ public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>):
  * The returned map preserves the entry iteration order of the original sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateBy
  */
 public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     return associateByTo(LinkedHashMap<K, T>(), keySelector)
@@ -607,6 +611,8 @@ public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * The returned map preserves the entry iteration order of the original sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByWithValueTransform
  */
 public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     return associateByTo(LinkedHashMap<K, V>(), keySelector, valueTransform)
@@ -620,6 +626,8 @@ public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, value
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByTo
  */
 public inline fun <T, K, M : MutableMap<in K, in T>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -636,6 +644,8 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Sequence<T>.associateByTo(d
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByToWithValueTransform
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -651,6 +661,8 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateByT
  * If any of two pairs would have the same key the last one gets added to the map.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateTo
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
@@ -684,6 +696,8 @@ public inline fun <K, V> Sequence<K>.associateWith(valueSelector: (K) -> V): Map
  * If any two elements are equal, the last one overwrites the former value in the map.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.3")
 public inline fun <K, V, M : MutableMap<in K, in V>> Sequence<K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
@@ -747,6 +761,8 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
  * Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Sequence<R> {
     return FlatteningSequence(this, transform, { it.iterator() })
@@ -962,6 +978,8 @@ public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T> Sequence<T>.distinct(): Sequence<T> {
     return this.distinctBy { it }
@@ -974,6 +992,8 @@ public fun <T> Sequence<T>.distinct(): Sequence<T> {
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
     return DistinctSequence(this, selector)
@@ -1332,6 +1352,8 @@ public fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T> {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun <S, T : S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S {
     val iterator = this.iterator()
@@ -1350,6 +1372,8 @@ public inline fun <S, T : S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S 
  * and the element itself and calculates the next accumulator value.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun <S, T : S> Sequence<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     val iterator = this.iterator()
@@ -1358,6 +1382,25 @@ public inline fun <S, T : S> Sequence<T>.reduceIndexed(operation: (index: Int, a
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(checkIndexOverflow(index++), accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Sequence<T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) return null
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
 }

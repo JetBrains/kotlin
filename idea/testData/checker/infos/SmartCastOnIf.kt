@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun baz(s: String?): Int {
     return if (s == null) {
         ""

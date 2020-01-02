@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.lightClasses
@@ -111,7 +100,12 @@ internal object IDELightClassContexts {
             "Class descriptor was not found for ${classOrObject.getElementTextWithContext()}"
         }
         ForceResolveUtil.forceResolveAllContents(classDescriptor)
-        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, classOrObject.languageVersionSettings, EXACT)
+        return IDELightClassConstructionContext(
+            bindingContext,
+            resolutionFacade.moduleDescriptor,
+            classOrObject.languageVersionSettings,
+            EXACT
+        )
     }
 
     fun contextForLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
@@ -122,12 +116,22 @@ internal object IDELightClassContexts {
 
         if (descriptor == null) {
             LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
-            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, classOrObject.languageVersionSettings, EXACT)
+            return IDELightClassConstructionContext(
+                bindingContext,
+                resolutionFacade.moduleDescriptor,
+                classOrObject.languageVersionSettings,
+                EXACT
+            )
         }
 
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, classOrObject.languageVersionSettings, EXACT)
+        return IDELightClassConstructionContext(
+            bindingContext,
+            resolutionFacade.moduleDescriptor,
+            classOrObject.languageVersionSettings,
+            EXACT
+        )
     }
 
 
@@ -135,7 +139,12 @@ internal object IDELightClassContexts {
         val resolveSession = files.first().getResolutionFacade().getFrontendService(ResolveSession::class.java)
 
         forceResolvePackageDeclarations(files, resolveSession)
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, files.first().languageVersionSettings, EXACT)
+        return IDELightClassConstructionContext(
+            resolveSession.bindingContext,
+            resolveSession.moduleDescriptor,
+            files.first().languageVersionSettings,
+            EXACT
+        )
     }
 
     fun contextForScript(script: KtScript): LightClassConstructionContext {
@@ -145,7 +154,12 @@ internal object IDELightClassContexts {
         val descriptor = bindingContext[BindingContext.SCRIPT, script]
         if (descriptor == null) {
             LOG.warn("No script descriptor in context for script: " + script.getElementTextWithContext())
-            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, script.languageVersionSettings, EXACT)
+            return IDELightClassConstructionContext(
+                bindingContext,
+                resolutionFacade.moduleDescriptor,
+                script.languageVersionSettings,
+                EXACT
+            )
         }
 
         ForceResolveUtil.forceResolveAllContents(descriptor)
@@ -167,7 +181,12 @@ internal object IDELightClassContexts {
 
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, classOrObject.languageVersionSettings, LIGHT)
+        return IDELightClassConstructionContext(
+            resolveSession.bindingContext,
+            resolveSession.moduleDescriptor,
+            classOrObject.languageVersionSettings,
+            LIGHT
+        )
     }
 
     fun lightContextForFacade(files: List<KtFile>): LightClassConstructionContext {
@@ -176,7 +195,12 @@ internal object IDELightClassContexts {
 
         forceResolvePackageDeclarations(files, resolveSession)
 
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, files.first().languageVersionSettings, LIGHT)
+        return IDELightClassConstructionContext(
+            resolveSession.bindingContext,
+            resolveSession.moduleDescriptor,
+            files.first().languageVersionSettings,
+            LIGHT
+        )
     }
 
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
@@ -384,7 +408,7 @@ internal object IDELightClassContexts {
         private val codegenAffectingAnnotations: CodegenAffectingAnnotations,
         private val callResolver: CallResolver,
         private val languageVersionSettings: LanguageVersionSettings,
-        private val dataFlowValueFactory: DataFlowValueFactory,constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val dataFlowValueFactory: DataFlowValueFactory, constantExpressionEvaluator: ConstantExpressionEvaluator,
         storageManager: StorageManager
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
 
@@ -404,7 +428,7 @@ internal object IDELightClassContexts {
             trace: BindingTrace
         ): OverloadResolutionResults<FunctionDescriptor> {
             val annotationConstructor = annotationClassByEntry(annotationEntry)?.constructors?.singleOrNull()
-                    ?: return super.resolveAnnotationCall(annotationEntry, scope, trace)
+                ?: return super.resolveAnnotationCall(annotationEntry, scope, trace)
 
             @Suppress("UNCHECKED_CAST")
             return callResolver.resolveConstructorCall(

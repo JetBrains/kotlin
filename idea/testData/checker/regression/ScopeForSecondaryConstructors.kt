@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun <T> checkSubtype(t: T) = t
 
 class Foo(var bar : Int, var barr : Int, var barrr : Int) {

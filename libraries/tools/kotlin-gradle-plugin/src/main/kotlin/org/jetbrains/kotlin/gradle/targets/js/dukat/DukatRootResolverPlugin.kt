@@ -20,7 +20,6 @@ internal class DukatRootResolverPlugin(val resolver: KotlinRootNpmResolver) : Ro
     }
 
     override fun close(resolution: KotlinRootNpmResolution) {
-        println("tests")
         if (resolver.forceFullResolve) {
             // inside idea import
             compilations.forEach {

@@ -16,6 +16,7 @@ data class KarmaConfig(
     val browsers: MutableList<String> = mutableListOf(),
     val customLaunchers: MutableMap<String, CustomLauncher> = mutableMapOf(),
     val failOnFailingTestSuite: Boolean = false,
+    val failOnEmptyTestSuite: Boolean = false,
     val reporters: MutableList<String> = mutableListOf(),
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf(),
     var coverageReporter: CoverageReporter? = null

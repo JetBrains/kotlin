@@ -18,6 +18,7 @@ dependencies {
     compile(projectTests(":idea:idea-maven"))
     compile(projectTests(":j2k"))
     compile(projectTests(":nj2k"))
+    compile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
     compile(projectTests(":idea:idea-android"))
     compile(projectTests(":idea:scripting-support"))
     compile(projectTests(":jps-plugin"))

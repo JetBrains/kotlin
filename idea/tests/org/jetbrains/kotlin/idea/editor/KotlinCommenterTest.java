@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.idea.editor;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -17,8 +18,10 @@ import org.jetbrains.kotlin.test.SettingsConfigurator;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+
+@SuppressWarnings("deprecation")
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
-public class KotlinCommenterTest extends LightCodeInsightTestCase {
+public class KotlinCommenterTest extends KotlinLightCodeInsightTestCase {
     private static final String BASE_PATH =
             new File(PluginTestCaseBase.getTestDataPathBase(), "/editor/commenter/").getAbsolutePath();
 
@@ -51,9 +54,9 @@ public class KotlinCommenterTest extends LightCodeInsightTestCase {
     private void doLineCommentTest() throws Exception {
         configure();
 
-        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings(getProject());
+        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject_());
         try {
-            String text = myFile.getText();
+            String text = getFile_().getText();
 
             SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(text, codeStyleSettings);
             configurator.configureSettings();

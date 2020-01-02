@@ -80,20 +80,21 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
             val importInsertHelper = ImportInsertHelper.getInstance(project)
             val psiDocumentManager = PsiDocumentManager.getInstance(project)
 
-            stats().perfTest<Unit, String>(
-                testName = testName,
-                setUp = {
+            performanceTest<Unit, String> {
+                name(testName)
+                stats(stats())
+                setUp {
                     fixture.configureByFile(fileName())
                     file = fixture.file as KtFile
 
                     fileText = file.text
-                },
-                test = {
+                }
+                test {
                     it.value = project.executeWriteCommand<String?>("") {
                         perfTestCore(file, fqName, filter, descriptorName, importInsertHelper, psiDocumentManager)
                     }
-                },
-                tearDown = {
+                }
+                tearDown {
                     val log = it.value
                     val testPath = testPath()
                     val afterFile = File("$testPath.after")
@@ -109,7 +110,8 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
                     runWriteAction {
                         myFixture.file.delete()
                     }
-                })
+                }
+            }
         } finally {
             CodeStyle.dropTemporarySettings(project)
         }

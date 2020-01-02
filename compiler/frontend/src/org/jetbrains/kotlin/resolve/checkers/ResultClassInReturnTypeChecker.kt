@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -17,7 +19,12 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ResultClassInReturnTypeChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (context.languageVersionSettings.getFlag(AnalysisFlags.allowResultReturnType)) return
+        val languageVersionSettings = context.languageVersionSettings
+        if (
+            languageVersionSettings.getFlag(AnalysisFlags.allowResultReturnType) ||
+            languageVersionSettings.supportsFeature(LanguageFeature.InlineClasses) &&
+            languageVersionSettings.supportsFeature(LanguageFeature.AllowResultInReturnType)
+        ) return
 
         if (declaration !is KtCallableDeclaration || descriptor !is CallableMemberDescriptor) return
 

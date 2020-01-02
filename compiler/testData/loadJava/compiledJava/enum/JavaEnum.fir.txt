@@ -3,4 +3,10 @@ public final enum class JavaEnum : R|kotlin/Enum<test/JavaEnum>| {
 
     public final static field ANOTHER: R|ft<test/JavaEnum, test/JavaEnum?>!|
 
+    public final static fun values(): R|kotlin/Array<test/JavaEnum>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/JavaEnum| {
+    }
+
 }

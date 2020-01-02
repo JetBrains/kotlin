@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -334,7 +335,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
     private val builder = context.createIrBuilder(irClass.symbol)
     private val enumEntries = irClass.declarations.filterIsInstance<IrEnumEntry>()
     private val enumName = irClass.name.identifier
-    private val throwISESymbol = context.throwISEymbol
+    private val throwISESymbol = context.throwISEsymbol
 
     fun transform(): List<IrDeclaration> {
 
@@ -382,23 +383,16 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         }
     }
 
-    private fun List<IrExpression>.toArrayLiteral(arrayType: IrType, elementType: IrType): IrExpression {
-        val irVararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, elementType, this)
-
-        return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, context.intrinsics.arrayLiteral).apply {
-            putValueArgument(0, irVararg)
-        }
-    }
-
     private fun createEnumValuesBody(): IrBody {
         val valuesFun = findFunctionDescriptorForMemberWithSyntheticBodyKind(IrSyntheticBodyKind.ENUM_VALUES)
         val entryInstanceToFunction = context.enumEntryToGetInstanceFunction
 
+        val backendContext = context
         return context.createIrBuilder(valuesFun.symbol).run {
             irBlockBody {
                 +irReturn(
                     enumEntries.map { irCall(entryInstanceToFunction[it.symbol]!!) }
-                        .toArrayLiteral(valuesFun.returnType, irClass.defaultType)
+                        .toJsArrayLiteral(backendContext, valuesFun.returnType, irClass.defaultType)
                 )
             }
         }

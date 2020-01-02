@@ -164,7 +164,7 @@ class DeserializedClassDescriptor(
 
     override fun getSealedSubclasses() = sealedSubclasses()
 
-    override fun toString() = "deserialized class $name" // not using descriptor render to preserve laziness
+    override fun toString() = "deserialized ${if (isExpect()) "expect" else ""} class $name" // not using descriptor render to preserve laziness
 
     override fun getSource() = sourceElement
 

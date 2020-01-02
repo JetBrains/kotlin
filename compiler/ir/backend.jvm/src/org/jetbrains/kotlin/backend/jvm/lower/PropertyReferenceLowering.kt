@@ -226,7 +226,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             //
             private fun createSpecializedKProperty(expression: IrCallableReference): IrExpression {
                 val referenceClass = createKPropertySubclass(expression)
-                return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+                return context.createIrBuilder(
+                    currentScope?.scope?.scopeOwnerSymbol ?: irClass.symbol, expression.startOffset, expression.endOffset
+                )
                     .irBlock {
                         +referenceClass
                         +irCall(referenceClass.constructors.single()).apply {

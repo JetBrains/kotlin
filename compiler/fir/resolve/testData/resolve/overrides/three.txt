@@ -19,8 +19,8 @@ FILE: three.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|()
-            this@R|/Y|.R|/Y.baz|()
+            this@R|/B|.R|/A.foo|()
+            this@R|/B|.R|/Y.baz|()
         }
 
     }
@@ -30,9 +30,9 @@ FILE: three.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|()
-            this@R|/B|.R|/B.bar|()
-            this@R|/Y|.R|/Y.baz|()
+            this@R|/C|.R|/A.foo|()
+            this@R|/C|.R|/B.bar|()
+            this@R|/C|.R|/Y.baz|()
         }
 
     }

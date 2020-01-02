@@ -1,10 +1,9 @@
 FILE: incorrectFunctionalType.kt
-    public final fun foo(func: R|kotlin/Int.() -> class error: Incomplete code|, Int: <implicit>): R|kotlin/Unit|
-    fun <anonymous>(): R|kotlin/Unit| {
+    public final fun foo(func: R|kotlin/Int.(kotlin/Int) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(<L> = foo@fun <anonymous>(): R|kotlin/String| {
-            this#.R|kotlin/plus|(<Unresolved name: it>#)
+        R|/foo|(<L> = foo@fun R|kotlin/Int|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
+            this@R|special/anonymous|.R|kotlin/Int.plus|(R|<local>/it|)
         }
         )
     }

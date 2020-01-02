@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.Severity.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtElement
 import kotlin.reflect.full.memberProperties
 
@@ -27,6 +28,7 @@ object FirErrors {
     val RECURSION_IN_IMPLICIT_TYPES = DiagnosticFactory0.create<KtElement>(ERROR)
     val ERROR_FROM_JAVA_RESOLUTION = DiagnosticFactory0.create<KtElement>(ERROR)
     val OTHER_ERROR = DiagnosticFactory0.create<KtElement>(ERROR)
+    val TYPE_MISMATCH = DiagnosticFactory2.create<KtElement, ConeKotlinType, ConeKotlinType>(ERROR)
 
     init {
         val klass = FirErrors::class

@@ -82,6 +82,7 @@ dependencies {
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:java"))
+    compile(project(":compiler:fir:jvm"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
@@ -188,12 +189,16 @@ dependencies {
         testRuntime(intellijPluginDep("git4idea"))
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
+    }
+
+    if (Ide.AS36()) {
         testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 
     performanceTestCompile(sourceSets["test"].output)
     performanceTestCompile(sourceSets["main"].output)
     performanceTestCompile(project(":nj2k"))
+    performanceTestCompile(project(":idea:idea-gradle-tooling-api"))
     performanceTestCompile(intellijPluginDep("gradle"))
     performanceTestRuntime(sourceSets["performanceTest"].output)
 }
@@ -220,6 +225,7 @@ projectTest(taskName = "performanceTest") {
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
 
     maxHeapSize = "3g"
+    jvmArgs("-Didea.debug.mode=true")
     jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
     jvmArgs(
         "-XX:ReservedCodeCacheSize=240m",

@@ -1,14 +1,6 @@
 FILE: whenAsReceiver.kt
     public final fun <T, R> R|T|.also(block: R|() -> R|): R|R| {
-        ^also when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
-            ==($subj$, Null(null)) ->  {
-                throw <Unresolved name: KotlinNullPointerException>#()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-
+        ^also Null(null)!!
     }
     public final fun foo(b: R|kotlin/Boolean|, a: R|kotlin/Int|): R|kotlin/Unit| {
         lval x: R|kotlin/Int?| = when (R|<local>/b|) {

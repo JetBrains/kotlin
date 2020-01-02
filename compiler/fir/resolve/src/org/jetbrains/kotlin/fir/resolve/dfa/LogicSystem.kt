@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import com.google.common.collect.ArrayListMultimap
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 interface Flow {
@@ -17,7 +18,7 @@ interface Flow {
     fun removeConditionalInfos(variable: DataFlowVariable): Collection<ConditionalFirDataFlowInfo>
 }
 
-abstract class LogicSystem(private val context: DataFlowInferenceContext) {
+abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     // ------------------------------- Flow operations -------------------------------
 

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.DummyTraces;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
@@ -77,7 +78,8 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
 
     private TypeParameterDescriptor createTypeVariable(String name) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
-                module, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT, Name.identifier(name), 0
+                module, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
+                Name.identifier(name), 0, LockBasedStorageManager.NO_LOCKS
         );
     }
 

@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 
 abstract class AbstractCoroutineDumpTest : KotlinDescriptorTestCaseWithStepping() {
-
-
     override fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences) {
-
         doOnBreakpoint {
             val evalContext = EvaluationContextImpl(this, frameProxy)
             val execContext = ExecutionContext(evalContext, frameProxy ?: return@doOnBreakpoint)

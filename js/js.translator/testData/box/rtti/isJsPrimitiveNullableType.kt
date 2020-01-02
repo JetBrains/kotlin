@@ -6,6 +6,7 @@ val STRING = 2
 val BOOLEAN = 3
 val OBJECT = 4
 val FUNCTION = 5
+val FUNCTION0 = FUNCTION // right now we can't distinguish functions with different arity
 
 fun testNullable(a: Any?, actualType: Int) {
     assertEquals(a == null || actualType == NUMBER, a is Int?, "$a is Int?")
@@ -13,7 +14,8 @@ fun testNullable(a: Any?, actualType: Int) {
     assertEquals(a == null || actualType == NUMBER, a is Double?, "$a is Double?")
     assertEquals(a == null || actualType == BOOLEAN, a is Boolean?, "$a is Boolean?")
     assertEquals(a == null || actualType == STRING, a is String?, "$a is String?")
-    assertEquals(a == null || actualType == FUNCTION, a is Function0<*>?, "$a is Function?")
+    assertEquals(a == null || actualType == FUNCTION0, a is Function0<*>?, "$a is Function0?")
+    assertEquals(a == null || actualType == FUNCTION || actualType == FUNCTION0, a is Function<*>?, "$a is Function?")
 }
 
 fun box(): String {
@@ -28,12 +30,16 @@ fun box(): String {
     testNullable(false, BOOLEAN)
 
     testNullable(object {}, OBJECT)
+    testNullable({}, FUNCTION0)
+
     testNullable({}, FUNCTION)
+    testNullable({a: Any -> }, FUNCTION)
 
     testNullable(null, NUMBER)
     testNullable(null, STRING)
     testNullable(null, BOOLEAN)
     testNullable(null, OBJECT)
+    testNullable(null, FUNCTION0)
     testNullable(null, FUNCTION)
 
     return "OK"

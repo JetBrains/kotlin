@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.testIntegration.GotoTestOrCodeHandler
 
 abstract class AbstractGotoTestOrCodeActionTest : AbstractNavigationTest() {
-    private object Handler: GotoTestOrCodeHandler() {
+    private object Handler : GotoTestOrCodeHandler() {
         public override fun getSourceAndTargetElements(editor: Editor?, file: PsiFile?) = super.getSourceAndTargetElements(editor, file)
     }
 

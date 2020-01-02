@@ -86,10 +86,77 @@ class Strings {
     }
 
     @Sample
+    fun associate() {
+        val string = "bonne journée"
+        // associate each character with its code
+        val result = string.associate { char -> char to char.toInt() }
+        // notice each letter occurs only once
+        assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
+    fun associateBy() {
+        val string = "bonne journée"
+        // associate each character by its code
+        val result = string.associateBy { char -> char.toInt() }
+        // notice each char code occurs only once
+        assertPrints(result, "{98=b, 111=o, 110=n, 101=e, 32= , 106=j, 117=u, 114=r, 233=é}")
+    }
+
+    @Sample
+    fun associateByWithValueTransform() {
+        val string = "bonne journée"
+        // associate each character by the code of its upper case equivalent and transform the character to upper case
+        val result = string.associateBy({ char -> char.toUpperCase().toInt() }, { char -> char.toUpperCase() })
+        // notice each char code occurs only once
+        assertPrints(result, "{66=B, 79=O, 78=N, 69=E, 32= , 74=J, 85=U, 82=R, 201=É}")
+    }
+
+    @Sample
+    fun associateByTo() {
+        val string = "bonne journée"
+        // associate each character by its code
+        val result = mutableMapOf<Int, Char>()
+        string.associateByTo(result) { char -> char.toInt() }
+        // notice each char code occurs only once
+        assertPrints(result, "{98=b, 111=o, 110=n, 101=e, 32= , 106=j, 117=u, 114=r, 233=é}")
+    }
+
+    @Sample
+    fun associateByToWithValueTransform() {
+        val string = "bonne journée"
+        // associate each character by the code of its upper case equivalent and transform the character to upper case
+        val result = mutableMapOf<Int, Char>()
+        string.associateByTo(result, { char -> char.toUpperCase().toInt() }, { char -> char.toUpperCase() })
+        // notice each char code occurs only once
+        assertPrints(result, "{66=B, 79=O, 78=N, 69=E, 32= , 74=J, 85=U, 82=R, 201=É}")
+    }
+
+    @Sample
+    fun associateTo() {
+        val string = "bonne journée"
+        // associate each character with its code
+        val result = mutableMapOf<Char, Int>()
+        string.associateTo(result) { char -> char to char.toInt() }
+        // notice each letter occurs only once
+        assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
     fun associateWith() {
         val string = "bonne journée"
         // associate each character with its code
         val result = string.associateWith { char -> char.toInt() }
+        // notice each letter occurs only once
+        assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
+    fun associateWithTo() {
+        val string = "bonne journée"
+        // associate each character with its code
+        val result = mutableMapOf<Char, Int>()
+        string.associateWithTo(result) { char -> char.toInt() }
         // notice each letter occurs only once
         assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
     }
@@ -137,6 +204,7 @@ class Strings {
         val noPadding = "abcde".padEnd(3)
         assertPrints("'$noPadding'", "'abcde'")
     }
+
     @Sample
     fun clearStringBuilder() {
         val builder = StringBuilder()
@@ -290,4 +358,19 @@ class Strings {
         assertPrints(string.map { it.toUpperCase() }, "[K, O, T, L, I, N]")
     }
 
+    @Sample
+    fun indexOf() {
+        fun matchDetails(inputString: String, whatToFind: String, startIndex: Int = 0): String {
+            val matchIndex = inputString.indexOf(whatToFind, startIndex)
+            return "Searching for '$whatToFind' in '$inputString' starting at position $startIndex: " +
+                    if (matchIndex >= 0) "Found at $matchIndex" else "Not found"
+        }
+
+        val inputString = "Never ever give up"
+        val toFind = "ever"
+
+        assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 0: Found at 1")
+        assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
+        assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
+    }
 }

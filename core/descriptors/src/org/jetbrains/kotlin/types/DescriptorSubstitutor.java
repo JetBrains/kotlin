@@ -40,7 +40,9 @@ public class DescriptorSubstitutor {
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result
     ) {
-        TypeSubstitutor substitutor = substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null);
+        TypeSubstitutor substitutor = substituteTypeParameters(
+                typeParameters, originalSubstitution, newContainingDeclaration, result, null
+        );
         if (substitutor == null) throw new AssertionError("Substitution failed");
         return substitutor;
     }
@@ -65,7 +67,8 @@ public class DescriptorSubstitutor {
                     descriptor.getVariance(),
                     descriptor.getName(),
                     index++,
-                    SourceElement.NO_SOURCE
+                    SourceElement.NO_SOURCE,
+                    descriptor.getStorageManager()
             );
 
             mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substituted.getDefaultType()));

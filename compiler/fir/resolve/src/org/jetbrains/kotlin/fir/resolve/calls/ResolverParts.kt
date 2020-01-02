@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -83,7 +81,11 @@ internal sealed class CheckReceivers : ResolutionStage() {
         override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
-            return (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
+            val receiverType = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
+            if (receiverType != null) return receiverType
+            val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
+            if (!returnTypeRef.isExtensionFunctionType()) return null
+            return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeTypedProjection)?.type
         }
     }
 
@@ -108,14 +110,13 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     sink = sink,
                     isReceiver = true,
                     isDispatch = this is Dispatch,
-                    isSafeCall = callInfo.isSafeCall,
-                    typeProvider = callInfo.typeProvider
+                    isSafeCall = callInfo.isSafeCall
                 )
-                sink.yield()
+                sink.yieldIfNeed()
             } else {
                 val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
                 if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeCheckedAgainstImplicit()) {
-                    resolvePlainArgumentType(
+                    candidate.resolvePlainArgumentType(
                         candidate.csBuilder,
                         argumentType = argumentExtensionReceiverValue.type,
                         expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type),
@@ -124,7 +125,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                         isDispatch = this is Dispatch,
                         isSafeCall = callInfo.isSafeCall
                     )
-                    sink.yield()
+                    sink.yieldIfNeed()
                 }
             }
         }
@@ -154,13 +155,12 @@ internal object CheckArguments : CheckerStage() {
                 parameter,
                 isReceiver = false,
                 isSafeCall = false,
-                typeProvider = callInfo.typeProvider,
                 sink = sink
             )
             if (candidate.system.hasContradiction) {
                 sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
             }
-            sink.yield()
+            sink.yieldIfNeed()
         }
     }
 }

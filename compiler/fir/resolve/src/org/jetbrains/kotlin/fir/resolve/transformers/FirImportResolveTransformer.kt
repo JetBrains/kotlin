@@ -33,6 +33,7 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer<Nothing?>(phase
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+        file.replaceResolvePhase(transformerPhase)
         session = file.session
         symbolProvider = FirSymbolProvider.getInstance(file.session)
         return file.also { it.transformChildren(this, null) }.compose()

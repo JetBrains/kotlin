@@ -57,6 +57,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is FirAmbiguityError -> FirErrors.AMBIGUITY.onSource(source, diagnostic.candidates)
             is FirOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.onSource(source, diagnostic.candidates)
             is FirVariableExpectedError -> Errors.VARIABLE_EXPECTED.onSource(source)
+            is FirTypeMismatchError -> FirErrors.TYPE_MISMATCH.onSource(source, diagnostic.expectedType, diagnostic.actualType)
             is FirSimpleDiagnostic -> diagnostic.getFactory().onSource(source)
             is FirStubDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")

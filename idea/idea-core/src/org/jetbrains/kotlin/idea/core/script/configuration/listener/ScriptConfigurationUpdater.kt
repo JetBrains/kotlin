@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.listener
 
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
 import org.jetbrains.kotlin.psi.KtFile
 
 interface ScriptConfigurationUpdater {
@@ -24,7 +25,7 @@ interface ScriptConfigurationUpdater {
     fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean
 
     /**
-     * Invalidate current configuration and start loading new
+     * Invalidate current configuration
      */
-    fun forceConfigurationReload(file: KtFile)
+    fun postponeConfigurationReload(scope: ScriptConfigurationCacheScope)
 }

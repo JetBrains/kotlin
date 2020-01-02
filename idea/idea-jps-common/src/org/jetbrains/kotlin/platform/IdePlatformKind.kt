@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,9 @@
 package org.jetbrains.kotlin.platform
 
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.isJps
+import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
@@ -75,7 +75,9 @@ val TargetPlatform.idePlatformKind: IdePlatformKind<*>
     get() = IdePlatformKind.ALL_KINDS.filter { it.supportsTargetPlatform(this) }.let { list ->
         when {
             list.size == 1 -> list.first()
-            list.size > 1 -> list.first().also { Logger.getInstance(IdePlatformKind.javaClass).warn("Found more than one IdePlatformKind [$list] for target [$this].") }
+            list.size > 1 -> list.first().also {
+                Logger.getInstance(IdePlatformKind.javaClass).warn("Found more than one IdePlatformKind [$list] for target [$this].")
+            }
             else -> error("Unknown platform $this")
         }
     }

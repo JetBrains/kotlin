@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.idea.references.KtSimpleReference
-import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.usagesSearch.searchReferencesOrMethodReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -49,13 +49,13 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntention<KtTypeReference>(
-        KtTypeReference::class.java,
-        "Convert function type receiver to parameter"
+    KtTypeReference::class.java,
+    "Convert function type receiver to parameter"
 ) {
     class ConversionData(
-            val functionParameterIndex: Int,
-            val lambdaReceiverType: KotlinType,
-            val function: KtFunction
+        val functionParameterIndex: Int,
+        val lambdaReceiverType: KotlinType,
+        val function: KtFunction
     ) {
         val functionDescriptor by lazy { function.unsafeResolveToDescriptor() as FunctionDescriptor }
     }
@@ -92,8 +92,8 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
             val psiFactory = KtPsiFactory(project)
 
             val validator = CollectingNameValidator(
-                    lambda.valueParameters.mapNotNull { it.name },
-                    NewDeclarationNameValidator(lambda.bodyExpression!!, null, NewDeclarationNameValidator.Target.VARIABLES)
+                lambda.valueParameters.mapNotNull { it.name },
+                NewDeclarationNameValidator(lambda.bodyExpression!!, null, NewDeclarationNameValidator.Target.VARIABLES)
             )
             val newParameterName = KotlinNameSuggester.suggestNamesByType(data.lambdaReceiverType, validator, "p").first()
             val newParameterRefExpression = psiFactory.createExpression(newParameterName)
@@ -112,7 +112,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
     }
 
     private inner class Converter(
-            private val data: ConversionData
+        private val data: ConversionData
     ) : CallableRefactoring<CallableDescriptor>(data.function.project, data.functionDescriptor, text) {
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
             val callables = getAffectedCallables(project, descriptorsForChange)
@@ -123,7 +123,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
 
             project.runSynchronouslyWithProgress("Looking for usages and conflicts...", true) {
                 runReadAction {
-                    val progressStep = 1.0/callables.size
+                    val progressStep = 1.0 / callables.size
                     for ((i, callable) in callables.withIndex()) {
                         ProgressManager.getInstance().progressIndicator!!.fraction = (i + 1) * progressStep
 
@@ -155,21 +155,27 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
             }
         }
 
-        private fun processExternalUsage(ref: KtSimpleReference<*>, usages: java.util.ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>) {
+        private fun processExternalUsage(
+            ref: KtSimpleReference<*>,
+            usages: java.util.ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>
+        ) {
             val callElement = ref.element.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return
             val context = callElement.analyze(BodyResolveMode.PARTIAL)
             val expressionToProcess = callElement
-                                              .getArgumentByParameterIndex(data.functionParameterIndex, context)
-                                              .singleOrNull()
-                                              ?.getArgumentExpression()
-                                              ?.let { KtPsiUtil.safeDeparenthesize(it) }
-                                      ?: return
+                .getArgumentByParameterIndex(data.functionParameterIndex, context)
+                .singleOrNull()
+                ?.getArgumentExpression()
+                ?.let { KtPsiUtil.safeDeparenthesize(it) }
+                ?: return
             if (expressionToProcess is KtLambdaExpression) {
                 usages += LambdaInfo(expressionToProcess)
             }
         }
 
-        private fun processInternalUsages(callable: KtFunction, usages: java.util.ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>) {
+        private fun processInternalUsages(
+            callable: KtFunction,
+            usages: java.util.ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>
+        ) {
             val body = when (callable) {
                 is KtConstructor<*> -> callable.containingClassOrObject?.getBody()
                 else -> callable.bodyExpression
@@ -189,9 +195,9 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
         val functionTypeReceiver = parent as? KtFunctionTypeReceiver ?: return null
         val functionType = functionTypeReceiver.parent as? KtFunctionType ?: return null
         val lambdaReceiverType = functionType
-                                         .getAbbreviatedTypeOrType(functionType.analyze(BodyResolveMode.PARTIAL))
-                                         ?.getReceiverTypeFromFunctionType()
-                                 ?: return null
+            .getAbbreviatedTypeOrType(functionType.analyze(BodyResolveMode.PARTIAL))
+            ?.getReceiverTypeFromFunctionType()
+            ?: return null
         val containingParameter = (functionType.parent as? KtTypeReference)?.parent as? KtParameter ?: return null
         val ownerFunction = containingParameter.ownerFunction as? KtFunction ?: return null
         val functionParameterIndex = ownerFunction.valueParameters.indexOf(containingParameter)
@@ -206,8 +212,8 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
         val elementBefore = data.function.valueParameters[data.functionParameterIndex].typeReference!!.typeElement as KtFunctionType
         val elementAfter = elementBefore.copied().apply {
             parameterList!!.addParameterBefore(
-                    KtPsiFactory(element).createFunctionTypeParameter(element),
-                    parameterList!!.parameters.firstOrNull()
+                KtPsiFactory(element).createFunctionTypeParameter(element),
+                parameterList!!.parameters.firstOrNull()
             )
             setReceiverTypeReference(null)
         }

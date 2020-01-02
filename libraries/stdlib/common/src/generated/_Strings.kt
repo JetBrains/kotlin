@@ -583,6 +583,8 @@ public inline fun String.reversed(): String {
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original char sequence.
+ * 
+ * @sample samples.text.Strings.associate
  */
 public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(length).coerceAtLeast(16)
@@ -596,6 +598,8 @@ public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>)
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original char sequence.
+ * 
+ * @sample samples.text.Strings.associateBy
  */
 public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
     val capacity = mapCapacity(length).coerceAtLeast(16)
@@ -608,6 +612,8 @@ public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K,
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original char sequence.
+ * 
+ * @sample samples.text.Strings.associateByWithValueTransform
  */
 public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
     val capacity = mapCapacity(length).coerceAtLeast(16)
@@ -620,6 +626,8 @@ public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valu
  * and value is the character itself.
  * 
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.text.Strings.associateByTo
  */
 public inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
@@ -634,6 +642,8 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(
  * and value is provided by the [valueTransform] function applied to characters of the given char sequence.
  * 
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.text.Strings.associateByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
@@ -647,6 +657,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(
  * provided by [transform] function applied to each character of the given char sequence.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.text.Strings.associateTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
     for (element in this) {
@@ -676,6 +688,8 @@ public inline fun <V> CharSequence.associateWith(valueSelector: (Char) -> V): Ma
  * where key is the character itself and value is provided by the [valueSelector] function applied to that key.
  * 
  * If any two characters are equal, the last one overwrites the former value in the map.
+ * 
+ * @sample samples.text.Strings.associateWithTo
  */
 @SinceKotlin("1.3")
 public inline fun <V, M : MutableMap<in Char, in V>> CharSequence.associateWithTo(destination: M, valueSelector: (Char) -> V): M {
@@ -735,6 +749,8 @@ public fun CharSequence.toSet(): Set<Char> {
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each character of original char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> CharSequence.flatMap(transform: (Char) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -1152,6 +1168,8 @@ public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
 
 /**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1168,6 +1186,8 @@ public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Cha
  * to current accumulator value and each character with its index in the original char sequence.
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1180,7 +1200,26 @@ public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, 
 }
 
 /**
+ * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character. Returns null if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -1197,6 +1236,8 @@ public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char)
  * to each character with its index in the original char sequence and current accumulator value.
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -1205,6 +1246,23 @@ public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, 
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
         --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value. Returns null if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
     }
     return accumulator
 }

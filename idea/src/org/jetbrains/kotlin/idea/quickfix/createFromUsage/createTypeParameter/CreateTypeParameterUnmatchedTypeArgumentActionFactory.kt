@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.storage.StorageManager
 
 object CreateTypeParameterUnmatchedTypeArgumentActionFactory :
     KotlinIntentionActionFactoryWithDelegate<KtTypeArgumentList, CreateTypeParameterData>() {
@@ -61,11 +64,12 @@ object CreateTypeParameterUnmatchedTypeArgumentActionFactory :
                 scope.findClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
             }
         )
+        val storageManager = element.getResolutionFacade().frontendService<StorageManager>()
         val typeParameterInfos = suggestedNames.map { name ->
             TypeParameterInfo(
                 name,
                 null,
-                createFakeTypeParameterDescriptor(referencedDescriptor, name)
+                createFakeTypeParameterDescriptor(referencedDescriptor, name, storageManager)
             )
         }
         return CreateTypeParameterData(referencedDeclaration, typeParameterInfos)

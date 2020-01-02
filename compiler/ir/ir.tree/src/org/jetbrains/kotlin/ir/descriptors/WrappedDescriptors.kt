@@ -101,6 +101,8 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
     fun bind(declaration: T) {
         owner = declaration
     }
+
+    fun isBound(): Boolean = _owner != null
 }
 
 abstract class WrappedCallableDescriptor<T : IrDeclaration>(
@@ -288,6 +290,7 @@ open class WrappedTypeParameterDescriptor(
 
     override fun getDefaultType() = _defaultType
 
+    override fun getStorageManager() = LockBasedStorageManager.NO_LOCKS
 
     override fun getContainingDeclaration() = (owner.parent as IrDeclaration).descriptor
 

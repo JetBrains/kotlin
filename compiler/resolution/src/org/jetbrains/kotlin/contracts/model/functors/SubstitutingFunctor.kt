@@ -28,7 +28,7 @@ class SubstitutingFunctor(
     private val basicEffects: List<ESEffect>,
     private val ownerFunction: FunctionDescriptor
 ) : AbstractFunctor() {
-    override fun doInvocation(arguments: List<Computation>, reducer: Reducer): List<ESEffect> {
+    override fun doInvocation(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect> {
         if (basicEffects.isEmpty()) return emptyList()
 
         val receiver =
@@ -40,7 +40,7 @@ class SubstitutingFunctor(
         }
 
         val substitutions = parameters.zip(arguments).toMap()
-        val substitutor = Substitutor(substitutions, reducer)
+        val substitutor = Substitutor(substitutions, typeSubstitution, reducer)
         val substitutedClauses = mutableListOf<ESEffect>()
 
         effectsLoop@ for (effect in basicEffects) {

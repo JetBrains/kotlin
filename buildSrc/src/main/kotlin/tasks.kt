@@ -100,6 +100,7 @@ fun Project.projectTest(
     maxHeapSize = "1600m"
     systemProperty("idea.is.unit.test", "true")
     systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    systemProperty("java.awt.headless", "true")
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
     environment("PROJECT_CLASSES_DIRS", testSourceSet.output.classesDirs.asPath)
     environment("PROJECT_BUILD_DIR", buildDir)

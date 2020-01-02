@@ -1,0 +1,5 @@
+rootProject.name = "${projectName}"
+
+#foreach($subProject in $subProjects)
+include("${subProject}")
+#end

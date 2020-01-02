@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 class Foo
 
 class C {

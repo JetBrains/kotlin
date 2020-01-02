@@ -107,6 +107,8 @@ class CoroutineInferenceSession(
         return commonSystem.fixedTypeVariables.cast() // TODO: SUB
     }
 
+    override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
+
     private fun createNonFixedTypeToVariableSubstitutor(): NewTypeSubstitutorByConstructorMap {
         val bindings = hashMapOf<TypeConstructor, UnwrappedType>()
         for ((variable, nonFixedType) in stubsForPostponedVariables) {
@@ -206,7 +208,7 @@ class CoroutineInferenceSession(
         val atomCompleter = createResolvedAtomCompleter(resultingSubstitutor, completedCall.context)
         val resultCallAtom = completedCall.callResolutionResult.resultCallAtom
 
-        for (subResolvedAtom in resultCallAtom.subResolvedAtoms) {
+        resultCallAtom.subResolvedAtoms?.forEach { subResolvedAtom ->
             atomCompleter.completeAll(subResolvedAtom)
         }
         atomCompleter.completeResolvedCall(resultCallAtom, completedCall.callResolutionResult.diagnostics)
@@ -235,4 +237,6 @@ class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubsti
             right.substituteNotNullTypeWithConstructor(constructor)?.constructor ?: constructor
         )
     }
+
+    override val isEmpty: Boolean get() = left.isEmpty && right.isEmpty
 }

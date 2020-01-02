@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1224
+// EXPECTED_REACHABLE_NODES: 1372
 package foo
 
 fun f() {}

@@ -111,6 +111,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         valueMap.putAll(replacement.valueParameterMap)
         worker.valueParameters.forEach { it.transformChildrenVoid() }
         worker.body = function.body?.transform(this, null)?.patchDeclarationParents(worker)
+        (worker as? IrAttributeContainer)?.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
         if (function.overriddenSymbols.isEmpty() || worker.dispatchReceiverParameter != null)

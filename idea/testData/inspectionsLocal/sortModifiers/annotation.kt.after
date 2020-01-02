@@ -1,3 +1,4 @@
+// PROBLEM: Modifiers should follow annotations
 annotation class Test
 
 @Test

@@ -1,7 +1,6 @@
 // !LANGUAGE: +PolymorphicSignature
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // FULL_JDK
 // SKIP_JDK6
 // WITH_RUNTIME
@@ -43,6 +42,9 @@ fun box(): String {
     }
     val result3 = (o.p).handle.invoke(C(), "Hello", 0.01, Derived()) as String
     if (result1 != result3) return "Fail 3: $result1 != $result3"
+
+    // Check cast expression without assignment to a variable
+    mh.invoke(C(), "", 0.01, Derived()) as String
 
     return "OK"
 }

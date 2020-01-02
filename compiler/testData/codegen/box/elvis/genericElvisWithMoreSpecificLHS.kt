@@ -1,7 +1,7 @@
 // !LANGUAGE: +NewInference
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 
 fun test(foo: MutableList<String>?): List<String> {
     val bar = foo ?: listOf()

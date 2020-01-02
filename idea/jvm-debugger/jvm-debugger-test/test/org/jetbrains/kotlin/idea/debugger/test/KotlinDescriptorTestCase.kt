@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.ComparisonFailure
 import java.io.File
@@ -222,5 +223,10 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         return super.getData(dataId)
     }
 
+    override fun shouldRunTest(): Boolean {
+        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
+    }
+
     private fun getTestDirectoryPath(): String = javaClass.getAnnotation(TestMetadata::class.java).value
 }
+

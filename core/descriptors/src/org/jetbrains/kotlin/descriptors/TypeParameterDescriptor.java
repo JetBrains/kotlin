@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.Variance;
@@ -53,4 +54,7 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor, TypeParam
      * 3. 'getTypeConstructor' is the same as for original declaration (at least in means of 'equals')
      */
     boolean isCapturedFromOuterDeclaration();
+
+    @NotNull
+    StorageManager getStorageManager();
 }

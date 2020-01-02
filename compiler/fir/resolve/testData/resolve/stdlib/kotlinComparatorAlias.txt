@@ -1,0 +1,13 @@
+FILE: kotlinComparatorAlias.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        lval comp: R|java/util/Comparator<kotlin/Int>| = R|java/util/Comparator|<R|kotlin/Int|>(<L> = Comparator@fun <anonymous>(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
+            Int(1)
+        }
+        )
+    }
+    public final fun test_3(comparator: R|java/util/Comparator<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/comparator|.R|FakeOverride<java/util/Comparator.compare: R|kotlin/Int|>|(Int(1), Int(2))
+    }
+    public final fun test_4(comparator: R|kotlin/Comparator<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/comparator|.R|FakeOverride<java/util/Comparator.compare: R|kotlin/Int|>|(Int(1), Int(2))
+    }

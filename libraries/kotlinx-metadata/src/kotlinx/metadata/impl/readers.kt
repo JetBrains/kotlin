@@ -282,6 +282,10 @@ private fun ProtoBuf.TypeAlias.accept(v: KmTypeAliasVisitor, outer: ReadContext)
         v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
 
+    for (extension in c.extensions) {
+        extension.readTypeAliasExtensions(v, this, c)
+    }
+
     v.visitEnd()
 }
 
@@ -292,6 +296,10 @@ private fun ProtoBuf.ValueParameter.accept(v: KmValueParameterVisitor, c: ReadCo
 
     varargElementType(c.types)?.let { varargElementType ->
         v.visitVarargElementType(varargElementType.typeFlags)?.let { varargElementType.accept(it, c) }
+    }
+
+    for (extension in c.extensions) {
+        extension.readValueParameterExtensions(v, this, c)
     }
 
     v.visitEnd()

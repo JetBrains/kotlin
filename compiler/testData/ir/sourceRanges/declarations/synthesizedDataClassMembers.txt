@@ -38,22 +38,22 @@
           @3:8..18 RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Any declared in <root>.C'
             @3:8..18 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               @3:8..18 GET_VAR '<this>: <root>.C declared in <root>.C.<get-z>' type=<root>.C origin=null
-    @1:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
+    @1:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int [operator]
       @1:8..18 VALUE_PARAMETER name:<this> type:<root>.C
       @1:8..18 BLOCK_BODY
-        @1:8..18 RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.C'
+        @1:8..18 RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.C'
           @1:8..18 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             @1:8..18 GET_VAR '<this>: <root>.C declared in <root>.C.component1' type=<root>.C origin=null
-    @2:8..21 FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String
+    @2:8..21 FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String [operator]
       @2:8..21 VALUE_PARAMETER name:<this> type:<root>.C
       @2:8..21 BLOCK_BODY
-        @2:8..21 RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.C'
+        @2:8..21 RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String [operator] declared in <root>.C'
           @2:8..21 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             @2:8..21 GET_VAR '<this>: <root>.C declared in <root>.C.component2' type=<root>.C origin=null
-    @3:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Any
+    @3:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Any [operator]
       @3:8..18 VALUE_PARAMETER name:<this> type:<root>.C
       @3:8..18 BLOCK_BODY
-        @3:8..18 RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any declared in <root>.C'
+        @3:8..18 RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any [operator] declared in <root>.C'
           @3:8..18 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
             @3:8..18 GET_VAR '<this>: <root>.C declared in <root>.C.component3' type=<root>.C origin=null
     @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.C, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C
@@ -98,10 +98,10 @@
       @0:0..4:1 VALUE_PARAMETER name:<this> type:<root>.C
       @0:0..4:1 BLOCK_BODY
         @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.C'
-          @0:0..4:1 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            @0:0..4:1 CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-              @0:0..4:1 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                @0:0..4:1 CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          @0:0..4:1 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            @0:0..4:1 CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              @0:0..4:1 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+                @0:0..4:1 CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
                   @0:0..4:1 CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
                     @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                       @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.hashCode' type=<root>.C origin=null
@@ -113,7 +113,7 @@
             @0:0..4:1 CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
               @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
                 @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.hashCode' type=<root>.C origin=null
-    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.C, other:kotlin.Any?) returnType:kotlin.Boolean
+    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.C, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       @0:0..4:1 VALUE_PARAMETER name:<this> type:<root>.C
       @0:0..4:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       @0:0..4:1 BLOCK_BODY
@@ -122,46 +122,46 @@
             @0:0..4:1 CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.equals' type=<root>.C origin=null
               @0:0..4:1 GET_VAR 'other: kotlin.Any? declared in <root>.C.equals' type=kotlin.Any? origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
               @0:0..4:1 CONST Boolean type=kotlin.Boolean value=true
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
             @0:0..4:1 TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.C
               @0:0..4:1 GET_VAR 'other: kotlin.Any? declared in <root>.C.equals' type=kotlin.Any? origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
               @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
         @0:0..4:1 VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.C [val]
           @0:0..4:1 TYPE_OP type=<root>.C origin=CAST typeOperand=<root>.C
             @0:0..4:1 GET_VAR 'other: kotlin.Any? declared in <root>.C.equals' type=kotlin.Any? origin=null
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
-            @0:0..4:1 CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            @0:0..4:1 CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               @0:0..4:1 CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                   @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.equals' type=<root>.C origin=null
                 @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                   @0:0..4:1 GET_VAR 'val tmp0_other_with_cast: <root>.C [val] declared in <root>.C.equals' type=<root>.C origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
               @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
-            @0:0..4:1 CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            @0:0..4:1 CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               @0:0..4:1 CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                   @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.equals' type=<root>.C origin=null
                 @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                   @0:0..4:1 GET_VAR 'val tmp0_other_with_cast: <root>.C [val] declared in <root>.C.equals' type=<root>.C origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
               @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH
-            @0:0..4:1 CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            @0:0..4:1 CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               @0:0..4:1 CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
                   @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.equals' type=<root>.C origin=null
                 @0:0..4:1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
                   @0:0..4:1 GET_VAR 'val tmp0_other_with_cast: <root>.C [val] declared in <root>.C.equals' type=<root>.C origin=null
-            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+            @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
               @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
-        @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+        @0:0..4:1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
           @0:0..4:1 CONST Boolean type=kotlin.Boolean value=true

@@ -109,3 +109,6 @@ var KmTypeAlias.uniqId: UniqId?
     set(value) {
         klibExtensions.uniqId = value
     }
+
+val KmValueParameter.annotations: MutableList<KmAnnotation>
+    get() = klibExtensions.annotations

@@ -16,7 +16,7 @@
           @1:4..14 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test1'
             @1:4..14 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @1:4..14 GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
-    @0:9..3:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @0:9..3:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @0:0..3:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @0:9..3:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @0:9..3:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -58,14 +58,14 @@
             @12:8..18 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test2.TestInner'
               @12:8..18 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 @12:8..18 GET_VAR '<this>: <root>.Test2.TestInner declared in <root>.Test2.TestInner.<get-x>' type=<root>.Test2.TestInner origin=null
-      @11:4..13:5 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      @11:4..13:5 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         @10:4..13:5 VALUE_PARAMETER name:<this> type:kotlin.Any
         @11:4..13:5 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       @11:4..13:5 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
         @10:4..13:5 VALUE_PARAMETER name:<this> type:kotlin.Any
       @11:4..13:5 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         @10:4..13:5 VALUE_PARAMETER name:<this> type:kotlin.Any
-    @7:0..14:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @7:0..14:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @5:0..14:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @7:0..14:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @7:0..14:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

@@ -1,0 +1,11 @@
+package
+
+public fun </*0*/ @kotlin.internal.OnlyInputTypes S> strictSelect(/*0*/ arg1: S, /*1*/ arg2: S): S
+public fun test(/*0*/ a: kotlin.collections.List<java.lang.Class<Anno>>): kotlin.Unit
+
+public final annotation class Anno : kotlin.Annotation {
+    public constructor Anno()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

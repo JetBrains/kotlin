@@ -37,19 +37,19 @@ FILE: branches.kt
     }
     public? final? fun grade(g: Int): String {
         ^grade when (g#) {
-            ==($subj$, Int(6)) || ==($subj$, Int(7)) ->  {
+            ==($subj$, IntegerLiteral(6)) || ==($subj$, IntegerLiteral(7)) ->  {
                 String(Outstanding)
             }
-            ==($subj$, Int(5)) ->  {
+            ==($subj$, IntegerLiteral(5)) ->  {
                 String(Excellent)
             }
-            ==($subj$, Int(4)) ->  {
+            ==($subj$, IntegerLiteral(4)) ->  {
                 String(Good)
             }
-            ==($subj$, Int(3)) ->  {
+            ==($subj$, IntegerLiteral(3)) ->  {
                 String(Mediocre)
             }
-            Int(1).rangeTo#(Int(2)).contains#($subj$) ->  {
+            IntegerLiteral(1).rangeTo#(IntegerLiteral(2)).contains#($subj$) ->  {
                 String(Fail)
             }
             ($subj$ is Number) ->  {

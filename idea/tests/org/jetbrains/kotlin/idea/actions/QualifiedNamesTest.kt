@@ -7,20 +7,20 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.ide.actions.CopyReferenceAction
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.LightCodeInsightTestCase
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 import java.util.*
 
+@Suppress("DEPRECATION")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class QualifiedNamesTest: LightCodeInsightTestCase() {
+class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
     fun testClassRef() {
-        LightPlatformCodeInsightTestCase.configureFromFileText(
-                "class.kt",
-                """
+        configureFromFileText_(
+            "class.kt",
+            """
                     package foo.bar
 
                     class Klass {
@@ -37,14 +37,23 @@ class QualifiedNamesTest: LightCodeInsightTestCase() {
                     }
                 """
         )
-        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass.Nested", "foo.bar.Klass.Companion", "foo.bar.Object", "foo.bar.ClassKt#getAnonymous", null),
-                     getQualifiedNamesForDeclarations())
+        assertEquals(
+            listOf(
+                "foo.bar.Klass",
+                "foo.bar.Klass.Nested",
+                "foo.bar.Klass.Companion",
+                "foo.bar.Object",
+                "foo.bar.ClassKt#getAnonymous",
+                null
+            ),
+            getQualifiedNamesForDeclarations()
+        )
     }
 
     fun testFunRef() {
-        LightPlatformCodeInsightTestCase.configureFromFileText(
-                "fun.kt",
-                """
+        configureFromFileText_(
+            "fun.kt",
+            """
                     package foo.bar
 
                     class Klass {
@@ -59,13 +68,21 @@ class QualifiedNamesTest: LightCodeInsightTestCase() {
                     val topLevelVal = ":)"
                 """
         )
-        assertEquals(listOf("foo.bar.Klass", "foo.bar.Klass#memberFun", "foo.bar.Klass#getMemberVal", "foo.bar.FunKt#topLevelFun", "foo.bar.FunKt#getTopLevelVal"),
-                     getQualifiedNamesForDeclarations())
+        assertEquals(
+            listOf(
+                "foo.bar.Klass",
+                "foo.bar.Klass#memberFun",
+                "foo.bar.Klass#getMemberVal",
+                "foo.bar.FunKt#topLevelFun",
+                "foo.bar.FunKt#getTopLevelVal"
+            ),
+            getQualifiedNamesForDeclarations()
+        )
     }
 
     private fun getQualifiedNamesForDeclarations(): List<String?> {
         val result = ArrayList<String?>()
-        LightPlatformCodeInsightTestCase.myFile.accept(object : KtVisitorVoid() {
+        file_.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }

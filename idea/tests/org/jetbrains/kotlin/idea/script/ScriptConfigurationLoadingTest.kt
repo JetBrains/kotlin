@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.script
 
+import org.jetbrains.kotlin.psi.KtFile
+
 class ScriptConfigurationLoadingTest : AbstractScriptConfigurationLoadingTest() {
     fun testSimple() {
         assertAndLoadInitialConfiguration()
@@ -158,10 +160,10 @@ class ScriptConfigurationLoadingTest : AbstractScriptConfigurationLoadingTest() 
 
     fun testLoadingForUsagesSearch() {
         assertAndLoadInitialConfiguration()
-        assertTrue(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(ktFile)))
+        assertTrue(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
 
         changeContents("A")
-        assertFalse(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(ktFile)))
+        assertFalse(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
     }
 
     fun testReportsOnAutoApply() {

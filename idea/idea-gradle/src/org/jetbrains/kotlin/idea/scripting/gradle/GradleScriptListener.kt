@@ -5,24 +5,38 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.DefaultScriptChangeListener
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
-import org.jetbrains.kotlin.psi.KtFile
 
-class GradleScriptListener : DefaultScriptChangeListener() {
-    private val listenGradleRelatedFiles = false // todo
+open class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
+    init {
+        // start GradleScriptInputsWatcher to track changes in gradle-configuration related files
+        project.service<GradleScriptInputsWatcher>().startWatching()
+    }
 
-    override fun editorActivated(file: KtFile, updater: ScriptConfigurationUpdater): Boolean {
-        if (!isGradleKotlinScript(file.virtualFile)) return false
-        if (listenGradleRelatedFiles) {
-            updater.ensureUpToDatedConfigurationSuggested(file)
-            // todo: force reload if related files changed
+    override fun editorActivated(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
+        if (useScriptConfigurationFromImportOnly()) {
+            // do nothing
         } else {
-            // configuration will be reloaded after editor activation, even it is already up-to-date
-            // this is required for Gradle scripts, since it's classpath may depend on other files (`.properties` for example)
-            updater.forceConfigurationReload(file)
+            val file = getAnalyzableKtFileForScript(vFile) ?: return
+            updater.ensureUpToDatedConfigurationSuggested(file)
         }
+    }
 
-        return true
+    override fun documentChanged(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
+        val file = getAnalyzableKtFileForScript(vFile)
+        if (file != null) {
+            // *.gradle.kts file was changed
+            updater.ensureUpToDatedConfigurationSuggested(file)
+        }
+    }
+
+    override fun isApplicable(vFile: VirtualFile): Boolean {
+        if (!isGradleKotlinScript(vFile)) return false
+
+        return isInAffectedGradleProjectFiles(project, vFile)
     }
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInsight.CodeInsightWorkspaceSettings
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
@@ -42,6 +41,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
@@ -119,7 +119,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val problems = data.unusedImports.map {
             val fixes = arrayListOf<LocalQuickFix>()
             fixes.add(OptimizeImportsQuickFix(file))
-            if (!CodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
+            if (!KotlinCodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
                 fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
             manager.createProblemDescriptor(
@@ -139,7 +139,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     }
 
     private fun scheduleOptimizeImportsOnTheFly(file: KtFile, data: OptimizedImportsBuilder.InputData) {
-        if (!CodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) return
+        if (!KotlinCodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) return
         val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, data) ?: return // return if already optimized
 
         // unwrap progress indicator
@@ -235,7 +235,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = name
 
         override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
-            CodeInsightWorkspaceSettings.getInstance(project).optimizeImportsOnTheFly = true
+            KotlinCodeInsightWorkspaceSettings.getInstance(project).optimizeImportsOnTheFly = true
             OptimizeImportsProcessor(
                 project,
                 file

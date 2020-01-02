@@ -18,17 +18,13 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
-import org.jetbrains.kotlin.backend.jvm.JvmStubGeneratorExtensions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsGeneratorExtensions
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -115,39 +111,30 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                     moduleDescriptors = emptyList(),
                     friendModuleDescriptors = emptyList()
                 ),
-                psi2ir, ktFilesToAnalyze, JsGeneratorExtensions(), StubGeneratorExtensions.EMPTY
+                psi2ir, ktFilesToAnalyze, JsGeneratorExtensions()
             )
 
         fun generateIrModuleWithJvmResolve(
             ktFilesToAnalyze: List<KtFile>, environment: KotlinCoreEnvironment, psi2ir: Psi2IrTranslator
         ): IrModuleFragment =
             generateIrModule(
-                JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze, JvmGeneratorExtensions,
-                IrTestStubGeneratorExtensions
+                JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze,
+                JvmGeneratorExtensions(generateFacades = false)
             )
 
         private fun generateIrModule(
             analysisResult: AnalysisResult,
             psi2ir: Psi2IrTranslator,
             ktFilesToAnalyze: List<KtFile>,
-            generatorExtensions: GeneratorExtensions,
-            stubGeneratorExtensions: StubGeneratorExtensions
+            generatorExtensions: GeneratorExtensions
         ): IrModuleFragment {
             if (!psi2ir.configuration.ignoreErrors) {
                 analysisResult.throwIfError()
                 AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
             }
             return psi2ir.generateModule(
-                analysisResult.moduleDescriptor, ktFilesToAnalyze, analysisResult.bindingContext, generatorExtensions,
-                stubGeneratorExtensions
+                analysisResult.moduleDescriptor, ktFilesToAnalyze, analysisResult.bindingContext, generatorExtensions
             )
         }
-    }
-
-    private object IrTestStubGeneratorExtensions : StubGeneratorExtensions() {
-        private val jvm = JvmStubGeneratorExtensions()
-
-        override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? =
-            jvm.computeExternalDeclarationOrigin(descriptor)
     }
 }

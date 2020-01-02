@@ -117,7 +117,8 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                         val token = context.file.findElementAt(offset1)!!
                         if (token.node.elementType == KtTokens.LT) {
                             val parent = token.parent
-                            if (parent is KtTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
+                            /* if type argument list is on multiple lines this is more likely wrong parsing*/
+                            if (parent is KtTypeArgumentList && parent.getText().indexOf('\n') < 0) {
                                 offset = parent.endOffset
                                 insertTypeArguments = false
                             }

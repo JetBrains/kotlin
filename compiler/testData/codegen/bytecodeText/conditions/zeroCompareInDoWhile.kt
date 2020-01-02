@@ -1,5 +1,4 @@
-// Generates ICONST_1
-val a = 1
+val a = 2
 
 fun main() {
     // Generates IFEQ
@@ -29,7 +28,7 @@ fun main() {
 }
 
 //0 ICONST_0
-//1 ICONST_1
+//0 ICONST_1
 //1 IFEQ
 //1 IFLE
 //1 IFLT

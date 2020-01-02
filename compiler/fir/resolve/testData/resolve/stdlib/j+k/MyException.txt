@@ -6,17 +6,17 @@ FILE: test.kt
 
     }
     public final fun test(e: R|MyException|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
-        R|<local>/e|.R|kotlin/printStackTrace|()
+        R|<local>/e|.R|java/lang/Throwable.printStackTrace|()
         R|<local>/e|.R|kotlin/printStackTrace|(R|<local>/stream|)
         lval result: <ERROR TYPE REF: Unresolved name: getLocalizedMessage> = R|<local>/e|.<Unresolved name: getLocalizedMessage>#()
     }
     public final fun test(e: R|YourException|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
-        R|<local>/e|.R|kotlin/printStackTrace|()
+        R|<local>/e|.R|java/lang/Throwable.printStackTrace|()
         R|<local>/e|.R|kotlin/printStackTrace|(R|<local>/stream|)
         lval result: <ERROR TYPE REF: Unresolved name: getLocalizedMessage> = R|<local>/e|.<Unresolved name: getLocalizedMessage>#()
     }
     public final fun test(e: R|kotlin/Exception|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
-        R|<local>/e|.R|kotlin/printStackTrace|()
+        R|<local>/e|.R|java/lang/Throwable.printStackTrace|()
         R|<local>/e|.R|kotlin/printStackTrace|(R|<local>/stream|)
         lval result: <ERROR TYPE REF: Unresolved name: getLocalizedMessage> = R|<local>/e|.<Unresolved name: getLocalizedMessage>#()
     }

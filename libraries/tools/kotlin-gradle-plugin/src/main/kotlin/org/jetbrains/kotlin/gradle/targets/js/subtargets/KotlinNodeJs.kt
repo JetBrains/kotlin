@@ -24,8 +24,8 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
     }
 
-    override fun configureDefaultTestFramework(it: KotlinJsTest) {
-        it.useMocha { }
+    override fun configureDefaultTestFramework(testTask: KotlinJsTest) {
+        testTask.useMocha { }
     }
 
     override fun configureMain(compilation: KotlinJsCompilation) {

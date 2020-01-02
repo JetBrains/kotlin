@@ -2,10 +2,13 @@
 abstract class A {
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val x: Int
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val y: Int
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val z: Int
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     abstract val t: Int
 

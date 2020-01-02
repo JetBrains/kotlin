@@ -60,9 +60,13 @@ class CoroutineTransformerMethodVisitor(
     private val isForNamedFunction: Boolean,
     private val shouldPreserveClassInitialization: Boolean,
     private val languageVersionSettings: LanguageVersionSettings,
-    // These two are needed to report diagnostics about suspension points inside critical section
-    private val element: KtElement,
-    private val diagnostics: DiagnosticSink,
+    // Since tail-call optimization of functions with Unit return type relies on ability of call-site to recognize them,
+    // in order to ignore return value and push Unit, when we cannot ensure this ability, for example, when the function overrides function,
+    // returning Any, we need to disable tail-call optimization for these functions.
+    private val disableTailCallOptimizationForFunctionReturningUnit: Boolean,
+    private val reportSuspensionPointInsideMonitor: (String) -> Unit,
+    private val lineNumber: Int,
+    private val sourceFile: String,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
@@ -72,8 +76,6 @@ class CoroutineTransformerMethodVisitor(
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
-    private val lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
-    private val sourceFile = element.containingKtFile.name
 
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
@@ -111,7 +113,8 @@ class CoroutineTransformerMethodVisitor(
             val examiner = MethodNodeExaminer(
                 languageVersionSettings,
                 containingClassInternalName,
-                methodNode
+                methodNode,
+                disableTailCallOptimizationForFunctionReturningUnit
             )
             if (examiner.allSuspensionPointsAreTailCalls(suspensionPoints)) {
                 examiner.replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks()
@@ -310,7 +313,7 @@ class CoroutineTransformerMethodVisitor(
                     sourceFile,
                     findSuspensionPointLineNumber(suspensionPoint)?.line ?: -1
                 )
-                diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(element, "$stackTraceElement"))
+                reportSuspensionPointInsideMonitor("$stackTraceElement")
                 return
             }
         }
@@ -783,13 +786,15 @@ class CoroutineTransformerMethodVisitor(
             // See 'splitTryCatchBlocksContainingSuspensionPoint'
             val possibleTryCatchBlockStart = suspension.tryCatchBlocksContinuationLabel
 
-            // Remove NOP as it's unnecessary anymore
+            // Move NOP, which is inserted in `splitTryCatchBlocksContainingSuspentionPoint`, inside the try catch block,
+            // so the inliner can transform suspend lambdas during inlining
             assert(possibleTryCatchBlockStart.previous.opcode == Opcodes.NOP) {
                 "NOP expected but ${possibleTryCatchBlockStart.previous.opcode} was found"
             }
             remove(possibleTryCatchBlockStart.previous)
 
             insert(possibleTryCatchBlockStart, withInstructionAdapter {
+                nop()
                 generateResumeWithExceptionCheck(languageVersionSettings.isReleaseCoroutines(), dataIndex, exceptionIndex)
 
                 // Load continuation argument just like suspending function returns it
@@ -897,7 +902,8 @@ class CoroutineTransformerMethodVisitor(
 private class MethodNodeExaminer(
     val languageVersionSettings: LanguageVersionSettings,
     val containingClassInternalName: String,
-    val methodNode: MethodNode
+    val methodNode: MethodNode,
+    disableTailCallOptimizationForFunctionReturningUnit: Boolean
 ) {
     private val sourceFrames: Array<Frame<SourceValue>?> =
         MethodTransformer.analyze(containingClassInternalName, methodNode, IgnoringCopyOperationSourceInterpreter())
@@ -910,25 +916,27 @@ private class MethodNodeExaminer(
     private val meaningfulPredecessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
 
     init {
-        // retrieve all POP insns
-        val pops = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }
-        // for each of them check that all successors are PUSH Unit
-        val popsBeforeUnitInstances = pops.map { it to it.meaningfulSuccessors() }
-            .filter { (_, succs) -> succs.all { it.isUnitInstance() } }
-            .map { it.first }.toList()
-        for (pop in popsBeforeUnitInstances) {
-            val units = pop.meaningfulSuccessors()
-            val allUnitsAreSafe = units.all { unit ->
-                // check no other predecessor exists
-                unit.meaningfulPredecessors().all { it in popsBeforeUnitInstances } &&
-                        // check they have only returns among successors
-                        unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
+        if (!disableTailCallOptimizationForFunctionReturningUnit) {
+            // retrieve all POP insns
+            val pops = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }
+            // for each of them check that all successors are PUSH Unit
+            val popsBeforeUnitInstances = pops.map { it to it.meaningfulSuccessors() }
+                .filter { (_, succs) -> succs.all { it.isUnitInstance() } }
+                .map { it.first }.toList()
+            for (pop in popsBeforeUnitInstances) {
+                val units = pop.meaningfulSuccessors()
+                val allUnitsAreSafe = units.all { unit ->
+                    // check no other predecessor exists
+                    unit.meaningfulPredecessors().all { it in popsBeforeUnitInstances } &&
+                            // check they have only returns among successors
+                            unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
+                }
+                if (!allUnitsAreSafe) continue
+                // save them all to the properties
+                popsBeforeSafeUnitInstances += pop
+                safeUnitInstances += units
+                units.flatMapTo(areturnsAfterSafeUnitInstances) { it.meaningfulSuccessors() }
             }
-            if (!allUnitsAreSafe) continue
-            // save them all to the properties
-            popsBeforeSafeUnitInstances += pop
-            safeUnitInstances += units
-            units.flatMapTo(areturnsAfterSafeUnitInstances) { it.meaningfulSuccessors() }
         }
     }
 

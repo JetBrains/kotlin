@@ -1,0 +1,14 @@
+import kotlinx.html.div
+import kotlinx.html.dom.append
+import kotlin.browser.document
+import kotlin.browser.window
+
+fun main() {
+    window.onload = {
+        document.body?.append {
+            div {
+                +"Hello from JS"
+            }
+        }
+    }
+}

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
@@ -51,11 +40,11 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.sure
 
 class KotlinCallableDefinitionUsage<T : PsiElement>(
-        function: T,
-        val originalCallableDescriptor: CallableDescriptor,
-        baseFunction: KotlinCallableDefinitionUsage<PsiElement>?,
-        private val samCallType: KotlinType?,
-        private val canDropOverride: Boolean = true
+    function: T,
+    val originalCallableDescriptor: CallableDescriptor,
+    baseFunction: KotlinCallableDefinitionUsage<PsiElement>?,
+    private val samCallType: KotlinType?,
+    private val canDropOverride: Boolean = true
 ) : KotlinUsageInfo<T>(function) {
     val baseFunction: KotlinCallableDefinitionUsage<*> = baseFunction ?: this
 
@@ -76,8 +65,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
 
         if (samCallType == null) {
             getCallableSubstitutor(this.baseFunction, this)
-        }
-        else {
+        } else {
             val currentBaseDescriptor = this.baseFunction.currentCallableDescriptor
             val classDescriptor = currentBaseDescriptor?.containingDeclaration as? ClassDescriptor ?: return@lazy null
             getTypeSubstitutor(classDescriptor.defaultType, samCallType)
@@ -118,8 +106,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
 
         if (changeInfo.isParameterSetOrOrderChanged) {
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory)
-        }
-        else if (parameterList != null) {
+        } else if (parameterList != null) {
             val offset = if (originalCallableDescriptor.extensionReceiverParameter != null) 1 else 0
             for ((paramIndex, parameter) in parameterList.parameters.withIndex()) {
                 val parameterInfo = changeInfo.newParameters[paramIndex + offset]
@@ -165,10 +152,11 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
     }
 
     private fun processParameterListWithStructuralChanges(
-            changeInfo: KotlinChangeInfo,
-            element: PsiElement,
-            originalParameterList: KtParameterList?,
-            psiFactory: KtPsiFactory) {
+        changeInfo: KotlinChangeInfo,
+        element: PsiElement,
+        originalParameterList: KtParameterList?,
+        psiFactory: KtPsiFactory
+    ) {
         var parameterList = originalParameterList
         val parametersCount = changeInfo.getNonReceiverParametersCount()
         val isLambda = element is KtFunctionLiteral
@@ -183,13 +171,11 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
                     arrow?.delete()
                     parameterList = null
                 }
-            }
-            else {
+            } else {
                 newParameterList = psiFactory.createLambdaParameterList(changeInfo.getNewParametersSignatureWithoutParentheses(this))
                 canReplaceEntireList = true
             }
-        }
-        else if (!(element is KtProperty || element is KtParameter)) {
+        } else if (!(element is KtProperty || element is KtParameter)) {
             newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(this))
         }
 
@@ -198,18 +184,15 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (parameterList != null) {
             newParameterList = if (canReplaceEntireList) {
                 parameterList.replace(newParameterList) as KtParameterList
-            }
-            else {
+            } else {
                 replaceListPsiAndKeepDelimiters(parameterList, newParameterList) { parameters }
             }
-        }
-        else {
+        } else {
             if (element is KtClass) {
                 val constructor = element.createPrimaryConstructorIfAbsent()
                 val oldParameterList = constructor.valueParameterList.sure { "primary constructor from factory has parameter list" }
                 newParameterList = oldParameterList.replace(newParameterList) as KtParameterList
-            }
-            else if (isLambda) {
+            } else if (isLambda) {
                 val functionLiteral = element as KtFunctionLiteral
                 val anchor = functionLiteral.lBrace
                 newParameterList = element.addAfter(newParameterList, anchor) as KtParameterList

@@ -76,7 +76,8 @@ fun CallableMemberDescriptor.createTypeParameterWithNewName(
         descriptor.variance,
         Name.identifier(newName),
         descriptor.index,
-        descriptor.source
+        descriptor.source,
+        descriptor.storageManager
     )
     descriptor.upperBounds.forEach {
         newDescriptor.addUpperBound(it)

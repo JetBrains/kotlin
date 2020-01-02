@@ -16,7 +16,6 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.checkers.languageVersionSettingsFromText
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -56,7 +55,9 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
 
         fun functionVisitor(function: KtNamedFunction) {
             val file = function.containingKtFile
-            val options = function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()?.map { it.text.trim().replace("//", "").trim() }?.filter { it.isNotBlank() }?.toList() ?: emptyList()
+            val options =
+                function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()?.map { it.text.trim().replace("//", "").trim() }
+                    ?.filter { it.isNotBlank() }?.toList() ?: emptyList()
             if (options.isNotEmpty()) {
                 val assertIsMain = "yes" in options
                 val assertIsNotMain = "no" in options
@@ -83,7 +84,9 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                 } else {
                     try {
                         createConfigurationFromMain(function.fqName?.asString()!!).checkConfiguration()
-                        fail("$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()")
+                        fail(
+                            "$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()"
+                        )
                     } catch (expected: Throwable) {
                     }
 
@@ -123,7 +126,8 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, testProjectJdk)
 
         val moduleWithDependencySrcDir = configureModule(
-                moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency).srcOutputDir
+            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency
+        ).srcOutputDir
 
         ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
 
@@ -220,34 +224,34 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
 
             val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt")!!)!!
             testFile.accept(
-                    object : KtTreeVisitorVoid() {
-                        override fun visitComment(comment: PsiComment) {
-                            val declaration = comment.getStrictParentOfType<KtNamedDeclaration>()!!
-                            val text = comment.text ?: return
-                            if (!text.startsWith(RUN_PREFIX)) return
+                object : KtTreeVisitorVoid() {
+                    override fun visitComment(comment: PsiComment) {
+                        val declaration = comment.getStrictParentOfType<KtNamedDeclaration>()!!
+                        val text = comment.text ?: return
+                        if (!text.startsWith(RUN_PREFIX)) return
 
-                            val expectedClass = text.substring(RUN_PREFIX.length).trim()
-                            if (expectedClass.isNotEmpty()) expectedClasses.add(expectedClass)
+                        val expectedClass = text.substring(RUN_PREFIX.length).trim()
+                        if (expectedClass.isNotEmpty()) expectedClasses.add(expectedClass)
 
-                            val dataContext = MapDataContext()
-                            dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
-                            val context = ConfigurationContext.getFromContext(dataContext)
-                            val actualClass = (context.configuration?.configuration as? KotlinRunConfiguration)?.runClass
-                            if (actualClass != null) {
-                                actualClasses.add(actualClass)
-                            }
+                        val dataContext = MapDataContext()
+                        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
+                        val context = ConfigurationContext.getFromContext(dataContext)
+                        val actualClass = (context.configuration?.configuration as? KotlinRunConfiguration)?.runClass
+                        if (actualClass != null) {
+                            actualClasses.add(actualClass)
                         }
                     }
+                }
             )
             assertEquals(expectedClasses, actualClasses)
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(createModuleResult.module, mockJdk())
         }
     }
 
     private fun createConfigurationFromMain(mainFqn: String): KotlinRunConfiguration {
-        val mainFunction = KotlinTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
+        val mainFunction =
+            KotlinTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
 
         return createConfigurationFromElement(mainFunction) as KotlinRunConfiguration
     }

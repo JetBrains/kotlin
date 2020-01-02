@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
@@ -90,7 +92,8 @@ fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
 
     // Boxing and unboxing kotlin.Result leads to CCE in generated code
     val doNotCoerceKotlinResultInContinuation =
-        (codegen.irFunction.isInvokeSuspendOfContinuation(codegen.context) || codegen.irFunction.isInvokeOfSuspendLambda(codegen.context))
+        (codegen.irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+                codegen.irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA)
                 && (irType.isKotlinResult() || irTarget.isKotlinResult())
 
     // Coerce inline classes

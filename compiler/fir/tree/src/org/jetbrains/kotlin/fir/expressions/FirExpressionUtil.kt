@@ -23,10 +23,10 @@ inline val FirAnnotationCall.coneClassLikeType: ConeClassLikeType?
 inline val FirAnnotationCall.classId: ClassId?
     get() = coneClassLikeType?.lookupTag?.classId
 
-fun <T> FirConstExpressionImpl(source: FirSourceElement?, kind: IrConstKind<T>, value: T?, diagnostic: FirDiagnostic): FirExpression =
+fun <T> FirConstExpressionImpl(source: FirSourceElement?, kind: FirConstKind<T>, value: T?, diagnostic: FirDiagnostic): FirExpression =
     value?.let { FirConstExpressionImpl(source, kind, it) } ?: FirErrorExpressionImpl(source, diagnostic)
 
-inline val FirTypeOperatorCall.argument: FirExpression get() = arguments.first()
+inline val FirCall.argument: FirExpression get() = arguments.first()
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
     return (this as? FirQualifiedAccess)?.calleeReference as? FirResolvedNamedReference

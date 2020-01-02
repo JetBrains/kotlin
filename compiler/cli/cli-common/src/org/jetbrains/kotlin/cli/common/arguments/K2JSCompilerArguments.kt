@@ -122,6 +122,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-produce-js", description = "Generates JS file using IR backend. Also disables pre-IR backend")
     var irProduceJs: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xir-dce", description = "Perform experimental dead code elimination")
+    var irDce: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
     var irOnly: Boolean by FreezableVar(false)
 

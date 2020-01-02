@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     }
 
     public void testAllFilesPresentInWriteSignature() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("ArrayOfCharSequence.kt")
@@ -147,7 +147,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("kArrayClassOfJClass.kt")
@@ -169,6 +169,11 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         public void testKClassInt() throws Exception {
             runTest("compiler/testData/writeSignature/annotations/kClassInt.kt");
         }
+
+        @TestMetadata("kClassOfKClass.kt")
+        public void testKClassOfKClass() throws Exception {
+            runTest("compiler/testData/writeSignature/annotations/kClassOfKClass.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/writeSignature/callableReference")
@@ -180,7 +185,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInCallableReference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("constructorReferenceInReturnType.kt")
@@ -213,7 +218,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/constructor"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Constructor0.kt")
@@ -246,7 +251,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInDeclarationSiteVariance() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("FunctionTwoTypeParameters.kt")
@@ -393,7 +398,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             }
 
             public void testAllFilesPresentInJvmWildcardAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("onFunction.kt")
@@ -421,7 +426,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             }
 
             public void testAllFilesPresentInWildcardOptimization() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("argumentOverridability.kt")
@@ -490,7 +495,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInDefaultImpls() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/defaultImpls"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/defaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("functionTypeParameterClash.kt")
@@ -518,7 +523,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInInlineClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("basicInlineClassDeclarationCodegen.kt")
@@ -581,7 +586,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInJava8() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/java8"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/java8"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("mutableMapRemove.kt")
@@ -599,7 +604,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInNothing() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/nothing"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/nothing"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("nothing.kt")
@@ -622,7 +627,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInParameterlessMain() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("arrayWithContravariantStringIsNotMainMethod.kt")

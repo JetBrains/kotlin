@@ -69,8 +69,7 @@ abstract class YarnBasics : NpmApi {
                         val scopedName = dep.scopedName
                         val child = NpmDependency(
                             src.project,
-                            scopedName.scope,
-                            scopedName.name,
+                            scopedName.toString(),
                             dep.version ?: "*"
                         )
                         child.parent = src

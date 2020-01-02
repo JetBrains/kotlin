@@ -1,0 +1,1 @@
+fun f(a: Collection<*>) = a is List<*>?

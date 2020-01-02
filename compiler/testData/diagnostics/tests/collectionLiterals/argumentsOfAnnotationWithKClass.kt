@@ -1,5 +1,5 @@
 // !WITH_NEW_INFERENCE
-// !LANGUAGE: +ArrayLiteralsInAnnotations
+// !LANGUAGE: +ArrayLiteralsInAnnotations +BareArrayClassLiteral
 
 import kotlin.reflect.KClass
 
@@ -15,7 +15,7 @@ fun test1() {}
 @Foo([Int::class, String::class])
 fun test2() {}
 
-@Foo([<!ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT!>Array::class<!>])
+@Foo([Array::class])
 fun test3() {}
 
 @Foo([<!CLASS_LITERAL_LHS_NOT_A_CLASS!>Gen<Int>::class<!>])

@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
+import org.jetbrains.kotlin.test.IgnoreAll
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
-import org.junit.Ignore
+import org.junit.runner.RunWith
 import java.io.File
 import java.net.URLClassLoader
 import java.util.logging.LogManager
@@ -34,7 +35,7 @@ private val logFiles = arrayListOf<String>()
 
 // TODO: remove ignore annotation from tests.
 
-@Ignore
+@RunWith(IgnoreAll::class)
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClient = KotlinCompilerDaemonClient

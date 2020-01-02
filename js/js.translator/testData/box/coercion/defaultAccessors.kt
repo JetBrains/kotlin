@@ -4,6 +4,7 @@ interface I {
     val a: Char
 }
 
+@JsExport
 object X : I {
     override var a = '#'
 }

@@ -1,0 +1,84 @@
+package
+
+public open class A {
+    public constructor A()
+    protected final val z: kotlin.String = "1"
+    public final var zVar: kotlin.String
+    public final inline fun call(): kotlin.Unit
+    internal final inline fun callFromInternal(): kotlin.Unit
+    protected final inline fun callFromProtected(): kotlin.Unit
+    @kotlin.PublishedApi internal final inline fun callFromPublished(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    protected final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class AInternal {
+    public constructor AInternal()
+    protected final val z: kotlin.String = "1"
+    public final var zVar: kotlin.String
+    public final inline fun call(): kotlin.Unit
+    @kotlin.PublishedApi internal final inline fun call2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    protected final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B : A {
+    public constructor B()
+    protected final override /*1*/ /*fake_override*/ val z: kotlin.String
+    public final override /*1*/ /*fake_override*/ var zVar: kotlin.String
+    public final override /*1*/ inline /*fake_override*/ fun call(): kotlin.Unit
+    internal final override /*1*/ inline /*fake_override*/ fun callFromInternal(): kotlin.Unit
+    protected final override /*1*/ inline /*fake_override*/ fun callFromProtected(): kotlin.Unit
+    @kotlin.PublishedApi internal final override /*1*/ inline /*fake_override*/ fun callFromPublished(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun test(): kotlin.Unit
+    public final inline fun testB(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C : JavaClass {
+    public constructor C()
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun bind(): kotlin.Unit
+    public final inline fun call(): kotlin.Unit
+    internal final inline fun callFromInternal(): kotlin.Unit
+    protected final inline fun callFromProtected(): kotlin.Unit
+    @kotlin.PublishedApi internal final inline fun callFromPublished(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class JavaClass {
+    public constructor JavaClass()
+    protected/*protected and package*/ open fun bind(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+private final class X {
+    public constructor X()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Z : A {
+        public constructor Z()
+        protected final override /*1*/ /*fake_override*/ val z: kotlin.String
+        public final override /*1*/ /*fake_override*/ var zVar: kotlin.String
+        public final override /*1*/ inline /*fake_override*/ fun call(): kotlin.Unit
+        internal final override /*1*/ inline /*fake_override*/ fun callFromInternal(): kotlin.Unit
+        protected final override /*1*/ inline /*fake_override*/ fun callFromProtected(): kotlin.Unit
+        @kotlin.PublishedApi internal final override /*1*/ inline /*fake_override*/ fun callFromPublished(): kotlin.Unit
+        public final inline fun effictivelyNonPublic(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

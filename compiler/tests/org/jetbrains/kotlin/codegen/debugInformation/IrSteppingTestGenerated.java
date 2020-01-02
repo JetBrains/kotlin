@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,13 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
 
     @Test
     public void testAllFilesPresentInStepping() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("callableReference.kt")
+    public void testCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/callableReference.kt");
     }
 
     @Test
@@ -53,6 +59,24 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("IfTrueThenFalse.kt")
     public void testIfTrueThenFalse() throws Exception {
         runTest("compiler/testData/debug/stepping/IfTrueThenFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineCallableReference.kt")
+    public void testInlineCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineNamedCallableReference.kt")
+    public void testInlineNamedCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("namedCallableReference.kt")
+    public void testNamedCallableReference() throws Exception {
+        runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
     }
 
     @Test

@@ -9,28 +9,12 @@ FILE: inferenceFromExpectedType.kt
         }
 
         public final fun <T, E> baz(x: R|T|): R|E| {
-            ^baz when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
-                ==($subj$, Null(null)) ->  {
-                    throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-                }
-                else ->  {
-                    R|<local>/<bangbang>|
-                }
-            }
-
+            ^baz Null(null)!!
         }
 
     }
     public final fun <T, E> bar(x: R|T|): R|E| {
-        ^bar when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
-            ==($subj$, Null(null)) ->  {
-                throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-
+        ^bar Null(null)!!
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|(::R|/bar<kotlin/String, kotlin/Int>|)

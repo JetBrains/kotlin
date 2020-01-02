@@ -17,7 +17,7 @@ FILE: main.kt
         }
 
         Q|JavaClass|.R|/JavaClass.foo2|(R|<local>/y|)
-        Q|JavaClass|.R|/JavaClass.foo3|<R|ft<kotlin/Int, kotlin/Int>|>(foo3@fun <anonymous>(it: R|ft<kotlin/Int, kotlin/Int>|): R|ft<kotlin/String, kotlin/String?>!| {
+        Q|JavaClass|.R|/JavaClass.foo3|<R|kotlin/Int|>(foo3@fun <anonymous>(it: R|kotlin/Int|): R|ft<kotlin/String, kotlin/String?>!| {
             R|<local>/it|.R|kotlin/Int.plus|(Int(4)).R|kotlin/Any.toString|()
         }
         , Int(5))

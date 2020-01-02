@@ -21,7 +21,7 @@ open class YarnRootExtension(val project: Project) {
     var installationDir = gradleHome.resolve("yarn")
 
     var downloadBaseUrl = "https://github.com/yarnpkg/yarn/releases/download"
-    var version = "1.15.2"
+    var version = "1.21.1"
 
     val yarnSetupTask: YarnSetupTask
         get() = project.tasks.getByName(YarnSetupTask.NAME) as YarnSetupTask

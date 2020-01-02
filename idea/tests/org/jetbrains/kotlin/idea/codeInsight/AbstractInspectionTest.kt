@@ -80,7 +80,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
 
             val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" }
-                    ?: emptyArray()
+                ?: emptyArray()
             val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull { file ->
                 when {
                     file.isDirectory -> null

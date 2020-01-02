@@ -49,8 +49,8 @@ class DelegatedPropertyInferenceSession(
 
     private fun ResolvedCallAtom.addConstraintForThis(descriptor: CallableDescriptor, commonSystem: ConstraintSystemBuilder) {
         val typeOfThis = variableDescriptor.extensionReceiverParameter?.type
-                ?: variableDescriptor.dispatchReceiverParameter?.type
-                ?: builtIns.nullableNothingType
+            ?: variableDescriptor.dispatchReceiverParameter?.type
+            ?: builtIns.nullableNothingType
 
         val valueParameterForThis = descriptor.valueParameters.getOrNull(0) ?: return
         val substitutedType = freshVariablesSubstitutor.safeSubstitute(valueParameterForThis.type.unwrap())
@@ -85,6 +85,8 @@ class DelegatedPropertyInferenceSession(
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
+
+    override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
 }
 
 object InferenceSessionForExistingCandidates : InferenceSession {
@@ -104,4 +106,7 @@ object InferenceSessionForExistingCandidates : InferenceSession {
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
     override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
+    override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean {
+        return !ErrorUtils.isError(resolvedCallAtom.candidateDescriptor)
+    }
 }

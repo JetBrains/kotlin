@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
+import com.intellij.openapi.help.HelpManager
+import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
@@ -56,6 +58,10 @@ class KotlinInlineValDialog(
     }
 
     fun shouldBeShown() = !simpleLocal || EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
+
+    override fun doHelpAction() =
+        HelpManager.getInstance().invokeHelp(HelpID.INLINE_VARIABLE)
+
 
     override fun isInlineThis() = KotlinRefactoringSettings.instance.INLINE_LOCAL_THIS
 

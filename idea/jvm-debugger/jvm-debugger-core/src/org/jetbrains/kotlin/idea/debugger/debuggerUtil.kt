@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
-import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -101,14 +100,11 @@ private fun Location.visibleVariables(debugProcess: DebugProcessImpl): List<Loca
 }
 
 // For Kotlin up to 1.3.10
-private fun lambdaOrdinalByLocalVariable(name: String): Int {
-    try {
-        val nameWithoutPrefix = name.removePrefix(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
-        return Integer.parseInt(nameWithoutPrefix.substringBefore("$", nameWithoutPrefix))
-    }
-    catch(e: NumberFormatException) {
-        return 0
-    }
+private fun lambdaOrdinalByLocalVariable(name: String): Int = try {
+    val nameWithoutPrefix = name.removePrefix(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
+    Integer.parseInt(nameWithoutPrefix.substringBefore("$", nameWithoutPrefix))
+} catch (e: NumberFormatException) {
+    0
 }
 
 // For Kotlin up to 1.3.10
@@ -129,11 +125,9 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
             val allVariables = location.method().safeVariables() ?: emptyList()
             val map = HashMap<String, LocalVariable>(allVariables.size)
 
-            for (allVariable in allVariables) {
-                val variable = allVariable as LocalVariableImpl
-                val name = variable.name()
+            for (variable in allVariables) {
                 if (variable.isVisible(this)) {
-                    map.put(name, variable)
+                    map[variable.name()] = variable
                 }
             }
             visibleVariables = map
@@ -143,7 +137,7 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
     override fun visibleVariables(): List<LocalVariable> {
         createVisibleVariables()
         val mapAsList = ArrayList(visibleVariables!!.values)
-        Collections.sort(mapAsList)
+        mapAsList.sort()
         return mapAsList
     }
 
@@ -238,14 +232,11 @@ fun findCallByEndToken(element: PsiElement): KtCallExpression? {
 
     return when (element.node.elementType) {
         KtTokens.RPAR -> (element.parent as? KtValueArgumentList)?.parent as? KtCallExpression
-        KtTokens.RBRACE -> {
-            val braceParent = CodeInsightUtils.getTopParentWithEndOffset(element, KtCallExpression::class.java)
-            when (braceParent) {
-                is KtCallExpression -> braceParent
-                is KtLambdaArgument -> braceParent.parent as? KtCallExpression
-                is KtValueArgument -> (braceParent.parent as? KtValueArgumentList)?.parent as? KtCallExpression
-                else -> null
-            }
+        KtTokens.RBRACE -> when (val braceParent = CodeInsightUtils.getTopParentWithEndOffset(element, KtCallExpression::class.java)) {
+            is KtCallExpression -> braceParent
+            is KtLambdaArgument -> braceParent.parent as? KtCallExpression
+            is KtValueArgument -> (braceParent.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+            else -> null
         }
         else -> null
     }

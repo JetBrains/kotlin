@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragment
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
@@ -58,7 +60,7 @@ class JsCoreScriptingCompiler(
         val module = analysisResult.moduleDescriptor
         val bindingContext = analysisResult.bindingContext
 
-        val psi2ir = Psi2IrTranslator(environment.configuration.languageVersionSettings)
+        val psi2ir = Psi2IrTranslator(environment.configuration.languageVersionSettings, mangler = JsMangler)
         val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, symbolTable)
 
         val irModuleFragment = psi2irContext.generateModuleFragment(listOf(snippetKtFile))
@@ -74,9 +76,12 @@ class JsCoreScriptingCompiler(
         )
 
         ExternalDependenciesGenerator(
-            irModuleFragment.descriptor,
             psi2irContext.symbolTable,
-            psi2irContext.irBuiltIns
+            generateTypicalIrProviderList(
+                irModuleFragment.descriptor,
+                psi2irContext.irBuiltIns,
+                psi2irContext.symbolTable
+            )
         ).generateUnboundSymbolsAsDependencies()
 
         environment.configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)

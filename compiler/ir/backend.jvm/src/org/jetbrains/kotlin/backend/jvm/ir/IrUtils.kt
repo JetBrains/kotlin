@@ -115,7 +115,8 @@ val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 val IrConstructor.shouldBeHidden: Boolean
-    get() = !Visibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters
+    get() = !Visibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters &&
+            origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
 
 // An IR builder with a reference to the JvmBackendContext
 class JvmIrBuilder(

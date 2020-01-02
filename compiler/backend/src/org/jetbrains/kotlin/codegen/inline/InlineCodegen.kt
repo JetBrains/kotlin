@@ -47,7 +47,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val codegen: T,
     protected val state: GenerationState,
     protected val functionDescriptor: FunctionDescriptor,
-    private val methodOwner: Type,
+    protected val methodOwner: Type,
     protected val jvmSignature: JvmMethodSignature,
     private val typeParameterMappings: TypeParameterMappings<*>,
     protected val sourceCompiler: SourceCompilerForInline,
@@ -427,7 +427,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     val type = info.type
                     val local = StackValue.local(index[i], type)
                     if (!skipStore) {
-                        local.store(StackValue.onStack(type), codegen.v)
+                        local.store(StackValue.onStack(info.typeOnStack), codegen.v)
                     }
                     if (info is CapturedParamInfo) {
                         info.remapValue = local

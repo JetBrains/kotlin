@@ -76,10 +76,10 @@ internal class ComparingDeclarationsVisitor(
         val expectedTypeAliases = mutableMapOf<FqName, TypeAliasDescriptor>()
 
         expected.collectMembers(
-            CallableMemberCollector<PropertyDescriptor> { expectedProperties[PropertyApproximationKey(it)] = it },
-            CallableMemberCollector<SimpleFunctionDescriptor> { expectedFunctions[FunctionApproximationKey(it)] = it },
-            Collector<ClassDescriptor> { expectedClasses[it.fqNameSafe] = it },
-            Collector<TypeAliasDescriptor> { expectedTypeAliases[it.fqNameSafe] = it }
+            PropertyCollector { expectedProperties[PropertyApproximationKey(it)] = it },
+            FunctionCollector { expectedFunctions[FunctionApproximationKey(it)] = it },
+            ClassCollector { expectedClasses[it.fqNameSafe] = it },
+            TypeAliasCollector { expectedTypeAliases[it.fqNameSafe] = it }
         )
 
         val actualProperties = mutableMapOf<PropertyApproximationKey, PropertyDescriptor>()
@@ -88,10 +88,10 @@ internal class ComparingDeclarationsVisitor(
         val actualTypeAliases = mutableMapOf<FqName, TypeAliasDescriptor>()
 
         actual.collectMembers(
-            CallableMemberCollector<PropertyDescriptor> { actualProperties[PropertyApproximationKey(it)] = it },
-            CallableMemberCollector<SimpleFunctionDescriptor> { actualFunctions[FunctionApproximationKey(it)] = it },
-            Collector<ClassDescriptor> { actualClasses[it.fqNameSafe] = it },
-            Collector<TypeAliasDescriptor> { actualTypeAliases[it.fqNameSafe] = it }
+            PropertyCollector { actualProperties[PropertyApproximationKey(it)] = it },
+            FunctionCollector { actualFunctions[FunctionApproximationKey(it)] = it },
+            ClassCollector { actualClasses[it.fqNameSafe] = it },
+            TypeAliasCollector { actualTypeAliases[it.fqNameSafe] = it }
         )
 
         context.assertSetsEqual(expectedProperties.keys, actualProperties.keys, "sets of properties")

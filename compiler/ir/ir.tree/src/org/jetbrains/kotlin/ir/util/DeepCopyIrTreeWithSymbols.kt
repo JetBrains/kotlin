@@ -33,11 +33,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-inline fun <reified T : IrElement> T.deepCopyWithSymbols(initialParent: IrDeclarationParent? = null): T {
+inline fun <reified T : IrElement> T.deepCopyWithSymbols(
+    initialParent: IrDeclarationParent? = null,
+    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols = ::DeepCopyIrTreeWithSymbols
+): T {
     val symbolRemapper = DeepCopySymbolRemapper()
     acceptVoid(symbolRemapper)
     val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
-    return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
+    return transform(createCopier(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
 }
 
 interface SymbolRenamer {
@@ -58,8 +61,10 @@ interface SymbolRenamer {
 open class DeepCopyIrTreeWithSymbols(
     private val symbolRemapper: SymbolRemapper,
     private val typeRemapper: TypeRemapper,
-    private val symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
+    private val symbolRenamer: SymbolRenamer
 ) : IrElementTransformerVoid() {
+
+    constructor(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) : this(symbolRemapper, typeRemapper, SymbolRenamer.DEFAULT)
 
     init {
         // TODO refactor
@@ -167,7 +172,8 @@ open class DeepCopyIrTreeWithSymbols(
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
             isExpect = declaration.isExpect,
-            isFakeOverride = declaration.isFakeOverride
+            isFakeOverride = declaration.isFakeOverride,
+            isOperator = declaration.isOperator
         ).apply {
             declaration.overriddenSymbols.mapTo(overriddenSymbols) {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
@@ -679,7 +685,7 @@ open class DeepCopyIrTreeWithSymbols(
         throw AssertionError("Outer loop was not transformed: ${irLoop.render()}")
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrWhileLoop =
-        IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, mapStatementOrigin(loop.origin)).also { newLoop ->
+        IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), mapStatementOrigin(loop.origin)).also { newLoop ->
             transformedLoops[loop] = newLoop
             newLoop.label = loop.label
             newLoop.condition = loop.condition.transform()
@@ -687,7 +693,7 @@ open class DeepCopyIrTreeWithSymbols(
         }.copyAttributes(loop)
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrDoWhileLoop =
-        IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, mapStatementOrigin(loop.origin)).also { newLoop ->
+        IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), mapStatementOrigin(loop.origin)).also { newLoop ->
             transformedLoops[loop] = newLoop
             newLoop.label = loop.label
             newLoop.condition = loop.condition.transform()
@@ -697,21 +703,21 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitBreak(jump: IrBreak): IrBreak =
         IrBreakImpl(
             jump.startOffset, jump.endOffset,
-            jump.type,
+            jump.type.remapType(),
             getTransformedLoop(jump.loop)
         ).apply { label = jump.label }.copyAttributes(jump)
 
     override fun visitContinue(jump: IrContinue): IrContinue =
         IrContinueImpl(
             jump.startOffset, jump.endOffset,
-            jump.type,
+            jump.type.remapType(),
             getTransformedLoop(jump.loop)
         ).apply { label = jump.label }.copyAttributes(jump)
 
     override fun visitTry(aTry: IrTry): IrTry =
         IrTryImpl(
             aTry.startOffset, aTry.endOffset,
-            aTry.type,
+            aTry.type.remapType(),
             aTry.tryResult.transform(),
             aTry.catches.map { it.transform() },
             aTry.finallyExpression?.transform()

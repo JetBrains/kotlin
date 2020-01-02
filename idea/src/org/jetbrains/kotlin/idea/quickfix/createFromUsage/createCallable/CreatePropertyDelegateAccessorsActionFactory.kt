@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
@@ -49,14 +38,15 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         val context = element.analyze()
 
         fun isApplicableForAccessor(accessor: VariableAccessorDescriptor?): Boolean =
-                accessor != null && context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor] == null
+            accessor != null && context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor] == null
 
         val property = element.getNonStrictParentOfType<KtProperty>() ?: return emptyList()
         val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptorWithAccessors
-                                 ?: return emptyList()
+            ?: return emptyList()
 
         if (propertyDescriptor is LocalVariableDescriptor
-                && !element.languageVersionSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)) {
+            && !element.languageVersionSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)
+        ) {
             return emptyList()
         }
 
@@ -75,11 +65,11 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
 
         if (isApplicableForAccessor(propertyDescriptor.getter)) {
             val getterInfo = FunctionInfo(
-                    name = OperatorNameConventions.GET_VALUE.asString(),
-                    receiverTypeInfo = accessorReceiverType,
-                    returnTypeInfo = TypeInfo(propertyType, Variance.OUT_VARIANCE),
-                    parameterInfos = listOf(thisRefParam, metadataParam),
-                    modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
+                name = OperatorNameConventions.GET_VALUE.asString(),
+                receiverTypeInfo = accessorReceiverType,
+                returnTypeInfo = TypeInfo(propertyType, Variance.OUT_VARIANCE),
+                parameterInfos = listOf(thisRefParam, metadataParam),
+                modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
             )
             callableInfos.add(getterInfo)
         }
@@ -87,11 +77,11 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         if (propertyDescriptor.isVar && isApplicableForAccessor(propertyDescriptor.setter)) {
             val newValueParam = ParameterInfo(TypeInfo(propertyType, Variance.IN_VARIANCE))
             val setterInfo = FunctionInfo(
-                    name = OperatorNameConventions.SET_VALUE.asString(),
-                    receiverTypeInfo = accessorReceiverType,
-                    returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
-                    parameterInfos = listOf(thisRefParam, metadataParam, newValueParam),
-                    modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
+                name = OperatorNameConventions.SET_VALUE.asString(),
+                receiverTypeInfo = accessorReceiverType,
+                returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
+                parameterInfos = listOf(thisRefParam, metadataParam, newValueParam),
+                modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
             )
             callableInfos.add(setterInfo)
         }

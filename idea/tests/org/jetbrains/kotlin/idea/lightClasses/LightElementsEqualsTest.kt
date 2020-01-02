@@ -37,13 +37,13 @@ class LightElementsEqualsTest : KotlinLightCodeInsightFixtureTestCase() {
                     val firstConversion = element.toLightElements()
                     val secondConversion = element.toLightElements()
                     TestCase.assertEquals(
-                            "LightElements from ${element.text} should be equal if they retrieved twice",
-                            firstConversion, secondConversion
+                        "LightElements from ${element.text} should be equal if they retrieved twice",
+                        firstConversion, secondConversion
                     )
                     for ((e1, e2) in firstConversion zip secondConversion) {
                         TestCase.assertEquals(
-                                "LightElements '$e1'(${e1.javaClass}) and '$e2'(${e2.javaClass}) from `${element.text}` should have equal hashcode as long as they are equal",
-                                e1.hashCode(), e2.hashCode()
+                            "LightElements '$e1'(${e1.javaClass}) and '$e2'(${e2.javaClass}) from `${element.text}` should have equal hashcode as long as they are equal",
+                            e1.hashCode(), e2.hashCode()
                         )
                     }
 
@@ -80,8 +80,8 @@ class LightElementsEqualsTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val directlyFlattenMethods = theAPsiClass.methods.asSequence().flatMap { psiElementsFlatten(it) }
         val contentOfToLightMethods = (theAPsiClass as KtLightClass).kotlinOrigin!!.declarations.asSequence()
-                .flatMap { it.toLightMethods().asSequence() }
-                .flatMap { psiElementsFlatten(it) }
+            .flatMap { it.toLightMethods().asSequence() }
+            .flatMap { psiElementsFlatten(it) }
         for ((e1, e2) in directlyFlattenMethods zip contentOfToLightMethods) {
             TestCase.assertEquals(e1, e2)
             TestCase.assertEquals(e1.hashCode(), e2.hashCode())
@@ -91,13 +91,13 @@ class LightElementsEqualsTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun psiElementsFlatten(psiElement: PsiElement): Sequence<PsiElement> {
         return when (psiElement) {
             is PsiClass -> sequenceOf(psiElement, psiElement.modifierList).filterNotNull() +
-                           psiElement.methods.asSequence().flatMap { psiElementsFlatten(it) } +
-                           psiElement.fields.asSequence().flatMap { psiElementsFlatten(it) }
+                    psiElement.methods.asSequence().flatMap { psiElementsFlatten(it) } +
+                    psiElement.fields.asSequence().flatMap { psiElementsFlatten(it) }
             is PsiMethod -> sequenceOf(psiElement, psiElement.parameterList) + psiElementsFlatten(psiElement.parameterList)
             is PsiParameterList -> sequenceOf(psiElement) +
-                                   psiElement.parameters.asSequence().flatMap { psiElementsFlatten(it) }
+                    psiElement.parameters.asSequence().flatMap { psiElementsFlatten(it) }
             is PsiModifierList -> sequenceOf(psiElement) +
-                                  psiElement.annotations.asSequence().flatMap { psiElementsFlatten(it) }
+                    psiElement.annotations.asSequence().flatMap { psiElementsFlatten(it) }
             is PsiAnnotation -> sequenceOf(psiElement, psiElement.parameterList) + psiElementsFlatten(psiElement.parameterList)
 
             else -> sequenceOf(psiElement)

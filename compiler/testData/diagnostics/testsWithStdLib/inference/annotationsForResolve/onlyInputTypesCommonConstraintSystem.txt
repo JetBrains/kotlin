@@ -1,0 +1,72 @@
+package
+
+public fun </*0*/ @kotlin.internal.OnlyInputTypes M> strictId(/*0*/ arg: M): M
+public fun </*0*/ @kotlin.internal.OnlyInputTypes S> strictSelect(/*0*/ arg1: S, /*1*/ arg2: S): S
+public fun testFail(/*0*/ first: First, /*1*/ bound: Bound, /*2*/ second: Second): kotlin.Unit
+public fun testOK(/*0*/ first: First, /*1*/ bound: Bound, /*2*/ second: Second): kotlin.Unit
+
+public interface Bound {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class First : Bound {
+    public constructor First()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class In</*0*/ in C> {
+    public constructor In</*0*/ in C>(/*0*/ v: C)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InB</*0*/ in C : Bound> {
+    public constructor InB</*0*/ in C : Bound>(/*0*/ v: C)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ I> {
+    public constructor Inv</*0*/ I>(/*0*/ v: I)
+    public final val v: I
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InvB</*0*/ I : Bound> {
+    public constructor InvB</*0*/ I : Bound>(/*0*/ v: I)
+    public final val v: I
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out O> {
+    public constructor Out</*0*/ out O>(/*0*/ v: O)
+    public final val v: O
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OutB</*0*/ out O : Bound> {
+    public constructor OutB</*0*/ out O : Bound>(/*0*/ v: O)
+    public final val v: O
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Second : Bound {
+    public constructor Second()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

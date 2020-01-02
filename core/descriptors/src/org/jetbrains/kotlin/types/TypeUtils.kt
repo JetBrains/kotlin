@@ -257,28 +257,48 @@ fun KotlinType.unCapture(): KotlinType = unwrap().unCapture()
 fun UnwrappedType.unCapture(): UnwrappedType = when (this) {
     is AbbreviatedType -> unCapture()
     is SimpleType -> unCapture()
-    is FlexibleType ->
-        FlexibleTypeImpl(
-            lowerBound.unCapture() as? SimpleType ?: lowerBound,
-            upperBound.unCapture() as? SimpleType ?: upperBound
-        )
+    is FlexibleType -> unCapture()
 }
 
 fun SimpleType.unCapture(): UnwrappedType {
+    if (this is ErrorType) return this
     if (this is NewCapturedType)
         return unCaptureTopLevelType()
 
-    val newArguments = arguments.map { projection ->
-        projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.let {
-            it.projection
-        } ?: projection
-    }
-    return replace(newArguments)
+    val newArguments = arguments.map(::unCaptureProjection)
+    return replace(newArguments).unwrap()
+}
+
+fun unCaptureProjection(projection: TypeProjection): TypeProjection {
+    val unCapturedProjection = projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.projection ?: projection
+    if (unCapturedProjection.isStarProjection || unCapturedProjection.type is ErrorType) return unCapturedProjection
+
+    val newArguments = unCapturedProjection.type.arguments.map(::unCaptureProjection)
+    return TypeProjectionImpl(
+        unCapturedProjection.projectionKind,
+        unCapturedProjection.type.replace(newArguments)
+    )
 }
 
 fun AbbreviatedType.unCapture(): SimpleType {
     val newType = expandedType.unCapture()
     return AbbreviatedType(newType as? SimpleType ?: expandedType, abbreviation)
+}
+
+fun FlexibleType.unCapture(): FlexibleType {
+    val unCapturedLowerBound = when (val unCaptured = lowerBound.unCapture()) {
+        is SimpleType -> unCaptured
+        is FlexibleType -> unCaptured.lowerBound
+        else -> lowerBound
+    }
+
+    val unCapturedUpperBound = when (val unCaptured = upperBound.unCapture()) {
+        is SimpleType -> unCaptured
+        is FlexibleType -> unCaptured.upperBound
+        else -> upperBound
+    }
+
+    return FlexibleTypeImpl(unCapturedLowerBound, unCapturedUpperBound)
 }
 
 private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {

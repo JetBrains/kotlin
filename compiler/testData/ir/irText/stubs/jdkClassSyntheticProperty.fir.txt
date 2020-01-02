@@ -4,5 +4,5 @@ FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Array<out java.lang.reflect.Field?>? declared in <root>'
-          CALL 'public open fun getDeclaredFields (): kotlin.Array<out java.lang.reflect.Field?>? declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
+          CALL 'public open fun getDeclaredFields (): kotlin.Array<out java.lang.reflect.Field?>? [operator] declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
             $this: ERROR_CALL 'Unresolved reference: this@R|/test|' type=java.lang.Class<*>

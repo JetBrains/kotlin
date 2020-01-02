@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
+import org.jetbrains.kotlin.test.runTest
 import org.junit.Assert.assertNotEquals
 import org.junit.runner.RunWith
 
@@ -77,7 +78,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInProject()
     }
 
-    fun testLazyResolvers() {
+    fun testLazyResolvers() = runTest {
         val tracker = ResolverTracker()
 
         project.withServiceRegistered<ResolverForModuleComputationTracker, Unit>(tracker) {
@@ -112,7 +113,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         }
     }
 
-    fun testRecomputeResolversOnChange() {
+    fun testRecomputeResolversOnChange() = runTest {
         val tracker = ResolverTracker()
 
         project.withServiceRegistered<ResolverForModuleComputationTracker, Unit>(tracker) {
@@ -142,7 +143,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             val m1 = m2ContentRoot.findChild("m1.kt")!!
             val m1doc = FileDocumentManager.getInstance().getDocument(m1)!!
             project.executeWriteCommand("a") {
-                m1doc.insertString(m1doc.textLength , "fun foo() = 1")
+                m1doc.insertString(m1doc.textLength, "fun foo() = 1")
                 PsiDocumentManager.getInstance(myProject).commitAllDocuments()
             }
 
@@ -157,7 +158,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             val m2 = m1ContentRoot.findChild("m2.kt")!!
             val m2doc = FileDocumentManager.getInstance().getDocument(m2)!!
             project.executeWriteCommand("a") {
-                m2doc.insertString(m2doc.textLength , "fun foo() = 1")
+                m2doc.insertString(m2doc.textLength, "fun foo() = 1")
                 PsiDocumentManager.getInstance(myProject).commitAllDocuments()
             }
 

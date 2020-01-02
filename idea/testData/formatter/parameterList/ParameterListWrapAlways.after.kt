@@ -18,6 +18,16 @@ fun testtesttesttest(foofoo: Int,
                      foobar: Int,
                      barfoo: Int)
 
+fun testtesttesttest(foofoo: Int,
+                     @Some barbar: Int,
+                     foobar: Int,
+                     barfoo: Int)
+
+fun testtesttesttest(@Some foofoo: Int,
+                     @Some barbar: Int,
+                     @Some foobar: Int,
+                     barfoo: Int)
+
 fun test() {
     for (foo: Int in bar) {
 
@@ -128,5 +138,36 @@ class G(sn1: ShorName) {
 class H(sn1: SN,
         sn2: SN) {
     constructor(sn1: SN) {
+    }
+}
+
+class I(sn1: SN,
+        @field:Some val sn2: SN,
+        sn3: SN,
+        sn4: SN,
+        sn5: SN,
+        sn6: SN,
+        sn6: SN,
+        sn8: SN,
+        sn9: SN,
+        sn10: SN,
+        sn11: SN,
+        sn12: SN,
+        sn13: SN,
+        sn14: SN) {
+    constructor(sn1: SN,
+                sn2: SN,
+                sn3: SN,
+                @Some sn4: SN,
+                sn5: SN,
+                sn6: SN,
+                sn6: SN,
+                sn8: SN,
+                sn9: SN,
+                sn10: SN,
+                sn11: SN,
+                sn12: SN,
+                sn13: SN,
+                sn14: SN) {
     }
 }

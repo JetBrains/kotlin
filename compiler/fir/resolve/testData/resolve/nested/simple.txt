@@ -10,7 +10,7 @@ FILE: simple.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            lval n: R|Owner.Nested| = R|/Owner.Nested.Nested|()
+            lval n: R|Owner.Nested| = this@R|/Owner|.R|/Owner.Nested.Nested|()
             R|<local>/n|.R|/Owner.Nested.baz|()
         }
 
@@ -30,7 +30,7 @@ FILE: simple.kt
             }
 
             public final fun err(): R|kotlin/Unit| {
-                <Unresolved name: foo>#()
+                R|/Owner.foo|()
                 this@R|/Owner.Nested|.<Unresolved name: foo>#()
             }
 

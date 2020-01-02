@@ -1,6 +1,6 @@
 UFile (package = ) [public final class AssertionKt {...]
     UClass (name = AssertionKt) [public final class AssertionKt {...}]
-        UAnnotationMethod (name = foo) [public static final fun foo() : java.lang.String {...}]
+        UMethod (name = foo) [public static final fun foo() : java.lang.String {...}]
             UBlockExpression [{...}] = Nothing
                 UDeclarationsExpression [var s: java.lang.String = "Not Null"] = Undetermined
                     ULocalVariable (name = s) [var s: java.lang.String = "Not Null"]

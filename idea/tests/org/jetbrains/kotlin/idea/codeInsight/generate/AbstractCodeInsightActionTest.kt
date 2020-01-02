@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -103,14 +103,11 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
                 myFixture.checkResult(FileUtil.loadFile(afterFile, true))
                 checkExtra()
             }
-        }
-        catch (e: ComparisonFailure) {
+        } catch (e: ComparisonFailure) {
             KotlinTestUtils.assertEqualsToFile(afterFile, myFixture.editor)
-        }
-        catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+        } catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
             KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)
-        }
-        finally {
+        } finally {
             mainPsiFile?.forcedTargetPlatform = null
             ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
         }

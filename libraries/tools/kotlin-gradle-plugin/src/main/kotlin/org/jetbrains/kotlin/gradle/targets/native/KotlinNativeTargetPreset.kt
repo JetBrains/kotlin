@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -181,15 +183,24 @@ open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget:
     }
 }
 
-open class KotlinNativeTargetWithTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
-    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithTests>(name, project, konanTarget, kotlinPluginVersion) {
+open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
+    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithHostTests>(name, project, konanTarget, kotlinPluginVersion) {
 
-    override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTargetWithTests> =
-        KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion)
+    override fun createTargetConfigurator(): KotlinNativeTargetWithHostTestsConfigurator =
+        KotlinNativeTargetWithHostTestsConfigurator(kotlinPluginVersion)
 
-    override fun instantiateTarget(name: String): KotlinNativeTargetWithTests {
-        return project.objects.newInstance(KotlinNativeTargetWithTests::class.java, project, konanTarget)
-    }
+    override fun instantiateTarget(name: String): KotlinNativeTargetWithHostTests =
+        project.objects.newInstance(KotlinNativeTargetWithHostTests::class.java, project, konanTarget)
+}
+
+open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
+    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithSimulatorTests>(name, project, konanTarget, kotlinPluginVersion) {
+
+    override fun createTargetConfigurator(): KotlinNativeTargetWithSimulatorTestsConfigurator =
+        KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion)
+
+    override fun instantiateTarget(name: String): KotlinNativeTargetWithSimulatorTests =
+        project.objects.newInstance(KotlinNativeTargetWithSimulatorTests::class.java, project, konanTarget)
 }
 
 internal val KonanTarget.isCurrentHost: Boolean

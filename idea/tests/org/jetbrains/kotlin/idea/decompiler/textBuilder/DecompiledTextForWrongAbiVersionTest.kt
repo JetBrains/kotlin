@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.runner.RunWith
 import java.io.File
+
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
 

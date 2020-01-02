@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -32,6 +32,7 @@ class IrFunctionImpl(
     isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
+    override val isOperator: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean
 ) :
@@ -57,12 +58,14 @@ class IrFunctionImpl(
         isTailrec = symbol.descriptor.isTailrec,
         isSuspend = symbol.descriptor.isSuspend,
         isExpect = symbol.descriptor.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isOperator = symbol.descriptor.isOperator
     )
 
     override val descriptor: FunctionDescriptor = symbol.descriptor
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
+    override var attributeOwnerId: IrAttributeContainer = this
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 

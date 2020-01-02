@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -16,13 +15,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 fun <D> AbstractFirBasedSymbol<D>.phasedFir(
-    session: FirSession,
     requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): D where D : FirDeclaration, D : FirSymbolOwner<D> {
     val result = this.fir
     val availablePhase = result.resolvePhase
     if (availablePhase < requiredPhase) {
-        val provider = FirProvider.getInstance(session)
+        // NB: we should use session from symbol here, not transformer session (important for IDE)
+        val provider = FirProvider.getInstance(fir.session)
         val containingFile = when (this) {
             is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(this)
             is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(this)

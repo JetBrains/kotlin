@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.typeForTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.types.TypeConstructor
 
 abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     private val psiCallResolver: PSICallResolver,
@@ -61,39 +64,95 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean =
         !completedCalls.add(resolvedAtom)
 
+    override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
+
     fun resolveCandidates(resolutionCallbacks: KotlinResolutionCallbacks): List<ResolutionResultCallInfo<D>> {
         val resolvedCallsInfo = partiallyResolvedCallsInfo.toList()
 
-        val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
-            addOtherSystem(currentConstraintSystem())
-        }
-
-        prepareForCompletion(commonSystem, resolvedCallsInfo)
-
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
 
-        kotlinConstraintSystemCompleter.runCompletion(
-            commonSystem.asConstraintSystemCompleterContext(),
-            KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
-            resolvedCallsInfo.map { it.callResolutionResult },
-            builtIns.unitType
-        ) {
-            postponedArgumentsAnalyzer.analyze(
-                commonSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder
-            )
+        val hasOneSuccessfulAndOneErrorCandidate = if (resolvedCallsInfo.size > 1) {
+            val hasErrors = resolvedCallsInfo.map {
+                it.callResolutionResult.constraintSystem.errors.isNotEmpty() || it.callResolutionResult.diagnostics.isNotEmpty()
+            }
+            hasErrors.any { it } && !hasErrors.all { it }
+        } else {
+            false
+        }
+
+        fun runCompletion(constraintSystem: NewConstraintSystem, atoms: List<ResolvedAtom>) {
+            kotlinConstraintSystemCompleter.runCompletion(
+                constraintSystem.asConstraintSystemCompleterContext(),
+                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                atoms,
+                builtIns.unitType
+            ) {
+                postponedArgumentsAnalyzer.analyze(
+                    constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder
+                )
+            }
+
         }
 
         val allCandidates = arrayListOf<ResolutionResultCallInfo<D>>()
 
-        resolvedCallsInfo.mapTo(allCandidates) {
-            val resolutionResult = it.asCallResolutionResult(diagnosticHolder, commonSystem)
-            ResolutionResultCallInfo(
-                resolutionResult, psiCallResolver.convertToOverloadResolutionResults(it.context, resolutionResult, it.tracingStrategy)
-            )
+        if (hasOneSuccessfulAndOneErrorCandidate) {
+            val goodCandidate = resolvedCallsInfo.first { it.callResolutionResult.constraintSystem.errors.isEmpty() && it.callResolutionResult.diagnostics.isEmpty() }
+            val badCandidate = resolvedCallsInfo.first { it.callResolutionResult.constraintSystem.errors.isNotEmpty() || it.callResolutionResult.diagnostics.isNotEmpty()}
+
+            for (callInfo in listOf(goodCandidate, badCandidate)) {
+                val atomsToAnalyze = mutableListOf<ResolvedAtom>(callInfo.callResolutionResult)
+                val system = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
+                    addOtherSystem(callInfo.callResolutionResult.constraintSystem)
+                    /*
+                     * This is needed for very stupid case, when we have some delegate with good `getValue` and bad `setValue` that
+                     *   was provided by some function call with generic (e.g. var x by lazy { "" })
+                     * The problem is that we want to complete candidates for `getValue` and `setValue` separately, so diagnostics
+                     *   from `setValue` don't leak into resolved call of `getValue`, but both calls can have same
+                     *   atom for receiver (and type variables from it). After we complete first call, completion of
+                     *   second call fails because it's atoms don't contains type variable from receiver, because
+                     *   they was completed in first call
+                     * To fix that we add equality constraints from first call to system of second call and create
+                     *   stub atoms in order to call completer doesn't fail
+                     */
+                    if (callInfo === badCandidate) {
+                        for ((typeVariable, fixedType) in allCandidates[0].resolutionResult.constraintSystem.fixedTypeVariables) {
+                            if (typeVariable in this.notFixedTypeVariables) {
+                                val type = (typeVariable as TypeConstructor).typeForTypeVariable()
+                                addEqualityConstraint(
+                                    type,
+                                    fixedType,
+                                    SimpleConstraintSystemConstraintPosition
+                                )
+                                atomsToAnalyze += StubResolvedAtom(typeVariable)
+                            }
+                        }
+                    }
+                }
+                runCompletion(system, atomsToAnalyze)
+                val resolutionResult = callInfo.asCallResolutionResult(diagnosticHolder, system)
+                allCandidates += ResolutionResultCallInfo(
+                    resolutionResult,
+                    psiCallResolver.convertToOverloadResolutionResults(callInfo.context, resolutionResult, callInfo.tracingStrategy)
+                )
+            }
+        } else {
+            val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
+                addOtherSystem(currentConstraintSystem())
+            }
+
+            prepareForCompletion(commonSystem, resolvedCallsInfo)
+            runCompletion(commonSystem, resolvedCallsInfo.map { it.callResolutionResult })
+            resolvedCallsInfo.mapTo(allCandidates) {
+                val resolutionResult = it.asCallResolutionResult(diagnosticHolder, commonSystem)
+                ResolutionResultCallInfo(
+                    resolutionResult, psiCallResolver.convertToOverloadResolutionResults(it.context, resolutionResult, it.tracingStrategy)
+                )
+            }
         }
 
-        errorCallsInfo.mapTo(allCandidates) { ResolutionResultCallInfo(it.callResolutionResult, it.result) }
-
+        val results = allCandidates.map { it.resolutionResult }
+        errorCallsInfo.filter { it.callResolutionResult !in results }.mapTo(allCandidates) { ResolutionResultCallInfo(it.callResolutionResult, it.result) }
         return allCandidates
     }
 

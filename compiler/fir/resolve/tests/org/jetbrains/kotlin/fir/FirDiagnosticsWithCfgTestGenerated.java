@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         }
 
         public void testAllFilesPresentInCfg() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("binaryOperations.kt")
@@ -115,7 +115,12 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         }
 
         public void testAllFilesPresentInSmartcasts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("anotherBoundSmartcasts.kt")
+        public void testAnotherBoundSmartcasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/anotherBoundSmartcasts.kt");
         }
 
         @TestMetadata("bangbang.kt")
@@ -181,6 +186,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         @TestMetadata("inPlaceLambdas.kt")
         public void testInPlaceLambdas() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/inPlaceLambdas.kt");
+        }
+
+        @TestMetadata("notBoundSmartcasts.kt")
+        public void testNotBoundSmartcasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/notBoundSmartcasts.kt");
         }
 
         @TestMetadata("nullability.kt")

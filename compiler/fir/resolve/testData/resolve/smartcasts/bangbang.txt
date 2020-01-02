@@ -4,28 +4,12 @@ FILE: bangbang.kt
 
     }
     public final fun test_0(a: R|A?|): R|kotlin/Unit| {
-        when (lval <bangbang>: R|A?| = R|<local>/a|) {
-            ==($subj$, Null(null)) ->  {
-                throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-            }
-            else ->  {
-                R|<local>/<bangbang>|
-            }
-        }
-        .R|/A.foo|()
+        R|<local>/a|!!.R|/A.foo|()
         R|<local>/a|.R|/A.foo|()
     }
     public final fun test_1(a: R|A?|): R|kotlin/Unit| {
         when () {
-            when (lval <bangbang>: R|A?| = R|<local>/a|) {
-                ==($subj$, Null(null)) ->  {
-                    throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-                }
-                else ->  {
-                    R|<local>/<bangbang>|
-                }
-            }
-            .R|/A.foo|() ->  {
+            R|<local>/a|!!.R|/A.foo|() ->  {
                 R|<local>/a|.R|/A.foo|()
             }
         }
@@ -34,15 +18,7 @@ FILE: bangbang.kt
     }
     public final fun test_2(a: R|A?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
-            when (lval <bangbang>: R|A?| = R|<local>/a|) {
-                ==($subj$, Null(null)) ->  {
-                    throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-                }
-                else ->  {
-                    R|<local>/<bangbang>|
-                }
-            }
-            .R|/A.foo|() && R|<local>/b| ->  {
+            R|<local>/a|!!.R|/A.foo|() && R|<local>/b| ->  {
                 R|<local>/a|.R|/A.foo|()
             }
         }
@@ -51,15 +27,7 @@ FILE: bangbang.kt
     }
     public final fun test_3(a: R|A?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
-            R|<local>/b| && when (lval <bangbang>: R|A?| = R|<local>/a|) {
-                ==($subj$, Null(null)) ->  {
-                    throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-                }
-                else ->  {
-                    R|<local>/<bangbang>|
-                }
-            }
-            .R|/A.foo|() ->  {
+            R|<local>/b| && R|<local>/a|!!.R|/A.foo|() ->  {
                 R|<local>/a|.R|/A.foo|()
             }
         }
@@ -68,15 +36,7 @@ FILE: bangbang.kt
     }
     public final fun test_4(a: R|A?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
-            when (lval <bangbang>: R|A?| = R|<local>/a|) {
-                ==($subj$, Null(null)) ->  {
-                    throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-                }
-                else ->  {
-                    R|<local>/<bangbang>|
-                }
-            }
-            .R|/A.foo|() || R|<local>/b| ->  {
+            R|<local>/a|!!.R|/A.foo|() || R|<local>/b| ->  {
                 R|<local>/a|.R|/A.foo|()
             }
         }
@@ -85,18 +45,16 @@ FILE: bangbang.kt
     }
     public final fun test_5(a: R|A?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
-            R|<local>/b| || when (lval <bangbang>: R|A?| = R|<local>/a|) {
-                ==($subj$, Null(null)) ->  {
-                    throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
-                }
-                else ->  {
-                    R|<local>/<bangbang>|
-                }
-            }
-            .R|/A.foo|() ->  {
+            R|<local>/b| || R|<local>/a|!!.R|/A.foo|() ->  {
                 R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
             }
         }
 
         R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+    }
+    public final fun <X : R|A?|> test_6(x: R|X|): R|kotlin/Unit| {
+        R|<local>/x|!!.R|/A.foo|()
+    }
+    public final fun <X : R|A|> test_7(x: R|X?|): R|kotlin/Unit| {
+        R|<local>/x|!!.R|/A.foo|()
     }

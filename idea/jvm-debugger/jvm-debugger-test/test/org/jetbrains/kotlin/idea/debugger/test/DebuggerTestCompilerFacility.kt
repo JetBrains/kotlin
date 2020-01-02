@@ -18,8 +18,11 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenTestCase.TestFile
+import org.jetbrains.kotlin.codegen.CodegenTestUtil
+import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -160,7 +163,7 @@ class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget:
             .codegenFactory(DefaultCodegenFactory)
             .build()
 
-        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+        KotlinCodegenFacade.compileCorrectFiles(state)
 
         val extraDiagnostics = state.collectedExtraJvmDiagnostics
         if (!extraDiagnostics.isEmpty()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -55,6 +55,7 @@ interface KotlinSourceSet : KotlinModule {
     val resourceDirs: Set<File>
     val dependsOnSourceSets: Set<String>
     val actualPlatforms: KotlinPlatformContainer
+
     @Deprecated("Returns single target platform", ReplaceWith("actualPlatforms.actualPlatforms"), DeprecationLevel.ERROR)
     val platform: KotlinPlatform
         get() = actualPlatforms.getSinglePlatform()

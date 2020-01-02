@@ -14,14 +14,14 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
         CONST Int type=kotlin.Int value=0
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.IntIterator [val]
-          CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+          CALL 'public final fun iterator (): kotlin.collections.IntIterator [operator] declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
             $this: GET_VAR 'val xs: kotlin.IntArray [val] declared in <root>.testBreakFor' type=kotlin.IntArray origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
-          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator [val] declared in <root>.testBreakFor' type=kotlin.collections.IntIterator origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
             VAR FOR_LOOP_VARIABLE name:x type:kotlin.Int [val]
-              CALL 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
+              CALL 'public final fun next (): kotlin.Int [operator] declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator [val] declared in <root>.testBreakFor' type=kotlin.collections.IntIterator origin=null
             BLOCK type=kotlin.Unit origin=null
               WHEN type=kotlin.Unit origin=WHEN
@@ -76,14 +76,14 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
         CONST Int type=kotlin.Int value=0
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_1 type:kotlin.collections.IntIterator [val]
-          CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+          CALL 'public final fun iterator (): kotlin.collections.IntIterator [operator] declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
             $this: GET_VAR 'val xs: kotlin.IntArray [val] declared in <root>.testContinueFor' type=kotlin.IntArray origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
-          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'val tmp_1: kotlin.collections.IntIterator [val] declared in <root>.testContinueFor' type=kotlin.collections.IntIterator origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
             VAR FOR_LOOP_VARIABLE name:x type:kotlin.Int [val]
-              CALL 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
+              CALL 'public final fun next (): kotlin.Int [operator] declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'val tmp_1: kotlin.collections.IntIterator [val] declared in <root>.testContinueFor' type=kotlin.collections.IntIterator origin=null
             BLOCK type=kotlin.Unit origin=null
               WHEN type=kotlin.Unit origin=WHEN
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
             TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               BLOCK type=kotlin.Int origin=PREFIX_INCR
                 SET_VAR 'var k: kotlin.Int [var] declared in <root>.testContinueDoWhile' type=kotlin.Unit origin=PREFIX_INCR
-                  CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+                  CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
                     $this: GET_VAR 'var k: kotlin.Int [var] declared in <root>.testContinueDoWhile' type=kotlin.Int origin=PREFIX_INCR
                 GET_VAR 'var k: kotlin.Int [var] declared in <root>.testContinueDoWhile' type=kotlin.Int origin=PREFIX_INCR
             WHEN type=kotlin.Unit origin=WHEN
@@ -129,7 +129,7 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
                   arg1: CONST Int type=kotlin.Int value=2
                 then: CONTINUE label=null loop.label=null
             SET_VAR 'var s: kotlin.String [var] declared in <root>.testContinueDoWhile' type=kotlin.Unit origin=PLUSEQ
-              CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+              CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUSEQ
                 $this: GET_VAR 'var s: kotlin.String [var] declared in <root>.testContinueDoWhile' type=kotlin.String origin=PLUSEQ
                 other: STRING_CONCATENATION type=kotlin.String
                   GET_VAR 'var k: kotlin.Int [var] declared in <root>.testContinueDoWhile' type=kotlin.Int origin=null
@@ -139,7 +139,7 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
             arg1: CONST Int type=kotlin.Int value=10
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'var s: kotlin.String [var] declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value="1;2;"

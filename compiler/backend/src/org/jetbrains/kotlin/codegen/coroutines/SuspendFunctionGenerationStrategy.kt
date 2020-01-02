@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMarker
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -95,13 +97,31 @@ open class SuspendFunctionGenerationStrategy(
         return CoroutineTransformerMethodVisitor(
             mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
             isForNamedFunction = true,
-            element = declaration,
-            diagnostics = state.diagnostics,
+            reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(declaration, state, it) },
+            lineNumber = CodegenUtil.getLineNumberForElement(declaration, false) ?: 0,
+            sourceFile = declaration.containingKtFile.name,
             shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
             needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
             internalNameForDispatchReceiver = containingClassInternalNameOrNull(),
-            languageVersionSettings = languageVersionSettings
+            languageVersionSettings = languageVersionSettings,
+            disableTailCallOptimizationForFunctionReturningUnit = originalSuspendDescriptor.returnType?.isUnit() == true &&
+                    originalSuspendDescriptor.overriddenDescriptors.isNotEmpty() &&
+                    !originalSuspendDescriptor.allOverriddenFunctionsReturnUnit()
         )
+    }
+
+    private fun FunctionDescriptor.allOverriddenFunctionsReturnUnit(): Boolean {
+        val visited = mutableSetOf<FunctionDescriptor>()
+
+        fun bfs(descriptor: FunctionDescriptor): Boolean {
+            if (!visited.add(descriptor)) return true
+            if (descriptor.original.returnType?.isUnit() != true) return false
+            for (parent in descriptor.overriddenDescriptors) {
+                if (!bfs(parent)) return false
+            }
+            return true
+        }
+        return bfs(this)
     }
 
     private fun containingClassInternalNameOrNull() =

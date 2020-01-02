@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteMemberScope(
     session: FirSession,
-    superTypesScope: FirSuperTypeScope,
+    superTypesScope: FirScope,
     declaredMemberScope: FirScope
 ) : AbstractFirUseSiteMemberScope(session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
 

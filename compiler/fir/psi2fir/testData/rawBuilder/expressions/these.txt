@@ -5,7 +5,7 @@ FILE: these.kt
         }
 
         public? final? fun foo(): Int {
-            ^foo Int(1)
+            ^foo IntegerLiteral(1)
         }
 
         public? final? fun bar(): Int {

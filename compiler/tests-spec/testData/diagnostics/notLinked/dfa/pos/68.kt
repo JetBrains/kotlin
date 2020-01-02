@@ -25,7 +25,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Any?) {
     (x as Nothing?)!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?"), UNREACHABLE_CODE!>x<!>
-    <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()<!>
+    <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS!>inv<!>()<!>
 }
 
 // TESTCASE NUMBER: 3
@@ -48,7 +48,7 @@ fun case_4(x: Any?) {
 fun case_5(x: Any?) {
     if (x as Nothing? is Nothing) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 

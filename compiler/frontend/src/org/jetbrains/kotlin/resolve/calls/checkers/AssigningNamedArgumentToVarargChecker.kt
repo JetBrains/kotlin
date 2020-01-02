@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations
-import org.jetbrains.kotlin.config.LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm
+import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -84,9 +83,18 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
         context: ResolutionContext<*>,
         parameterDescriptor: ValueParameterDescriptor
     ) {
-        if (!argument.hasSpread()) {
-            reportMigrationDiagnostic(migrationDiagnosticsForFunction, context) { diagnostic ->
-                context.trace.report(diagnostic.on(argumentExpression, parameterDescriptor.type))
+        if (
+            context.languageVersionSettings.supportsFeature(AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)
+            && isArrayOrArrayLiteral(argument, context.trace)
+        ) {
+            if (argument.hasSpread()) {
+                context.trace.report(Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION.on(argumentExpression))
+            }
+        } else {
+            if (!argument.hasSpread()) {
+                reportMigrationDiagnostic(migrationDiagnosticsForFunction, context) { diagnostic ->
+                    context.trace.report(diagnostic.on(argumentExpression, parameterDescriptor.type))
+                }
             }
         }
     }
@@ -108,3 +116,6 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
 }
 
 private data class MigrationDiagnostics<T : DiagnosticFactory<*>>(val warning: T, val error: T)
+
+private val ResolutionContext<*>.isAssigningArrayEnabled: Boolean
+    get() = languageVersionSettings.supportsFeature(AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)

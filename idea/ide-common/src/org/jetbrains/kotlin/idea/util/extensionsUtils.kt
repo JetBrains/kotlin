@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:JvmName("ExtensionUtils")
@@ -33,8 +22,8 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
 fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
-        receiverTypes: Collection<KotlinType>,
-        callType: CallType<*>
+    receiverTypes: Collection<KotlinType>,
+    callType: CallType<*>
 ): Collection<TCallable> {
     if (!callType.descriptorKindFilter.accepts(this)) return listOf()
 
@@ -44,22 +33,20 @@ fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
     }
 
     val extensionReceiverType = fuzzyExtensionReceiverType()!!
-    val substitutors = types
-            .mapNotNull {
-                var substitutor = extensionReceiverType.checkIsSuperTypeOf(it)
-                // check if we may fail due to receiver expression being nullable
-                if (substitutor == null && it.nullability() == TypeNullability.NULLABLE && extensionReceiverType.nullability() == TypeNullability.NOT_NULL) {
-                    substitutor = extensionReceiverType.checkIsSuperTypeOf(it.makeNotNullable())
-                }
-                substitutor
-            }
+    val substitutors = types.mapNotNull {
+        var substitutor = extensionReceiverType.checkIsSuperTypeOf(it)
+        // check if we may fail due to receiver expression being nullable
+        if (substitutor == null && it.nullability() == TypeNullability.NULLABLE && extensionReceiverType.nullability() == TypeNullability.NOT_NULL) {
+            substitutor = extensionReceiverType.checkIsSuperTypeOf(it.makeNotNullable())
+        }
+        substitutor
+    }
     return if (typeParameters.isEmpty()) { // optimization for non-generic callables
         if (substitutors.any()) listOf(this) else listOf()
-    }
-    else {
+    } else {
         substitutors
-                .mapNotNull { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable?) }
-                .toList()
+            .mapNotNull { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable?) }
+            .toList()
     }
 }
 
@@ -76,20 +63,16 @@ fun ReceiverValue?.getThisReceiverOwner(bindingContext: BindingContext): Declara
     }
 }
 
-fun ReceiverValue?.getReceiverTargetDescriptor(bindingContext: BindingContext): DeclarationDescriptor? {
-    return when (this) {
-        is ExpressionReceiver -> {
-            val expression = KtPsiUtil.deparenthesize(this.expression)
-            val refExpression = when (expression) {
-                                    is KtThisExpression -> expression.instanceReference
-                                    is KtReferenceExpression -> expression
-                                    else -> null
-                                }  ?: return null
-            bindingContext[BindingContext.REFERENCE_TARGET, refExpression]
-        }
-
-        is ImplicitReceiver -> this.declarationDescriptor
-
+fun ReceiverValue?.getReceiverTargetDescriptor(bindingContext: BindingContext): DeclarationDescriptor? = when (this) {
+    is ExpressionReceiver -> when (val expression = KtPsiUtil.deparenthesize(this.expression)) {
+        is KtThisExpression -> expression.instanceReference
+        is KtReferenceExpression -> expression
         else -> null
+    }?.let { referenceExpression ->
+        bindingContext[BindingContext.REFERENCE_TARGET, referenceExpression]
     }
+
+    is ImplicitReceiver -> this.declarationDescriptor
+
+    else -> null
 }

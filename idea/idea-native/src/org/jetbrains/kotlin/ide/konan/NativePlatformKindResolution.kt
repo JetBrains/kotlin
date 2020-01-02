@@ -9,13 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.getCapability
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -27,10 +28,10 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.safeAbiVersion
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.isCompatible
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.safeMetadataVersion
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.MetadataInfo.Compatible
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.MetadataInfo.Incompatible
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
@@ -39,8 +40,9 @@ import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.KonanFactories
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
@@ -57,7 +59,7 @@ fun KotlinLibrary.createPackageFragmentProvider(
     moduleDescriptor: ModuleDescriptor
 ): PackageFragmentProvider? {
 
-    if (!safeAbiVersion.isCompatible) return null
+    if (safeMetadataVersion?.isCompatible() != true) return null
 
     val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(this)
 
@@ -98,24 +100,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         )
     }
 
-    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
-        return when {
-            // The virtual file for a library packed in a ZIP file will have path like "/some/path/to/the/file.klib!/",
-            // and therefore will be recognized by VFS as a directory (isDirectory == true).
-            // So, first, let's check the extension.
-            virtualFile.extension == KLIB_FILE_EXTENSION -> true
-
-            virtualFile.isDirectory -> {
-                val linkdataDir = virtualFile.findChild("linkdata") ?: return false
-                // False means we hit .knm file
-                !VfsUtil.processFilesRecursively(linkdataDir) {
-                    it.extension != KLIB_METADATA_FILE_EXTENSION
-                }
-            }
-
-            else -> false
-        }
-    }
+    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean = virtualFile.isKonanLibraryRoot
 
     override fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
@@ -130,7 +115,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = NativeIdePlatformKind
 
-    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo): BuiltInsCacheKey = NativeBuiltInsCacheKey
+    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?): BuiltInsCacheKey = NativeBuiltInsCacheKey
 
     override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext, sdkDependency: SdkInfo?) =
         createKotlinNativeBuiltIns(moduleInfo, projectContext)
@@ -187,14 +172,33 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
 private fun ModuleInfo.findNativeStdlib(): NativeLibraryInfo? =
     dependencies().lazyClosure { it.dependencies() }
         .filterIsInstance<NativeLibraryInfo>()
-        .firstOrNull { it.isStdlib && it.safeAbiVersion.isCompatible }
+        .firstOrNull { it.isStdlib && it.metadataInfo.isCompatible }
 
 class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
+
+    sealed class MetadataInfo {
+        abstract val isCompatible: Boolean
+
+        object Compatible : MetadataInfo() {
+            override val isCompatible get() = true
+        }
+
+        class Incompatible(val isOlder: Boolean) : MetadataInfo() {
+            override val isCompatible get() = false
+        }
+    }
 
     private val nativeLibrary = createKotlinLibrary(File(libraryRoot))
 
     val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
-    val safeAbiVersion get() = nativeLibrary.safeAbiVersion
+    val metadataInfo by lazy {
+        val metadataVersion = nativeLibrary.safeMetadataVersion
+        when {
+            metadataVersion == null -> Incompatible(true) // too old KLIB format, even doesn't have metadata version
+            !metadataVersion.isCompatible() -> Incompatible(!metadataVersion.isAtLeast(KlibMetadataVersion.INSTANCE))
+            else -> Compatible
+        }
+    }
 
     override fun getLibraryRoots() = listOf(libraryRoot)
 
@@ -215,8 +219,7 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
     companion object {
         val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
 
-        internal val KotlinLibrary.safeAbiVersion get() = this.readSafe(null) { versions.abiVersion }
-        internal val KotlinAbiVersion?.isCompatible get() = this == KotlinAbiVersion.CURRENT
+        internal val KotlinLibrary.safeMetadataVersion get() = this.readSafe(null) { metadataVersion }
 
         private fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) = try {
             action()

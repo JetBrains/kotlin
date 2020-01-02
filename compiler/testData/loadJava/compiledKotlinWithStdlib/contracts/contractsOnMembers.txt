@@ -1,0 +1,11 @@
+package test
+
+public final class Foo {
+    /*primary*/ public constructor Foo()
+    public final fun </*0*/ X, /*1*/ Y, /*2*/ Z, /*3*/ R> callsEffectWithKind(/*0*/ block: (X, Y, Z) -> R): kotlin.Unit
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    public final fun returnsImplies(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+}

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.contracts.parsing
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.description.LazyContractProvider
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -46,7 +46,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         // is a *necessary* (but not sufficient, actually) condition for presence of 'LazyContractProvider'
         if (!expression.isContractDescriptionCallPsiCheck()) return
 
-        val callContext = ContractCallContext(expression, scope, trace)
+        val callContext = ContractCallContext(expression, scope, trace, languageVersionSettings)
         val contractProviderIfAny =
             (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey) as? LazyContractProvider?
         var resultingContractDescription: ContractDescription? = null
@@ -104,7 +104,8 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
 class ContractCallContext(
     val contractCallExpression: KtExpression,
     val scope: LexicalScope,
-    val trace: BindingTrace
+    val trace: BindingTrace,
+    val languageVersionSettings: LanguageVersionSettings
 ) {
     val ownerDescriptor: DeclarationDescriptor = scope.ownerDescriptor
     val functionDescriptor: FunctionDescriptor = ownerDescriptor as FunctionDescriptor

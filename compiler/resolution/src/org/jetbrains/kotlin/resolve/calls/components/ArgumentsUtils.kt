@@ -52,7 +52,11 @@ val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
     }
 
 internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor, languageVersionSettings: LanguageVersionSettings) =
-    if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
+    if (
+        this.isSpread ||
+        this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings) ||
+        this.isArrayAssignedAsNamedArgumentInFunction(parameter, languageVersionSettings)
+    ) {
         parameter.type.unwrap()
     } else {
         parameter.safeAs<ValueParameterDescriptor>()?.varargElementType?.unwrap() ?: parameter.type.unwrap()
@@ -118,6 +122,17 @@ private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
     if (this.argumentName == null || !parameter.isVararg) return false
 
     return isParameterOfAnnotation(parameter) && this.isArrayOrArrayLiteral()
+}
+
+private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInFunction(
+    parameter: ParameterDescriptor,
+    languageVersionSettings: LanguageVersionSettings
+): Boolean {
+    if (!languageVersionSettings.supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)) return false
+
+    if (this.argumentName == null || !parameter.isVararg) return false
+
+    return this.isArrayOrArrayLiteral()
 }
 
 private fun KotlinCallArgument.isArrayOrArrayLiteral(): Boolean {

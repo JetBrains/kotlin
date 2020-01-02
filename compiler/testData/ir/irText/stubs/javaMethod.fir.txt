@@ -1,0 +1,7 @@
+FILE fqName:<root> fileName:/javaMethod.kt
+  FUN name:test visibility:public modality:FINAL <> (j:<root>.J) returnType:kotlin.Unit
+    VALUE_PARAMETER name:j index:0 type:<root>.J
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (j: <root>.J): kotlin.Unit declared in <root>'
+        CALL 'public open fun bar (): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=null
+          $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null

@@ -71,7 +71,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
 
     private fun KotlinAwareMoveFilesOrDirectoriesModel.testDataString(): String {
         return "KotlinAwareMoveFilesOrDirectoriesModel:\n" +
-                "elementsToMove = ${elementsToMove.joinToString { if (it is PsiFileSystemItem) it.virtualFile.path else it.javaClass.name }}\n" +
+                "elementsToMove = ${elementsToMove.joinToString { it.virtualFile.path }}\n" +
                 "directoryName = $targetDirectoryName\n" +
                 "updatePackageDirective = $updatePackageDirective\n" +
                 "searchReferences = $searchReferences"
@@ -214,7 +214,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
     override fun invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
         project: Project,
         initialDirectory: PsiDirectory?,
-        elements: Array<out PsiElement>,
+        elements: List<PsiFileSystemItem>,
         moveCallback: MoveCallback?
     ) {
         val targetPath =
@@ -224,7 +224,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
 
         val model = KotlinAwareMoveFilesOrDirectoriesModel(
             project = project,
-            elementsToMove = elements.toList(),
+            elementsToMove = elements,
             targetDirectoryName = randomDirectoryPathMutator(targetPath),
             updatePackageDirective = randomBoolean(),
             searchReferences = randomBoolean(),

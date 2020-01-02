@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.projectModel
 
 import com.intellij.util.text.nullize
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 import java.io.InputStreamReader
 import java.io.Reader
@@ -128,7 +128,9 @@ open class ProjectStructureParser(private val projectRoot: File) {
             if (it == "JVM")
                 JvmPlatforms.defaultJvmPlatform.single()
             else
-                platformsByPlatformName[it] ?: error("Unknown platform $it. Available platforms: ${platformsByPlatformName.keys.joinToString()}")
+                platformsByPlatformName[it] ?: error(
+                    "Unknown platform $it. Available platforms: ${platformsByPlatformName.keys.joinToString()}"
+                )
         }.toSet()
 
         return TargetPlatform(platforms)

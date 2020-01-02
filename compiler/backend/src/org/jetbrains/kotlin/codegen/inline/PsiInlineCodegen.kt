@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -36,7 +35,8 @@ class PsiInlineCodegen(
     methodOwner: Type,
     signature: JvmMethodSignature,
     typeParameterMappings: TypeParameterMappings<KotlinType>,
-    sourceCompiler: SourceCompilerForInline
+    sourceCompiler: SourceCompilerForInline,
+    private val actualDispatchReceiver: Type = methodOwner
 ) : InlineCodegen<ExpressionCodegen>(
     codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(typeParameterMappings, object : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
@@ -73,7 +73,7 @@ class PsiInlineCodegen(
 
     override fun processAndPutHiddenParameters(justProcess: Boolean) {
         if (getMethodAsmFlags(functionDescriptor, sourceCompiler.contextKind, state) and Opcodes.ACC_STATIC == 0) {
-            invocationParamBuilder.addNextParameter(AsmTypes.OBJECT_TYPE, false)
+            invocationParamBuilder.addNextParameter(methodOwner, false, actualDispatchReceiver)
         }
 
         for (param in jvmSignature.valueParameters) {

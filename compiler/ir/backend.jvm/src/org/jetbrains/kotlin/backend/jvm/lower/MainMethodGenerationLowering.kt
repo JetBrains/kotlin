@@ -68,7 +68,11 @@ internal class MainMethodGenerationLowering(val context: JvmBackendContext) : Cl
     }
 
     private fun IrSimpleFunction.isParameterlessMainMethod(): Boolean =
-        typeParameters.isEmpty() && valueParameters.isEmpty() && returnType.isUnit() && name.asString() == "main"
+        typeParameters.isEmpty() &&
+                extensionReceiverParameter == null &&
+                valueParameters.isEmpty() &&
+                returnType.isUnit() &&
+                name.asString() == "main"
 
 
     private fun IrSimpleFunction.isMainMethod(): Boolean {

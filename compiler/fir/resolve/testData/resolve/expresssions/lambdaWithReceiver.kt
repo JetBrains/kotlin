@@ -3,11 +3,11 @@ interface A {
 }
 
 fun <T> myWith(receiver: T, block: T.() -> Unit) {
-    receiver.<!UNRESOLVED_REFERENCE!>block<!>()
+    receiver.block()
 }
 
 fun <T> T.myApply(block: T.() -> Unit) {
-    this.<!UNRESOLVED_REFERENCE!>block<!>()
+    this.block()
 }
 
 fun withA(block: A.() -> Unit) {}

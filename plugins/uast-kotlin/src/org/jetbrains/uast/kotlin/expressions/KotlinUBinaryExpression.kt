@@ -35,7 +35,10 @@ class KotlinUBinaryExpression(
         val BITWISE_OPERATORS = mapOf(
                 "or" to UastBinaryOperator.BITWISE_OR,
                 "and" to UastBinaryOperator.BITWISE_AND,
-                "xor" to UastBinaryOperator.BITWISE_XOR
+                "xor" to UastBinaryOperator.BITWISE_XOR,
+                "shl" to UastBinaryOperator.SHIFT_LEFT,
+                "shr" to UastBinaryOperator.SHIFT_RIGHT,
+                "ushr" to UastBinaryOperator.UNSIGNED_SHIFT_RIGHT
         )
     }
 

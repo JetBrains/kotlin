@@ -28,9 +28,16 @@ abstract class FirAbstractPhaseTransformer<D>(
 
     open val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() {
-            val requiredPhase = transformerPhase.prev
-            return phasedFir(session, requiredPhase)
+            val requiredPhase = transformerPhase.requiredToLaunch
+            return phasedFir(requiredPhase)
         }
+
+    override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirFile> {
+        file.replaceResolvePhase(transformerPhase)
+
+        @Suppress("UNCHECKED_CAST")
+        return super.transformFile(file, data) as CompositeTransformResult<FirFile>
+    }
 
     override fun transformDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
         declaration.replaceResolvePhase(transformerPhase)

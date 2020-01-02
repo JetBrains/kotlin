@@ -1,0 +1,10 @@
+FILE: incorrectInvokeReceiver.kt
+    public final fun R|kotlin/String|.invoke(): R|kotlin/String| {
+        ^invoke this@R|/invoke|
+    }
+    public final val some: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    public final fun sss(): R|kotlin/Unit| {
+        lval some: R|kotlin/Int| = Int(10)
+        <Inapplicable(WRONG_RECEIVER): [/invoke]>#()
+    }

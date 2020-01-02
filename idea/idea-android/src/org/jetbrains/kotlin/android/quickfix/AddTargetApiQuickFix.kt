@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.quickfix
@@ -31,8 +20,8 @@ import org.jetbrains.kotlin.psi.*
 
 
 class AddTargetApiQuickFix(
-        val api: Int,
-        val useRequiresApi: Boolean
+    val api: Int,
+    val useRequiresApi: Boolean
 ) : AndroidLintQuickFix {
 
     private companion object {
@@ -41,7 +30,7 @@ class AddTargetApiQuickFix(
     }
 
     override fun isApplicable(startElement: PsiElement, endElement: PsiElement, contextType: AndroidQuickfixContexts.ContextType): Boolean =
-            getAnnotationContainer(startElement, useRequiresApi) != null
+        getAnnotationContainer(startElement, useRequiresApi) != null
 
     override fun getName(): String = getAnnotationValue(false).let {
         if (useRequiresApi) {
@@ -60,10 +49,11 @@ class AddTargetApiQuickFix(
         }
 
         if (annotationContainer is KtModifierListOwner) {
-             annotationContainer.addAnnotation(
-                    if (useRequiresApi) FQNAME_REQUIRES_API else FQNAME_TARGET_API,
-                    getAnnotationValue(true),
-                    whiteSpaceText = if (annotationContainer.isNewLineNeededForAnnotation()) "\n" else " ")
+            annotationContainer.addAnnotation(
+                if (useRequiresApi) FQNAME_REQUIRES_API else FQNAME_TARGET_API,
+                getAnnotationValue(true),
+                whiteSpaceText = if (annotationContainer.isNewLineNeededForAnnotation()) "\n" else " "
+            )
         }
     }
 
@@ -82,14 +72,14 @@ class AddTargetApiQuickFix(
 
     private fun PsiElement.isRequiresApiAnnotationValidTarget(): Boolean {
         return this is KtClassOrObject ||
-               (this is KtFunction && this !is KtFunctionLiteral) ||
-               (this is KtProperty && !isLocal && hasBackingField()) ||
-               this is KtPropertyAccessor
+                (this is KtFunction && this !is KtFunctionLiteral) ||
+                (this is KtProperty && !isLocal && hasBackingField()) ||
+                this is KtPropertyAccessor
     }
 
     private fun PsiElement.isTargetApiAnnotationValidTarget(): Boolean {
         return this is KtClassOrObject ||
-               (this is KtFunction && this !is KtFunctionLiteral) ||
-               this is KtPropertyAccessor
+                (this is KtFunction && this !is KtFunctionLiteral) ||
+                this is KtPropertyAccessor
     }
 }

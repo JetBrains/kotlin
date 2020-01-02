@@ -1,0 +1,18 @@
+FILE: typeAliasWithForEach.kt
+    public abstract interface ArgsInfo : R|kotlin/Any| {
+    }
+    public final class ArgsInfoImpl : R|ArgsInfo| {
+        public constructor(info: R|ArgsInfo|): R|ArgsInfoImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias Arguments = R|kotlin/collections/Map<kotlin/String, ArgsInfo>|
+    public final fun R|Arguments|.deepCopy(): R|Arguments| {
+        lval result: R|java/util/HashMap<kotlin/String, ArgsInfo>| = R|java/util/HashMap.HashMap|<R|kotlin/String|, R|ArgsInfo|>()
+        this@R|/deepCopy|.R|FakeOverride<java/util/Map.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|kotlin/String|, value: R|ArgsInfo|): R|kotlin/Unit| {
+            R|<local>/result|.R|kotlin/collections/set|<R|kotlin/String|, R|ArgsInfo|>(R|<local>/key|, R|/ArgsInfoImpl.ArgsInfoImpl|(R|<local>/value|))
+        }
+        )
+        ^deepCopy R|<local>/result|
+    }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.inline
@@ -63,12 +52,12 @@ fun highlightElements(project: Project, editor: Editor?, elements: List<PsiEleme
 }
 
 fun showDialog(
-        project: Project,
-        name: String,
-        title: String,
-        declaration: KtNamedDeclaration,
-        usages: List<KtElement>,
-        helpTopic: String? = null
+    project: Project,
+    name: String,
+    title: String,
+    declaration: KtNamedDeclaration,
+    usages: List<KtElement>,
+    helpTopic: String? = null
 ): Boolean {
     if (ApplicationManager.getApplication().isUnitTestMode) return true
 
@@ -78,12 +67,12 @@ fun showDialog(
         else -> return false
     }
     val dialog = RefactoringMessageDialog(
-            title,
-            "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", usages.size),
-            helpTopic,
-            "OptionPane.questionIcon",
-            true,
-            project
+        title,
+        "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", usages.size),
+        helpTopic,
+        "OptionPane.questionIcon",
+        true,
+        project
     )
     dialog.show()
     return dialog.isOK
@@ -99,9 +88,9 @@ internal fun preProcessInternalUsages(element: KtElement, usages: Collection<KtE
         if (targetPackage == mainFile.packageFqName) continue
         val packageNameInfo = ContainerChangeInfo(ContainerInfo.Package(mainFile.packageFqName), ContainerInfo.Package(targetPackage))
         element.processInternalReferencesToUpdateOnPackageNameChange(packageNameInfo) { expr, factory ->
-            val infos =
-                    expr.internalUsageInfos
-                    ?: LinkedHashMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>().apply { expr.internalUsageInfos = this }
+            val infos = expr.internalUsageInfos ?: LinkedHashMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>().apply {
+                expr.internalUsageInfos = this
+            }
             infos[targetPackage] = factory
         }
     }
@@ -118,12 +107,12 @@ internal fun <E : KtElement> postProcessInternalReferences(inlinedElement: E): E
 }
 
 internal fun buildCodeToInline(
-        declaration: KtDeclaration,
-        returnType: KotlinType?,
-        isReturnTypeExplicit: Boolean,
-        bodyOrInitializer: KtExpression,
-        isBlockBody: Boolean,
-        editor: Editor?
+    declaration: KtDeclaration,
+    returnType: KotlinType?,
+    isReturnTypeExplicit: Boolean,
+    bodyOrInitializer: KtExpression,
+    isBlockBody: Boolean,
+    editor: Editor?
 ): CodeToInline? {
     val bodyCopy = bodyOrInitializer.copied()
 
@@ -132,11 +121,11 @@ internal fun buildCodeToInline(
     else
         TypeUtils.NO_EXPECTED_TYPE
 
-    fun analyzeBodyCopy(): BindingContext {
-        return bodyCopy.analyzeInContext(bodyOrInitializer.getResolutionScope(),
-                                         contextExpression = bodyOrInitializer,
-                                         expectedType = expectedType)
-    }
+    fun analyzeBodyCopy(): BindingContext = bodyCopy.analyzeInContext(
+        bodyOrInitializer.getResolutionScope(),
+        contextExpression = bodyOrInitializer,
+        expectedType = expectedType
+    )
 
     val descriptor = declaration.unsafeResolveToDescriptor()
     val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
@@ -151,28 +140,27 @@ internal fun buildCodeToInline(
         val lastReturn = statements.lastOrNull() as? KtReturnExpression
         if (returnStatements.any { it != lastReturn }) {
             val message = RefactoringBundle.getCannotRefactorMessage(
-                    if (returnStatements.size > 1)
-                        "Inline Function is not supported for functions with multiple return statements."
-                    else
-                        "Inline Function is not supported for functions with return statements not at the end of the body."
+                if (returnStatements.size > 1)
+                    "Inline Function is not supported for functions with multiple return statements."
+                else
+                    "Inline Function is not supported for functions with return statements not at the end of the body."
             )
             CommonRefactoringUtil.showErrorHint(declaration.project, editor, message, "Inline Function", null)
             return null
         }
 
-        return builder.prepareCodeToInline(lastReturn?.returnedExpression,
-                                           statements.dropLast(returnStatements.size), ::analyzeBodyCopy, reformat = true)
-    }
-    else {
+        return builder.prepareCodeToInline(
+            lastReturn?.returnedExpression,
+            statements.dropLast(returnStatements.size), ::analyzeBodyCopy, reformat = true
+        )
+    } else {
         return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy, reformat = true)
     }
 }
 
-internal fun Editor.findSimpleNameReference(): KtSimpleNameReference? {
-    val reference = TargetElementUtil.findReference(this, caretModel.offset)
-    return when (reference) {
+internal fun Editor.findSimpleNameReference(): KtSimpleNameReference? =
+    when (val reference = TargetElementUtil.findReference(this, caretModel.offset)) {
         is KtSimpleNameReference -> reference
         is PsiMultiReference -> reference.references.firstIsInstanceOrNull()
         else -> null
     }
-}

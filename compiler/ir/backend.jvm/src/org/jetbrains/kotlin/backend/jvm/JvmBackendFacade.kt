@@ -5,50 +5,69 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmMangler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 object JvmBackendFacade {
-    fun doGenerateFiles(
-        files: Collection<KtFile>,
-        state: GenerationState,
-        errorHandler: CompilationErrorHandler,
-        phaseConfig: PhaseConfig
-    ) {
-        val psi2ir = Psi2IrTranslator(state.languageVersionSettings)
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
-        val extensions = JvmStubGeneratorExtensions()
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, stubGeneratorExtensions = extensions)
+    fun doGenerateFiles(files: Collection<KtFile>, state: GenerationState, phaseConfig: PhaseConfig) {
+        val extensions = JvmGeneratorExtensions()
+        val psi2ir = Psi2IrTranslator(state.languageVersionSettings, mangler = JvmMangler)
+        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = extensions)
+
+        for (extension in IrGenerationExtension.getInstances(state.project)) {
+            psi2ir.addPostprocessingStep { module ->
+                extension.generate(
+                    module,
+                    IrPluginContext(
+                        psi2irContext.moduleDescriptor,
+                        psi2irContext.bindingContext,
+                        psi2irContext.languageVersionSettings,
+                        psi2irContext.symbolTable,
+                        psi2irContext.typeTranslator,
+                        psi2irContext.irBuiltIns
+                    )
+                )
+            }
+        }
+
+        val irProviders = generateTypicalIrProviderList(
+            psi2irContext.moduleDescriptor, psi2irContext.irBuiltIns, psi2irContext.symbolTable,
+            extensions = extensions
+        )
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders = irProviders, expectDescriptorToSymbol = null)
         doGenerateFilesInternal(
-            state, errorHandler, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, extensions
+            state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, irProviders, extensions
         )
     }
 
     internal fun doGenerateFilesInternal(
         state: GenerationState,
-        errorHandler: CompilationErrorHandler,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
         phaseConfig: PhaseConfig,
-        extensions: JvmStubGeneratorExtensions = JvmStubGeneratorExtensions()
+        irProviders: List<IrProvider>,
+        extensions: JvmGeneratorExtensions
     ) {
         val context = JvmBackendContext(
-            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig
+            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions.classNameOverride
         )
+        /* JvmBackendContext creates new unbound symbols, have to resolve them. */
+        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+
         state.irBasedMapAsmMethod = { descriptor ->
             context.methodSignatureMapper.mapAsmMethod(context.referenceFunction(descriptor).owner)
         }
@@ -56,26 +75,7 @@ object JvmBackendFacade {
             context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
         }
 
-        ExternalDependenciesGenerator(
-            irModuleFragment.descriptor,
-            symbolTable,
-            irModuleFragment.irBuiltins,
-            extensions = extensions
-        ).generateUnboundSymbolsAsDependencies()
-
-        context.classNameOverride = extensions.classNameOverride
-
-        for (irFile in irModuleFragment.files) {
-            for (extension in IrGenerationExtension.getInstances(context.state.project)) {
-                extension.generate(irFile, context, context.state.bindingContext)
-            }
-        }
-
-        try {
-            JvmLower(context).lower(irModuleFragment)
-        } catch (e: Throwable) {
-            errorHandler.reportException(e, null)
-        }
+        JvmLower(context).lower(irModuleFragment)
 
         for (generateMultifileFacade in listOf(true, false)) {
             for (irFile in irModuleFragment.files) {
@@ -95,7 +95,7 @@ object JvmBackendFacade {
                     }
                     state.afterIndependentPart()
                 } catch (e: Throwable) {
-                    errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+                    CodegenUtil.reportBackendException(e, "code generation", irFile.fileEntry.name)
                 }
             }
         }

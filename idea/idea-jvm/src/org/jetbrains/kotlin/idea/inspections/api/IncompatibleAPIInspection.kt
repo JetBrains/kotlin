@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -67,7 +67,7 @@ class IncompatibleAPIInspection : LocalInspectionTool(), CustomSuppressableInspe
 
             element.language == JavaLanguage.INSTANCE -> {
                 val key = HighlightDisplayKey.find(shortName)
-                        ?: throw AssertionError("HighlightDisplayKey.find($shortName) is null. Inspection: $javaClass")
+                    ?: throw AssertionError("HighlightDisplayKey.find($shortName) is null. Inspection: $javaClass")
                 return SuppressManager.getInstance().createSuppressActions(key)
             }
 

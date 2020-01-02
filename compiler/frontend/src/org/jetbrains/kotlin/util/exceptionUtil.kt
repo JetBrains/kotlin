@@ -17,9 +17,9 @@ fun getExceptionMessage(
         append(subsystemName).append(" Internal error: ").appendln(message)
 
         if (location != null) {
-            append("File being compiled at position: ").appendln(location)
+            append("File being compiled: ").appendln(location)
         } else {
-            append("Element is unknown")
+            appendln("File is unknown")
         }
 
         if (cause != null) {

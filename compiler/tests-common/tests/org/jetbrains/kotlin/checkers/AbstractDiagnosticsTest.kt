@@ -214,6 +214,16 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         performAdditionalChecksAfterDiagnostics(
             testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
         )
+        checkOriginalAndFirTestdataIdentity(testDataFile)
+    }
+
+    private fun checkOriginalAndFirTestdataIdentity(testDataFile: File) {
+        val firTestDataFile = File(testDataFile.absolutePath.replace(".kt", ".fir.kt"))
+        if (!firTestDataFile.exists()) return
+        val originalTestData = loadTestDataWithoutDiagnostics(testDataFile)
+        val firTestData = loadTestDataWithoutDiagnostics(firTestDataFile)
+        val message = "Original and fir test data doesn't identical. Please, add changes from ${testDataFile.name} to ${firTestDataFile.name}"
+        TestCase.assertEquals(message, originalTestData, firTestData)
     }
 
     private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }

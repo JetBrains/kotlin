@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -19,7 +8,7 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
@@ -32,8 +21,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class InsertHandlerProvider(
-        private val callType: CallType<*>,
-        expectedInfosCalculator: () -> Collection<ExpectedInfo>
+    private val callType: CallType<*>,
+    expectedInfosCalculator: () -> Collection<ExpectedInfo>
 ) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
@@ -51,12 +40,12 @@ class InsertHandlerProvider(
                                 if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
                                     val parameter = parameters.single()
                                     val parameterType = parameter.type
-                                    if (parameterType.isFunctionType) {
+                                    if (parameterType.isBuiltinFunctionalType) {
                                         if (getValueParametersCountFromFunctionType(parameterType) <= 1 && !parameter.hasDefaultValue()) {
                                             // otherwise additional item with lambda template is to be added
                                             return KotlinFunctionInsertHandler.Normal(
-                                                    callType, needTypeArguments, inputValueArguments = false,
-                                                    lambdaInfo = GenerateLambdaInfo(parameterType, false)
+                                                callType, needTypeArguments, inputValueArguments = false,
+                                                lambdaInfo = GenerateLambdaInfo(parameterType, false)
                                             )
                                         }
                                     }
@@ -101,7 +90,7 @@ class InsertHandlerProvider(
                 descriptor.upperBounds.filter { it.arguments.isNotEmpty() }.forEach(::addPotentiallyInferred)
             }
 
-            if (type.isFunctionType && getValueParametersCountFromFunctionType(type) <= 1) {
+            if (type.isBuiltinFunctionalType && getValueParametersCountFromFunctionType(type) <= 1) {
                 // do not rely on inference from input of function type with one or no arguments - use only return type of functional type
                 addPotentiallyInferred(type.getReturnTypeFromFunctionType())
                 return
@@ -126,7 +115,10 @@ class InsertHandlerProvider(
         if (returnType != null) {
             addPotentiallyInferred(returnType)
 
-            if (allTypeParametersPotentiallyInferred() && expectedInfos.any { it.fuzzyType?.checkIsSuperTypeOf(originalFunction.fuzzyReturnType()!!) != null }) {
+            if (allTypeParametersPotentiallyInferred() && expectedInfos.any {
+                    it.fuzzyType?.checkIsSuperTypeOf(originalFunction.fuzzyReturnType()!!) != null
+                }
+            ) {
                 return false
             }
         }

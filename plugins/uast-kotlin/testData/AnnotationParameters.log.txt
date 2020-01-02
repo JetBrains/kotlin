@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = AnnotationParametersKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UAnnotation (fqName = RequiresPermission)
                 UNamedExpression (name = anyOf)
                     UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 3))
@@ -21,7 +21,7 @@ UFile (package = )
             UBlockExpression
                 UReturnExpression
                     ULiteralExpression (value = 5)
-        UAnnotationMethod (name = bar)
+        UMethod (name = bar)
             UAnnotation (fqName = IntRange)
                 UNamedExpression (name = from)
                     ULiteralExpression (value = 0)
@@ -36,7 +36,7 @@ UFile (package = )
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = Unit)
-        UAnnotationMethod (name = fooWithArrLiteral)
+        UMethod (name = fooWithArrLiteral)
             UAnnotation (fqName = RequiresPermission)
                 UNamedExpression (name = anyOf)
                     UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 3))
@@ -47,7 +47,7 @@ UFile (package = )
             UBlockExpression
                 UReturnExpression
                     ULiteralExpression (value = 5)
-        UAnnotationMethod (name = fooWithStrArrLiteral)
+        UMethod (name = fooWithStrArrLiteral)
             UAnnotation (fqName = RequiresStrPermission)
                 UNamedExpression (name = strs)
                     UCallExpression (kind = UastCallKind(name='array_initializer'), argCount = 3))

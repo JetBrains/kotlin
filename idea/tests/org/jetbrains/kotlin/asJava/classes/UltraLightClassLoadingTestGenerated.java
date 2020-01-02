@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,12 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
     }
 
     public void testAllFilesPresentInUltraLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @TestMetadata("annotationWithSetParamPropertyModifier.kt")
+    public void testAnnotationWithSetParamPropertyModifier() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/annotationWithSetParamPropertyModifier.kt");
     }
 
     @TestMetadata("annotations.kt")

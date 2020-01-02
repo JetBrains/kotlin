@@ -6,19 +6,16 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.resolve.OverloadabilitySpecificityCallbacks
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.types.checker.requireOrDescribe
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
     protected val inferenceComponents: InferenceComponents
-) : ConeCallConflictResolver {
+) : ConeCallConflictResolver() {
     protected fun Collection<Candidate>.setIfOneOrEmpty(): Set<Candidate>? = when (size) {
         0 -> emptySet()
         1 -> setOf(single())
@@ -50,9 +47,40 @@ abstract class AbstractConeCallConflictResolver(
         return createEmptyConstraintSystem().isSignatureNotLessSpecific(
             call1,
             call2,
-            OverloadabilitySpecificityCallbacks,
+            SpecificityComparisonWithNumerics,
             specificityComparator
         )
+    }
+
+    private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
+            requireOrDescribe(specific is ConeKotlinType, specific)
+            requireOrDescribe(general is ConeKotlinType, general)
+
+            // TODO: support unsigned types
+            // see OverloadingConflictResolver.kt:294
+
+            val int = StandardClassIds.Int
+            val long = StandardClassIds.Long
+            val byte = StandardClassIds.Byte
+            val short = StandardClassIds.Short
+
+            val specificClassId = specific.classId ?: return false
+            val generalClassId = general.classId ?: return false
+
+            when {
+                //TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
+                specificClassId == int -> {
+                    when {
+                        generalClassId == long -> return true
+                        generalClassId == byte -> return true
+                        generalClassId == short -> return true
+                    }
+                }
+                specificClassId == short && generalClassId == byte -> return true
+            }
+            return false
+        }
     }
 
     protected fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {

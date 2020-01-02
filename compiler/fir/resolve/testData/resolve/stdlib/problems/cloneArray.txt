@@ -1,0 +1,7 @@
+FILE: cloneArray.kt
+    public final fun test_1(array: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        R|<local>/array|.<Unresolved name: clone>#()
+    }
+    public final fun test_2(array: R|kotlin/IntArray|): R|kotlin/Unit| {
+        R|<local>/array|.<Unresolved name: clone>#()
+    }

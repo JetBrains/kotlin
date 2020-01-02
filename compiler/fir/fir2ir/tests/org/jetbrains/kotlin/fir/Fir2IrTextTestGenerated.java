@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -21,11 +22,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
     }
 
     public void testAllFilesPresentInIrText() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/ir/irText/classes")
@@ -33,7 +34,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Classes extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         @TestMetadata("abstractMembers.kt")
@@ -42,7 +43,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         public void testAllFilesPresentInClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/classes"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotationClasses.kt")
@@ -85,6 +86,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/dataClassesGeneric.kt");
         }
 
+        @TestMetadata("delegatedGenericImplementation.kt")
+        public void testDelegatedGenericImplementation() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/delegatedGenericImplementation.kt");
+        }
+
         @TestMetadata("delegatedImplementation.kt")
         public void testDelegatedImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedImplementation.kt");
@@ -120,6 +126,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
         }
 
+        @TestMetadata("implicitNotNullOnDelegatedImplementation.kt")
+        public void testImplicitNotNullOnDelegatedImplementation() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/implicitNotNullOnDelegatedImplementation.kt");
+        }
+
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/testData/ir/irText/classes/initBlock.kt");
@@ -128,6 +139,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("initVal.kt")
         public void testInitVal() throws Exception {
             runTest("compiler/testData/ir/irText/classes/initVal.kt");
+        }
+
+        @TestMetadata("initValInLambda.kt")
+        public void testInitValInLambda() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/initValInLambda.kt");
         }
 
         @TestMetadata("initVar.kt")
@@ -216,11 +232,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("catchParameterInTopLevelProperty.kt")
@@ -283,6 +299,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/declarations/kt29833.kt");
         }
 
+        @TestMetadata("kt35550.kt")
+        public void testKt35550() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt35550.kt");
+        }
+
         @TestMetadata("localClassWithOverrides.kt")
         public void testLocalClassWithOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/localClassWithOverrides.kt");
@@ -323,11 +344,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Annotations extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("annotationsInAnnotationArguments.kt")
@@ -486,11 +507,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Multiplatform extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInMultiplatform() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("expectClassInherited.kt")
@@ -514,11 +535,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInParameters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("class.kt")
@@ -592,11 +613,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ProvideDelegate extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInProvideDelegate() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("differentReceivers.kt")
@@ -636,11 +657,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Errors extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInErrors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/errors"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/errors"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("suppressedNonPublicCall.kt")
@@ -659,11 +680,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("argumentMappedWithError.kt")
@@ -861,6 +882,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/equality.kt");
         }
 
+        @TestMetadata("equals.kt")
+        public void testEquals() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/equals.kt");
+        }
+
         @TestMetadata("extFunInvokeAsFun.kt")
         public void testExtFunInvokeAsFun() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/extFunInvokeAsFun.kt");
@@ -944,6 +970,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("implicitCastToTypeParameter.kt")
         public void testImplicitCastToTypeParameter() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastToTypeParameter.kt");
+        }
+
+        @TestMetadata("implicitNotNullInDestructuringAssignment.kt")
+        public void testImplicitNotNullInDestructuringAssignment() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitNotNullInDestructuringAssignment.kt");
         }
 
         @TestMetadata("in.kt")
@@ -1054,6 +1085,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("multipleThisReferences.kt")
         public void testMultipleThisReferences() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/multipleThisReferences.kt");
+        }
+
+        @TestMetadata("nullCheckOnLambdaReturn.kt")
+        public void testNullCheckOnLambdaReturn() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/nullCheckOnLambdaReturn.kt");
         }
 
         @TestMetadata("objectAsCallable.kt")
@@ -1311,11 +1347,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FloatingPointComparisons extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInFloatingPointComparisons() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/expressions/floatingPointComparisons"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/floatingPointComparisons"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("comparableWithDoubleOrFloat.kt")
@@ -1379,11 +1415,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Sam extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInSam() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("samByProjectedType.kt")
@@ -1433,11 +1469,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lambdas extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInLambdas() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("anonymousFunction.kt")
@@ -1486,11 +1522,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Regressions extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInRegressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("coercionInLoop.kt")
@@ -1518,11 +1554,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NewInference extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
             public void testAllFilesPresentInNewInference() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/regressions/newInference"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions/newInference"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("fixationOrder1.kt")
@@ -1537,11 +1573,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Singletons extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInSingletons() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/singletons"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/singletons"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("companion.kt")
@@ -1565,11 +1601,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Stubs extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         public void testAllFilesPresentInStubs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("builtinMap.kt")
@@ -1643,7 +1679,7 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Types extends AbstractFir2IrTextTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
         @TestMetadata("abbreviatedTypes.kt")
@@ -1652,12 +1688,17 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         public void testAllFilesPresentInTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/types"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("asOnPlatformType.kt")
         public void testAsOnPlatformType() throws Exception {
             runTest("compiler/testData/ir/irText/types/asOnPlatformType.kt");
+        }
+
+        @TestMetadata("enhancedNullability.kt")
+        public void testEnhancedNullability() throws Exception {
+            runTest("compiler/testData/ir/irText/types/enhancedNullability.kt");
         }
 
         @TestMetadata("explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt")
@@ -1668,6 +1709,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("genericPropertyReferenceType.kt")
         public void testGenericPropertyReferenceType() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericPropertyReferenceType.kt");
+        }
+
+        @TestMetadata("implicitNotNullOnPlatformType.kt")
+        public void testImplicitNotNullOnPlatformType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/implicitNotNullOnPlatformType.kt");
         }
 
         @TestMetadata("intersectionType1_NI.kt")
@@ -1713,6 +1759,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("platformTypeReceiver.kt")
         public void testPlatformTypeReceiver() throws Exception {
             runTest("compiler/testData/ir/irText/types/platformTypeReceiver.kt");
+        }
+
+        @TestMetadata("smartCastOnFakeOverrideReceiver.kt")
+        public void testSmartCastOnFakeOverrideReceiver() throws Exception {
+            runTest("compiler/testData/ir/irText/types/smartCastOnFakeOverrideReceiver.kt");
         }
 
         @TestMetadata("smartCastOnFieldReceiverOfGenericType.kt")

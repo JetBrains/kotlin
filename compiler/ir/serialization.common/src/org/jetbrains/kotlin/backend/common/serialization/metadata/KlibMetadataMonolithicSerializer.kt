@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
-import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
-import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -10,7 +8,6 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -21,34 +18,33 @@ class KlibMetadataMonolithicSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
     descriptorTable: DescriptorTable,
-    val bindingContext: BindingContext
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable) {
+    skipExpects: Boolean,
+    includeOnlyModuleContent: Boolean = false
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable, skipExpects, includeOnlyModuleContent) {
 
-    protected fun serializePackageFragment(fqName: FqName,
-                                           module: ModuleDescriptor,
-                                           bindingContext: BindingContext
-    ):
-            List<ProtoBuf.PackageFragment> {
+    private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 
-        // TODO: ModuleDescriptor should be able to return
-        // the package only with the contents of that module, without dependencies
+        val fragments = if (includeOnlyModuleContent) {
+            module.packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName)
+        } else {
+            module.getPackage(fqName).fragments.filter { it.module == module }
+        }
 
-        val fragments = module.getPackage(fqName).fragments.filter { it.module == module }
         if (fragments.isEmpty()) return emptyList()
 
         val classifierDescriptors = DescriptorSerializer.sort(
             fragments.flatMap {
                 it.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS)
-            }.filter { !it.isExpectMember || it.isSerializableExpectClass }
+            }
         )
 
         val topLevelDescriptors = DescriptorSerializer.sort(
             fragments.flatMap { fragment ->
                 fragment.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.CALLABLES)
-            }.filter { !it.isExpectMember }
+            }
         )
 
-        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors, bindingContext)
+        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors)
     }
 
     fun serializeModule(moduleDescriptor: ModuleDescriptor): SerializedMetadata {
@@ -59,7 +55,7 @@ class KlibMetadataMonolithicSerializer(
 
         for (packageFqName in getPackagesFqNames(moduleDescriptor)) {
             val packageProtos =
-                serializePackageFragment(packageFqName, moduleDescriptor, bindingContext)
+                serializePackageFragment(packageFqName, moduleDescriptor)
             if (packageProtos.isEmpty()) continue
 
             val packageFqNameStr = packageFqName.asString()

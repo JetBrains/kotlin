@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
@@ -80,6 +81,8 @@ abstract class KotlinBasePluginWrapper(
         setupAttributeMatchingStrategy(project)
 
         plugin.apply(project)
+
+        project.addNpmDependencyExtension()
     }
 
     internal open fun createTestRegistry(project: Project) = KotlinTestsRegistry(project)

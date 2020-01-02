@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.f'
-                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=INVOKE
                   $this: GET_VAR 'f2: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION
     VALUE_PARAMETER name:f2 index:1 type:kotlin.Function0<kotlin.String>
       EXPRESSION_BODY
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
                 CONST String type=kotlin.String value="FAIL"
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=INVOKE
           $this: GET_VAR 'f1: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
             SET_VAR 'var result: kotlin.String [var] declared in <root>.box' type=kotlin.Unit origin=EQ
               CONST String type=kotlin.String value="OK"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
             f2: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String

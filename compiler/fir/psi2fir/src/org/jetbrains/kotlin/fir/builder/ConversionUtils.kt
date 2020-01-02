@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitKPropertyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -149,7 +148,7 @@ fun FirExpression.generateNotNullOrOther(
             baseSource,
             FirOperatorCallImpl(baseSource, FirOperation.EQ).apply {
                 arguments += subjectExpression
-                arguments += FirConstExpressionImpl(baseSource, IrConstKind.Null, null)
+                arguments += FirConstExpressionImpl(baseSource, FirConstKind.Null, null)
             },
             FirSingleExpressionBlock(other)
         )
@@ -314,7 +313,7 @@ fun generateTemporaryVariable(
     session: FirSession, source: FirSourceElement?, specialName: String, initializer: FirExpression
 ): FirVariable<*> = generateTemporaryVariable(session, source, Name.special("<$specialName>"), initializer)
 
-fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean) {
+fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean, receiver: FirExpression?) {
     val variable = this as FirVariable<*>
     val delegateFieldSymbol = delegateFieldSymbol ?: return
     val delegate = delegate as? FirWrappedDelegateExpressionImpl ?: return
@@ -326,7 +325,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
         if (member) FirQualifiedAccessExpressionImpl(null).apply {
             calleeReference = FirExplicitThisReference(null, null)
         }
-        else FirConstExpressionImpl(null, IrConstKind.Null, null)
+        else FirConstExpressionImpl(null, FirConstKind.Null, null)
 
     fun propertyRef() = FirCallableReferenceAccessImpl(null).apply {
         calleeReference = FirResolvedNamedReferenceImpl(null, variable.name, variable.symbol)
@@ -334,7 +333,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
     }
 
     delegate.delegateProvider = if (stubMode) FirExpressionStub(null) else FirFunctionCallImpl(null).apply {
-        explicitReceiver = delegate.expression
+        explicitReceiver = receiver
         calleeReference = FirSimpleNamedReference(null, PROVIDE_DELEGATE, null)
         arguments += thisRef()
         arguments += propertyRef()

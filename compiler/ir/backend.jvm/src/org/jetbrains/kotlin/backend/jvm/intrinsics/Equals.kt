@@ -30,8 +30,28 @@ import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.types.typeUtil.upperBoundedByPrimitiveNumberOrNullableType
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+
+class ExplicitEquals : IntrinsicMethod() {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val (a, b) = expression.receiverAndArgs()
+
+        // TODO use specialized boxed type - this might require types like 'java.lang.Integer' in IR
+        a.accept(codegen, data).coerce(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType).materialize()
+        b.accept(codegen, data).coerce(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType).materialize()
+        codegen.mv.visitMethodInsn(
+            Opcodes.INVOKEVIRTUAL,
+            AsmTypes.OBJECT_TYPE.internalName,
+            "equals",
+            Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE),
+            false
+        )
+
+        return MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
+    }
+}
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
     private class BooleanConstantFalseCheck(val value: PromisedValue) : BooleanValue(value.codegen) {

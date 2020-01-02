@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.test
@@ -43,10 +32,10 @@ import kotlin.test.assertNotNull
  * Helper for configuring kotlin runtime in tested project.
  */
 object ConfigLibraryUtil {
-    private val DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME"
-    private val DEFAULT_KOTLIN_TEST_LIB_NAME = "KOTLIN_TEST_LIB_NAME"
-    private val DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME"
-    private val DEFAULT_KOTLIN_COMMON_STDLIB_NAME = "KOTLIN_COMMON_STDLIB_NAME"
+    private const val DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME"
+    private const val DEFAULT_KOTLIN_TEST_LIB_NAME = "KOTLIN_TEST_LIB_NAME"
+    private const val DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME"
+    private const val DEFAULT_KOTLIN_COMMON_STDLIB_NAME = "KOTLIN_COMMON_STDLIB_NAME"
 
     private fun getKotlinRuntimeLibEditor(libName: String, library: File): NewLibraryEditor {
         val editor = NewLibraryEditor()
@@ -63,9 +52,13 @@ object ConfigLibraryUtil {
 
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME,
-                                             PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath), module,
-                   JSLibraryKind)
+        addLibrary(
+            getKotlinRuntimeLibEditor(
+                DEFAULT_KOTLIN_JS_STDLIB_NAME,
+                PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
+            ), module,
+            JSLibraryKind
+        )
     }
 
     fun configureKotlinCommonRuntime(module: Module) {
@@ -222,7 +215,7 @@ object ConfigLibraryUtil {
             }
         }
 
-        if (!libraryNames.isEmpty()) throw AssertionError("Couldn't find the following libraries: " + libraryNames)
+        if (libraryNames.isNotEmpty()) throw AssertionError("Couldn't find the following libraries: " + libraryNames)
     }
 
     fun configureLibrariesByDirective(module: Module, rootPath: String, fileText: String) {

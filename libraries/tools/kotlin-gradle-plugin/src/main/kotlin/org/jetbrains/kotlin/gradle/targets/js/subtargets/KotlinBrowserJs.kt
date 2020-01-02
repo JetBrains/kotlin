@@ -7,16 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
+import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariant
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -37,20 +36,26 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
+    private val distribution: Distribution = BrowserDistribution()
 
     private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
-    override fun configureDefaultTestFramework(it: KotlinJsTest) {
-        it.useKarma {
+    override fun configureDefaultTestFramework(testTask: KotlinJsTest) {
+        testTask.useKarma {
             useChromeHeadless()
         }
     }
 
     override fun runTask(body: KotlinWebpack.() -> Unit) {
         commonRunConfigurations.add(body)
+    }
+
+    @ExperimentalDistributionDsl
+    override fun distribution(body: Distribution.() -> Unit) {
+        distribution.body()
     }
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
@@ -143,6 +148,23 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val compileKotlinTask = compilation.compileKotlinTask
 
+        val basePluginConvention = project.convention.plugins["base"] as BasePluginConvention?
+
+        val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
+        distribution.directory = distribution.directory ?: baseDist
+
+        val distributionTask = project.registerTask<Copy>(
+            disambiguateCamelCased(
+                DISTRIBUTION_TASK_NAME
+            )
+        ) {
+            it.from(compilation.output.resourcesDir)
+            it.into(distribution.directory ?: baseDist)
+        }
+
+        val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+        assembleTask.dependsOn(distributionTask)
+
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
             val webpackTask = project.registerTask<KotlinWebpack>(
@@ -153,13 +175,16 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 )
             ) {
                 it.dependsOn(
-                    nodeJs.npmInstallTask
+                    nodeJs.npmInstallTask,
+                    target.project.tasks.getByName(compilation.processResourcesTaskName),
+                    distributionTask
                 )
 
                 it.configureOptimization(kind)
 
                 it.compilation = compilation
                 it.description = "build webpack ${kind.name.toLowerCase()} bundle"
+                it.destinationDirectory = distribution.directory
 
                 when (kind) {
                     BuildVariantKind.PRODUCTION -> {
@@ -182,7 +207,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
 
             if (kind == BuildVariantKind.PRODUCTION) {
-                project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(webpackTask)
+                assembleTask.dependsOn(webpackTask)
                 project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
                     it.dependsOn(webpackTask)
                 }
@@ -262,5 +287,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         const val DEVELOPMENT = "development"
 
         private const val WEBPACK_TASK_NAME = "webpack"
+        private const val DISTRIBUTION_TASK_NAME = "distribution"
     }
 }

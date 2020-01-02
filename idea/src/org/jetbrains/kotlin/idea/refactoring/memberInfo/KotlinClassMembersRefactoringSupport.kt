@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
@@ -32,39 +21,39 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 class KotlinClassMembersRefactoringSupport : ClassMembersRefactoringSupport {
     override fun isProperMember(memberInfo: MemberInfoBase<*>): Boolean {
         val member = memberInfo.member
-        return member is KtNamedFunction
-               || member is KtProperty
-               || (member is KtParameter && member.isPropertyParameter())
-               || (member is KtClassOrObject && memberInfo.overrides == null)
+        return member is KtNamedFunction || member is KtProperty || (member is KtParameter && member.isPropertyParameter()) || (member is KtClassOrObject && memberInfo.overrides == null)
     }
 
     override fun createDependentMembersCollector(clazz: Any, superClass: Any?): DependentMembersCollectorBase<*, *> {
         return object : DependentMembersCollectorBase<KtNamedDeclaration, PsiNamedElement>(
-                clazz as KtClassOrObject,
-                superClass as PsiNamedElement?
+            clazz as KtClassOrObject,
+            superClass as PsiNamedElement?
         ) {
             override fun collect(member: KtNamedDeclaration) {
                 member.accept(
-                        object : KtTreeVisitorVoid() {
-                            private val pullUpData = superClass?.let { KotlinPullUpData(clazz as KtClassOrObject, it as PsiNamedElement, emptyList()) }
+                    object : KtTreeVisitorVoid() {
+                        private val pullUpData =
+                            superClass?.let { KotlinPullUpData(clazz as KtClassOrObject, it as PsiNamedElement, emptyList()) }
 
-                            private val possibleContainingClasses =
-                                    listOf(clazz) + ((clazz as? KtClass)?.companionObjects ?: emptyList())
+                        private val possibleContainingClasses =
+                            listOf(clazz) + ((clazz as? KtClass)?.companionObjects ?: emptyList())
 
-                            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                                val referencedMember = expression.mainReference.resolve() as? KtNamedDeclaration ?: return
-                                val containingClassOrObject = referencedMember.containingClassOrObject ?: return
-                                if (containingClassOrObject !in possibleContainingClasses) return
+                        override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+                            val referencedMember = expression.mainReference.resolve() as? KtNamedDeclaration ?: return
+                            val containingClassOrObject = referencedMember.containingClassOrObject ?: return
+                            if (containingClassOrObject !in possibleContainingClasses) return
 
-                                if (pullUpData != null) {
-                                    val memberDescriptor = referencedMember.unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
-                                    val memberInSuper = memberDescriptor.substitute(pullUpData.sourceToTargetClassSubstitutor) ?: return
-                                    if (pullUpData.targetClassDescriptor.findCallableMemberBySignature(memberInSuper as CallableMemberDescriptor) != null) return
-                                }
-
-                                myCollection.add(referencedMember)
+                            if (pullUpData != null) {
+                                val memberDescriptor = referencedMember.unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
+                                val memberInSuper = memberDescriptor.substitute(pullUpData.sourceToTargetClassSubstitutor) ?: return
+                                if (pullUpData.targetClassDescriptor
+                                        .findCallableMemberBySignature(memberInSuper as CallableMemberDescriptor) != null
+                                ) return
                             }
+
+                            myCollection.add(referencedMember)
                         }
+                    }
                 )
             }
         }

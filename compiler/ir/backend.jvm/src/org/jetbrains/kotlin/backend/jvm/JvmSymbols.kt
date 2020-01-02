@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class JvmSymbols(
     context: JvmBackendContext,
-    private val symbolTable: ReferenceSymbolTable
+    private val symbolTable: SymbolTable
 ) : Symbols<JvmBackendContext>(context, symbolTable) {
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
     private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))

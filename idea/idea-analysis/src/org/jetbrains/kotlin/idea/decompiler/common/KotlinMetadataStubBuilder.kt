@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.common
@@ -30,10 +19,10 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 open class KotlinMetadataStubBuilder(
-        private val version: Int,
-        private val fileType: FileType,
-        private val serializerProtocol: () -> SerializerExtensionProtocol,
-        private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?
+    private val version: Int,
+    private val fileType: FileType,
+    private val serializerProtocol: () -> SerializerExtensionProtocol,
+    private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?
 ) : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
 
@@ -51,21 +40,21 @@ open class KotlinMetadataStubBuilder(
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
                 val components = ClsStubBuilderComponents(
-                        ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
-                        AnnotationLoaderForStubBuilderImpl(serializerProtocol()),
-                        virtualFile
+                    ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
+                    AnnotationLoaderForStubBuilderImpl(serializerProtocol()),
+                    virtualFile
                 )
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
 
                 val fileStub = createFileStub(packageFqName, isScript = false)
                 createDeclarationsStubs(
-                        fileStub, context,
-                        ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, source = null),
-                        packageProto
+                    fileStub, context,
+                    ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, source = null),
+                    packageProto
                 )
                 for (classProto in file.classesToDecompile) {
                     createClassStub(
-                            fileStub, classProto, nameResolver, nameResolver.getClassId(classProto.fqName), source = null, context = context
+                        fileStub, classProto, nameResolver, nameResolver.getClassId(classProto.fqName), source = null, context = context
                     )
                 }
                 return fileStub

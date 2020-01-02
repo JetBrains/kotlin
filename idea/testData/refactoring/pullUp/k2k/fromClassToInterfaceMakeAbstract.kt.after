@@ -2,10 +2,13 @@
 interface T {
     // INFO: {"checked": "true", "toAbstract": "true"}
     val x: Int
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     val y: Int
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     val z: Int
+
     // INFO: {"checked": "true", "toAbstract": "true"}
     val t: Int
 

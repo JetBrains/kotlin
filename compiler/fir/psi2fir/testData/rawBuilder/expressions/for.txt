@@ -1,6 +1,6 @@
 FILE: for.kt
     public? final? fun foo(): R|kotlin/Unit| {
-        lval <range>: <implicit> = Int(1).rangeTo#(Int(10))
+        lval <range>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10))
         lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
         while(R|<local>/<iterator>|.hasNext#()) {
             lval i: <implicit> = R|<local>/<iterator>|.next#()
@@ -9,14 +9,14 @@ FILE: for.kt
 
     }
     public? final? fun bar(list: List<String>): R|kotlin/Unit| {
-        lval <range>: <implicit> = list#.subList#(Int(0), Int(10))
+        lval <range>: <implicit> = list#.subList#(IntegerLiteral(0), IntegerLiteral(10))
         lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
         while(R|<local>/<iterator>|.hasNext#()) {
             lval element: <implicit> = R|<local>/<iterator>|.next#()
             println#(element#)
         }
 
-        lval <range>: <implicit> = list#.subList#(Int(10), Int(20))
+        lval <range>: <implicit> = list#.subList#(IntegerLiteral(10), IntegerLiteral(20))
         lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
         while(R|<local>/<iterator>|.hasNext#()) {
             lval element: <implicit> = R|<local>/<iterator>|.next#()

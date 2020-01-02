@@ -2,7 +2,6 @@ typealias A = Int
 typealias B = Int
 //
 typealias C = Int
-
 typealias D =
         Int
 
@@ -23,6 +22,7 @@ object O
 typealias I = Int
 
 fun foo() {}
+
 //
 fun foo() {}
 typealias J = Int

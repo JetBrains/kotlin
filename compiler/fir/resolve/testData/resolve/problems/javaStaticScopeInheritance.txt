@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval b: <ERROR TYPE REF: Ambiguity: VALUE, [/B.VALUE, /A.VALUE]> = Q|B|.<Ambiguity: VALUE, [/B.VALUE, /A.VALUE]>#
+    }

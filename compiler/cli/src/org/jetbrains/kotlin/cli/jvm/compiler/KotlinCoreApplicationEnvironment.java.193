@@ -117,7 +117,6 @@ public class KotlinCoreApplicationEnvironment extends CoreApplicationEnvironment
     myApplication.registerService(EmptySubstitutor.class, emptySubstitutor);
 
     // Patch null values obtained because of cyclic dependency during initialization
-    updateInterfaceField(PsiSubstitutor.class, "KEY", KeyWithDefaultValue.create("SUBSTITUTOR", emptySubstitutor));
     updateInterfaceField(PsiSubstitutor.class, "EMPTY", emptySubstitutor);
     updateInterfaceField(PsiSubstitutor.class, "UNKNOWN", PsiSubstitutor.EMPTY);
 

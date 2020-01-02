@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -107,7 +108,7 @@ class JvmDeclarationFactory(
             val outerThisValueParameter = IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS,
                 IrValueParameterSymbolImpl(outerThisDescriptor),
-                Name.identifier("\$outer"),
+                Name.identifier(AsmUtil.CAPTURED_THIS_FIELD),
                 0,
                 type = outerThisType,
                 varargElementType = null,
@@ -179,7 +180,7 @@ class JvmDeclarationFactory(
                 annotations += oldField.annotations
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmDeclarationFactory, oldParent, oldParent.thisReceiver!!)
-                    ?.deepCopyWithSymbols(this) as IrExpressionBody?
+                    ?.patchDeclarationParents(this) as IrExpressionBody?
                 (this as IrFieldImpl).metadata = oldField.metadata
             }
         }
@@ -210,7 +211,7 @@ class JvmDeclarationFactory(
                 },
                 // Old backend doesn't generate ACC_FINAL on DefaultImpls methods.
                 modality = Modality.OPEN
-            )
+            ).also { it.copyAttributes(interfaceFun) }
         }
     }
 
@@ -253,7 +254,8 @@ class JvmDeclarationFactory(
                     isTailrec = false,
                     isSuspend = isSuspend,
                     isExpect = false,
-                    isFakeOverride = false
+                    isFakeOverride = false,
+                    isOperator = isOperator
                 ).apply {
                     descriptor.bind(this)
                     parent = irClass

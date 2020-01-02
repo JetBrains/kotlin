@@ -1,0 +1,3 @@
+val ti = """
+    <caret>
+""".trimIndent()

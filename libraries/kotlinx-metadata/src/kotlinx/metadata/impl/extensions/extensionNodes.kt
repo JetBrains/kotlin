@@ -27,4 +27,6 @@ interface KmTypeParameterExtension : KmTypeParameterExtensionVisitor, KmExtensio
 
 interface KmTypeExtension : KmTypeExtensionVisitor, KmExtension<KmTypeExtensionVisitor>
 
-interface KmTypeAliasExtension : KmTypeAliasExtensionVisitor, KmExtension<KmTypeExtensionVisitor>
+interface KmTypeAliasExtension : KmTypeAliasExtensionVisitor, KmExtension<KmTypeAliasExtensionVisitor>
+
+interface KmValueParameterExtension : KmValueParameterExtensionVisitor, KmExtension<KmValueParameterExtensionVisitor>

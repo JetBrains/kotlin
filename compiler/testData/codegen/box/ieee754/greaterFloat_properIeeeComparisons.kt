@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun greater1(a: Float, b: Float) = a > b
 

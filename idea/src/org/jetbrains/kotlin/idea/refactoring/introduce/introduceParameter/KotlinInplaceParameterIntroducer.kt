@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
@@ -47,20 +36,18 @@ import java.util.*
 import javax.swing.JCheckBox
 
 class KotlinInplaceParameterIntroducer(
-        val originalDescriptor: IntroduceParameterDescriptor,
-        val parameterType: KotlinType,
-        val suggestedNames: Array<out String>,
-        project: Project,
-        editor: Editor
-): AbstractKotlinInplaceIntroducer<KtParameter>(
-        null,
-        originalDescriptor.originalRange.elements.single() as KtExpression,
-        originalDescriptor.occurrencesToReplace
-                .map { it.elements.single() as KtExpression }
-                .toTypedArray(),
-        INTRODUCE_PARAMETER,
-        project,
-        editor
+    val originalDescriptor: IntroduceParameterDescriptor,
+    val parameterType: KotlinType,
+    val suggestedNames: Array<out String>,
+    project: Project,
+    editor: Editor
+) : AbstractKotlinInplaceIntroducer<KtParameter>(
+    null,
+    originalDescriptor.originalRange.elements.single() as KtExpression,
+    originalDescriptor.occurrencesToReplace.map { it.elements.single() as KtExpression }.toTypedArray(),
+    INTRODUCE_PARAMETER,
+    project,
+    editor
 ) {
     companion object {
         private val LOG = Logger.getInstance(KotlinInplaceParameterIntroducer::class.java)
@@ -86,11 +73,12 @@ class KotlinInplaceParameterIntroducer(
         protected abstract val textAttributes: TextAttributes
 
         fun applyToRange(range: TextRange, markupModel: MarkupModel) {
-            markupModel.addRangeHighlighter(range.startOffset,
-                                            range.endOffset,
-                                            0,
-                                            textAttributes,
-                                            HighlighterTargetArea.EXACT_RANGE
+            markupModel.addRangeHighlighter(
+                range.startOffset,
+                range.endOffset,
+                0,
+                textAttributes,
+                HighlighterTargetArea.EXACT_RANGE
             )
         }
     }
@@ -109,9 +97,7 @@ class KotlinInplaceParameterIntroducer(
         init {
             val templateState = TemplateManagerImpl.getTemplateState(myEditor)
             val currentType = if (templateState?.template != null) {
-                templateState
-                        .getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)
-                        ?.text
+                templateState.getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)?.text
             } else null
 
             val builder = StringBuilder()
@@ -131,7 +117,7 @@ class KotlinInplaceParameterIntroducer(
                 for (i in parameters.indices) {
                     val parameter = parameters[i]
 
-                    val parameterText = if (parameter == addedParameter){
+                    val parameterText = if (parameter == addedParameter) {
                         val parameterName = currentName ?: parameter.name
                         val parameterType = currentType ?: parameter.typeReference!!.text
                         descriptor = descriptor.copy(newParameterName = parameterName!!, newParameterTypeText = parameterType)
@@ -141,16 +127,14 @@ class KotlinInplaceParameterIntroducer(
                         } else ""
 
                         "$modifier$parameterName: $parameterType$defaultValue"
-                    }
-                    else parameter.text
+                    } else parameter.text
 
                     builder.append(parameterText)
 
                     val range = TextRange(builder.length - parameterText.length, builder.length)
                     if (parameter == addedParameter) {
                         addedRange = range
-                    }
-                    else if (!descriptor.withDefaultValue && parameter in parametersToRemove) {
+                    } else if (!descriptor.withDefaultValue && parameter in parametersToRemove) {
                         _rangesToRemove.add(range)
                     }
 
@@ -208,7 +192,7 @@ class KotlinInplaceParameterIntroducer(
         return runWriteAction {
             with(descriptor) {
                 val parameterList = callable.getValueParameterList()
-                                    ?: (callable as KtClass).createPrimaryConstructorParameterListIfAbsent()
+                    ?: (callable as KtClass).createPrimaryConstructorParameterListIfAbsent()
                 val parameter = KtPsiFactory(myProject).createParameter("$newParameterName: $newParameterTypeText")
                 parameterList.addParameter(parameter)
             }
@@ -259,19 +243,21 @@ class KotlinInplaceParameterIntroducer(
     private fun getDescriptorToRefactor(replaceAll: Boolean): IntroduceParameterDescriptor {
         val originalRange = expr.toRange()
         return descriptor.copy(
-                originalRange = originalRange,
-                occurrencesToReplace = if (replaceAll) occurrences.map { it.toRange() } else listOf(originalRange),
-                argumentValue = expr!!
+            originalRange = originalRange,
+            occurrencesToReplace = if (replaceAll) occurrences.map { it.toRange() } else listOf(originalRange),
+            argumentValue = expr!!
         )
     }
 
     fun switchToDialogUI() {
         stopIntroduce(myEditor)
-        KotlinIntroduceParameterDialog(myProject,
-                                       myEditor,
-                                       getDescriptorToRefactor(true),
-                                       myNameSuggestions.toTypedArray(),
-                                       listOf(parameterType) + parameterType.supertypes(),
-                                       KotlinIntroduceParameterHelper.Default).show()
+        KotlinIntroduceParameterDialog(
+            myProject,
+            myEditor,
+            getDescriptorToRefactor(true),
+            myNameSuggestions.toTypedArray(),
+            listOf(parameterType) + parameterType.supertypes(),
+            KotlinIntroduceParameterHelper.Default
+        ).show()
     }
 }

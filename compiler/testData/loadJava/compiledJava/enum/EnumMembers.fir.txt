@@ -9,4 +9,10 @@ public final enum class EnumMembers : R|kotlin/Enum<test/EnumMembers>| {
 
     private constructor(isFirst: R|kotlin/Boolean|): R|test/EnumMembers|
 
+    public final static fun values(): R|kotlin/Array<test/EnumMembers>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/EnumMembers| {
+    }
+
 }

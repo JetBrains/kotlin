@@ -134,10 +134,10 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(scriptFile.virtualFile.parent, "dest") }
 
         MoveFilesOrDirectoriesProcessor(
-                project,
-                arrayOf(scriptFile),
-                JavaPsiFacade.getInstance(project).findPackage("dest")!!.directories[0],
-                false, true, null, null
+            project,
+            arrayOf(scriptFile),
+            JavaPsiFacade.getInstance(project).findPackage("dest")!!.directories[0],
+            false, true, null, null
         ).run()
     }
 

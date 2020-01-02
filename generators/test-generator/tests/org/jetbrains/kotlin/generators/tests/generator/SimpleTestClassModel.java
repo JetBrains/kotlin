@@ -29,6 +29,8 @@ public class SimpleTestClassModel extends TestClassModel {
     @NotNull
     private final Pattern filenamePattern;
     @Nullable
+    private final Pattern excludePattern;
+    @Nullable
     private final Boolean checkFilenameStartsLowerCase;
     @NotNull
     private final String doTestMethodName;
@@ -56,6 +58,7 @@ public class SimpleTestClassModel extends TestClassModel {
             boolean recursive,
             boolean excludeParentDirs,
             @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludedPattern,
             @Nullable Boolean checkFilenameStartsLowerCase,
             @NotNull String doTestMethodName,
             @NotNull String testClassName,
@@ -71,6 +74,7 @@ public class SimpleTestClassModel extends TestClassModel {
         this.recursive = recursive;
         this.excludeParentDirs = excludeParentDirs;
         this.filenamePattern = filenamePattern;
+        this.excludePattern = excludedPattern;
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
         this.targetBackend = targetBackend;
@@ -98,7 +102,7 @@ public class SimpleTestClassModel extends TestClassModel {
                     if (file.isDirectory() && dirHasFilesInside(file) && !excludeDirs.contains(file.getName())) {
                         String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
                         children.add(new SimpleTestClassModel(
-                                file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
+                                file, true, excludeParentDirs, filenamePattern, excludePattern, checkFilenameStartsLowerCase,
                                 doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
                                 skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null, annotations)
                         );
@@ -173,7 +177,8 @@ public class SimpleTestClassModel extends TestClassModel {
 
                 if (listFiles != null && (deep == null || deep == 0)) {
                     for (File file : listFiles) {
-                        if (filenamePattern.matcher(file.getName()).matches()) {
+                        boolean excluded = excludePattern != null && excludePattern.matcher(file.getName()).matches();
+                        if (filenamePattern.matcher(file.getName()).matches() && !excluded) {
 
                             if (file.isDirectory() && excludeParentDirs && dirHasSubDirs(file)) {
                                 continue;
@@ -252,19 +257,25 @@ public class SimpleTestClassModel extends TestClassModel {
                 exclude.append("\"");
             }
 
+            String excludedArgument;
+            if (excludePattern != null) {
+                excludedArgument = String.format("Pattern.compile(\"%s\")", StringUtil.escapeStringCharacters(excludePattern.pattern()));
+            } else {
+                excludedArgument = null;
+            }
+
             String assertTestsPresentStr;
 
             if (targetBackend == TargetBackend.ANY) {
                 assertTestsPresentStr = String.format(
-                        "KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s%s);",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                        recursive, exclude
+                        "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s%s);",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument, recursive, exclude
                 );
             } else {
                 assertTestsPresentStr = String.format(
-                        "KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s, %s%s);",
+                        "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s, %s%s);",
                         KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                        TargetBackend.class.getSimpleName(), targetBackend.toString(), recursive, exclude
+                        excludedArgument, TargetBackend.class.getSimpleName(), targetBackend.toString(), recursive, exclude
                 );
             }
 

@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitProtectedCallFromInline
 // TARGET_BACKEND: JVM
 
 // FILE: First.java

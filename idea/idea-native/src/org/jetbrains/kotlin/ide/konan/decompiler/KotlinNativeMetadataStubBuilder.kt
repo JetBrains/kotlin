@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createIncompatibleAbiVer
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 
 open class KotlinNativeMetadataStubBuilder(
     private val version: Int,
@@ -40,7 +40,7 @@ open class KotlinNativeMetadataStubBuilder(
                 val ktFileText = decompiledText(
                     file,
                     serializerProtocol(),
-                    NullFlexibleTypeDeserializer,
+                    DynamicTypeDeserializer,
                     renderer
                 )
                 createFileStub(content.project, ktFileText.text)

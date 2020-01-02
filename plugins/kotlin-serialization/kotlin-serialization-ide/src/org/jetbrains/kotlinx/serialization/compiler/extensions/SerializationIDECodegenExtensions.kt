@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlinx.serialization.idea.runIfEnabledOn
 
 class SerializationIDECodegenExtension : SerializationCodegenExtension() {
@@ -32,7 +31,7 @@ class SerializationIDEJsExtension : SerializationJsExtension() {
 }
 
 class SerializationIDEIrExtension : SerializationLoweringExtension() {
-    override fun generate(file: IrFile, backendContext: BackendContext, bindingContext: BindingContext) {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         /* No-op – don't enable IR extensions in IDE */
     }
 }

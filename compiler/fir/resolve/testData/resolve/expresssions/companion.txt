@@ -18,7 +18,7 @@ FILE: companion.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            this@R|/A.Companion|.R|/A.Companion.foo|()
+            R|/A.Companion.foo|()
         }
 
     }

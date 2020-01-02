@@ -1,0 +1,1 @@
+class A<T> : <!OTHER_ERROR!>T<!> {}

@@ -137,6 +137,14 @@ public final class IrFile extends
             input.popLimit(limit);
             break;
           }
+          case 50: {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+              actuals_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.Actual>();
+              mutable_bitField0_ |= 0x00000020;
+            }
+            actuals_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.Actual.PARSER, extensionRegistry));
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -156,6 +164,9 @@ public final class IrFile extends
       }
       if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
         explicitlyExportedToCompiler_ = java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
+      }
+      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+        actuals_ = java.util.Collections.unmodifiableList(actuals_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -299,12 +310,48 @@ public final class IrFile extends
     return explicitlyExportedToCompiler_.get(index);
   }
 
+  public static final int ACTUALS_FIELD_NUMBER = 6;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.Actual> actuals_;
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   */
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.Actual> getActualsList() {
+    return actuals_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   */
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.ActualOrBuilder> 
+      getActualsOrBuilderList() {
+    return actuals_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   */
+  public int getActualsCount() {
+    return actuals_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.Actual getActuals(int index) {
+    return actuals_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.ActualOrBuilder getActualsOrBuilder(
+      int index) {
+    return actuals_.get(index);
+  }
+
   private void initFields() {
     declarationId_ = java.util.Collections.emptyList();
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     fqName_ = java.util.Collections.emptyList();
     annotation_ = java.util.Collections.emptyList();
     explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
+    actuals_ = java.util.Collections.emptyList();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -322,6 +369,12 @@ public final class IrFile extends
     }
     for (int i = 0; i < getAnnotationCount(); i++) {
       if (!getAnnotation(i).isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    for (int i = 0; i < getActualsCount(); i++) {
+      if (!getActuals(i).isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -347,6 +400,9 @@ public final class IrFile extends
     }
     for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
       output.writeInt32(5, explicitlyExportedToCompiler_.get(i));
+    }
+    for (int i = 0; i < actuals_.size(); i++) {
+      output.writeMessage(6, actuals_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -391,6 +447,10 @@ public final class IrFile extends
       }
       size += dataSize;
       size += 1 * getExplicitlyExportedToCompilerList().size();
+    }
+    for (int i = 0; i < actuals_.size(); i++) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(6, actuals_.get(i));
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -496,6 +556,8 @@ public final class IrFile extends
       bitField0_ = (bitField0_ & ~0x00000008);
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
+      actuals_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -543,6 +605,11 @@ public final class IrFile extends
         bitField0_ = (bitField0_ & ~0x00000010);
       }
       result.explicitlyExportedToCompiler_ = explicitlyExportedToCompiler_;
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        actuals_ = java.util.Collections.unmodifiableList(actuals_);
+        bitField0_ = (bitField0_ & ~0x00000020);
+      }
+      result.actuals_ = actuals_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -592,6 +659,16 @@ public final class IrFile extends
         }
         
       }
+      if (!other.actuals_.isEmpty()) {
+        if (actuals_.isEmpty()) {
+          actuals_ = other.actuals_;
+          bitField0_ = (bitField0_ & ~0x00000020);
+        } else {
+          ensureActualsIsMutable();
+          actuals_.addAll(other.actuals_);
+        }
+        
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -608,6 +685,12 @@ public final class IrFile extends
       }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
+          
+          return false;
+        }
+      }
+      for (int i = 0; i < getActualsCount(); i++) {
+        if (!getActuals(i).isInitialized()) {
           
           return false;
         }
@@ -1014,6 +1097,131 @@ public final class IrFile extends
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
       
+      return this;
+    }
+
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.Actual> actuals_ =
+      java.util.Collections.emptyList();
+    private void ensureActualsIsMutable() {
+      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+        actuals_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.Actual>(actuals_);
+        bitField0_ |= 0x00000020;
+       }
+    }
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.Actual> getActualsList() {
+      return java.util.Collections.unmodifiableList(actuals_);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public int getActualsCount() {
+      return actuals_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.Actual getActuals(int index) {
+      return actuals_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder setActuals(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.Actual value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureActualsIsMutable();
+      actuals_.set(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder setActuals(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.Actual.Builder builderForValue) {
+      ensureActualsIsMutable();
+      actuals_.set(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder addActuals(org.jetbrains.kotlin.backend.common.serialization.proto.Actual value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureActualsIsMutable();
+      actuals_.add(value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder addActuals(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.Actual value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureActualsIsMutable();
+      actuals_.add(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder addActuals(
+        org.jetbrains.kotlin.backend.common.serialization.proto.Actual.Builder builderForValue) {
+      ensureActualsIsMutable();
+      actuals_.add(builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder addActuals(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.Actual.Builder builderForValue) {
+      ensureActualsIsMutable();
+      actuals_.add(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder addAllActuals(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.Actual> values) {
+      ensureActualsIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, actuals_);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder clearActuals() {
+      actuals_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000020);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.Actual actuals = 6;</code>
+     */
+    public Builder removeActuals(int index) {
+      ensureActualsIsMutable();
+      actuals_.remove(index);
+
       return this;
     }
 

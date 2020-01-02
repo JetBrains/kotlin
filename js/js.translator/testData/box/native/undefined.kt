@@ -13,7 +13,7 @@ fun box(): String {
     assertEquals(a.foo, undefined)
     assertNotEquals(a.toString, undefined)
 
-    val b: dynamic = object {val bar = ""}
+    val b: dynamic = object {@JsName("bar") val bar = ""}
     assertEquals(b.foo, undefined)
     assertNotEquals(b.bar, undefined)
 

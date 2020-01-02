@@ -10,14 +10,21 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirModuleBasedSession
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionBase
+import org.jetbrains.kotlin.fir.FirSessionProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -36,7 +43,10 @@ class FirJavaModuleBasedSession(
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-        val firProvider = FirProviderImpl(this)
+
+        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+        val firProvider = FirProviderImpl(this, kotlinScopeProvider)
         registerComponent(FirProvider::class, firProvider)
 
         registerComponent(
@@ -53,6 +63,11 @@ class FirJavaModuleBasedSession(
         registerComponent(
             FirCorrespondingSupertypesCache::class,
             FirCorrespondingSupertypesCache(this)
+        )
+
+        registerComponent(
+            ConeCallConflictResolverFactory::class,
+            JvmCallConflictResolverFactory
         )
 
         Extensions.getArea(sessionProvider.project)
@@ -72,20 +87,22 @@ class FirLibrarySession private constructor(
 
 
     init {
-        sessionProvider.sessionCache[moduleInfo] = this
         val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
+
+        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
         registerComponent(
             FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
-                    FirLibrarySymbolProviderImpl(this),
+                    FirLibrarySymbolProviderImpl(this, kotlinScopeProvider),
                     KotlinDeserializedJvmSymbolsProvider(
                         this, sessionProvider.project,
                         packagePartProvider,
                         javaSymbolProvider,
                         kotlinClassFinder,
-                        javaClassFinder
+                        javaClassFinder,
+                        kotlinScopeProvider
                     ),
                     javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)
@@ -98,6 +115,8 @@ class FirLibrarySession private constructor(
             FirCorrespondingSupertypesCache::class,
             FirCorrespondingSupertypesCache(this)
         )
+
+        sessionProvider.sessionCache[moduleInfo] = this
     }
 
     companion object {
@@ -123,7 +142,7 @@ class FirLibrarySession private constructor(
     }
 }
 
-class FirProjectSessionProvider(val project: Project) : FirSessionProvider {
+class FirProjectSessionProvider(override val project: Project) : FirSessionProvider {
     override fun getSession(moduleInfo: ModuleInfo): FirSession? {
         return sessionCache[moduleInfo]
     }

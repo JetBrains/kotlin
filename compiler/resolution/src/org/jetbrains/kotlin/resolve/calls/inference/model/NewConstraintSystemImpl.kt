@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolve
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.OnlyInputTypesDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedAtom
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
@@ -43,7 +44,28 @@ class NewConstraintSystemImpl(
         COMPLETION
     }
 
+    private fun checkState(a: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a))
+    }
+
+    private fun checkState(a: State, b: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a, b))
+    }
+
+    private fun checkState(a: State, b: State, c: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a, b, c))
+    }
+
+    private fun checkState(a: State, b: State, c: State, d: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
+        checkState(*arrayOf(a, b, c, d))
+    }
+
     private fun checkState(vararg allowedState: State) {
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         assert(state in allowedState) {
             "State $state is not allowed. AllowedStates: ${allowedState.joinToString()}"
         }
@@ -165,6 +187,9 @@ class NewConstraintSystemImpl(
         }
 
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
+        otherSystem.allTypeVariables.forEach {
+            transactionRegisterVariable(it.value)
+        }
         storage.allTypeVariables.putAll(otherSystem.allTypeVariables)
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(constraints.typeVariable, constraints.constraints)
@@ -185,9 +210,11 @@ class NewConstraintSystemImpl(
             val capturedType = it.asSimpleType()?.asCapturedType()
             // TODO: change NewCapturedType to markered one for FE-IR
             val typeToCheck = if (capturedType is CapturedTypeMarker && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
-                capturedType.typeConstructorProjection().getType()
+                capturedType.typeConstructorProjection().takeUnless { projection -> projection.isStarProjection() }?.getType()
             else
                 it
+
+            if (typeToCheck == null) return@contains false
 
             storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
         }
@@ -271,10 +298,10 @@ class NewConstraintSystemImpl(
         variableWithConstraints: MutableVariableWithConstraints?,
         resultType: KotlinTypeMarker
     ) {
-        if (resultType !is KotlinType) return
-        if (variableWithConstraints == null || variableWithConstraints.typeVariable.safeAs<NewTypeVariable>()?.hasOnlyInputTypesAnnotation() != true ) return
-        val projectedInputCallTypes = variableWithConstraints.projectedInputCallTypes
-        val resultTypeIsInputType = projectedInputCallTypes.any { inputType ->
+        if (resultType !is KotlinType || variableWithConstraints == null) return
+        if (variableWithConstraints.typeVariable.safeAs<NewTypeVariable>()?.hasOnlyInputTypesAnnotation() != true) return
+
+        val resultTypeIsInputType = variableWithConstraints.projectedInputCallTypes.any { inputType ->
             NewKotlinTypeChecker.Default.equalTypes(resultType, inputType) ||
                     inputType.constructor is IntersectionTypeConstructor
                     && inputType.constructor.supertypes.any { NewKotlinTypeChecker.Default.equalTypes(resultType, it) }

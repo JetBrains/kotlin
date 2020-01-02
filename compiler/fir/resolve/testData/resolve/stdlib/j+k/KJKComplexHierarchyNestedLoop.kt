@@ -1,5 +1,5 @@
 // FILE: K1.kt
-class K2: J1() {
+class K2: <!AMBIGUITY!>J1<!>() {
     class Q : Nested()
     fun bar() {
         <!UNRESOLVED_REFERENCE!>foo<!>()

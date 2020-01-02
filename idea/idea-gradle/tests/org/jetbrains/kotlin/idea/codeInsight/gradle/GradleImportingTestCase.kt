@@ -47,12 +47,15 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.GroovyFileType
+import org.junit.AfterClass
 import org.junit.Assume.assumeThat
+import org.junit.Assume.assumeTrue
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.TestName
@@ -63,11 +66,10 @@ import java.io.IOException
 import java.io.StringWriter
 import java.net.URISyntaxException
 import java.util.*
-import org.junit.AfterClass
-import org.junit.Assume.assumeTrue
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 @RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
+@Parameterized.UseParametersRunnerFactory(RunnerFactoryWithMuteInDatabase::class)
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     protected var sdkCreationChecker : KotlinSdkCreationChecker? = null

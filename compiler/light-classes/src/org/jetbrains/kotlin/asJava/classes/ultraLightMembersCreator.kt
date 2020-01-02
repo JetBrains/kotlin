@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.lang.Language
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightModifierList
@@ -18,10 +17,8 @@ import org.jetbrains.kotlin.asJava.elements.convertToLightAnnotationMemberValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.EXTERNAL_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.REIFIED_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +26,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
-import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
@@ -120,19 +117,27 @@ internal class UltraLightMembersCreator(
             ktFunction.hasExpectModifier()
         ) return emptyList()
 
-        val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate)
+
+        if (ktFunction.modifierList?.hasSuspendModifier() == true && ktFunction.isPrivate()) {
+            return emptyList()
+        }
+
+        var methodIndex = METHOD_INDEX_BASE
+        val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate, methodIndex = methodIndex)
 
         val result = mutableListOf(basicMethod)
 
         if (ktFunction.hasAnnotation(JVM_OVERLOADS_FQ_NAME)) {
             val numberOfDefaultParameters = ktFunction.valueParameters.count(KtParameter::hasDefaultValue)
             for (numberOfDefaultParametersToAdd in numberOfDefaultParameters - 1 downTo 0) {
+                methodIndex++
                 result.add(
                     asJavaMethod(
                         ktFunction,
                         forceStatic,
                         forcePrivate,
-                        numberOfDefaultParametersToAdd = numberOfDefaultParametersToAdd
+                        numberOfDefaultParametersToAdd = numberOfDefaultParametersToAdd,
+                        methodIndex = methodIndex
                     )
                 )
             }
@@ -142,7 +147,7 @@ internal class UltraLightMembersCreator(
     }
 
     internal class KtUltraLightAnnotationMethod(
-        psiMethod: KtLightMethod,
+        private val psiMethod: KtLightMethod,
         expression: KtExpression
     ) : KtLightMethod by psiMethod,
         PsiAnnotationMethod {
@@ -151,14 +156,23 @@ internal class UltraLightMembersCreator(
             convertToLightAnnotationMemberValue(psiMethod, expression)
         }
 
+        override fun equals(other: Any?): Boolean = psiMethod == (other as? KtUltraLightAnnotationMethod)?.psiMethod
+
+        override fun hashCode(): Int = psiMethod.hashCode()
+
+        override fun toString(): String = psiMethod.toString()
+
         override fun getDefaultValue(): PsiAnnotationMemberValue? = value
+
+        override fun getSourceElement(): PsiElement? = psiMethod.sourceElement
     }
 
     private fun asJavaMethod(
         ktFunction: KtFunction,
         forceStatic: Boolean,
         forcePrivate: Boolean,
-        numberOfDefaultParametersToAdd: Int = -1
+        numberOfDefaultParametersToAdd: Int = -1,
+        methodIndex: Int
     ): KtLightMethod {
         val isConstructor = ktFunction is KtConstructor<*>
         val name =
@@ -166,7 +180,7 @@ internal class UltraLightMembersCreator(
             else computeMethodName(ktFunction, ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString(), MethodType.REGULAR)
 
         val method = lightMethod(name.orEmpty(), ktFunction, forceStatic, forcePrivate)
-        val wrapper = KtUltraLightMethodForSourceDeclaration(method, ktFunction, support, containingClass)
+        val wrapper = KtUltraLightMethodForSourceDeclaration(method, ktFunction, support, containingClass, methodIndex)
         addReceiverParameter(ktFunction, wrapper, method)
 
         var remainingNumberOfDefaultParametersToAdd =
@@ -247,7 +261,10 @@ internal class UltraLightMembersCreator(
 
         override fun hasModifierProperty(name: String): Boolean {
 
-            if (name != PsiModifier.FINAL || !outerDeclaration.isOrdinaryClass) return hasModifier(name)
+            val hasModifierByDeclaration = hasModifier(name)
+            if (name != PsiModifier.FINAL) return hasModifierByDeclaration
+
+            if (!hasModifierByDeclaration) return false //AllOpen can't modify open to final
 
             //AllOpen can affect on modality of the member. We ought to check if the extension could override the modality
             val descriptor = lazy { declaration.resolve() }
@@ -263,7 +280,9 @@ internal class UltraLightMembersCreator(
                 if (forcePrivate || declaration.isPrivate() || accessedProperty?.isPrivate() == true) {
                     return name == PsiModifier.PRIVATE
                 }
-                if (declaration.hasModifier(KtTokens.PROTECTED_KEYWORD) || accessedProperty?.hasModifier(KtTokens.PROTECTED_KEYWORD) == true) {
+                if (declaration.hasModifier(KtTokens.PROTECTED_KEYWORD) || accessedProperty
+                        ?.hasModifier(KtTokens.PROTECTED_KEYWORD) == true
+                ) {
                     return name == PsiModifier.PROTECTED
                 }
 
@@ -281,7 +300,8 @@ internal class UltraLightMembersCreator(
             return when (name) {
                 PsiModifier.FINAL -> !containingClass.isInterface && outerDeclaration !is KtConstructor<*> && isFinal(outerDeclaration)
                 PsiModifier.ABSTRACT -> containingClass.isInterface || outerDeclaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)
-                PsiModifier.STATIC -> forceStatic || containingClassIsNamedObject && (outerDeclaration.isJvmStatic(support) || declaration.isJvmStatic(support))
+                PsiModifier.STATIC -> forceStatic || containingClassIsNamedObject && (outerDeclaration.isJvmStatic(support) || declaration
+                    .isJvmStatic(support))
                 PsiModifier.STRICTFP -> declaration is KtFunction && declaration.hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
                 PsiModifier.SYNCHRONIZED -> declaration is KtFunction && declaration.hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
                 PsiModifier.NATIVE -> declaration is KtFunction && declaration.hasModifier(EXTERNAL_KEYWORD)
@@ -405,7 +425,9 @@ internal class UltraLightMembersCreator(
                 if (declaration is KtProperty && declaration.hasDelegate()) {
                     return true
                 }
-                if (accessor?.hasModifier(KtTokens.PRIVATE_KEYWORD) == true || accessor?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true) {
+                if (accessor?.hasModifier(KtTokens.PRIVATE_KEYWORD) == true || accessor
+                        ?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true
+                ) {
                     return false
                 }
                 if (!isPrivate || accessor?.hasBody() == true) {
@@ -433,7 +455,8 @@ internal class UltraLightMembersCreator(
                 lightMemberOrigin,
                 support,
                 containingClass,
-                forceToSkipNullabilityAnnotation = createAsAnnotationMethod
+                forceToSkipNullabilityAnnotation = createAsAnnotationMethod,
+                methodIndex = METHOD_INDEX_FOR_GETTER
             )
 
             val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper, isSuspendFunction = false) }
@@ -460,14 +483,32 @@ internal class UltraLightMembersCreator(
             val setterPrototype = lightMethod(setterName, auxiliaryOrigin, forceStatic = onlyJvmStatic || forceStatic)
                 .setMethodReturnType(PsiType.VOID)
 
-            val setterWrapper = KtUltraLightMethodForSourceDeclaration(setterPrototype, lightMemberOrigin, support, containingClass)
+            val setterWrapper = KtUltraLightMethodForSourceDeclaration(
+                setterPrototype,
+                lightMemberOrigin,
+                support,
+                containingClass,
+                methodIndex = METHOD_INDEX_FOR_SETTER
+            )
             addReceiverParameter(declaration, setterWrapper, setterPrototype)
             val setterParameter = ktSetter?.parameter
             setterPrototype.addParameter(
                 if (setterParameter != null)
-                    KtUltraLightParameterForSource(propertyName, setterParameter, support, setterWrapper, declaration)
+                    KtUltraLightParameterForSource(
+                        name = setterParameter.name ?: propertyName,
+                        kotlinOrigin = setterParameter,
+                        support = support,
+                        method = setterWrapper,
+                        containingDeclaration = declaration
+                    )
                 else
-                    KtUltraLightParameterForSetterParameter(propertyName, declaration, support, setterWrapper, declaration)
+                    KtUltraLightParameterForSetterParameter(
+                        name = propertyName,
+                        property = declaration,
+                        support = support,
+                        method = setterWrapper,
+                        containingDeclaration = declaration
+                    )
             )
             result.add(setterWrapper)
         }

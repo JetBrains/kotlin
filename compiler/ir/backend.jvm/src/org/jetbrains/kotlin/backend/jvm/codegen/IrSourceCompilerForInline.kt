@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
@@ -16,16 +17,24 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -61,7 +70,8 @@ class IrSourceCompilerForInline(
                 root.signature.asmMethod.descriptor,
                 //compilationContextFunctionDescriptor.isInlineOrInsideInline()
                 false,
-                compilationContextFunctionDescriptor.isSuspend
+                compilationContextFunctionDescriptor.isSuspend,
+                findElement()?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
             )
         }
 
@@ -127,12 +137,19 @@ class IrSourceCompilerForInline(
     override fun getContextLabels(): Set<String> {
         val name = codegen.irFunction.name.asString()
         if (name == INVOKE_SUSPEND_METHOD_NAME) {
-            codegen.context.suspendLambdaToOriginalFunctionMap[codegen.irFunction.parent]?.let {
+            codegen.context.suspendLambdaToOriginalFunctionMap[codegen.irFunction.parentAsClass.attributeOwnerId]?.let {
                 return setOf(it.name.asString())
             }
         }
         return setOf(name)
     }
+
+    // TODO: Find a way to avoid using PSI here
+    override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
+        org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor(findElement()!!, state, stackTraceElement)
+    }
+
+    private fun findElement() = (callElement.symbol.descriptor.original as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement
 
     internal val isPrimaryCopy: Boolean
         get() = codegen.classCodegen !is FakeClassCodegen

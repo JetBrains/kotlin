@@ -39,9 +39,10 @@ abstract class AbstractFirDiagnosticsWithCfgTest : AbstractFirDiagnosticsTest() 
         return ConfigurationKind.ALL
     }
 
-    override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
-        super.runAnalysis(testDataFile, testFiles, firFiles)
-        checkCfg(testDataFile, firFiles)
+    override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
+        super.runAnalysis(testDataFile, testFiles, firFilesPerSession)
+        val allFirFiles = firFilesPerSession.values.flatten()
+        checkCfg(testDataFile, allFirFiles)
     }
 
     fun checkCfg(testDataFile: File, firFiles: List<FirFile>) {

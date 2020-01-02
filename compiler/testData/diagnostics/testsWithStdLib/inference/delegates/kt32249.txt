@@ -1,0 +1,21 @@
+package
+
+private fun </*0*/ T> wrapper(/*0*/ defaultValue: T): wrapper.<no name provided><T>
+
+public object Foo {
+    private constructor Foo()
+    public final val x: Wrapper<kotlin.Boolean>
+    public final val y: Wrapper<kotlin.Boolean>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Wrapper</*0*/ T> {
+    public constructor Wrapper</*0*/ T>(/*0*/ name: kotlin.String, /*1*/ defaultValue: T)
+    public final val defaultValue: T
+    public final val name: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

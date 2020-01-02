@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTestsPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTestsPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTestsPreset
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -155,11 +157,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun iosX64(
         name: String = "iosX64",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget =
+        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
+    ): KotlinNativeTargetWithSimulatorTests =
         configureOrCreate(
             name,
-            presets.getByName("iosX64") as KotlinNativeTargetPreset,
+            presets.getByName("iosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
             configure
         )
 
@@ -200,11 +202,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun watchosX86(
         name: String = "watchosX86",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget =
+        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
+    ): KotlinNativeTargetWithSimulatorTests =
         configureOrCreate(
             name,
-            presets.getByName("watchosX86") as KotlinNativeTargetPreset,
+            presets.getByName("watchosX86") as KotlinNativeTargetWithSimulatorTestsPreset,
             configure
         )
 
@@ -230,11 +232,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun tvosX64(
         name: String = "tvosX64",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget =
+        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
+    ): KotlinNativeTargetWithSimulatorTests =
         configureOrCreate(
             name,
-            presets.getByName("tvosX64") as KotlinNativeTargetPreset,
+            presets.getByName("tvosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
             configure
         )
 
@@ -245,11 +247,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun linuxX64(
         name: String = "linuxX64",
-        configure: KotlinNativeTargetWithTests.() -> Unit = { }
-    ): KotlinNativeTargetWithTests =
+        configure: KotlinNativeTargetWithHostTests.() -> Unit = { }
+    ): KotlinNativeTargetWithHostTests =
         configureOrCreate(
             name,
-            presets.getByName("linuxX64") as KotlinNativeTargetWithTestsPreset,
+            presets.getByName("linuxX64") as KotlinNativeTargetWithHostTestsPreset,
             configure
         )
 
@@ -320,11 +322,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun mingwX64(
         name: String = "mingwX64",
-        configure: KotlinNativeTargetWithTests.() -> Unit = { }
-    ): KotlinNativeTargetWithTests =
+        configure: KotlinNativeTargetWithHostTests.() -> Unit = { }
+    ): KotlinNativeTargetWithHostTests =
         configureOrCreate(
             name,
-            presets.getByName("mingwX64") as KotlinNativeTargetWithTestsPreset,
+            presets.getByName("mingwX64") as KotlinNativeTargetWithHostTestsPreset,
             configure
         )
 
@@ -350,11 +352,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun macosX64(
         name: String = "macosX64",
-        configure: KotlinNativeTargetWithTests.() -> Unit = { }
-    ): KotlinNativeTargetWithTests =
+        configure: KotlinNativeTargetWithHostTests.() -> Unit = { }
+    ): KotlinNativeTargetWithHostTests =
         configureOrCreate(
             name,
-            presets.getByName("macosX64") as KotlinNativeTargetWithTestsPreset,
+            presets.getByName("macosX64") as KotlinNativeTargetWithHostTestsPreset,
             configure
         )
 

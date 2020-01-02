@@ -2,5 +2,5 @@ fun foo() {
     val test : <caret>
 }
 
-// EXIST: suspend fun
+// EXIST: suspend
 // NOTHING_ELSE

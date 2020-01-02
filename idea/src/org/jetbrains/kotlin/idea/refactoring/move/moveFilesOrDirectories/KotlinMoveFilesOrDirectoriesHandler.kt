@@ -13,35 +13,40 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.idea.refactoring.move.MoveFilesOrDirectoriesHandlerCompat
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesModel
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
-class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
-    private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
+class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandlerCompat() {
+    private fun adjustElements(elements: Array<out PsiElement>): Array<PsiFileSystemItem>? {
         return elements.map {
             when {
-                it is PsiFile || it is PsiDirectory -> it
+                it is PsiFile -> it
+                it is PsiDirectory -> it
                 it is PsiClass && it.containingClass == null -> it.containingFile
-                it is KtClassOrObject && it.parent is KtFile -> it.parent
+                it is KtClassOrObject && it.parent is KtFile -> it.parent as KtFile
                 else -> return null
             }
         }.toTypedArray()
     }
 
-    override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
+    override fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?, reference: PsiReference?): Boolean {
         val adjustedElements = adjustElements(elements) ?: return false
         if (adjustedElements.none { it is KtFile }) return false
 
-        return super.canMove(adjustedElements, targetContainer)
+        return super.canMove(adjustedElements, targetContainer, reference)
     }
 
-    override fun adjustForMove(project: Project, sourceElements: Array<out PsiElement>, targetElement: PsiElement?): Array<PsiElement>? {
+    override fun adjustForMove(
+        project: Project,
+        sourceElements: Array<out PsiElement>,
+        targetElement: PsiElement?
+    ): Array<PsiFileSystemItem>? {
         return adjustElements(sourceElements)
     }
 
@@ -71,7 +76,7 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
             return
         }
 
-        KotlinAwareMoveFilesOrDirectoriesDialog(project, initialTargetDirectory, elements, callback).show()
+        KotlinAwareMoveFilesOrDirectoriesDialog(project, initialTargetDirectory, adjustedElementsToMove, callback).show()
     }
 
     override fun tryToMove(

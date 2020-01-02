@@ -72,7 +72,7 @@ fun ResolvedCall<*>.hasLastFunctionalParameterWithResult(context: BindingContext
     val lastArgument = valueArguments[lastParameter]?.arguments?.singleOrNull() ?: return false
     if (this is NewResolvedCallImpl<*>) {
         // TODO: looks like hack
-        resolvedCallAtom.subResolvedAtoms.firstOrNull { it is ResolvedLambdaAtom }.safeAs<ResolvedLambdaAtom>()?.let { lambdaAtom ->
+        resolvedCallAtom.subResolvedAtoms?.firstOrNull { it is ResolvedLambdaAtom }.safeAs<ResolvedLambdaAtom>()?.let { lambdaAtom ->
             return lambdaAtom.resultArguments.filterIsInstance<ReceiverKotlinCallArgument>().all {
                 val type = it.receiverValue?.type ?: return@all false
                 predicate(type)

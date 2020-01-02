@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
+import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Presets
+import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Targets
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -19,11 +21,19 @@ internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, ta
 
 internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
 
-internal const val KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetPreset"
-internal const val KOTLIN_NATIVE_TARGET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTarget"
+internal object NativeFQNames {
+    object Targets {
+        const val base = "$MPP_PACKAGE.KotlinNativeTarget"
+        const val withHostTests = "$MPP_PACKAGE.KotlinNativeTargetWithHostTests"
+        const val withSimulatorTests = "$MPP_PACKAGE.KotlinNativeTargetWithSimulatorTests"
+    }
 
-internal const val KOTLIN_NATIVE_TARGET_WITH_TESTS_PRESET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetWithTestsPreset"
-internal const val KOTLIN_NATIVE_TARGET_WITH_TESTS_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetWithTests"
+    object Presets {
+        const val simple = "$MPP_PACKAGE.KotlinNativeTargetPreset"
+        const val withHostTests = "$MPP_PACKAGE.KotlinNativeTargetWithHostTestsPreset"
+        const val withSimulatorTests = "$MPP_PACKAGE.KotlinNativeTargetWithSimulatorTestsPreset"
+    }
+}
 
 internal val jvmPresetEntry = KotlinPresetEntry(
     "jvm",
@@ -44,27 +54,24 @@ internal val androidPresetEntry = KotlinPresetEntry(
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
-private val testableNativeTargets = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+private val nativeTargetsWithHostTests = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+private val nativeTargetsWithSimulatorTests = setOf(KonanTarget.IOS_X64, KonanTarget.WATCHOS_X86, KonanTarget.TVOS_X64)
 private val disabledNativeTargets = setOf(KonanTarget.WATCHOS_X64)
 
 internal val nativePresetEntries = HostManager().targets
     .filter { (_, target) -> target !in disabledNativeTargets }
     .map { (_, target) ->
-        KotlinPresetEntry(
-            target.presetName,
-            typeName(
-                if (target in testableNativeTargets)
-                    KOTLIN_NATIVE_TARGET_WITH_TESTS_PRESET_CLASS_FQNAME
-                else
-                    KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME
-            ),
-            typeName(
-                if (target in testableNativeTargets)
-                    KOTLIN_NATIVE_TARGET_WITH_TESTS_CLASS_FQNAME
-                else
-                    KOTLIN_NATIVE_TARGET_CLASS_FQNAME
-            )
-        )
+
+        val (presetType, targetType) = when (target) {
+            in nativeTargetsWithHostTests ->
+                Presets.withHostTests to Targets.withHostTests
+            in nativeTargetsWithSimulatorTests ->
+                Presets.withSimulatorTests to Targets.withSimulatorTests
+            else ->
+                Presets.simple to Targets.base
+        }
+
+        KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType))
     }
 
 internal val allPresetEntries = listOf(

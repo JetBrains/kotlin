@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger
@@ -32,15 +21,17 @@ enum class SourceLineKind {
     EXECUTED_LINE
 }
 
-fun mapStacktraceLineToSource(smapData: SmapData,
-                              line: Int,
-                              project: Project,
-                              lineKind: SourceLineKind,
-                              searchScope: GlobalSearchScope): Pair<KtFile, Int>? {
+fun mapStacktraceLineToSource(
+    smapData: SmapData,
+    line: Int,
+    project: Project,
+    lineKind: SourceLineKind,
+    searchScope: GlobalSearchScope
+): Pair<KtFile, Int>? {
     val smap = when (lineKind) {
-                   SourceLineKind.CALL_LINE -> smapData.kotlinDebugStrata
-                   SourceLineKind.EXECUTED_LINE -> smapData.kotlinStrata
-               } ?: return null
+        SourceLineKind.CALL_LINE -> smapData.kotlinDebugStrata
+        SourceLineKind.EXECUTED_LINE -> smapData.kotlinStrata
+    } ?: return null
 
     val mappingInfo = smap.fileMappings.firstOrNull {
         it.getIntervalIfContains(line) != null
@@ -48,7 +39,8 @@ fun mapStacktraceLineToSource(smapData: SmapData,
 
     val jvmName = JvmClassName.byInternalName(mappingInfo.path)
     val sourceFile = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(
-            project, searchScope, jvmName, mappingInfo.name) ?: return null
+        project, searchScope, jvmName, mappingInfo.name
+    ) ?: return null
 
     val interval = mappingInfo.getIntervalIfContains(line)!!
     val sourceLine = when (lineKind) {

@@ -18,9 +18,6 @@ fun getC() = false
 
 fun getD() = true
 
-// IGNORE_BACKEND: JVM_IR
-// IR backend is missing a line number 3 in box() after stepping on line 9 for getting the result of false
-
 // LINENUMBERS
 // TestKt.box():3
 // TestKt.getA():13

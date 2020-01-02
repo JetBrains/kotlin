@@ -3,5 +3,5 @@ FILE: callMe.kt
         ^callMe Int(42)
     }
     public final fun other(): R|kotlin/Unit| {
-        lval x: <implicit> = Int(1)
+        lval x: <implicit> = IntegerLiteral(1)
     }

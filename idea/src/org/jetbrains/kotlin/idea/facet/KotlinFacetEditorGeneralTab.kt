@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.facet
@@ -31,14 +20,13 @@ import org.jetbrains.kotlin.idea.compiler.configuration.*
 import org.jetbrains.kotlin.idea.core.util.onTextChange
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import java.awt.BorderLayout
+import java.awt.Component
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import kotlin.reflect.full.findAnnotation
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import java.awt.Component
-import kotlin.math.min
 
 class KotlinFacetEditorGeneralTab(
     private val configuration: KotlinFacetConfiguration,
@@ -146,8 +134,8 @@ class KotlinFacetEditorGeneralTab(
             useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
             dependsOnLabel = JLabel()
 
-            targetPlatformWrappers =
-                CommonPlatforms.allDefaultTargetPlatforms.sortedBy { unifyJvmVersion(it.oldFashionedDescription) }.map { TargetPlatformWrapper(it) }
+            targetPlatformWrappers = CommonPlatforms.allDefaultTargetPlatforms.sortedBy { unifyJvmVersion(it.oldFashionedDescription) }
+                .map { TargetPlatformWrapper(it) }
             targetPlatformLabel = JLabel() //JTextField()? targetPlatformLabel.isEditable = false
             targetPlatformSelectSingleCombobox =
                 ComboBox(targetPlatformWrappers.toTypedArray()).apply {
@@ -161,7 +149,8 @@ class KotlinFacetEditorGeneralTab(
                         ): Component {
                             return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus).apply {
                                 text =
-                                    (value as? TargetPlatformWrapper)?.targetPlatform?.componentPlatforms?.singleOrNull()?.oldFashionedDescription
+                                    (value as? TargetPlatformWrapper)?.targetPlatform?.componentPlatforms?.singleOrNull()
+                                        ?.oldFashionedDescription
                                         ?: "Multiplatform"
                             }
                         }
@@ -369,7 +358,8 @@ class KotlinFacetEditorGeneralTab(
 
         // work-around for hacked equals in JvmPlatform
         if (!configuration?.settings?.isHmppEnabled) {
-            if (configuration.settings.targetPlatform?.let { TargetPlatformWrapper(it) } != editor.targetPlatformSelectSingleCombobox.selectedItemTyped) {
+            if (configuration.settings.targetPlatform?.let { TargetPlatformWrapper(it) } != editor.targetPlatformSelectSingleCombobox
+                    .selectedItemTyped) {
                 return true
             }
         }
@@ -391,7 +381,7 @@ class KotlinFacetEditorGeneralTab(
                 editor.targetPlatformsCurrentlySelected?.componentPlatforms?.map { it.oldFashionedDescription.trim() }?.joinToString(", ")
                     ?: "<none>"
             editor.dependsOnLabel.isVisible = configuration.settings.dependsOnModuleNames.isNotEmpty()
-            editor.dependsOnLabel.text = configuration.settings.dependsOnModuleNames.joinToString(", ","Depends on: ", ".")
+            editor.dependsOnLabel.text = configuration.settings.dependsOnModuleNames.joinToString(", ", "Depends on: ", ".")
 
             editor.targetPlatformSelectSingleCombobox.selectedItem = configuration.settings.targetPlatform?.let {
                 val index = editor.targetPlatformWrappers.indexOf(TargetPlatformWrapper(it))

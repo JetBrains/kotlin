@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -40,22 +29,23 @@ import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 object KeywordValues {
     interface Consumer {
         fun consume(
-                lookupString: String,
-                expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
-                priority: SmartCompletionItemPriority,
-                factory: () -> LookupElement)
+            lookupString: String,
+            expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
+            priority: SmartCompletionItemPriority,
+            factory: () -> LookupElement
+        )
     }
 
     fun process(
-            consumer: Consumer,
-            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
-            bindingContext: BindingContext,
-            resolutionFacade: ResolutionFacade,
-            moduleDescriptor: ModuleDescriptor,
-            isJvmModule: Boolean
+        consumer: Consumer,
+        callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+        bindingContext: BindingContext,
+        resolutionFacade: ResolutionFacade,
+        moduleDescriptor: ModuleDescriptor,
+        isJvmModule: Boolean
     ) {
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-            val booleanInfoMatcher = matcher@ { info: ExpectedInfo ->
+            val booleanInfoMatcher = matcher@{ info: ExpectedInfo ->
                 // no sense in true or false as if-condition or when entry for when with no subject
                 val additionalData = info.additionalData
                 val skipTrueFalse = when (additionalData) {
@@ -72,10 +62,10 @@ object KeywordValues {
                 else
                     ExpectedInfoMatch.noMatch
             }
-            consumer.consume("true",  booleanInfoMatcher, SmartCompletionItemPriority.TRUE) {
+            consumer.consume("true", booleanInfoMatcher, SmartCompletionItemPriority.TRUE) {
                 LookupElementBuilder.create(KeywordLookupObject(), "true").bold()
             }
-            consumer.consume("false",  booleanInfoMatcher, SmartCompletionItemPriority.FALSE) {
+            consumer.consume("false", booleanInfoMatcher, SmartCompletionItemPriority.FALSE) {
                 LookupElementBuilder.create(KeywordLookupObject(), "false").bold()
             }
 
@@ -97,7 +87,8 @@ object KeywordValues {
             val qualifierType = bindingContext.get(BindingContext.DOUBLE_COLON_LHS, callTypeAndReceiver.receiver!!)?.type
             if (qualifierType != null) {
                 val kClassDescriptor = resolutionFacade.getFrontendService(ReflectionTypes::class.java).kClass
-                val classLiteralType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClassDescriptor, listOf(TypeProjectionImpl(qualifierType)))
+                val classLiteralType =
+                    KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClassDescriptor, listOf(TypeProjectionImpl(qualifierType)))
                 val kClassTypes = listOf(classLiteralType.toFuzzyType(emptyList()))
                 val kClassMatcher = { info: ExpectedInfo -> kClassTypes.matchExpectedInfo(info) }
                 consumer.consume("class", kClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
@@ -106,17 +97,21 @@ object KeywordValues {
 
                 if (isJvmModule) {
                     val javaLangClassDescriptor = resolutionFacade.resolveImportReference(moduleDescriptor, FqName("java.lang.Class"))
-                            .singleOrNull() as? ClassDescriptor
+                        .singleOrNull() as? ClassDescriptor
 
                     if (javaLangClassDescriptor != null) {
-                        val javaLangClassType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, javaLangClassDescriptor, listOf(TypeProjectionImpl(qualifierType)))
+                        val javaLangClassType = KotlinTypeFactory.simpleNotNullType(
+                            Annotations.EMPTY,
+                            javaLangClassDescriptor,
+                            listOf(TypeProjectionImpl(qualifierType))
+                        )
                         val javaClassTypes = listOf(javaLangClassType.toFuzzyType(emptyList()))
                         val javaClassMatcher = { info: ExpectedInfo -> javaClassTypes.matchExpectedInfo(info) }
                         consumer.consume("class", javaClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
                             LookupElementBuilder.create(KeywordLookupObject(), "class.java")
-                                    .withPresentableText("class")
-                                    .withTailText(".java")
-                                    .bold()
+                                .withPresentableText("class")
+                                .withTailText(".java")
+                                .bold()
                         }
                     }
                 }

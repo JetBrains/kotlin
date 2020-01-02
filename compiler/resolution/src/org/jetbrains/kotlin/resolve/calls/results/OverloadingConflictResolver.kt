@@ -37,6 +37,7 @@ open class OverloadingConflictResolver<C : Any>(
     private val builtIns: KotlinBuiltIns,
     private val module: ModuleDescriptor,
     private val specificityComparator: TypeSpecificityComparator,
+    private val platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
     private val getResultingDescriptor: (C) -> CallableDescriptor,
     private val createEmptyConstraintSystem: () -> SimpleConstraintSystem,
     private val createFlatSignature: (C) -> FlatSignature<C>,
@@ -364,6 +365,10 @@ open class OverloadingConflictResolver<C : Any>(
             return false
         }
 
+        if (platformOverloadsSpecificityComparator.isMoreSpecificShape(call2.candidateDescriptor(), call1.candidateDescriptor())) {
+            return false
+        }
+
         return true
     }
 
@@ -409,6 +414,10 @@ open class OverloadingConflictResolver<C : Any>(
         if (f is CallableMemberDescriptor && g is CallableMemberDescriptor) {
             if (!f.isExpect && g.isExpect) return true
             if (f.isExpect && !g.isExpect) return false
+        }
+
+        if (platformOverloadsSpecificityComparator.isMoreSpecificShape(g, f)) {
+            return false
         }
 
         return true

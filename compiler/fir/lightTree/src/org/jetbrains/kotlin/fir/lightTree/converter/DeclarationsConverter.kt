@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.NAME_FOR_DEFAULT_VALUE_PARAMETER
-import org.jetbrains.kotlin.fir.builder.*
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.Context
+import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
+import org.jetbrains.kotlin.fir.builder.generateComponentFunctions
+import org.jetbrains.kotlin.fir.builder.generateCopyFunction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class DeclarationsConverter(
     session: FirSession,
+    val scopeProvider: FirScopeProvider,
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context = Context()
@@ -339,11 +342,7 @@ class DeclarationsConverter(
             }
         }
 
-        val defaultDelegatedSuperTypeRef = when {
-            modifiers.isEnum() && (classKind == ClassKind.CLASS || classKind == ClassKind.INTERFACE) -> implicitEnumType
-            modifiers.isAnnotation() && (classKind == ClassKind.CLASS || classKind == ClassKind.INTERFACE) -> implicitAnnotationType
-            else -> implicitAnyType
-        }
+
 
         if (classKind == ClassKind.CLASS) {
             classKind = when {
@@ -354,7 +353,6 @@ class DeclarationsConverter(
         }
 
         val className = identifier.nameAsSafeName(if (modifiers.isCompanion()) "Companion" else "")
-        superTypeRefs.ifEmpty { superTypeRefs += defaultDelegatedSuperTypeRef }
         val isLocal = isClassLocal(classNode) { getParent() }
 
         return withChildClassName(className) {
@@ -376,6 +374,7 @@ class DeclarationsConverter(
                     className,
                     status,
                     classKind,
+                    scopeProvider,
                     FirRegularClassSymbol(context.currentClassId)
                 )
             } else {
@@ -385,18 +384,41 @@ class DeclarationsConverter(
                     className,
                     status,
                     classKind,
+                    scopeProvider,
                     FirRegularClassSymbol(context.currentClassId)
                 )
             }
             firClass.annotations += modifiers.annotations
             firClass.typeParameters += firTypeParameters
             firClass.joinTypeParameters(typeConstraints)
+
+            val selfType = null.toDelegatedSelfType(firClass)
+
+            when {
+                modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) -> {
+                    superTypeRefs += FirResolvedTypeRefImpl(
+                        source = null,
+                        ConeClassLikeTypeImpl(
+                            implicitEnumType.type.lookupTag,
+                            arrayOf(selfType.coneTypeUnsafe()),
+                            isNullable = false
+                        )
+                    )
+                }
+                modifiers.isAnnotation() && (classKind == ClassKind.ANNOTATION_CLASS) -> {
+                    superTypeRefs += implicitAnnotationType
+                }
+            }
+            val defaultDelegatedSuperTypeRef = implicitAnyType
+
+            superTypeRefs.ifEmpty { superTypeRefs += defaultDelegatedSuperTypeRef }
+
             firClass.superTypeRefs += superTypeRefs
 
             val classWrapper = ClassWrapper(
                 className, modifiers, classKind, primaryConstructor != null,
                 classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
-                null.toDelegatedSelfType(firClass),
+                selfType,
                 delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef, superTypeCallEntry
             )
             //parse primary constructor
@@ -467,7 +489,7 @@ class DeclarationsConverter(
         val delegatedType = delegatedSuperTypeRef ?: implicitAnyType
 
         return withChildClassName(ANONYMOUS_OBJECT_NAME) {
-            FirAnonymousObjectImpl(null, session, FirAnonymousObjectSymbol()).apply {
+            FirAnonymousObjectImpl(null, session, scopeProvider, FirAnonymousObjectSymbol()).apply {
                 annotations += modifiers.annotations
                 this.superTypeRefs += superTypeRefs
                 this.typeRef = superTypeRefs.first()
@@ -518,15 +540,12 @@ class DeclarationsConverter(
                 null,
                 session,
                 enumEntryName,
+                scopeProvider,
                 FirRegularClassSymbol(context.currentClassId)
             )
             firEnumEntry.annotations += modifiers.annotations
 
-            val defaultDelegatedSuperTypeRef = when {
-                modifiers.isEnum() -> implicitEnumType
-                modifiers.isAnnotation() -> implicitAnnotationType
-                else -> implicitAnyType
-            }
+            val defaultDelegatedSuperTypeRef = implicitAnyType
 
             val enumClassWrapper = ClassWrapper(
                 enumEntryName, modifiers, ClassKind.ENUM_ENTRY, hasPrimaryConstructor = true,
@@ -808,6 +827,7 @@ class DeclarationsConverter(
         val parentNode = property.getParent()
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
         return if (isLocal) {
+            val receiver = delegateExpression?.let { expressionConverter.getAsFirExpression<FirExpression>(it, "Incorrect delegate expression") }
             FirPropertyImpl(
                 null,
                 session,
@@ -826,7 +846,7 @@ class DeclarationsConverter(
                 FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
             ).apply {
                 annotations += modifiers.annotations
-                this.generateAccessorsByDelegate(this@DeclarationsConverter.session, member = false, stubMode = stubMode)
+                this.generateAccessorsByDelegate(this@DeclarationsConverter.session, member = false, stubMode, receiver)
             }
         } else {
             val status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
@@ -835,6 +855,9 @@ class DeclarationsConverter(
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.isConst()
                 isLateInit = modifiers.hasLateinit()
+            }
+            val receiver = delegateExpression?.let {
+                expressionConverter.getAsFirExpression<FirExpression>(it, "Should have delegate")
             }
             FirPropertyImpl(
                 null,
@@ -860,7 +883,7 @@ class DeclarationsConverter(
                 this.getter = getter ?: FirDefaultPropertyGetter(null, session, returnType, modifiers.getVisibility())
                 this.setter = if (isVar) setter ?: FirDefaultPropertySetter(null, session, returnType, modifiers.getVisibility()) else null
                 generateAccessorsByDelegate(
-                    this@DeclarationsConverter.session, member = parentNode?.tokenType != KT_FILE, stubMode = stubMode
+                    this@DeclarationsConverter.session, member = parentNode?.tokenType != KT_FILE, stubMode, receiver
                 )
             }
         }
@@ -1105,7 +1128,7 @@ class DeclarationsConverter(
         }
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
-            return DeclarationsConverter(session, stubMode, blockTree, context).convertBlockExpression(blockTree.root)
+            return DeclarationsConverter(session, scopeProvider, stubMode, blockTree, context).convertBlockExpression(blockTree.root)
         } else {
             FirSingleExpressionBlock(
                 FirExpressionStub(null).toReturn()
@@ -1249,6 +1272,8 @@ class DeclarationsConverter(
         )
         firTypeParameter.annotations += typeParameterModifiers.annotations
         firType?.let { firTypeParameter.bounds += it }
+
+        firTypeParameter.addDefaultBoundIfNecessary()
 
         return firTypeParameter
     }

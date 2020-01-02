@@ -42,6 +42,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
     private final NotNullLazyValue<SimpleType> defaultType;
+    private final StorageManager storageManager;
 
     protected AbstractTypeParameterDescriptor(
             @NotNull final StorageManager storageManager,
@@ -82,6 +83,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 );
             }
         });
+        this.storageManager = storageManager;
     }
 
     protected abstract void reportSupertypeLoopError(@NotNull KotlinType type);
@@ -137,6 +139,12 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public StorageManager getStorageManager() {
+        return storageManager;
     }
 
     private class TypeParameterTypeConstructor extends AbstractTypeConstructor {

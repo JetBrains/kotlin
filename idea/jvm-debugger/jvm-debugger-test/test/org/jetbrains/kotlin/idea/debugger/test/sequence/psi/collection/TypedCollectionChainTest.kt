@@ -6,8 +6,8 @@ package org.jetbrains.kotlin.idea.debugger.test.sequence.psi.collection
 
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.collections.KotlinCollectionSupportProvider
-import org.jetbrains.kotlin.idea.debugger.test.sequence.psi.TypedChainTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
+import org.jetbrains.kotlin.idea.debugger.test.sequence.psi.TypedChainTestCase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
@@ -51,6 +51,9 @@ class TypedCollectionChainTest : TypedChainTestCase("collection/positive/types")
     fun testNullableToNotNull() = doTest(KotlinSequenceTypes.NULLABLE_ANY, KotlinSequenceTypes.INT)
     fun testNotNullToNullable() = doTest(KotlinSequenceTypes.DOUBLE, KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testFewTransitions1() = doTest(KotlinSequenceTypes.BYTE, KotlinSequenceTypes.ANY, KotlinSequenceTypes.NULLABLE_ANY, KotlinSequenceTypes.INT)
-    fun testFewTransitions2() = doTest(KotlinSequenceTypes.CHAR, KotlinSequenceTypes.BOOLEAN, KotlinSequenceTypes.DOUBLE, KotlinSequenceTypes.ANY)
+    fun testFewTransitions1() =
+        doTest(KotlinSequenceTypes.BYTE, KotlinSequenceTypes.ANY, KotlinSequenceTypes.NULLABLE_ANY, KotlinSequenceTypes.INT)
+
+    fun testFewTransitions2() =
+        doTest(KotlinSequenceTypes.CHAR, KotlinSequenceTypes.BOOLEAN, KotlinSequenceTypes.DOUBLE, KotlinSequenceTypes.ANY)
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
@@ -37,9 +26,9 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinMemberInfo @JvmOverloads constructor(
-        member: KtNamedDeclaration,
-        val isSuperClass: Boolean = false,
-        val isCompanionMember: Boolean = false
+    member: KtNamedDeclaration,
+    val isSuperClass: Boolean = false,
+    val isCompanionMember: Boolean = false
 ) : MemberInfoBase<KtNamedDeclaration>(member) {
     companion object {
         private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
@@ -55,13 +44,11 @@ class KotlinMemberInfo @JvmOverloads constructor(
             if (member.isInterfaceClass()) {
                 displayName = RefactoringBundle.message("member.info.implements.0", member.name)
                 overrides = false
-            }
-            else {
+            } else {
                 displayName = RefactoringBundle.message("member.info.extends.0", member.name)
                 overrides = true
             }
-        }
-        else {
+        } else {
             displayName = RENDERER.render(memberDescriptor)
             if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 displayName = "abstract $displayName"

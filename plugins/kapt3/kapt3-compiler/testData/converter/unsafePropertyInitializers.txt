@@ -116,3 +116,37 @@ public final class Foo {
         super();
     }
 }
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class HavingState {
+    @org.jetbrains.annotations.NotNull()
+    private final State state = State.START;
+
+    @org.jetbrains.annotations.NotNull()
+    public final State getState() {
+        return null;
+    }
+
+    public HavingState() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum State {
+    /*public static final*/ START /* = new State() */,
+    /*public static final*/ FINISH /* = new State() */;
+
+    State() {
+    }
+}

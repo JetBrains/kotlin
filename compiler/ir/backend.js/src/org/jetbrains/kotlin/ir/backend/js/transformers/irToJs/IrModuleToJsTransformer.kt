@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToJsStatements
+import org.jetbrains.kotlin.ir.backend.js.export.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -33,63 +35,7 @@ class IrModuleToJsTransformer(
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
-    private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
-        val statements = mutableListOf<JsStatement>().also {
-            if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
-        }
-
-        val preDeclarationBlock = JsGlobalBlock()
-        val postDeclarationBlock = JsGlobalBlock()
-
-        statements.addWithComment("block: pre-declaration", preDeclarationBlock)
-
-        val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
-        val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
-
-        module.files.forEach {
-            val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
-            if (fileStatements.isNotEmpty()) {
-                var startComment = ""
-
-                if (generateRegionComments) {
-                    startComment = "region "
-                }
-
-                if (generateRegionComments || generateFilePaths) {
-                    val originalPath = it.path
-                    val path = pathPrefixMap.entries
-                        .find { (k, _) -> originalPath.startsWith(k) }
-                        ?.let { (k, v) -> v + originalPath.substring(k.length) }
-                        ?: originalPath
-
-                    startComment += "file: $path"
-                }
-
-                if (startComment.isNotEmpty()) {
-                    statements.add(JsSingleLineComment(startComment))
-                }
-
-                statements.addAll(fileStatements)
-                statements.endRegion()
-            }
-        }
-
-        // sort member forwarding code
-        processClassModels(context.staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
-
-        statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
-        statements.addWithComment("block: init", context.staticContext.initializerBlock.statements)
-
-        if (backendContext.hasTests) {
-            statements.startRegion("block: tests")
-            statements += JsInvocation(context.getNameForStaticFunction(backendContext.testContainer).makeRef()).makeStmt()
-            statements.endRegion()
-        }
-
-        return statements
-    }
-
-    fun generateModule(module: IrModuleFragment): CompilerResult {
+    fun generateModule(module: IrModuleFragment, fullJs: Boolean = true, dceJs: Boolean = false): CompilerResult {
         val additionalPackages = with(backendContext) {
             externalPackageFragment.values + listOf(
                 bodilessBuiltInsPackageFragment,
@@ -104,6 +50,17 @@ class IrModuleToJsTransformer(
 
         namer.merge(module.files, additionalPackages)
 
+        val jsCode = if (fullJs) generateWrappedModuleBody(module, exportedModule) else null
+
+        val dceJsCode = if (dceJs) {
+            eliminateDeadDeclarations(module, backendContext, mainFunction)
+            generateWrappedModuleBody(module, exportedModule)
+        } else null
+
+        return CompilerResult(jsCode, dceJsCode, dts)
+    }
+
+    private fun generateWrappedModuleBody(module: IrModuleFragment, exportedModule: ExportedModule): String {
         val program = JsProgram()
 
         val nameGenerator = IrNamerImpl(
@@ -159,7 +116,63 @@ class IrModuleToJsTransformer(
             )
         }
 
-        return CompilerResult(program.toString(), dts)
+        return program.toString()
+    }
+
+    private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
+        val statements = mutableListOf<JsStatement>().also {
+            if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
+        }
+
+        val preDeclarationBlock = JsGlobalBlock()
+        val postDeclarationBlock = JsGlobalBlock()
+
+        statements.addWithComment("block: pre-declaration", preDeclarationBlock)
+
+        val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
+        val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
+
+        module.files.forEach {
+            val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
+            if (fileStatements.isNotEmpty()) {
+                var startComment = ""
+
+                if (generateRegionComments) {
+                    startComment = "region "
+                }
+
+                if (generateRegionComments || generateFilePaths) {
+                    val originalPath = it.path
+                    val path = pathPrefixMap.entries
+                        .find { (k, _) -> originalPath.startsWith(k) }
+                        ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                        ?: originalPath
+
+                    startComment += "file: $path"
+                }
+
+                if (startComment.isNotEmpty()) {
+                    statements.add(JsSingleLineComment(startComment))
+                }
+
+                statements.addAll(fileStatements)
+                statements.endRegion()
+            }
+        }
+
+        // sort member forwarding code
+        processClassModels(context.staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
+
+        statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
+        statements.addWithComment("block: init", context.staticContext.initializerBlock.statements)
+
+        if (backendContext.hasTests) {
+            statements.startRegion("block: tests")
+            statements += JsInvocation(context.getNameForStaticFunction(backendContext.testContainer).makeRef()).makeStmt()
+            statements.endRegion()
+        }
+
+        return statements
     }
 
     private fun generateMainArguments(mainFunction: IrSimpleFunction, rootContext: JsGenerationContext): List<JsExpression> {

@@ -270,10 +270,10 @@ fun refineScriptCompilationConfiguration(
 }
 
 fun ScriptDependencies.adjustByDefinition(definition: ScriptDefinition): ScriptDependencies {
-    val additionalClasspath = additionalClasspath(definition)
+    val additionalClasspath = additionalClasspath(definition).filterNot { classpath.contains(it) }
     if (additionalClasspath.isEmpty()) return this
 
-    return copy(classpath = additionalClasspath + classpath)
+    return copy(classpath = classpath + additionalClasspath)
 }
 
 fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration {

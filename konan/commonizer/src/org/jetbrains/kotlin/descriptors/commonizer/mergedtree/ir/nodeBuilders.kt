@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.firstNonNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.NullableLazyValue
@@ -41,6 +42,7 @@ internal fun buildModuleNode(
 
 internal fun buildPackageNode(
     storageManager: StorageManager,
+    moduleName: Name,
     packageFqName: FqName,
     packageMemberScopes: List<MemberScope?>
 ): CirPackageNode = buildNode(
@@ -51,6 +53,7 @@ internal fun buildPackageNode(
     recursionMarker = null,
     nodeProducer = ::CirPackageNode
 ).also { node ->
+    node.moduleName = moduleName
     node.fqName = packageFqName
 }
 

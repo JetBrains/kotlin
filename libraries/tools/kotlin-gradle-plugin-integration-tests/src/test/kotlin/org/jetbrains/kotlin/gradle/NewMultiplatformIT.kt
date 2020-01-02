@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
+import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
+import java.io.File
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
@@ -1277,16 +1280,29 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
     }
+    
+    private fun getBootedSimulators(workingDirectory: File): Set<String>? =
+        if (HostManager.hostIsMac) {
+            val simulators = runProcess(listOf("xcrun", "simctl", "list"), workingDirectory, System.getenv()).also {
+                assertTrue(it.isSuccessful, "xcrun exection failed")
+            }.output
+
+            simulators.split('\n').filter { it.contains("(Booted)") }.map { it.trim() }.toSet()
+        } else {
+            null
+        }
 
     @Test
     fun testNativeTests() = with(Project("new-mpp-native-tests", gradleVersion)) {
-        val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test")
+        val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test", "iosTest")
         val hostTestTask = "${nativeHostTargetName}Test"
 
         val suffix = if (isWindows) "exe" else "kexe"
 
         val defaultOutputFile = "build/bin/$nativeHostTargetName/debugTest/test.$suffix"
         val anotherOutputFile = "build/bin/$nativeHostTargetName/anotherDebugTest/another.$suffix"
+
+        val hostIsMac = HostManager.hostIsMac
 
         build("tasks") {
             assertSuccessful()
@@ -1296,6 +1312,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
 
+        // Perform all following checks in a single test to avoid running the K/N compiler several times.
         // Check that tests are not built during the ":assemble" execution
         build("assemble") {
             assertSuccessful()
@@ -1303,18 +1320,91 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertNoSuchFile(anotherOutputFile)
         }
 
+        val testsToExecute = mutableListOf(":$hostTestTask")
+        if (hostIsMac) {
+            testsToExecute.add(":iosTest")
+        }
+        val testsToSkip = testTasks.map { ":$it" } - testsToExecute
+
+        // Store currently booted simulators to check that they don't leak (MacOS only).
+        val bootedSimulatorsBefore = getBootedSimulators(projectDir)
+
+        // Check the case when all tests pass.
         build("check") {
             assertSuccessful()
-            assertTasksExecuted(":$hostTestTask")
+
+            assertTasksExecuted(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+
+            assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fooTest\\s+PASSED".toRegex())
+            assertContainsRegex("org\\.foo\\.test\\.TestKt\\.barTest\\s+PASSED".toRegex())
+
             assertFileExists(defaultOutputFile)
+        }
+
+        // Check simulator process leaking.
+        val bootedSimulatorsAfter = getBootedSimulators(projectDir)
+        assertEquals(bootedSimulatorsBefore, bootedSimulatorsAfter)
+
+        // Check the case with failed tests.
+        projectDir.resolve("src/commonTest/kotlin/test.kt").appendText(
+            """
+                @Test
+                fun fail() {
+                    error("FAILURE!")
+                }
+            """.trimIndent()
+        )
+        build("check") {
+            assertFailed()
+
+            assertTasksFailed(":allTests")
+            // In the aggregation report mode platform-specific tasks
+            // are executed successfully even if there are failing tests.
+            assertTasksExecuted(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+
+            assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fail\\s+FAILED".toRegex())
+        }
+
+        // Check that individual test reports are created correctly.
+        build("check", "-Pkotlin.tests.individualTaskReports=true", "--continue") {
+            assertFailed()
+
+            // In the individual report mode platform-specific tasks
+            // fail if there are failing tests.
+            assertTasksFailed(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+
+
+            fun assertStacktrace(taskName: String) {
+                val testReport = projectDir.resolve("build/test-results/$taskName/TEST-org.foo.test.TestKt.xml")
+                val stacktrace = SAXBuilder().build(testReport).rootElement
+                    .getChildren("testcase")
+                    .single { it.getAttribute("name").value == "fail" }
+                    .getChild("failure")
+                    .text
+                assertTrue(stacktrace.contains("""at org\.foo\.test\.fail\(.*test\.kt:24\)""".toRegex()))
+            }
+
             assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", hostTestTask)
+            // K/N doesn't report line numbers correctly on Linux (see KT-35408).
+            // TODO: Uncomment when this is fixed.
+            //assertStacktrace(hostTestTask)
+            if (hostIsMac) {
+                assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", "iosTest")
+                assertStacktrace("iosTest")
+            }
         }
 
         build("linkAnotherDebugTest${nativeHostTargetName}") {
             assertSuccessful()
             assertFileExists(anotherOutputFile)
         }
+    }
 
+    @Test
+    fun testNativeTestGetters() = with(Project("new-mpp-native-tests", gradleVersion)) {
         // Check that test binaries can be accessed in a buildscript.
         build("checkNewGetters") {
             assertSuccessful()
@@ -2122,8 +2212,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
         // TOOD: add Kotlin/JS tests once they can be tested without much performance overhead
-        val testTasks =
-            arrayOf(":jvmTest", ":${nativeHostTargetName}Test", ":jvmIntegrationTest", ":${nativeHostTargetName}IntegrationTest")
+        val targetsToTest = listOf("jvm", nativeHostTargetName) + listOf("ios").takeIf { HostManager.hostIsMac }.orEmpty()
+        val testTasks = targetsToTest.flatMap { listOf(":${it}Test", ":${it}IntegrationTest") }.toTypedArray()
 
         build(*testTasks) {
             assertSuccessful()
@@ -2139,11 +2229,11 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .resolve("build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html")
                     .readText()
 
-                if (targetName != nativeHostTargetName) // TODO: fix exclude patterns for the Kotlin/Native test tasks
-                    assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
+                assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
             }
-            checkUnitTestOutput("jvm")
-            checkUnitTestOutput(nativeHostTargetName)
+            targetsToTest.forEach {
+                checkUnitTestOutput(it)
+            }
 
             fun checkIntegrationTestOutput(targetName: String) {
                 val classReportHtml = projectDir
@@ -2154,8 +2244,9 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
                 assertTrue("thirdTest" !in classReportHtml, "Test report should not contain 'thirdTest':\n$classReportHtml")
             }
-            checkIntegrationTestOutput("jvm")
-            checkIntegrationTestOutput(nativeHostTargetName)
+            targetsToTest.forEach {
+                checkIntegrationTestOutput(it)
+            }
         }
     }
 }

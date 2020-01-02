@@ -27,6 +27,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun checkLocalVariable(text: String) = check(text.trimIndent(), HintType.LOCAL_VARIABLE_HINT)
     private fun checkPropertyHint(text: String) = check(text.trimIndent(), HintType.PROPERTY_HINT)
     private fun checkFunctionHint(text: String) = check(text, HintType.FUNCTION_HINT)
+    private fun checkParameterTypeHint(text: String) = check(text, HintType.PARAMETER_TYPE_HINT)
 
     fun testLocalVariableType() {
         checkLocalVariable("""fun foo() { val a<hint text=": List<String>" /> = listOf("a") }""")
@@ -37,7 +38,8 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testQualifiedReferences() {
-        checkLocalVariable("""
+        checkLocalVariable(
+            """
             package p
             class A {
                 class B {
@@ -56,7 +58,8 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 val v5 = A.F.enumCase
                 val v6 = p.A()
             }
-        """)
+        """
+        )
     }
 
     fun testPropertyType() {
@@ -281,6 +284,19 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             fun foo() {
                 val x<hint text=": Unit"/> = println("Foo")
+            }
+            """
+        )
+    }
+
+    fun testParameterType() {
+        checkParameterTypeHint(
+            """
+            fun <T> T.wrap(lambda: (T) -> T) {}
+            fun foo() {
+                12.wrap { elem<hint text=": Int"/> ->
+                    elem
+                }
             }
             """
         )

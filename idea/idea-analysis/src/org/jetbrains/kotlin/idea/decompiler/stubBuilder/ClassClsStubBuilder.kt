@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
@@ -45,46 +34,47 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createClassStub(
-        parent: StubElement<out PsiElement>,
-        classProto: ProtoBuf.Class,
-        nameResolver: NameResolver,
-        classId: ClassId,
-        source: SourceElement?,
-        context: ClsStubBuilderContext
+    parent: StubElement<out PsiElement>,
+    classProto: ProtoBuf.Class,
+    nameResolver: NameResolver,
+    classId: ClassId,
+    source: SourceElement?,
+    context: ClsStubBuilderContext
 ) {
     ClassClsStubBuilder(parent, classProto, nameResolver, classId, source, context).build()
 }
 
 private class ClassClsStubBuilder(
-        private val parentStub: StubElement<out PsiElement>,
-        private val classProto: ProtoBuf.Class,
-        nameResolver: NameResolver,
-        private val classId: ClassId,
-        source: SourceElement?,
-        outerContext: ClsStubBuilderContext
+    private val parentStub: StubElement<out PsiElement>,
+    private val classProto: ProtoBuf.Class,
+    nameResolver: NameResolver,
+    private val classId: ClassId,
+    source: SourceElement?,
+    outerContext: ClsStubBuilderContext
 ) {
     private val thisAsProtoContainer = ProtoContainer.Class(
-            classProto, nameResolver, TypeTable(classProto.typeTable), source, outerContext.protoContainer
+        classProto, nameResolver, TypeTable(classProto.typeTable), source, outerContext.protoContainer
     )
     private val classKind = thisAsProtoContainer.kind
 
     private val c = outerContext.child(
-            classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
+        classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
     )
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
         //empty supertype list if single supertype is Any
-        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.FQ_NAMES.any == it.asSingleFqName().toUnsafe() } ?: false) {
+        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.FQ_NAMES.any == it.asSingleFqName().toUnsafe() } == true) {
             listOf()
-        }
-        else {
+        } else {
             supertypeIds
         }
     }
 
-    private val companionObjectName =
-            if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.companionObjectName) else null
+    private val companionObjectName = if (classProto.hasCompanionObjectName())
+        c.nameResolver.getName(classProto.companionObjectName)
+    else
+        null
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
@@ -134,24 +124,24 @@ private class ClassClsStubBuilder(
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> {
                 KotlinObjectStubImpl(
-                        parentStub, shortName, fqName, superTypeRefs,
-                        isTopLevel = !classId.isNestedClass,
-                        isDefault = isCompanionObject,
-                        isLocal = false,
-                        isObjectLiteral = false
+                    parentStub, shortName, fqName, superTypeRefs,
+                    isTopLevel = !classId.isNestedClass,
+                    isDefault = isCompanionObject,
+                    isLocal = false,
+                    isObjectLiteral = false
                 )
             }
             else -> {
                 KotlinClassStubImpl(
-                        KtClassElementType.getStubType(classKind == ProtoBuf.Class.Kind.ENUM_ENTRY),
-                        parentStub,
-                        fqName.ref(),
-                        shortName,
-                        superTypeRefs,
-                        isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
-                        isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
-                        isLocal = false,
-                        isTopLevel = !classId.isNestedClass
+                    KtClassElementType.getStubType(classKind == ProtoBuf.Class.Kind.ENUM_ENTRY),
+                    parentStub,
+                    fqName.ref(),
+                    shortName,
+                    superTypeRefs,
+                    isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
+                    isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
+                    isLocal = false,
+                    isTopLevel = !classId.isNestedClass
                 )
             }
         }
@@ -169,12 +159,11 @@ private class ClassClsStubBuilder(
         // if single supertype is any then no delegation specifier list is needed
         if (supertypeIds.isEmpty()) return
 
-        val delegationSpecifierListStub =
-                KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtStubElementTypes.SUPER_TYPE_LIST)
+        val delegationSpecifierListStub = KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtStubElementTypes.SUPER_TYPE_LIST)
 
         classProto.supertypes(c.typeTable).forEach { type ->
             val superClassStub = KotlinPlaceHolderStubImpl<KtSuperTypeEntry>(
-                    delegationSpecifierListStub, KtStubElementTypes.SUPER_TYPE_ENTRY
+                delegationSpecifierListStub, KtStubElementTypes.SUPER_TYPE_ENTRY
             )
             typeStubBuilder.createTypeReferenceStub(superClassStub, type)
         }
@@ -204,15 +193,15 @@ private class ClassClsStubBuilder(
             val name = c.nameResolver.getName(entry.name)
             val annotations = c.components.annotationLoader.loadEnumEntryAnnotations(thisAsProtoContainer, entry)
             val enumEntryStub = KotlinClassStubImpl(
-                    KtStubElementTypes.ENUM_ENTRY,
-                    classBody,
-                    qualifiedName = c.containerFqName.child(name).ref(),
-                    name = name.ref(),
-                    superNames = arrayOf(),
-                    isInterface = false,
-                    isEnumEntry = true,
-                    isLocal = false,
-                    isTopLevel = false
+                KtStubElementTypes.ENUM_ENTRY,
+                classBody,
+                qualifiedName = c.containerFqName.child(name).ref(),
+                name = name.ref(),
+                superNames = arrayOf(),
+                isInterface = false,
+                isEnumEntry = true,
+                isLocal = false,
+                isTopLevel = false
             )
             if (annotations.isNotEmpty()) {
                 createAnnotationStubs(annotations, createEmptyModifierListStub(enumEntryStub))
@@ -228,13 +217,14 @@ private class ClassClsStubBuilder(
         }
 
         createDeclarationsStubs(
-                classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList, classProto.typeAliasList)
+            classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList, classProto.typeAliasList
+        )
     }
 
     private fun isClass(): Boolean {
         return classKind == ProtoBuf.Class.Kind.CLASS ||
-               classKind == ProtoBuf.Class.Kind.ENUM_CLASS ||
-               classKind == ProtoBuf.Class.Kind.ANNOTATION_CLASS
+                classKind == ProtoBuf.Class.Kind.ENUM_CLASS ||
+                classKind == ProtoBuf.Class.Kind.ANNOTATION_CLASS
     }
 
     private fun createInnerAndNestedClasses(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {

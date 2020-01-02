@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProvider<FirClassLikeSymbol<*>>() {
-    private val dependencyProviders by lazy {
+open class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProvider<FirClassLikeSymbol<*>>() {
+    protected open val dependencyProviders by lazy {
         val moduleInfo = session.moduleInfo ?: return@lazy emptyList()
         moduleInfo.dependenciesWithoutSelf().mapNotNull {
             session.sessionProvider?.getSession(it)?.firSymbolProvider
@@ -33,8 +33,9 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
         } ?: emptyList()
     }
 
-    override fun getClassDeclaredMemberScope(classId: ClassId) =
-        dependencyProviders.firstNotNullResult { it.getClassDeclaredMemberScope(classId) }
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+        return dependencyProviders.firstNotNullResult { it.getNestedClassifierScope(classId) }
+    }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
         return classCache.lookupCacheOrCalculate(classId) {
@@ -45,14 +46,6 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
             }
             null
         }
-    }
-
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
-        return dependencyProviders.firstNotNullResult { it.getClassUseSiteMemberScope(classId, useSiteSession, scopeSession) }
     }
 
     override fun getPackage(fqName: FqName): FqName? {

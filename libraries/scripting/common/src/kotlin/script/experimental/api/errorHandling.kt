@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ package kotlin.script.experimental.api
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.lang.RuntimeException
+import java.io.Serializable
 
 /**
  * The single script diagnostic report
@@ -25,7 +25,7 @@ data class ScriptDiagnostic(
     val sourcePath: String? = null,
     val location: SourceCode.Location? = null,
     val exception: Throwable? = null
-) {
+) : Serializable {
     /**
      * The diagnostic severity
      */

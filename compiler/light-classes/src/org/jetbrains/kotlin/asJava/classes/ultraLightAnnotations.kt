@@ -10,16 +10,17 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.meta.PsiMetaData
-import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
-import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.ErrorValue
 
 class KtUltraLightNullabilityAnnotation(
     member: KtUltraLightElementWithNullabilityAnnotation<*, *>,
@@ -119,31 +120,6 @@ private fun ConstantValue<*>.toAnnotationMemberValue(
     is ErrorValue -> null
     else -> createPsiLiteral(parent)
 }
-
-private fun ConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiExpression? {
-    val asString = asStringForPsiLiteral(parent)
-    val instance = PsiElementFactory.SERVICE.getInstance(parent.project)
-    return instance.createExpressionFromText(asString, parent)
-}
-
-private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
-    when (this) {
-        is NullValue -> "null"
-        is StringValue -> "\"$value\""
-        is KClassValue -> {
-            val value = (value as KClassValue.Value.NormalClass).value
-            val arrayPart = "[]".repeat(value.arrayNestedness)
-            val fqName = value.classId.asSingleFqName()
-            val canonicalText = psiType(
-                fqName.asString(), parent, boxPrimitiveType = value.arrayNestedness > 0
-            ).let(TypeConversionUtil::erasure).getCanonicalText(false)
-
-            "$canonicalText$arrayPart.class"
-        }
-        is EnumValue -> "${enumClassId.asSingleFqName().asString()}.$enumEntryName"
-        else -> value.toString()
-    }
-
 
 private class KtUltraLightPsiArrayInitializerMemberValue(
     val lightParent: PsiElement,

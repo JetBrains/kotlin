@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -55,9 +44,9 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         if (!element.isInterface() && primaryConstructor != null) {
             val constructors = element.secondaryConstructors + primaryConstructor
             if (constructors.none() {
-                !it.isPrivate() &&
-                it.getValueParameters().all { it.hasDefaultValue() }
-            }) {
+                    !it.isPrivate() &&
+                            it.getValueParameters().all { it.hasDefaultValue() }
+                }) {
                 // At this moment we require non-private default constructor
                 // TODO: handle non-private constructors with parameters
                 return null
@@ -68,12 +57,12 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
     }
 
     private fun getImplementTitle(baseClass: KtClass) =
-            when {
-                baseClass.isInterface() -> "Implement interface"
-                baseClass.isAbstract() -> "Implement abstract class"
-                baseClass.isSealed() -> "Implement sealed class"
-                else /* open class */ -> "Create subclass"
-            }
+        when {
+            baseClass.isInterface() -> "Implement interface"
+            baseClass.isAbstract() -> "Implement abstract class"
+            baseClass.isSealed() -> "Implement sealed class"
+            else /* open class */ -> "Create subclass"
+        }
 
     override fun startInWriteAction() = false
 
@@ -83,8 +72,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         val name = element.name ?: throw IllegalStateException("This intention should not be applied to anonymous classes")
         if (element.isSealed()) {
             createSealedSubclass(element, name, editor)
-        }
-        else {
+        } else {
             createExternalSubclass(element, name, editor)
         }
     }
@@ -94,7 +82,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
     private fun KtClassOrObject.hasSameDeclaration(name: String) = declarations.any { it is KtNamedDeclaration && it.name == name }
 
     private fun targetNameWithoutConflicts(baseName: String, container: KtClassOrObject?) =
-            KotlinNameSuggester.suggestNameByName(defaultTargetName(baseName)) { container?.hasSameDeclaration(it) != true }
+        KotlinNameSuggester.suggestNameByName(defaultTargetName(baseName)) { container?.hasSameDeclaration(it) != true }
 
     private fun createSealedSubclass(sealedClass: KtClass, sealedName: String, editor: Editor) {
         val project = sealedClass.project
@@ -143,11 +131,12 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
                 file to klass
             }
             chooseAndImplementMethods(project, klass, CodeInsightUtil.positionCursor(project, file, klass) ?: editor)
-        }
-        else {
+        } else {
             val klass = runWriteAction {
-                val builder = buildClassHeader(targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
-                                               baseClass, name, visibility)
+                val builder = buildClassHeader(
+                    targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
+                    baseClass, name, visibility
+                )
                 val classFromText = factory.createClass(builder.asString())
                 container.parent.addAfter(classFromText, container) as KtClass
             }
@@ -166,11 +155,11 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
         val aPackage = JavaDirectoryService.getInstance().getPackage(sourceDir)
         val dialog = object : CreateKotlinClassDialog(
-                baseClass.project, text,
-                targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
-                aPackage?.qualifiedName ?: "",
-                CreateClassKind.CLASS, true,
-                ModuleUtilCore.findModuleForPsiElement(baseClass)
+            baseClass.project, text,
+            targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
+            aPackage?.qualifiedName ?: "",
+            CreateClassKind.CLASS, true,
+            ModuleUtilCore.findModuleForPsiElement(baseClass)
         ) {
             override fun getBaseDir(packageName: String) = sourceDir
 
@@ -180,10 +169,10 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
     }
 
     private fun buildClassHeader(
-            targetName: String,
-            baseClass: KtClass,
-            baseName: String,
-            defaultVisibility: Visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, Visibilities.PUBLIC)
+        targetName: String,
+        baseClass: KtClass,
+        baseName: String,
+        defaultVisibility: Visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, Visibilities.PUBLIC)
     ): ClassHeaderBuilder {
         return ClassHeaderBuilder().apply {
             if (!baseClass.isInterface()) {

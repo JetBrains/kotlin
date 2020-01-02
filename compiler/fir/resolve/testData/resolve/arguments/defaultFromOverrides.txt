@@ -1,0 +1,29 @@
+FILE: defaultFromOverrides.kt
+    public abstract interface I1 : R|kotlin/Any| {
+        public abstract fun foo(x: R|kotlin/Int| = Int(1)): R|kotlin/Unit|
+
+    }
+    public abstract interface I2 : R|kotlin/Any| {
+        public abstract fun bar(x: R|kotlin/String| = String(), y: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final class A : R|I1|, R|I2| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(x: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        public final override fun bar(x: R|kotlin/String|, y: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun foo(a: R|A|): R|kotlin/Unit| {
+        R|<local>/a|.R|/A.foo|()
+        R|<local>/a|.R|/A.foo|(Int(1))
+        R|<local>/a|.<Inapplicable(PARAMETER_MAPPING_ERROR): [/A.bar]>#()
+        R|<local>/a|.<Inapplicable(PARAMETER_MAPPING_ERROR): [/A.bar]>#(String())
+        R|<local>/a|.R|/A.bar|(y = Int(1))
+        R|<local>/a|.R|/A.bar|(String(), Int(2))
+    }

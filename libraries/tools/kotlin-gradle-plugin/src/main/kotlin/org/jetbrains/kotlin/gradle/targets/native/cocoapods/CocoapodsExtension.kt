@@ -66,7 +66,7 @@ open class CocoapodsExtension(private val project: Project) {
      * Add a CocoaPods dependency to the pod built from this project.
      */
     @JvmOverloads
-    fun pod(name: String, version: String? = null, moduleName: String = name) {
+    fun pod(name: String, version: String? = null, moduleName: String = name.split("/")[0]) {
         check(_pods.findByName(name) == null) { "Project already has a CocoaPods dependency with name $name" }
         _pods.add(CocoapodsDependency(name, version, moduleName))
     }

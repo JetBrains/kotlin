@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
@@ -227,6 +228,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         val bindingContext = try {
             file.getResolutionFacade().analyze(references.mapNotNull { it.second?.element }, BodyResolveMode.PARTIAL)
         } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
             LOG.error("Failed to analyze references after copy paste", e)
             return emptyList()
         }

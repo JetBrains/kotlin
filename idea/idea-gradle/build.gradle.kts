@@ -46,6 +46,7 @@ dependencies {
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
     testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
     testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":idea:idea-new-project-wizard"))
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -76,6 +77,9 @@ dependencies {
 
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
+    }
+
+    if (Ide.AS36()) {
         testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 }

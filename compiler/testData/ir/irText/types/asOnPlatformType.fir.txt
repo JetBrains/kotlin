@@ -2,9 +2,9 @@ FILE fqName:<root> fileName:/asOnPlatformType.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:nullStr type:kotlin.String? [val]
-        CALL 'public open fun nullString (): kotlin.String? declared in <root>.JavaClass' type=kotlin.String? origin=null
+        CALL 'public open fun nullString (): kotlin.String? [operator] declared in <root>.JavaClass' type=kotlin.String? origin=null
       VAR name:nonnullStr type:kotlin.String? [val]
-        CALL 'public open fun nonnullString (): kotlin.String? declared in <root>.JavaClass' type=kotlin.String? origin=null
+        CALL 'public open fun nonnullString (): kotlin.String? [operator] declared in <root>.JavaClass' type=kotlin.String? origin=null
       CALL 'public final fun foo <T> (): T of <root>.foo [inline] declared in <root>' type=kotlin.String? origin=null
         <T>: kotlin.String?
         $receiver: GET_VAR 'val nullStr: kotlin.String? [val] declared in <root>.test' type=kotlin.String? origin=null

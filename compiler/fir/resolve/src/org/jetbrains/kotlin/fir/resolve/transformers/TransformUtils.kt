@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -73,6 +72,17 @@ internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() 
         namedReference: FirNamedReference,
         data: FirNamedReference
     ): CompositeTransformResult<FirNamedReference> {
+        return data.compose()
+    }
+
+    override fun transformThisReference(thisReference: FirThisReference, data: FirNamedReference): CompositeTransformResult<FirReference> {
+        return data.compose()
+    }
+
+    override fun transformSuperReference(
+        superReference: FirSuperReference,
+        data: FirNamedReference
+    ): CompositeTransformResult<FirReference> {
         return data.compose()
     }
 }

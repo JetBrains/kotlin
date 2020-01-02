@@ -1,14 +1,29 @@
+import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer.COMPILE
+
 plugins {
+    maven
     kotlin("jvm")
     id("jps-compatible")
 }
 
+val mavenCompileScope by configurations.creating {
+    the<MavenPluginConvention>()
+        .conf2ScopeMappings
+        .addMapping(0, this, COMPILE)
+}
+
+description = "Kotlin/Native library commonizer"
+
 dependencies {
-    compileOnly(project(":core:util.runtime"))
-    compileOnly(project(":core:descriptors"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:ir.serialization.common"))
+
+    // This dependency is necessary to keep the right dependency record inside of POM file:
+    mavenCompileScope(project(":kotlin-compiler"))
 
     compile(kotlinStdlib())
 
+    compile(project(":kotlin-util-klib-metadata"))
     compile(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
     compile(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
 
@@ -44,8 +59,16 @@ dependencies {
     }
 }
 
+val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
+    classpath(sourceSets.main.get().runtimeClasspath)
+    main = "org.jetbrains.kotlin.descriptors.commonizer.CliKt"
+}
+
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        runtimeClasspath += configurations.compileOnly
+    }
     "test" { projectDefault() }
 }
 
@@ -53,3 +76,7 @@ projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
 }
+
+publish()
+
+standardPublicJars()

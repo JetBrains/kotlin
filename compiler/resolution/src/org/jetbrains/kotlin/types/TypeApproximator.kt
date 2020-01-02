@@ -485,6 +485,17 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()
 
+            val capturedStarProjectionOrNull =
+                argumentType.lowerBoundIfFlexible().asCapturedType()?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
+
+            if (capturedStarProjectionOrNull != null &&
+                (effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV) &&
+                toSuper
+            ) {
+                newArguments[index] = capturedStarProjectionOrNull
+                continue@loop
+            }
+
             when (effectiveVariance) {
                 null -> {
                     return if (conf.errorType) {
@@ -509,6 +520,24 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                             approximateToSubType(it, conf, depth)
                         }
                     } ?: continue@loop
+
+                    if (
+                        conf.intersection != ALLOWED &&
+                        effectiveVariance == TypeVariance.OUT &&
+                        argumentType.typeConstructor().isIntersection()
+                    ) {
+                        var shouldReplaceWithStar = false
+                        for (upperBoundIndex in 0 until parameter.upperBoundCount()) {
+                            if (!AbstractTypeChecker.isSubtypeOf(ctx, approximatedArgument, parameter.getUpperBound(upperBoundIndex))) {
+                                shouldReplaceWithStar = true
+                                break
+                            }
+                        }
+                        if (shouldReplaceWithStar) {
+                            newArguments[index] = createStarProjection(parameter)
+                            continue@loop
+                        }
+                    }
 
                     if (parameter.getVariance() == TypeVariance.INV) {
                         newArguments[index] = createTypeArgument(approximatedArgument, effectiveVariance)

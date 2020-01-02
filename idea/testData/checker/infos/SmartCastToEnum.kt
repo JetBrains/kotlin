@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 package test2
 
 <info descr="null">enum</info> class En { A, B, С }

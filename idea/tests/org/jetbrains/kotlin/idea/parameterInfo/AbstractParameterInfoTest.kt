@@ -64,7 +64,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
             val handlers = ShowParameterInfoHandler.getHandlers(project, KotlinLanguage.INSTANCE)!!
             val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
-                          ?: error("Could not find parameter info handler")
+                ?: error("Could not find parameter info handler")
 
             val mockCreateParameterInfoContext = MockCreateParameterInfoContext(file, myFixture)
             val parameterOwner = handler.findElementForParameterInfo(mockCreateParameterInfoContext) as PsiElement

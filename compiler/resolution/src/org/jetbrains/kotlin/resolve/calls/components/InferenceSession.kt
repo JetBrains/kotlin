@@ -26,6 +26,7 @@ interface InferenceSession {
 
             override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
             override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
+            override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
         }
     }
 
@@ -37,6 +38,7 @@ interface InferenceSession {
     fun inferPostponedVariables(lambda: ResolvedLambdaAtom, initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType>
     fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
+    fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean
 }
 
 interface PartialCallInfo {

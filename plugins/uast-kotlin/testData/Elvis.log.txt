@@ -1,16 +1,16 @@
 UFile (package = )
     UClass (name = ElvisKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UParameter (name = bar)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression
                     ULiteralExpression (value = null)
-        UAnnotationMethod (name = bar)
+        UMethod (name = bar)
             UBlockExpression
                 UReturnExpression
                     ULiteralExpression (value = 42)
-        UAnnotationMethod (name = baz)
+        UMethod (name = baz)
             UBlockExpression
                 UReturnExpression
                     UExpressionList (elvis)

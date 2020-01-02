@@ -1,0 +1,28 @@
+FILE: simpleCapturedTypes.kt
+    public abstract interface Ann : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface KC<T> : R|kotlin/Any| {
+        public abstract val x: R|T|
+            public get(): R|T|
+
+    }
+    public final fun <T> id(x: R|KC<T>|): R|KC<T>| {
+        ^id R|<local>/x|
+    }
+    public final fun <T> R|KC<T>|.idR(): R|KC<T>| {
+        ^idR this@R|/idR|
+    }
+    public final val <T> R|KC<T>|.idP: R|KC<T>|
+        public get(): R|KC<T>| {
+            ^ this@R|/idP|
+        }
+    private final fun getSetterInfos(kc: R|KC<out Ann>|): R|kotlin/Unit| {
+        R|/id|<R|captured type: lowerType = null|>(R|<local>/kc|).R|FakeOverride</KC.x: R|Ann|>|.R|/Ann.foo|()
+        R|<local>/kc|.R|/idR|<R|captured type: lowerType = null|>().R|FakeOverride</KC.x: R|Ann|>|.R|/Ann.foo|()
+        R|<local>/kc|.R|/idP|.R|FakeOverride</KC.x: R|Ann|>|.R|/Ann.foo|()
+        lval x1: R|KC<out Ann>| = R|/id|<R|captured type: lowerType = null|>(R|<local>/kc|)
+        lval x2: R|KC<out Ann>| = R|<local>/kc|.R|/idR|<R|captured type: lowerType = null|>()
+        lval x3: R|KC<out Ann>| = R|<local>/kc|.R|/idP|
+    }

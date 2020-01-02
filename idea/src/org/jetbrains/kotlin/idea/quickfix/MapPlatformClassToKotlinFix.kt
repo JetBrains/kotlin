@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -41,19 +30,19 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class MapPlatformClassToKotlinFix(
-        element: KtReferenceExpression,
-        private val platformClass: ClassDescriptor,
-        private val possibleClasses: Collection<ClassDescriptor>
+    element: KtReferenceExpression,
+    private val platformClass: ClassDescriptor,
+    private val possibleClasses: Collection<ClassDescriptor>
 ) : KotlinQuickFixAction<KtReferenceExpression>(element) {
 
     override fun getText(): String {
         val platformClassQualifiedName = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(platformClass.defaultType)
         val singleClass = possibleClasses.singleOrNull()
         return if (singleClass != null)
-            "Change all usages of '$platformClassQualifiedName' in this file to '${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(singleClass.defaultType)}'"
+            "Change all usages of '$platformClassQualifiedName' in this file to '${DescriptorRenderer.FQ_NAMES_IN_TYPES
+                .renderType(singleClass.defaultType)}'"
         else
             "Change all usages of '$platformClassQualifiedName' in this file to a Kotlin class"
     }
@@ -75,8 +64,7 @@ class MapPlatformClassToKotlinFix(
             val import = refExpr.getStrictParentOfType<KtImportDirective>()
             if (import != null) {
                 imports.add(import)
-            }
-            else {
+            } else {
                 usages.add(refExpr.getStrictParentOfType<KtUserType>() ?: continue)
             }
         }
@@ -120,8 +108,8 @@ class MapPlatformClassToKotlinFix(
     private val OTHER_USAGE = "OtherUsage"
 
     private fun buildAndShowTemplate(
-            project: Project, editor: Editor, file: PsiFile,
-            replacedElements: Collection<PsiElement>, options: LinkedHashSet<String>
+        project: Project, editor: Editor, file: PsiFile,
+        replacedElements: Collection<PsiElement>, options: LinkedHashSet<String>
     ) {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
@@ -133,7 +121,8 @@ class MapPlatformClassToKotlinFix(
         caretModel.moveToOffset(file.node.startOffset)
 
         val builder = TemplateBuilderImpl(file)
-        val expression = MyLookupExpression(primaryReplacedExpression.text, options, null, null, false, "Choose an appropriate Kotlin class")
+        val expression =
+            MyLookupExpression(primaryReplacedExpression.text, options, null, null, false, "Choose an appropriate Kotlin class")
 
         builder.replaceElement(primaryReplacedExpression, PRIMARY_USAGE, expression, true)
         for (replacedExpression in replacedElements) {
@@ -149,11 +138,12 @@ class MapPlatformClassToKotlinFix(
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtReferenceExpression, Companion.Data>() {
-        data class Data(val platformClass: ClassDescriptor,
-                        val possibleClasses: Collection<ClassDescriptor>)
+        data class Data(
+            val platformClass: ClassDescriptor,
+            val possibleClasses: Collection<ClassDescriptor>
+        )
 
-        override fun getElementOfInterest(diagnostic: Diagnostic): KtReferenceExpression?
-                = getImportOrUsageFromDiagnostic(diagnostic)
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtReferenceExpression? = getImportOrUsageFromDiagnostic(diagnostic)
 
         override fun extractFixData(element: KtReferenceExpression, diagnostic: Diagnostic): Data? {
             val context = element.analyze(BodyResolveMode.PARTIAL)
@@ -174,8 +164,7 @@ class MapPlatformClassToKotlinFix(
             val import = diagnostic.psiElement.getNonStrictParentOfType<KtImportDirective>()
             return if (import != null) {
                 import.importedReference?.getQualifiedElementSelector() as? KtReferenceExpression
-            }
-            else {
+            } else {
                 (diagnostic.psiElement.getNonStrictParentOfType<KtUserType>() ?: return null).referenceExpression
             }
         }

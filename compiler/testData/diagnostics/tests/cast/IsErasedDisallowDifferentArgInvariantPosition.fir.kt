@@ -1,0 +1,1 @@
+fun f(a: MutableList<String>) = a is MutableList<CharSequence>

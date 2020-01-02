@@ -21,7 +21,6 @@ import java.io.File
 
 data class NpmDependency(
     internal val project: Project,
-    private val org: String?,
     private val name: String,
     private val version: String,
     val scope: Scope = Scope.NORMAL
@@ -37,7 +36,7 @@ data class NpmDependency(
         PEER
     }
 
-    override fun getGroup(): String? = org
+    override fun getGroup(): String? = null
 
     internal var parent: NpmDependency? = null
     internal val dependencies = mutableSetOf<NpmDependency>()
@@ -123,7 +122,7 @@ data class NpmDependency(
         return nodeJs.npmResolutionManager.getNpmDependencyResolvedCompilation(this)
     }
 
-    val key: String = if (org == null) name else "@$org/$name"
+    val key: String = name
 
     override fun toString() = "$key: $version"
 
@@ -139,7 +138,7 @@ data class NpmDependency(
 
     override fun getTargetComponentId() = DefaultLibraryBinaryIdentifier(project.path, key, "npm")
 
-    override fun copy(): Dependency = this.copy(org = org)
+    override fun copy(): Dependency = this.copy(name = name)
 
     private var reason: String? = null
 

@@ -235,8 +235,11 @@ class Stats(
         warmUpStatInfosArray.filterNotNull().map { it[ERROR_KEY] as? Throwable }.firstOrNull()?.let { throw it }
     }
 
-    private fun <SV, TV> mainPhase(phaseData: PhaseData<SV, TV>): Array<StatInfos> =
-        phase(phaseData, "")
+    private fun <SV, TV> mainPhase(phaseData: PhaseData<SV, TV>): Array<StatInfos> {
+        val statInfosArray = phase(phaseData, "")
+        statInfosArray.filterNotNull().map { it[ERROR_KEY] as? Throwable }.firstOrNull()?.let { throw it }
+        return statInfosArray
+    }
 
     private fun <SV, TV> phase(phaseData: PhaseData<SV, TV>, phaseName: String): Array<StatInfos> {
         val statInfosArray = Array<StatInfos>(phaseData.iterations) { null }

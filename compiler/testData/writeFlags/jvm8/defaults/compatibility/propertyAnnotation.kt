@@ -1,4 +1,5 @@
 // !JVM_DEFAULT_MODE: compatibility
+// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
 
@@ -12,9 +13,9 @@ interface Test {
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Test, test$annotations
+// TESTED_OBJECTS: Test, getTest$annotations
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Test$DefaultImpls, test$annotations
+// TESTED_OBJECTS: Test$DefaultImpls, getTest$annotations
 // FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC, ACC_DEPRECATED

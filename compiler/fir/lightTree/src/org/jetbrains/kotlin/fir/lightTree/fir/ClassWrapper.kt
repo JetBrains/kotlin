@@ -53,10 +53,11 @@ class ClassWrapper(
     }
 
     fun defaultConstructorVisibility(): Visibility {
-        return if (isObject() || isSealed() || isEnum())
-            Visibilities.PRIVATE
-        else
-            Visibilities.UNKNOWN
+        return when {
+            isObject() || isEnum() -> Visibilities.PRIVATE
+            isSealed() -> Visibilities.PUBLIC
+            else -> Visibilities.UNKNOWN
+        }
     }
 
     fun getFirUserTypeFromClassName(): FirUserTypeRef {

@@ -114,7 +114,9 @@ class FirDeserializationContext(
 }
 
 // TODO: Move something here
-class FirDeserializationComponents
+class FirDeserializationComponents {
+
+}
 
 class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private val contractDeserializer = FirContractDeserializer(c)

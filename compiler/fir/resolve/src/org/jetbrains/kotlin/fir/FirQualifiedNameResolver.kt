@@ -43,7 +43,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
             null
         }
 
-    fun tryResolveAsQualifier(): FirResolvedQualifier? {
+    fun tryResolveAsQualifier(source: FirSourceElement?): FirResolvedQualifier? {
         val symbolProvider = session.firSymbolProvider
         var qualifierParts = qualifierStack.asReversed().map { it.asString() }
         var resolved: PackageOrClass?
@@ -59,7 +59,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
         if (resolved != null) {
             qualifierPartsToDrop = qualifierParts.size - 1
             return FirResolvedQualifierImpl(
-                null /* TODO */,
+                source,
                 resolved.packageFqName,
                 resolved.relativeClassFqName
             ).apply { resultType = typeForQualifier(this) }

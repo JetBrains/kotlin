@@ -1,0 +1,3 @@
+org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GroovyDslPlugin
+org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.KotlinDslPlugin

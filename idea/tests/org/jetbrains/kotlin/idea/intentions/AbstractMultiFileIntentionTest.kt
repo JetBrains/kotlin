@@ -53,8 +53,10 @@ abstract class AbstractMultiFileIntentionTest : KotlinLightCodeInsightFixtureTes
             val conflictFile = rootDir.findFileByRelativePath("$mainFilePath.conflicts")
 
             try {
-                Assert.assertTrue("isAvailable() for ${intentionAction::class.java} should return $isApplicableExpected",
-                                  isApplicableExpected == intentionAction.isAvailable(project, editor, mainFile))
+                Assert.assertTrue(
+                    "isAvailable() for ${intentionAction::class.java} should return $isApplicableExpected",
+                    isApplicableExpected == intentionAction.isAvailable(project, editor, mainFile)
+                )
                 config.getNullableString("intentionText")?.let {
                     TestCase.assertEquals("Intention text mismatch", it, intentionAction.text)
                 }
@@ -66,12 +68,11 @@ abstract class AbstractMultiFileIntentionTest : KotlinLightCodeInsightFixtureTes
                 }
 
                 assert(conflictFile == null) { "Conflict file $conflictFile should not exist" }
-            }
-            catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            } catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
                 val expectedConflicts = LoadTextUtil.loadText(conflictFile!!).toString().trim()
                 assertEquals(expectedConflicts, e.message)
             }
-       }
+        }
     }
 
     protected fun doTest(path: String, action: (VirtualFile) -> Unit) {

@@ -105,6 +105,10 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker
 }
 
+// This interface is only used to declare that implementing class is supposed to be used as a TypeSystemInferenceExtensionContext component
+// Otherwise clash happens during DI container initialization: there are a lot of components that extend TypeSystemInferenceExtensionContext
+// but they only has it among supertypes to bring additional receiver into their scopes, i.e. they are not intended to be used as
+// component implementation for TypeSystemInferenceExtensionContext
 interface TypeSystemInferenceExtensionContextDelegate : TypeSystemInferenceExtensionContext
 
 interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBuiltInsContext, TypeSystemCommonSuperTypesContext {
@@ -232,6 +236,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isFlexible(): Boolean = asFlexibleType() != null
 
     fun KotlinTypeMarker.isDynamic(): Boolean = asFlexibleType()?.asDynamicType() != null
+    fun KotlinTypeMarker.isCapturedDynamic(): Boolean =
+        asSimpleType()?.asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
+            ?.getType()?.isDynamic() == true
+
     fun KotlinTypeMarker.isDefinitelyNotNullType(): Boolean = asSimpleType()?.asDefinitelyNotNullType() != null
 
     fun KotlinTypeMarker.hasFlexibleNullability() =
@@ -244,6 +252,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isNullableAny() = this.typeConstructor().isAnyConstructor() && this.isNullableType()
     fun KotlinTypeMarker.isNothing() = this.typeConstructor().isNothingConstructor() && !this.isNullableType()
+    fun KotlinTypeMarker.isFlexibleNothing() =
+        this is FlexibleTypeMarker && lowerBound().isNothing() && upperBound().isNullableNothing()
+
     fun KotlinTypeMarker.isNullableNothing() = this.typeConstructor().isNothingConstructor() && this.isNullableType()
 
     fun SimpleTypeMarker.isClassType(): Boolean = typeConstructor().isClassTypeConstructor()

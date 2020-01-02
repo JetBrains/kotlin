@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
         }
 
         public void testAllFilesPresentInK2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/k2k"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pushDown/k2k"), Pattern.compile("^(.+)\\.kt$"), null);
         }
 
         @TestMetadata("clashingMembers.kt")
@@ -140,7 +140,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
         }
 
         public void testAllFilesPresentInK2J() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/k2j"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pushDown/k2j"), Pattern.compile("^(.+)\\.kt$"), null);
         }
 
         @TestMetadata("kotlinToJava.kt")
@@ -158,7 +158,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
         }
 
         public void testAllFilesPresentInJ2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/j2k"), Pattern.compile("^(.+)\\.java$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pushDown/j2k"), Pattern.compile("^(.+)\\.java$"), null);
         }
 
         @TestMetadata("fromClass.java")

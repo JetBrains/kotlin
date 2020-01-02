@@ -87,8 +87,18 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         }
 
         val testDataPathFile = File(myFixture.testDataPath)
-        javaFiles.forEach { myFixture.copyFileToProject(FileUtil.getRelativePath(testDataPathFile, it)!!, FileUtil.getRelativePath(baseDir, it)!!) }
-        kotlinFiles.forEach { myFixture.copyFileToProject(FileUtil.getRelativePath(testDataPathFile, it)!!, FileUtil.getRelativePath(baseDir, it)!!) }
+        javaFiles.forEach {
+            myFixture.copyFileToProject(
+                FileUtil.getRelativePath(testDataPathFile, it)!!,
+                FileUtil.getRelativePath(baseDir, it)!!
+            )
+        }
+        kotlinFiles.forEach {
+            myFixture.copyFileToProject(
+                FileUtil.getRelativePath(testDataPathFile, it)!!,
+                FileUtil.getRelativePath(baseDir, it)!!
+            )
+        }
 
         val outputDir = createTempDir(dirName)
 

@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !WITH_NEW_INFERENCE
+// !LANGUAGE: -DslMarkerOnFunctionTypeReceiver
 
 @Target(AnnotationTarget.TYPE)
 @DslMarker

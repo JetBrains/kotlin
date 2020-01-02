@@ -20,10 +20,10 @@ FILE: main.kt
             public get(): R|CommandExecutor|
 
         public final fun test(): R|kotlin/Unit| {
-            lval e: <ERROR TYPE REF: Ambiguity: executor, [/B.executor, /A.executor]> = <Ambiguity: executor, [/B.executor, /A.executor]>#
+            lval e: R|CommandExecutor| = this@R|/B|.R|/B.executor|
         }
 
     }
     public final fun test(b: R|B|): R|kotlin/Unit| {
-        R|<local>/b|.<Ambiguity: executor, [/B.executor, /A.executor]>#
+        R|<local>/b|.R|/B.executor|
     }

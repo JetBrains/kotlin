@@ -32,12 +32,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Type
@@ -159,6 +157,13 @@ class AnnotationCodegen(
         val retentionPolicy = getRetentionPolicy(annotationClass)
         if (retentionPolicy == RetentionPolicy.SOURCE) return null
 
+        // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
+        // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
+        // (Otherwise we would've resolved the entry to the actual annotation class.)
+        if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(annotationClass.descriptor)) {
+            return null
+        }
+
         innerClassConsumer.addInnerClassInfoFromAnnotation(annotationClass)
 
         val asmTypeDescriptor = typeMapper.mapType(annotation.type).descriptor
@@ -185,11 +190,15 @@ class AnnotationCodegen(
     private fun getAnnotationArgumentJvmName(annotationClass: IrClass?, parameterName: Name): String {
         if (annotationClass == null) return parameterName.asString()
 
-        val field =
-            annotationClass.declarations.filterIsInstance<IrField>().singleOrNull { it.name == parameterName }
-                ?: return parameterName.asString()
-
-        return methodSignatureMapper.mapAnnotationParameterName(field)
+        val propertyOrGetter = annotationClass.declarations.singleOrNull {
+            // IrSimpleFunction if lowered, IrProperty with a getter if imported
+            (it is IrSimpleFunction && it.correspondingPropertySymbol?.owner?.name == parameterName) ||
+                    (it is IrProperty && it.name == parameterName)
+        } ?: return parameterName.asString()
+        val getter = propertyOrGetter as? IrSimpleFunction
+            ?: (propertyOrGetter as IrProperty).getter
+            ?: error("No getter for annotation property: ${propertyOrGetter.render()}")
+        return methodSignatureMapper.mapFunctionName(getter)
     }
 
     private fun genCompileTimeValue(

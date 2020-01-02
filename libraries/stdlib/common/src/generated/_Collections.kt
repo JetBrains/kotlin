@@ -1056,6 +1056,8 @@ public fun Collection<Short>.toShortArray(): ShortArray {
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associate
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -1069,6 +1071,8 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateBy
  */
 public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -1081,6 +1085,8 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByWithValueTransform
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -1093,6 +1099,8 @@ public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, value
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByTo
  */
 public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -1107,6 +1115,8 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(d
  * and value is provided by the [valueTransform] function applied to elements of the given collection.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByToWithValueTransform
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -1120,6 +1130,8 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByT
  * provided by [transform] function applied to each element of the given collection.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateTo
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
@@ -1149,6 +1161,8 @@ public inline fun <K, V> Iterable<K>.associateWith(valueSelector: (K) -> V): Map
  * where key is the element itself and value is provided by the [valueSelector] function applied to that key.
  * 
  * If any two elements are equal, the last one overwrites the former value in the map.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.3")
 public inline fun <K, V, M : MutableMap<in K, in V>> Iterable<K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
@@ -1223,6 +1237,8 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -1406,6 +1422,8 @@ public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
  * Returns a list containing only distinct elements from the given collection.
  * 
  * The elements in the resulting list are in the same order as they were in the source collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T> Iterable<T>.distinct(): List<T> {
     return this.toMutableSet().toList()
@@ -1416,6 +1434,8 @@ public fun <T> Iterable<T>.distinct(): List<T> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
     val set = HashSet<K>()
@@ -1818,6 +1838,8 @@ public inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun <S, T : S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
     val iterator = this.iterator()
@@ -1834,6 +1856,8 @@ public inline fun <S, T : S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S 
  * to current accumulator value and each element with its index in the original collection.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun <S, T : S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     val iterator = this.iterator()
@@ -1847,7 +1871,26 @@ public inline fun <S, T : S> Iterable<T>.reduceIndexed(operation: (index: Int, a
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Iterable<T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) return null
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun <S, T : S> List<T>.reduceRight(operation: (T, acc: S) -> S): S {
     val iterator = listIterator(size)
@@ -1865,6 +1908,8 @@ public inline fun <S, T : S> List<T>.reduceRight(operation: (T, acc: S) -> S): S
  * to each element with its index in the original list and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun <S, T : S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
     val iterator = listIterator(size)
@@ -1874,6 +1919,24 @@ public inline fun <S, T : S> List<T>.reduceRightIndexed(operation: (index: Int, 
     while (iterator.hasPrevious()) {
         val index = iterator.previousIndex()
         accumulator = operation(index, iterator.previous(), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the list is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> List<T>.reduceRightOrNull(operation: (T, acc: S) -> S): S? {
+    val iterator = listIterator(size)
+    if (!iterator.hasPrevious())
+        return null
+    var accumulator: S = iterator.previous()
+    while (iterator.hasPrevious()) {
+        accumulator = operation(iterator.previous(), accumulator)
     }
     return accumulator
 }

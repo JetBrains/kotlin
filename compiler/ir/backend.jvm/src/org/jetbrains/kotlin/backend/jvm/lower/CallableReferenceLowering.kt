@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -144,6 +145,9 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
+            if (isLambda) {
+                (this as IrClassImpl).metadata = irFunctionReference.symbol.owner.metadata
+            }
         }
 
         private val receiverFieldFromSuper = context.ir.symbols.functionReferenceReceiverField.owner
@@ -181,7 +185,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
         private fun createConstructor(): IrConstructor =
             functionReferenceClass.addConstructor {
-                setSourceRange(irFunctionReference)
                 origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 returnType = functionReferenceClass.defaultType
                 isPrimary = true
@@ -223,6 +226,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
         private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
             functionReferenceClass.addFunction {
+                setSourceRange(if (isLambda) callee else irFunctionReference)
                 name = superMethod.owner.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
@@ -240,8 +244,9 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             }
             valueParameters += valueParameterMap.values
 
-            body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
-                callee.body?.statements?.forEach { statement ->
+            val calleeBody = callee.body as IrBlockBody
+            body = context.createIrBuilder(symbol).irBlockBody(calleeBody.startOffset, calleeBody.endOffset) {
+                calleeBody.statements.forEach { statement ->
                     +statement.transform(object : IrElementTransformerVoid() {
                         override fun visitGetValue(expression: IrGetValue): IrExpression {
                             val replacement = valueParameterMap[expression.symbol.owner]
@@ -409,7 +414,4 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             }
         }
     }
-
-    private val currentDeclarationParent
-        get() = allScopes.last { it.irElement is IrDeclarationParent }.irElement as IrDeclarationParent
 }

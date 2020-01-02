@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
@@ -45,7 +34,8 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
         }
     }
 
-    private fun isQualifierExpected(element: KtSimpleNameExpression) = element.isDotReceiver() || ((element.parent as? KtDotQualifiedExpression)?.isDotReceiver() ?: false)
+    private fun isQualifierExpected(element: KtSimpleNameExpression) =
+        element.isDotReceiver() || ((element.parent as? KtDotQualifiedExpression)?.isDotReceiver() ?: false)
 
     override fun getPossibleClassKinds(element: KtSimpleNameExpression, diagnostic: Diagnostic): List<ClassKind> {
         fun isEnum(element: PsiElement): Boolean {
@@ -64,11 +54,12 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
 
         val inImport = element.getNonStrictParentOfType<KtImportDirective>() != null
         if (inImport || isQualifierExpected(element)) {
-            val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
+            val receiverSelector =
+                (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParents = getTargetParentsByQualifier(element, receiverSelector != null, qualifierDescriptor)
-                    .ifEmpty { return emptyList() }
+                .ifEmpty { return emptyList() }
 
             targetParents.forEach {
                 if (element.getCreatePackageFixIfApplicable(it) != null) return emptyList()
@@ -76,15 +67,13 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
 
             if (!name.checkClassName()) return emptyList()
 
-            return ClassKind
-                    .values()
-                    .filter {
-                        when (it) {
-                            ClassKind.ANNOTATION_CLASS -> inImport
-                            ClassKind.ENUM_ENTRY -> inImport && targetParents.any { isEnum(it) }
-                            else -> true
-                        }
-                    }
+            return ClassKind.values().filter {
+                when (it) {
+                    ClassKind.ANNOTATION_CLASS -> inImport
+                    ClassKind.ENUM_ENTRY -> inImport && targetParents.any { isEnum(it) }
+                    else -> true
+                }
+            }
         }
         val parent = element.parent
         if (parent is KtClassLiteralExpression && parent.receiverExpression == element) {
@@ -120,16 +109,17 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
         val fullCallExpr = getFullCallExpression(element) ?: return null
 
         if (element.isInImportDirective() || isQualifierExpected(element)) {
-            val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
+            val receiverSelector =
+                (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParents = getTargetParentsByQualifier(element, receiverSelector != null, qualifierDescriptor)
-                    .ifEmpty { return null }
+                .ifEmpty { return null }
 
             return ClassInfo(
-                    name = name,
-                    targetParents = targetParents,
-                    expectedTypeInfo = TypeInfo.Empty
+                name = name,
+                targetParents = targetParents,
+                expectedTypeInfo = TypeInfo.Empty
             )
         }
 
@@ -139,9 +129,9 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
         val expectedTypeInfo = fullCallExpr.guessTypeForClass(context, moduleDescriptor)?.toClassTypeInfo() ?: TypeInfo.Empty
 
         return ClassInfo(
-                name = name,
-                targetParents = targetParents,
-                expectedTypeInfo = expectedTypeInfo
+            name = name,
+            targetParents = targetParents,
+            expectedTypeInfo = expectedTypeInfo
         )
     }
 }

@@ -7,6 +7,7 @@ open class A<T> {
 class B<S> : A<Z<S>>() {
     // INFO: {"checked": "true"}
     val t1: Z<S>
+
     // INFO: {"checked": "true"}
     val t2: Z<Z<S>>
 
@@ -28,6 +29,7 @@ class B<S> : A<Z<S>>() {
 class C<K> : A<B<K>>() {
     // INFO: {"checked": "true"}
     val t1: B<K>
+
     // INFO: {"checked": "true"}
     val t2: Z<B<K>>
 

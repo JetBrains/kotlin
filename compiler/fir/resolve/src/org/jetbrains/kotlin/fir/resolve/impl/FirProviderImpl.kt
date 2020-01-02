@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirProviderImpl(val session: FirSession) : FirProvider() {
+class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirProvider() {
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
         symbol.overriddenSymbol?.let {
             return getFirCallableContainerFile(it)
@@ -40,8 +40,11 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         return (state.callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
     }
 
-    override fun getClassDeclaredMemberScope(classId: ClassId) =
-        (getFirClassifierByFqName(classId) as? FirRegularClass)?.let(::FirClassDeclaredMemberScope)
+    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+        return (getFirClassifierByFqName(classId) as? FirRegularClass)?.let {
+            nestedClassifierScope(it)
+        }
+    }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return state.classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
@@ -213,25 +216,6 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
             state.setFrom(newState)
         }
     }
-
-    override fun getClassUseSiteMemberScope(
-        classId: ClassId,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope? {
-        return when (val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null) {
-            is FirRegularClassSymbol -> symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
-            is FirAnonymousObjectSymbol -> symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
-            is FirTypeAliasSymbol -> {
-                val expandedTypeRef = symbol.fir.expandedTypeRef as FirResolvedTypeRef
-                val expandedType = expandedTypeRef.type as? ConeLookupTagBasedType ?: return null
-                val lookupTag = expandedType.lookupTag as? ConeClassLikeLookupTag ?: return null
-                getClassUseSiteMemberScope(lookupTag.classId, useSiteSession, scopeSession)
-            }
-            else -> throw IllegalArgumentException("Unexpected FIR symbol in getClassUseSiteMemberScope: $symbol")
-        }
-    }
-
 }
 
 private const val rebuildIndex = true

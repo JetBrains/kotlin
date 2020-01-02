@@ -215,7 +215,10 @@ fun getEffectiveExpectedTypeForSingleArgument(
         return if (parameterDescriptor.varargElementType == null) DONT_CARE else parameterDescriptor.type
     }
 
-    if (arrayAssignmentToVarargInNamedFormInAnnotation(parameterDescriptor, argument, languageVersionSettings, trace)) {
+    if (
+        arrayAssignmentToVarargInNamedFormInAnnotation(parameterDescriptor, argument, languageVersionSettings, trace) ||
+        arrayAssignmentToVarargInNamedFormInFunction(parameterDescriptor, argument, languageVersionSettings, trace)
+    ) {
         return parameterDescriptor.type
     }
 
@@ -235,6 +238,17 @@ private fun arrayAssignmentToVarargInNamedFormInAnnotation(
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
     if (!isParameterOfAnnotation(parameterDescriptor)) return false
+
+    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, trace)
+}
+
+private fun arrayAssignmentToVarargInNamedFormInFunction(
+    parameterDescriptor: ValueParameterDescriptor,
+    argument: ValueArgument,
+    languageVersionSettings: LanguageVersionSettings,
+    trace: BindingTrace
+): Boolean {
+    if (!languageVersionSettings.supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)) return false
 
     return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, trace)
 }

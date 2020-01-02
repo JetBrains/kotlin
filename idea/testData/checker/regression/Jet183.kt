@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 enum class ProtocolState {
   WAITING {
     override fun signal() = ProtocolState.TALKING

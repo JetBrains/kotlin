@@ -7,22 +7,23 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.ParallelDiagnosticsCollector
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.registerAllComponents
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
-    override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
-        doFirResolveTestBench(
-            firFiles,
-            FirTotalResolveTransformer().transformers,
-            gc = false
-        )
-        checkDiagnostics(testDataFile, testFiles, firFiles)
-        checkFir(testDataFile, firFiles)
+    override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
+        for ((_, firFiles) in firFilesPerSession) {
+            doFirResolveTestBench(
+                firFiles,
+                FirTotalResolveTransformer().transformers,
+                gc = false
+            )
+        }
+        val allFirFiles = firFilesPerSession.values.flatten()
+        checkDiagnostics(testDataFile, testFiles, allFirFiles)
+        checkFir(testDataFile, allFirFiles)
     }
 
     fun checkFir(testDataFile: File, firFiles: List<FirFile>) {
@@ -34,7 +35,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         )
     }
 
-    private fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
+    protected fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
         val collector = createCollector()
         val actualText = StringBuilder()
         for (testFile in testFiles) {
@@ -49,10 +50,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(file, actualText.toString())
     }
 
-    private fun createCollector(): AbstractDiagnosticCollector {
-//        val collector = SimpleDiagnosticsCollector()
-        val collector = ParallelDiagnosticsCollector(4)
-        collector.registerAllComponents()
-        return collector
+    protected fun createCollector(): AbstractDiagnosticCollector {
+        return FirDiagnosticsCollector.create()
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.CandidateApplicability
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
@@ -45,6 +46,11 @@ class FirOperatorAmbiguityError(val candidates: Collection<AbstractFirBasedSymbo
 
 class FirVariableExpectedError : FirDiagnostic() {
     override val reason: String get() = "Variable expected"
+}
+
+class FirTypeMismatchError(val expectedType: ConeKotlinType, val actualType: ConeKotlinType) : FirDiagnostic() {
+    override val reason: String
+        get() = "Type mismatch. Expected: $expectedType, Actual: $actualType"
 }
 
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {

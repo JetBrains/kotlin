@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formatter;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
@@ -17,11 +18,11 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.test.KotlinLightIdeaTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -33,7 +34,7 @@ import java.util.Map;
 
 // Based on from com.intellij.psi.formatter.java.AbstractJavaFormatterTest
 @SuppressWarnings("UnusedDeclaration")
-public abstract class AbstractFormatterTest extends LightIdeaTestCase {
+public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
 
     protected enum Action {REFORMAT, INDENT}
 
@@ -46,13 +47,13 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
         ACTIONS.put(Action.REFORMAT, new TestFormatAction() {
             @Override
             public void run(PsiFile psiFile, int startOffset, int endOffset) {
-                CodeStyleManager.getInstance(getProject()).reformatText(psiFile, startOffset, endOffset);
+                CodeStyleManager.getInstance(psiFile.getProject()).reformatText(psiFile, startOffset, endOffset);
             }
         });
         ACTIONS.put(Action.INDENT, new TestFormatAction() {
             @Override
             public void run(PsiFile psiFile, int startOffset, int endOffset) {
-                CodeStyleManager.getInstance(getProject()).adjustLineIndent(psiFile, startOffset);
+                CodeStyleManager.getInstance(psiFile.getProject()).adjustLineIndent(psiFile, startOffset);
             }
         });
     }
@@ -131,7 +132,7 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
         String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
 
-        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings(getProject());
+        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject_());
         try {
             Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
             if (rightMargin != null) {

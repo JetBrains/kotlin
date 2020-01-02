@@ -1683,7 +1683,7 @@ public abstract class StackValue {
                 PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
                 assert getterDescriptor != null : "Getter descriptor should be not null for " + descriptor;
                 if (resolvedCall != null && getterDescriptor.isInline()) {
-                    CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, getterDescriptor);
+                    CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, ((PropertyDescriptor)resolvedCall.getResultingDescriptor()).getGetter());
                     callGenerator.processAndPutHiddenParameters(false);
                     callGenerator.genCall(getter, resolvedCall, false, codegen);
                 }
@@ -1764,7 +1764,7 @@ public abstract class StackValue {
             PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
             if (resolvedCall != null && setterDescriptor != null && setterDescriptor.isInline()) {
                 assert setter != null : "Setter should be not null for " + descriptor;
-                CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, setterDescriptor);
+                CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, ((PropertyDescriptor)resolvedCall.getResultingDescriptor()).getSetter());
                 if (!skipReceiver) {
                     putReceiver(v, false);
                 }

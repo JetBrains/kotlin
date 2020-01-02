@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: a.kt
 <!CONFLICTING_OVERLOADS!>fun main()<!> {}
 

@@ -7,6 +7,6 @@ FILE: main.kt
         R|<local>/foo|()
     }
     public final fun bar(): R|kotlin/Int| {
-        lval x: <implicit> = Int(4)
-        ^bar Int(9).times#(x#)
+        lval x: <implicit> = IntegerLiteral(4)
+        ^bar IntegerLiteral(9).times#(x#)
     }

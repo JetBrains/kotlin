@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -151,6 +152,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             // Note: native `instanceOf` is not used which is important because of null-behaviour
             private fun advancedCheckRequired(type: IrType) = type.isInterface() ||
+                    type.isTypeParameter() && type.superTypes().any { it.isInterface() } ||
                     type.isArray() ||
                     type.isPrimitiveArray() ||
                     isTypeOfCheckingType(type)
@@ -199,9 +201,13 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 newStatements: MutableList<IrStatement>,
                 declaration: IrDeclarationParent
             ): () -> IrExpressionWithCopy {
-                val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)
-                newStatements += varDeclaration
-                return { JsIrBuilder.buildGetValue(varDeclaration.symbol) }
+                return if (value.isPure(true)) {
+                    { value.deepCopyWithSymbols() as IrExpressionWithCopy }
+                } else {
+                    val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)
+                    newStatements += varDeclaration
+                    { JsIrBuilder.buildGetValue(varDeclaration.symbol) }
+                }
             }
 
             private fun generateTypeCheck(argument: () -> IrExpressionWithCopy, toType: IrType): IrExpression {
@@ -261,10 +267,16 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
                 // TODO either remove functions with reified type parameters or support this case
                 // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
-                return typeParameter.superTypes.fold(litTrue) { r, t ->
+
+                return typeParameter.superTypes.fold<IrType, IrExpression?>(null) { r, t ->
                     val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
-                    calculator.and(r, check)
-                }
+
+                    if (r == null) {
+                        check
+                    } else {
+                        calculator.andand(r, check)
+                    }
+                } ?: litTrue
             }
 
 //            private fun generateCheckForChar(argument: IrExpression) =

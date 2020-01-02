@@ -59,7 +59,10 @@ class JavaSyntheticScopes(
             samConventionResolver,
             deprecationResolver,
             lookupTracker,
-            samViaSyntheticScopeDisabled = samConversionPerArgumentIsEnabled
+            samViaSyntheticScopeDisabled = samConversionPerArgumentIsEnabled,
+            shouldGenerateCandidateForVarargAfterSam = !languageVersionSettings.supportsFeature(
+                LanguageFeature.ProhibitVarargAsArrayAfterSamArgument
+            )
         )
 
         scopes = listOf(javaSyntheticPropertiesScope, samAdapterFunctionsScope) + scopesFromExtensions
@@ -70,7 +73,8 @@ class JavaSyntheticScopes(
                 samConventionResolver,
                 deprecationResolver,
                 lookupTracker,
-                samViaSyntheticScopeDisabled = false
+                samViaSyntheticScopeDisabled = false,
+                shouldGenerateCandidateForVarargAfterSam = false
             )
 
             scopesWithForceEnabledSamAdapters =

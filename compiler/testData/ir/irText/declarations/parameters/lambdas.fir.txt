@@ -16,7 +16,8 @@ FILE fqName:<root> fileName:/lambdas.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Int> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Any) returnType:kotlin.Int
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Any, it:kotlin.Any) returnType:kotlin.Int
+            $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
             VALUE_PARAMETER name:it index:0 type:kotlin.Any
             BLOCK_BODY
               CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null

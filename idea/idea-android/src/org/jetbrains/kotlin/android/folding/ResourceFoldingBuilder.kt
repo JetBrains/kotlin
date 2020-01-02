@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.folding
@@ -48,10 +37,12 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
         private val FORMAT = Pattern.compile("%(\\d+\\$)?([-+#, 0(<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])")
         private val FOLD_MAX_LENGTH = 60
         private val UNIT_TEST_MODE: Boolean = ApplicationManager.getApplication().isUnitTestMode
-        private val RESOURCE_TYPES = listOf(ResourceType.STRING,
-                                            ResourceType.DIMEN,
-                                            ResourceType.INTEGER,
-                                            ResourceType.PLURALS)
+        private val RESOURCE_TYPES = listOf(
+            ResourceType.STRING,
+            ResourceType.DIMEN,
+            ResourceType.INTEGER,
+            ResourceType.PLURALS
+        )
     }
 
     private val isFoldingEnabled = AndroidFoldingSettings.getInstance().isCollapseAndroidStrings
@@ -115,10 +106,10 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
 
     private fun UCallExpression.isFoldableGetResourceValueCall(): Boolean {
         return methodName == "getString" ||
-               methodName == "getText" ||
-               methodName == "getInteger" ||
-               methodName?.startsWith("getDimension") ?: false ||
-               methodName?.startsWith("getQuantityString") ?: false
+                methodName == "getText" ||
+                methodName == "getInteger" ||
+                methodName?.startsWith("getDimension") ?: false ||
+                methodName?.startsWith("getQuantityString") ?: false
     }
 
     private fun PsiElement.getAndroidResourceType(): ResourceType? {
@@ -141,8 +132,7 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
 
         if (resourceType == ResourceType.STRING || resourceType == ResourceType.PLURALS) {
             return '"' + StringUtil.shortenTextWithEllipsis(text, FOLD_MAX_LENGTH - 2, 0) + '"'
-        }
-        else if (text.length <= 1) {
+        } else if (text.length <= 1) {
             // Don't just inline empty or one-character replacements: they can't be expanded by a mouse click
             // so are hard to use without knowing about the folding keyboard shortcut to toggle folding.
             // This is similar to how IntelliJ 14 handles call parameters
@@ -153,9 +143,10 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
     }
 
     private tailrec fun LocalResourceRepository.getResourceValue(
-            type: ResourceType,
-            name: String,
-            referenceConfig: FolderConfiguration): String? {
+        type: ResourceType,
+        name: String,
+        referenceConfig: FolderConfiguration
+    ): String? {
         val value = getConfiguredValue(type, name, referenceConfig)?.value ?: return null
         if (!value.startsWith('@')) {
             return value
@@ -215,8 +206,7 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
                     numberString = numberString.substring(0, numberString.length - 1)
                     number = Integer.parseInt(numberString)
                     nextNumber = number + 1
-                }
-                else {
+                } else {
                     number = nextNumber++
                 }
 
@@ -237,8 +227,7 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
                     sb.append('}')
                     start = index
                 }
-            }
-            else {
+            } else {
                 var i = start
                 val n = formatString.length
                 while (i < n) {

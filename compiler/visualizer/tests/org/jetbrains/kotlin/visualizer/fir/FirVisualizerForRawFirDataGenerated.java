@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,7 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
     }
 
     public void testAllFilesPresentInRawBuilder() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/fir/psi2fir/testData/rawBuilder/declarations")
@@ -37,7 +37,7 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("complexTypes.kt")
@@ -150,7 +150,7 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotated.kt")
@@ -211,6 +211,11 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizer {
         @TestMetadata("in.kt")
         public void testIn() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/in.kt");
+        }
+
+        @TestMetadata("inBrackets.kt")
+        public void testInBrackets() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/inBrackets.kt");
         }
 
         @TestMetadata("init.kt")

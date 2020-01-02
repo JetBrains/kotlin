@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import java.io.Serializable
 import kotlin.script.experimental.api.ScriptDiagnostic
 
 /**
@@ -29,10 +30,16 @@ interface ScriptConfigurationCache {
 
     fun setApplied(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
     fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
-    fun markOutOfDate(file: VirtualFile)
+    fun markOutOfDate(scope: ScriptConfigurationCacheScope)
 
     fun allApplied(): Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
     fun clear()
+}
+
+sealed class ScriptConfigurationCacheScope {
+    object All : ScriptConfigurationCacheScope()
+    class File(val file: KtFile) : ScriptConfigurationCacheScope()
+    class Except(val file: KtFile) : ScriptConfigurationCacheScope()
 }
 
 data class ScriptConfigurationState(
@@ -49,7 +56,7 @@ data class ScriptConfigurationSnapshot(
     val configuration: ScriptCompilationConfigurationWrapper?
 )
 
-interface CachedConfigurationInputs {
+interface CachedConfigurationInputs: Serializable {
     fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile? = null): Boolean
 
     object OutOfDate : CachedConfigurationInputs {

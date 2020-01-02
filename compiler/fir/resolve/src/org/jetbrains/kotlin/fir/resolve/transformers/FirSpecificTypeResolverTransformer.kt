@@ -46,6 +46,7 @@ class FirSpecificTypeResolverTransformer(
             resolvedType
         ).apply {
             annotations += typeRef.annotations
+            delegatedTypeRef = typeRef
         }.compose()
     }
 

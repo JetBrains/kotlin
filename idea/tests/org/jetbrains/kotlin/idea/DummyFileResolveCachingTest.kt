@@ -26,10 +26,8 @@ class DummyFileResolveCachingTest : LightCodeInsightFixtureTestCase() {
         val dummyFileText = "import java.util.Properties"
         val dummyFile = KtPsiFactory(project).createAnalyzableFile("Dummy.kt", dummyFileText, file)
 
-        fun findClassifier(identifier: String) =
-                dummyFile.getResolutionFacade()
-                        .getFileResolutionScope(dummyFile)
-                        .findClassifier(Name.identifier(identifier), NoLookupLocation.FROM_IDE)
+        fun findClassifier(identifier: String) = dummyFile.getResolutionFacade().getFileResolutionScope(dummyFile)
+            .findClassifier(Name.identifier(identifier), NoLookupLocation.FROM_IDE)
 
         assertNotNull(findClassifier("Properties"))
 

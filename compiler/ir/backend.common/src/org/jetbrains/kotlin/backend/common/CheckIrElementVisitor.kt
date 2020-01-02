@@ -177,12 +177,6 @@ class CheckIrElementVisitor(
         expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
-        super.visitEnumConstructorCall(expression)
-
-        expression.ensureTypeIs(irBuiltIns.unitType)
-    }
-
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
         super.visitInstanceInitializerCall(expression)
 

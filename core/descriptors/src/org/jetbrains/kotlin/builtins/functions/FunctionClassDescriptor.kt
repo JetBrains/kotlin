@@ -60,7 +60,7 @@ class FunctionClassDescriptor(
 
         fun typeParameter(variance: Variance, name: String) {
             result.add(TypeParameterDescriptorImpl.createWithDefaultBound(
-                    this@FunctionClassDescriptor, Annotations.EMPTY, false, variance, Name.identifier(name), result.size
+                    this@FunctionClassDescriptor, Annotations.EMPTY, false, variance, Name.identifier(name), result.size, storageManager
             ))
         }
 

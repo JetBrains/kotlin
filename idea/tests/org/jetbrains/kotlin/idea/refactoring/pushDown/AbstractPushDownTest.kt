@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 abstract class AbstractPushDownTest : AbstractMemberPullPushTest() {
     protected fun doKotlinTest(path: String) {
         doTest(path) { file ->
-            val helper = object: KotlinPushDownHandler.TestHelper {
+            val helper = object : KotlinPushDownHandler.TestHelper {
                 override fun adjustMembers(members: List<KotlinMemberInfo>) = chooseMembers(members)
             }
             KotlinPushDownHandler().invoke(project, editor, file) {

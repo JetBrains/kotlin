@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
+import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
+import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMarker
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -32,14 +35,19 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 internal fun generateStateMachineForNamedFunction(
     irFunction: IrFunction,
@@ -47,21 +55,19 @@ internal fun generateStateMachineForNamedFunction(
     methodVisitor: MethodVisitor,
     access: Int,
     signature: JvmMethodGenericSignature,
-    continuationClassBuilder: ClassBuilder?,
+    obtainContinuationClassBuilder: () -> ClassBuilder,
     element: KtElement
 ): MethodVisitor {
     assert(irFunction.isSuspend)
-    assert(continuationClassBuilder != null) {
-        "Class builder for continuation is null"
-    }
     val state = classCodegen.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     return CoroutineTransformerMethodVisitor(
         methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, null, null,
-        obtainClassBuilderForCoroutineState = { continuationClassBuilder!! },
-        element = element,
-        diagnostics = state.diagnostics,
+        obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
+        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
+        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+        sourceFile = classCodegen.irClass.file.name,
         languageVersionSettings = languageVersionSettings,
         shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
         containingClassInternalName = classCodegen.visitor.thisName,
@@ -69,7 +75,11 @@ internal fun generateStateMachineForNamedFunction(
         needDispatchReceiver = irFunction.dispatchReceiverParameter != null
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
         internalNameForDispatchReceiver = classCodegen.visitor.thisName,
-        putContinuationParameterToLvt = false
+        putContinuationParameterToLvt = false,
+        disableTailCallOptimizationForFunctionReturningUnit = irFunction.returnType.isUnit() &&
+                (irFunction as? IrSimpleFunction)?.overriddenSymbols?.let { symbols ->
+                    symbols.isNotEmpty() && symbols.any { !it.owner.returnType.isUnit() }
+                } == true
     )
 }
 
@@ -84,28 +94,31 @@ internal fun generateStateMachineForLambda(
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     return CoroutineTransformerMethodVisitor(
-        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, null, null,
+        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, signature.genericsSignature, null,
         obtainClassBuilderForCoroutineState = { classCodegen.visitor },
-        element = element,
-        diagnostics = state.diagnostics,
+        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
+        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+        sourceFile = classCodegen.irClass.file.name,
         languageVersionSettings = languageVersionSettings,
         shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
         containingClassInternalName = classCodegen.visitor.thisName,
-        isForNamedFunction = false
+        isForNamedFunction = false,
+        disableTailCallOptimizationForFunctionReturningUnit = false
     )
 }
 
-internal fun IrFunction.isInvokeSuspendOfLambda(context: JvmBackendContext): Boolean =
-    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parent in context.suspendLambdaToOriginalFunctionMap
+internal fun IrFunction.isInvokeSuspendOfLambda(): Boolean =
+    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
-internal fun IrFunction.isInvokeOfSuspendLambda(context: JvmBackendContext): Boolean =
-    name.asString() == "invoke" && parent in context.suspendLambdaToOriginalFunctionMap
+internal fun IrFunction.isInvokeSuspendForInlineOfLambda(): Boolean =
+    origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+            && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
-internal fun IrFunction.isInvokeSuspendOfContinuation(context: JvmBackendContext): Boolean =
-    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass in context.suspendFunctionContinuations.values
+internal fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
+    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
 internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspend && name.asString() == "invoke" &&
-        (parent as? IrClass)?.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+        parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
 internal fun IrFunction.isKnownToBeTailCall(): Boolean =
     when (origin) {
@@ -119,13 +132,15 @@ internal fun IrFunction.isKnownToBeTailCall(): Boolean =
         else -> isInvokeOfSuspendCallableReference()
     }
 
-internal fun IrFunction.shouldNotContainSuspendMarkers(context: JvmBackendContext): Boolean =
-    isInvokeSuspendOfContinuation(context) || isKnownToBeTailCall()
+internal fun IrFunction.shouldNotContainSuspendMarkers(): Boolean =
+    isInvokeSuspendOfContinuation() || isKnownToBeTailCall()
 
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
 internal fun IrFunction.getOrCreateSuspendFunctionViewIfNeeded(context: JvmBackendContext): IrFunction {
-    if (!isSuspend || origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW) return this
+    if (!isSuspend || origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW ||
+        origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
+    ) return this
     context.suspendFunctionOriginalToView[this]?.let { return it }
     return suspendFunctionView(context)
 }
@@ -145,13 +160,21 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
         else
             WrappedSimpleFunctionDescriptor(sourceElement = originalDescriptor.source)
     return IrFunctionImpl(
-        startOffset, endOffset, JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW, IrSimpleFunctionSymbolImpl(descriptor),
+        startOffset, endOffset,
+        if (origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE)
+            JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
+        else
+            JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW,
+        IrSimpleFunctionSymbolImpl(descriptor),
         name, visibility, modality, context.irBuiltIns.anyNType,
         isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-        isFakeOverride = false
+        isFakeOverride = false, isOperator = false
     ).also {
         descriptor.bind(it)
         it.parent = parent
+
+        it.annotations.addAll(annotations)
+
         it.copyTypeParametersFrom(this)
 
         it.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(it)
@@ -186,6 +209,7 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
                 return super.visitCall(expression.createSuspendFunctionCallViewIfNeeded(context, it, callerIsInlineLambda = false))
             }
         })
+        it.copyAttributes(this)
     }
 }
 
@@ -206,7 +230,8 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
         }
         val continuationParameter =
             when {
-                caller.isInvokeSuspendOfLambda(context) || caller.isInvokeSuspendOfContinuation(context) ->
+                caller.isInvokeSuspendOfLambda() || caller.isInvokeSuspendOfContinuation() ||
+                        caller.isInvokeSuspendForInlineOfLambda() ->
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!.symbol)
                 callerIsInlineLambda -> context.fakeContinuation
                 else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters.last().symbol)
@@ -221,3 +246,31 @@ internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = 
     context.ir.symbols.continuationClass.createType(true, listOf(makeTypeProjection(context.irBuiltIns.anyNType, Variance.INVARIANT))),
     "FAKE_CONTINUATION"
 )
+
+internal fun generateFakeContinuationConstructorCall(
+    v: InstructionAdapter,
+    containingClassBuilder: ClassBuilder,
+    classBuilder: ClassBuilder,
+    irFunction: IrFunction
+) {
+    val continuationType = Type.getObjectType(classBuilder.thisName)
+    // TODO: This is different in case of DefaultImpls
+    val thisNameType = Type.getObjectType(containingClassBuilder.thisName.replace(".", "/"))
+    val continuationIndex = listOfNotNull(irFunction.dispatchReceiverParameter, irFunction.extensionReceiverParameter).size +
+            irFunction.valueParameters.size - 1
+    with(v) {
+        addFakeContinuationConstructorCallMarker(this, true)
+        anew(continuationType)
+        dup()
+        if (irFunction.dispatchReceiverParameter != null) {
+            load(0, AsmTypes.OBJECT_TYPE)
+            load(continuationIndex, Type.getObjectType("kotlin/coroutines/Continuation"))
+            invokespecial(continuationType.internalName, "<init>", "(${thisNameType}Lkotlin/coroutines/Continuation;)V", false)
+        } else {
+            load(continuationIndex, Type.getObjectType("kotlin/coroutines/Continuation"))
+            invokespecial(continuationType.internalName, "<init>", "(Lkotlin/coroutines/Continuation;)V", false)
+        }
+        pop()
+        addFakeContinuationConstructorCallMarker(this, false)
+    }
+}

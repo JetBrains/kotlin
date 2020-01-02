@@ -1,7 +1,8 @@
 // OUT_OF_CODE_BLOCK: TRUE
+// ERROR: Unresolved reference: a
+val b = true
 
-val a = 1
-fun test() = if (a) {
+fun test() = if (b) {
     fun hello() {
         <caret>
     }

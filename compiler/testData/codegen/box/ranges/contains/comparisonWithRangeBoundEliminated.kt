@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun abs(x: Int) = if (x < 0) -x else x
 fun abs(x: Long) = if (x < 0) -x else x
 

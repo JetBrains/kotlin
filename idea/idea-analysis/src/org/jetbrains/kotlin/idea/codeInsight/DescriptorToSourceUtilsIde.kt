@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight
@@ -33,9 +22,9 @@ object DescriptorToSourceUtilsIde {
 
     // Returns all PSI elements for descriptor. It can find declarations in builtins or decompiled code.
     fun getAllDeclarations(
-            project: Project,
-            targetDescriptor: DeclarationDescriptor,
-            builtInsSearchScope: GlobalSearchScope? = null
+        project: Project,
+        targetDescriptor: DeclarationDescriptor,
+        builtInsSearchScope: GlobalSearchScope? = null
     ): Collection<PsiElement> {
         val result = getDeclarationsStream(project, targetDescriptor, builtInsSearchScope).toHashSet()
         // filter out elements which are navigate to some other element of the result
@@ -44,15 +33,15 @@ object DescriptorToSourceUtilsIde {
     }
 
     private fun getDeclarationsStream(
-            project: Project, targetDescriptor: DeclarationDescriptor, builtInsSearchScope: GlobalSearchScope? = null
+        project: Project, targetDescriptor: DeclarationDescriptor, builtInsSearchScope: GlobalSearchScope? = null
     ): Sequence<PsiElement> {
         val effectiveReferencedDescriptors = DescriptorToSourceUtils.getEffectiveReferencedDescriptors(targetDescriptor).asSequence()
         return effectiveReferencedDescriptors.flatMap { effectiveReferenced ->
             // References in library sources should be resolved to corresponding decompiled declarations,
             // therefore we put both source declaration and decompiled declaration to stream, and afterwards we filter it in getAllDeclarations
             sequenceOfLazyValues(
-                    { DescriptorToSourceUtils.getSourceFromDescriptor(effectiveReferenced)  },
-                    { findDecompiledDeclaration(project, effectiveReferenced, builtInsSearchScope) }
+                { DescriptorToSourceUtils.getSourceFromDescriptor(effectiveReferenced) },
+                { findDecompiledDeclaration(project, effectiveReferenced, builtInsSearchScope) }
             )
         }.filterNotNull()
     }

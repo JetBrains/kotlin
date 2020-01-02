@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.impl.PsiBuilderFactoryImpl
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.parsing.KotlinLightParser
@@ -22,9 +22,9 @@ import java.io.File
 import java.nio.file.Path
 
 class LightTree2Fir(
-    private val session: FirSession = object : FirSessionBase(null) {},
-    private val stubMode: Boolean,
-    private val project: Project
+    val session: FirSession = object : FirSessionBase(null) {},
+    private val scopeProvider: FirScopeProvider,
+    private val stubMode: Boolean = false
 ) {
     //private val ktDummyFile = KtFile(SingleRootFileViewProvider(PsiManager.getInstance(project), LightVirtualFile()), false)
 
@@ -66,7 +66,7 @@ class LightTree2Fir(
     fun buildFirFile(code: String, fileName: String): FirFile {
         val lightTree = buildLightTree(code)
 
-        return DeclarationsConverter(session, stubMode, lightTree)
+        return DeclarationsConverter(session, scopeProvider, stubMode, lightTree)
             .convertFile(lightTree.root, fileName)
     }
 }

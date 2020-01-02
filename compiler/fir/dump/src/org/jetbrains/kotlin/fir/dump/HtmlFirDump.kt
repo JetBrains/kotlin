@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -79,6 +78,8 @@ private class PackageInfo(val fqName: FqName, val moduleInfo: ModuleInfo) {
         it.mkdirs()
     }
     val errors = mutableMapOf<String, Int>().withDefault { 0 }
+    val implicits = mutableMapOf<String, Int>().withDefault { 0 }
+    val unresolved = mutableMapOf<String, Int>().withDefault { 0 }
 }
 
 private class ModuleInfo(val name: String, outputRoot: File) {
@@ -88,6 +89,12 @@ private class ModuleInfo(val name: String, outputRoot: File) {
     }
     val errors: Map<FqName, Int> by lazy {
         packages.mapValues { (_, packageInfo) -> packageInfo.errors.values.sum() }.withDefault { 0 }
+    }
+    val implicits: Map<FqName, Int> by lazy {
+        packages.mapValues { (_, packageInfo) -> packageInfo.implicits.values.sum() }.withDefault { 0 }
+    }
+    val unresolved: Map<FqName, Int> by lazy {
+        packages.mapValues { (_, packageInfo) -> packageInfo.unresolved.values.sum() }.withDefault { 0 }
     }
 }
 
@@ -118,7 +125,11 @@ private class SupplementaryGenerator(val outputRoot: File) {
                             ) {
                                 +packageInfo.fqName.asString()
                             }
-                            addErrors(moduleInfo.errors.getValue(packageInfo.fqName))
+                            addErrors(
+                                moduleInfo.errors.getValue(packageInfo.fqName),
+                                moduleInfo.implicits.getValue(packageInfo.fqName),
+                                moduleInfo.unresolved.getValue(packageInfo.fqName)
+                            )
                         }
                     }
                 }
@@ -126,9 +137,15 @@ private class SupplementaryGenerator(val outputRoot: File) {
         }
     }
 
-    fun LI.addErrors(errors: Int) {
+    fun LI.addErrors(errors: Int, implicits: Int, unresolved: Int) {
         if (errors > 0) {
             span(classes = "error-counter") { +(errors.toString()) }
+        }
+        if (implicits > 0) {
+            span(classes = "implicit-counter") { +(implicits.toString()) }
+        }
+        if (unresolved > 0) {
+            span(classes = "unresolved-counter") { +(unresolved.toString()) }
         }
     }
 
@@ -167,7 +184,11 @@ private class SupplementaryGenerator(val outputRoot: File) {
                     for (file in packageInfo.contents) {
                         li {
                             a(href = "./$file.fir.html", classes = "container-ref") { +file }
-                            addErrors(packageInfo.errors.getValue(file))
+                            addErrors(
+                                packageInfo.errors.getValue(file),
+                                packageInfo.implicits.getValue(file),
+                                packageInfo.unresolved.getValue(file)
+                            )
                         }
                     }
                 }
@@ -190,7 +211,11 @@ private class SupplementaryGenerator(val outputRoot: File) {
                     for (module in modules) {
                         li {
                             a(href = linkToIndex(module, outputRoot), classes = "container-ref") { +module.name }
-                            addErrors(module.errors.values.sum())
+                            addErrors(
+                                module.errors.values.sum(),
+                                module.implicits.values.sum(),
+                                module.unresolved.values.sum()
+                            )
                         }
                     }
                 }
@@ -296,6 +321,8 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
         dumpOutput.writeText(builder.toString())
         packageForFile(file).apply {
             errors[file.name] = dumper.errors
+            implicits[file.name] = dumper.implicits
+            unresolved[file.name] = dumper.unresolved
         }
     }
 
@@ -395,12 +422,19 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     var errors: Int = 0
         private set
 
-    fun generate(element: FirFile, builder: StringBuilder): Int {
+    var implicits: Int = 0
+        private set
+
+    var unresolved: Int = 0
+        private set
+
+    fun generate(element: FirFile, builder: StringBuilder) {
         errors = 0
+        implicits = 0
+        unresolved = 0
         builder.appendHTML().html {
             generate(element)
         }
-        return errors
     }
 
     private fun FlowContent.keyword(text: String) {
@@ -693,38 +727,38 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(expression: FirConstExpression<*>) {
         val value = expression.value
-        if (value == null && expression.kind != IrConstKind.Null) {
+        if (value == null && expression.kind != FirConstKind.Null) {
             return error {
                 +"null value"
             }
         }
 
         when (expression.kind) {
-            IrConstKind.Null -> keyword("null")
-            IrConstKind.Boolean -> keyword(value.toString())
-            IrConstKind.String, IrConstKind.Char ->
+            FirConstKind.Null -> keyword("null")
+            FirConstKind.Boolean -> keyword(value.toString())
+            FirConstKind.String, FirConstKind.Char ->
                 stringLiteral(value)
-            IrConstKind.Byte -> {
+            FirConstKind.Byte -> {
                 +value.toString()
                 keyword("B")
             }
-            IrConstKind.Short -> {
+            FirConstKind.Short -> {
                 +value.toString()
                 keyword("S")
             }
-            IrConstKind.Int -> {
+            FirConstKind.Int -> {
                 +value.toString()
                 keyword("I")
             }
-            IrConstKind.Long -> {
+            FirConstKind.Long -> {
                 +value.toString()
                 keyword("L")
             }
-            IrConstKind.Float -> {
+            FirConstKind.Float -> {
                 +value.toString()
                 keyword("F")
             }
-            IrConstKind.Double -> {
+            FirConstKind.Double -> {
                 +value.toString()
                 keyword("D")
             }
@@ -749,6 +783,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 +"!!"
             }
             is ConeIntersectionType -> resolved { generate(type) }
+            is ConeIntegerLiteralType -> inlineUnsupported(type)
         }
         if (type.typeArguments.isNotEmpty()) {
             +"<"
@@ -794,8 +829,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         when (typeRef) {
             is FirErrorTypeRef -> error { +typeRef.diagnostic.reason }
             is FirResolvedTypeRef -> generate(typeRef.type)
-            is FirImplicitTypeRef -> unresolved { keyword("<implicit>") }
+            is FirImplicitTypeRef -> unresolved {
+                implicits++
+                keyword("<implicit>")
+            }
             is FirUserTypeRef -> unresolved {
+                unresolved++
                 generateList(typeRef.qualifier, separator = ".") {
                     simpleName(it.name)
                     generateTypeProjections(it.typeArguments)
@@ -1205,10 +1244,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generateUnary(expression: FirOperatorCall) {
-        val (first) = expression.arguments
         unresolved { +expression.operation.operator }
         ws
-        generate(first)
+        generate(expression.argument)
     }
 
     private fun FlowContent.generate(expression: FirOperatorCall) {
@@ -1220,12 +1258,16 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(typeOperatorCall: FirTypeOperatorCall) {
-        val (expression) = typeOperatorCall.arguments
-        generate(expression)
+        generate(typeOperatorCall.argument)
         ws
         keyword(typeOperatorCall.operation.operator)
         ws
         generate(typeOperatorCall.conversionTypeRef)
+    }
+
+    private fun FlowContent.generate(checkNotNullCall: FirCheckNotNullCall) {
+        generate(checkNotNullCall.argument)
+        +"!!"
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1432,6 +1474,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirTypeOperatorCall -> generate(expression)
                 is FirOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
+                is FirCheckNotNullCall -> generate(expression)
                 else -> inlineUnsupported(expression)
             }
         }

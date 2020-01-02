@@ -87,7 +87,9 @@ class IfThenToElvisInspection(
 
         fun isApplicableTo(element: KtIfExpression, expressionShouldBeStable: Boolean): Boolean {
             val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-            if (expressionShouldBeStable && !ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
+            if (expressionShouldBeStable &&
+                !ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)
+            ) return false
 
             val type = element.getType(ifThenToSelectData.context) ?: return false
             if (KotlinBuiltIns.isUnit(type)) return false

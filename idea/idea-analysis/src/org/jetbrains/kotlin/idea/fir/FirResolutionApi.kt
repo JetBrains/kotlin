@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir
 
+import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
@@ -13,13 +14,15 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.selfImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -41,9 +44,14 @@ private fun FirFile.findCallableMember(
     provider: FirProvider, callableMember: KtCallableDeclaration,
     packageFqName: FqName, klassFqName: FqName?, declName: Name
 ): FirCallableDeclaration<*> {
-    val memberScope =
-        if (klassFqName == null) selfImportingScope(this.packageFqName, session)
-        else provider.getClassDeclaredMemberScope(ClassId(packageFqName, klassFqName, false))!!
+    if (klassFqName != null) {
+        return provider.getClassDeclaredCallableSymbols(ClassId(packageFqName, klassFqName, false), declName)
+            .find { symbol: FirCallableSymbol<*> ->
+                symbol.fir.psi == callableMember
+            }?.fir ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
+    }
+    // NB: not sure it's correct to use member scope provider from here (because of possible changes)
+    val memberScope = FirPackageMemberScope(this.packageFqName, session)
     var result: FirCallableDeclaration<*>? = null
     val processor = { symbol: FirCallableSymbol<*> ->
         val fir = symbol.fir
@@ -64,9 +72,8 @@ private fun FirFile.findCallableMember(
         ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
 }
 
-// NB: at this moment it crashes with ISE when called on local declaration
 fun KtCallableDeclaration.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirCallableDeclaration<*> {
     val session = state.getSession(this)
@@ -76,15 +83,21 @@ fun KtCallableDeclaration.getOrBuildFir(
     val klassFqName = this.containingClassOrObject?.relativeFqName()
     val declName = this.nameAsSafeName
 
-    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+    val firProvider = FirProvider.getInstance(session) as FirIdeProvider
     val firFile = firProvider.getOrBuildFile(file)
-    val memberSymbol = firFile.findCallableMember(firProvider, this, packageFqName, klassFqName, declName).symbol
-    memberSymbol.fir.runResolve(firFile, firProvider, phase, state)
-    return memberSymbol.fir
+    val firMemberSymbol = firFile.findCallableMember(firProvider, this, packageFqName, klassFqName, declName).symbol
+    val firMemberDeclaration = firMemberSymbol.fir
+    if (firMemberDeclaration.resolvePhase >= phase) {
+        return firMemberDeclaration
+    }
+    synchronized(firFile) {
+        firMemberDeclaration.runResolve(firFile, firProvider, phase, state)
+    }
+    return firMemberDeclaration
 }
 
 fun KtClassOrObject.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirRegularClass {
     val session = state.getSession(this)
@@ -93,63 +106,95 @@ fun KtClassOrObject.getOrBuildFir(
     val packageFqName = file.packageFqName
     val klassFqName = this.relativeFqName()
 
-    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+    val firProvider = FirProvider.getInstance(session) as FirIdeProvider
     val firFile = firProvider.getOrBuildFile(file)
     val firClass = firProvider.getFirClassifierByFqName(ClassId(packageFqName, klassFqName, false)) as FirRegularClass
-    firClass.runResolve(firFile, firProvider, phase, state)
+    if (firClass.resolvePhase >= phase) {
+        return firClass
+    }
+    synchronized(firFile) {
+        firClass.runResolve(firFile, firProvider, phase, state)
+    }
     return firClass
 }
 
+private fun KtFile.getOrBuildRawFirFile(state: FirModuleResolveState): Pair<FirIdeProvider, FirFile> {
+    val session = state.getSession(this)
+    val firProvider = FirProvider.getInstance(session) as FirIdeProvider
+    return firProvider to firProvider.getOrBuildFile(this)
+}
+
 fun KtFile.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirFile {
-    val session = state.getSession(this)
-    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
-    val firFile = firProvider.getOrBuildFile(this)
-    firFile.runResolve(firFile, firProvider, phase, state)
+    val (firProvider, firFile) = getOrBuildRawFirFile(state)
+    if (phase <= FirResolvePhase.DECLARATIONS && firFile.resolvePhase >= phase) {
+        return firFile
+    }
+    synchronized(firFile) {
+        firFile.runResolve(firFile, firProvider, phase, state)
+    }
+    return firFile
+}
+
+fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): FirFile {
+    val (_, firFile) = getOrBuildRawFirFile(state)
+    val currentResolvePhase = firFile.resolvePhase
+    if (currentResolvePhase < FirResolvePhase.BODY_RESOLVE) {
+        synchronized(firFile) {
+            firFile.runResolve(toPhase = FirResolvePhase.BODY_RESOLVE, fromPhase = currentResolvePhase)
+        }
+    }
+
+    ProgressIndicatorProvider.checkCanceled() // ???
+    if (state.hasDiagnosticsForFile(this)) return firFile
+
+    FirIdeDiagnosticsCollector(state).collectDiagnostics(firFile)
+    state.setDiagnosticsForFile(this, firFile)
     return firFile
 }
 
 private fun FirDeclaration.runResolve(
     file: FirFile,
-    firProvider: IdeFirProvider,
+    firProvider: FirIdeProvider,
     toPhase: FirResolvePhase,
-    state: FirResolveState
+    state: FirModuleResolveState
 ) {
     val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
     file.runResolve(toPhase = nonLazyPhase, fromPhase = this.resolvePhase)
-    if (toPhase > nonLazyPhase) {
-        val designation = mutableListOf<FirElement>()
-        designation += file
-        if (this !is FirFile) {
-            val id = when (this) {
-                is FirCallableDeclaration<*> -> {
-                    this.symbol.callableId.classId
-                }
-                is FirRegularClass -> {
-                    this.symbol.classId
-                }
-                else -> error("Unsupported: ${render()}")
+    if (toPhase <= nonLazyPhase) return
+    val designation = mutableListOf<FirDeclaration>(file)
+    if (this !is FirFile) {
+        val id = when (this) {
+            is FirCallableDeclaration<*> -> {
+                this.symbol.callableId.classId
             }
-            val outerClasses = generateSequence(id) { classId ->
-                classId.outerClassId
-            }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it)!! }
-            designation += outerClasses.asReversed()
-            if (this is FirCallableDeclaration<*>) {
-                designation += this
+            is FirRegularClass -> {
+                this.symbol.classId
             }
+            else -> error("Unsupported: ${render()}")
         }
-        val transformer = FirDesignatedBodyResolveTransformer(
-            designation.iterator(), state.getSession(psi as KtElement),
-            implicitTypeOnly = toPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
-        )
-        file.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
+        val outerClasses = generateSequence(id) { classId ->
+            classId.outerClassId
+        }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it)!! }
+        designation += outerClasses.asReversed()
+        if (this is FirCallableDeclaration<*>) {
+            designation += this
+        }
     }
+    if (designation.all { it.resolvePhase >= toPhase }) {
+        return
+    }
+    val transformer = FirDesignatedBodyResolveTransformer(
+        designation.iterator(), state.getSession(psi as KtElement),
+        implicitTypeOnly = toPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+    )
+    file.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
 }
 
 fun KtElement.getOrBuildFir(
-    state: FirResolveState,
+    state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ): FirElement {
     val containerFir: FirDeclaration =
@@ -190,6 +235,10 @@ fun KtElement.getOrBuildFir(
             override fun visitThisReference(thisReference: FirThisReference) {}
 
             override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {}
+
+            override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
+                userTypeRef.acceptChildren(this)
+            }
         })
         var current: PsiElement? = psi
         while (current is KtElement) {

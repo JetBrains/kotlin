@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
+import org.jetbrains.kotlin.backend.common.lower.optimizations.foldConstantLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -16,6 +18,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -71,8 +75,8 @@ private val arrayConstructorPhase = makeIrFilePhase(
     description = "Transform `Array(size) { index -> value }` into a loop"
 )
 
-private val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    ::ExpectDeclarationsRemoveLowering,
+private val expectDeclarationsRemovingPhase = makeIrModulePhase<JvmBackendContext>(
+    { context -> ExpectDeclarationsRemoveLowering(context, keepOptionalAnnotations = true) },
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )
@@ -121,7 +125,10 @@ internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
                     }
 
                 override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
-                    scopedVisibility(inInlineFunctionScope)
+                    if (declaration.parentAsClass.isAnonymousObject)
+                        scopedVisibility(inInlineFunctionScope)
+                    else
+                        declaration.visibility
 
                 private fun scopedVisibility(inInlineFunctionScope: Boolean): Visibility =
                     if (inInlineFunctionScope) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
@@ -137,6 +144,17 @@ private val jvmLocalClassExtractionPhase = makeIrFilePhase(
     ::JvmLocalClassPopupLowering,
     name = "JvmLocalClassExtraction",
     description = "Move local classes from field initializers and anonymous init blocks into the containing class"
+)
+
+private val computeStringTrimPhase = makeIrFilePhase<JvmBackendContext>(
+    { context ->
+        if (context.state.canReplaceStdlibRuntimeApiBehavior)
+            StringTrimLowering(context)
+        else
+            FileLoweringPass.Empty
+    },
+    name = "StringTrimLowering",
+    description = "Compute trimIndent and trimMargin operations on constant strings"
 )
 
 private val defaultArgumentStubPhase = makeIrFilePhase(
@@ -173,8 +191,13 @@ private val staticInitializersPhase = makeIrFilePhase(
     description = "Move code from object init blocks and static field initializers to a new <clinit> function"
 )
 
-private val initializersPhase = makeIrFilePhase(
-    ::InitializersLowering,
+private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
+    { context ->
+        object : InitializersLowering(context) {
+            override fun shouldEraseFieldInitializer(irField: IrField): Boolean =
+                irField.constantValue(context) == null
+        }
+    },
     name = "Initializers",
     description = "Merge init blocks and field initializers into constructors",
     stickyPostconditions = setOf(fun(irFile: IrFile) {
@@ -206,6 +229,12 @@ private val syntheticAccessorPhase = makeIrFilePhase(
     prerequisite = setOf(objectClassPhase, staticDefaultFunctionPhase, interfacePhase)
 )
 
+private val tailrecPhase = makeIrFilePhase<JvmBackendContext>(
+    ::JvmTailrecLowering,
+    name = "Tailrec",
+    description = "Handle tailrec calls"
+)
+
 @Suppress("Reformat")
 private val jvmFilePhases =
         typeAliasAnnotationMethodsPhase then
@@ -214,6 +243,7 @@ private val jvmFilePhases =
         inventNamesForLocalClassesPhase then
         kCallableNamePropertyPhase then
         annotationPhase then
+        polymorphicSignaturePhase then
         varargPhase then
         arrayConstructorPhase then
         checkNotNullPhase then
@@ -227,7 +257,6 @@ private val jvmFilePhases =
         propertiesToFieldsPhase then
         remapObjectFieldAccesses then
         propertiesPhase then
-        renameFieldsPhase then
         anonymousObjectSuperConstructorPhase then
         tailrecPhase then
 
@@ -263,6 +292,7 @@ private val jvmFilePhases =
         interfaceDelegationPhase then
         interfaceSuperCallsPhase then
         interfaceDefaultCallsPhase then
+        interfaceObjectCallsPhase then
 
         addContinuationPhase then
 
@@ -282,6 +312,8 @@ private val jvmFilePhases =
         staticDefaultFunctionPhase then
         syntheticAccessorPhase then
 
+
+        jvmArgumentNullabilityAssertions then
         toArrayPhase then
         jvmBuiltinOptimizationLoweringPhase then
         additionalClassAnnotationPhase then
@@ -291,6 +323,8 @@ private val jvmFilePhases =
         checkLocalNamesWithOldBackendPhase then
 
         mainMethodGenerationPhase then
+        renameFieldsPhase then
+        fakeInliningLocalVariablesLowering then
 
         makePatchParentsPhase(3)
 

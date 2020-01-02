@@ -41,7 +41,7 @@ import javax.swing.JComponent
 class KotlinAwareMoveFilesOrDirectoriesDialog(
     private val project: Project,
     private val initialDirectory: PsiDirectory?,
-    private val psiElements: Array<out PsiElement>,
+    private val psiElements: List<PsiFileSystemItem>,
     private val callback: MoveCallback?
 ) : DialogWrapper(project, true) {
 
@@ -115,7 +115,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     private fun initializeData() {
         val psiElement = psiElements.singleOrNull()
         if (psiElement != null) {
-            val shortenedPath = CopyFilesOrDirectoriesDialog.shortenPath((psiElement as PsiFileSystemItem).virtualFile)
+            val shortenedPath = CopyFilesOrDirectoriesDialog.shortenPath(psiElement.virtualFile)
             nameLabel.text = when (psiElement) {
                 is PsiFile -> RefactoringBundle.message("move.file.0", shortenedPath)
                 else -> RefactoringBundle.message("move.directory.0", shortenedPath)
@@ -166,7 +166,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             PsiManager.getInstance(project).findDirectory(it)
         }
 
-        val elementsToMove: List<PsiElement> = directory?.let { existentDirectory ->
+        val elementsToMove = directory?.let { existentDirectory ->
             val choice = if (psiElements.size > 1 || psiElements[0] is PsiDirectory) intArrayOf(-1) else null
             psiElements.filterNot {
                 it is PsiFile && CopyFilesOrDirectoriesHandler.checkFileExist(existentDirectory, choice, it, it.name, "Move")

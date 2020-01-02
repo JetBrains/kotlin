@@ -54,7 +54,7 @@ fun collectScriptsCompilationDependencies(
 
                         val sourceDependenciesRoots = refinedConfiguration.value.importedScripts.mapNotNull {
                             // TODO: support any kind of ScriptSource.
-                            val path = (it as? FileBasedScriptSource)?.file?.path ?: return@mapNotNull null
+                            val path = (it as? FileBasedScriptSource)?.file?.absolutePath ?: return@mapNotNull null
                             KotlinSourceRoot(path, false)
                         }
                         val sourceDependencies =

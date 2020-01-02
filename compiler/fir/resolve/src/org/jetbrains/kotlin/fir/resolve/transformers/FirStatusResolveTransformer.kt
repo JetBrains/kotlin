@@ -26,7 +26,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformFile(file: FirFile, data: FirDeclarationStatus?): CompositeTransformResult<FirFile> {
         session = file.session
-        return transformElement(file, data)
+        return super.transformFile(file, data)
     }
 
     override fun transformDeclarationStatus(
@@ -49,7 +49,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
         typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
         typeAlias.transformStatus(this, typeAlias.resolveStatus(typeAlias.status, containingClass, isLocal = false))
-        return typeAlias.compose()
+        return transformDeclaration(typeAlias, data)
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: FirDeclarationStatus?): CompositeTransformResult<FirStatement> {

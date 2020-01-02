@@ -160,5 +160,10 @@ interface ScriptConfigurationManager {
         fun updateScriptDependenciesSynchronously(file: PsiFile, project: Project) {
             (getInstance(project) as AbstractScriptConfigurationManager).updateScriptDependenciesSynchronously(file)
         }
+
+        @TestOnly
+        fun clearCaches(project: Project) {
+            (getInstance(project) as AbstractScriptConfigurationManager).clearCaches()
+        }
     }
 }

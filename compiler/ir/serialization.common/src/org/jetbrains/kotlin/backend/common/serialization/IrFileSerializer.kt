@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findTopLevelDeclaration
 import org.jetbrains.kotlin.ir.util.lineStartOffsets
+import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -115,15 +116,21 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind as P
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments as ProtoTypeArguments
 import org.jetbrains.kotlin.backend.common.serialization.proto.Visibility as ProtoVisibility
+import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
 
 open class IrFileSerializer(
     val logger: LoggingContext,
     private val declarationTable: DeclarationTable,
-    private val bodiesOnlyForInlines: Boolean = false
+    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    private val bodiesOnlyForInlines: Boolean = false,
+    private val skipExpects: Boolean = false
 ) {
-
     private val loopIndex = mutableMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
+
+    // For every actual we keep a corresponding expects' uniqIds.
+    // The linker substitutes actual symbols when asked for an expect uniqId.
+    private val expectActualTable = ExpectActualTable(expectDescriptorToSymbol)
 
     // The same symbol can be used multiple times in a file
     // so use this index to store symbol data only once.
@@ -141,7 +148,7 @@ open class IrFileSerializer(
     private val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
     private val descriptorReferenceSerializer =
-        DescriptorReferenceSerializer(declarationTable, { serializeString(it) }, { serializeFqName(it) })
+        DescriptorReferenceSerializer(declarationTable, { serializeString(it) }, { serializeFqName(it) }, skipExpects)
 
     sealed class XStatementOrExpression {
         abstract fun toByteArray(): ByteArray
@@ -984,13 +991,15 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrDeclarationBase(declaration: IrDeclaration) =
-        ProtoDeclarationBase.newBuilder()
+    private fun serializeIrDeclarationBase(declaration: IrDeclaration): ProtoDeclarationBase {
+        if (!skipExpects) expectActualTable.findExpectsForActuals(declaration)
+        return ProtoDeclarationBase.newBuilder()
             .setSymbol(serializeIrSymbol((declaration as IrSymbolOwner).symbol))
             .setCoordinates(serializeCoordinates(declaration.startOffset, declaration.endOffset))
             .addAllAnnotation(serializeAnnotations(declaration.annotations))
             .setOrigin(serializeIrDeclarationOrigin(declaration.origin))
             .build()
+    }
 
     private fun serializeIrValueParameter(parameter: IrValueParameter): ProtoValueParameter {
         val proto = ProtoValueParameter.newBuilder()
@@ -1070,6 +1079,7 @@ open class IrFileSerializer(
             .setIsTailrec(declaration.isTailrec)
             .setIsSuspend(declaration.isSuspend)
             .setIsFakeOverride(declaration.isFakeOverride)
+            .setIsOperator(declaration.isOperator)
 
         declaration.overriddenSymbols.forEach {
             proto.addOverridden(serializeIrSymbol(it))
@@ -1268,6 +1278,7 @@ open class IrFileSerializer(
 
     open fun backendSpecificExplicitRoot(declaration: IrFunction) = false
     open fun backendSpecificExplicitRoot(declaration: IrClass) = false
+    open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
 
     fun serializeIrFile(file: IrFile): SerializedIrFile {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
@@ -1278,7 +1289,7 @@ open class IrFileSerializer(
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
-            if (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
+            if (skipExpects && it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
                 topLevelDeclarations.add(SkippedDeclaration)
                 return@forEach
             }
@@ -1296,7 +1307,7 @@ open class IrFileSerializer(
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
             .filterIsInstance<IrProperty>()
-            .filter { it.backingField?.initializer != null }
+            .filter { it.backingField?.initializer != null && keepOrderOfProperties(it) }
             .forEach { proto.addExplicitlyExportedToCompiler(serializeIrSymbol(it.backingField!!.symbol)) }
 
         // TODO: Konan specific
@@ -1321,6 +1332,8 @@ open class IrFileSerializer(
             }
         })
 
+        serializeExpectActualSubstitutionTable(proto)
+
         return SerializedIrFile(
             proto.build().toByteArray(),
             file.fqName.asString(),
@@ -1332,4 +1345,23 @@ open class IrFileSerializer(
             IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory()
         )
     }
+
+    fun serializeExpectActualSubstitutionTable(proto: ProtoFile.Builder) {
+        if (skipExpects) return
+
+        expectActualTable.table.forEach next@{ (expect, actualSymbol) ->
+            val expectSymbol = expectDescriptorToSymbol[expect]
+                ?: error("Could not find expect symbol for expect descriptor $expect")
+            val expectDeclaration = expectSymbol.owner as IrDeclaration
+            val actualDeclaration = actualSymbol.owner as IrDeclaration
+
+            proto.addActuals(
+                ProtoActual.newBuilder()
+                    .setExpectSymbol(serializeIrSymbol(expectSymbol))
+                    .setActualSymbol(serializeIrSymbol(actualSymbol))
+                    .build()
+            )
+        }
+    }
 }
+

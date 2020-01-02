@@ -20,9 +20,6 @@ fun bar(x: Int) =
         foo(x)
     }
 
-// IGNORE_BACKEND: JVM_IR
-
-// IR backend has bar().12 replaced as bar().8 for returning bar() function result.
 // LINENUMBERS
 // TestKt.box():4
 // FooKt.foo(int):4

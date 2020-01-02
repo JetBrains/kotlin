@@ -1,0 +1,35 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -VAL_REASSIGNMENT -UNUSED_CHANGED_VALUE -VARIABLE_EXPECTED
+
+inline operator fun <T, V> Function1<T, V>.unaryPlus() = this
+operator fun <T, V> Function1<T, V>.unaryMinus() = this
+inline operator fun <T, V> Function1<T, V>.inc() = this
+operator fun <T, V> Function1<T, V>.dec() = this
+
+inline operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.unaryPlus(){}
+operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.unaryMinus(){}
+inline operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.inc() = this
+operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.dec() = this
+
+inline fun <T, V> inlineFunWithInvoke(s: (p: T) -> V, ext: T.(p: T) -> V) {
+    +s
+    -s
+    s++
+    ++s
+    s--
+    --s
+    +ext
+    -ext
+    ext++
+    ++ext
+    ext--
+    --ext
+}
+
+inline fun <T, V> Function1<T, V>.inlineFunWithInvoke() {
+    +this
+    -this
+    this++
+    ++this
+    this--
+    --this
+}

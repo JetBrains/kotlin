@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -106,7 +106,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     companion object {
         fun replaceSamConstructorCall(callExpression: KtCallExpression): KtLambdaExpression {
             val functionalArgument = callExpression.samConstructorValueArgument()?.getArgumentExpression()
-                    ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
+                ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
             return callExpression.getQualifiedExpressionForSelectorOrThis().replace(functionalArgument) as KtLambdaExpression
         }
 
@@ -132,10 +132,12 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             if (!resolutionResults.isSuccess) return false
 
+            val generatingAdditionalSamCandidateIsDisabled =
+                parentCall.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) ||
+                        parentCall.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
+
             val samAdapterOriginalDescriptor =
-                if (parentCall.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
-                    resolutionResults.resultingCall is NewResolvedCallImpl<*>
-                ) {
+                if (generatingAdditionalSamCandidateIsDisabled && resolutionResults.resultingCall is NewResolvedCallImpl<*>) {
                     resolutionResults.resultingDescriptor
                 } else {
                     SamCodegenUtil.getOriginalIfSamAdapter(resolutionResults.resultingDescriptor) ?: return false
@@ -188,7 +190,8 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val originalFunctionDescriptor = functionResolvedCall.resultingDescriptor.original as? FunctionDescriptor ?: return emptyList()
             val containingClass = originalFunctionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
-            val syntheticScopes = functionCall.getResolutionFacade().getFrontendService(SyntheticScopes::class.java).forceEnableSamAdapters()
+            val syntheticScopes =
+                functionCall.getResolutionFacade().getFrontendService(SyntheticScopes::class.java).forceEnableSamAdapters()
 
             // SAM adapters for static functions
             val contributedFunctions = syntheticScopes.collectSyntheticStaticFunctions(containingClass.staticScope)

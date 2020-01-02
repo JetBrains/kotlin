@@ -1,0 +1,12 @@
+// !WITH_NEW_INFERENCE
+package c
+
+import java.util.ArrayList
+
+fun Array<Int>.toIntArray(): IntArray = this.<!INAPPLICABLE_CANDIDATE!>mapTo<!>(IntArray(size), {<!UNRESOLVED_REFERENCE!>it<!>})
+
+fun Array<Int>.toArrayList(): ArrayList<Int> = this.mapTo(ArrayList<Int>(size), {it})
+
+public fun <T, R, C: MutableCollection<in R>> Array<out T>.mapTo(result: C, transform : (T) -> R) : C =
+        throw Exception("$result $transform")
+

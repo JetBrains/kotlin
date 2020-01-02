@@ -306,28 +306,33 @@ class ExpressionsConverter(
         }
 
         val operationToken = operationTokenName.getOperationSymbol()
-        if (operationToken == EXCLEXCL) {
-            return argument.bangBangToWhen(null) { getAsFirExpression(this, it) }
-        }
-
         val conventionCallName = operationToken.toUnaryName()
-        return if (conventionCallName != null) {
-            if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
-                return generateIncrementOrDecrementBlock(
-                    null,
-                    argument,
-                    callName = conventionCallName,
-                    prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
-                ) { getAsFirExpression(this) }
+        return when {
+            operationToken == EXCLEXCL -> {
+                FirCheckNotNullCallImpl(null).apply {
+                    arguments += getAsFirExpression<FirExpression>(argument, "No operand")
+                }
+
             }
-            FirFunctionCallImpl(null).apply {
-                calleeReference = FirSimpleNamedReference(null, conventionCallName, null)
-                explicitReceiver = getAsFirExpression(argument, "No operand")
+            conventionCallName != null -> {
+                if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
+                    return generateIncrementOrDecrementBlock(
+                        null,
+                        argument,
+                        callName = conventionCallName,
+                        prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
+                    ) { getAsFirExpression(this) }
+                }
+                FirFunctionCallImpl(null).apply {
+                    calleeReference = FirSimpleNamedReference(null, conventionCallName, null)
+                    explicitReceiver = getAsFirExpression(argument, "No operand")
+                }
             }
-        } else {
-            val firOperation = operationToken.toFirOperation()
-            FirOperatorCallImpl(null, firOperation).apply {
-                arguments += getAsFirExpression<FirExpression>(argument, "No operand")
+            else -> {
+                val firOperation = operationToken.toFirOperation()
+                FirOperatorCallImpl(null, firOperation).apply {
+                    arguments += getAsFirExpression<FirExpression>(argument, "No operand")
+                }
             }
         }
     }
@@ -435,17 +440,29 @@ class ExpressionsConverter(
         val valueArguments = mutableListOf<LighterASTNode>()
         var additionalArgument: FirExpression? = null
         var hasArguments = false
-        callSuffix.forEachChildren {
-            when (it.tokenType) {
-                REFERENCE_EXPRESSION -> name = it.asText
-                TYPE_ARGUMENT_LIST -> firTypeArguments += declarationsConverter.convertTypeArguments(it)
-                VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
-                    hasArguments = true
-                    valueArguments += it
+        callSuffix.forEachChildren { child ->
+            fun process(node: LighterASTNode) {
+                when (node.tokenType) {
+                    REFERENCE_EXPRESSION -> {
+                        name = node.asText
+                    }
+                    PARENTHESIZED -> node.getExpressionInParentheses()?.let { process(it) } ?: run {
+                        additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
+                    }
+                    TYPE_ARGUMENT_LIST -> {
+                        firTypeArguments += declarationsConverter.convertTypeArguments(node)
+                    }
+                    VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
+                        hasArguments = true
+                        valueArguments += node
+                    }
+                    else -> if (node.tokenType != TokenType.ERROR_ELEMENT) {
+                        additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
+                    }
                 }
-                else -> if (it.tokenType != TokenType.ERROR_ELEMENT) additionalArgument =
-                    getAsFirExpression(it, "Incorrect invoke receiver")
             }
+
+            process(child)
         }
 
         val (calleeReference, explicitReceiver) = when {

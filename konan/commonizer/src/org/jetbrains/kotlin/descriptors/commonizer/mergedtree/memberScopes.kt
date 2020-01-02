@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
 import org.jetbrains.kotlin.descriptors.commonizer.fqNameWithTypeParameters
+import org.jetbrains.kotlin.descriptors.commonizer.isBlacklistedDarwinFunction
+import org.jetbrains.kotlin.descriptors.commonizer.isKniBridgeFunction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -19,7 +21,7 @@ internal fun MemberScope.collectMembers(vararg collectors: (DeclarationDescripto
     }
 
 @Suppress("FunctionName")
-internal inline fun <reified T : DeclarationDescriptor> Collector(
+private inline fun <reified T : DeclarationDescriptor> Collector(
     crossinline typedCollector: (T) -> Unit
 ): (DeclarationDescriptor) -> Boolean = { candidate ->
     if (candidate is T) {
@@ -30,10 +32,28 @@ internal inline fun <reified T : DeclarationDescriptor> Collector(
 }
 
 @Suppress("FunctionName")
-internal inline fun <reified T : CallableMemberDescriptor> CallableMemberCollector(
-    crossinline typedCollector: (T) -> Unit
-): (DeclarationDescriptor) -> Boolean = Collector<T> { candidate ->
+internal inline fun ClassCollector(
+    crossinline typedCollector: (ClassDescriptor) -> Unit
+): (DeclarationDescriptor) -> Boolean = Collector(typedCollector)
+
+@Suppress("FunctionName")
+internal inline fun TypeAliasCollector(
+    crossinline typedCollector: (TypeAliasDescriptor) -> Unit
+): (DeclarationDescriptor) -> Boolean = Collector(typedCollector)
+
+@Suppress("FunctionName")
+internal inline fun PropertyCollector(
+    crossinline typedCollector: (PropertyDescriptor) -> Unit
+): (DeclarationDescriptor) -> Boolean = Collector<PropertyDescriptor> { candidate ->
     if (candidate.kind.isReal) // omit fake overrides
+        typedCollector(candidate)
+}
+
+@Suppress("FunctionName")
+internal inline fun FunctionCollector(
+    crossinline typedCollector: (SimpleFunctionDescriptor) -> Unit
+): (DeclarationDescriptor) -> Boolean = Collector<SimpleFunctionDescriptor> { candidate ->
+    if (candidate.kind.isReal && !candidate.isKniBridgeFunction() && !candidate.isBlacklistedDarwinFunction())
         typedCollector(candidate)
 }
 

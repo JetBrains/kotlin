@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.util.IncorrectOperationException
@@ -21,12 +22,11 @@ import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.InvalidPathException
-import java.nio.file.Path
 import java.nio.file.Paths
 
 class KotlinAwareMoveFilesOrDirectoriesModel(
     val project: Project,
-    val elementsToMove: List<PsiElement>,
+    val elementsToMove: List<PsiFileSystemItem>,
     val targetDirectoryName: String,
     val updatePackageDirective: Boolean,
     val searchReferences: Boolean,

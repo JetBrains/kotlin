@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
@@ -44,29 +33,24 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
-fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
-    return when {
-        this is KtClassOrObject -> getSuperTypeList()
-        this is KtPrimaryConstructor -> getContainingClassOrObject().getSuperTypeList()
-        this is KtSecondaryConstructor -> getDelegationCall()
-        this is KtNamedFunction -> bodyExpression
-        else -> null
-    }
+fun KtNamedDeclaration.getDeclarationBody(): KtElement? = when (this) {
+    is KtClassOrObject -> getSuperTypeList()
+    is KtPrimaryConstructor -> getContainingClassOrObject().getSuperTypeList()
+    is KtSecondaryConstructor -> getDelegationCall()
+    is KtNamedFunction -> bodyExpression
+    else -> null
 }
 
 fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
     val primaryConstructor = (this as? KtClass)?.primaryConstructor
     val elementsToSearch = if (primaryConstructor != null) listOf(primaryConstructor, this) else listOf(this)
     return allUsages
-            .asSequence()
-            .filter {
-                val usage = (it as? JavaMethodKotlinUsageWithDelegate<*>)?.delegateUsage ?: it
-                usage is KotlinCallerUsage
-                || usage is DeferredJavaMethodKotlinCallerUsage
-                || usage is CallerUsageInfo
-                || (usage is OverriderUsageInfo && !usage.isOriginalOverrider)
-            }
-            .any { it.element in elementsToSearch }
+        .asSequence()
+        .filter {
+            val usage = (it as? JavaMethodKotlinUsageWithDelegate<*>)?.delegateUsage ?: it
+            usage is KotlinCallerUsage || usage is DeferredJavaMethodKotlinCallerUsage || usage is CallerUsageInfo || (usage is OverriderUsageInfo && !usage.isOriginalOverrider)
+        }
+        .any { it.element in elementsToSearch }
 }
 
 fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
@@ -78,8 +62,8 @@ fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
 }
 
 fun getCallableSubstitutor(
-        baseFunction: KotlinCallableDefinitionUsage<*>,
-        derivedCallable: KotlinCallableDefinitionUsage<*>
+    baseFunction: KotlinCallableDefinitionUsage<*>,
+    derivedCallable: KotlinCallableDefinitionUsage<*>
 ): TypeSubstitutor? {
     val currentBaseFunction = baseFunction.currentCallableDescriptor ?: return null
     val currentDerivedFunction = derivedCallable.currentCallableDescriptor ?: return null
@@ -88,21 +72,24 @@ fun getCallableSubstitutor(
 
 fun KotlinType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
     val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
-    val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION else IdeDescriptorRenderers.SOURCE_CODE
+    val renderer =
+        if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION else IdeDescriptorRenderers.SOURCE_CODE
     return renderer.renderType(newType)
 }
 
 // This method is used to create full copies of functions (including copies of all types)
 // It's needed to prevent accesses to PSI (e.g. using LazyJavaClassifierType properties) when Change signature invalidates it
 // See KotlinChangeSignatureTest.testSAMChangeMethodReturnType
-fun DeclarationDescriptor.createDeepCopy() = (this as? JavaMethodDescriptor)?.substitute(TypeSubstitutor.create(ForceTypeCopySubstitution)) ?: this
+fun DeclarationDescriptor.createDeepCopy() =
+    (this as? JavaMethodDescriptor)?.substitute(TypeSubstitutor.create(ForceTypeCopySubstitution)) ?: this
 
 private object ForceTypeCopySubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) =
-            with(key) {
-                if (isError) return@with asTypeProjection()
-                KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations, constructor, arguments, isMarkedNullable, memberScope).asTypeProjection()
-            }
+        with(key) {
+            if (isError) return@with asTypeProjection()
+            KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations, constructor, arguments, isMarkedNullable, memberScope)
+                .asTypeProjection()
+        }
 
     override fun isEmpty() = false
 }

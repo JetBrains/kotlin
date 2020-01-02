@@ -9,21 +9,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 
 fun ConeTypeContext.hasNullableSuperType(type: ConeKotlinType): Boolean {
     if (type is ConeClassLikeType) return false
@@ -45,17 +41,17 @@ class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSy
     ConeTypeVariable(typeParameterSymbol.name.identifier)
 
 class InferenceComponents(
-    val ctx: TypeSystemInferenceExtensionContextDelegate,
+    val ctx: ConeInferenceContext,
     val session: FirSession,
     val returnTypeCalculator: ReturnTypeCalculator,
     val scopeSession: ScopeSession
 ) {
-    private val approximator = object : AbstractTypeApproximator(ctx) {
+    val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {
             return ConeClassErrorType(message)
         }
     }
-    val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle(ctx)
+    val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle)
     private val injector = ConstraintInjector(incorporator, approximator, KotlinTypeRefiner.Default)
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)

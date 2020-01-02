@@ -90,7 +90,6 @@ val distLibraryProjects = listOfNotNull(
     ":js:js.engines",
     ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-source-sections-compiler-plugin",
-    ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-jvm",
@@ -149,6 +148,7 @@ dependencies {
     libraries(kotlinStdlib("jdk8"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         libraries(kotlinStdlib("js", "distLibrary"))
+        libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
 
     distLibraryProjects.forEach {

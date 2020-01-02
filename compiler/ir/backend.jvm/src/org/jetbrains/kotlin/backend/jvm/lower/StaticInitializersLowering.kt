@@ -5,72 +5,46 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.SetDeclarationsParentVisitor
 import org.jetbrains.kotlin.backend.common.lower.InitializersLoweringBase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.Name
 
-class StaticInitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context) {
+class StaticInitializersLowering(override val context: JvmBackendContext) : InitializersLoweringBase(context) {
     override fun lower(irClass: IrClass) {
-        val staticDeclarations = getDeclarationsWithStaticInitializers(irClass)
-        val staticInitializerStatements = staticDeclarations.mapNotNull { handleDeclaration(irClass, it) }
+        val staticInitializerStatements = extractInitializers(irClass) {
+            // JVM implementations are required to generate initializers for all static fields with ConstantValue,
+            // so don't add any to <clinit>.
+            (it is IrField && it.isStatic && it.constantValue(context) == null) || (it is IrAnonymousInitializer && it.isStatic)
+        }.toMutableList()
         if (staticInitializerStatements.isNotEmpty()) {
-            createStaticInitializationMethod(irClass, staticInitializerStatements)
-
-            val anonymousInitializers = staticDeclarations.filterTo(hashSetOf()) { it is IrAnonymousInitializer }
-            irClass.declarations.removeAll(anonymousInitializers)
+            staticInitializerStatements.sortBy {
+                when ((it as? IrSetField)?.symbol?.owner?.origin) {
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 1
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 2
+                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 3
+                    else -> 4
+                }
+            }
+            irClass.addFunction {
+                startOffset = irClass.startOffset
+                endOffset = irClass.endOffset
+                name = clinitName
+                // TODO: mark as synthesized
+                origin = JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
+                returnType = context.irBuiltIns.unitType
+            }.apply {
+                body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset, staticInitializerStatements).patchDeclarationParents(this)
+            }
         }
-    }
-
-    private fun getDeclarationsWithStaticInitializers(irClass: IrClass): List<IrDeclaration> =
-        // Hardcoded order of initializers
-        (irClass.declarations.filter { it is IrField && it.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY } +
-                irClass.declarations.filter { it is IrField && it.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES } +
-                irClass.declarations.filter { it is IrField && it.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE } +
-                irClass.declarations.filter {
-                    (it is IrField && it.isStatic && it.origin !in listOf(
-                        IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
-                        IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
-                        IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
-                    )) || (it is IrAnonymousInitializer && it.isStatic)
-                })
-
-    private fun createStaticInitializationMethod(irClass: IrClass, staticInitializerStatements: List<IrStatement>) {
-        // TODO: mark as synthesized
-        val staticInitializerDescriptor = WrappedSimpleFunctionDescriptor()
-        val staticInitializer = IrFunctionImpl(
-            irClass.startOffset,
-            irClass.endOffset,
-            JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER,
-            IrSimpleFunctionSymbolImpl(staticInitializerDescriptor),
-            clinitName,
-            Visibilities.PUBLIC,
-            Modality.FINAL,
-            returnType = context.irBuiltIns.unitType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false
-        ).apply {
-            staticInitializerDescriptor.bind(this)
-            body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
-                                   staticInitializerStatements.map { it.copy(irClass) })
-            accept(SetDeclarationsParentVisitor, this)
-            // Should come after SetDeclarationParentVisitor, because it sets staticInitializer's own parent to itself.
-            parent = irClass
-        }
-        irClass.declarations.add(staticInitializer)
     }
 
     companion object {

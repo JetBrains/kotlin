@@ -1,0 +1,19 @@
+FILE: tryWithLambdaInside.kt
+    public final fun foo(): R|kotlin/collections/List<kotlin/String>| {
+        ^foo R|kotlin/TODO|()
+    }
+    public final fun <T> ba(): R|kotlin/collections/List<T>| {
+        ^ba R|kotlin/TODO|()
+    }
+    public final fun bar(): R|kotlin/collections/List<kotlin/String>| {
+        ^bar try {
+            R|/foo|().R|kotlin/collections/filter|<R|kotlin/String|>(<L> = filter@fun <implicit>.<anonymous>(): <implicit> <kind=UNKNOWN>  {
+                >(it#.length#, IntegerLiteral(2))
+            }
+            )
+        }
+        finally {
+            R|/ba|<R|kotlin/Nothing|>()
+        }
+
+    }

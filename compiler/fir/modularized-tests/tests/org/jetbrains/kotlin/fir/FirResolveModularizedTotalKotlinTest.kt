@@ -8,15 +8,20 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -44,19 +49,27 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
 
-    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
+    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment, useLightTree: Boolean = false) {
         val project = environment.project
         val ktFiles = environment.getSourceFiles()
 
-        val scope = ProjectScope.getContentScope(project)
+
+        val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSession(environment, scope, librariesScope)
-        val builder = RawFirBuilder(session, stubMode = false)
-
+        val session = createSession(environment, scope, librariesScope, moduleData.qualifiedName)
         val totalTransformer = FirTotalResolveTransformer()
-        val firFiles = bench.buildFiles(builder, ktFiles)
 
-        println("Raw FIR up, files: ${firFiles.size}")
+        val firProvider = session.firProvider as FirProviderImpl
+        val firFiles = if (useLightTree) {
+            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, stubMode = false)
+            bench.buildFiles(lightTree2Fir, moduleData.sources.filter { it.extension == "kt" })
+        } else {
+            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+            bench.buildFiles(builder, ktFiles)
+        }
+
+        //println("Raw FIR up, files: ${firFiles.size}")
 
         bench.processFiles(firFiles, totalTransformer.transformers)
 
@@ -122,6 +135,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     override fun beforePass() {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
+        System.gc()
     }
 
     override fun afterPass(pass: Int) {

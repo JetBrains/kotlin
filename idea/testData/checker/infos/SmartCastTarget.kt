@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 // See KT-15901
 
 <info>enum</info> class En { A }

@@ -1,4 +1,8 @@
 // FILE: test/CallableDescriptor.java
+
+// IGNORE_BACKEND: JVM_IR
+// See KT-35656, here JMV_IR correctly generates a nullability assertion for an argument of 'Iterable<T>.contains(T)'.
+
 package test;
 
 import org.jetbrains.annotations.NotNull;

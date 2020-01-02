@@ -54,8 +54,7 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
             for ((extraPsiFile, extraFile) in extraFilesToPsi) {
                 KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
             }
-        }
-        catch(e: Exception) {
+        } catch (e: Exception) {
             val message = when (e) {
                 is BaseRefactoringProcessor.ConflictsInTestsException -> e.messages.sorted().joinToString("\n")
                 is CommonRefactoringUtil.RefactoringErrorHintException -> e.message!!
@@ -69,8 +68,10 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
 internal fun markMembersInfo(file: PsiFile) {
     for ((element, info) in file.findElementsByCommentPrefix("// INFO: ")) {
         val parsedInfo = JsonParser().parse(info).asJsonObject
-        element.elementInfo = ElementInfo(parsedInfo["checked"]?.asBoolean ?: false,
-                                          parsedInfo["toAbstract"]?.asBoolean ?: false)
+        element.elementInfo = ElementInfo(
+            parsedInfo["checked"]?.asBoolean ?: false,
+            parsedInfo["toAbstract"]?.asBoolean ?: false
+        )
     }
 }
 

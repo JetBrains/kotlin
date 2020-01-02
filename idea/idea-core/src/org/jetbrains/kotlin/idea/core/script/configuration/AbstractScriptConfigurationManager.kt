@@ -24,6 +24,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationState
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
@@ -130,13 +131,8 @@ internal abstract class AbstractScriptConfigurationManager(
             return reloadIfOutOfDate(files, false)
         }
 
-        override fun forceConfigurationReload(file: KtFile) {
-            val virtualFile = file.originalFile.virtualFile ?: return
-            cache.markOutOfDate(virtualFile)
-
-            rootsIndexer.transaction {
-                reloadOutOfDateConfiguration(file, loadEvenWillNotBeApplied = true)
-            }
+        override fun postponeConfigurationReload(scope: ScriptConfigurationCacheScope) {
+            cache.markOutOfDate(scope)
         }
     }
 
@@ -226,12 +222,18 @@ internal abstract class AbstractScriptConfigurationManager(
     override fun clearConfigurationCachesAndRehighlight() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
+        // todo: cache.clear()
         clearClassRootsCaches()
 
         if (project.isOpen) {
             val openedScripts = FileEditorManager.getInstance(project).openFiles.filterNot { it.isNonScript() }
             updateHighlighting(openedScripts)
         }
+    }
+
+    @TestOnly
+    internal fun clearCaches() {
+        cache.clear()
     }
 
     private fun updateHighlighting(files: List<VirtualFile>) {

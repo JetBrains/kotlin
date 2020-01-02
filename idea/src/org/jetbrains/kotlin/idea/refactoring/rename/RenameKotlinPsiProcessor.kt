@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.rename
@@ -58,12 +47,12 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
         ref: PsiReference,
         referenceElement: PsiElement
     ) : MoveRenameUsageInfo(
-            referenceElement,
-            ref,
-            ref.getRangeInElement().getStartOffset(),
-            ref.getRangeInElement().getEndOffset(),
-            element,
-            false
+        referenceElement,
+        ref,
+        ref.getRangeInElement().getStartOffset(),
+        ref.getRangeInElement().getEndOffset(),
+        element,
+        false
     )
 
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
@@ -77,9 +66,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
             kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
         )
         val references = ReferencesSearch.search(searchParameters).toMutableList()
-        if (element is KtNamedFunction
-            || (element is KtProperty && !element.isLocal)
-            || (element is KtParameter && element.hasValOrVar())) {
+        if (element is KtNamedFunction || (element is KtProperty && !element.isLocal) || (element is KtParameter && element.hasValOrVar())) {
             element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
         }
         return references
@@ -91,10 +78,10 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
             if (targetElement is KtLightMethod && targetElement.isMangled) {
                 KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix(targetElement.name)?.let {
                     return MangledJavaRefUsageInfo(
-                            it,
-                            element,
-                            ref,
-                            referenceElement
+                        it,
+                        element,
+                        ref,
+                        referenceElement
                     )
                 }
             }
@@ -140,12 +127,14 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     protected fun UsageInfo.isAmbiguousImportUsage(): Boolean {
         val ref = reference as? PsiPolyVariantReference ?: return false
         val refElement = ref.element
-        return refElement.parents.any { (it is KtImportDirective && !it.isAllUnder) || (it is PsiImportStaticStatement && !it.isOnDemand) }
-               && ref.multiResolve(false).mapNotNullTo(HashSet()) { it.element?.unwrapped }.size > 1
+        return refElement.parents
+            .any { (it is KtImportDirective && !it.isAllUnder) || (it is PsiImportStaticStatement && !it.isOnDemand) } && ref.multiResolve(
+            false
+        ).mapNotNullTo(HashSet()) { it.element?.unwrapped }.size > 1
     }
 
     protected fun renameMangledUsageIfPossible(usage: UsageInfo, element: PsiElement, newName: String): Boolean {
-        val chosenName = if (usage is MangledJavaRefUsageInfo) {
+        val chosenName = (if (usage is MangledJavaRefUsageInfo) {
             KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, usage.manglingSuffix)
         } else {
             val reference = usage.reference
@@ -154,8 +143,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
                     KotlinTypeMapper.InternalNameMapper.demangleInternalName(newName)
                 } else null
             } else null
-        }
-        if (chosenName == null) return false
+        }) ?: return false
         usage.reference?.handleElementRename(chosenName)
         return true
     }
@@ -183,13 +171,12 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
                     if (!renameMangledUsageIfPossible(it, element, newName)) {
                         ref.handleElementRename(newName)
                     }
-                }
-                else {
+                } else {
                     ref.element.getStrictParentOfType<KtImportDirective>()?.let { importDirective ->
                         val fqName = importDirective.importedFqName!!
                         val newFqName = fqName.parent().child(Name.identifier(newName))
                         val importList = importDirective.parent as KtImportList
-                        if (importList.imports.none { it.importedFqName == newFqName }) {
+                        if (importList.imports.none { directive -> directive.importedFqName == newFqName }) {
                             val newImportDirective = KtPsiFactory(element).createImportDirective(ImportPath(newFqName, false))
                             importDirective.parent.addAfter(newImportDirective, importDirective)
                         }

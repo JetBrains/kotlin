@@ -71,7 +71,7 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
             }
             result.add(
                 AddAnnotationFix(
-                    containingDeclaration, ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME, suffix, annotationFqName
+                    containingDeclaration, ExperimentalUsageChecker.OPT_IN_FQ_NAME, suffix, annotationFqName
                 )
             )
         }
@@ -84,7 +84,7 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
                 } else {
                     result.add(
                         AddAnnotationFix(
-                            containingClassOrObject, ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME, suffix, annotationFqName
+                            containingClassOrObject, ExperimentalUsageChecker.OPT_IN_FQ_NAME, suffix, annotationFqName
                         )
                     )
                 }

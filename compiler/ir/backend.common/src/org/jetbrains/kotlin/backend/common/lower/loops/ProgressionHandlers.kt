@@ -132,9 +132,9 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
             var additionalVariables = emptyList<IrVariable>()
             if (untilArg.canHaveSideEffects) {
                 if (receiverValue.canHaveSideEffects) {
-                    receiverValueVar = scope.createTemporaryVariable(receiverValue, nameHint = "untilReceiverValue")
+                    receiverValueVar = scope.createTmpVariable(receiverValue, nameHint = "untilReceiverValue")
                 }
-                untilArgVar = scope.createTemporaryVariable(untilArgCasted, nameHint = "untilArg")
+                untilArgVar = scope.createTmpVariable(untilArgCasted, nameHint = "untilArg")
                 additionalVariables = listOfNotNull(receiverValueVar, untilArgVar)
             }
 
@@ -512,16 +512,25 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
 internal class CollectionIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
 
     override val matcher = SimpleCalleeMatcher {
-        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() || isCollection() } }
+        extensionReceiver { it?.type?.isCollection() == true }
         fqName { it == FqName("kotlin.collections.<get-indices>") }
         parameterCount { it == 0 }
     }
 
-    // The lowering operates on subtypes of Collection. Therefore, the IrType could be
-    // a type parameter bounded by Collection. When that is the case, we cannot get
-    // the class from the type and instead uses the Collection getter.
-    override val IrType.sizePropertyGetter
-        get() = getClass()?.getPropertyGetter("size")?.owner ?: context.ir.symbols.collection.getPropertyGetter("size")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.collection.getPropertyGetter("size")!!.owner
+}
+
+internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+
+    override val matcher = SimpleCalleeMatcher {
+        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() } }
+        fqName { it == FqName("kotlin.collections.<get-indices>") }
+        parameterCount { it == 0 }
+    }
+
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = getClass()!!.getPropertyGetter("size")!!.owner
 }
 
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
@@ -532,11 +541,8 @@ internal class CharSequenceIndicesHandler(context: CommonBackendContext) : Indic
         parameterCount { it == 0 }
     }
 
-    // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be
-    // a type parameter bounded by CharSequence. When that is the case, we cannot get
-    // the class from the type and instead uses the CharSequence getter.
-    override val IrType.sizePropertyGetter
-        get() = getClass()?.getPropertyGetter("length")?.owner ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
 }
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
@@ -572,7 +578,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
-            val progression = scope.createTemporaryVariable(expression, nameHint = "progression")
+            val progression = scope.createTmpVariable(expression, nameHint = "progression")
             val progressionClass = progression.type.getClass()!!
             val first = irCall(progressionClass.symbol.getPropertyGetter("first")!!).apply {
                 dispatchReceiver = irGet(progression)
@@ -616,7 +622,7 @@ internal abstract class IndexedGetIterationHandler(
             //
             // This also ensures that the semantics of re-assignment of array variables used in the loop is consistent with the semantics
             // proposed in https://youtrack.jetbrains.com/issue/KT-21354.
-            val objectVariable = scope.createTemporaryVariable(
+            val objectVariable = scope.createTmpVariable(
                 expression, nameHint = "indexedObject"
             )
 
@@ -673,18 +679,11 @@ internal open class CharSequenceIterationHandler(context: CommonBackendContext, 
         parameterCount { it == 0 }
     }
 
-    // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be
-    // a type parameter bounded by CharSequence. When that is the case, we cannot get
-    // the class from the type and instead uses the CharSequence getter and function.
-    override val IrType.sizePropertyGetter
-        get() = getClass()?.getPropertyGetter("length")?.owner ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
 
-    override val IrType.getFunction
-        get() = getClass()?.functions?.single {
-            it.name == OperatorNameConventions.GET &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
-        } ?: context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+    override val IrType.getFunction: IrSimpleFunction
+        get() = context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
 
 /**
@@ -694,6 +693,12 @@ internal open class CharSequenceIterationHandler(context: CommonBackendContext, 
  */
 internal class StringIterationHandler(context: CommonBackendContext) : CharSequenceIterationHandler(context, canCacheLast = true) {
     override fun matchIterable(expression: IrExpression) = expression.type.isString()
+
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.ir.symbols.string.getPropertyGetter("length")!!.owner
+
+    override val IrType.getFunction: IrSimpleFunction
+        get() = context.ir.symbols.string.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
 
 /** Builds a [HeaderInfo] for calls to `withIndex()`. */
@@ -731,23 +736,20 @@ internal class WithIndexHandler(context: CommonBackendContext, private val visit
     }
 }
 
-/** Builds a [HeaderInfo] for iterables not handled by more specialized handlers. */
-internal class DefaultIterableHandler(private val context: CommonBackendContext) : ExpressionHandler {
+/** Builds a [HeaderInfo] for Iterables not handled by more specialized handlers. */
+internal open class DefaultIterableHandler(private val context: CommonBackendContext) : ExpressionHandler {
 
-    override fun matchIterable(expression: IrExpression) = true
+    protected open val iterableClassSymbol = context.ir.symbols.iterable
+
+    override fun matchIterable(expression: IrExpression) = expression.type.isSubtypeOfClass(iterableClassSymbol)
 
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            val iterableClass = expression.type.getClass()!!
-            val iterator =
-                irCall(iterableClass.functions.single {
-                    it.name == OperatorNameConventions.ITERATOR &&
-                            it.valueParameters.isEmpty()
-                }).apply {
-                    dispatchReceiver = expression
-                }
+            val iteratorFun = iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(
-                scope.createTemporaryVariable(iterator, nameHint = "iterator")
+                scope.createTmpVariable(irCall(iteratorFun).apply { dispatchReceiver = expression }, nameHint = "iterator")
             )
         }
 }
+
+// TODO: Handle Sequences by extending DefaultIterableHandler.

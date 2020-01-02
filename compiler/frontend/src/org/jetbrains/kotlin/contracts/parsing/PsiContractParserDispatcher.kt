@@ -133,9 +133,18 @@ internal class PsiContractParserDispatcher(
             return null
         }
 
-        if (descriptor is ReceiverParameterDescriptor && descriptor.type.constructor.declarationDescriptor?.isFromContractDsl() == true) {
-            collector.badDescription("only references to parameters are allowed. Did you miss label on <this>?", expression)
-            return null
+        if (descriptor is ReceiverParameterDescriptor) {
+            if (descriptor.type.constructor.declarationDescriptor?.isFromContractDsl() == true) {
+                collector.badDescription("only references to parameters are allowed. Did you miss label on <this>?", expression)
+                return null
+            }
+            val directReceiver = callContext.functionDescriptor.let {
+                it.extensionReceiverParameter ?: it.dispatchReceiverParameter
+            }
+            if (descriptor != directReceiver) {
+                collector.badDescription("only references to direct <this> are allowed", expression)
+                return null
+            }
         }
 
         return if (KotlinBuiltIns.isBoolean(descriptor.type))

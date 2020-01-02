@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
@@ -38,8 +27,9 @@ import java.util.*
  * Special <code>Expression</code> for parameter names based on its type.
  */
 internal class ParameterNameExpression(
-        private val names: Array<String>,
-        private val parameterTypeToNamesMap: Map<String, Array<String>>) : Expression() {
+    private val names: Array<String>,
+    private val parameterTypeToNamesMap: Map<String, Array<String>>
+) : Expression() {
     init {
         assert(names.all(String::isNotEmpty))
     }
@@ -103,19 +93,18 @@ internal class ParameterNameExpression(
 internal abstract class TypeExpression(val typeCandidates: List<TypeCandidate>) : Expression() {
     class ForTypeReference(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
-                typeCandidates.map { LookupElementBuilder.create(it, it.renderedTypes.first()) }.toTypedArray()
+            typeCandidates.map { LookupElementBuilder.create(it, it.renderedTypes.first()) }.toTypedArray()
     }
 
     class ForDelegationSpecifier(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
-        override val cachedLookupElements: Array<LookupElement> =
-                typeCandidates.map {
-                    val types = it.theType.decomposeIntersection()
-                    val text = (types zip it.renderedTypes).joinToString { (type, renderedType) ->
-                        val descriptor = type.constructor.declarationDescriptor as ClassDescriptor
-                        renderedType + if (descriptor.kind == ClassKind.INTERFACE) "" else "()"
-                    }
-                    LookupElementBuilder.create(it, text)
-                }.toTypedArray()
+        override val cachedLookupElements: Array<LookupElement> = typeCandidates.map {
+            val types = it.theType.decomposeIntersection()
+            val text = (types zip it.renderedTypes).joinToString { (type, renderedType) ->
+                val descriptor = type.constructor.declarationDescriptor as ClassDescriptor
+                renderedType + if (descriptor.kind == ClassKind.INTERFACE) "" else "()"
+            }
+            LookupElementBuilder.create(it, text)
+        }.toTypedArray()
     }
 
     protected abstract val cachedLookupElements: Array<LookupElement>
@@ -133,9 +122,11 @@ internal abstract class TypeExpression(val typeCandidates: List<TypeCandidate>) 
 /**
  * A sort-of dummy <code>Expression</code> for parameter lists, to allow us to update the parameter list as the user makes selections.
  */
-internal class TypeParameterListExpression(private val mandatoryTypeParameters: List<RenderedTypeParameter>,
-                                          private val parameterTypeToTypeParameterNamesMap: Map<String, List<RenderedTypeParameter>>,
-                                          insertLeadingSpace: Boolean) : Expression() {
+internal class TypeParameterListExpression(
+    private val mandatoryTypeParameters: List<RenderedTypeParameter>,
+    private val parameterTypeToTypeParameterNamesMap: Map<String, List<RenderedTypeParameter>>,
+    insertLeadingSpace: Boolean
+) : Expression() {
     private val prefix = if (insertLeadingSpace) " <" else "<"
 
     var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
@@ -176,7 +167,7 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
         currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
 
         return TextResult(
-                if (sortedRenderedTypeParameters.isEmpty()) "" else sortedRenderedTypeParameters.joinToString(", ", prefix, ">") { it.text }
+            if (sortedRenderedTypeParameters.isEmpty()) "" else sortedRenderedTypeParameters.joinToString(", ", prefix, ">") { it.text }
         )
     }
 

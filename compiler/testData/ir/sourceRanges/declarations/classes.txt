@@ -5,7 +5,7 @@
       @0:0..11 BLOCK_BODY
         @0:0..11 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @0:0..11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    @0:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @0:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @0:0..11 VALUE_PARAMETER name:<this> type:kotlin.Any
       @0:0..11 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @0:0..11 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -18,7 +18,7 @@
       @3:0..4:11 BLOCK_BODY
         @3:0..4:11 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @3:0..4:11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:internal superTypes:[kotlin.Any]'
-    @4:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @4:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @3:0..4:11 VALUE_PARAMETER name:<this> type:kotlin.Any
       @4:0..11 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @4:0..11 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -31,7 +31,7 @@
       @10:0..11 BLOCK_BODY
         @10:0..11 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @10:0..11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    @10:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @10:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @10:0..11 VALUE_PARAMETER name:<this> type:kotlin.Any
       @10:0..11 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @10:0..11 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -44,7 +44,7 @@
       @13:0..14:11 BLOCK_BODY
         @13:0..14:11 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @13:0..14:11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    @14:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @14:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @13:0..14:11 VALUE_PARAMETER name:<this> type:kotlin.Any
       @14:0..11 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @14:0..11 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -63,10 +63,10 @@
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test5>
     @18:0..11 FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test5>) returnType:java.lang.Class<<root>.Test5?>? [fake_override]
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test5>
-    @18:0..11 FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test5>, other:<root>.Test5) returnType:kotlin.Int [fake_override]
+    @18:0..11 FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test5>, other:<root>.Test5) returnType:kotlin.Int [fake_override,operator]
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test5>
       @18:0..11 VALUE_PARAMETER name:other index:0 type:<root>.Test5
-    @18:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test5>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @18:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test5>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test5>
       @18:0..11 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @18:0..11 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test5>) returnType:kotlin.Int [fake_override]
@@ -87,7 +87,7 @@
   @21:0..22:11 CLASS ANNOTATION_CLASS name:Test6 modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     @21:0..22:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test6
     @22:0..11 CONSTRUCTOR visibility:public <> () returnType:<root>.Test6 [primary]
-    @22:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    @22:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @21:0..22:11 VALUE_PARAMETER name:<this> type:kotlin.Any
       @22:0..11 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     @22:0..11 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

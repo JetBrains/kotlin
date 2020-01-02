@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -19,10 +18,8 @@ import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructClassType
@@ -36,7 +33,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -277,7 +275,7 @@ private fun JavaAnnotationArgument.toFirExpression(
 }
 
 // TODO: use kind here
-private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED_PARAMETER") kind: IrConstKind<T>): FirArrayOfCall {
+private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED_PARAMETER") kind: FirConstKind<T>): FirArrayOfCall {
     return FirArrayOfCallImpl(null).apply {
         for (element in this@createArrayOfCall) {
             arguments += element.createConstant(session)
@@ -287,24 +285,24 @@ private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED
 
 internal fun Any?.createConstant(session: FirSession): FirExpression {
     return when (this) {
-        is Byte -> FirConstExpressionImpl(null, IrConstKind.Byte, this)
-        is Short -> FirConstExpressionImpl(null, IrConstKind.Short, this)
-        is Int -> FirConstExpressionImpl(null, IrConstKind.Int, this)
-        is Long -> FirConstExpressionImpl(null, IrConstKind.Long, this)
-        is Char -> FirConstExpressionImpl(null, IrConstKind.Char, this)
-        is Float -> FirConstExpressionImpl(null, IrConstKind.Float, this)
-        is Double -> FirConstExpressionImpl(null, IrConstKind.Double, this)
-        is Boolean -> FirConstExpressionImpl(null, IrConstKind.Boolean, this)
-        is String -> FirConstExpressionImpl(null, IrConstKind.String, this)
-        is ByteArray -> toList().createArrayOfCall(session, IrConstKind.Byte)
-        is ShortArray -> toList().createArrayOfCall(session, IrConstKind.Short)
-        is IntArray -> toList().createArrayOfCall(session, IrConstKind.Int)
-        is LongArray -> toList().createArrayOfCall(session, IrConstKind.Long)
-        is CharArray -> toList().createArrayOfCall(session, IrConstKind.Char)
-        is FloatArray -> toList().createArrayOfCall(session, IrConstKind.Float)
-        is DoubleArray -> toList().createArrayOfCall(session, IrConstKind.Double)
-        is BooleanArray -> toList().createArrayOfCall(session, IrConstKind.Boolean)
-        null -> FirConstExpressionImpl(null, IrConstKind.Null, null)
+        is Byte -> FirConstExpressionImpl(null, FirConstKind.Byte, this)
+        is Short -> FirConstExpressionImpl(null, FirConstKind.Short, this)
+        is Int -> FirConstExpressionImpl(null, FirConstKind.Int, this)
+        is Long -> FirConstExpressionImpl(null, FirConstKind.Long, this)
+        is Char -> FirConstExpressionImpl(null, FirConstKind.Char, this)
+        is Float -> FirConstExpressionImpl(null, FirConstKind.Float, this)
+        is Double -> FirConstExpressionImpl(null, FirConstKind.Double, this)
+        is Boolean -> FirConstExpressionImpl(null, FirConstKind.Boolean, this)
+        is String -> FirConstExpressionImpl(null, FirConstKind.String, this)
+        is ByteArray -> toList().createArrayOfCall(session, FirConstKind.Byte)
+        is ShortArray -> toList().createArrayOfCall(session, FirConstKind.Short)
+        is IntArray -> toList().createArrayOfCall(session, FirConstKind.Int)
+        is LongArray -> toList().createArrayOfCall(session, FirConstKind.Long)
+        is CharArray -> toList().createArrayOfCall(session, FirConstKind.Char)
+        is FloatArray -> toList().createArrayOfCall(session, FirConstKind.Float)
+        is DoubleArray -> toList().createArrayOfCall(session, FirConstKind.Double)
+        is BooleanArray -> toList().createArrayOfCall(session, FirConstKind.Boolean)
+        null -> FirConstExpressionImpl(null, FirConstKind.Null, null)
 
         else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java))
     }
@@ -318,92 +316,4 @@ private fun JavaType.toFirResolvedTypeRef(
         source = null, type = ConeClassErrorType("Unexpected JavaType: $this")
     )
 }
-
-internal fun FirFunction<*>.computeJvmDescriptor(): String = buildString {
-    if (this@computeJvmDescriptor is FirJavaMethod) {
-        append(name.asString())
-    } else {
-        append("<init>")
-    }
-
-    append("(")
-    for (parameter in valueParameters) {
-        appendErasedType(parameter.returnTypeRef)
-    }
-    append(")")
-
-    if (this@computeJvmDescriptor !is FirJavaMethod || (returnTypeRef as FirJavaTypeRef).isVoid()) {
-        append("V")
-    } else {
-        appendErasedType(returnTypeRef)
-    }
-}
-
-// TODO: primitive types, arrays, etc.
-private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
-    fun appendClass(klass: JavaClass) {
-        klass.fqName?.let {
-            append("L")
-            append(it.asString().replace(".", "/"))
-        }
-    }
-
-    when (typeRef) {
-        is FirResolvedTypeRef -> appendConeType(typeRef.type)
-        is FirJavaTypeRef -> {
-            when (val javaType = typeRef.type) {
-                is JavaClassifierType -> {
-                    when (val classifier = javaType.classifier) {
-                        is JavaClass -> appendClass(classifier)
-                        is JavaTypeParameter -> {
-                            val representative = classifier.upperBounds.firstOrNull { it.classifier is JavaClass }
-                            if (representative == null) {
-                                append("Ljava/lang/Object")
-                            } else {
-                                appendClass(representative.classifier as JavaClass)
-                            }
-                        }
-                        else -> return
-                    }
-                    append(";")
-                }
-            }
-        }
-    }
-}
-
-private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
-    fun appendClassLikeType(type: ConeClassLikeType) {
-        append("L")
-        val classId = type.lookupTag.classId
-        append(classId.packageFqName.asString().replace(".", "/"))
-        append("/")
-        append(classId.relativeClassName)
-    }
-
-    if (coneType is ConeClassErrorType) return
-    when (coneType) {
-        is ConeClassLikeType -> {
-            appendClassLikeType(coneType)
-        }
-        is ConeTypeParameterType -> {
-            val representative = coneType.lookupTag.typeParameterSymbol.fir.bounds.firstOrNull {
-                (it as? FirResolvedTypeRef)?.type is ConeClassLikeType
-            }
-            if (representative == null) {
-                append("Ljava/lang/Object")
-            } else {
-                appendClassLikeType(representative.coneTypeUnsafe())
-            }
-            append(coneType.lookupTag.name)
-        }
-    }
-    append(";")
-}
-
-private fun FirJavaTypeRef.isVoid(): Boolean {
-    return type is JavaPrimitiveType && type.type == null
-}
-
-
 

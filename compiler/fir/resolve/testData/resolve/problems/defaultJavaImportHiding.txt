@@ -1,0 +1,36 @@
+FILE: LinkedList.kt
+    public final class LinkedList<T> : R|class error: Symbol not found, for `java.util.LinkedList<R|T|>`| {
+        public constructor<T>(): R|foo/LinkedList<T>| {
+            super<R|class error: Symbol not found, for `java.util.LinkedList<R|T|>`|>()
+        }
+
+    }
+FILE: HashSet.kt
+    public final class HashSet<T> : R|java/util/HashSet<T>| {
+        public constructor<T>(): R|util/HashSet<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: main.kt
+    public final class LinkedHashMap<K, V> : R|class error: Symbol not found, for `java.util.LinkedHashMap<R|K|, R|V|>`| {
+        public constructor<K, V>(): R|foo/LinkedHashMap<K, V>| {
+            super<R|class error: Symbol not found, for `java.util.LinkedHashMap<R|K|, R|V|>`|>()
+        }
+
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval map: <ERROR TYPE REF: Ambiguity: HashMap, [util/HashMap.HashMap, java/util/HashMap.HashMap]> = <Ambiguity: HashMap, [util/HashMap.HashMap, java/util/HashMap.HashMap]>#<R|kotlin/Int|, R|kotlin/Int|>()
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval set: <ERROR TYPE REF: Ambiguity: HashSet, [util/HashSet.HashSet, java/util/HashSet.HashSet]> = <Ambiguity: HashSet, [util/HashSet.HashSet, java/util/HashSet.HashSet]>#<R|kotlin/Int|>()
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval list: <ERROR TYPE REF: Ambiguity: ArrayList, [foo/ArrayList.ArrayList, java/util/ArrayList.ArrayList]> = <Ambiguity: ArrayList, [foo/ArrayList.ArrayList, java/util/ArrayList.ArrayList]>#<R|kotlin/Int|>()
+    }
+    public final fun test_4(): R|kotlin/Unit| {
+        lval list: R|foo/LinkedList<kotlin/Int>| = R|foo/LinkedList.LinkedList|<R|kotlin/Int|>()
+    }
+    public final fun test_5(): R|kotlin/Unit| {
+        lval map: R|foo/LinkedHashMap<kotlin/Int, kotlin/Int>| = R|foo/LinkedHashMap.LinkedHashMap|<R|kotlin/Int|, R|kotlin/Int|>()
+    }

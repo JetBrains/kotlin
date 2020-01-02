@@ -114,6 +114,15 @@ enum class LanguageFeature(
     TrailingCommas(KOTLIN_1_4),
     ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_4, kind = BUG_FIX),
+    ProhibitProtectedCallFromInline(KOTLIN_1_4, kind = BUG_FIX),
+    ProperFinally(KOTLIN_1_4, kind = BUG_FIX),
+    ProhibitVarargAsArrayAfterSamArgument(KOTLIN_1_4, kind = BUG_FIX),
+    AllowAssigningArrayElementsToVarargsInNamedFormForFunctions(KOTLIN_1_4),
+    AllowNullOperatorsForResult(KOTLIN_1_4),
+    AllowResultInReturnType(KOTLIN_1_4),
+    PreferJavaFieldOverload(KOTLIN_1_4),
+    AllowContractsForNonOverridableMembers(KOTLIN_1_4),
+    AllowReifiedGenericsInContracts(KOTLIN_1_4),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379

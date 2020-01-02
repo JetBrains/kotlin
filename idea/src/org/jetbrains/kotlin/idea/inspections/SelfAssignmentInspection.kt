@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,15 +42,20 @@ class SelfAssignmentInspection : AbstractKotlinInspection(), CleanupLocalInspect
                 if (rightCallee.accessors.any { !it.isDefault }) return
             }
 
-            if (left.receiverDeclarationDescriptor(leftResolvedCall, context) !=
-                right.receiverDeclarationDescriptor(rightResolvedCall, context)) {
+            if (left.receiverDeclarationDescriptor(leftResolvedCall, context) != right.receiverDeclarationDescriptor(
+                    rightResolvedCall,
+                    context
+                )
+            ) {
                 return
             }
 
-            holder.registerProblem(right,
-                                   "Variable '${rightCallee.name}' is assigned to itself",
-                                   ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                   RemoveSelfAssignmentFix())
+            holder.registerProblem(
+                right,
+                "Variable '${rightCallee.name}' is assigned to itself",
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                RemoveSelfAssignmentFix()
+            )
         })
     }
 
@@ -71,7 +76,7 @@ class SelfAssignmentInspection : AbstractKotlinInspection(), CleanupLocalInspect
         if (thisExpression != null) {
             return thisExpression.getResolvedCall(context)?.resultingDescriptor?.containingDeclaration
         }
-        val implicitReceiver = with (resolvedCall) { dispatchReceiver ?: extensionReceiver } as? ImplicitReceiver
+        val implicitReceiver = with(resolvedCall) { dispatchReceiver ?: extensionReceiver } as? ImplicitReceiver
         return implicitReceiver?.declarationDescriptor
     }
 }

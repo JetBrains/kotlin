@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -105,8 +104,7 @@ open class GenericReplCompiler(
             KotlinCodegenFacade.generatePackage(
                 generationState,
                 psiFile.script!!.containingKtFile.packageFqName,
-                setOf(psiFile.script!!.containingKtFile),
-                CompilationErrorHandler.THROW_EXCEPTION
+                setOf(psiFile.script!!.containingKtFile)
             )
 
             compilerState.history.push(LineId(codeLine), scriptDescriptor)

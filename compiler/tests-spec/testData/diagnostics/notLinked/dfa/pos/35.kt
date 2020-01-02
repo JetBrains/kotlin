@@ -39,7 +39,7 @@ fun case_2(x: Any?) {
 /*
  * TESTCASE NUMBER: 3
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-30756
+ * ISSUES: KT-30756, KT-35668
  */
 fun case_3(x: Any?) {
     while (true) {

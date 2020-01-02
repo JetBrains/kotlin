@@ -25,38 +25,21 @@ import org.jetbrains.kotlin.psi.KtFile;
 import java.util.Collection;
 
 public class KotlinCodegenFacade {
-
-    public static void compileCorrectFiles(
-            @NotNull GenerationState state,
-            @NotNull CompilationErrorHandler errorHandler
-    ) {
+    public static void compileCorrectFiles(@NotNull GenerationState state) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         state.beforeCompile();
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        doGenerateFiles(state.getFiles(), state, errorHandler);
-    }
-
-    public static void doGenerateFiles(
-            @NotNull Collection<KtFile> files,
-            @NotNull GenerationState state,
-            @NotNull CompilationErrorHandler errorHandler
-    ) {
-        state.getCodegenFactory().generateModule(state, files, errorHandler);
+        state.getCodegenFactory().generateModule(state, state.getFiles());
 
         CodegenFactory.Companion.doCheckCancelled(state);
         state.getFactory().done();
     }
 
-    public static void generatePackage(
-            @NotNull GenerationState state,
-            @NotNull FqName packageFqName,
-            @NotNull Collection<KtFile> jetFiles,
-            @NotNull CompilationErrorHandler errorHandler
-    ) {
-        DefaultCodegenFactory.INSTANCE.generatePackage(state, packageFqName, jetFiles, errorHandler);
+    public static void generatePackage(@NotNull GenerationState state, @NotNull FqName packageFqName, @NotNull Collection<KtFile> files) {
+        DefaultCodegenFactory.INSTANCE.generatePackage(state, packageFqName, files);
     }
 
     private KotlinCodegenFacade() {}

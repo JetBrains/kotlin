@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,22 +29,26 @@ class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin
         }
     }
 
-    override fun createConfigurables(category: DebuggerSettingsCategory): Collection<Configurable?> {
-        return when (category) {
-            DebuggerSettingsCategory.STEPPING ->
-                listOf(SimpleConfigurable.create(
-                        "reference.idesettings.debugger.kotlin.stepping",
-                        "Kotlin",
-                        KotlinSteppingConfigurableUi::class.java,
-                        this))
-            DebuggerSettingsCategory.DATA_VIEWS ->
-                listOf(SimpleConfigurable.create(
-                        "reference.idesettings.debugger.kotlin.data.view",
-                        "Kotlin",
-                        KotlinDelegatedPropertyRendererConfigurableUi::class.java,
-                        this))
-            else -> listOf()
-        }
+    override fun createConfigurables(category: DebuggerSettingsCategory): Collection<Configurable?> = when (category) {
+        DebuggerSettingsCategory.STEPPING ->
+            listOf(
+                SimpleConfigurable.create(
+                    "reference.idesettings.debugger.kotlin.stepping",
+                    "Kotlin",
+                    KotlinSteppingConfigurableUi::class.java,
+                    this
+                )
+            )
+        DebuggerSettingsCategory.DATA_VIEWS ->
+            listOf(
+                SimpleConfigurable.create(
+                    "reference.idesettings.debugger.kotlin.data.view",
+                    "Kotlin",
+                    KotlinDelegatedPropertyRendererConfigurableUi::class.java,
+                    this
+                )
+            )
+        else -> listOf()
     }
 
     override fun getState() = this

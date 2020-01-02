@@ -11,11 +11,8 @@ import java.io.File
 
 
 fun main(args: Array<String>) {
-    val generationPath = args.firstOrNull()?.let { if (!it.endsWith("/")) "$it/" else it }
-    if (generationPath == null) {
-        println("Not enough arguments")
-        return
-    }
+    val generationPath = args.firstOrNull()?.let { File(it) }
+        ?: File("compiler/fir/tree/gen").absoluteFile
 
     NodeConfigurator.configureFields()
     detectBaseTransformerTypes(FirTreeBuilder)
@@ -79,8 +76,8 @@ private fun detectBaseTransformerTypes(builder: AbstractFirTreeBuilder) {
     }
 }
 
-private fun removePreviousGeneratedFiles(generationPath: String) {
-    File(generationPath).walkTopDown().forEach {
+private fun removePreviousGeneratedFiles(generationPath: File) {
+    generationPath.walkTopDown().forEach {
         if (it.isFile && it.readText().contains(GENERATED_MESSAGE)) {
             it.delete()
         }

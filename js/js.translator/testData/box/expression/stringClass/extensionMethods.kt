@@ -1,5 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1250
+// EXPECTED_REACHABLE_NODES: 1439
 package foo
 
 val testString = "foobarbaz"

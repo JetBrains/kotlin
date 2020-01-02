@@ -5,15 +5,22 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
+import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
+import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
@@ -22,6 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -59,11 +67,8 @@ open class FunctionCodegen(
             )
         }
 
-        // Since the only arguments to anonymous object constructors are captured variables and complex
-        // super constructor arguments, there shouldn't be any annotations on them other than @NonNull,
-        // and those are meaningless on synthetic parameters. (Also, the inliner cannot handle them and
-        // will throw an exception if we generate any.)
-        if (irFunction !is IrConstructor || !irFunction.parentAsClass.isAnonymousObject) {
+
+        if (irFunction !is IrConstructor || !irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations()) {
             generateParameterAnnotations(functionView, methodVisitor, signature, classCodegen, context)
         }
 
@@ -71,33 +76,63 @@ open class FunctionCodegen(
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
             val frameMap = createFrameMapWithReceivers()
-            val irClass = context.suspendFunctionContinuations[irFunction]
-            val element = (irFunction.symbol.descriptor.psiElement
-                ?: context.suspendLambdaToOriginalFunctionMap[irFunction.parent]?.symbol?.descriptor?.psiElement) as? KtElement
-            val continuationClassBuilder = context.continuationClassBuilders[irClass]
             methodVisitor = when {
-                irFunction.isSuspend &&
-                        // We do not generate continuation and state-machine for synthetic accessors, bridges, and delegated members,
-                        // in a sense, they are tail-call
-                        !irFunction.isKnownToBeTailCall() &&
-                        // TODO: We should generate two versions of inline suspend function: one with state-machine and one without
-                        !irFunction.isInline ->
+                irFunction.hasContinuation() -> {
                     generateStateMachineForNamedFunction(
-                        irFunction, classCodegen, methodVisitor, flags, signature, continuationClassBuilder, element!!
+                        irFunction, classCodegen, methodVisitor,
+                        access = flags,
+                        signature = signature,
+                        obtainContinuationClassBuilder = {
+                            context.continuationClassBuilders[continuationClass().attributeOwnerId]!!
+                        },
+                        element = psiElement()
                     )
-                irFunction.isInvokeSuspendOfLambda(context) -> generateStateMachineForLambda(
-                    classCodegen, methodVisitor, flags, signature, element!!
+                }
+                irFunction.isInvokeSuspendOfLambda() -> generateStateMachineForLambda(
+                    classCodegen, methodVisitor, flags, signature, psiElement()
                 )
                 else -> methodVisitor
             }
             ExpressionCodegen(functionView, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, inlinedInto).generate()
             methodVisitor.visitMaxs(-1, -1)
-            continuationClassBuilder?.done()
+            if (irFunction.hasContinuation()) {
+                context.continuationClassBuilders[continuationClass().attributeOwnerId].sure {
+                    "Could not find continuation class builder for ${continuationClass().render()}"
+                }.done()
+            }
         }
         methodVisitor.visitEnd()
 
         return signature
     }
+
+    // Since the only arguments to anonymous object constructors are captured variables and complex
+    // super constructor arguments, there shouldn't be any annotations on them other than @NonNull,
+    // and those are meaningless on synthetic parameters. (Also, the inliner cannot handle them and
+    // will throw an exception if we generate any.)
+    // The same applies for continuations.
+    private fun IrClass.shouldNotGenerateConstructorParameterAnnotations() =
+        isAnonymousObject || origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS || origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
+
+    private fun psiElement(): KtElement =
+        if (irFunction.isSuspend) irFunction.symbol.descriptor.psiElement as KtElement
+        else context.suspendLambdaToOriginalFunctionMap[irFunction.parentAsClass.attributeOwnerId]!!.symbol.descriptor.psiElement as KtElement
+
+    private fun IrFunction.hasContinuation(): Boolean = isSuspend &&
+            // We do not generate continuation and state-machine for synthetic accessors, bridges, and delegated members,
+            // in a sense, they are tail-call
+            !isKnownToBeTailCall() &&
+            // TODO: We should generate two versions of inline suspend function: one with state-machine and one without
+            !isInline &&
+            // This is suspend lambda parameter of inline function
+            origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
+            // This is just a template for inliner
+            origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
+            // Continuations are generated for suspendImpls
+            parentAsClass.functions.none { it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX }
+
+    private fun continuationClass(): IrClass =
+        irFunction.body!!.statements[0] as IrClass
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {
         if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
@@ -115,7 +150,11 @@ open class FunctionCodegen(
             irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL
         ) Opcodes.ACC_BRIDGE else 0
         val modalityFlag = when ((irFunction as? IrSimpleFunction)?.modality) {
-            Modality.FINAL -> if (!classCodegen.irClass.isAnnotationClass || irFunction.isStatic) Opcodes.ACC_FINAL else Opcodes.ACC_ABSTRACT
+            Modality.FINAL -> when {
+                classCodegen.irClass.isInterface && irFunction.body != null -> 0
+                !classCodegen.irClass.isAnnotationClass || irFunction.isStatic -> Opcodes.ACC_FINAL
+                else -> Opcodes.ACC_ABSTRACT
+            }
             Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
             else -> if (classCodegen.irClass.isJvmInterface && irFunction.body == null) Opcodes.ACC_ABSTRACT else 0 //TODO transform interface modality on lowering to DefaultImpls
         }
@@ -202,7 +241,7 @@ open class FunctionCodegen(
 }
 
 // Borrowed from org.jetbrains.kotlin.codegen.FunctionCodegen.java
-fun generateParameterAnnotations(
+private fun generateParameterAnnotations(
     irFunction: IrFunction,
     mv: MethodVisitor,
     jvmSignature: JvmMethodSignature,
@@ -211,20 +250,9 @@ fun generateParameterAnnotations(
 ) {
     val iterator = irFunction.valueParameters.iterator()
     val kotlinParameterTypes = jvmSignature.valueParameters
-    var syntheticParameterCount = 0
-    kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
-        val kind = parameterSignature.kind
-        if (kind.isSkippedInGenericSignature) {
-            if (AsmUtil.IS_BUILT_WITH_ASM6) {
-                markEnumOrInnerConstructorParameterAsSynthetic(mv, i, ClassBuilderMode.FULL)
-            } else {
-                syntheticParameterCount++
-            }
-        }
-    }
-    if (!AsmUtil.IS_BUILT_WITH_ASM6) {
-        visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
-    }
+    val syntheticParameterCount = kotlinParameterTypes.count { it.kind.isSkippedInGenericSignature }
+
+    visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
     kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
         val kind = parameterSignature.kind
@@ -236,7 +264,7 @@ fun generateParameterAnnotations(
         if (!kind.isSkippedInGenericSignature) {
             AnnotationCodegen(innerClassConsumer, context) { descriptor, visible ->
                 mv.visitParameterAnnotation(
-                    if (AsmUtil.IS_BUILT_WITH_ASM6) i else i - syntheticParameterCount,
+                    i - syntheticParameterCount,
                     descriptor,
                     visible
                 )
@@ -245,13 +273,52 @@ fun generateParameterAnnotations(
     }
 }
 
-private fun markEnumOrInnerConstructorParameterAsSynthetic(mv: MethodVisitor, i: Int, mode: ClassBuilderMode) {
-    // IDEA's ClsPsi builder fails to annotate synthetic parameters
-    if (mode === ClassBuilderMode.LIGHT_CLASSES) return
+private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jvmSignature: JvmMethodSignature, state: GenerationState) {
+    val iterator = irFunction.valueParameters.iterator()
+    for (parameterSignature in jvmSignature.valueParameters) {
+        val irParameter = when (parameterSignature.kind) {
+            JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter!!
+            else -> iterator.next()
+        }
+        val name = when (parameterSignature.kind) {
+            JvmMethodParameterKind.RECEIVER -> getNameForReceiverParameter(irFunction, state)
+            else -> irParameter.name.asString()
+        }
+        // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
+        // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
+        // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
+        // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
+        val access = when {
+            irParameter == irFunction.extensionReceiverParameter -> Opcodes.ACC_MANDATED
+            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
+            // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
+            //      to generate LVT entries for them)
+            irParameter.origin == IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
+            else -> 0
+        }
+        mv.visitParameter(name, access)
+    }
+}
 
-    // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
-    // see MethodWriter.visitParameterAnnotation()
+private fun getNameForReceiverParameter(irFunction: IrFunction, state: GenerationState): String {
+    if (!state.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+        return AsmUtil.RECEIVER_PARAMETER_NAME
+    }
 
-    val av = mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true)
-    av?.visitEnd()
+    // Current codegen never touches CALL_LABEL_FOR_LAMBDA_ARGUMENT
+//    if (irFunction is IrSimpleFunction) {
+//        val labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, irFunction.descriptor)
+//        if (labelName != null) {
+//            return getLabeledThisName(labelName, prefix, defaultName)
+//        }
+//    }
+
+    val callableName = irFunction.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
+    return if (callableName.isSpecial || !Name.isValidIdentifier(callableName.asString()))
+        AsmUtil.RECEIVER_PARAMETER_NAME
+    else
+        AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
 }

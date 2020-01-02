@@ -1,27 +1,16 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.pushDown
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.classMembers.*
 import com.intellij.refactoring.ui.RefactoringDialog
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinUsesDependencyMemberInfoModel
@@ -40,9 +29,9 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class KotlinPushDownDialog(
-        project: Project,
-        private val memberInfos: List<KotlinMemberInfo>,
-        private val sourceClass: KtClass
+    project: Project,
+    private val memberInfos: List<KotlinMemberInfo>,
+    private val sourceClass: KtClass
 ) : RefactoringDialog(project, true) {
     init {
         title = PUSH_MEMBERS_DOWN
@@ -68,23 +57,31 @@ class KotlinPushDownDialog(
         gbConstraints.gridwidth = GridBagConstraints.REMAINDER
         gbConstraints.fill = GridBagConstraints.BOTH
         gbConstraints.anchor = GridBagConstraints.WEST
-        panel.add(JLabel(RefactoringBundle.message("push.members.from.0.down.label",
-                                                   sourceClass.qualifiedClassNameForRendering())), gbConstraints)
+        panel.add(
+            JLabel(
+                RefactoringBundle.message(
+                    "push.members.from.0.down.label",
+                    sourceClass.qualifiedClassNameForRendering()
+                )
+            ), gbConstraints
+        )
         return panel
     }
 
     override fun createCenterPanel(): JComponent? {
         val panel = JPanel(BorderLayout())
         val memberSelectionPanel = KotlinMemberSelectionPanel(
-                RefactoringBundle.message("members.to.be.pushed.down.panel.title"),
-                memberInfos,
-                RefactoringBundle.message("keep.abstract.column.header"))
+            RefactoringBundle.message("members.to.be.pushed.down.panel.title"),
+            memberInfos,
+            RefactoringBundle.message("keep.abstract.column.header")
+        )
         panel.add(memberSelectionPanel, BorderLayout.CENTER)
 
         memberInfoModel = object : DelegatingMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(
-                ANDCombinedMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(
-                        KotlinUsesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(sourceClass, null, false),
-                        UsedByDependencyMemberInfoModel<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(sourceClass))
+            ANDCombinedMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(
+                KotlinUsesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(sourceClass, null, false),
+                UsedByDependencyMemberInfoModel<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(sourceClass)
+            )
         ) {
             override fun isFixedAbstract(member: KotlinMemberInfo?) = null
 
@@ -92,7 +89,8 @@ class KotlinPushDownDialog(
                 val member = memberInfo.member
                 if (member.hasModifier(KtTokens.INLINE_KEYWORD) ||
                     member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
-                    member.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
+                    member.hasModifier(KtTokens.LATEINIT_KEYWORD)
+                ) return false
                 return member is KtNamedFunction || member is KtProperty
             }
         }

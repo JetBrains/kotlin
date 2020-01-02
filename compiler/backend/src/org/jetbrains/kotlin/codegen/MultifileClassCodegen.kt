@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -54,7 +52,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
 interface MultifileClassCodegen {
-    fun generate(errorHandler: CompilationErrorHandler)
+    fun generate()
+
     fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>)
 }
 
@@ -147,10 +146,10 @@ class MultifileClassCodegenImpl(
         }
     }
 
-    override fun generate(errorHandler: CompilationErrorHandler) {
+    override fun generate() {
         assert(delegateGenerationTasks.isEmpty()) { "generate() is called twice for facade class $facadeFqName" }
 
-        generateCodeForSourceFiles(errorHandler)
+        generateCodeForSourceFiles()
 
         generateDelegatesToPreviouslyCompiledParts()
 
@@ -161,7 +160,7 @@ class MultifileClassCodegenImpl(
         done()
     }
 
-    private fun generateCodeForSourceFiles(errorHandler: CompilationErrorHandler) {
+    private fun generateCodeForSourceFiles() {
         for (file in files) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             try {
@@ -170,11 +169,7 @@ class MultifileClassCodegenImpl(
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Throwable) {
-                errorHandler.reportException(e, file.virtualFile?.url ?: "no file")
-                DiagnosticUtils.throwIfRunningOnServer(e)
-                if (ApplicationManager.getApplication().isInternal) {
-                    e.printStackTrace()
-                }
+                CodegenUtil.reportBackendException(e, "multi-file class part code generation", file.virtualFile?.url)
             }
         }
     }
@@ -287,7 +282,7 @@ class MultifileClassCodegenImpl(
     }
 
     object DelegateToCompiledMemberGenerationStrategy : FunctionGenerationStrategy() {
-        override fun skipNotNullAssertionsForParameters(): kotlin.Boolean {
+        override fun skipNotNullAssertionsForParameters(): Boolean {
             throw IllegalStateException("shouldn't be called")
         }
 

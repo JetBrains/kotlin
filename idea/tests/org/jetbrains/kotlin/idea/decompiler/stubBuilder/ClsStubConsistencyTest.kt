@@ -24,7 +24,7 @@ import org.junit.runner.RunWith
 class ClsStubConsistencyTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun doTest(id: ClassId) {
         val packageFile = VirtualFileFinder.SERVICE.getInstance(project).findVirtualFileWithHeader(id)
-                ?: throw AssertionError("File not found for id: $id")
+            ?: throw AssertionError("File not found for id: $id")
         val decompiledText = buildDecompiledTextForClassFile(packageFile).text
         val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)
         val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(fileWithDecompiledText)

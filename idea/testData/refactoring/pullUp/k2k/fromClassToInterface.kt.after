@@ -2,10 +2,13 @@
 interface T {
     // INFO: {"checked": "true"}
     val x: Int
+
     // INFO: {"checked": "true"}
     val y: Int get() = 2
+
     // INFO: {"checked": "true"}
     val z: Int
+
     // INFO: {"checked": "true"}
     val t: Int
 
@@ -38,6 +41,7 @@ abstract class B: T {
 
     // INFO: {"checked": "true"}
     override val x = 1
+
     // INFO: {"checked": "true"}
     override val z: Int by lazy { 3 }
 

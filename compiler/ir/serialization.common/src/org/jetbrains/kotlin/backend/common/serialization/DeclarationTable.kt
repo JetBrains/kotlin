@@ -13,13 +13,21 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.UniqId
 
-class DescriptorTable {
-    private val descriptors = mutableMapOf<DeclarationDescriptor, Long>()
-    fun put(descriptor: DeclarationDescriptor, uniqId: UniqId) {
-        descriptors.getOrPut(descriptor) { uniqId.index }
-    }
+interface DescriptorTable {
+    fun put(descriptor: DeclarationDescriptor, uniqId: UniqId)
+    fun get(descriptor: DeclarationDescriptor): Long?
 
-    fun get(descriptor: DeclarationDescriptor) = descriptors[descriptor]
+    companion object {
+        fun createDefault() = object : DescriptorTable {
+            private val descriptors = mutableMapOf<DeclarationDescriptor, Long>()
+
+            override fun put(descriptor: DeclarationDescriptor, uniqId: UniqId) {
+                descriptors.getOrPut(descriptor) { uniqId.index }
+            }
+
+            override fun get(descriptor: DeclarationDescriptor) = descriptors[descriptor]
+        }
+    }
 }
 
 interface UniqIdClashTracker {

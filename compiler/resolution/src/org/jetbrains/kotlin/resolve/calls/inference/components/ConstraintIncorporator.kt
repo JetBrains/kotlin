@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
@@ -157,7 +155,11 @@ class ConstraintIncorporator(
         isSubtype: Boolean
     ) {
         if (targetVariable in getNestedTypeVariables(newConstraint)) return
-        if (!containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)) return
+
+        val isUsefulForNullabilityConstraint =
+            isPotentialUsefulNullabilityConstraint(newConstraint, otherConstraint.type, otherConstraint.kind)
+
+        if (!isUsefulForNullabilityConstraint && !containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)) return
         if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
                 baseConstraint, otherConstraint, newConstraint, isSubtype
             )
@@ -170,7 +172,13 @@ class ConstraintIncorporator(
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
-        addNewIncorporatedConstraint(targetVariable, newConstraint, ConstraintContext(kind, derivedFrom))
+        val inputTypePosition = if (baseConstraint.position.from is OnlyInputTypeConstraintPosition)
+            baseConstraint.position else null
+
+        val isNullabilityConstraint = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
+        val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
+
+        addNewIncorporatedConstraint(targetVariable, newConstraint, constraintContext)
     }
 
     fun Context.containsConstrainingTypeWithoutProjection(
@@ -180,6 +188,19 @@ class ConstraintIncorporator(
         return getNestedArguments(newConstraint).any {
             it.getType().typeConstructor() == otherConstraint.type.typeConstructor() && it.getVariance() == TypeVariance.INV
         }
+    }
+
+    private fun Context.isPotentialUsefulNullabilityConstraint(
+        newConstraint: KotlinTypeMarker,
+        otherConstraint: KotlinTypeMarker,
+        kind: ConstraintKind
+    ): Boolean {
+        val otherConstraintCanAddNullabilityToNewOne =
+            !newConstraint.isNullableType() && otherConstraint.isNullableType() && kind == ConstraintKind.LOWER
+        val newConstraintCanAddNullabilityToOtherOne =
+            newConstraint.isNullableType() && !otherConstraint.isNullableType() && kind == ConstraintKind.UPPER
+
+        return otherConstraintCanAddNullabilityToNewOne || newConstraintCanAddNullabilityToOtherOne
     }
 
     fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
@@ -199,9 +220,23 @@ class ConstraintIncorporator(
 
 private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinTypeMarker): List<TypeArgumentMarker> {
     val result = ArrayList<TypeArgumentMarker>()
-
     val stack = ArrayDeque<TypeArgumentMarker>()
+
+    when (type) {
+        is FlexibleType -> {
+            stack.push(createTypeArgument(type.lowerBound, TypeVariance.INV))
+            stack.push(createTypeArgument(type.upperBound, TypeVariance.INV))
+        }
+        else -> stack.push(createTypeArgument(type, TypeVariance.INV))
+    }
+
     stack.push(createTypeArgument(type, TypeVariance.INV))
+
+    val addArgumentsToStack = { projectedType: KotlinTypeMarker ->
+        for (argumentIndex in 0 until projectedType.argumentsCount()) {
+            stack.add(projectedType.getArgument(argumentIndex))
+        }
+    }
 
     while (!stack.isEmpty()) {
         val typeProjection = stack.pop()
@@ -209,9 +244,12 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
 
         result.add(typeProjection)
 
-        val projectedType = typeProjection.getType()
-        for (argumentIndex in 0 until projectedType.argumentsCount()) {
-            stack.add(projectedType.getArgument(argumentIndex))
+        when (val projectedType = typeProjection.getType()) {
+            is FlexibleType -> {
+                addArgumentsToStack(projectedType.lowerBound)
+                addArgumentsToStack(projectedType.upperBound)
+            }
+            else -> addArgumentsToStack(projectedType)
         }
     }
     return result

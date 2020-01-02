@@ -22,7 +22,7 @@ class KotlinFrameworkSupportProviderTest : FrameworkSupportProviderTestCase() {
         selectFramework(provider).createLibraryDescription()
         addSupport()
 
-        with (KotlinCommonCompilerArgumentsHolder.getInstance(module.project).settings) {
+        with(KotlinCommonCompilerArgumentsHolder.getInstance(module.project).settings) {
             TestCase.assertEquals(VersionView.LatestStable, languageVersionView)
             TestCase.assertEquals(VersionView.LatestStable, apiVersionView)
         }

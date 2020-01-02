@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class CInt(val value: Int)
 val nCInt3: CInt? = CInt(3)
 

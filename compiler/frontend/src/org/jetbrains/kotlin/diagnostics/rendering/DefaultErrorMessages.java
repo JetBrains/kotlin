@@ -147,22 +147,22 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid @{0} annotation value (should be ''major.minor'' or ''major.minor.patch'')", TO_STRING);
         MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
 
-        MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
-        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
 
         MAP.put(EXPERIMENTAL_OVERRIDE, "This declaration overrides experimental member of supertype ''{1}'' and should be annotated with ''@{0}''", TO_STRING, NAME);
         MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "This declaration overrides experimental member of supertype ''{1}'' and must be annotated with ''@{0}''", TO_STRING, NAME);
 
-        MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xuse-experimental=kotlin.Experimental'");
+        MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'");
         MAP.put(EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation");
-        MAP.put(EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL, "This class can only be used as an annotation or as an argument to @UseExperimental");
+        MAP.put(EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL, "This class can only be used as an annotation or as an argument to @OptIn");
 
-        MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@UseExperimental without any arguments has no effect");
-        MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
+        MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@OptIn without any arguments has no effect");
+        MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @OptIn is ignored", TO_STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Experimental annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
 
-        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "Unsigned literals are experimental and their usages should be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
-        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "Unsigned literals are experimental and their usages must be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "Unsigned literals are experimental and their usages should be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "Unsigned literals are experimental and their usages must be marked with ''@{0}'' or ''@OptIn({0}::class)''", TO_STRING);
 
         MAP.put(NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES, "Non-parenthesized annotations on function types without receiver aren't yet supported (see KT-31734 for details)");
 
@@ -842,6 +842,7 @@ public class DefaultErrorMessages {
         MAP.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property");
         MAP.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION, "Assigning single elements to varargs in named form is deprecated", TO_STRING);
         MAP.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, "Assigning single elements to varargs in named form is forbidden", TO_STRING);
+        MAP.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, "Redundant spread (*) operator");
         MAP.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION, "Assigning single elements to varargs in named form is deprecated");
         MAP.put(ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR, "Assigning single elements to varargs in named form is forbidden");
         MAP.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION, "Redundant spread (*) operator");
@@ -859,6 +860,7 @@ public class DefaultErrorMessages {
                                                  "(argument types, receiver type or expected type). Try to specify it explicitly.", NAME);
         MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "{0}", TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
         MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG, "Please use spread operator to pass an array as vararg. It will be an error in 1.5.");
 
         MAP.put(TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT, "Type inference for control flow expression failed. Please specify its type explicitly.");
 
@@ -975,6 +977,7 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_PROPERTY_WITH_BACKING_FIELD, "Inline property cannot have backing field");
         MAP.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable for internal declaration");
         MAP.put(PROTECTED_CALL_FROM_PUBLIC_INLINE, "Protected function call from public-API inline function is deprecated", NAME);
+        MAP.put(PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR, "Protected function call from public-API inline function is prohibited", NAME);
         MAP.put(INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE, "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, "Usage of inline parameter ''{0}'' in default value for another inline parameter is not supported", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         //Inline non locals

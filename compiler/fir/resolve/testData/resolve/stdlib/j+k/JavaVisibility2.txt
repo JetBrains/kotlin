@@ -30,7 +30,7 @@ FILE: k.kt
         public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
             public get(): R|kotlin/Int|
 
-        public final val p3: R|kotlin/Int| = this@R|j/JavaProtected|.R|j/JavaProtected.javaPProtectedPackage|
+        public final val p3: R|kotlin/Int| = this@R|k/B|.R|j/JavaProtected.javaPProtectedPackage|
             public get(): R|kotlin/Int|
 
         public final fun test(): R|kotlin/Unit| {

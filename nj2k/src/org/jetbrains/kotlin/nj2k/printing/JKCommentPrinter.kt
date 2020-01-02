@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.printing
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.nj2k.tree.JKComment
 import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
 import org.jetbrains.kotlin.nj2k.tree.JKFormattingOwner
@@ -32,7 +33,8 @@ internal class JKCommentPrinter(val printer: JKPrinter) {
         for (comment in this@createText) {
             if (comment.shouldBeDropped()) continue
             val text = comment.createText() ?: continue
-            if (needNewLine) appendln() else append(' ')
+            if (needNewLine && comment.indent?.let { StringUtil.containsLineBreak(it) } != true) appendln()
+            append(comment.indent ?: ' ')
             append(text)
             needNewLine = text.startsWith("//") || '\n' in text
         }

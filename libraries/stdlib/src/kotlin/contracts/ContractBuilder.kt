@@ -19,6 +19,7 @@ import kotlin.internal.InlineOnly
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.3")
 @Experimental
+@RequiresOptIn
 @MustBeDocumented
 public annotation class ExperimentalContracts
 

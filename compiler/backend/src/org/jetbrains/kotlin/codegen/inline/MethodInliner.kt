@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -123,7 +124,8 @@ class MethodInliner(
         if (inliningContext.isRoot) {
             val remapValue = remapper.remap(parameters.argsSizeOnStack + 1).value
             InternalFinallyBlockInliner.processInlineFunFinallyBlocks(
-                resultNode, lambdasFinallyBlocks, (remapValue as StackValue.Local).index
+                resultNode, lambdasFinallyBlocks, (remapValue as StackValue.Local).index,
+                languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)
             )
         }
 
@@ -155,6 +157,7 @@ class MethodInliner(
             ), AsmTypeRemapper(remapper, result)
         )
 
+        val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
@@ -174,9 +177,7 @@ class MethodInliner(
                         inlineCallSiteInfo
                     )
                     val transformer = transformationInfo!!.createTransformer(
-                        childInliningContext,
-                        isSameModule,
-                        CoroutineTransformer.findFakeContinuationConstructorClassName(node)
+                        childInliningContext, isSameModule, fakeContinuationName
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
@@ -437,7 +438,10 @@ class MethodInliner(
             private fun getNewIndex(`var`: Int): Int {
                 val lambdaInfo = inliningContext.lambdaInfo
                 if (reorderIrLambdaParameters && lambdaInfo is IrExpressionLambda) {
-                    val extensionSize = if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0
+                    val extensionSize =
+                        if (lambdaInfo.isExtensionLambda && !lambdaInfo.isBoundCallableReference)
+                            lambdaInfo.invokeMethod.argumentTypes[0].size
+                        else 0
                     return when {
                         //                v-- extensionSize     v-- argsSizeOnStack
                         // |- extension -|- captured -|- real -|- locals -|    old descriptor
@@ -1145,7 +1149,7 @@ class MethodInliner(
         ) {
             val actualParams = Type.getArgumentTypes(descriptor)
             assert(actualParams.size == directOrder.size) {
-                "Number of expected and actual params should be equals, but ${actualParams.size} != ${directOrder.size}}!"
+                "Number of expected and actual parameters should be equal, but ${actualParams.size} != ${directOrder.size}!"
             }
 
             var currentShift = shift + directOrder.sumBy { it.size }

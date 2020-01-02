@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
@@ -57,24 +59,24 @@ data class LambdaContextInfo(
 
 class KotlinResolutionCallbacksImpl(
     val trace: BindingTrace,
-    val expressionTypingServices: ExpressionTypingServices,
-    val typeApproximator: TypeApproximator,
-    val argumentTypeResolver: ArgumentTypeResolver,
-    val languageVersionSettings: LanguageVersionSettings,
-    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
-    val dataFlowValueFactory: DataFlowValueFactory,
+    private val expressionTypingServices: ExpressionTypingServices,
+    private val typeApproximator: TypeApproximator,
+    private val argumentTypeResolver: ArgumentTypeResolver,
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    private val dataFlowValueFactory: DataFlowValueFactory,
     override val inferenceSession: InferenceSession,
-    val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    val typeResolver: TypeResolver,
-    val psiCallResolver: PSICallResolver,
-    val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-    val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
-    val callComponents: KotlinCallComponents,
-    val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-    val deprecationResolver: DeprecationResolver,
-    val moduleDescriptor: ModuleDescriptor,
-    val topLevelCallContext: BasicCallResolutionContext?,
-    val missingSupertypesResolver: MissingSupertypesResolver
+    private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+    private val typeResolver: TypeResolver,
+    private val psiCallResolver: PSICallResolver,
+    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    private val callComponents: KotlinCallComponents,
+    private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
+    private val deprecationResolver: DeprecationResolver,
+    private val moduleDescriptor: ModuleDescriptor,
+    private val topLevelCallContext: BasicCallResolutionContext?,
+    private val missingSupertypesResolver: MissingSupertypesResolver
 ) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         val returnStatements = ArrayList<Pair<KtReturnExpression, LambdaContextInfo?>>()
@@ -113,6 +115,16 @@ class KotlinResolutionCallbacksImpl(
             )?.let {
                 it.setResultDataFlowInfoIfRelevant(typeInfo.dataFlowInfo)
                 return it
+            }
+
+            val deparenthesizedExpression = KtPsiUtil.deparenthesize(ktExpression) ?: ktExpression
+            if (deparenthesizedExpression is KtCallableReferenceExpression) {
+                return psiCallResolver.createCallableReferenceKotlinCallArgument(
+                    newContext, deparenthesizedExpression, DataFlowInfo.EMPTY,
+                    CallMaker.makeExternalValueArgument(deparenthesizedExpression),
+                    argumentName = null,
+                    outerCallContext
+                )
             }
 
             return createSimplePSICallArgument(

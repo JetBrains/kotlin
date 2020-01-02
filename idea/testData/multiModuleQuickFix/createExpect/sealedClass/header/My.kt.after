@@ -7,9 +7,11 @@ expect sealed class My(x: Double) {
     object First : My {
         override val num: Int
     }
+
     class Some(num: Int) : My {
         override val num: Int
     }
+
     object Best : My {
         override val num: Int
         override fun isGood(): Boolean

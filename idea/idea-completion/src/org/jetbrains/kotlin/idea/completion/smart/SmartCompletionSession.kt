@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.smart
@@ -39,10 +28,10 @@ import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 class SmartCompletionSession(
-        configuration: CompletionSessionConfiguration,
-        parameters: CompletionParameters,
-        toFromOriginalFileMapper: ToFromOriginalFileMapper,
-        resultSet: CompletionResultSet
+    configuration: CompletionSessionConfiguration,
+    parameters: CompletionParameters,
+    toFromOriginalFileMapper: ToFromOriginalFileMapper,
+    resultSet: CompletionResultSet
 ) : CompletionSession(configuration, parameters, toFromOriginalFileMapper, resultSet) {
 
     override val descriptorKindFilter: DescriptorKindFilter by lazy {
@@ -62,9 +51,11 @@ class SmartCompletionSession(
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
-            SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false),
-                            prefixMatcher, searchScope, toFromOriginalFileMapper,
-                            callTypeAndReceiver, isJvmModule)
+            SmartCompletion(
+                it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false),
+                prefixMatcher, searchScope, toFromOriginalFileMapper,
+                callTypeAndReceiver, isJvmModule
+            )
         }
     }
 
@@ -92,7 +83,8 @@ class SmartCompletionSession(
         val contextVariableTypesForReferenceVariants = filter?.let {
             withCollectRequiredContextVariableTypes { lookupElementFactory ->
                 if (referenceVariantsCollector != null) {
-                    val (imported, notImported) = referenceVariantsCollector.collectReferenceVariants(descriptorKindFilter).excludeNonInitializedVariable()
+                    val (imported, notImported) = referenceVariantsCollector.collectReferenceVariants(descriptorKindFilter)
+                        .excludeNonInitializedVariable()
                     imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
                     notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
                     referenceVariantsCollector.collectingFinished()
@@ -105,8 +97,11 @@ class SmartCompletionSession(
         val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
         withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
             if (filter != null && receiverTypes != null) {
-                val results = ExtensionFunctionTypeValueCompletion(receiverTypes, callTypeAndReceiver.callType, lookupElementFactory)
-                        .processVariables(contextVariablesProvider)
+                val results = ExtensionFunctionTypeValueCompletion(
+                    receiverTypes,
+                    callTypeAndReceiver.callType,
+                    lookupElementFactory
+                ).processVariables(contextVariablesProvider)
                 for ((invokeDescriptor, factory) in results) {
                     collector.addElements(filter(invokeDescriptor, factory))
                 }
@@ -117,7 +112,9 @@ class SmartCompletionSession(
                 collector.addElements(additionalItems)
             }
 
-            if (filter != null && contextVariableTypesForReferenceVariants!!.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+            if (filter != null &&
+                contextVariableTypesForReferenceVariants!!.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }
+            ) {
                 val (imported, notImported) = referenceVariantsWithSingleFunctionTypeParameter()!!
                 imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
                 notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
@@ -129,13 +126,12 @@ class SmartCompletionSession(
                 val staticMembersCompletion: StaticMembersCompletion?
                 if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
                     val alreadyCollected = referenceVariantsCollector!!.allCollected.imported
-                    staticMembersCompletion = StaticMembersCompletion(prefixMatcher, resolutionFacade, lookupElementFactory, alreadyCollected, isJvmModule)
+                    staticMembersCompletion =
+                        StaticMembersCompletion(prefixMatcher, resolutionFacade, lookupElementFactory, alreadyCollected, isJvmModule)
                     val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
-                    staticMembersCompletion.membersFromImports(file)
-                            .flatMap { filter(it, decoratedFactory) }
-                            .forEach { collector.addElement(it) }
-                }
-                else {
+                    staticMembersCompletion.membersFromImports(file).flatMap { filter(it, decoratedFactory) }
+                        .forEach { collector.addElement(it) }
+                } else {
                     staticMembersCompletion = null
                 }
 
@@ -152,7 +148,12 @@ class SmartCompletionSession(
                         val variants = variantsAndFactory.first
                         @Suppress("NAME_SHADOWING") val lookupElementFactory = variantsAndFactory.second
                         variants.imported.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }) }
-                        variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
+                        variants.notImportedExtensions.forEach {
+                            collector.addElements(
+                                filter(it, lookupElementFactory).map { element -> element.withReceiverCast() },
+                                notImported = true
+                            )
+                        }
                         flushToResultSet()
                     }
                 }
@@ -160,8 +161,8 @@ class SmartCompletionSession(
                 if (staticMembersCompletion != null && configuration.staticMembers) {
                     val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
                     staticMembersCompletion.processMembersFromIndices(indicesHelper(false)) {
-                        filter(it, decoratedFactory).forEach {
-                            collector.addElement(it)
+                        filter(it, decoratedFactory).forEach { element ->
+                            collector.addElement(element)
                             flushToResultSet()
                         }
                     }
@@ -199,23 +200,24 @@ class SmartCompletionSession(
                     override fun getValueArgumentList() = throw UnsupportedOperationException()
                 }
 
-                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, indicesHelper(false))
-                        .calculateForArgument(dummyCall, dummyArgument)
+                val expectedInfos =
+                    ExpectedInfos(bindingContext, resolutionFacade, indicesHelper(false)).calculateForArgument(dummyCall, dummyArgument)
                 collector.addElements(LambdaItems.collect(expectedInfos))
             }
         }
     }
 
-    override fun createSorter(): CompletionSorter {
-        return super.createSorter()
-                .weighBefore(KindWeigher.toString(), NameSimilarityWeigher, SmartCompletionPriorityWeigher, CallableReferenceWeigher(callTypeAndReceiver.callType))
-    }
+    override fun createSorter(): CompletionSorter = super.createSorter().weighBefore(
+        KindWeigher.toString(),
+        NameSimilarityWeigher,
+        SmartCompletionPriorityWeigher,
+        CallableReferenceWeigher(callTypeAndReceiver.callType)
+    )
 
-    override fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
-        return super.createLookupElementFactory(contextVariablesProvider).copy(
-                standardLookupElementsPostProcessor = { wrapStandardLookupElement(it) }
+    override fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory =
+        super.createLookupElementFactory(contextVariablesProvider).copy(
+            standardLookupElementsPostProcessor = { wrapStandardLookupElement(it) }
         )
-    }
 
     private fun wrapStandardLookupElement(lookupElement: LookupElement): LookupElement {
         val descriptor = (lookupElement.`object` as DeclarationLookupObject).descriptor

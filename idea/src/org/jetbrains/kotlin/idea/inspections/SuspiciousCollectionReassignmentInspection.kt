@@ -68,7 +68,7 @@ class SuspiciousCollectionReassignmentInspection : AbstractKotlinInspection() {
             val operationReference = binaryExpression.operationReference
             holder.registerProblem(
                 operationReference,
-                "'${operationReference.text}' create new $typeText under the hood",
+                "'${operationReference.text}' creates new $typeText under the hood",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 *fixes.toTypedArray()
             )

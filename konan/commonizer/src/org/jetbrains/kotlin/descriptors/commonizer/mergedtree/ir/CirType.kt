@@ -47,8 +47,8 @@ class CirSimpleType(private val wrapped: SimpleType) : CirType() {
     val isDefinitelyNotNullType get() = abbreviation.isDefinitelyNotNullType
     val expandedTypeConstructorId by lazy(PUBLICATION) { CirTypeConstructorId(expanded) }
 
-    inline val isClassOrTypeAlias: Boolean get() = (kind == CLASS || kind == TYPE_ALIAS)
-    val fqNameWithTypeParameters: String get() = wrapped.fqNameWithTypeParameters
+    inline val isClassOrTypeAlias get() = (kind == CLASS || kind == TYPE_ALIAS)
+    val fqNameWithTypeParameters by lazy(PUBLICATION) { wrapped.fqNameWithTypeParameters }
 
     override fun equals(other: Any?) = wrapped == (other as? CirSimpleType)?.wrapped
     override fun hashCode() = wrapped.hashCode()

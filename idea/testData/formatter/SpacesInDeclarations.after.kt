@@ -24,22 +24,26 @@ fun Int.extFun2() {
 val fooVal1 = 1
 
 val fooVal2 = 1
+
 //-----------------------
 var fooVar1 = 1
 
 var fooVar2 = 2
+
 //-----------------------
 private val Int.extVal1 = 122
 
 private
 val
         Int.extVal: Int = 1
+
 //-----------------------
 public var Int.extVar1: Int = 122
 
 public
 var
         Int.extVar: Int = 1
+
 //-----------------------
 public var varWithAccessors1: Int
     get() {
@@ -64,7 +68,6 @@ val
 
 //-----------------------
 annotation class A1
-
 annotation class A2
 
 private @[A1 A2 A1]

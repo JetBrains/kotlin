@@ -103,7 +103,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     unaryFunForPrimitives("inc", INC) +
                     unaryFunForPrimitives("dec", DEC) +
                     unaryFunForPrimitives("hashCode", HashCode) +
-                    binaryFunForPrimitives("equals", EQUALS, irBuiltIns.anyClass) +
+                    binaryFunForPrimitives("equals", EXPLICIT_EQUALS, irBuiltIns.anyClass) +
                     binaryFunForPrimitivesAcrossPrimitives("rangeTo", RangeTo) +
                     binaryOp("plus", IADD) +
                     binaryOp("minus", ISUB) +
@@ -193,7 +193,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         private val INC = Increment(1)
 
         private val DEC = Increment(-1)
-        private val EQUALS = Equals(KtTokens.EQEQ)
+        private val EXPLICIT_EQUALS = ExplicitEquals()
 
         private fun IrFunctionSymbol.toKey(): Key? {
             val parent = owner.parent

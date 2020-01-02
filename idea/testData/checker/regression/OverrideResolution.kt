@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun box() {
     val a : C = C()
     a.foo()

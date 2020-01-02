@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
+import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
@@ -15,6 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraint
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.isIntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -30,7 +34,8 @@ fun Candidate.computeCompletionMode(
     if (expectedType != null) return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
 
     // This is questionable as null return type can be only for error call
-    if (currentReturnType == null) return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
+    if (currentReturnType == null || currentReturnType is ConeIntegerLiteralType)
+        return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
 
     return when {
         // Consider call foo(bar(x)), if return type of bar is a proper one, then we can complete resolve for bar => full completion mode
@@ -62,7 +67,7 @@ private fun Candidate.containsTypeVariablesWithProperEqualConstraints(components
 
             val constraints = variableWithConstraints.constraints
             val onlyProperEqualConstraints =
-                constraints.isNotEmpty() && constraints.all { it.kind.isEqual() && csBuilder.isProperType(it.type) }
+                constraints.isNotEmpty() && constraints.any { it.kind.isEqual() && csBuilder.isProperType(it.type) }
 
             if (!onlyProperEqualConstraints) return false
         }
@@ -77,16 +82,18 @@ private fun Candidate.hasProperNonTrivialLowerConstraints(components: InferenceC
     val constructor = typeVariable.typeConstructor(context)
     val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
     val constraints = variableWithConstraints.constraints
-    return constraints.isNotEmpty() && constraints.all {
+    // TODO: support Exact annotation
+    // see KotlinCallCompleter:244
+    return constraints.isNotEmpty() && constraints.any {
         !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
-                it.kind.isLower() && csBuilder.isProperType(it.type)
+                (it.kind.isLower() || it.kind.isEqual()) && csBuilder.isProperType(it.type)
     }
 
 }
 
 
 class ConstraintSystemCompleter(val components: InferenceComponents) {
-    val variableFixationFinder = VariableFixationFinder(components.trivialConstraintTypeInferenceOracle)
+    private val variableFixationFinder = VariableFixationFinder(components.trivialConstraintTypeInferenceOracle)
     fun complete(
         c: KotlinConstraintSystemCompleter.Context,
         completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
@@ -98,9 +105,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
         while (true) {
             if (analyzePostponeArgumentIfPossible(c, topLevelAtoms, analyze)) continue
 
-
-//            val allTypeVariables = getOrderedAllTypeVariables(c, collectVariablesFromContext, topLevelAtoms)
-            val allTypeVariables = c.notFixedTypeVariables.keys.toList()
+            val allTypeVariables = getOrderedAllTypeVariables(c, topLevelAtoms)
             val postponedKtPrimitives = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
             val variableForFixation =
                 variableFixationFinder.findFirstVariableForFixation(
@@ -134,6 +139,43 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
 //                runCompletion(c, completionMode, topLevelAtoms, topLevelType, analyze)
 //            }
         }
+    }
+
+    private fun getOrderedAllTypeVariables(
+        c: KotlinConstraintSystemCompleter.Context,
+        topLevelAtoms: List<FirStatement>
+    ): List<TypeConstructorMarker> {
+        val result = LinkedHashSet<TypeConstructorMarker>(c.notFixedTypeVariables.size)
+        fun ConeTypeVariable?.toTypeConstructor(): TypeConstructorMarker? =
+            this?.typeConstructor?.takeIf { it in c.notFixedTypeVariables.keys }
+
+        fun FirStatement.collectAllTypeVariables() {
+            this.processAllContainingCallCandidates(processBlocks = true) { candidate ->
+                candidate.freshVariables.mapNotNullTo(result) { typeVariable ->
+                    typeVariable.toTypeConstructor()
+                }
+
+                for (lambdaAtom in candidate.postponedAtoms.filterIsInstance<ResolvedLambdaAtom>()) {
+                    result.addIfNotNull(lambdaAtom.typeVariableForLambdaReturnType.toTypeConstructor())
+                    if (lambdaAtom.analyzed) {
+                        for (firStatement in lambdaAtom.returnStatements) {
+                            firStatement.collectAllTypeVariables()
+                        }
+                    }
+                }
+            }
+        }
+
+        for (topLevel in topLevelAtoms) {
+            topLevel.collectAllTypeVariables()
+        }
+
+        require(result.size == c.notFixedTypeVariables.size) {
+            val notFoundTypeVariables = c.notFixedTypeVariables.keys.toMutableSet().apply { removeAll(result) }
+            "Not all type variables found: $notFoundTypeVariables"
+        }
+
+        return result.toList()
     }
 
     private fun fixVariable(
@@ -170,46 +212,70 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     }
 
     private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<FirStatement>): List<PostponedResolvedAtomMarker> {
-        fun FirStatement.process(to: MutableList<PostponedResolvedAtomMarker>) {
-            when (this) {
-                is FirFunctionCall -> {
-                    val candidate = (this.calleeReference as? FirNamedReferenceWithCandidate)?.candidate
-                    candidate?.postponedAtoms?.forEach {
-                        to.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })
-                    }
-                    this.arguments.forEach { it.process(to) }
-                }
-                is FirWhenExpression -> {
-                    val candidate = (this.calleeReference as? FirNamedReferenceWithCandidate)?.candidate
-                    candidate?.postponedAtoms?.forEach {
-                        to.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })
-                    }
-                    this.branches.forEach { it.result.process(to) }
-                }
-
-                is FirTryExpression -> {
-                    val candidate = (this.calleeReference as? FirNamedReferenceWithCandidate)?.candidate
-                    candidate?.postponedAtoms?.forEach {
-                        to.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })
-                    }
-                    tryBlock.process(to)
-                    catches.forEach { it.block.process(to) }
-                }
-
-                is FirWrappedArgumentExpression -> this.expression.process(to)
-                // TOOD: WTF?
-            }
-//            if (analyzed) {
-//                subResolvedAtoms.forEach { it.process(to) }
-//            }
-        }
-
         val notAnalyzedArguments = arrayListOf<PostponedResolvedAtomMarker>()
         for (primitive in topLevelAtoms) {
-            primitive.process(notAnalyzedArguments)
+            primitive.processAllContainingCallCandidates(
+                // TODO: remove this argument and relevant parameter
+                // Currently, it's used because otherwise problem happens with a lambda in a try-block (see tryWithLambdaInside test)
+                processBlocks = primitive !is FirTryExpression
+            ) { candidate ->
+                candidate.postponedAtoms.forEach {
+                    notAnalyzedArguments.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })
+                }
+            }
         }
 
         return notAnalyzedArguments
+    }
+
+    private fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, processor: (Candidate) -> Unit) {
+        when (this) {
+            is FirFunctionCall -> {
+                processCandidateIfApplicable(processor)
+                this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+            }
+
+            is FirWhenExpression -> {
+                processCandidateIfApplicable(processor)
+                this.branches.forEach { it.result.processAllContainingCallCandidates(processBlocks, processor) }
+            }
+
+            is FirTryExpression -> {
+                processCandidateIfApplicable(processor)
+                tryBlock.processAllContainingCallCandidates(processBlocks, processor)
+                catches.forEach { it.block.processAllContainingCallCandidates(processBlocks, processor) }
+            }
+
+            is FirCheckNotNullCall -> {
+                processCandidateIfApplicable(processor)
+                this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+            }
+
+            is FirQualifiedAccessExpression -> {
+                processCandidateIfApplicable(processor)
+            }
+
+            is FirVariableAssignment -> {
+                processCandidateIfApplicable(processor)
+                rValue.processAllContainingCallCandidates(processBlocks, processor)
+            }
+
+            is FirWrappedArgumentExpression -> this.expression.processAllContainingCallCandidates(processBlocks, processor)
+            is FirBlock -> {
+                if (processBlocks) {
+                    this.returnExpressions().forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+                }
+            }
+
+            is FirDelegatedConstructorCall -> {
+                processCandidateIfApplicable(processor)
+                this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+            }
+        }
+    }
+
+    private inline fun FirResolvable.processCandidateIfApplicable(processor: (Candidate) -> Unit) {
+        (calleeReference as? FirNamedReferenceWithCandidate)?.candidate?.let(processor)
     }
 
     private fun canWeAnalyzeIt(c: KotlinConstraintSystemCompleter.Context, argument: PostponedResolvedAtomMarker): Boolean {

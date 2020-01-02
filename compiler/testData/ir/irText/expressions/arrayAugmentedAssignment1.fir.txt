@@ -28,9 +28,9 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.IntArray declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-x>' type=<root>.C origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -55,14 +55,14 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
     VALUE_PARAMETER name:c index:0 type:<root>.C
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-        CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
+        CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=null
             $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
           index: CONST Int type=kotlin.Int value=0
-      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
         $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=null
           $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
         index: CONST Int type=kotlin.Int value=0
-        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
       GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null

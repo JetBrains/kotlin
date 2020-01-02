@@ -11,14 +11,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
 
-sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
-    abstract val kind: ProjectionKind
-
-    companion object {
-        val EMPTY_ARRAY = arrayOf<ConeKotlinTypeProjection>()
-    }
-}
-
 enum class ProjectionKind {
     STAR, IN, OUT, INVARIANT;
 
@@ -33,40 +25,37 @@ enum class ProjectionKind {
     }
 }
 
+sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
+    abstract val kind: ProjectionKind
+
+    companion object {
+        val EMPTY_ARRAY = arrayOf<ConeKotlinTypeProjection>()
+    }
+}
+
 object ConeStarProjection : ConeKotlinTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.STAR
 }
 
-interface ConeTypedProjection {
-    val type: ConeKotlinType
-}
-
-data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection(), ConeTypedProjection {
+data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection(),
+    ConeTypedProjection {
     override val kind: ProjectionKind
         get() = ProjectionKind.IN
 }
 
-data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection(), ConeTypedProjection {
+data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection(),
+    ConeTypedProjection {
     override val kind: ProjectionKind
         get() = ProjectionKind.OUT
 }
 
-enum class ConeNullability(val suffix: String) {
-    NULLABLE("?"),
-    UNKNOWN("!"),
-    NOT_NULL("");
-
-    val isNullable: Boolean get() = this != NOT_NULL
-
-    companion object {
-        fun create(isNullable: Boolean) = if (isNullable) NULLABLE else NOT_NULL
-    }
-}
-
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
-sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection, KotlinTypeMarker, TypeArgumentListMarker {
+sealed class ConeKotlinType : ConeKotlinTypeProjection(),
+    ConeTypedProjection,
+    KotlinTypeMarker,
+    TypeArgumentListMarker {
     override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
@@ -82,9 +71,11 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection, K
     }
 }
 
-val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
+sealed class ConeSimpleKotlinType : ConeKotlinType(), SimpleTypeMarker
 
-val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
+interface ConeTypedProjection {
+    val type: ConeKotlinType
+}
 
 typealias ConeKotlinErrorType = ConeClassErrorType
 
@@ -105,7 +96,7 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     }
 }
 
-abstract class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
+abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
@@ -161,7 +152,7 @@ class ConeCapturedType(
     val lowerType: ConeKotlinType?,
     override val nullability: ConeNullability = ConeNullability.NOT_NULL,
     val constructor: ConeCapturedTypeConstructor
-) : ConeKotlinType(), SimpleTypeMarker, CapturedTypeMarker {
+) : ConeSimpleKotlinType(), CapturedTypeMarker {
     constructor(captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeKotlinTypeProjection) : this(
         captureStatus,
         lowerType,
@@ -181,7 +172,7 @@ class ConeTypeVariableType(
     override val typeArguments: Array<out ConeKotlinTypeProjection> get() = emptyArray()
 }
 
-class ConeDefinitelyNotNullType private constructor(val original: ConeKotlinType) : ConeKotlinType(), DefinitelyNotNullTypeMarker {
+class ConeDefinitelyNotNullType private constructor(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = original.typeArguments
     override val nullability: ConeNullability
@@ -205,7 +196,7 @@ class ConeRawType(lowerBound: ConeKotlinType, upperBound: ConeKotlinType) : Cone
  */
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>
-) : ConeKotlinType(), SimpleTypeMarker, TypeConstructorMarker {
+) : ConeSimpleKotlinType(), TypeConstructorMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = emptyArray()
 
@@ -217,7 +208,7 @@ fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): Con
     return ConeIntersectionType(intersectedTypes.map(func))
 }
 
-class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeKotlinType() {
+class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = emptyArray()
 }
@@ -229,4 +220,34 @@ open class ConeTypeVariable(name: String) : TypeVariableMarker {
 
 class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
     override val name: Name get() = Name.identifier(debugName)
+}
+
+abstract class ConeIntegerLiteralType(val value: Long) : ConeSimpleKotlinType(), TypeConstructorMarker {
+    abstract val possibleTypes: Collection<ConeClassLikeType>
+    abstract val supertypes: List<ConeClassLikeType>
+
+    override val typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray()
+    override val nullability: ConeNullability = ConeNullability.NOT_NULL
+
+    abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeIntegerLiteralType
+
+        if (possibleTypes != other.possibleTypes) return false
+        if (nullability != other.nullability) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return 31 * possibleTypes.hashCode() + nullability.hashCode()
+    }
+}
+
+fun ConeIntegerLiteralType.canBeInt(): Boolean {
+    return value in Int.MIN_VALUE..Int.MAX_VALUE
 }

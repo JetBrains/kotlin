@@ -1,0 +1,4 @@
+FILE: useSite.kt
+    public final fun foo(holder: R|U|, box: R|Box<kotlin/Int>|): R|kotlin/Int| {
+        ^foo R|<local>/holder|.R|/U.getValue|<R|kotlin/Int|>(R|<local>/box|)
+    }

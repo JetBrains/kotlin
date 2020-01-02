@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.daemon.common.experimental.walkDaemonsAsync
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
+import org.jetbrains.kotlin.test.IgnoreAll
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.Ignore
+import org.junit.runner.RunWith
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -35,7 +36,7 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
 
-@Ignore
+@RunWith(IgnoreAll::class)
 class ConnectionsTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClient = KotlinCompilerDaemonClient.instantiate(DaemonProtocolVariant.SOCKETS)

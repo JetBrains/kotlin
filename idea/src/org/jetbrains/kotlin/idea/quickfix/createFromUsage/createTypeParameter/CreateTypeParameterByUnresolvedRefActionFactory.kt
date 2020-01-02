@@ -23,15 +23,19 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.getUnsubstitutedTypeConstraintInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.isObjectOrNonInnerClass
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
@@ -63,7 +67,9 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
             it is KtProperty || it is KtNamedFunction || it is KtClass
         } as? KtTypeParameterListOwner ?: return null
         val containingDescriptor = declaration.resolveToDescriptorIfAny() ?: return null
-        val fakeTypeParameter = createFakeTypeParameterDescriptor(containingDescriptor, newName)
+        val fakeTypeParameter = createFakeTypeParameterDescriptor(
+            containingDescriptor, newName, declaration.getResolutionFacade().frontendService<StorageManager>()
+        )
         val upperBoundType = getUnsubstitutedTypeConstraintInfo(element)?.let {
             it.performSubstitution(it.typeParameter.typeConstructor to TypeProjectionImpl(fakeTypeParameter.defaultType))?.upperBound
         }
@@ -98,9 +104,17 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
     }
 }
 
-fun createFakeTypeParameterDescriptor(containingDescriptor: DeclarationDescriptor, name: String): TypeParameterDescriptor {
+fun createFakeTypeParameterDescriptor(
+    containingDescriptor: DeclarationDescriptor,
+    name: String,
+    storageManager: StorageManager
+): TypeParameterDescriptor {
     return TypeParameterDescriptorImpl
-        .createWithDefaultBound(containingDescriptor, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier(name), -1)
+        .createWithDefaultBound(
+            containingDescriptor, Annotations.EMPTY, false,
+            Variance.INVARIANT, Name.identifier(name), -1,
+            storageManager
+        )
 }
 
 fun getPossibleTypeParameterContainers(startFrom: PsiElement): List<KtTypeParameterListOwner> {

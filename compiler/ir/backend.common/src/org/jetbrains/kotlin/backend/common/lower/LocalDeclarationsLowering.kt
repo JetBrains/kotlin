@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -85,6 +86,9 @@ class LocalDeclarationsLowering(
 
     object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
         IrDeclarationOriginImpl("FIELD_FOR_CAPTURED_VALUE", isSynthetic = true)
+
+    object DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE :
+        IrDeclarationOriginImpl("FIELD_FOR_CROSSINLINE_CAPTURED_VALUE", isSynthetic = true)
 
     private object STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE :
         IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
@@ -411,9 +415,9 @@ class LocalDeclarationsLowering(
                     0,
                     localClassContext.capturedValueToField.map { (capturedValue, field) ->
                         IrSetFieldImpl(
-                            irClass.startOffset, irClass.endOffset, field.symbol,
-                            IrGetValueImpl(irClass.startOffset, irClass.endOffset, irClass.thisReceiver!!.symbol),
-                            constructorContext.irGet(irClass.startOffset, irClass.endOffset, capturedValue)!!,
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol,
+                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.thisReceiver!!.symbol),
+                            constructorContext.irGet(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedValue)!!,
                             context.irBuiltIns.unitType,
                             STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
                         )
@@ -527,7 +531,8 @@ class LocalDeclarationsLowering(
                 isTailrec = oldDeclaration.isTailrec,
                 isSuspend = oldDeclaration.isSuspend,
                 isExpect = oldDeclaration.isExpect,
-                isFakeOverride = oldDeclaration.isFakeOverride
+                isFakeOverride = oldDeclaration.isFakeOverride,
+                isOperator = oldDeclaration.isOperator
             )
             newDescriptor.bind(newDeclaration)
 
@@ -541,6 +546,7 @@ class LocalDeclarationsLowering(
                     newParameterToOld.putAbsentOrSame(it, this)
                 }
             }
+            newDeclaration.copyAttributes(oldDeclaration)
 
             newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, oldDeclaration, newDeclaration)
             newDeclaration.recordTransformedValueParameters(localFunctionContext)
@@ -652,14 +658,15 @@ class LocalDeclarationsLowering(
             name: Name,
             visibility: Visibility,
             parent: IrClass,
-            fieldType: IrType
+            fieldType: IrType,
+            isCrossinline: Boolean
         ): IrField {
             val descriptor = WrappedFieldDescriptor()
             val symbol = IrFieldSymbolImpl(descriptor)
             return IrFieldImpl(
                 startOffset,
                 endOffset,
-                DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
+                if (isCrossinline) DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE else DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
                 symbol,
                 name,
                 fieldType,
@@ -679,16 +686,18 @@ class LocalDeclarationsLowering(
             val generatedNames = mutableSetOf<Name>()
             localClassContext.closure.capturedValues.forEach { capturedValue ->
 
+                val owner = capturedValue.owner
                 val irField = createFieldForCapturedValue(
                     classDeclaration.startOffset,
                     classDeclaration.endOffset,
-                    suggestNameForCapturedValue(capturedValue.owner, generatedNames),
+                    suggestNameForCapturedValue(owner, generatedNames),
                     Visibilities.PRIVATE,
                     classDeclaration,
-                    capturedValue.owner.type
+                    owner.type,
+                    owner is IrValueParameter && owner.isCrossinline
                 )
 
-                localClassContext.capturedValueToField[capturedValue.owner] = irField
+                localClassContext.capturedValueToField[owner] = irField
             }
         }
 

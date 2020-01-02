@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
@@ -40,13 +29,13 @@ import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 class JavaToKotlinPreconversionPullUpHelper(
-        private val data: PullUpData,
-        private val dummyTargetClass: PsiClass,
-        private val javaHelper: JavaPullUpHelper
+    private val data: PullUpData,
+    private val dummyTargetClass: PsiClass,
+    private val javaHelper: JavaPullUpHelper
 ) : PullUpHelper<MemberInfo> by javaHelper {
     private val membersToDummyDeclarations = HashMap<PsiMember, KtElement>()
 
-    private val encapsulateFieldsDescriptor = object: EncapsulateFieldsDescriptor {
+    private val encapsulateFieldsDescriptor = object : EncapsulateFieldsDescriptor {
         override fun getSelectedFields(): Array<out FieldDescriptor>? = arrayOf()
         override fun isToEncapsulateGet() = true
         override fun isToEncapsulateSet() = true
@@ -76,9 +65,8 @@ class JavaToKotlinPreconversionPullUpHelper(
         val fieldDescriptor = FieldDescriptorImpl(member, getterName, setterName, getter, setter)
         getter?.let { dummyAccessorByName[getterName] = dummyTargetClass.add(it) as PsiMethod }
         setter?.let { dummyAccessorByName[setterName] = dummyTargetClass.add(it) as PsiMethod }
-        fieldsToUsages[member] = ReferencesSearch
-                .search(member)
-                .mapNotNull { helper.createUsage(encapsulateFieldsDescriptor, fieldDescriptor, it) }
+        fieldsToUsages[member] =
+            ReferencesSearch.search(member).mapNotNull { helper.createUsage(encapsulateFieldsDescriptor, fieldDescriptor, it) }
     }
 
     override fun move(info: MemberInfo, substitutor: PsiSubstitutor) {
@@ -103,8 +91,8 @@ class JavaToKotlinPreconversionPullUpHelper(
             if (type == null) {
                 val substitutedUpperBound = substitutor.substitute(PsiIntersectionType.createIntersection(*typeParameter.superTypes))
                 subst.put(typeParameter, substitutedUpperBound)
-            }
-            else subst
+            } else
+                subst
         }
 
         javaHelper.move(info, adjustedSubstitutor)
@@ -130,7 +118,7 @@ class JavaToKotlinPreconversionPullUpHelper(
             member.hasModifierProperty(PsiModifier.STATIC) && member !is PsiClass -> targetClass.getOrCreateCompanionObject()
             else -> targetClass
         }
-        val dummyDeclaration : KtNamedDeclaration = when (member) {
+        val dummyDeclaration: KtNamedDeclaration = when (member) {
             is PsiField -> psiFactory.createProperty("val foo = 0")
             is PsiMethod -> psiFactory.createFunction("fun foo() = 0")
             is PsiClass -> psiFactory.createClass("class Foo")
@@ -173,9 +161,7 @@ class JavaToKotlinPreconversionPullUpHelper(
                 val getter = targetLightClass.findMethodBySignature(fieldDescriptor.getterPrototype, false)
                 val setter = targetLightClass.findMethodBySignature(fieldDescriptor.setterPrototype, false)
 
-                EncapsulateFieldHelper
-                        .getHelper(usage.element!!.language)
-                        ?.processUsage(usage, encapsulateFieldsDescriptor, setter, getter)
+                EncapsulateFieldHelper.getHelper(usage.element!!.language)?.processUsage(usage, encapsulateFieldsDescriptor, setter, getter)
             }
         }
     }

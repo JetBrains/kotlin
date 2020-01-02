@@ -2,9 +2,9 @@ import {escapeRegExp, startsWith, trim} from "./utils";
 import {KotlinTestRunner} from "./KotlinTestRunner";
 
 export interface KotlinTestsFilter {
-    mayContainTestsFromSuite(fqn: string): boolean;
+    mayContainTestsFromSuite(fqn: string, alternativeFqn?: string): boolean;
 
-    containsTest(fqn: string): boolean;
+    containsTest(fqn: string, alternativeFqn?: string): boolean;
 }
 
 export function runWithFilter(
@@ -13,13 +13,29 @@ export function runWithFilter(
 ): KotlinTestRunner {
     let path: string[] = [];
 
-    function pathString() {
+    function jsClassName() {
         // skip root
         if (!path[0]) {
             return path.slice(1).join('.')
-        } else {
-            return path.join('.')
         }
+
+        return path.join('.')
+    }
+
+    // In Java (Gradle, IDEA) inner classes uses `$` as separator
+    function javaClassName() {
+        const javaClassName = `${path.slice(1).join('$')}`;
+
+        // skip root
+        if (!path[0]) {
+            return javaClassName
+        }
+
+        if (!javaClassName) {
+            return path[0]
+        }
+
+        return `${path[0]}.${javaClassName}`
     }
 
     return {
@@ -27,7 +43,9 @@ export function runWithFilter(
             path.push(name);
 
             try {
-                if (path.length > 1 && !filter.mayContainTestsFromSuite(pathString())) return;
+                if (path.length > 0 && !filter.mayContainTestsFromSuite(jsClassName(), javaClassName())) {
+                    return;
+                }
 
                 runner.suite(name, isIgnored, fn);
             } finally {
@@ -36,14 +54,12 @@ export function runWithFilter(
         },
 
         test: function (name: string, isIgnored: boolean, fn: () => void) {
-            path.push(name);
-
             try {
-                if (!filter.containsTest(pathString())) return;
+                if (!filter.containsTest(`${jsClassName()}.${name}`, `${javaClassName()}.${name}`))
+                    return;
 
                 runner.test(name, isIgnored, fn);
             } finally {
-                path.pop()
             }
         }
     };
@@ -83,16 +99,13 @@ export class StartsWithFilter implements KotlinTestsFilter {
     ) {
     }
 
-    isPrefixMatched(fqn: string): boolean {
-        return startsWith(fqn + ".", this.prefix);
-    }
-
     mayContainTestsFromSuite(fqn: string): boolean {
-        return this.isPrefixMatched(fqn);
+        return startsWith(this.prefix, fqn)
+            || startsWith(fqn, this.prefix);
     }
 
     containsAllTestsFromSuite(fqn: string): boolean {
-        return this.filter == null && this.isPrefixMatched(fqn);
+        return this.filter == null && startsWith(fqn, this.prefix);
     }
 
     containsTest(fqn: string): boolean {
@@ -102,7 +115,11 @@ export class StartsWithFilter implements KotlinTestsFilter {
 }
 
 export class ExactFilter implements KotlinTestsFilter {
+    private readonly classNameOnlyRegExp: RegExp;
+
     constructor(public fqn: string) {
+        // Exact filter by class name only
+        this.classNameOnlyRegExp = RegExp(`^${escapeRegExp(this.fqn + ".")}[^\.]+$`);
     }
 
     mayContainTestsFromSuite(fqn: string): boolean {
@@ -110,7 +127,11 @@ export class ExactFilter implements KotlinTestsFilter {
     }
 
     containsTest(fqn: string): boolean {
-        return fqn === this.fqn;
+        if (fqn === this.fqn) {
+            return true
+        }
+
+        return this.classNameOnlyRegExp.test(fqn)
     }
 }
 
@@ -151,22 +172,26 @@ export class CompositeTestFilter implements KotlinTestsFilter {
         })
     }
 
-    mayContainTestsFromSuite(fqn: string): boolean {
+    mayContainTestsFromSuite(fqn: string, alternativeFqn: string): boolean {
         for (const excl of this.excludePrefix) {
-            if (excl.containsAllTestsFromSuite(fqn)) return false
+            if (excl.containsAllTestsFromSuite(fqn) || excl.containsAllTestsFromSuite(alternativeFqn)) {
+                return false
+            }
         }
         for (const incl of this.include) {
-            if (incl.mayContainTestsFromSuite(fqn)) return true
+            if (incl.mayContainTestsFromSuite(fqn) || incl.mayContainTestsFromSuite(alternativeFqn)) {
+                return true
+            }
         }
         return false;
     }
 
-    containsTest(fqn: string): boolean {
+    containsTest(fqn: string, alternativeFqn: string): boolean {
         for (const excl of this.exclude) {
-            if (excl.containsTest(fqn)) return false
+            if (excl.containsTest(fqn) || excl.containsTest(alternativeFqn)) return false
         }
         for (const incl of this.include) {
-            if (incl.containsTest(fqn)) return true
+            if (incl.containsTest(fqn) || incl.containsTest(alternativeFqn)) return true
         }
         return false
     }

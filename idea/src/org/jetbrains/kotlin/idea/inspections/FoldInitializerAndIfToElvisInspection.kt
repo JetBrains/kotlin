@@ -74,7 +74,8 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
                 declaration.isVar && declaration.typeReference == null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)
 
                 // for val with explicit type, change it to non-nullable
-                !declaration.isVar && declaration.typeReference != null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)?.makeNotNullable()
+                !declaration.isVar && declaration.typeReference != null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)
+                    ?.makeNotNullable()
 
                 else -> null
             }

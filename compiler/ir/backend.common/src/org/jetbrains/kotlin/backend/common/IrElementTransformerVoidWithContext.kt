@@ -83,6 +83,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
+    protected val currentDeclarationParent get() = allScopes.last { it.irElement is IrDeclarationParent }.irElement as IrDeclarationParent
 
     fun printScopeStack() {
         scopeStack.forEach { println(it.scope.scopeOwner) }

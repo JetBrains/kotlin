@@ -14,8 +14,6 @@ fun throwIfLess(a: Int, b: Int) {
     if (a<b)
         throw java.lang.IllegalStateException()
 }
-// IGNORE_BACKEND: JVM_IR
-// after throwing exception in try block, IR backend is returning a line number at line 6 instead of line 7 where catch statement is in.
 // LINENUMBERS
 // TestKt.box():3
 // TestKt.box():4

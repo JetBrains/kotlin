@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 sealed <warning descr="[REDUNDANT_MODIFIER] Modifier 'abstract' is redundant because 'sealed' is present">abstract</warning> class First
 
 <warning descr="[REDUNDANT_MODIFIER] Modifier 'abstract' is redundant because 'sealed' is present">abstract</warning> sealed class Second

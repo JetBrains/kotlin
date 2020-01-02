@@ -7,6 +7,7 @@ fun deinitialize(foo: dynamic) {
 }
 
 class Foo {
+    @JsName("bar")
     lateinit var bar: String
 
     fun test(): String {

@@ -3748,6 +3748,8 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3758,6 +3760,8 @@ public inline fun <R> UIntArray.flatMap(transform: (UInt) -> Iterable<R>): List<
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3768,6 +3772,8 @@ public inline fun <R> ULongArray.flatMap(transform: (ULong) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3778,6 +3784,8 @@ public inline fun <R> UByteArray.flatMap(transform: (UByte) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5472,6 +5480,8 @@ public inline fun UShortArray.none(predicate: (UShort) -> Boolean): Boolean {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5488,6 +5498,8 @@ public inline fun UIntArray.reduce(operation: (acc: UInt, UInt) -> UInt): UInt {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5504,6 +5516,8 @@ public inline fun ULongArray.reduce(operation: (acc: ULong, ULong) -> ULong): UL
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5520,6 +5534,8 @@ public inline fun UByteArray.reduce(operation: (acc: UByte, UByte) -> UByte): UB
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5539,6 +5555,8 @@ public inline fun UShortArray.reduce(operation: (acc: UShort, UShort) -> UShort)
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5558,6 +5576,8 @@ public inline fun UIntArray.reduceIndexed(operation: (index: Int, acc: UInt, UIn
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5577,6 +5597,8 @@ public inline fun ULongArray.reduceIndexed(operation: (index: Int, acc: ULong, U
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5596,6 +5618,8 @@ public inline fun UByteArray.reduceIndexed(operation: (index: Int, acc: UByte, U
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5611,7 +5635,85 @@ public inline fun UShortArray.reduceIndexed(operation: (index: Int, acc: UShort,
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reduceOrNull(operation: (acc: UInt, UInt) -> UInt): UInt? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reduceOrNull(operation: (acc: ULong, ULong) -> ULong): ULong? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reduceOrNull(operation: (acc: UByte, UByte) -> UByte): UByte? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reduceOrNull(operation: (acc: UShort, UShort) -> UShort): UShort? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5628,6 +5730,8 @@ public inline fun UIntArray.reduceRight(operation: (UInt, acc: UInt) -> UInt): U
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5644,6 +5748,8 @@ public inline fun ULongArray.reduceRight(operation: (ULong, acc: ULong) -> ULong
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5660,6 +5766,8 @@ public inline fun UByteArray.reduceRight(operation: (UByte, acc: UByte) -> UByte
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5679,6 +5787,8 @@ public inline fun UShortArray.reduceRight(operation: (UShort, acc: UShort) -> US
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5699,6 +5809,8 @@ public inline fun UIntArray.reduceRightIndexed(operation: (index: Int, UInt, acc
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5719,6 +5831,8 @@ public inline fun ULongArray.reduceRightIndexed(operation: (index: Int, ULong, a
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5739,6 +5853,8 @@ public inline fun UByteArray.reduceRightIndexed(operation: (index: Int, UByte, a
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5750,6 +5866,82 @@ public inline fun UShortArray.reduceRightIndexed(operation: (index: Int, UShort,
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
         --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.reduceRightOrNull(operation: (UInt, acc: UInt) -> UInt): UInt? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.reduceRightOrNull(operation: (ULong, acc: ULong) -> ULong): ULong? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.reduceRightOrNull(operation: (UByte, acc: UByte) -> UByte): UByte? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.reduceRightOrNull(operation: (UShort, acc: UShort) -> UShort): UShort? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
     }
     return accumulator
 }

@@ -10,7 +10,6 @@ class My {
 }
 
 // 1 GETSTATIC My.my
-// 1 PUTSTATIC My.my
 // 0 INVOKESTATIC My\$Companion.access\$getMy\$p
 // 0 INVOKESTATIC My.access\$getMy\$cp
 // 0 INVOKESPECIAL My\$Companion.getMy

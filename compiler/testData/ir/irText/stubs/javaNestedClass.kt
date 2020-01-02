@@ -10,5 +10,4 @@ public class J {
 
 
 // FILE: javaNestedClass.kt
-// FIR_IDENTICAL
 fun test(jj: J.JJ) = jj.foo()

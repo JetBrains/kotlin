@@ -1,0 +1,7 @@
+FILE fqName:<root> fileName:/javaNestedClass.kt
+  FUN name:test visibility:public modality:FINAL <> (jj:<root>.J.JJ) returnType:kotlin.Unit
+    VALUE_PARAMETER name:jj index:0 type:<root>.J.JJ
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (jj: <root>.J.JJ): kotlin.Unit declared in <root>'
+        CALL 'public open fun foo (): kotlin.Unit [operator] declared in <root>.J.JJ' type=kotlin.Unit origin=null
+          $this: GET_VAR 'jj: <root>.J.JJ declared in <root>.test' type=<root>.J.JJ origin=null

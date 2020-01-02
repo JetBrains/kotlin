@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -50,15 +39,15 @@ object RenameUnresolvedReferenceActionFactory : KotlinSingleIntentionActionFacto
     }
 }
 
-class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQuickFixAction<KtNameReferenceExpression>(element) {
+class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
     companion object {
         private val INPUT_VARIABLE_NAME = "INPUT_VAR"
         private val OTHER_VARIABLE_NAME = "OTHER_VAR"
     }
 
     private class ReferenceNameExpression(
-            private val items: Array<out LookupElement>,
-            private val originalReferenceName: String
+        private val items: Array<out LookupElement>,
+        private val originalReferenceName: String
     ) : Expression() {
         init {
             Arrays.sort(items, HammingComparator(originalReferenceName, { lookupString }))
@@ -89,11 +78,11 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
         val container = element.parents.firstOrNull { it is KtDeclarationWithBody || it is KtClassOrObject || it is KtFile } ?: return
         val isCallee = element.isCallee()
         val occurrences = patternExpression.toRange()
-                .match(container, KotlinPsiUnifier.DEFAULT)
-                .mapNotNull {
-                    val candidate = (it.range.elements.first() as? KtExpression)?.getQualifiedElementSelector() as? KtNameReferenceExpression
-                    if (candidate != null && candidate.isCallee() == isCallee) candidate else null
-                }
+            .match(container, KotlinPsiUnifier.DEFAULT)
+            .mapNotNull {
+                val candidate = (it.range.elements.first() as? KtExpression)?.getQualifiedElementSelector() as? KtNameReferenceExpression
+                if (candidate != null && candidate.isCallee() == isCallee) candidate else null
+            }
 
         val resolutionFacade = element.getResolutionFacade()
         val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL_WITH_CFA)
@@ -101,28 +90,25 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
         val variantsHelper = ReferenceVariantsHelper(context, resolutionFacade, moduleDescriptor, {
             it !is DeclarationDescriptorWithVisibility || it.isVisible(element, null, context, resolutionFacade)
         }, NotPropertiesService.getNotProperties(element))
-        val expectedTypes = patternExpression
-                .guessTypes(context, moduleDescriptor)
-                .ifEmpty { arrayOf(moduleDescriptor.builtIns.nullableAnyType) }
+        val expectedTypes = patternExpression.guessTypes(context, moduleDescriptor)
+            .ifEmpty { arrayOf(moduleDescriptor.builtIns.nullableAnyType) }
         val descriptorKindFilter = if (isCallee) DescriptorKindFilter.FUNCTIONS else DescriptorKindFilter.VARIABLES
-        val lookupItems = variantsHelper
-                .getReferenceVariants(element, descriptorKindFilter, { true })
-                .filter { candidate ->
-                    candidate is CallableDescriptor && (expectedTypes.any { candidate.returnType?.isSubtypeOf(it) ?: false })
-                }
-                .mapTo(if (ApplicationManager.getApplication().isUnitTestMode) linkedSetOf() else linkedSetOf(originalName)) {
-                    it.name.asString()
-                }
-                .map { LookupElementBuilder.create(it) }
-                .toTypedArray()
+        val lookupItems = variantsHelper.getReferenceVariants(element, descriptorKindFilter, { true })
+            .filter { candidate ->
+                candidate is CallableDescriptor && (expectedTypes.any { candidate.returnType?.isSubtypeOf(it) ?: false })
+            }
+            .mapTo(if (ApplicationManager.getApplication().isUnitTestMode) linkedSetOf() else linkedSetOf(originalName)) {
+                it.name.asString()
+            }
+            .map { LookupElementBuilder.create(it) }
+            .toTypedArray()
         val nameExpression = ReferenceNameExpression(lookupItems, originalName)
 
         val builder = TemplateBuilderImpl(container)
         occurrences.forEach {
             if (it != element) {
                 builder.replaceElement(it.getReferencedNameElement(), OTHER_VARIABLE_NAME, INPUT_VARIABLE_NAME, false)
-            }
-            else {
+            } else {
                 builder.replaceElement(it.getReferencedNameElement(), INPUT_VARIABLE_NAME, nameExpression, true)
             }
         }

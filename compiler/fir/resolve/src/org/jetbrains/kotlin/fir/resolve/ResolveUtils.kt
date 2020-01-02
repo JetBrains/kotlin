@@ -6,26 +6,22 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.componentArrayAccessor
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
@@ -35,6 +31,8 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -175,6 +173,19 @@ fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeKotlinTypeProj
 fun FirClassifierSymbol<*>.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
     constructType(parts.toTypeProjections(), isNullable)
 
+fun FirClassifierSymbol<*>.constructType(
+    parts: List<FirQualifierPart>,
+    isNullable: Boolean,
+    symbolOriginSession: FirSession
+): ConeKotlinType =
+    constructType(parts.toTypeProjections(), isNullable)
+        .also {
+            val lookupTag = it.lookupTag
+            if (lookupTag is ConeClassLikeLookupTagImpl && this is FirClassLikeSymbol<*>) {
+                lookupTag.bindSymbolToLookupTag(symbolOriginSession.firSymbolProvider, this)
+            }
+        }
+
 fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =
     when (variance) {
         Variance.INVARIANT -> this
@@ -195,8 +206,24 @@ private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProj
     }
 }.toTypedArray()
 
+fun coneFlexibleOrSimpleType(
+    typeContext: ConeInferenceContext?,
+    lowerBound: ConeKotlinType,
+    upperBound: ConeKotlinType
+): ConeKotlinType {
+    if (lowerBound is ConeFlexibleType) {
+        return coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
+    }
+    if (upperBound is ConeFlexibleType) {
+        return coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
+    }
+    if (typeContext != null && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound)) {
+        return lowerBound
+    }
+    return ConeFlexibleType(lowerBound, upperBound)
+}
 
-fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
+fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeContext: ConeInferenceContext? = null): T {
     if (this.nullability == nullability) {
         return this
     }
@@ -205,7 +232,14 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable) as T
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
-        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
+        is ConeFlexibleType -> {
+            if (nullability == ConeNullability.UNKNOWN) {
+                if (lowerBound.nullability != upperBound.nullability || lowerBound.nullability == ConeNullability.UNKNOWN) {
+                    return this
+                }
+            }
+            coneFlexibleOrSimpleType(typeContext, lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
+        }
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor) as T
         is ConeIntersectionType -> when (nullability) {
@@ -221,6 +255,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
             ConeNullability.NULLABLE -> original.withNullability(nullability)
             ConeNullability.UNKNOWN -> original.withNullability(nullability)
         } as T
+        is ConeIntegerLiteralType -> this
         else -> error("sealed: ${this::class}")
     }
 }
@@ -294,8 +329,14 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     }
     // TODO: Handle no value type here
     return resultType.resolvedTypeFromPrototype(
-        StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
+        session.builtinTypes.unitType.type//StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
     )
+}
+
+internal fun typeForReifiedParameterReference(parameterReference: FirResolvedReifiedParameterReference): FirTypeRef {
+    val resultType = parameterReference.resultType
+    val typeParameterSymbol = parameterReference.symbol
+    return resultType.resolvedTypeFromPrototype(typeParameterSymbol.constructType(emptyArray(), false))
 }
 
 internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultType: FirTypeRef): FirTypeRef? {
@@ -345,6 +386,9 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             val implicitReceiver = implicitReceiverStack[labelName]
             FirResolvedTypeRefImpl(null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName"))
         }
+        is FirSuperReference -> {
+            newCallee.superTypeRef as? FirResolvedTypeRef ?: FirErrorTypeRefImpl(newCallee.source, FirUnresolvedNameError(Name.identifier("super")))
+        }
         else -> error("Failed to extract type from: $newCallee")
     }
 }
@@ -355,7 +399,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
             val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
             if (makeNullable) {
                 returnType.withReplacedConeType(
-                    returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
+                    returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext)
                 )
             } else {
                 returnType

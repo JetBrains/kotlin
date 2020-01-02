@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,7 +54,10 @@ class ConfigureKotlinNotification(
 
     companion object {
         fun getNotificationState(project: Project, excludeModules: Collection<Module>): ConfigureKotlinNotificationState? {
-            val (configurableModules, ableToRunConfigurators) = getConfigurationPossibilitiesForConfigureNotification(project, excludeModules)
+            val (configurableModules, ableToRunConfigurators) = getConfigurationPossibilitiesForConfigureNotification(
+                project,
+                excludeModules
+            )
             if (ableToRunConfigurators.isEmpty() || configurableModules.isEmpty()) return null
 
             val isOnlyOneModule = configurableModules.size == 1
@@ -71,8 +74,7 @@ class ConfigureKotlinNotification(
             )
         }
 
-        private fun getLink(configurator: KotlinProjectConfigurator, isOnlyOneModule: Boolean): String {
-            return "<a href=\"${configurator.name}\">as Kotlin (${configurator.presentableText}) module${if(!isOnlyOneModule) "s" else ""}</a>"
-        }
+        private fun getLink(configurator: KotlinProjectConfigurator, isOnlyOneModule: Boolean): String =
+            "<a href=\"${configurator.name}\">as Kotlin (${configurator.presentableText}) module${if (!isOnlyOneModule) "s" else ""}</a>"
     }
 }

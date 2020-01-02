@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 
 class IrBuiltIns(
@@ -91,7 +92,7 @@ class IrBuiltIns(
             SourceElement.NO_SOURCE
         ).apply {
             typeParameterDescriptor = TypeParameterDescriptorImpl.createWithDefaultBound(
-                this, Annotations.EMPTY, true, Variance.INVARIANT, Name.identifier("T0"), 0
+                this, Annotations.EMPTY, true, Variance.INVARIANT, Name.identifier("T0"), 0, LockBasedStorageManager.NO_LOCKS
             )
 
             valueParameterDescriptor = ValueParameterDescriptorImpl(
@@ -153,7 +154,8 @@ class IrBuiltIns(
             SourceElement.NO_SOURCE
         ).apply {
             typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
-                this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T0"), 0, SourceElement.NO_SOURCE
+                this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T0"),
+                0, SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
             ).apply {
                 addUpperBound(any)
                 setInitialized()

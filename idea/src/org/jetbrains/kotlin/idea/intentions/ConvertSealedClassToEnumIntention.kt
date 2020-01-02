@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -71,10 +60,10 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         val inconvertibleSubclasses = subclassesByContainer[null] ?: emptyList()
         if (inconvertibleSubclasses.isNotEmpty()) {
             return showError(
-                    "All inheritors must be nested objects of the class itself and may not inherit from other classes or interfaces.\n",
-                    inconvertibleSubclasses,
-                    project,
-                    editor
+                "All inheritors must be nested objects of the class itself and may not inherit from other classes or interfaces.\n",
+                inconvertibleSubclasses,
+                project,
+                editor
             )
         }
 
@@ -86,8 +75,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
 
         if (subclassesByContainer.isNotEmpty()) {
             subclassesByContainer.forEach { currentClass, currentSubclasses -> processClass(currentClass!!, currentSubclasses, project) }
-        }
-        else {
+        } else {
             processClass(klass, emptyList(), project)
         }
     }
@@ -125,8 +113,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
 
             if (i < subclasses.lastIndex) {
                 entry.add(comma)
-            }
-            else if (needSemicolon) {
+            } else if (needSemicolon) {
                 entry.add(semicolon)
             }
 
@@ -143,11 +130,10 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
                 .reversed()
                 .asSequence()
                 .map { klass.addDeclarationBefore(it, null) }
-                    .last()
+                .last()
             // TODO: Add formatter rule
             firstEntry.parent.addBefore(psiFactory.createNewLine(), firstEntry)
-        }
-        else if (needSemicolon) {
+        } else if (needSemicolon) {
             klass.declarations.firstOrNull()?.let { anchor ->
                 val delimiter = anchor.parent.addBefore(semicolon, anchor)
                 CodeStyleManager.getInstance(project).reformat(delimiter)

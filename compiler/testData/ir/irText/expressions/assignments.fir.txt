@@ -25,9 +25,9 @@ FILE fqName:<root> fileName:/assignments.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Ref declared in <root>.Ref.<set-x>' type=<root>.Ref origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Ref.<set-x>' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/assignments.kt
       SET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
         CONST Int type=kotlin.Int value=1
       SET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> (r:<root>.Ref) returnType:kotlin.Unit

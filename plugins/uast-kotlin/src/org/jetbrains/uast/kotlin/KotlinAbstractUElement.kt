@@ -17,8 +17,10 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForLocalDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightGetter
 import org.jetbrains.kotlin.asJava.toLightSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -44,6 +46,20 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
         @Suppress("DEPRECATION")
         val psi = psi //TODO: `psi` is deprecated but it seems that it couldn't be simply replaced for this case
         var parent = psi?.parent ?: sourcePsi?.parent ?: psi?.containingFile
+
+        if (psi is PsiMethod && psi !is KtLightMethod) { // handling of synthetic things not represented in lightclasses directly
+            when (parent) {
+                is KtClassBody -> {
+                    val grandParent = parent.parent
+                    doConvertParent(this, grandParent)?.let { return it }
+                    parent = grandParent
+                }
+                is KtFile -> {
+                    parent.toUElementOfType<UClass>()?.let { return it } // mutlifile facade class
+                }
+            }
+
+        }
 
         if (psi is KtLightClassForLocalDeclaration) {
             val originParent = psi.kotlinOrigin.parent

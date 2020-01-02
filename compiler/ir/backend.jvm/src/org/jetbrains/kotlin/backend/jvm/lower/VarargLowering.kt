@@ -23,13 +23,15 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 val varargPhase = makeIrFilePhase(
     ::VarargLowering,
     name = "VarargLowering",
-    description = "Replace varargs with array arguments and lower arrayOf calls"
+    description = "Replace varargs with array arguments and lower arrayOf calls",
+    prerequisite = setOf(polymorphicSignaturePhase)
 )
 
 private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
@@ -55,7 +57,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
             val parameter = function.owner.valueParameters[i]
             if (parameter.varargElementType != null && !parameter.hasDefaultValue()) {
                 // Compute the correct type for the array argument.
-                val arrayType = parameter.type.substitute(expression.typeSubstitutionMap)
+                val arrayType = parameter.type.substitute(expression.typeSubstitutionMap).makeNotNull()
                 expression.putValueArgument(i, createBuilder().irArrayOf(arrayType))
             }
         }

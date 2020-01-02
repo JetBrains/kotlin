@@ -108,7 +108,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             irFunction.modality !== Modality.ABSTRACT &&
             irFunction.visibility !== Visibilities.INVISIBLE_FAKE &&
             irFunction.overriddenInClasses().firstOrNull { it.getJvmSignature() != ourSignature || it.origin != IrDeclarationOrigin.FAKE_OVERRIDE }
-                ?.let { (it.getJvmName() != ourMethodName || it.getJvmSignature() == specialOverrideSignature) && it.comesFromJava() } == true
+                ?.let { (it.getJvmName() != ourMethodName || it.getJvmSignature() == specialOverrideSignature) && it.isExternalDeclaration() } == true
         ) {
             val resolved = irFunction.findConcreteSuperDeclaration()!!
             val resolvedSignature = resolved.getJvmSignature()
@@ -215,7 +215,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                 newName,
                 visibility, modality, returnType,
                 isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                isOperator = isOperator
             ).apply {
                 newDescriptor.bind(this)
                 parent = this@copyRenamingTo.parent
@@ -250,7 +251,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             isTailrec = false,
             isSuspend = signatureFunction.isSuspend,
             isExpect = false,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+            isOperator = false
         ).apply {
             descriptor.bind(this)
             parent = irClass
@@ -313,7 +315,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                         }
                         // After the checks, insert the orignal method body.
                         if (body is IrExpressionBody) {
-                            +(body as IrExpressionBody).expression
+                            +irReturn((body as IrExpressionBody).expression)
                         } else {
                             (body as IrBlockBody).statements.forEach { +it }
                         }
@@ -393,7 +395,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                     Name.identifier(getJvmName()),
                     visibility, modality, returnType,
                     isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-                    isFakeOverride = newOrigin == IrDeclarationOrigin.FAKE_OVERRIDE
+                    isFakeOverride = newOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                    isOperator = isOperator
                 ).apply {
                     wrappedDescriptor.bind(this)
                     parent = this@orphanedCopy.parent
@@ -489,10 +492,11 @@ fun IrSimpleFunction.overriddenInClasses(): Sequence<IrSimpleFunction> =
 fun IrSimpleFunction.isCollectionStub(): Boolean =
     origin == IrDeclarationOrigin.IR_BUILTINS_STUB
 
-// TODO: At present, there is no reliable way to distinguish Java imports from Kotlin cross-module imports.
-val ORIGINS_FROM_JAVA = setOf(IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
+val EXTERNAL_ORIGIN = setOf(IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
 
-fun IrDeclaration.comesFromJava() = parentAsClass.origin in ORIGINS_FROM_JAVA
+fun IrDeclaration.comesFromJava() = parentAsClass.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+
+fun IrDeclaration.isExternalDeclaration() = parentAsClass.origin in EXTERNAL_ORIGIN
 
 // Method has the same name, same arguments as `other`. Return types may differ.
 fun Method.sameCallAs(other: Method) =

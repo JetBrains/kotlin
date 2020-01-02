@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCo
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.debugger.test.sequence.exec.AbstractSequenceTraceTestCase
 import org.jetbrains.kotlin.idea.debugger.test.*
@@ -161,6 +160,7 @@ import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractBuildFileGenerationTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
@@ -253,6 +253,16 @@ fun main(args: Array<String>) {
             model("checker/scripts", extension = "kts")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
+            model("checker/diagnosticsMessage")
+        }
+
+        testClass<AbstractFirPsiCheckerTest> {
+            model("checker", recursive = false)
+            model("checker/regression")
+            model("checker/recovery")
+            model("checker/rendering")
+            model("checker/duplicateJvmSignature")
+            model("checker/infos")
             model("checker/diagnosticsMessage")
         }
 
@@ -497,6 +507,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractReferenceResolveTest> {
+            model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractFirReferenceResolveTest> {
             model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
@@ -1050,6 +1064,15 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiPlatformCompletionTest> {
             model("multiPlatform", recursive = false, extension = null)
+        }
+    }
+
+    testGroup(
+        "libraries/tools/new-project-wizard/new-project-wizard-cli/tests",
+        "libraries/tools/new-project-wizard/new-project-wizard-cli/testData"
+    ) {
+        testClass<AbstractBuildFileGenerationTest> {
+            model("buildFileGeneration", recursive = false, extension = null)
         }
     }
 

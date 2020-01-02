@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import java.io.File
 
 class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
     private val project: Project = compilation.target.project
@@ -49,7 +51,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             testNameSuffix = task.targetName,
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
-            ignoreOutOfRootNodes = true
+            ignoreOutOfRootNodes = true,
+            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
         )
 
         val npmProject = compilation.npmProject
@@ -59,19 +62,31 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             exclude = task.excludePatterns
         )
 
-        createAdapterJs(task)
-
         val mocha = npmProject.require("mocha/bin/mocha")
-        val adapter = npmProject.require("./$ADAPTER_NODEJS")
+
+        val file = task.nodeModulesToLoad
+            .map { npmProject.require(it) }
+            .single()
+
+        val adapter = createAdapterJs(file, debug)
 
         val args = mutableListOf(
             "--require",
             npmProject.require("source-map-support/register.js")
-
         ).apply {
+            if (debug) {
+                // Idle run of tests to load file with source maps to enable break points
+                add("--require")
+                add(
+                    npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-idle-runner.js")
+                )
+                add("--require")
+                add(file)
+
+                add("--inspect-brk")
+            }
             add(mocha)
-            addAll(cliArg("--inspect-brk", debug))
-            add(adapter)
+            add(adapter.canonicalPath)
             addAll(cliArgs.toList())
             addAll(cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js"))
             addAll(cliArg("--timeout", timeout))
@@ -85,27 +100,33 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         )
     }
 
-    private fun cliArg(cli: String, value: Boolean): List<String> {
-        return if (value) listOf(cli) else emptyList()
-    }
-
     private fun cliArg(cli: String, value: String?): List<String> {
         return value?.let { listOf(cli, it) } ?: emptyList()
     }
 
-    private fun createAdapterJs(task: KotlinJsTest) {
+    private fun createAdapterJs(
+        file: String,
+        debug: Boolean
+    ): File {
         val npmProject = compilation.npmProject
-        val file = task.nodeModulesToLoad
-            .map { npmProject.require(it) }
-            .single()
 
         val adapterJs = npmProject.dir.resolve(ADAPTER_NODEJS)
         adapterJs.printWriter().use { writer ->
             val adapter = npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
+            val escapedFile = file.jsQuoted()
+
+            if (debug) {
+                // Invalidate caches after idle run
+                writer.println("delete require.cache[require.resolve($escapedFile)]")
+                writer.println("delete require.cache[require.resolve('kotlin-test')]")
+            }
+
             writer.println("require(${adapter.jsQuoted()})")
 
-            writer.println("module.exports = require(${file.jsQuoted()})")
+            writer.println("module.exports = require($escapedFile)")
         }
+
+        return adapterJs
     }
 
     companion object {

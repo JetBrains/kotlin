@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter.renderersUtil
@@ -32,8 +21,8 @@ import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 
-private val RED_TEMPLATE = "<font color=red><b>%s</b></font>"
-private val STRONG_TEMPLATE = "<b>%s</b>"
+private const val RED_TEMPLATE = "<font color=red><b>%s</b></font>"
+private const val STRONG_TEMPLATE = "<b>%s</b>"
 
 fun renderStrong(o: Any): String = STRONG_TEMPLATE.format(o)
 
@@ -59,21 +48,19 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
     fun renderParameter(parameter: ValueParameterDescriptor): String {
         val varargElementType = parameter.varargElementType
         val parameterType = varargElementType ?: parameter.type
-        val renderedParameter =
-                (if (varargElementType != null) "<b>vararg</b> " else "") +
+        val renderedParameter = (if (varargElementType != null) "<b>vararg</b> " else "") +
                 typeRenderer.render(parameterType, context) +
                 if (parameter.hasDefaultValue()) " = ..." else ""
-        if (resolvedCall.hasTypeMismatchErrorOnParameter(parameter)) {
-            return renderError(renderedParameter)
-        }
-        return renderedParameter
+        return if (resolvedCall.hasTypeMismatchErrorOnParameter(parameter))
+            renderError(renderedParameter)
+        else
+            renderedParameter
     }
 
     fun appendTypeParametersSubstitution() {
         val parametersToArgumentsMap = resolvedCall.typeArguments
         fun TypeParameterDescriptor.isInferred(): Boolean {
-            val typeArgument = parametersToArgumentsMap[this]
-            if (typeArgument == null) return false
+            val typeArgument = parametersToArgumentsMap[this] ?: return false
             return !ErrorUtils.isUninferredParameter(typeArgument)
         }
 
@@ -81,16 +68,16 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition(TypeParameterDescriptor::isInferred)
 
         append("<br/>$indent<i>where</i> ")
-        if (!notInferredTypeParameters.isEmpty()) {
+        if (notInferredTypeParameters.isNotEmpty()) {
             append(notInferredTypeParameters.joinToString { typeParameter -> renderError(typeParameter.name) })
             append("<i> cannot be inferred</i>")
-            if (!inferredTypeParameters.isEmpty()) {
+            if (inferredTypeParameters.isNotEmpty()) {
                 append("; ")
             }
         }
 
         val typeParameterToTypeArgumentMap = resolvedCall.typeArguments
-        if (!inferredTypeParameters.isEmpty()) {
+        if (inferredTypeParameters.isNotEmpty()) {
             append(inferredTypeParameters.joinToString { typeParameter ->
                 "${typeParameter.name} = ${typeRenderer.render(typeParameterToTypeArgumentMap[typeParameter]!!, context)}"
             })
@@ -106,13 +93,12 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
     append(resultingDescriptor.valueParameters.joinToString(transform = ::renderParameter))
     append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
-    if (!resolvedCall.candidateDescriptor.typeParameters.isEmpty()) {
+    if (resolvedCall.candidateDescriptor.typeParameters.isNotEmpty()) {
         appendTypeParametersSubstitution()
         append("<i> for </i><br/>$indent")
         // candidate descriptor is not in context of the rest of the message
         append(descriptorRenderer.render(resolvedCall.candidateDescriptor, RenderingContext.of(resolvedCall.candidateDescriptor)))
-    }
-    else {
+    } else {
         append(" <i>defined in</i> ")
         val containingDeclaration = resultingDescriptor.containingDeclaration
         val fqName = DescriptorUtils.getFqName(containingDeclaration)

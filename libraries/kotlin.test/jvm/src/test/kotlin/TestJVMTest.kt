@@ -30,14 +30,14 @@ class TestJVMTest {
     @Test
     fun assertEqualsMessage() {
         expectAssertion({ msg ->
-                            assertNotNull(msg); msg!!
+                            assertNotNull(msg)
                             assertTrue { msg.contains(expected.toString()) }
                             assertTrue { msg.contains(actual.toString()) }
                             assertFalse { msg.startsWith(".") }
                         }, { assertEquals<Any>(expected, actual) })
 
         expectAssertion({ msg ->
-                            assertNotNull(msg); msg!!
+                            assertNotNull(msg)
                             assertTrue { msg.contains(message) }
                             assertTrue { msg.contains(expected.toString()) }
                             assertTrue { msg.contains(actual.toString()) }
@@ -47,13 +47,13 @@ class TestJVMTest {
     @Test
     fun assertNotEqualsMessage() {
         expectAssertion({ msg ->
-                            assertNotNull(msg); msg!!
+                            assertNotNull(msg)
                             assertTrue { msg.contains(actual.toString()) }
                             assertFalse { msg.startsWith(".") }
                         }, { assertNotEquals(actual, actual) })
 
         expectAssertion({ msg ->
-                            assertNotNull(msg); msg!!
+                            assertNotNull(msg)
                             assertTrue { msg.contains(message) }
                             assertTrue { msg.contains(actual.toString()) }
                         }, { assertNotEquals(actual, actual, message) })

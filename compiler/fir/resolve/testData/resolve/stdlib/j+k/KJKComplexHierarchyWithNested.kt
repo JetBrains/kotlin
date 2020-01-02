@@ -7,7 +7,7 @@ fun main(k: KSub, vString: SuperClass<String>.NestedInSuperClass, vInt: SuperCla
     // TODO: Support parametrisized inner classes
     k.getImpl().nestedI(vInt)
     k.getNestedSubClass().<!INAPPLICABLE_CANDIDATE!>nested<!>("")
-    k.getNestedSubClass().<!INAPPLICABLE_CANDIDATE!>nested<!>(1)
+    k.getNestedSubClass().nested(1)
 }
 
 // FILE: J1.java

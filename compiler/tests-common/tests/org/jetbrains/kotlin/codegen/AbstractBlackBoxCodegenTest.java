@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.codegen.ir.AbstractFirBlackBoxCodegenTest;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -32,7 +33,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             @NotNull List<TestFile> files,
             boolean unexpectedBehaviour
     ) throws Exception {
-        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
+        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile) ||
+                            (this instanceof AbstractFirBlackBoxCodegenTest &&
+                             InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "IGNORE_BACKEND_FIR: JVM_IR"));
 
         compile(files, !isIgnored, false);
 

@@ -5,28 +5,6 @@
 
 package kotlin.text
 
-expect interface Appendable {
-    fun append(c: Char): Appendable
-    fun append(csq: CharSequence?): Appendable
-    fun append(csq: CharSequence?, start: Int, end: Int): Appendable
-}
-
-expect class StringBuilder : Appendable, CharSequence {
-    constructor()
-    constructor(capacity: Int)
-    constructor(content: CharSequence)
-
-    override val length: Int
-    override operator fun get(index: Int): Char
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
-
-    fun reverse(): StringBuilder
-    override fun append(c: Char): StringBuilder
-    override fun append(csq: CharSequence?): StringBuilder
-    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder
-    fun append(obj: Any?): StringBuilder
-}
-
 expect class Regex {
     constructor(pattern: String)
     constructor(pattern: String, option: RegexOption)
@@ -81,13 +59,6 @@ expect enum class RegexOption {
     IGNORE_CASE,
     MULTILINE
 }
-
-/**
- *  The exception thrown when a character encoding or decoding error occurs.
- */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public expect open class CharacterCodingException() : Exception
 
 
 // From char.kt
@@ -236,15 +207,6 @@ public expect fun String.toLowerCase(): String
 public expect fun String.capitalize(): String
 public expect fun String.decapitalize(): String
 public expect fun CharSequence.repeat(n: Int): String
-
-
-/**
- * Clears the content of this string builder making it empty.
- *
- * @sample samples.text.Strings.clearStringBuilder
- */
-@SinceKotlin("1.3")
-public expect fun StringBuilder.clear(): StringBuilder
 
 
 /**

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisitor<FirExpression?, Map<Int, FirExpression>>() {
@@ -21,8 +21,8 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
 
     override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Map<Int, FirExpression>): FirExpression? {
         return when (constantReference) {
-            ConeBooleanConstantReference.TRUE -> FirConstExpressionImpl(null, IrConstKind.Boolean, true)
-            ConeBooleanConstantReference.FALSE -> FirConstExpressionImpl(null, IrConstKind.Boolean, false)
+            ConeBooleanConstantReference.TRUE -> FirConstExpressionImpl(null, FirConstKind.Boolean, true)
+            ConeBooleanConstantReference.FALSE -> FirConstExpressionImpl(null, FirConstKind.Boolean, false)
             ConeConstantReference.NULL -> createConstNull()
             else -> null
         }
@@ -71,7 +71,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
         return data[valueParameterReference.parameterIndex]
     }
 
-    private fun createConstNull(): FirConstExpression<*> = FirConstExpressionImpl(null, IrConstKind.Null, null)
+    private fun createConstNull(): FirConstExpression<*> = FirConstExpressionImpl(null, FirConstKind.Null, null)
 }
 
 fun ConeConditionalEffectDeclaration.buildContractFir(argumentMapping: Map<Int, FirExpression>): FirExpression? {

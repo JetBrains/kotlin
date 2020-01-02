@@ -150,7 +150,8 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                     isTailrec = false,
                     isSuspend = oldFunction.isSuspend,
                     isExpect = false,
-                    isFakeOverride = false
+                    isFakeOverride = false,
+                    isOperator = false
                 ).apply {
                     descriptor.bind(this)
                 }

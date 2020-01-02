@@ -13,13 +13,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.LABELED_THIS_PARAMETER
-import org.jetbrains.kotlin.codegen.AsmUtil.RECEIVER_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.Modality
@@ -34,33 +29,30 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
     private val typeMap = mutableMapOf<IrSymbol, Type>()
 
-    override fun enter(descriptor: IrSymbol, type: Type): Int {
-        typeMap[descriptor] = type
-        return super.enter(descriptor, type)
+    override fun enter(key: IrSymbol, type: Type): Int {
+        typeMap[key] = type
+        return super.enter(key, type)
     }
 
-    override fun leave(descriptor: IrSymbol): Int {
-        typeMap.remove(descriptor)
-        return super.leave(descriptor)
+    override fun leave(key: IrSymbol): Int {
+        typeMap.remove(key)
+        return super.leave(key)
     }
 
-    fun typeOf(descriptor: IrSymbol): Type = typeMap.getValue(descriptor)
+    fun typeOf(symbol: IrSymbol): Type =
+        typeMap[symbol] ?: error("No mapping for symbol: ${symbol.owner.render()}")
 }
 
 internal val IrFunction.isStatic
@@ -410,105 +402,6 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
 //        }
 
 //        JvmDeclarationOrigin(OTHER, element, descriptor)
-
-/* From generateJava8ParameterNames.kt */
-
-fun generateParameterNames(
-    irFunction: IrFunction,
-    mv: MethodVisitor,
-    jvmSignature: JvmMethodSignature,
-    state: GenerationState
-) {
-    val iterator = irFunction.valueParameters.iterator()
-    val kotlinParameterTypes = jvmSignature.valueParameters
-    var isEnumName = true
-
-    kotlinParameterTypes.forEachIndexed { index, parameterSignature ->
-        val kind = parameterSignature.kind
-
-        val name = when (kind) {
-            JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL -> {
-                isEnumName = !isEnumName
-                if (!isEnumName) "\$enum\$name" else "\$enum\$ordinal"
-            }
-            JvmMethodParameterKind.RECEIVER -> {
-                getNameForReceiverParameter(irFunction, state.languageVersionSettings)
-            }
-            JvmMethodParameterKind.OUTER -> AsmUtil.CAPTURED_THIS_FIELD
-            JvmMethodParameterKind.VALUE -> iterator.next().name.asString()
-
-            JvmMethodParameterKind.CONSTRUCTOR_MARKER,
-            JvmMethodParameterKind.SUPER_CALL_PARAM,
-            JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE,
-            JvmMethodParameterKind.THIS -> {
-                //we can't generate null name cause of jdk problem #9045294
-                "arg" + index
-            }
-        }
-
-        //A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared explicitly or
-        // implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
-        //A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
-        // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
-        val access = when (kind) {
-            JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL -> Opcodes.ACC_SYNTHETIC
-            JvmMethodParameterKind.RECEIVER -> Opcodes.ACC_MANDATED
-            JvmMethodParameterKind.OUTER -> Opcodes.ACC_MANDATED
-            JvmMethodParameterKind.VALUE -> 0
-
-            JvmMethodParameterKind.CONSTRUCTOR_MARKER,
-            JvmMethodParameterKind.SUPER_CALL_PARAM,
-            JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE,
-            JvmMethodParameterKind.THIS -> Opcodes.ACC_SYNTHETIC
-        }
-
-        mv.visitParameter(name, access)
-    }
-}
-
-/* From AsmUtil.java */
-
-fun getNameForReceiverParameter(
-    irFunction: IrFunction,
-    languageVersionSettings: LanguageVersionSettings
-): String {
-    return getLabeledThisNameForReceiver(
-        irFunction, languageVersionSettings, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME
-    )
-}
-
-private fun getLabeledThisNameForReceiver(
-    irFunction: IrFunction,
-    languageVersionSettings: LanguageVersionSettings,
-    prefix: String,
-    defaultName: String
-): String {
-    if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-        return defaultName
-    }
-
-    // Current codegen never touches CALL_LABEL_FOR_LAMBDA_ARGUMENT
-//    if (irFunction is IrSimpleFunction) {
-//        val labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, irFunction.descriptor)
-//        if (labelName != null) {
-//            return getLabeledThisName(labelName, prefix, defaultName)
-//        }
-//    }
-
-//    val callableName = irFunction.descriptor.safeAs<VariableAccessorDescriptor>()?.correspondingVariable?.name ?: irFunction.descriptor.name
-    val callableName = irFunction.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
-
-    return if (callableName.isSpecial) {
-        defaultName
-    } else getLabeledThisName(callableName.asString(), prefix, defaultName)
-
-}
-
-fun getLabeledThisName(callableName: String, prefix: String, defaultName: String): String {
-    return if (!Name.isValidIdentifier(callableName)) {
-        defaultName
-    } else prefix + mangleNameIfNeeded(callableName)
-}
 
 val IrAnnotationContainer.deprecationFlags: Int
     get() {

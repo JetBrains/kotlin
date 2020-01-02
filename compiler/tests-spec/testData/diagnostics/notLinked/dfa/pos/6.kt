@@ -328,7 +328,11 @@ val case_17 = if (nullableIntProperty === <!DEBUG_INFO_CONSTANT!>implicitNullabl
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>nullableIntProperty<!>.funNullableAny()
 }
 
-//TESTCASE NUMBER: 18
+/*
+ * TESTCASE NUMBER: 18
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668, KT-35668
+ */
 fun case_18(a: DeepObject.A.B.C.D.E.F.G.J?, b: Boolean) {
     val x = null
     val y = null
@@ -682,7 +686,7 @@ fun case_33(a: ((Float) -> Int?)?, b: Float?, c: Boolean?) {
 fun case_34(z1: Boolean?) {
     var z = null
 
-    if (true && true && true && true && EnumClassWithNullableProperty.A.prop_1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> && <!SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== null<!> && EnumClassWithNullableProperty.A.prop_1 !== <!DEBUG_INFO_CONSTANT!>z<!> || z1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> || <!ALWAYS_NULL!>z1<!>!! && true && true) {
+    if (true && true && true && true && EnumClassWithNullableProperty.A.prop_1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> && <!SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== null<!> && EnumClassWithNullableProperty.A.prop_1 !== <!DEBUG_INFO_CONSTANT!>z<!> || z1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> || <!ALWAYS_NULL!>z1<!>!! <!UNREACHABLE_CODE!>&& true && true<!>) {
 
     } else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>EnumClassWithNullableProperty.A.prop_1<!>
@@ -1172,7 +1176,11 @@ fun case_65(x: Any?, z: Nothing?) {
     }
 }
 
-// TESTCASE NUMBER: 66
+/*
+ * TESTCASE NUMBER: 66
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_66(x: Any?, z1: Nothing?, z2: Nothing?, b: Boolean) {
     if (x is ClassLevel1?) {
         if (x is ClassLevel2?) {
@@ -1234,7 +1242,11 @@ fun case_68(x: Any?, z: Nothing?) {
     }
 }
 
-// TESTCASE NUMBER: 69
+/*
+ * TESTCASE NUMBER: 69
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-35668
+ */
 fun case_69(x: Any?, z: Nothing?) {
     if (x is ClassLevel1? && x is ClassLevel2? && x is ClassLevel3? && x is ClassLevel4? && x != try { <!DEBUG_INFO_CONSTANT!>z<!> } catch (e: Exception) { <!DEBUG_INFO_CONSTANT!>z<!> } && x is ClassLevel5?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & ClassLevel2 & ClassLevel3 & ClassLevel4 & ClassLevel5 & kotlin.Any & kotlin.Any?")!>x<!>
@@ -1309,18 +1321,19 @@ fun case_71(t: Any?) {
  * TESTCASE NUMBER: 72
  * NOTE: lazy smartcasts
  * DISCUSSION
- * ISSUES: KT-28362, KT-27032
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-28362, KT-27032, KT-35668
  */
 fun case_72(t: Any?, z1: Nothing?) {
     var z2 = null
 
     if (t is Interface1? && t != <!DEBUG_INFO_CONSTANT!>z1<!> ?: <!DEBUG_INFO_CONSTANT!>z2<!> && t is Interface2?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any & kotlin.Any?")!>t<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest2()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!><!UNSAFE_CALL!>.<!>itest()
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest2() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("{Any? & Interface1? & Interface2?}")!>it<!><!UNSAFE_CALL!>.<!>itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("{Any? & Interface1? & Interface2?}")!>it<!><!UNSAFE_CALL!>.<!>itest2() }
     }
 }
 
@@ -1328,6 +1341,7 @@ fun case_72(t: Any?, z1: Nothing?) {
  * TESTCASE NUMBER: 73
  * NOTE: lazy smartcasts
  * DISCUSSION
+ * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28362
  */
 fun case_73(t: Any?) {

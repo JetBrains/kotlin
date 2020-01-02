@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
-abstract class AbstractFirOverrideScope(val session: FirSession, private val overrideChecker: FirOverrideChecker) : FirScope() {
+abstract class AbstractFirOverrideScope(val session: FirSession, protected val overrideChecker: FirOverrideChecker) : FirScope() {
     //base symbol as key, overridden as value
     val overrideByBase = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>?>()
 
@@ -25,7 +25,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession, private val ove
         return overrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
     }
 
-    private fun similarFunctionsOrBothProperties(
+    protected fun similarFunctionsOrBothProperties(
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirCallableMemberDeclaration<*>
     ): Boolean {

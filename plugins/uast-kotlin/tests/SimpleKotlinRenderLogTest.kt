@@ -12,6 +12,8 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testDefaultImpls() = doTest("DefaultImpls")
 
+    @Test fun testBitwise() = doTest("Bitwise")
+
     @Test fun testElvis() = doTest("Elvis")
 
     @Test fun testPropertyAccessors() = doTest("PropertyAccessors")
@@ -102,6 +104,15 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testLambdaReturn() = doTest("LambdaReturn")
+
+    @Test
+    fun testReified() = doTest("Reified")
+
+    @Test
+    fun testSuspend() = doTest("Suspend")
+
+    @Test
+    fun testDeprecatedHidden() = doTest("DeprecatedHidden")
 }
 
 fun withForceUInjectionHostValue(call: () -> Unit) {

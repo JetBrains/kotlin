@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.isError
 
 class SpecifyTypeExplicitlyInDestructuringAssignmentIntention : SelfTargetingRangeIntention<KtDestructuringDeclaration>(
-        KtDestructuringDeclaration::class.java, "Specify all types explicitly in destructuring declaration"
+    KtDestructuringDeclaration::class.java, "Specify all types explicitly in destructuring declaration"
 ), LowPriorityAction {
 
     override fun applicabilityRange(element: KtDestructuringDeclaration): TextRange? {

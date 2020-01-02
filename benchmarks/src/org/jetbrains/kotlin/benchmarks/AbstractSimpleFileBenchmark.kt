@@ -161,10 +161,11 @@ abstract class AbstractSimpleFileBenchmark {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
         val session = createSession(env, scope)
-        val builder = RawFirBuilder(session, stubMode = false)
+        val firProvider = session.firProvider as FirProviderImpl
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
 
         val totalTransformer = FirTotalResolveTransformer()
-        val firFile = builder.buildFirFile(file).also((session.firProvider as FirProviderImpl)::recordFile)
+        val firFile = builder.buildFirFile(file).also(firProvider::recordFile)
 
         for (transformer in totalTransformer.transformers) {
             transformer.transformFile(firFile, null)

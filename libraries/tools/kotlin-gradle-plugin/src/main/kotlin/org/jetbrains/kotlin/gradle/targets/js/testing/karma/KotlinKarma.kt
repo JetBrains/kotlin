@@ -14,6 +14,7 @@ import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -56,6 +57,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         useMocha()
         useWebpack()
         useSourceMapSupport()
+
+        // necessary for debug as a fallback when no debuggable browsers found
+        addChromeLauncher()
     }
 
     private fun useKotlinReporter() {
@@ -98,6 +102,19 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         )
     }
 
+    fun useDebuggableChrome() {
+        val debuggableChrome = "DebuggableChrome"
+
+        config.customLaunchers[debuggableChrome] = CustomLauncher("Chrome").apply {
+            flags.add("--remote-debugging-port=9222")
+        }
+
+        useBrowser(
+            id = debuggableChrome,
+            dependency = versions.karmaChromeLauncher
+        )
+    }
+
     fun useChromeHeadless() {
         useBrowser(
             id = "ChromeHeadless",
@@ -118,6 +135,10 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private fun useBrowser(id: String, dependency: NpmPackageVersion) {
         config.browsers.add(id)
         requiredDependencies.add(dependency)
+    }
+
+    private fun addChromeLauncher() {
+        requiredDependencies.add(versions.karmaChromeLauncher)
     }
 
     private fun useMocha() {
@@ -293,7 +314,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             testNameSuffix = task.targetName,
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
-            ignoreOutOfRootNodes = true
+            ignoreOutOfRootNodes = true,
+            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
         )
 
         config.basePath = npmProject.nodeModulesDir.absolutePath
@@ -322,7 +344,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             confWriter.println()
 
             confWriter.print("config.set(")
-            GsonBuilder().setPrettyPrinting().create().toJson(config, confWriter)
+            GsonBuilder()
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create()
+                .toJson(config, confWriter)
             confWriter.println(");")
 
             confJsWriters.forEach { it(confWriter) }

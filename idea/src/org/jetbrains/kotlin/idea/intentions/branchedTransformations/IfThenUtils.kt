@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -149,7 +153,18 @@ fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(e
 
     val references = ReferencesSearch.search(declaration, scope).findAll()
     if (references.size == 1) {
-        KotlinInlineValHandler().inlineElement(this.project, editor, declaration)
+        if (!ApplicationManager.getApplication().isUnitTestMode) {
+            ApplicationManager.getApplication().invokeLater {
+                val handler = KotlinInlineValHandler()
+                if (declaration.isValid && handler.canInlineElement(declaration)) {
+                    TransactionGuard.getInstance().submitTransactionAndWait {
+                        handler.inlineElement(this.project, editor, declaration)
+                    }
+                }
+            }
+        } else {
+            KotlinInlineValHandler().inlineElement(this.project, editor, declaration)
+        }
     }
 }
 

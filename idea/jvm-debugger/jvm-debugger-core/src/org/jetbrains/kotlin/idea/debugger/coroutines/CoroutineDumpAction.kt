@@ -102,7 +102,7 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
             return
         }
         val debuggerSession = DebuggerManagerEx.getInstanceEx(project).context.debuggerSession
-        presentation.isEnabled = debuggerSession != null && debuggerSession.isAttached && Registry.`is`("kotlin.debugger" + ".coroutines")
+        presentation.isEnabled = debuggerSession != null && debuggerSession.isAttached && isCoroutineDebuggerEnabled()
         presentation.isVisible = presentation.isEnabled
     }
 }

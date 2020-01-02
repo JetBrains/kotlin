@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
-import org.jetbrains.kotlin.fir.contracts.description.*
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
+import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
+import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -24,13 +27,12 @@ import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.withNullability
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -41,7 +43,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         private val KOTLIN_BOOLEAN_NOT = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
     }
 
-    private val context: DataFlowInferenceContext get() = inferenceComponents.ctx as DataFlowInferenceContext
+    private val context: ConeInferenceContext get() = inferenceComponents.ctx
     private val receiverStack: ImplicitReceiverStackImpl = components.implicitReceiverStack as ImplicitReceiverStackImpl
 
     private val graphBuilder = ControlFlowGraphBuilder()
@@ -50,6 +52,8 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     private val flowOnNodes = mutableMapOf<CFGNode<*>, Flow>()
 
     private val variablesForWhenConditions = mutableMapOf<WhenBranchConditionExitNode, DataFlowVariable>()
+
+    private var contractDescriptionVisitingMode = false
 
     /*
      * If there is no types from smartcasts function returns null
@@ -142,7 +146,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
         if (typeOperatorCall.operation !in FirOperation.TYPES) return
         val type = typeOperatorCall.conversionTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
-        val operandVariable = getOrCreateRealVariable(typeOperatorCall.argument)?.variableUnderAlias ?: return
+        val operandVariable = getOrCreateRealVariable(typeOperatorCall.argument) ?: return
 
         val flow = node.flow
         when (typeOperatorCall.operation) {
@@ -211,8 +215,8 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                 val rightConst = rightOperand as? FirConstExpression<*>
 
                 when {
-                    leftConst?.kind == IrConstKind.Null -> processEqNull(node, rightOperand, operation)
-                    rightConst?.kind == IrConstKind.Null -> processEqNull(node, leftOperand, operation)
+                    leftConst?.kind == FirConstKind.Null -> processEqNull(node, rightOperand, operation)
+                    rightConst?.kind == FirConstKind.Null -> processEqNull(node, leftOperand, operation)
                     leftConst != null -> processEqWithConst(node, rightOperand, leftConst, operation)
                     rightConst != null -> processEqWithConst(node, leftOperand, rightConst, operation)
                     operation != FirOperation.EQ && operation != FirOperation.IDENTITY -> return
@@ -248,7 +252,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
         // propagating facts for (... == true) and (... == false)
         variableStorage[operand]?.let { operandVariable ->
-            if (const.kind != IrConstKind.Boolean) return@let
+            if (const.kind != FirConstKind.Boolean) return@let
 
             val constValue = (const.value as Boolean)
             val shouldInvert = isEq xor constValue
@@ -336,6 +340,19 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     fun exitJump(jump: FirJump<*>) {
         graphBuilder.exitJump(jump).mergeIncomingFlow()
+    }
+
+    // ----------------------------------- Check not null call -----------------------------------
+
+    fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall) {
+        // Add `Any` to the set of possible types; the intersection type `T? & Any` will be reduced to `T` after smartcast.
+        val node = graphBuilder.exitCheckNotNullCall(checkNotNullCall).mergeIncomingFlow()
+        val operandVariable = getOrCreateRealVariable(checkNotNullCall.argument) ?: return
+        logicSystem.addApprovedInfo(
+            node.flow,
+            operandVariable,
+            FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
+        )
     }
 
     // ----------------------------------- When -----------------------------------
@@ -507,7 +524,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         qualifiedAccess.explicitReceiver?.let {
             val type = it.typeRef.coneTypeSafe<ConeKotlinType>()
                 ?.takeIf { it.isMarkedNullable }
-                ?.withNullability(ConeNullability.NOT_NULL)
+                ?.withNullability(ConeNullability.NOT_NULL, session.inferenceContext)
                 ?: return@let
 
             when (val variable = getOrCreateVariable(it)) {
@@ -556,6 +573,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         val conditionalEffects = contractDescription.effects.filterIsInstance<ConeConditionalEffectDeclaration>()
         if (conditionalEffects.isEmpty()) return
         val argumentsMapping = createArgumentsMapping(functionCall) ?: return
+        contractDescriptionVisitingMode = true
         graphBuilder.enterContract(functionCall).mergeIncomingFlow()
         val functionCallVariable = getOrCreateVariable(functionCall)
         for (conditionalEffect in conditionalEffects) {
@@ -594,6 +612,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             }
         }
         graphBuilder.exitContract(functionCall).mergeIncomingFlow()
+        contractDescriptionVisitingMode = true
     }
 
 
@@ -622,6 +641,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     }
 
     fun exitConstExpresion(constExpression: FirConstExpression<*>) {
+        if (constExpression.resultType is FirResolvedTypeRef && !contractDescriptionVisitingMode) return
         graphBuilder.exitConstExpresion(constExpression).mergeIncomingFlow()
     }
 
@@ -818,23 +838,17 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     private fun getOrCreateSyntheticVariable(fir: FirElement): SyntheticDataFlowVariable =
         variableStorage.getOrCreateNewSyntheticVariable(fir)
 
-    private fun FirElement.unwrapWhenSubjectExpression(): FirElement = if (this is FirWhenSubjectExpression) {
-        val whenExpression = whenSubject.whenExpression
-        whenExpression.subjectVariable
-            ?: whenExpression.subject
-            ?: throw IllegalStateException("Subject or subject variable must be not null")
-    } else {
-        this
-    }
-
     private fun getOrCreateRealVariable(fir: FirElement): RealDataFlowVariable? {
         @Suppress("NAME_SHADOWING")
-        val fir = fir.unwrapWhenSubjectExpression()
-        if (fir is FirThisReceiverExpressionImpl) {
-            return variableStorage.getOrCreateNewThisRealVariable(fir.calleeReference.boundSymbol ?: return null)
+        val fir = fir.unwrapWhenSubjectExpression().unwrapSmartcast()
+        val symbol = fir.resolvedSymbol ?: return null
+        return when {
+            fir is FirThisReceiverExpressionImpl -> variableStorage.getOrCreateNewThisRealVariable(symbol)
+            symbol is FirVariableSymbol<*> ->
+                // TODO: Fix this for non-local properties.
+                variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
+            else -> null
         }
-        val symbol: AbstractFirBasedSymbol<*> = fir.resolvedSymbol ?: return null
-        return variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
     }
 
     private fun getOrCreateVariable(fir: FirElement): DataFlowVariable {
@@ -853,6 +867,10 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             return variableStorage[symbol]
         }
 
+    // TODO: Fix this -- see broken test_3 in compiler/fir/resolve/testData/resolve/smartcasts/notBoundSmartcasts.kt
+    // If we have multiple local variables (could be value parameter) of the same type, there should be separate DataFlowVariables for
+    // accesses to a property for each distinct local variable, i.e., DataFlowVariables in storage for properties should be keyed by
+    // the "chain" of variable/property accesses. We also need to check that the property is not mutable and has no custom getter.
     private fun getRealVariablesForSafeCallChain(call: FirExpression): Collection<RealDataFlowVariable> {
         val result = mutableListOf<RealDataFlowVariable>()
 
@@ -878,7 +896,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         return result
     }
 
-    private inner class LogicSystemImpl(context: DataFlowInferenceContext) : DelegatingLogicSystem(context) {
+    private inner class LogicSystemImpl(context: ConeInferenceContext) : DelegatingLogicSystem(context) {
         override fun processUpdatedReceiverVariable(flow: Flow, variable: RealDataFlowVariable) {
             val symbol = (variable.fir as? FirSymbolOwner<*>)?.symbol ?: return
 

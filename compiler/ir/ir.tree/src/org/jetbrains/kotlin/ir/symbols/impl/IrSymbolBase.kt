@@ -32,10 +32,17 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         assert(isOriginalDescriptor(descriptor)) {
             "Substituted descriptor $descriptor for ${descriptor.original}"
         }
+        if (descriptor !is WrappedDeclarationDescriptor<*>) {
+            val containingDeclaration = descriptor.containingDeclaration
+            assert(containingDeclaration == null || isOriginalDescriptor(containingDeclaration)) {
+                "Substituted containing declaration: $containingDeclaration\nfor descriptor: $descriptor"
+            }
+        }
     }
 
     private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =
         descriptor is WrappedDeclarationDescriptor<*> ||
+                // TODO fix declaring/referencing value parameters: compute proper original descriptor
                 descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
                 descriptor == descriptor.original
 

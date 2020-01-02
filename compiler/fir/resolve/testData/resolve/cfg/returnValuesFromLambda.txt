@@ -14,7 +14,7 @@ FILE: returnValuesFromLambda.kt
 
     }
     public final fun test_1(b: R|kotlin/Boolean|): R|kotlin/Unit| {
-        lval x: R|A| = R|kotlin/run|<R|A|>(<L> = run@fun <anonymous>(): R|C| <kind=EXACTLY_ONCE>  {
+        lval x: R|A| = R|kotlin/run|<R|A|>(<L> = run@fun <anonymous>(): R|A| <kind=EXACTLY_ONCE>  {
             when () {
                 R|<local>/b| ->  {
                     ^@run R|/B.B|()
@@ -32,7 +32,7 @@ FILE: returnValuesFromLambda.kt
         )
     }
     public final fun test_3(): R|kotlin/Unit| {
-        lval x: R|kotlin/Nothing| = R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        lval x: R|kotlin/Nothing| = R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
             ^test_3 Unit
         }
         )

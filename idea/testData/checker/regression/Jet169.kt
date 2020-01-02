@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun set(<warning>key</warning> : String, <warning>value</warning> : String) {
   val a : String? = ""
   when (a) {

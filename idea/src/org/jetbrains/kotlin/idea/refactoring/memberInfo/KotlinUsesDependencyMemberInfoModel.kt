@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 open class KotlinUsesDependencyMemberInfoModel<T : KtNamedDeclaration, M : MemberInfoBase<T>>(
-        klass : KtClassOrObject,
-        superClass: PsiNamedElement?,
-        recursive: Boolean
+    klass: KtClassOrObject,
+    superClass: PsiNamedElement?,
+    recursive: Boolean
 ) : UsesDependencyMemberInfoModel<T, PsiNamedElement, M>(klass, superClass, recursive) {
     override fun doCheck(memberInfo: M, problem: Int): Int {
         val member = memberInfo.member
@@ -36,7 +36,8 @@ open class KotlinUsesDependencyMemberInfoModel<T : KtNamedDeclaration, M : Membe
         if (problem == MemberInfoModel.ERROR
             && container is KtObjectDeclaration
             && container.isCompanion()
-            && container.containingClassOrObject == myClass) return MemberInfoModel.WARNING
+            && container.containingClassOrObject == myClass
+        ) return MemberInfoModel.WARNING
 
         return problem
     }

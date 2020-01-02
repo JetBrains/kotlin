@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,9 +27,10 @@ import com.intellij.ui.treeStructure.SimpleTreeBuilder
 import com.intellij.ui.treeStructure.SimpleTreeStructure
 import com.intellij.ui.treeStructure.Tree
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSessionBase
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.idea.fir.firResolveState
+import org.jetbrains.kotlin.idea.fir.getOrBuildFir
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -73,7 +74,7 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
                     val psiDocumentManager = PsiDocumentManager.getInstance(project)
                     val file = runReadAction { psiDocumentManager.getPsiFile(editor.document) as? KtFile }
                     if (file != null) {
-                        val firFile = runReadAction { RawFirBuilder(object : FirSessionBase(null) {}, stubMode = false).buildFirFile(file) }
+                        val firFile = runReadAction { file.getOrBuildFir(file.firResolveState(), phase = FirResolvePhase.RAW_FIR) }
                         runInEdt {
                             treeStructure.root = FirExplorerTreeNode("root = ", firFile, null)
                             builder.updateFromRoot(!init)
@@ -125,7 +126,6 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
                                 val psi = (data as? FirElement)?.psi
                                 if (data is FirElement && psi != null) {
                                     if (FileDocumentManager.getInstance().getFile(currentEditor.document) == psi.containingFile.virtualFile) {
-
                                         rangeHighlightMarkers += currentEditor.markupModel.addRangeHighlighter(
                                             psi.startOffset,
                                             min(currentEditor.document.textLength, psi.endOffset),
@@ -288,8 +288,7 @@ private fun KType.renderSimple(): String {
     }
 
     return buildString {
-        val classifier = classifier
-        when (classifier) {
+        when (val classifier = classifier) {
             is KClass<*> -> append(classifier.simpleName)
             is KTypeParameter -> append(classifier.name)
         }

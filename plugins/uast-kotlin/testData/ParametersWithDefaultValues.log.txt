@@ -1,6 +1,6 @@
 UFile (package = )
     UClass (name = ParametersWithDefaultValuesKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UParameter (name = a)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UParameter (name = b)

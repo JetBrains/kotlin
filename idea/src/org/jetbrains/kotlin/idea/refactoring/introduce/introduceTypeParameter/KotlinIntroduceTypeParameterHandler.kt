@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter
@@ -30,9 +19,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterByUnresolvedRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterFromUsageFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.getPossibleTypeParameterContainers
@@ -68,30 +57,30 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
 
     fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit) {
         selectElementsWithTargetParent(
-                REFACTORING_NAME,
-                editor,
-                file,
-                "Introduce type parameter to declaration",
-                listOf(CodeInsightUtils.ElementKind.TYPE_ELEMENT),
-                { null },
-                { _, parent -> getPossibleTypeParameterContainers(parent) },
-                continuation
+            REFACTORING_NAME,
+            editor,
+            file,
+            "Introduce type parameter to declaration",
+            listOf(CodeInsightUtils.ElementKind.TYPE_ELEMENT),
+            { null },
+            { _, parent -> getPossibleTypeParameterContainers(parent) },
+            continuation
         )
     }
 
     fun doInvoke(project: Project, editor: Editor, elements: List<PsiElement>, targetParent: PsiElement) {
         val targetOwner = targetParent as KtTypeParameterListOwner
-        val typeElementToExtract = elements.singleOrNull() as? KtTypeElement
-                            ?: return showErrorHint(project, editor, "No type to refactor", REFACTORING_NAME)
+        val typeElementToExtract =
+            elements.singleOrNull() as? KtTypeElement ?: return showErrorHint(project, editor, "No type to refactor", REFACTORING_NAME)
 
         val typeElementToExtractPointer = typeElementToExtract.createSmartPointer()
 
         val scope = targetOwner.getResolutionScope()
         val suggestedNames = KotlinNameSuggester.suggestNamesForTypeParameters(
-                1,
-                CollectingNameValidator(targetOwner.typeParameters.mapNotNull { it.name }) {
-                    scope.findClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
-                }
+            1,
+            CollectingNameValidator(targetOwner.typeParameters.mapNotNull { it.name }) {
+                scope.findClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
+            }
         )
         val defaultName = suggestedNames.single()
 
@@ -99,16 +88,17 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
         val originalType = typeElementToExtract.getAbbreviatedTypeOrType(context)
 
         val createTypeParameterData =
-                CreateTypeParameterByUnresolvedRefActionFactory.extractFixData(typeElementToExtract, defaultName)?.let {
-                    it.copy(typeParameters = listOf(it.typeParameters.single().copy(upperBoundType = originalType)), declaration = targetOwner)
-                } ?: return showErrorHint(project, editor, "Refactoring is not applicable in the current context", REFACTORING_NAME)
+            CreateTypeParameterByUnresolvedRefActionFactory.extractFixData(typeElementToExtract, defaultName)?.let {
+                it.copy(typeParameters = listOf(it.typeParameters.single().copy(upperBoundType = originalType)), declaration = targetOwner)
+            } ?: return showErrorHint(project, editor, "Refactoring is not applicable in the current context", REFACTORING_NAME)
 
         project.executeCommand(REFACTORING_NAME) {
-            val newTypeParameter = CreateTypeParameterFromUsageFix(typeElementToExtract, createTypeParameterData, false).doInvoke().singleOrNull()
-                                   ?: return@executeCommand
+            val newTypeParameter =
+                CreateTypeParameterFromUsageFix(typeElementToExtract, createTypeParameterData, false).doInvoke().singleOrNull()
+                    ?: return@executeCommand
             val newTypeParameterPointer = newTypeParameter.createSmartPointer()
 
-            val postRename = postRename@ {
+            val postRename = postRename@{
                 val restoredTypeParameter = newTypeParameterPointer.element ?: return@postRename
                 val restoredOwner = restoredTypeParameter.getStrictParentOfType<KtTypeParameterListOwner>() ?: return@postRename
                 val restoredOriginalTypeElement = typeElementToExtractPointer.element ?: return@postRename
@@ -132,16 +122,19 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                 }
 
                 processDuplicates(
-                        duplicateRanges.keysToMap {
-                            {
-                                it.elements.singleOrNull()?.replace(parameterRefElement)
-                                Unit
-                            }
-                        },
-                        project,
-                        editor,
-                        ElementDescriptionUtil.getElementDescription(restoredOwner, UsageViewTypeLocation.INSTANCE) + " '${restoredOwner.name}'",
-                        "a reference to extracted type parameter"
+                    duplicateRanges.keysToMap {
+                        {
+                            it.elements.singleOrNull()?.replace(parameterRefElement)
+                            Unit
+                        }
+                    },
+                    project,
+                    editor,
+                    ElementDescriptionUtil.getElementDescription(
+                        restoredOwner,
+                        UsageViewTypeLocation.INSTANCE
+                    ) + " '${restoredOwner.name}'",
+                    "a reference to extracted type parameter"
                 )
 
                 restoredTypeParameter.extendsBound?.let {
@@ -151,13 +144,14 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
             }
 
             if (!ApplicationManager.getApplication().isUnitTestMode) {
-                val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, newTypeParameter,
-                                                                     (editor as? EditorEx)?.dataContext)
+                val dataContext = SimpleDataContext.getSimpleContext(
+                    CommonDataKeys.PSI_ELEMENT.name, newTypeParameter,
+                    (editor as? EditorEx)?.dataContext
+                )
                 editor.selectionModel.removeSelection()
                 editor.caretModel.moveToOffset(newTypeParameter.startOffset)
                 VariableInplaceRenameHandlerWithFinishHook(postRename).doRename(newTypeParameter, editor, dataContext)
-            }
-            else {
+            } else {
                 postRename()
             }
         }

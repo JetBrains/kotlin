@@ -24,21 +24,23 @@ import org.jetbrains.kotlin.contracts.model.structure.ESType
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
 class IsFunctor(val type: ESType, val isNegated: Boolean) : AbstractFunctor() {
-    override fun doInvocation(arguments: List<Computation>, reducer: Reducer): List<ESEffect> {
+    override fun doInvocation(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect> {
         assert(arguments.size == 1) { "Wrong size of arguments list for Unary operator: expected 1, got ${arguments.size}" }
-        return invokeWithArguments(arguments[0])
+        return invokeWithArguments(arguments[0], typeSubstitution)
     }
 
-    fun invokeWithArguments(arg: Computation): List<ESEffect> {
+    fun invokeWithArguments(arg: Computation, typeSubstitution: ESTypeSubstitution): List<ESEffect> {
         return if (arg is ESValue)
-            invokeWithValue(arg)
+            invokeWithValue(arg, typeSubstitution)
         else
             emptyList()
     }
 
-    private fun invokeWithValue(value: ESValue): List<ConditionalEffect> {
-        val trueIs = ESIs(value, this)
-        val falseIs = ESIs(value, IsFunctor(type, isNegated.not()))
+    private fun invokeWithValue(value: ESValue, typeSubstitution: ESTypeSubstitution): List<ConditionalEffect> {
+        val substitutedType = typeSubstitution[type] ?: type
+
+        val trueIs = ESIs(value, IsFunctor(substitutedType, isNegated))
+        val falseIs = ESIs(value, IsFunctor(substitutedType, isNegated.not()))
 
         val trueResult = ConditionalEffect(trueIs, ESReturns(ESConstants.trueValue))
         val falseResult = ConditionalEffect(falseIs, ESReturns(ESConstants.falseValue))

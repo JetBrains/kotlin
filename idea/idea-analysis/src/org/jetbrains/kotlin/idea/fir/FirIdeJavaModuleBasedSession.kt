@@ -9,14 +9,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirModuleBasedSession
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
+import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
 
@@ -24,16 +26,14 @@ class FirIdeJavaModuleBasedSession(
     project: Project,
     moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope,
-    dependenciesProvider: FirSymbolProvider? = null
+    scope: GlobalSearchScope
 ) : FirModuleBasedSession(moduleInfo, sessionProvider) {
 
 
     init {
-        sessionProvider.sessionCache[moduleInfo] = this
         registerComponent(
             FirProvider::class,
-            IdeFirProvider(project, scope, RawFirBuilder(this, stubMode = false), this)
+            FirIdeProvider(project, scope, this, KotlinScopeProvider(::wrapScopeWithJvmMapped))
         )
         registerComponent(
             FirSymbolProvider::class,
@@ -41,7 +41,7 @@ class FirIdeJavaModuleBasedSession(
                 listOf(
                     firProvider,
                     JavaSymbolProvider(this, sessionProvider.project, scope),
-                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+                    FirIdeModuleDependenciesSymbolProvider(this)
                 )
             ) as FirSymbolProvider
         )
@@ -49,6 +49,11 @@ class FirIdeJavaModuleBasedSession(
         registerComponent(
             FirCorrespondingSupertypesCache::class,
             FirCorrespondingSupertypesCache(this)
+        )
+
+        registerComponent(
+            ConeCallConflictResolverFactory::class,
+            JvmCallConflictResolverFactory
         )
     }
 }

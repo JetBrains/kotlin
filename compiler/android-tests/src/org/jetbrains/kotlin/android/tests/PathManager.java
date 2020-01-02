@@ -77,7 +77,7 @@ public class PathManager {
     }
 
     public String getDependenciesRoot() {
-        return rootFolder + "/android.tests.dependencies";
+        return rootFolder + "/dependencies/android.tests.dependencies";
     }
 
     public String getGradleBinFolder() {

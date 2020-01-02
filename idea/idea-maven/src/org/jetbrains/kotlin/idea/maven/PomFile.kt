@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.maven
@@ -56,7 +45,7 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
     constructor(xmlFile: XmlFile) : this(
         xmlFile,
         MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile)
-                ?: throw IllegalStateException("No DOM model found for pom ${xmlFile.name}")
+            ?: throw IllegalStateException("No DOM model found for pom ${xmlFile.name}")
     )
 
     private val nodesByName = HashMap<String, XmlTag>()
@@ -278,10 +267,8 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
             return false
         }
 
-        // TODO: getPhase has been added as per https://youtrack.jetbrains.com/issue/IDEA-153582 and available only in latest IDEAs
         return plugin.executions.filter { it.executionId == executionId }.all { execution ->
-            execution::class.java.methods.filter { it.name == "getPhase" && it.parameterTypes.isEmpty() }
-                .all { it.invoke(execution) == DefaultPhases.None }
+            execution.phase == DefaultPhases.None
         }
     }
 

@@ -7145,6 +7145,8 @@ public expect fun CharArray.toTypedArray(): Array<Char>
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7158,6 +7160,8 @@ public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>)
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7171,6 +7175,8 @@ public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): M
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7184,6 +7190,8 @@ public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>):
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7197,6 +7205,8 @@ public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7210,6 +7220,8 @@ public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): M
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7223,6 +7235,8 @@ public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>):
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7236,6 +7250,8 @@ public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7249,6 +7265,8 @@ public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, 
  * If any of two pairs would have the same key the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitives
  */
 public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7262,6 +7280,8 @@ public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): M
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7275,6 +7295,8 @@ public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K,
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7288,6 +7310,8 @@ public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, By
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7301,6 +7325,8 @@ public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7314,6 +7340,8 @@ public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int>
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7327,6 +7355,8 @@ public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Lo
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7340,6 +7370,8 @@ public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7353,6 +7385,8 @@ public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7366,6 +7400,8 @@ public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesBy
  */
 public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7378,6 +7414,8 @@ public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Ch
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7390,6 +7428,8 @@ public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valu
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7402,6 +7442,8 @@ public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTr
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7414,6 +7456,8 @@ public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, value
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7426,6 +7470,8 @@ public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTran
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7438,6 +7484,8 @@ public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTr
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7450,6 +7498,8 @@ public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, value
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7462,6 +7512,8 @@ public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, val
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7474,6 +7526,8 @@ public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, v
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  * 
  * The returned map preserves the entry iteration order of the original array.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByWithValueTransform
  */
 public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
     val capacity = mapCapacity(size).coerceAtLeast(16)
@@ -7486,6 +7540,8 @@ public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTr
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -7500,6 +7556,8 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
@@ -7514,6 +7572,8 @@ public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(des
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
@@ -7528,6 +7588,8 @@ public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(d
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
@@ -7542,6 +7604,8 @@ public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(desti
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
@@ -7556,6 +7620,8 @@ public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(des
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
@@ -7570,6 +7636,8 @@ public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(d
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
@@ -7584,6 +7652,8 @@ public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
@@ -7598,6 +7668,8 @@ public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateBy
  * and value is the element itself.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
 public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
@@ -7612,6 +7684,8 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(des
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -7626,6 +7700,8 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateBy
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
     for (element in this) {
@@ -7640,6 +7716,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(des
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
     for (element in this) {
@@ -7654,6 +7732,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(de
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
     for (element in this) {
@@ -7668,6 +7748,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(dest
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
     for (element in this) {
@@ -7682,6 +7764,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(des
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
     for (element in this) {
@@ -7696,6 +7780,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(de
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
     for (element in this) {
@@ -7710,6 +7796,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(d
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
     for (element in this) {
@@ -7724,6 +7812,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(
  * and value is provided by the [valueTransform] function applied to elements of the given array.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
@@ -7737,6 +7827,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(des
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
@@ -7750,6 +7842,8 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M {
     for (element in this) {
@@ -7763,6 +7857,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(desti
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M {
     for (element in this) {
@@ -7776,6 +7872,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(dest
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M {
     for (element in this) {
@@ -7789,6 +7887,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destin
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M {
     for (element in this) {
@@ -7802,6 +7902,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(desti
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M {
     for (element in this) {
@@ -7815,6 +7917,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(dest
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M {
     for (element in this) {
@@ -7828,6 +7932,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(des
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M {
     for (element in this) {
@@ -7841,6 +7947,8 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(de
  * provided by [transform] function applied to each element of the given array.
  * 
  * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
     for (element in this) {
@@ -8299,6 +8407,8 @@ public fun CharArray.toSet(): Set<Char> {
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8306,6 +8416,8 @@ public inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Iterable<R>): Li
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> ByteArray.flatMap(transform: (Byte) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8313,6 +8425,8 @@ public inline fun <R> ByteArray.flatMap(transform: (Byte) -> Iterable<R>): List<
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> ShortArray.flatMap(transform: (Short) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8320,6 +8434,8 @@ public inline fun <R> ShortArray.flatMap(transform: (Short) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> IntArray.flatMap(transform: (Int) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8327,6 +8443,8 @@ public inline fun <R> IntArray.flatMap(transform: (Int) -> Iterable<R>): List<R>
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> LongArray.flatMap(transform: (Long) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8334,6 +8452,8 @@ public inline fun <R> LongArray.flatMap(transform: (Long) -> Iterable<R>): List<
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> FloatArray.flatMap(transform: (Float) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8341,6 +8461,8 @@ public inline fun <R> FloatArray.flatMap(transform: (Float) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> DoubleArray.flatMap(transform: (Double) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8348,6 +8470,8 @@ public inline fun <R> DoubleArray.flatMap(transform: (Double) -> Iterable<R>): L
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> BooleanArray.flatMap(transform: (Boolean) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8355,6 +8479,8 @@ public inline fun <R> BooleanArray.flatMap(transform: (Boolean) -> Iterable<R>):
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> CharArray.flatMap(transform: (Char) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -9514,6 +9640,8 @@ public fun CharArray.withIndex(): Iterable<IndexedValue<Char>> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun <T> Array<out T>.distinct(): List<T> {
     return this.toMutableSet().toList()
@@ -9523,6 +9651,8 @@ public fun <T> Array<out T>.distinct(): List<T> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun ByteArray.distinct(): List<Byte> {
     return this.toMutableSet().toList()
@@ -9532,6 +9662,8 @@ public fun ByteArray.distinct(): List<Byte> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun ShortArray.distinct(): List<Short> {
     return this.toMutableSet().toList()
@@ -9541,6 +9673,8 @@ public fun ShortArray.distinct(): List<Short> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun IntArray.distinct(): List<Int> {
     return this.toMutableSet().toList()
@@ -9550,6 +9684,8 @@ public fun IntArray.distinct(): List<Int> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun LongArray.distinct(): List<Long> {
     return this.toMutableSet().toList()
@@ -9559,6 +9695,8 @@ public fun LongArray.distinct(): List<Long> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun FloatArray.distinct(): List<Float> {
     return this.toMutableSet().toList()
@@ -9568,6 +9706,8 @@ public fun FloatArray.distinct(): List<Float> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun DoubleArray.distinct(): List<Double> {
     return this.toMutableSet().toList()
@@ -9577,6 +9717,8 @@ public fun DoubleArray.distinct(): List<Double> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun BooleanArray.distinct(): List<Boolean> {
     return this.toMutableSet().toList()
@@ -9586,6 +9728,8 @@ public fun BooleanArray.distinct(): List<Boolean> {
  * Returns a list containing only distinct elements from the given array.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public fun CharArray.distinct(): List<Char> {
     return this.toMutableSet().toList()
@@ -9596,6 +9740,8 @@ public fun CharArray.distinct(): List<Char> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T> {
     val set = HashSet<K>()
@@ -9613,6 +9759,8 @@ public inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte> {
     val set = HashSet<K>()
@@ -9630,6 +9778,8 @@ public inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short> {
     val set = HashSet<K>()
@@ -9647,6 +9797,8 @@ public inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short>
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int> {
     val set = HashSet<K>()
@@ -9664,6 +9816,8 @@ public inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long> {
     val set = HashSet<K>()
@@ -9681,6 +9835,8 @@ public inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long> {
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float> {
     val set = HashSet<K>()
@@ -9698,6 +9854,8 @@ public inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float>
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Double> {
     val set = HashSet<K>()
@@ -9715,6 +9873,8 @@ public inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Doub
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Boolean> {
     val set = HashSet<K>()
@@ -9732,6 +9892,8 @@ public inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Bo
  * having distinct keys returned by the given [selector] function.
  * 
  * The elements in the resulting list are in the same order as they were in the source array.
+ * 
+ * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
  */
 public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
     val set = HashSet<K>()
@@ -12310,6 +12472,8 @@ public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun <S, T : S> Array<out T>.reduce(operation: (acc: S, T) -> S): S {
     if (isEmpty())
@@ -12323,6 +12487,8 @@ public inline fun <S, T : S> Array<out T>.reduce(operation: (acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun ByteArray.reduce(operation: (acc: Byte, Byte) -> Byte): Byte {
     if (isEmpty())
@@ -12336,6 +12502,8 @@ public inline fun ByteArray.reduce(operation: (acc: Byte, Byte) -> Byte): Byte {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun ShortArray.reduce(operation: (acc: Short, Short) -> Short): Short {
     if (isEmpty())
@@ -12349,6 +12517,8 @@ public inline fun ShortArray.reduce(operation: (acc: Short, Short) -> Short): Sh
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun IntArray.reduce(operation: (acc: Int, Int) -> Int): Int {
     if (isEmpty())
@@ -12362,6 +12532,8 @@ public inline fun IntArray.reduce(operation: (acc: Int, Int) -> Int): Int {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun LongArray.reduce(operation: (acc: Long, Long) -> Long): Long {
     if (isEmpty())
@@ -12375,6 +12547,8 @@ public inline fun LongArray.reduce(operation: (acc: Long, Long) -> Long): Long {
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun FloatArray.reduce(operation: (acc: Float, Float) -> Float): Float {
     if (isEmpty())
@@ -12388,6 +12562,8 @@ public inline fun FloatArray.reduce(operation: (acc: Float, Float) -> Float): Fl
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun DoubleArray.reduce(operation: (acc: Double, Double) -> Double): Double {
     if (isEmpty())
@@ -12401,6 +12577,8 @@ public inline fun DoubleArray.reduce(operation: (acc: Double, Double) -> Double)
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun BooleanArray.reduce(operation: (acc: Boolean, Boolean) -> Boolean): Boolean {
     if (isEmpty())
@@ -12414,6 +12592,8 @@ public inline fun BooleanArray.reduce(operation: (acc: Boolean, Boolean) -> Bool
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharArray.reduce(operation: (acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -12430,6 +12610,8 @@ public inline fun CharArray.reduce(operation: (acc: Char, Char) -> Char): Char {
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun <S, T : S> Array<out T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     if (isEmpty())
@@ -12446,6 +12628,8 @@ public inline fun <S, T : S> Array<out T>.reduceIndexed(operation: (index: Int, 
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun ByteArray.reduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): Byte {
     if (isEmpty())
@@ -12462,6 +12646,8 @@ public inline fun ByteArray.reduceIndexed(operation: (index: Int, acc: Byte, Byt
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun ShortArray.reduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): Short {
     if (isEmpty())
@@ -12478,6 +12664,8 @@ public inline fun ShortArray.reduceIndexed(operation: (index: Int, acc: Short, S
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun IntArray.reduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): Int {
     if (isEmpty())
@@ -12494,6 +12682,8 @@ public inline fun IntArray.reduceIndexed(operation: (index: Int, acc: Int, Int) 
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun LongArray.reduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): Long {
     if (isEmpty())
@@ -12510,6 +12700,8 @@ public inline fun LongArray.reduceIndexed(operation: (index: Int, acc: Long, Lon
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun FloatArray.reduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): Float {
     if (isEmpty())
@@ -12526,6 +12718,8 @@ public inline fun FloatArray.reduceIndexed(operation: (index: Int, acc: Float, F
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun DoubleArray.reduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): Double {
     if (isEmpty())
@@ -12542,6 +12736,8 @@ public inline fun DoubleArray.reduceIndexed(operation: (index: Int, acc: Double,
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun BooleanArray.reduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): Boolean {
     if (isEmpty())
@@ -12558,6 +12754,8 @@ public inline fun BooleanArray.reduceIndexed(operation: (index: Int, acc: Boolea
  * to current accumulator value and each element with its index in the original array.
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduce
  */
 public inline fun CharArray.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -12570,7 +12768,162 @@ public inline fun CharArray.reduceIndexed(operation: (index: Int, acc: Char, Cha
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Array<out T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
+    if (isEmpty())
+        return null
+    var accumulator: S = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun ByteArray.reduceOrNull(operation: (acc: Byte, Byte) -> Byte): Byte? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun ShortArray.reduceOrNull(operation: (acc: Short, Short) -> Short): Short? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun IntArray.reduceOrNull(operation: (acc: Int, Int) -> Int): Int? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun LongArray.reduceOrNull(operation: (acc: Long, Long) -> Long): Long? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun FloatArray.reduceOrNull(operation: (acc: Float, Float) -> Float): Float? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun DoubleArray.reduceOrNull(operation: (acc: Double, Double) -> Double): Double? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun BooleanArray.reduceOrNull(operation: (acc: Boolean, Boolean) -> Boolean): Boolean? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharArray.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
+    if (isEmpty())
+        return null
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun <S, T : S> Array<out T>.reduceRight(operation: (T, acc: S) -> S): S {
     var index = lastIndex
@@ -12584,6 +12937,8 @@ public inline fun <S, T : S> Array<out T>.reduceRight(operation: (T, acc: S) -> 
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun ByteArray.reduceRight(operation: (Byte, acc: Byte) -> Byte): Byte {
     var index = lastIndex
@@ -12597,6 +12952,8 @@ public inline fun ByteArray.reduceRight(operation: (Byte, acc: Byte) -> Byte): B
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun ShortArray.reduceRight(operation: (Short, acc: Short) -> Short): Short {
     var index = lastIndex
@@ -12610,6 +12967,8 @@ public inline fun ShortArray.reduceRight(operation: (Short, acc: Short) -> Short
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun IntArray.reduceRight(operation: (Int, acc: Int) -> Int): Int {
     var index = lastIndex
@@ -12623,6 +12982,8 @@ public inline fun IntArray.reduceRight(operation: (Int, acc: Int) -> Int): Int {
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun LongArray.reduceRight(operation: (Long, acc: Long) -> Long): Long {
     var index = lastIndex
@@ -12636,6 +12997,8 @@ public inline fun LongArray.reduceRight(operation: (Long, acc: Long) -> Long): L
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun FloatArray.reduceRight(operation: (Float, acc: Float) -> Float): Float {
     var index = lastIndex
@@ -12649,6 +13012,8 @@ public inline fun FloatArray.reduceRight(operation: (Float, acc: Float) -> Float
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun DoubleArray.reduceRight(operation: (Double, acc: Double) -> Double): Double {
     var index = lastIndex
@@ -12662,6 +13027,8 @@ public inline fun DoubleArray.reduceRight(operation: (Double, acc: Double) -> Do
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun BooleanArray.reduceRight(operation: (Boolean, acc: Boolean) -> Boolean): Boolean {
     var index = lastIndex
@@ -12675,6 +13042,8 @@ public inline fun BooleanArray.reduceRight(operation: (Boolean, acc: Boolean) ->
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharArray.reduceRight(operation: (Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -12691,6 +13060,8 @@ public inline fun CharArray.reduceRight(operation: (Char, acc: Char) -> Char): C
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun <S, T : S> Array<out T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
     var index = lastIndex
@@ -12708,6 +13079,8 @@ public inline fun <S, T : S> Array<out T>.reduceRightIndexed(operation: (index: 
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun ByteArray.reduceRightIndexed(operation: (index: Int, Byte, acc: Byte) -> Byte): Byte {
     var index = lastIndex
@@ -12725,6 +13098,8 @@ public inline fun ByteArray.reduceRightIndexed(operation: (index: Int, Byte, acc
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun ShortArray.reduceRightIndexed(operation: (index: Int, Short, acc: Short) -> Short): Short {
     var index = lastIndex
@@ -12742,6 +13117,8 @@ public inline fun ShortArray.reduceRightIndexed(operation: (index: Int, Short, a
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun IntArray.reduceRightIndexed(operation: (index: Int, Int, acc: Int) -> Int): Int {
     var index = lastIndex
@@ -12759,6 +13136,8 @@ public inline fun IntArray.reduceRightIndexed(operation: (index: Int, Int, acc: 
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun LongArray.reduceRightIndexed(operation: (index: Int, Long, acc: Long) -> Long): Long {
     var index = lastIndex
@@ -12776,6 +13155,8 @@ public inline fun LongArray.reduceRightIndexed(operation: (index: Int, Long, acc
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun FloatArray.reduceRightIndexed(operation: (index: Int, Float, acc: Float) -> Float): Float {
     var index = lastIndex
@@ -12793,6 +13174,8 @@ public inline fun FloatArray.reduceRightIndexed(operation: (index: Int, Float, a
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun DoubleArray.reduceRightIndexed(operation: (index: Int, Double, acc: Double) -> Double): Double {
     var index = lastIndex
@@ -12810,6 +13193,8 @@ public inline fun DoubleArray.reduceRightIndexed(operation: (index: Int, Double,
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun BooleanArray.reduceRightIndexed(operation: (index: Int, Boolean, acc: Boolean) -> Boolean): Boolean {
     var index = lastIndex
@@ -12827,6 +13212,8 @@ public inline fun BooleanArray.reduceRightIndexed(operation: (index: Int, Boolea
  * to each element with its index in the original array and current accumulator value.
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRight
  */
 public inline fun CharArray.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -12835,6 +13222,159 @@ public inline fun CharArray.reduceRightIndexed(operation: (index: Int, Char, acc
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
         --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun <S, T : S> Array<out T>.reduceRightOrNull(operation: (T, acc: S) -> S): S? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator: S = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun ByteArray.reduceRightOrNull(operation: (Byte, acc: Byte) -> Byte): Byte? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun ShortArray.reduceRightOrNull(operation: (Short, acc: Short) -> Short): Short? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun IntArray.reduceRightOrNull(operation: (Int, acc: Int) -> Int): Int? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun LongArray.reduceRightOrNull(operation: (Long, acc: Long) -> Long): Long? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun FloatArray.reduceRightOrNull(operation: (Float, acc: Float) -> Float): Float? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun DoubleArray.reduceRightOrNull(operation: (Double, acc: Double) -> Double): Double? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun BooleanArray.reduceRightOrNull(operation: (Boolean, acc: Boolean) -> Boolean): Boolean? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value. Returns null if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public inline fun CharArray.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
+    var index = lastIndex
+    if (index < 0) return null
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
     }
     return accumulator
 }

@@ -94,7 +94,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
             proceed = { c.resume(Unit) }
         }
 
-        fun check(numberOfSuspensions: Int) {
+        fun check(numberOfSuspensions: Int, checkFinished: Boolean = true) {
             for (i in 1..numberOfSuspensions) {
                 if (counter != i) error("Wrong state-machine generated: suspendHere should be called exactly once in one state. Expected " + i + ", got " + counter)
                 proceed()
@@ -103,7 +103,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
                 error("Wrong state-machine generated: wrong number of overall suspensions. Expected " + numberOfSuspensions + ", got " + counter)
             if (finished) error("Wrong state-machine generated: it is finished early")
             proceed()
-            if (!finished) error("Wrong state-machine generated: it is not finished yet")
+            if (checkFinished && !finished) error("Wrong state-machine generated: it is not finished yet")
         }
     }
     val StateMachineChecker = StateMachineCheckerClass()

@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Long visibility:private [final,static]
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
-          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Long
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Short visibility:private [final,static]
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
-          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.Short
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:private [final,static]
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
-          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Byte
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
@@ -71,21 +71,21 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         CONST Long type=kotlin.Long value=-1
       VAR name:test5 type:kotlin.Long? [val]
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
-          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
       VAR name:test6 type:kotlin.Short? [val]
         TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
-          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
       VAR name:test7 type:kotlin.Byte? [val]
         TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
-          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
   FUN name:testImplicitArguments visibility:public modality:FINAL <> (x:kotlin.Long) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Long
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
-          CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value=1
     BLOCK_BODY
   CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public superTypes:[kotlin.Any]
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Long
         EXPRESSION_BODY
           TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
-            CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: CONST Int type=kotlin.Int value=1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -110,9 +110,9 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Long declared in <root>.TestImplicitArguments'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Long visibility:private [final]' type=kotlin.Long origin=null
               receiver: GET_VAR '<this>: <root>.TestImplicitArguments declared in <root>.TestImplicitArguments.<get-x>' type=<root>.TestImplicitArguments origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

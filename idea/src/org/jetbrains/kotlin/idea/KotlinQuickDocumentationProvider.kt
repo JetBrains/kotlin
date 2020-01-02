@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea
@@ -241,7 +230,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 // so reference extracted from originalElement
                 val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
                 (context[BindingContext.REFERENCE_TARGET, referenceExpression]
-                        ?: context[BindingContext.REFERENCE_TARGET, referenceExpression.getChildOfType<KtReferenceExpression>()])?.let {
+                    ?: context[BindingContext.REFERENCE_TARGET, referenceExpression.getChildOfType<KtReferenceExpression>()])?.let {
                     if (it is FunctionDescriptor) // To protect from Some<caret>Enum.values()
                         return renderEnumSpecialFunction(element, it, quickNavigation)
                 }
@@ -255,7 +244,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             return try {
                 getTextImpl(element, originalElement, quickNavigation)
             } catch (_: IndexNotReadyException) {
-                DumbService.getInstance(element.project).showDumbModeNotification("Element information is not available during index update")
+                DumbService.getInstance(element.project)
+                    .showDumbModeNotification("Element information is not available during index update")
                 null
             }
         }
@@ -304,7 +294,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 val origin = element.kotlinOrigin ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
             } else if (element.isModifier()) {
-                when(element.text) {
+                when (element.text) {
                     KtTokens.LATEINIT_KEYWORD.value -> {
                         return "lateinit allows initializing a ${a(
                             LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL,
@@ -515,7 +505,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
             if (originalInfo != null) {
                 val renderedDecl = constant { DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false } }.render(declarationDescriptor)
-                return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo
+                return "$renderedDecl<br/>Java declaration:<br/>$originalInfo"
             }
 
             return null
@@ -530,9 +520,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             }
         }
 
-        private fun PsiElement?.isModifier() = this != null
-                                               && parent is KtModifierList
-                                               && KtTokens.MODIFIER_KEYWORDS_ARRAY.firstOrNull { it.value == text } != null
+        private fun PsiElement?.isModifier() =
+            this != null && parent is KtModifierList && KtTokens.MODIFIER_KEYWORDS_ARRAY.firstOrNull { it.value == text } != null
 
     }
 }

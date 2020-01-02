@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 // KT-3750 When without else
 
 enum class A {

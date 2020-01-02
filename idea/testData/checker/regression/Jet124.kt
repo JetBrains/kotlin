@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun foo1() :  (Int) -> Int = { x: Int -> x }
 
 fun foo() {

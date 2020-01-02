@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -206,16 +205,11 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
 
 private fun generate(
     analysisResult: AnalysisResult, sourceFiles: List<KtFile>, kotlinCompilerConfiguration: CompilerConfiguration
-): GenerationState {
-    val generationState = GenerationState.Builder(
-        sourceFiles.first().project,
-        ClassBuilderFactories.BINARIES,
-        analysisResult.moduleDescriptor,
-        analysisResult.bindingContext,
-        sourceFiles,
-        kotlinCompilerConfiguration
-    ).build()
-
-    KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
-    return generationState
-}
+): GenerationState = GenerationState.Builder(
+    sourceFiles.first().project,
+    ClassBuilderFactories.BINARIES,
+    analysisResult.moduleDescriptor,
+    analysisResult.bindingContext,
+    sourceFiles,
+    kotlinCompilerConfiguration
+).build().also(KotlinCodegenFacade::compileCorrectFiles)

@@ -93,11 +93,14 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             destinationDir.set(project.provider { defaultKotlinDestinationDir })
         }
 
-        return doRegisterTask(project, name) {
+        val result = doRegisterTask(project, name) {
             it.description = taskDescription
             it.mapClasspath { kotlinCompilation.compileDependencyFiles }
-            kotlinCompilation.output.addClassesDir { project.files(kotlinTask.get().destinationDir).builtBy(kotlinTask.get()) }
         }
+
+        kotlinCompilation.output.addClassesDir { project.files(result.map { it.destinationDir }) }
+
+        return result
     }
 
     open fun run() {
@@ -439,7 +442,8 @@ internal abstract class AbstractKotlinPlugin(
             val inspectTask =
                 registerTask(project, "inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java) {
                     it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
-                    it.jarTask = jarTask
+                    it.archivePath.set(project.provider { jarTask.archivePathCompatible.canonicalPath })
+                    it.archiveName.set(project.provider { jarTask.archiveNameCompatible })
                     it.dependsOn(classesTask)
                 }
             jarTask.dependsOn(inspectTask)

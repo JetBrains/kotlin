@@ -77,8 +77,8 @@ class ConstantValueGenerator(
                     startOffset, endOffset,
                     constantType,
                     arrayElementType.toIrType(),
-                    constantValue.value.map {
-                        generateConstantValueAsExpression(startOffset, endOffset, it, null)
+                    constantValue.value.mapNotNull {
+                        generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, it, null)
                     }
                 )
             }
@@ -89,6 +89,14 @@ class ConstantValueGenerator(
                         ?: throw AssertionError("No such enum entry ${constantValue.enumEntryName} in $constantType")
                 if (enumEntryDescriptor !is ClassDescriptor) {
                     throw AssertionError("Enum entry $enumEntryDescriptor should be a ClassDescriptor")
+                }
+                if (!DescriptorUtils.isEnumEntry(enumEntryDescriptor)) {
+                    // Error class descriptor for an unresolved entry.
+                    // TODO this `null` may actually reach codegen if the annotation is on an interface member's default implementation,
+                    //      as any bridge generated in an implementation of that interface will have a copy of the annotation. See
+                    //      `missingEnumReferencedInAnnotationArgumentIr` in `testData/compileKotlinAgainstCustomBinaries`: replace
+                    //      `open class B` with `interface B` and watch things break. (`KClassValue` below likely has a similar problem.)
+                    return null
                 }
                 IrGetEnumValueImpl(
                     startOffset, endOffset,
@@ -114,6 +122,8 @@ class ConstantValueGenerator(
                     )
                 }
             }
+
+            is ErrorValue -> null
 
             else -> TODO("Unexpected constant value: ${constantValue.javaClass.simpleName} $constantValue")
         }

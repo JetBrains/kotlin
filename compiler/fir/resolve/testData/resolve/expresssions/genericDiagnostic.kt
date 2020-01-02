@@ -32,8 +32,7 @@ public class DiagnosticFactory<D extends EmptyDiagnostic> {
 }
 
 // FILE: DiagnosticFactory0.java
-
-public class DiagnosticFactory0<E extends Element> extends DiagnosticFactory<Diagnostic> {}
+public class DiagnosticFactory0<E extends Element> extends DiagnosticFactory<Diagnostic<E>> {}
 
 // FILE: test.kt
 
@@ -54,5 +53,5 @@ private val DERIVED_FACTORY = DiagnosticFactory0<DerivedElement>()
 fun createViaFactory(d: EmptyDiagnostic) {
     val casted = DERIVED_FACTORY.cast(d)
     val element = casted.element
-    <!INAPPLICABLE_CANDIDATE!>Fix<!>(element)
+    Fix(element)
 }

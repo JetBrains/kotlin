@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:JvmName("FuzzyTypeUtils")
@@ -27,7 +16,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 fun CallableDescriptor.fuzzyReturnType() = returnType?.toFuzzyType(typeParameters)
@@ -67,8 +55,8 @@ fun FuzzyType.presentationType(): KotlinType {
 fun KotlinType.toFuzzyType(freeParameters: Collection<TypeParameterDescriptor>) = FuzzyType(this, freeParameters)
 
 class FuzzyType(
-        val type: KotlinType,
-        freeParameters: Collection<TypeParameterDescriptor>
+    val type: KotlinType,
+    freeParameters: Collection<TypeParameterDescriptor>
 ) {
     val freeParameters: Set<TypeParameterDescriptor>
 
@@ -79,12 +67,10 @@ class FuzzyType(
             if (usedTypeParameters.isNotEmpty()) {
                 val originalFreeParameters = freeParameters.map { it.toOriginal() }.toSet()
                 this.freeParameters = usedTypeParameters.filter { it.toOriginal() in originalFreeParameters }.toSet()
-            }
-            else {
+            } else {
                 this.freeParameters = emptySet()
             }
-        }
-        else {
+        } else {
             this.freeParameters = emptySet()
         }
     }
@@ -115,17 +101,13 @@ class FuzzyType(
         }
     }
 
-    fun checkIsSubtypeOf(otherType: FuzzyType): TypeSubstitutor?
-            = matchedSubstitutor(otherType, MatchKind.IS_SUBTYPE)
+    fun checkIsSubtypeOf(otherType: FuzzyType): TypeSubstitutor? = matchedSubstitutor(otherType, MatchKind.IS_SUBTYPE)
 
-    fun checkIsSuperTypeOf(otherType: FuzzyType): TypeSubstitutor?
-            = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
+    fun checkIsSuperTypeOf(otherType: FuzzyType): TypeSubstitutor? = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
 
-    fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor?
-            = checkIsSubtypeOf(otherType.toFuzzyType(emptyList()))
+    fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSubtypeOf(otherType.toFuzzyType(emptyList()))
 
-    fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor?
-            = checkIsSuperTypeOf(otherType.toFuzzyType(emptyList()))
+    fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSuperTypeOf(otherType.toFuzzyType(emptyList()))
 
     private enum class MatchKind {
         IS_SUBTYPE,
@@ -181,14 +163,14 @@ class FuzzyType(
         }.buildSubstitutor()
 
         val substitutionMap: Map<TypeConstructor, TypeProjection> = constraintSystem.typeVariables
-                .map { it.originalTypeParameter }
-                .associateBy(
-                        keySelector = { it.typeConstructor },
-                        valueTransform = {
-                            val typeProjection = TypeProjectionImpl(Variance.INVARIANT, it.defaultType)
-                            val substitutedProjection = substitutorToKeepCapturedTypes.substitute(typeProjection)
-                            substitutedProjection?.takeUnless { ErrorUtils.containsUninferredParameter(it.type) } ?: typeProjection
-                        })
+            .map { it.originalTypeParameter }
+            .associateBy(
+                keySelector = { it.typeConstructor },
+                valueTransform = {
+                    val typeProjection = TypeProjectionImpl(Variance.INVARIANT, it.defaultType)
+                    val substitutedProjection = substitutorToKeepCapturedTypes.substitute(typeProjection)
+                    substitutedProjection?.takeUnless { ErrorUtils.containsUninferredParameter(it.type) } ?: typeProjection
+                })
         return TypeConstructorSubstitution.createByConstructorsMap(substitutionMap, approximateCapturedTypes = true).buildSubstitutor()
     }
 }
@@ -199,7 +181,10 @@ fun TypeSubstitution.hasConflictWith(other: TypeSubstitution, freeParameters: Co
         val type = parameter.defaultType
         val substituted1 = this[type] ?: return@any false
         val substituted2 = other[type] ?: return@any false
-        !StrictEqualityTypeChecker.strictEqualTypes(substituted1.type.unwrap(), substituted2.type.unwrap()) || substituted1.projectionKind != substituted2.projectionKind
+        !StrictEqualityTypeChecker.strictEqualTypes(
+            substituted1.type.unwrap(),
+            substituted2.type.unwrap()
+        ) || substituted1.projectionKind != substituted2.projectionKind
     }
 }
 

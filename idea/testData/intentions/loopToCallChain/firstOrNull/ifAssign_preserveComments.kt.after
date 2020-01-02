@@ -4,8 +4,7 @@
 fun foo(list: List<String>) {
     // string should be non-empty
     // save it into result
-    val result: String? = list.firstOrNull {
-        // search for first non-empty string in the list
+    val result: String? = list.firstOrNull {  // search for first non-empty string in the list
         it.length > 0
     }
 }

@@ -311,7 +311,7 @@ private fun loadScriptDefinition(
         if (def != null) {
             messageReporter(
                 ScriptDiagnostic.Severity.DEBUG,
-                "Configure scripting: Added template $templateClassName from ${classpathWithLoader.classpath}"
+                "Configure scripting: Added template $templateClassName from ${classpathWithLoader.classpath.sorted()}"
             )
             return def
         }

@@ -57,7 +57,8 @@ open class PodspecTask : DefaultTask() {
         val syncTask = "${project.path}:$SYNC_TASK_NAME"
 
 
-        outputFile.writeText("""
+        outputFile.writeText(
+            """
             |Pod::Spec.new do |spec|
             |    spec.name                     = '$specName'
             |    spec.version                  = '${settings.version}'
@@ -102,7 +103,8 @@ open class PodspecTask : DefaultTask() {
             |        }
             |    ]
             |end
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         logger.quiet(
             """
@@ -204,14 +206,16 @@ open class DefFileTask : DefaultTask() {
 
     @get:OutputFile
     val outputFile: File
-        get() = project.cocoapodsBuildDirs.defs.resolve("${pod.name}.def")
+        get() = project.cocoapodsBuildDirs.defs.resolve("${pod.moduleName}.def")
 
     @TaskAction
     fun generate() {
         outputFile.parentFile.mkdirs()
-        outputFile.writeText("""
+        outputFile.writeText(
+            """
             language = Objective-C
             modules = ${pod.moduleName}
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 }

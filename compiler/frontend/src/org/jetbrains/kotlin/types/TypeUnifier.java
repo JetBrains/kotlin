@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.utils.CollectionsKt;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,9 +98,10 @@ public class TypeUnifier {
         }
 
         // Foo ~ X  =>  x |-> Foo
+        // * ~ X => x |-> *
         TypeConstructor maybeVariable = withVariables.getConstructor();
         if (isVariable.test(maybeVariable)) {
-            result.put(maybeVariable, new TypeProjectionImpl(knownProjectionKind, known));
+            result.put(maybeVariable, knownProjection);
             return;
         }
 

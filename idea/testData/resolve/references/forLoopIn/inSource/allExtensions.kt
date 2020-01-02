@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 fun test(f: Foo) {
     for(i <caret>in f) {}
 }

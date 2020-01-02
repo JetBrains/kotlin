@@ -9,6 +9,12 @@ public final enum class StaticMembersInEnum : R|kotlin/Enum<test/StaticMembersIn
 
     public open static operator fun values(x: R|kotlin/Int|): R|kotlin/Unit|
 
+    public final static fun values(): R|kotlin/Array<test/StaticMembersInEnum>| {
+    }
+
     public open static operator fun valueOf(x: R|kotlin/Int|): R|kotlin/Unit|
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/StaticMembersInEnum| {
+    }
 
 }

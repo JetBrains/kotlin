@@ -11,4 +11,3 @@ class TestInitValInInitBlock {
         x = 0
     }
 }
-
