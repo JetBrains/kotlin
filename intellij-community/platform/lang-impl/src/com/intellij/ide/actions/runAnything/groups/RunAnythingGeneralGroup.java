@@ -14,7 +14,7 @@ public class RunAnythingGeneralGroup extends RunAnythingGroupBase {
   @NotNull
   @Override
   public String getTitle() {
-    return getTITLE();
+    return getGroupTitle();
   }
 
   @NotNull
@@ -23,7 +23,7 @@ public class RunAnythingGeneralGroup extends RunAnythingGroupBase {
     Collection<RunAnythingItem> collector = new ArrayList<>();
 
     for (RunAnythingProvider provider : RunAnythingProvider.EP_NAME.getExtensions()) {
-      if (getTITLE().equals(provider.getCompletionGroupTitle())) {
+      if (getGroupTitle().equals(provider.getCompletionGroupTitle())) {
         Collection values = provider.getValues(dataContext, pattern);
         for (Object value : values) {
           //noinspection unchecked
@@ -40,7 +40,7 @@ public class RunAnythingGeneralGroup extends RunAnythingGroupBase {
     return 15;
   }
 
-  public static String getTITLE() {
+  public static String getGroupTitle() {
     return IdeBundle.message("run.anything.general.group.title");
   }
 }
