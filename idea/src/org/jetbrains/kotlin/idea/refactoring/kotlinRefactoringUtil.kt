@@ -44,6 +44,7 @@ import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.refactoring.util.ConflictsUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
+import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.ui.components.JBList
 import com.intellij.usageView.UsageViewTypeLocation
 import com.intellij.util.VisibilityUtil
@@ -958,17 +959,20 @@ fun checkSuperMethodsWithPopup(
         append(" of ")
         append(SymbolPresentationUtil.getSymbolPresentableText(superClass))
     }
-    val list = JBList<String>(renameBase, renameCurrent)
+
     JBPopupFactory.getInstance()
-        .createListPopupBuilder(list)
+        .createPopupChooserBuilder(listOf(renameBase, renameCurrent))
         .setTitle(title)
         .setMovable(false)
         .setResizable(false)
         .setRequestFocus(true)
-        .setItemChoosenCallback {
-            val value = list.selectedValue ?: return@setItemChoosenCallback
-            val chosenElements = if (value == renameBase) deepestSuperMethods + declaration else listOf(declaration)
-            action(chosenElements)
+        .setItemChosenCallback { selected ->
+            if (selected == renameBase) {
+                val ableToRename = declaration.project.let { project ->
+                    deepestSuperMethods.all { PsiElementRenameHandler.canRename(project, editor, it) }
+                }
+                if (ableToRename) action(deepestSuperMethods + declaration)
+            } else action(listOf(declaration))
         }
         .createPopup()
         .showInBestPositionFor(editor)
