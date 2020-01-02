@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.profile.codeInspection.ui;
 
@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
 import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.ex.*;
 import com.intellij.icons.AllIcons;
@@ -21,6 +22,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.options.SchemeState;
 import com.intellij.openapi.options.ex.Settings;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -28,6 +30,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.profile.codeInspection.BaseInspectionProfileManager;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
@@ -107,8 +110,19 @@ public class SingleInspectionProfilePanel extends JPanel {
     super(new BorderLayout());
     myProjectProfileManager = projectProfileManager;
     myProfile = profile;
+    final Project project = projectProfileManager.getProject();
+
     // to ensure that profile initialized with proper project
-    myProfile.initInspectionTools(projectProfileManager.getProject());
+    myProfile.initInspectionTools(project);
+    project.getMessageBus().connect(myDisposable).subscribe(ProfileChangeAdapter.TOPIC, new ProfileChangeAdapter() {
+      @Override
+      public void profileChanged(@Nullable InspectionProfile profile) {
+        if (myProfile == profile) {
+          initToolStates();
+          filterTree();
+        }
+      }
+    });
   }
 
   public boolean differsFromDefault() {
@@ -444,6 +458,11 @@ public class SingleInspectionProfilePanel extends JPanel {
         postProcessModification();
       }
     });
+    for (InspectionProfileActionProvider provider : InspectionProfileActionProvider.EP_NAME.getExtensionList()) {
+      for (AnAction action : provider.getActions(this)) {
+        actions.add(action);
+      }
+    }
 
     final ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("SingleInspectionProfile", actions, true);
     actionToolbar.setTargetComponent(this);
@@ -914,6 +933,25 @@ public class SingleInspectionProfilePanel extends JPanel {
     return myProfile;
   }
 
+  public InspectionToolWrapper<?, ?> getSelectedTool() {
+    InspectionConfigTreeNode.Tool node = myTreeTable.getStrictlySelectedToolNode();
+    if (node == null) return null;
+    return node.getDefaultDescriptor().getToolWrapper();
+  }
+
+  public void removeSelectedRow() {
+    final InspectionConfigTreeNode.Tool node = myTreeTable.getStrictlySelectedToolNode();
+    if (node != null) {
+      getExpandedNodes(myProfile).saveVisibleState(myTreeTable.getTree());
+      final TreePath path = myTreeTable.getTree().getSelectionPath();
+      assert path != null;
+      final TreePath newPath = path.getParentPath().pathByAddingChild(node.getPreviousNode());
+      myTreeTable.removeSelectedPath(path);
+      myTreeTable.addSelectedPath(newPath);
+      restoreTreeState();
+    }
+  }
+
   @Override
   public Dimension getPreferredSize() {
     return new Dimension(700, 500);
@@ -1019,7 +1057,7 @@ public class SingleInspectionProfilePanel extends JPanel {
   public boolean isModified() {
     if (myTreeTable == null) return false;
     if (myModified) return true;
-    if (myProfile.isChanged()) return true;
+    if (myProfile.isChanged() || myProfile.getSchemeState() == SchemeState.POSSIBLY_CHANGED) return true;
     if (myProfile.getSource().isProjectLevel() != myProfile.isProjectLevel()) return true;
     if (!Comparing.strEqual(myProfile.getSource().getName(), myProfile.getName())) return true;
     if (!Arrays.equals(myInitialScopesOrder, myProfile.getScopesOrder())) return true;
