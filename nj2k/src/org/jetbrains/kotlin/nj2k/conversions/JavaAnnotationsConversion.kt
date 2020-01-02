@@ -28,10 +28,7 @@ class JavaAnnotationsConversion(context: NewJ2kConverterContext) : RecursiveAppl
     private fun processAnnotation(annotation: JKAnnotation) {
         if (annotation.classSymbol.fqName == "java.lang.Deprecated") {
             annotation.classSymbol = symbolProvider.provideClassSymbol("kotlin.Deprecated")
-            if (annotation.arguments.isEmpty()) {
-                annotation.arguments +=
-                    JKAnnotationParameterImpl(JKLiteralExpression("\"\"", JKLiteralExpression.LiteralType.STRING))
-            }
+            annotation.arguments = listOf(JKAnnotationParameterImpl(JKLiteralExpression("\"\"", JKLiteralExpression.LiteralType.STRING)))
         }
         if (annotation.classSymbol.fqName == "java.lang.annotation.Target") {
             annotation.classSymbol = symbolProvider.provideClassSymbol("kotlin.annotation.Target")
