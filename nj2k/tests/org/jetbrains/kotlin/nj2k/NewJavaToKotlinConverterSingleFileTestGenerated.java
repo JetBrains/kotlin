@@ -80,6 +80,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/annotations/annotationUsages.java");
         }
 
+        @TestMetadata("java9Deprecated.java")
+        public void testJava9Deprecated() throws Exception {
+            runTest("nj2k/testData/newJ2k/annotations/java9Deprecated.java");
+        }
+
         @TestMetadata("annotationsFromPropertyAccessors.java")
         public void testAnnotationsFromPropertyAccessors() throws Exception {
             runTest("nj2k/testData/newJ2k/annotations/annotationsFromPropertyAccessors.java");
