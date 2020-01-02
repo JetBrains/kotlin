@@ -334,27 +334,38 @@ private fun IrFunction.generateDefaultsFunction(
     context: CommonBackendContext,
     skipInlineMethods: Boolean,
     skipExternalMethods: Boolean
-): IrFunction? = context.ir.defaultParameterDeclarationsCache[this] ?: when {
-    skipInlineMethods && isInline -> null
-    skipExternalMethods && isExternalOrInheritedFromExternal() -> null
-    valueParameters.any { it.defaultValue != null } ->
-        generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER).also {
-            context.ir.defaultParameterDeclarationsCache[this] = it
-        }
-    this is IrSimpleFunction -> {
+): IrFunction? {
+    if (skipInlineMethods && isInline) return null
+    if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
+    context.ir.defaultParameterDeclarationsCache[this]?.let { return it }
+    if (this is IrSimpleFunction) {
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
         val overriddenStubs = overriddenSymbols.mapNotNull {
             it.owner.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods)?.symbol as IrSimpleFunctionSymbol?
         }
-        if (overriddenStubs.isNotEmpty())
-            generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE).also {
+        if (overriddenStubs.isNotEmpty()) {
+            return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE).also {
                 (it as IrSimpleFunction).overriddenSymbols.addAll(overriddenStubs)
                 context.ir.defaultParameterDeclarationsCache[this] = it
             }
-        else
-            null
+        }
     }
-    else -> null
+    // Note: this is intentionally done *after* checking for overrides. While normally `override fun`s
+    // have no default parameters, there is an exception in case of interface delegation:
+    //     interface I {
+    //         fun f(x: Int = 1)
+    //     }
+    //     class C(val y: I) : I by y {
+    //         // implicit `override fun f(x: Int) = y.f(x)` has a default value for `x`
+    //     }
+    // Since this bug causes the metadata serializer to write the "has default value" flag into compiled
+    // binaries, it's way too late to fix it. Hence the workaround.
+    if (valueParameters.any { it.defaultValue != null }) {
+        return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER).also {
+            context.ir.defaultParameterDeclarationsCache[this] = it
+        }
+    }
+    return null
 }
 
 private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContext, newOrigin: IrDeclarationOrigin): IrFunction {
