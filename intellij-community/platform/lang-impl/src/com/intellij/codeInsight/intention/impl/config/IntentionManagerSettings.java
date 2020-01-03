@@ -9,7 +9,10 @@ import com.intellij.ide.ui.search.SearchableOptionsRegistrar;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.extensions.ExtensionPointListener;
@@ -43,6 +46,8 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   private final Set<String> myIgnoredActions = Collections.synchronizedSet(new LinkedHashSet<>());
 
   private final Map<MetaDataKey, IntentionActionMetaData> myMetaData = new LinkedHashMap<>(); // guarded by this
+  private final Map<IntentionActionBean, MetaDataKey> myExtensionMapping = new HashMap<>(); // guarded by this
+
   @NonNls private static final String IGNORE_ACTION_TAG = "ignoreAction";
   @NonNls private static final String NAME_ATT = "name";
   private static final Pattern HTML_PATTERN = Pattern.compile("<[^<>]*>");
@@ -59,8 +64,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
       public void extensionRemoved(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
         String[] categories = extension.getCategories();
         if (categories == null) return;
-        String familyName = extension.getInstance().getFamilyName();
-        unregisterMetaData(categories, familyName);
+        unregisterMetaDataForEP(extension);
         OptionsTopHitProvider.invalidateCachedOptions(IntentionsOptionsTopHitProvider.class);
       }
     }, true, this);
@@ -82,7 +86,12 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
       descriptionDirectoryName = instance.getDescriptionDirectoryName();
     }
     try {
-      registerMetaData(new IntentionActionMetaData(instance, extension.getLoaderForClass(), categories, descriptionDirectoryName));
+      //noinspection SynchronizeOnThis
+      synchronized (this) {
+        MetaDataKey key = registerMetaData(new IntentionActionMetaData(instance, extension.getLoaderForClass(),
+                                                                       categories, descriptionDirectoryName));
+        myExtensionMapping.put(extension, key);
+      }
     }
     catch (ExtensionNotApplicableException ignore) {
     }
@@ -136,7 +145,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   }
 
   private static String getFamilyName(@NotNull IntentionActionMetaData metaData) {
-    return StringUtil.join(metaData.myCategory, "/") + "/" + metaData.getFamily();
+    return StringUtil.join(metaData.myCategory, "/") + "/" + metaData.getAction().getFamilyName();
   }
 
   private static String getFamilyName(@NotNull IntentionAction action) {
@@ -165,12 +174,13 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
     }
   }
 
-  private synchronized void registerMetaData(@NotNull IntentionActionMetaData metaData) {
+  private synchronized MetaDataKey registerMetaData(@NotNull IntentionActionMetaData metaData) {
     MetaDataKey key = new MetaDataKey(metaData.myCategory, metaData.getFamily());
     if (!myMetaData.containsKey(key)){
       processMetaData(metaData);
     }
     myMetaData.put(key, metaData);
+    return key;
   }
 
   private static void processMetaData(@NotNull IntentionActionMetaData metaData) {
@@ -212,7 +222,9 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
     }
   }
 
-  private synchronized void unregisterMetaData(String[] categories, String familyName) {
-    myMetaData.remove(new MetaDataKey(categories, familyName));
+  private synchronized void unregisterMetaDataForEP(IntentionActionBean extension) {
+    MetaDataKey key = myExtensionMapping.remove(extension);
+    assert key != null : extension;
+    myMetaData.remove(key);
   }
 }
