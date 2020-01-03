@@ -39,13 +39,21 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-    private val pendingTransformations = mutableListOf<Function0<Unit>>()
+    private val pendingAccessorsToAdd = mutableListOf<IrFunction>()
     private val inlineLambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
 
     override fun lower(irFile: IrFile) {
         inlineLambdaToCallSite.putAll(IrInlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
         irFile.transformChildrenVoid(this)
-        pendingTransformations.forEach { it() }
+
+        for (accessor in pendingAccessorsToAdd) {
+            assert(accessor.file == irFile) {
+                "SyntheticAccessorLowering should not attempt to modify other files!\n" +
+                        "While lowering this file: ${irFile.render()}\n" +
+                        "Trying to add this accessor: ${accessor.render()}"
+            }
+            (accessor.parent as IrDeclarationContainer).declarations.add(accessor)
+        }
     }
 
     private val functionMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
@@ -68,11 +76,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             !expression.symbol.isAccessible(withSuper, thisSymbol) ->
                 functionMap.getOrPut(expression.symbol) {
                     when (val symbol = expression.symbol) {
-                        is IrConstructorSymbol -> symbol.owner.makeConstructorAccessor().also { accessor ->
-                            pendingTransformations.add {
-                                (accessor.parent as IrDeclarationContainer).declarations.add(accessor)
-                            }
-                        }.symbol
+                        is IrConstructorSymbol -> symbol.owner.makeConstructorAccessor().also(pendingAccessorsToAdd::add).symbol
                         is IrSimpleFunctionSymbol -> symbol.owner.makeSimpleFunctionAccessor(expression as IrCall).symbol
                         else -> error("Unknown subclass of IrFunctionSymbol")
                     }
@@ -101,9 +105,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         if (declaration.isOrShouldBeHidden) {
-            pendingTransformations.add {
-                declaration.parentAsClass.declarations.add(handleHiddenConstructor(declaration))
-            }
+            pendingAccessorsToAdd.add(handleHiddenConstructor(declaration))
             declaration.visibility = Visibilities.PRIVATE
         }
 
@@ -241,7 +243,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
             accessor.parent = parent
-            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
+            pendingAccessorsToAdd.add(accessor)
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
@@ -273,7 +275,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             returnType = fieldSymbol.owner.type
         }.also { accessor ->
             accessor.parent = fieldSymbol.owner.accessorParent()
-            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
+            pendingAccessorsToAdd.add(accessor)
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(
@@ -309,7 +311,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             returnType = context.irBuiltIns.unitType
         }.also { accessor ->
             accessor.parent = fieldSymbol.owner.accessorParent()
-            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
+            pendingAccessorsToAdd.add(accessor)
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(

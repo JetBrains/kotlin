@@ -210,7 +210,12 @@ class JvmDeclarationFactory(
                     else -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
                 },
                 // Old backend doesn't generate ACC_FINAL on DefaultImpls methods.
-                modality = Modality.OPEN
+                modality = Modality.OPEN,
+                // Interface functions are always public, with one exception: clone in Cloneable, which is protected. However, Cloneable
+                // has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend. We should rather not generate
+                // a bridge to clone when interface inherits from Cloneable at all. Below, we force everything, including those bridges,
+                // to be public so that we won't try to generate synthetic accessor for them.
+                visibility = Visibilities.PUBLIC
             ).also { it.copyAttributes(interfaceFun) }
         }
     }

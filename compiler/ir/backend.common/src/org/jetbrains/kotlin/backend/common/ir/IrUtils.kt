@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
@@ -514,6 +514,7 @@ fun createStaticFunctionWithReceivers(
     dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
     origin: IrDeclarationOrigin = oldFunction.origin,
     modality: Modality = Modality.FINAL,
+    visibility: Visibility = oldFunction.visibility,
     copyMetadata: Boolean = true
 ): IrSimpleFunction {
     val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
@@ -524,7 +525,7 @@ fun createStaticFunctionWithReceivers(
         origin,
         IrSimpleFunctionSymbolImpl(descriptor),
         name,
-        oldFunction.visibility,
+        visibility,
         modality,
         oldFunction.returnType,
         isInline = oldFunction.isInline,
