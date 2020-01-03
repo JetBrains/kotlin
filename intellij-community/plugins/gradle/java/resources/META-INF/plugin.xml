@@ -18,7 +18,7 @@
   <depends optional="true" config-file="gradle-coverage-integration.xml">Coverage</depends>
   <depends optional="true" config-file="gradle-groovy-integration.xml">org.intellij.groovy</depends>
 
-  <resource-bundle>i18n.GradleInspectionBundle</resource-bundle>
+  <resource-bundle>messages.GradleInspectionBundle</resource-bundle>
 
   <extensionPoints>
     <extensionPoint name="frameworkSupport" interface="org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider"/>

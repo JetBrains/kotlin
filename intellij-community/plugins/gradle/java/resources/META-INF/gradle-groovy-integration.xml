@@ -35,7 +35,7 @@
     <weigher key="completion" implementationClass="org.jetbrains.plugins.gradle.service.resolve.dsl.GradleCompletionWeigher"
              id="gradleWeigher" order="first"/>
     <localInspection language="Groovy" groupPath="Gradle" shortName="MultipleRepositoryUrls"
-                     bundle="i18n.GradleInspectionBundle"
+                     bundle="messages.GradleInspectionBundle"
                      key="multiple.repository.urls" groupKey="group.names.probable.bugs" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.plugins.gradle.codeInspection.MultipleRepositoryUrlsInspection"/>
 

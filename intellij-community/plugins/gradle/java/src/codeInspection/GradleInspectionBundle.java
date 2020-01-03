@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 public class GradleInspectionBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "i18n.GradleInspectionBundle";
+  @NonNls private static final String BUNDLE = "messages.GradleInspectionBundle";
   private static final GradleInspectionBundle INSTANCE = new GradleInspectionBundle();
 
   private GradleInspectionBundle() { super(BUNDLE); }
