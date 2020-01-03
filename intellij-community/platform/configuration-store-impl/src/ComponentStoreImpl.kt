@@ -383,7 +383,7 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
 
     val defaultState = if (stateSpec.defaultStateAsResource) getDefaultState(component, name, stateClass) else null
-    if (loadPolicy == StateLoadPolicy.LOAD) {
+    if (loadPolicy == StateLoadPolicy.LOAD || info.stateSpec?.allowLoadInTests == true) {
       val storageChooser = component as? StateStorageChooserEx
       for (storageSpec in getStorageSpecs(component, stateSpec, StateStorageOperation.READ)) {
         if (storageChooser?.getResolution(storageSpec, StateStorageOperation.READ) == Resolution.SKIP) {

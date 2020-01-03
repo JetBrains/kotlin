@@ -151,6 +151,7 @@ class StateMap private constructor(private val names: Array<String>, private val
     val prev = states.getAndUpdate(index) { state ->
       when {
         archive && state is Element -> archiveState(state).toByteArray()
+        !archive && state is ByteArray -> unarchiveState(state)
         else -> state
       }
     }
