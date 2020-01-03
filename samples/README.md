@@ -10,7 +10,7 @@ the building process.
   * `csvparser` - simple CSV file parser and analyzer
   * `echoServer` - TCP/IP echo server
   * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
-  * `gtk` - GTK2 interoperability example
+  * `gtk` - GTK3 interoperability example
   * `html5Canvas` - WebAssembly example
   * `libcurl` - using of FTP/HTTP/HTTPS client library `libcurl`
   * `nonBlockingEchoServer` - multi-client TCP/IP echo server using co-routines
