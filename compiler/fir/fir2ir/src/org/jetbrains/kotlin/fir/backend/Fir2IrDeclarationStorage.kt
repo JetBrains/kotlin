@@ -111,14 +111,18 @@ class Fir2IrDeclarationStorage(
         val thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         val thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList())
         val parent = this
+        val receiverDescriptor = WrappedReceiverParameterDescriptor()
         thisReceiver = irSymbolTable.declareValueParameter(
-            startOffset, endOffset, thisOrigin, WrappedReceiverParameterDescriptor(), thisType
+            startOffset, endOffset, thisOrigin, receiverDescriptor, thisType
         ) { symbol ->
             IrValueParameterImpl(
                 startOffset, endOffset, thisOrigin, symbol,
                 Name.special("<this>"), -1, thisType,
                 varargElementType = null, isCrossinline = false, isNoinline = false
-            ).apply { this.parent = parent }
+            ).apply {
+                this.parent = parent
+                receiverDescriptor.bind(this)
+            }
         }
         leaveScope(descriptor)
     }
@@ -351,15 +355,19 @@ class Fir2IrDeclarationStorage(
             }
             if (containingClass != null && !isStatic) {
                 val thisType = containingClass.thisReceiver!!.type
+                val descriptor = WrappedReceiverParameterDescriptor()
                 dispatchReceiverParameter = irSymbolTable.declareValueParameter(
-                    startOffset, endOffset, thisOrigin, WrappedReceiverParameterDescriptor(),
+                    startOffset, endOffset, thisOrigin, descriptor,
                     thisType
                 ) { symbol ->
                     IrValueParameterImpl(
                         startOffset, endOffset, thisOrigin, symbol,
                         Name.special("<this>"), -1, thisType,
                         varargElementType = null, isCrossinline = false, isNoinline = false
-                    ).apply { this.parent = parent }
+                    ).apply {
+                        this.parent = parent
+                        descriptor.bind(this)
+                    }
                 }
             }
         }
