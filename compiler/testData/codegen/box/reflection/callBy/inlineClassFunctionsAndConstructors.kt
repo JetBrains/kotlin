@@ -1,5 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JS_IR, JS, NATIVE, JVM_IR
+// IGNORE_BACKEND: JS_IR, JS, NATIVE
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
@@ -23,16 +23,18 @@ class D(e: S, f: S = S("f")) {
 fun S.extension(h: S = S("h")): S = this + h
 
 fun box(): String {
+    assertEquals(S("ab"), C().member(S("a")))
     assertEquals(S("ab"), C::member.callBy(C::member.parameters.filter { it.name != "b" }.associate {
         it to (if (it.name == "a") S("a") else C())
     }))
 
+    assertEquals(S("cd"), topLevel(S("c")))
     assertEquals(S("cd"), ::topLevel.callBy(::topLevel.parameters.filter { it.name != "d" }.associate { it to S("c") }))
 
     // assertEquals(S("ef"), ::D.callBy(::D.parameters.filter { it.name != "f" }.associate { it to S("e") }).result)
 
+    assertEquals(S("gh"), S("g").extension())
     assertEquals(S("gh"), S::extension.callBy(S::extension.parameters.filter { it.name != "h" }.associate { it to S("g") }))
-
 
     val boundMember = C()::member
     assertEquals(S("ab"), boundMember.callBy(boundMember.parameters.associate { it to S(it.name!!) }))

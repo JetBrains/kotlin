@@ -85,11 +85,15 @@ open class DefaultArgumentStubGenerator(
                 newIrFunction.valueParameters[it.index]
             }
 
+            var sourceParameterIndex = -1
             for (valueParameter in irFunction.valueParameters) {
+                if (!valueParameter.isMovedReceiver()) {
+                    ++sourceParameterIndex
+                }
                 val parameter = newIrFunction.valueParameters[valueParameter.index]
                 val remapped = if (valueParameter.defaultValue != null) {
                     val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
-                    val bit = irInt(1 shl (valueParameter.index % 32))
+                    val bit = irInt(1 shl (sourceParameterIndex % 32))
                     val defaultFlag = irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
 
                     val expressionBody = valueParameter.defaultValue!!
@@ -289,14 +293,18 @@ open class DefaultParameterInjector(
             "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
                     "got ${stubFunction.valueParameters.size} total in ${stubFunction.render()}"
         }
+        var sourceParameterIndex = -1
         return stubFunction.symbol to stubFunction.valueParameters.mapIndexed { i, parameter ->
+            if (!parameter.isMovedReceiver()) {
+                ++sourceParameterIndex
+            }
             when {
                 i >= realArgumentsNumber + maskValues.size -> IrConstImpl.constNull(startOffset, endOffset, parameter.type)
                 i >= realArgumentsNumber -> IrConstImpl.int(startOffset, endOffset, parameter.type, maskValues[i - realArgumentsNumber])
                 else -> {
                     val valueArgument = expression.getValueArgument(i)
                     if (valueArgument == null) {
-                        maskValues[i / 32] = maskValues[i / 32] or (1 shl (i % 32))
+                        maskValues[i / 32] = maskValues[i / 32] or (1 shl (sourceParameterIndex % 32))
                     }
                     valueArgument ?: nullConst(startOffset, endOffset, parameter)?.let {
                         IrCompositeImpl(
@@ -440,3 +448,6 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     annotations.mapTo(newFunction.annotations) { it.deepCopyWithSymbols() }
     return newFunction
 }
+
+private fun IrValueParameter.isMovedReceiver() =
+    origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER || origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
