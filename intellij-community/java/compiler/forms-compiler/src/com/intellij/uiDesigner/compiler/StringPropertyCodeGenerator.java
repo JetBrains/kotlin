@@ -33,7 +33,8 @@ public class StringPropertyCodeGenerator extends PropertyCodeGenerator implement
 
   private final Set<String> myClassesRequiringLoadLabelText = new HashSet<String>();
   private final Set<String> myClassesRequiringLoadButtonText = new HashSet<String>();
-  private boolean myHaveSetDisplayedMnemonicIndex = false;
+  private boolean myHaveSetDisplayedMnemonicIndex;
+  private Type myDynamicBundleType = Type.getType(ResourceBundle.class);
 
   @Override
   public void generateClassStart(AsmCodeGenerator.FormClassVisitor visitor, final String name, final InstrumentationClassFinder classFinder) {
@@ -45,9 +46,13 @@ public class StringPropertyCodeGenerator extends PropertyCodeGenerator implement
         myHaveSetDisplayedMnemonicIndex = true;
       }
     }
-    catch (Exception e) {
-      // ignore
+    catch (Exception ignored) {}
+
+    try {
+      classFinder.loadClass("com.intellij.DynamicBundle");
+      myDynamicBundleType = Type.getType("Lcom/intellij/DynamicBundle;");
     }
+    catch (Exception ignored) {}
   }
 
   @Override
@@ -110,7 +115,7 @@ public class StringPropertyCodeGenerator extends PropertyCodeGenerator implement
         generator.loadThis();
         generator.loadLocal(componentLocal);
         generator.push(propertyValue.getBundleName());
-        generator.invokeStatic(myResourceBundleType, myGetBundleMethod);
+        generator.invokeStatic(myDynamicBundleType, myGetBundleMethod);
         generator.push(propertyValue.getKey());
         generator.invokeVirtual(myResourceBundleType, myGetStringMethod);
         generator.invokeVirtual(Type.getType("L" + formClassName + ";"), method);
@@ -131,7 +136,7 @@ public class StringPropertyCodeGenerator extends PropertyCodeGenerator implement
     }
     else {
       generator.push(descriptor.getBundleName());
-      generator.invokeStatic(myResourceBundleType, myGetBundleMethod);
+      generator.invokeStatic(myDynamicBundleType, myGetBundleMethod);
       generator.push(descriptor.getKey());
       generator.invokeVirtual(myResourceBundleType, myGetStringMethod);
     }
