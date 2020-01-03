@@ -16,6 +16,7 @@
 package org.jetbrains.plugins.gradle.util;
 
 import com.intellij.DynamicBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -23,13 +24,12 @@ import org.jetbrains.annotations.PropertyKey;
  * @author Denis Zhdanov
  */
 public class GradleBundle extends DynamicBundle {
+  @NonNls public static final String PATH_TO_BUNDLE = "messages.GradleBundle";
+  private static final GradleBundle BUNDLE = new GradleBundle();
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
     return BUNDLE.getMessage(key, params);
   }
-
-  public static final String PATH_TO_BUNDLE = "i18n.GradleBundle";
-  private static final GradleBundle BUNDLE = new GradleBundle();
 
   public GradleBundle() {
     super(PATH_TO_BUNDLE);
