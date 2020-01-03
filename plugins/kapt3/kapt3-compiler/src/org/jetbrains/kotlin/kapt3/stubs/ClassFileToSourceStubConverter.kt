@@ -1008,7 +1008,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         invisibleAnnotations: List<AnnotationNode>?,
         descriptorAnnotations: Annotations
     ): JCModifiers {
+        var seenOverride = false
         fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: AnnotationNode): JavacList<JCAnnotation> {
+            if (annotation.desc == "Ljava/lang/Override;") {
+                if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations
+                seenOverride = true
+            }
             val annotationDescriptor = descriptorAnnotations.singleOrNull { checkIfAnnotationValueMatches(annotation, AnnotationValue(it)) }
             val annotationTree = convertAnnotation(annotation, packageFqName, annotationDescriptor) ?: return list
             return list.prepend(annotationTree)
