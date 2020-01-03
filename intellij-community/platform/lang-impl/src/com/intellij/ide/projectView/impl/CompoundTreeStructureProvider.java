@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -24,26 +22,25 @@ import java.util.Objects;
  * @author Sergey Malenkov
  */
 public final class CompoundTreeStructureProvider implements TreeStructureProvider {
-  private static final TreeStructureProvider EMPTY = new CompoundTreeStructureProvider(Collections.emptyList());
   private static final Key<TreeStructureProvider> KEY = Key.create("TreeStructureProvider");
   private static final Logger LOG = Logger.getInstance(CompoundTreeStructureProvider.class);
-  private final List<? extends TreeStructureProvider> providers;
+  private final Project myProject;
 
   /**
    * @return a shared instance for the specified project
    */
-  @NotNull
+  @Nullable
   public static TreeStructureProvider get(@Nullable Project project) {
-    if (project == null || project.isDisposed()) return EMPTY;
+    if (project == null || project.isDisposed()) return null;
     TreeStructureProvider provider = project.getUserData(KEY);
     if (provider != null) return provider;
-    provider = new CompoundTreeStructureProvider(EP.getExtensions(project));
+    provider = new CompoundTreeStructureProvider(project);
     project.putUserData(KEY, provider);
     return provider;
   }
 
-  public CompoundTreeStructureProvider(@NotNull List<? extends TreeStructureProvider> providers) {
-    this.providers = providers;
+  public CompoundTreeStructureProvider(@NotNull Project project) {
+    myProject = project;
   }
 
   @NotNull
@@ -51,7 +48,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
   public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
                                              @NotNull Collection<AbstractTreeNode> children,
                                              ViewSettings settings) {
-    for (TreeStructureProvider provider : providers) {
+    for (TreeStructureProvider provider : EP.getExtensions(myProject)) {
       try {
         children = provider.modify(parent, children, settings);
         if (children.stream().anyMatch(Objects::isNull)) {
@@ -76,8 +73,8 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
   @Nullable
   @Override
   public Object getData(@NotNull Collection<AbstractTreeNode> selection, @NotNull String dataId) {
-    if (dataId != null && !selection.isEmpty()) {
-      for (TreeStructureProvider provider : providers) {
+    if (!selection.isEmpty()) {
+      for (TreeStructureProvider provider : EP.getExtensions(myProject)) {
         try {
           Object data = provider.getData(selection, dataId);
           if (data != null) return data;

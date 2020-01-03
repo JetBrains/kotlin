@@ -20,7 +20,7 @@ public abstract class ProjectAbstractTreeStructureBase extends AbstractTreeStruc
   @Override
   public List<TreeStructureProvider> getProviders() {
     if (myProviders == null) {
-      myProviders = TreeStructureProvider.EP.getExtensions(myProject);
+      return TreeStructureProvider.EP.getExtensions(myProject);
     }
     return myProviders;
   }

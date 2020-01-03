@@ -8,10 +8,7 @@ import com.intellij.ide.SelectInTarget;
 import com.intellij.ide.dnd.*;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.ide.impl.FlattenModulesToggleAction;
-import com.intellij.ide.projectView.BaseProjectTreeBuilder;
-import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.projectView.ProjectViewNode;
-import com.intellij.ide.projectView.RootsProvider;
+import com.intellij.ide.projectView.*;
 import com.intellij.ide.projectView.impl.nodes.AbstractModuleNode;
 import com.intellij.ide.projectView.impl.nodes.AbstractProjectNode;
 import com.intellij.ide.projectView.impl.nodes.ModuleGroupNode;
@@ -118,6 +115,10 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     };
     project.getMessageBus().connect(this).subscribe(ProblemListener.TOPIC, problemListener);
     Disposer.register(project, this);
+
+    TreeStructureProvider.EP.addExtensionPointListener(project,
+                                                       () -> updateFromRoot(true).waitFor(5000),
+                                                       this);
   }
 
   /**
