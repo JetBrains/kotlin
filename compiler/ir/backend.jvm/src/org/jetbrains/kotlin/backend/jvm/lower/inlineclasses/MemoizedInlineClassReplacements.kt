@@ -182,8 +182,12 @@ class MemoizedInlineClassReplacements {
                     function.extensionReceiverParameter -> Name.identifier("\$receiver")
                     else -> parameter.name
                 }
-
-                val newParameter = parameter.copyTo(this, index = index, name = name, defaultValue = null)
+                val parameterOrigin = when (parameter) {
+                    function.dispatchReceiverParameter -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                    function.extensionReceiverParameter -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                    else -> parameter.origin
+                }
+                val newParameter = parameter.copyTo(this, index = index, name = name, defaultValue = null, origin = parameterOrigin)
                 valueParameters.add(newParameter)
                 // See comment next to a similar line above.
                 newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)

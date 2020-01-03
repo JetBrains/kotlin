@@ -307,7 +307,8 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jv
             irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
             // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
             //      to generate LVT entries for them)
-            irParameter.origin == IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
+            irParameter.origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
+            irParameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC

@@ -17055,6 +17055,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/parametersMetadata/function.kt");
         }
 
+        @TestMetadata("inlineClassMethodParameterModifiers.kt")
+        public void testInlineClassMethodParameterModifiers() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/inlineClassMethodParameterModifiers.kt");
+        }
+
+        @TestMetadata("inlineClassMethodParameterNames.kt")
+        public void testInlineClassMethodParameterNames() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/inlineClassMethodParameterNames.kt");
+        }
+
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
             runTest("compiler/testData/codegen/box/parametersMetadata/innerClass.kt");
