@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -703,6 +703,9 @@ class MethodInliner(
     //   2) it is ASTORE'd right after
     //   3) it is passed to invoke of lambda
     private fun replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode: MethodNode) {
+        // in ir backend inline suspend lambdas do not use ALOAD 0 to get continuation, since they are generated as static functions
+        // instead they get continuation from parameter.
+        if (inliningContext.state.isIrBackend) return
         val lambdaInfo = inliningContext.lambdaInfo ?: return
         if (!lambdaInfo.isSuspend) return
         val sources = analyzeMethodNodeBeforeInline(processingNode)

@@ -536,13 +536,12 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
             override fun visitClass(declaration: IrClass): IrStatement {
                 functionsToAdd.push(mutableSetOf())
-                val res = super.visitClass(declaration)
-                (res as IrClass).declarations.addAll(functionsToAdd.peek()!!)
-                for (function in functionsToAdd.peek()!!) {
-                    function.patchDeclarationParents(res)
+                return (super.visitClass(declaration) as IrClass).also { irClass ->
+                    for (function in functionsToAdd.pop()) {
+                        function.parent = irClass
+                        irClass.declarations.add(function)
+                    }
                 }
-                functionsToAdd.pop()
-                return res
             }
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
