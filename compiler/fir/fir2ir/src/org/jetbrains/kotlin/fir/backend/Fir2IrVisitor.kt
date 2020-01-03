@@ -1245,6 +1245,7 @@ class Fir2IrVisitor(
             ClassId(FqName("kotlin"), FqName("Int"), false) -> irBuiltIns.intType
             ClassId(FqName("kotlin"), FqName("Float"), false) -> irBuiltIns.floatType
             ClassId(FqName("kotlin"), FqName("Double"), false) -> irBuiltIns.doubleType
+            ClassId(FqName("kotlin"), FqName("Char"), false) -> irBuiltIns.charType
             else -> {
                 return IrErrorCallExpressionImpl(
                     startOffset, endOffset, booleanType, "Comparison of arguments with unsupported type: $classId"

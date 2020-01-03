@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun <T> id(x: T) = x
 
 fun box(): String {
