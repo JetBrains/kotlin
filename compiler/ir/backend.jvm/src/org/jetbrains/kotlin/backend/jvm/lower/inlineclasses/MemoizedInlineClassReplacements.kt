@@ -144,7 +144,6 @@ class MemoizedInlineClassReplacements {
 
         val parameterMap = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
         val replacement = buildReplacement(function) {
-            annotations += function.annotations
             metadata = function.metadata
             overriddenSymbols.addAll(overrides)
 
@@ -203,6 +202,7 @@ class MemoizedInlineClassReplacements {
             returnType = function.returnType
         }.apply {
             parent = function.parent
+            annotations += function.annotations
             if (function is IrConstructor) {
                 copyTypeParameters(function.constructedClass.typeParameters + function.typeParameters)
             } else {
