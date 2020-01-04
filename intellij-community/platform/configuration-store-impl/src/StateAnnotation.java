@@ -61,6 +61,11 @@ public class StateAnnotation implements State {
   }
 
   @Override
+  public boolean allowLoadInTests() {
+    return false;
+  }
+
+  @Override
   public boolean useLoadedStateAsExisting() {
     return true;
   }
