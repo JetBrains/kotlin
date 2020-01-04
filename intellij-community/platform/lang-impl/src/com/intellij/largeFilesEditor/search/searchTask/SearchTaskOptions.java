@@ -23,6 +23,7 @@ public class SearchTaskOptions implements Cloneable {
 
   public boolean caseSensitive = false;
   public boolean wholeWords = false;
+  public boolean regularExpression = false;
 
   public int contextOneSideLength = 0;
   public int criticalAmountOfSearchResults = DEFAULT_CRITICAL_AMOUNT_OF_SEARCH_RESULTS;
@@ -49,6 +50,11 @@ public class SearchTaskOptions implements Cloneable {
 
   public SearchTaskOptions setWholeWords(boolean wholeWords) {
     this.wholeWords = wholeWords;
+    return this;
+  }
+
+  public SearchTaskOptions setRegularExpression(boolean regularExpression) {
+    this.regularExpression = regularExpression;
     return this;
   }
 
@@ -103,6 +109,7 @@ public class SearchTaskOptions implements Cloneable {
     findModel.setStringToFind(stringToFind);
     findModel.setCaseSensitive(caseSensitive);
     findModel.setWholeWordsOnly(wholeWords);
+    findModel.setRegularExpressions(regularExpression);
     return findModel;
   }
 }
