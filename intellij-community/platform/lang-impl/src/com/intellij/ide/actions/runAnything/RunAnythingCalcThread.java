@@ -126,7 +126,7 @@ class RunAnythingCalcThread implements Computable<RunAnythingSearchListModel> {
       .filter(group -> group instanceof RunAnythingCompletionGroup ||
                        group instanceof RunAnythingGeneralGroup ||
                        group instanceof RunAnythingRecentGroup)
-      .filter(group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group.getTitle()))
+      .filter(group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group))
       .forEach(group -> {
         group.collectItems(dataContext, items, myPattern);
       });

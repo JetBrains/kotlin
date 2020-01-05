@@ -23,7 +23,7 @@ public class RunAnythingCompletionGroup<V, P extends RunAnythingProvider<V>> ext
   }
 
   @NotNull
-  protected P getProvider() {
+  public P getProvider() {
     return myProvider;
   }
 

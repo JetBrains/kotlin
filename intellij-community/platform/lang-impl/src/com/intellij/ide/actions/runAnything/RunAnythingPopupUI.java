@@ -863,7 +863,10 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
       res.markElements(getVisibleGroups());
       ElementsChooser.ElementsMarkListener<RunAnythingGroup> listener = (element, isMarked) -> {
-        RunAnythingCache.getInstance(myProject).saveGroupVisibilityKey(element.getTitle(), isMarked);
+        RunAnythingCache.getInstance(myProject)
+          .saveGroupVisibilityKey(element instanceof RunAnythingCompletionGroup
+                                  ? ((RunAnythingCompletionGroup)element).getProvider().getClass().getCanonicalName()
+                                  : element.getTitle(), isMarked);
         rebuildList();
       };
       res.addElementsMarkListener(listener);
@@ -872,7 +875,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
     @NotNull
     private List<RunAnythingGroup> getVisibleGroups() {
-      return ContainerUtil.filter(myTemplateGroups, group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group.getTitle()));
+      return ContainerUtil.filter(myTemplateGroups, group -> RunAnythingCache.getInstance(myProject).isGroupVisible(group));
     }
   }
 }

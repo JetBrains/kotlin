@@ -2,6 +2,8 @@
 package com.intellij.ide.actions.runAnything;
 
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
+import com.intellij.ide.actions.runAnything.groups.RunAnythingCompletionGroup;
+import com.intellij.ide.actions.runAnything.groups.RunAnythingGroup;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -26,9 +28,19 @@ public class RunAnythingCache implements PersistentStateComponent<RunAnythingCac
   /**
    * @return true is group is visible; false if it's hidden
    */
-  public boolean isGroupVisible(@NotNull String key) {
-    Boolean visible = mySettings.myKeys.get(key);
-    return visible == null || visible;
+  public boolean isGroupVisible(@NotNull RunAnythingGroup group) {
+    Boolean visible = mySettings.myKeys.get(group.getTitle());
+    if (visible != null) {
+      return visible;
+    }
+    if (group instanceof RunAnythingCompletionGroup) {
+      String name = ((RunAnythingCompletionGroup)group).getProvider().getClass().getCanonicalName();
+      Boolean providerValue = mySettings.myKeys.get(name);
+      if (providerValue != null) {
+        return providerValue;
+      }
+    }
+    return true;
   }
 
   /**
