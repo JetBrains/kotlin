@@ -175,7 +175,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
 
     @Override
     protected HierarchyScopeType correctViewType(@NotNull HierarchyBrowserBaseEx browser, HierarchyScopeType viewType) {
-      if (((TypeHierarchyBrowserBase)browser).myIsInterface && getTypeHierarchyType().equals(viewType)) {
+      if (((TypeHierarchyBrowserBase)browser).myIsInterface && getTypeHierarchyType() == viewType) {
         return getSubtypesHierarchyType();
       }
       return viewType;

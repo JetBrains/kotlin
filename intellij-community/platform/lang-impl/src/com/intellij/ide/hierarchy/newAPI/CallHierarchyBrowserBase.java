@@ -90,7 +90,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
 
     @Override
     public final boolean isSelected(@NotNull final AnActionEvent event) {
-      return myTypeName.equals(getCurrentViewType());
+      return myTypeName == getCurrentViewType();
     }
 
     @Override

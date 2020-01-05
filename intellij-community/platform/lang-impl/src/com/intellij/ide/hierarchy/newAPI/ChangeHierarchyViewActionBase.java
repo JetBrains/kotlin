@@ -16,7 +16,7 @@ public abstract class ChangeHierarchyViewActionBase extends ToggleAction {
   @Override
   public final boolean isSelected(@NotNull final AnActionEvent event) {
     final HierarchyBrowserBaseEx browser = getHierarchyBrowser(event.getDataContext());
-    return browser != null && getTypeName().equals(browser.getCurrentViewType());
+    return browser != null && getTypeName() == browser.getCurrentViewType();
   }
 
   protected abstract HierarchyScopeType getTypeName();
