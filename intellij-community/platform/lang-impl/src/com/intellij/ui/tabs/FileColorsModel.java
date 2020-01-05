@@ -67,7 +67,7 @@ public final class FileColorsModel implements Cloneable {
       if (NonProjectFilesScope.NAME.equals(scopeName)) {
         propertyKey = "file.colors.enable.non.project";
       }
-      else if (TestsScope.getNameText().equals(scopeName)) {
+      else if (TestsScope.NAME.equals(scopeName)) {
         propertyKey = "file.colors.enable.tests";
       }
       else {

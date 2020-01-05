@@ -147,7 +147,7 @@ open class TestTasksChooser {
       iconTextGap = cellInsets.left
       border = EmptyBorder(cellInsets)
       if (!isSelected) {
-        background = colorManager.getScopeColor(TestsScope.getNameText())
+        background = colorManager.getScopeColor(TestsScope.NAME)
       }
       return this
     }

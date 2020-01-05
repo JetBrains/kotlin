@@ -16,7 +16,7 @@ class ExternalProjectTree(project: Project) : SimpleTree() {
   override fun getFileColorFor(value: Any?): Color? {
     val node = TreeUtil.getUserObject(value)
     if (node is TaskNode && node.isTest) {
-      return colorManager.getScopeColor(TestsScope.getNameText())
+      return colorManager.getScopeColor(TestsScope.NAME)
     }
     return null
   }
