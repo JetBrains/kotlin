@@ -9,13 +9,11 @@ import com.intellij.util.io.PersistentHashMap;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import junit.framework.TestCase;
-import org.junit.Ignore;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 
-@Ignore
 public class PersistentMapPacksTest extends TestCase {
 
   public void testPersistentHashMapPack() throws IOException {
