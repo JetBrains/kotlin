@@ -228,6 +228,34 @@ class Sequences {
             val result = sequenceA.zip(sequenceB) { a, b -> "$a/$b" }
             assertPrints(result.take(4).toList(), "[a/1, b/3, c/7, d/15]")
         }
+
+        @Sample
+        fun flattenSequenceOfSequences() {
+            val sequence = generateSequence(1) { it + 1 }
+            val sequenceOfSequences = sequence.map { num ->
+                generateSequence { num }.take(num)
+            }
+
+            assertPrints(sequenceOfSequences.flatten().take(10).toList(), "[1, 2, 2, 3, 3, 3, 4, 4, 4, 4]")
+        }
+
+        @Sample
+        fun flattenSequenceOfLists() {
+            val sequence = generateSequence(1) { it + 1 }
+            val sequenceOfLists = sequence.map { num ->
+                generateSequence { num }.take(num).toList()
+            }
+
+            assertPrints(sequenceOfLists.flatten().take(10).toList(), "[1, 2, 2, 3, 3, 3, 4, 4, 4, 4]")
+        }
+
+        @Sample
+        fun unzip() {
+            val result = generateSequence(1 to 1) { it.first + 1 to it.second * 2 }.take(10).unzip()
+
+            assertPrints(result.first.toList(), "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
+            assertPrints(result.second.toList(), "[1, 2, 4, 8, 16, 32, 64, 128, 256, 512]")
+        }
     }
 
 }
