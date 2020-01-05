@@ -16,8 +16,12 @@
 
 package com.intellij.usageView.impl;
 
-import com.intellij.ide.hierarchy.*;
-import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase;
+import com.intellij.ide.hierarchy.HierarchyBrowser;
+import com.intellij.ide.hierarchy.HierarchyProvider;
+import com.intellij.ide.hierarchy.LanguageCallHierarchy;
+import com.intellij.ide.hierarchy.newAPI.CallHierarchyBrowserBase;
+import com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBaseEx;
+import com.intellij.ide.hierarchy.newAPI.actions.BrowseHierarchyActionBase;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
