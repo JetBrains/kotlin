@@ -7,6 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.NotImplementedHierarchyBrowser} instead
+ */
+@Deprecated
 public class NotImplementedHierarchyBrowser implements HierarchyBrowser {
   private final PsiElement myTarget;
 

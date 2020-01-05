@@ -13,6 +13,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.ExporterToTextFileHierarchy} instead
+ */
+@Deprecated
 class ExporterToTextFileHierarchy implements ExporterToTextFile {
   private static final Logger LOG = Logger.getInstance(ExporterToTextFileHierarchy.class);
   private final HierarchyBrowserBase myHierarchyBrowserBase;

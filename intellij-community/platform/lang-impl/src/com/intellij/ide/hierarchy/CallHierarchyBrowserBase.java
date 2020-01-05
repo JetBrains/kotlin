@@ -26,6 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.CallHierarchyBrowserBase} instead
+ */
+@Deprecated
 public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
    * Use {code {@link #getCalleeType()}} instead

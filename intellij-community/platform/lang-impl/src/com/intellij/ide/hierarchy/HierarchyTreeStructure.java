@@ -30,6 +30,10 @@ import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure} instead
+ */
+@Deprecated
 public abstract class HierarchyTreeStructure extends AbstractTreeStructure {
   protected HierarchyNodeDescriptor myBaseDescriptor;
   private HierarchyNodeDescriptor myRoot;

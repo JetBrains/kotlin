@@ -19,6 +19,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyNodeDescriptor} instead
+ */
+@Deprecated
 public abstract class HierarchyNodeDescriptor extends SmartElementDescriptor {
   @NotNull
   protected CompositeAppearance myHighlightedText;
