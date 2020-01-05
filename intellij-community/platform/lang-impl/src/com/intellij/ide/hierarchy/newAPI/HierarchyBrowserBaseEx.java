@@ -156,7 +156,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
 
       myType2Sheet.put(type, new Sheet(type, tree, scope, occurenceNavigatorSupport));
-      myTreePanel.add(ScrollPaneFactory.createScrollPane(tree), type);
+      myTreePanel.add(ScrollPaneFactory.createScrollPane(tree), type.getName());
     }
 
     final JPanel legendPanel = createLegendPanel();
