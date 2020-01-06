@@ -14,3 +14,6 @@
 
 # Don't note on API calls from different JVM versions as they're gated properly at runtime.
 -dontnote kotlin.internal.PlatformImplementationsKt
+
+# Don't note on internal APIs, as there is some class relocating that Proguard unnecessarily finds suspicious.
+-dontwarn kotlin.reflect.jvm.internal.**
