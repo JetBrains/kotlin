@@ -12,12 +12,15 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
@@ -242,10 +245,34 @@ data class IfThenToSelectData(
                     receiverExpression,
                     baseClause
                 ).insertSafeCalls(factory)
-                baseClause is KtCallExpression -> baseClause.replaceCallWithLet(receiverExpression, factory)
-                else -> baseClause.insertSafeCalls(factory)
+                baseClause is KtCallExpression -> {
+                    val callee = baseClause.calleeExpression
+                    if (callee != null && baseClause.isCallingInvokeFunction(context)) {
+                        factory.createExpressionByPattern("$0?.invoke()", callee)
+                    } else {
+                        baseClause.replaceCallWithLet(receiverExpression, factory)
+                    }
+                }
+                else -> {
+                    var replaced = baseClause.insertSafeCalls(factory)
+                    if (replaced is KtQualifiedExpression) {
+                        val call = replaced.callExpression
+                        val callee = call?.calleeExpression
+                        if (callee != null && call.isCallingInvokeFunction(context)) {
+                            replaced = factory.createExpressionByPattern("$0?.${callee.text}?.invoke()", replaced.receiverExpression)
+                        }
+                    }
+                    replaced
+                }
             }
         }
+    }
+
+    internal fun KtExpression.isCallingInvokeFunction(context: BindingContext): Boolean {
+        if (this !is KtCallExpression) return false
+        val resolvedCall = getResolvedCall(context) ?: resolveToCall() ?: return false
+        val descriptor = resolvedCall.resultingDescriptor as? SimpleFunctionDescriptor ?: return false
+        return descriptor is FunctionInvokeDescriptor || descriptor.isOperator && descriptor.name.asString() == "invoke"
     }
 
     internal fun getImplicitReceiver(): ImplicitReceiver? {
