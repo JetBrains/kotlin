@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 
@@ -98,6 +100,9 @@ val IrFunction.propertyIfAccessor: IrDeclaration
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
 
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)
+
+fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
+    if (Visibilities.isPrivate(visibility) || isInlineOnly()) JavaVisibilities.PACKAGE_VISIBILITY else Visibilities.PUBLIC
 
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype())

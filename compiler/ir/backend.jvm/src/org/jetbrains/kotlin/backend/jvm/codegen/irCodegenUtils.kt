@@ -165,7 +165,6 @@ fun IrDeclarationWithVisibility.getVisibilityAccessFlag(kind: OwnerKind? = null)
         ?: visibilityToAccessFlag[visibility]
         ?: throw IllegalStateException("$visibility is not a valid visibility in backend for ${ir2string(this)}")
 
-
 private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?): Int? {
 //    if (JvmCodegenUtil.isNonIntrinsicPrivateCompanionObjectInInterface(memberDescriptor)) {
 //        return ACC_PUBLIC
@@ -284,11 +283,10 @@ fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
             (this is IrSimpleFunction && isSuspend && isInline &&
                     (valueParameters.any { it.isCrossinline } || visibility === Visibilities.PRIVATE))
 
-private fun IrFunction.isInlineOnly() =
+fun IrFunction.isInlineOnly() =
     isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
 
 private fun IrFunction.isReifiable() = typeParameters.any { it.isReified }
-
 
 // Borrowed with modifications from ImplementationBodyCodegen.java
 
