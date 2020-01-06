@@ -60,9 +60,9 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
         if(!(file instanceof KtFile))  {
-            String fileString = (file != null && file.isValid()) ? file.getText() : "";
+            String fileString = (file != null && file.isValid()) ? (" " + file.getText()) : "";
             throw new IllegalStateException("KtElement not inside KtFile: " + file + fileString +
-                                            "for element " + this + " of type " + this.getClass() + " node = " + getNode());
+                                            " for element " + this + " of type " + this.getClass() + " node = " + getNode());
         }
         return (KtFile) file;
     }
