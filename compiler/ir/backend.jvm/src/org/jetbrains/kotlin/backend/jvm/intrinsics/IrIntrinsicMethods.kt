@@ -78,6 +78,18 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     "clone",
                     emptyList()
                 ) to Clone,
+                Key(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    null,
+                    "enumValues",
+                    listOf()
+                ) to EnumValues,
+                Key(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    null,
+                    "enumValueOf",
+                    listOf(KotlinBuiltIns.FQ_NAMES.string.toSafe())
+                ) to EnumValueOf,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),

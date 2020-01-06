@@ -1087,6 +1087,6 @@ class ExpressionCodegen(
         return irFunction.isInline || inlinedInto != null
     }
 
-    private val IrType.isReifiedTypeParameter: Boolean
+    val IrType.isReifiedTypeParameter: Boolean
         get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
 }
