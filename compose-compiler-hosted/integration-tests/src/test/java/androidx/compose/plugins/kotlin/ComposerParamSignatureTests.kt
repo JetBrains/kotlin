@@ -27,6 +27,140 @@ import org.robolectric.annotation.Config
     maxSdk = 23
 )
 class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
+
+    @Test
+    fun testCorrectComposerPassed1(): Unit = checkComposerParam(
+        """
+            val a = makeComposer()
+            fun run() {
+                invokeComposable(a) {
+                    assertComposer(a)
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCorrectComposerPassed2(): Unit = checkComposerParam(
+        """
+            val a = makeComposer()
+            @Composable fun Foo() {
+                assertComposer(a)
+            }
+            fun run() {
+                invokeComposable(a) {
+                    Foo()
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCorrectComposerPassed3(): Unit = checkComposerParam(
+        """
+            val a = makeComposer()
+            val b = makeComposer()
+            @Composable fun Callback(fn: () -> Unit) {
+                fn()
+            }
+            fun run() {
+                invokeComposable(a) {
+                    assertComposer(a)
+                    Callback {
+                        invokeComposable(b) {
+                            assertComposer(b)
+                        }
+                    }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCorrectComposerPassed4(): Unit = checkComposerParam(
+        """
+            val a = makeComposer()
+            val b = makeComposer()
+            @Composable fun makeInt(): Int {
+                assertComposer(a)
+                return 10
+            }
+            @Composable fun WithDefault(x: Int = makeInt()) {}
+            fun run() {
+                invokeComposable(a) {
+                    assertComposer(a)
+                    WithDefault()
+                    WithDefault(10)
+                }
+                invokeComposable(b) {
+                    assertComposer(b)
+                    WithDefault(10)
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCorrectComposerPassed5(): Unit = checkComposerParam(
+        """
+            val a = makeComposer()
+            @Composable fun Wrap(children: @Composable() () -> Unit) {
+                children()
+            }
+            fun run() {
+                invokeComposable(a) {
+                    assertComposer(a)
+                    Wrap {
+                        assertComposer(a)
+                        Wrap {
+                            assertComposer(a)
+                            Wrap {
+                                assertComposer(a)
+                            }
+                        }
+                    }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testDefaultParameters(): Unit = checkApi(
+        """
+            @Composable fun Foo(x: Int = 0) {
+
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static Foo(ILandroidx/compose/Composer;)V
+              public static synthetic Foo%default(ILandroidx/compose/Composer;ILjava/lang/Object;)V
+            }
+        """
+    )
+
+    @Test
+    fun testDefaultExpressionsWithComposableCall(): Unit = checkApi(
+        """
+            @Composable fun <T> identity(value: T): T = value
+            @Composable fun Foo(x: Int = identity(20)) {
+
+            }
+            @Composable fun test() {
+                Foo()
+                Foo(10)
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static identity(Ljava/lang/Object;Landroidx/compose/Composer;)Ljava/lang/Object;
+              public final static Foo(ILandroidx/compose/Composer;)V
+              public static synthetic Foo%default(ILandroidx/compose/Composer;ILjava/lang/Object;)V
+              public final static test(Landroidx/compose/Composer;)V
+            }
+        """
+    )
+
     @Test
     fun testBasicCallAndParameterUsage(): Unit = checkApi(
         """
