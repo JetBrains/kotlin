@@ -367,8 +367,9 @@ class ExpressionCodegen(
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it }
 
-        val callable = methodSignatureMapper.mapToCallableMethod(irFunction, expression)
         val callee = expression.symbol.owner
+        require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
+        val callable = methodSignatureMapper.mapToCallableMethod(irFunction, expression)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
         val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
 
@@ -1022,7 +1023,7 @@ class ExpressionCodegen(
             }
         }
 
-        val methodOwner = callee.parent.safeAs<IrClass>()?.let(typeMapper::mapClass) ?: MethodSignatureMapper.FAKE_OWNER_TYPE
+        val methodOwner = typeMapper.mapClass(callee.parentAsClass)
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data)
 
         val reifiedTypeInliner = ReifiedTypeInliner(mappings, object : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
