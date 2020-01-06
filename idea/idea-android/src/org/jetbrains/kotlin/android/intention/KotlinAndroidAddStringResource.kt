@@ -107,8 +107,8 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
                 return@runWriteAction
             }
 
-            createResourceReference(facet.module, editor, file, element, manifestPackage, parameters.name, ResourceType.STRING)
             PsiDocumentManager.getInstance(project).commitAllDocuments()
+            createResourceReference(facet.module, editor, file, element, manifestPackage, parameters.name, ResourceType.STRING)
             UndoUtil.markPsiFileForUndo(file)
         }
     }
