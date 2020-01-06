@@ -208,6 +208,106 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     )
 
+    @Test
+    fun testLocalClassAndObjectLiterals(): Unit = checkApi(
+        """
+            @Composable
+            fun Wat() {}
+
+            @Composable
+            fun Foo(x: Int) {
+                Wat()
+                @Composable fun goo() { Wat() }
+                class Bar {
+                    @Composable fun baz() { Wat() }
+                }
+                goo()
+                Bar().baz()
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static Wat(Landroidx/compose/Composer;)V
+              public final static Foo(ILandroidx/compose/Composer;)V
+              private final static Foo%goo(Landroidx/compose/Composer;)V
+              public final static INNERCLASS TestKt%Foo%Bar null Bar
+            }
+            public final class TestKt%Foo%Bar {
+              <init>()V
+              public final baz(Landroidx/compose/Composer;)V
+              public final static INNERCLASS TestKt%Foo%Bar null Bar
+              OUTERCLASS TestKt Foo (ILandroidx/compose/Composer;)V
+            }
+        """
+    )
+
+    @Test
+    fun testNonComposableCode(): Unit = checkApi(
+        """
+            fun A() {}
+            val b: Int get() = 123
+            fun C(x: Int) {
+                var x = 0
+                x++
+
+                class D {
+                    fun E() { A() }
+                    val F: Int get() = 123
+                }
+                val g = object { fun H() {} }
+            }
+            fun I(block: () -> Unit) { block() }
+            fun J() {
+                I {
+                    I {
+                        A()
+                    }
+                }
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static A()V
+              public final static getB()I
+              public final static C(I)V
+              public final static I(Lkotlin/jvm/functions/Function0;)V
+              public final static J()V
+              public final static INNERCLASS TestKt%C%D null D
+              public final static INNERCLASS TestKt%C%g%1 null null
+              final static INNERCLASS TestKt%J%1 null null
+            }
+            public final class TestKt%C%D {
+              <init>()V
+              public final E()V
+              public final getF()I
+              public final static INNERCLASS TestKt%C%D null D
+              OUTERCLASS TestKt C (I)V
+            }
+            public final class TestKt%C%g%1 {
+              <init>()V
+              public final H()V
+              public final static INNERCLASS TestKt%C%g%1 null null
+              OUTERCLASS TestKt C (I)V
+            }
+            final class TestKt%J%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+              synthetic <init>()V
+              public final invoke()V
+              public synthetic bridge invoke()Ljava/lang/Object;
+              final static INNERCLASS TestKt%J%1%1 null null
+              final static INNERCLASS TestKt%J%1 null null
+              OUTERCLASS TestKt J ()V
+            }
+            final class TestKt%J%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+              synthetic <init>()V
+              public final invoke()V
+              public synthetic bridge invoke()Ljava/lang/Object;
+              final static INNERCLASS TestKt%J%1%1 null null
+              final static INNERCLASS TestKt%J%1 null null
+              OUTERCLASS TestKt%J%1 invoke ()V
+            }
+        """
+    )
+
     override fun setUp() {
         ComposeFlags.COMPOSER_PARAM = true
         super.setUp()
