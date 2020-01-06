@@ -469,6 +469,26 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
                 runTest("testData/inspectionsLocal/branched/ifThenToSafeAccess/call4.kt");
             }
 
+            @TestMetadata("callInvokeOperator.kt")
+            public void testCallInvokeOperator() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/callInvokeOperator.kt");
+            }
+
+            @TestMetadata("callInvokeOperator2.kt")
+            public void testCallInvokeOperator2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/callInvokeOperator2.kt");
+            }
+
+            @TestMetadata("callVariable.kt")
+            public void testCallVariable() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/callVariable.kt");
+            }
+
+            @TestMetadata("callVariable2.kt")
+            public void testCallVariable2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/callVariable2.kt");
+            }
+
             @TestMetadata("conditionComparesNullWithNull.kt")
             public void testConditionComparesNullWithNull() throws Exception {
                 runTest("testData/inspectionsLocal/branched/ifThenToSafeAccess/conditionComparesNullWithNull.kt");

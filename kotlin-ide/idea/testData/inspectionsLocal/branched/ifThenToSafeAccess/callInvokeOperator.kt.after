@@ -1,0 +1,8 @@
+// HIGHLIGHT: INFORMATION
+fun test(foo: Foo?) {
+    foo?.invoke()
+}
+
+class Foo {
+    operator fun invoke() {}
+}
