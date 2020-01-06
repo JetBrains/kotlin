@@ -1,4 +1,3 @@
-##---------------Begin: Kotlin-reflect ----------
 # Keep Metadata annotations so they can be parsed at runtime.
 -keep class kotlin.Metadata { *; }
 
@@ -15,4 +14,3 @@
 
 # Don't note on API calls from different JVM versions as they're gated properly at runtime.
 -dontnote kotlin.internal.PlatformImplementationsKt
-##---------------End: Kotlin-reflect ----------
