@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterInjector
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -34,4 +36,6 @@ class JvmDefaultParameterInjector(context: JvmBackendContext) :
             putValueArgument(0, super.nullConst(startOffset, endOffset, underlyingType))
         }
     }
+
+    override fun defaultArgumentStubVisibility(function: IrFunction) = function.getJvmVisibilityOfDefaultArgumentStub()
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -16,9 +17,11 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
@@ -134,9 +137,16 @@ open class FunctionCodegen(
     private fun continuationClass(): IrClass =
         irFunction.body!!.statements[0] as IrClass
 
+    private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
+        when (visibility) {
+            Visibilities.PUBLIC -> Opcodes.ACC_PUBLIC
+            JavaVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+            else -> throw IllegalStateException("Default argument stub should be either public or package private: ${ir2string(this)}")
+        }
+
     private fun calculateMethodFlags(isStatic: Boolean): Int {
         if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            return Opcodes.ACC_PUBLIC or Opcodes.ACC_SYNTHETIC.let {
+            return irFunction.getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC.let {
                 if (irFunction is IrConstructor) it else it or Opcodes.ACC_STATIC
             }
         }

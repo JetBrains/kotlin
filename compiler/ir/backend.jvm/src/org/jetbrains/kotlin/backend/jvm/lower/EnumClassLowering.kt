@@ -138,7 +138,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 enumConstructor.origin,
                 IrConstructorSymbolImpl(descriptor),
                 enumConstructor.name,
-                Visibilities.PRIVATE,
+                enumConstructor.visibility,
                 returnType = enumConstructor.returnType,
                 isInline = enumConstructor.isInline,
                 isExternal = enumConstructor.isExternal,
