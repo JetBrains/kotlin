@@ -1,0 +1,9 @@
+class Foo(val bar: Bar)
+
+class Bar {
+    operator fun invoke() {}
+}
+
+fun test(foo: Foo?) {
+    foo?.bar?.invoke()
+}
