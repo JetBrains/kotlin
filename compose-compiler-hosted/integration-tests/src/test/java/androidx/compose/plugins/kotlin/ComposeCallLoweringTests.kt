@@ -827,7 +827,7 @@ fun WebComponent(
     fun testComposeWithResult(): Unit = ensureSetup {
         compose(
             """
-                fun <T> identity(block: @Composable() ()->T): T = block()
+                @Composable fun <T> identity(block: @Composable() ()->T): T = block()
 
                 @Composable
                 fun TestCall() {
@@ -1342,7 +1342,7 @@ fun WebComponent(
     @Test
     fun testInline_NonComposable_Identity(): Unit = ensureSetup {
         compose("""
-            inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
+            @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
               children()
             }
             """,

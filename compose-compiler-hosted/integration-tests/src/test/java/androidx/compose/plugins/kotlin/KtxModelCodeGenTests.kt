@@ -306,6 +306,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
 
            class $className {
 
+             @Composable
              fun compose() {
                $composition
              }

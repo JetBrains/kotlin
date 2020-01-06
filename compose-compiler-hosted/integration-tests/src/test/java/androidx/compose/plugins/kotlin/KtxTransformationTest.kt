@@ -234,6 +234,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
+    // NOTE(lmr): I'm not sure this is a pattern we can support long term...
     fun testFunctionInstanceZeroArgs() = testCompile(
         """
         import androidx.compose.*
@@ -245,6 +246,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
             @Composable
             operator fun invoke() {
                 val foo = object: Function0<Unit> {
+                    @Composable
                     override fun invoke() {
                         Bar()
                     }
@@ -422,6 +424,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
             }
         }
 
+        @Composable
         fun doStuff() {
             val a = A(123)
 
@@ -506,6 +509,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         @Composable
         fun Simple() {}
 
+        @Composable
         fun run() {
             val foo = @Composable { Simple() }
             foo()
@@ -564,6 +568,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
         }
 
+        @Composable
         fun run(text: String) {
             Example {
                 println("hello ${"$"}text")
@@ -609,6 +614,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         import androidx.compose.*
         import android.widget.TextView
 
+        @Composable
         fun foo() {
             val lambda = @Composable {  }
             for(x in 1..5) {
