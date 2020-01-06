@@ -236,7 +236,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testComposeWithResult(): Unit = ensureSetup {
         compose(
             """
-                fun <T> identity(block: @Composable() ()->T): T = block()
+                @Composable fun <T> identity(block: @Composable() ()->T): T = block()
 
                 @Composable
                 fun TestCall() {
@@ -793,7 +793,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testInline_NonComposable_Identity(): Unit = ensureSetup {
         compose("""
-            inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
+            @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
               children()
             }
             """,
@@ -1659,7 +1659,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testImplicitReceiverPassing1(): Unit = ensureSetup {
         compose(
             """
-                fun Int.Foo(x: @Composable() Int.() -> Unit) {
+                @Composable fun Int.Foo(x: @Composable() Int.() -> Unit) {
                     x()
                 }
             """,
@@ -1681,8 +1681,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testImplicitReceiverPassing2(): Unit = ensureSetup {
         compose(
             """
-                fun Int.Foo(x: @Composable() Int.(text: String) -> Unit, text: String) {
+                @Composable fun Int.Foo(x: @Composable() Int.(text: String) -> Unit, text: String) {
                     x(text=text)
+                }
+
+                @Composable fun MyText(text: String, id: Int) {
+                    TextView(text=text, id=id)
                 }
             """,
             { mapOf<String, String>() },
@@ -1690,7 +1694,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 val id = 42
 
                 id.Foo(text="Hello, world!", x={ text ->
-                    TextView(text=text, id=this)
+                    MyText(text=text, id=this)
                 })
             """
         ).then { activity ->

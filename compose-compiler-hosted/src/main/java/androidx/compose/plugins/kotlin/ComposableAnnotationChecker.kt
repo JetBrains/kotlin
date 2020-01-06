@@ -128,8 +128,7 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
             return candidateDescriptor.type.hasComposableAnnotation()
         }
         if (candidateDescriptor is PropertyDescriptor) {
-            return candidateDescriptor.hasComposableAnnotation() ||
-                    candidateDescriptor.type.hasComposableAnnotation()
+            return candidateDescriptor.hasComposableAnnotation()
         }
         return candidateDescriptor.hasComposableAnnotation()
     }
