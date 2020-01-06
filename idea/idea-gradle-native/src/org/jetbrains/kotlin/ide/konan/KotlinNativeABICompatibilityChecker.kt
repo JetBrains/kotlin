@@ -11,6 +11,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicator
@@ -67,7 +68,12 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         ProgressManager.getInstance().runProcessWithProgressAsynchronously(
             object : Task.Backgroundable(project, BG_TASK_NAME) {
                 override fun run(indicator: ProgressIndicator) {
-                    val librariesToNotify = getLibrariesToNotifyAbout()
+                    val librariesToNotify = runReadAction {
+                        if (project.isDisposed) return@runReadAction emptyMap<String, NativeLibraryInfo>()
+
+                        getLibrariesToNotifyAbout()
+                    }
+                    if (project.isDisposed) return
                     val notifications = prepareNotifications(librariesToNotify)
 
                     notifications.forEach {
