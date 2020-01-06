@@ -62,6 +62,13 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
 
         if (construct is KtDoWhileExpression) {
             newElement.parent!!.addAfter(factory.createNewLine(), newElement)
+        } else if (editor != null) {
+            val document = editor.document
+            val line = document.getLineNumber(newElement.startOffset)
+            val rightMargin = editor.settings.getRightMargin(editor.project)
+            if (document.getLineEndOffset(line) - document.getLineStartOffset(line) >= rightMargin) {
+                newElement.parent.addBefore(factory.createNewLine(), newElement)
+            }
         }
 
         if (construct is KtIfExpression &&
