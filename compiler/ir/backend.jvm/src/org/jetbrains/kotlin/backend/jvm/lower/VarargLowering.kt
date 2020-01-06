@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 val varargPhase = makeIrFilePhase(
     ::VarargLowering,
     name = "VarargLowering",
-    description = "Replace varargs with array arguments and lower arrayOf calls",
+    description = "Replace varargs with array arguments and lower arrayOf and emptyArray calls",
     prerequisite = setOf(polymorphicSignaturePhase)
 )
 
@@ -62,9 +62,16 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
             }
         }
 
-        // Lower `arrayOf` calls. When `isArrayOf` returns true we know that the function has exactly one
-        // vararg parameter. Meanwhile, the code above ensures that the corresponding argument is not null.
-        return if (function.isArrayOf) expression.getValueArgument(0)!! else expression
+        return when {
+            // Lower `arrayOf` calls. When `isArrayOf` returns true we know that the function has exactly one
+            // vararg parameter. Meanwhile, the code above ensures that the corresponding argument is not null.
+            function.isArrayOf ->
+                expression.getValueArgument(0)!!
+            function.isEmptyArray ->
+                createBuilder(expression.startOffset, expression.endOffset).irArrayOf(expression.type)
+            else ->
+                expression
+        }
     }
 
     override fun visitVararg(expression: IrVararg): IrExpression =
@@ -94,8 +101,11 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
     private fun createBuilder(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET) =
         context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
 
-    private val IrFunctionSymbol.isArrayOf
+    private val IrFunctionSymbol.isArrayOf: Boolean
         get() = this == context.ir.symbols.arrayOf || owner.isPrimitiveArrayOf
+
+    private val IrFunctionSymbol.isEmptyArray: Boolean
+        get() = owner.name.asString() == "emptyArray" && (owner.parent as? IrPackageFragment)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 
     companion object {
         private val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
