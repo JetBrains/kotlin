@@ -114,7 +114,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 addField("p\$", it.type)
             }
 
-            val parametersFields = info.function.valueParameters.map { addField(it.name.asString(), it.type) }
+            val parametersFields = info.function.valueParameters.map { addField(it.name, it.type) }
             val parametersWithoutArguments = parametersFields.withIndex()
                 .mapNotNull { (i, field) -> if (info.reference.getValueArgument(i) == null) field else null }
             val parametersWithArguments = parametersFields - parametersWithoutArguments
