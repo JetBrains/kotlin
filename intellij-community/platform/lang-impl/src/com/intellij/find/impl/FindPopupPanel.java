@@ -1603,7 +1603,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     private final FindPopupScopeUI.ScopeType myScope;
 
     MySelectScopeToggleAction(FindPopupScopeUI.ScopeType scope) {
-      super(scope.text, null, scope.icon);
+      super(scope.textComputable.compute(), null, scope.icon);
       getTemplatePresentation().setHoveredIcon(scope.icon);
       getTemplatePresentation().setDisabledIcon(scope.icon);
       myScope = scope;
