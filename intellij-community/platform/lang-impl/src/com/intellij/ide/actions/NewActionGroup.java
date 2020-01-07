@@ -17,6 +17,7 @@ package com.intellij.ide.actions;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ import java.util.function.Predicate;
  * @author Dmitry Avdeev
  */
 public class NewActionGroup extends ActionGroup {
-  private static final String PROJECT_OR_MODULE_GROUP_ID = "NewProjectOrModuleGroup";
+  @NonNls private static final String PROJECT_OR_MODULE_GROUP_ID = "NewProjectOrModuleGroup";
 
   @NotNull
   @Override
