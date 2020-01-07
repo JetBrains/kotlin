@@ -3471,6 +3471,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.IncompleteDestructuringInspection"
+                     displayName="Incomplete destructuring declaration"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
                     serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
