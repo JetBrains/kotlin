@@ -102,7 +102,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
       PsiElement element = myElementsToMove[i];
       if (mySearchForReferences) {
         for (PsiReference reference : ReferencesSearch.search(element, GlobalSearchScope.projectScope(myProject))) {
-          result.add(new MyUsageInfo(reference.getElement(), i, reference));
+          result.add(new MyUsageInfo(reference, i));
         }
       }
       findElementUsages(result, element);
@@ -327,8 +327,8 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     int myIndex;
     PsiReference myReference;
 
-    MyUsageInfo(PsiElement element, final int index, PsiReference reference) {
-      super(element);
+    MyUsageInfo(@NotNull PsiReference reference, int index) {
+      super(reference);
       myIndex = index;
       myReference = reference;
     }
