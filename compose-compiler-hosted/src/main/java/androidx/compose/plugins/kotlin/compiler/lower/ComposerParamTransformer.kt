@@ -212,14 +212,17 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
     }
 
     fun IrFunction.lambdaInvokeWithComposerParamIfNeeded(): IrFunction {
-        // TODO(lmr): add to transformedFunctionSet?
+        if (transformedFunctionSet.contains(this)) return this
+        return transformedFunctions.getOrPut(this) {
+            lambdaInvokeWithComposerParam().also { transformedFunctionSet.add(it) }
+        }
+    }
+
+    fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
-        val newFnClass = builtIns
-            .builtIns
-            .getFunction(argCount + 1)
-
-        val newDescriptor = newFnClass.unsubstitutedMemberScope.findFirstFunction(
+        val newFnClass = context.irIntrinsics.symbols.getFunction(argCount + 1)
+        val newDescriptor = newFnClass.descriptor.unsubstitutedMemberScope.findFirstFunction(
             OperatorNameConventions.INVOKE.identifier
         ) { true }
 
@@ -227,22 +230,17 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
             startOffset,
             endOffset,
             origin,
-            IrSimpleFunctionSymbolImpl(newDescriptor),
-            name,
-            visibility,
-            descriptor.modality,
-            returnType,
-            isInline,
-            isExternal,
-            descriptor.isTailrec,
-            descriptor.isSuspend
+            newDescriptor,
+            newDescriptor.returnType?.toIrType()!!
         ).also { fn ->
-            fn.parent = parent
+            fn.parent = newFnClass.owner
 
             fn.copyTypeParametersFrom(this)
             fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
             fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
-            valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn) }
+            newDescriptor.valueParameters.forEach { p ->
+                fn.addValueParameter(p.name.identifier, p.type.toIrType())
+            }
             assert(fn.body == null) { "expected body to be null" }
         }
     }
@@ -356,8 +354,7 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
     }
 
     fun IrCall.isComposableLambdaInvoke(): Boolean {
-        // TODO: determine if it is a composable lambda!
-        return origin == IrStatementOrigin.INVOKE
+        return origin == IrStatementOrigin.INVOKE && dispatchReceiver?.type?.isComposable() == true
     }
 
     fun IrFunction.isInlinedLambda(): Boolean {
@@ -382,6 +379,10 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
             ComposableAnnotationChecker.Composability.MARKED -> true
             ComposableAnnotationChecker.Composability.INFERRED -> true
         }
+    }
+
+    fun IrType.isComposable(): Boolean {
+        return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
 }
 

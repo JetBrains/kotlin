@@ -73,6 +73,52 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         assertEquals(expectedApiString, apiString)
     }
 
+    fun checkComposerParam(src: String, dumpClasses: Boolean = false) = ensureSetup {
+        testFile(
+            """
+                import androidx.compose.*
+
+                class FakeNode
+                object FakeNodeApplierAdapter :
+                    ApplyAdapter<FakeNode> {
+                    override fun FakeNode.start(instance: FakeNode) {}
+                    override fun FakeNode.insertAt(index: Int, instance: FakeNode) {}
+                    override fun FakeNode.removeAt(index: Int, count: Int) {}
+                    override fun FakeNode.move(from: Int, to: Int, count: Int) {}
+                    override fun FakeNode.end(instance: FakeNode, parent: FakeNode) {}
+                }
+
+                class FakeComposer(
+                    val root: FakeNode
+                ) : Composer<FakeNode>(
+                    SlotTable(),
+                    Applier(root, FakeNodeApplierAdapter),
+                    Recomposer.current()
+                )
+
+                fun makeComposer(): Composer<*> {
+                    return FakeComposer(FakeNode())
+                }
+
+                fun invokeComposable(composer: Composer<*>, fn: @Composable() () -> Unit) {
+                    val realFn = fn as Function1<Composer<*>, Unit>
+                    realFn(composer)
+                }
+
+                @Composable fun assertComposer(expected: Composer<*>) {
+                    val actual = currentComposerIntrinsic
+                    assert(expected === actual)
+                }
+
+                class Test {
+                  fun test() { run() }
+                }
+                $src
+            """,
+            dumpClasses
+        )
+    }
+
     fun codegen(text: String, dumpClasses: Boolean = false): Unit = ensureSetup {
         codegenNoImports(
             """
