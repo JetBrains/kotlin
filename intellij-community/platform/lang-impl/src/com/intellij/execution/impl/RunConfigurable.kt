@@ -262,7 +262,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
   protected open fun addRunConfigurationsToModel(model: DefaultMutableTreeNode) {
   }
 
-  fun selectConfigurableOnShow(modality: ModalityState) {
+  fun selectConfigurableOnShow() {
     ApplicationManager.getApplication().invokeLater({
       if (isDisposed) {
         return@invokeLater
@@ -279,7 +279,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
         selectedConfigurable = null
       }
       drawPressAddButtonMessage(null)
-    }, modality)
+    }, ModalityState.stateForComponent(wholePanel!!))
   }
 
   private fun selectConfiguration(configuration: RunConfiguration): Boolean {
