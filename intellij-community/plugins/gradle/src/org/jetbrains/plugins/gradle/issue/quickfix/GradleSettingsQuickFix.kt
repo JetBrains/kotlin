@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.issue.quickfix
 
 import com.intellij.build.issue.BuildIssueQuickFix
@@ -16,9 +16,6 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiPredicate
 
-/**
- * @author Vladislav.Soroka
- */
 @ApiStatus.Experimental
 class GradleSettingsQuickFix(private val myProjectPath: String, private val myRequestImport: Boolean,
                              private val myConfigurationChangeDetector: BiPredicate<GradleProjectSettings, GradleProjectSettings>?,
@@ -35,7 +32,7 @@ class GradleSettingsQuickFix(private val myProjectPath: String, private val myRe
       oldSettings = projectSettings.clone()
 
       val groups = ShowSettingsUtilImpl.getConfigurableGroups(project, true)
-      val configurable = ConfigurableVisitor.ByType(GradleConfigurable::class.java).find(*groups)
+      val configurable = ConfigurableVisitor.findByType(GradleConfigurable::class.java, groups.toList())
       val dialogWrapper = SettingsDialogFactory.getInstance().create(project, groups, configurable, myFilter)
       val result = dialogWrapper.showAndGet()
       future.complete(result && myConfigurationChangeDetector != null && myConfigurationChangeDetector.test(oldSettings, projectSettings))
