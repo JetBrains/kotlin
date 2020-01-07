@@ -224,7 +224,7 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
       return;
     }
 
-    String title = RefactoringBundle.message(doClone ? "copy,handler.clone.files.directories" : "copy.handler.copy.files.directories");
+    String title = RefactoringBundle.message(doClone ? "copy.handler.clone.files.directories" : "copy.handler.copy.files.directories");
     try {
       PsiFile firstFile = null;
       final int[] choice = files.length > 1 || files[0].isDirectory() ? new int[]{-1} : null;
