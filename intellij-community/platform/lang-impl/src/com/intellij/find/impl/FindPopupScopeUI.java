@@ -18,10 +18,12 @@ package com.intellij.find.impl;
 import com.intellij.find.FindModel;
 import com.intellij.find.FindSettings;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.*;
+import java.util.function.Supplier;
 
 public interface FindPopupScopeUI {
   @NotNull
@@ -44,20 +46,20 @@ public interface FindPopupScopeUI {
 
   class ScopeType {
     public final String name;
-    public Computable<String> textComputable;
+    public Supplier<String> textComputable;
     @Deprecated
     public final String text;
     public final Icon icon;
 
-    public ScopeType(String name, Computable<String> textComputable, Icon icon) {
+    public ScopeType(String name, Supplier<String> textComputable, Icon icon) {
       this.name = name;
       this.textComputable = textComputable;
       this.icon = icon;
-      this.text = textComputable.compute();
+      this.text = textComputable.get();
     }
 
     /**
-     * Use {@link #ScopeType(String, Computable, Icon)}
+     * Use {@link #ScopeType(String, Supplier, Icon)}
      */
     @Deprecated
     public ScopeType(String name, String text, Icon icon) {
