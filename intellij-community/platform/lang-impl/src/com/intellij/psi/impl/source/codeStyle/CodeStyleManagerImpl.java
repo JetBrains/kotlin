@@ -73,13 +73,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   @Override
   @NotNull
   public PsiElement reformat(@NotNull PsiElement element, boolean canChangeWhiteSpacesOnly) throws IncorrectOperationException {
-    return reformat(element, canChangeWhiteSpacesOnly, false);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement reformat(@NotNull PsiElement element, boolean canChangeWhiteSpacesOnly, boolean keepLineBreaks)
-    throws IncorrectOperationException {
     CheckUtil.checkWritable(element);
     if( !SourceTreeToPsiMap.hasTreeElement( element ) )
     {
@@ -89,7 +82,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     ASTNode treeElement = element.getNode();
     final PsiFile file = element.getContainingFile();
     if (ExternalFormatProcessor.useExternalFormatter(file)) {
-      return ExternalFormatProcessor.formatElement(element, element.getTextRange(), canChangeWhiteSpacesOnly, keepLineBreaks);
+      return ExternalFormatProcessor.formatElement(element, element.getTextRange(), canChangeWhiteSpacesOnly);
     }
 
     final PsiElement formatted =
@@ -139,23 +132,14 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   public PsiElement reformatRange(@NotNull PsiElement element,
                                   int startOffset,
                                   int endOffset,
-                                  boolean canChangeWhiteSpacesOnly,
-                                  boolean keepLineBreaks) throws IncorrectOperationException {
-    return reformatRangeImpl(element, startOffset, endOffset, canChangeWhiteSpacesOnly, keepLineBreaks);
-  }
-
-  @Override
-  public PsiElement reformatRange(@NotNull PsiElement element,
-                                  int startOffset,
-                                  int endOffset,
                                   boolean canChangeWhiteSpacesOnly) throws IncorrectOperationException {
-    return reformatRangeImpl(element, startOffset, endOffset, canChangeWhiteSpacesOnly, false);
+    return reformatRangeImpl(element, startOffset, endOffset, canChangeWhiteSpacesOnly);
   }
 
   @Override
   public PsiElement reformatRange(@NotNull PsiElement element, int startOffset, int endOffset)
     throws IncorrectOperationException {
-    return reformatRangeImpl(element, startOffset, endOffset, false, false);
+    return reformatRangeImpl(element, startOffset, endOffset, false);
 
   }
 
@@ -300,8 +284,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   private static PsiElement reformatRangeImpl(final @NotNull PsiElement element,
                                               final int startOffset,
                                               final int endOffset,
-                                              boolean canChangeWhiteSpacesOnly,
-                                              boolean keepLineBreaks) throws IncorrectOperationException {
+                                              boolean canChangeWhiteSpacesOnly) throws IncorrectOperationException {
     LOG.assertTrue(element.isValid());
     CheckUtil.checkWritable(element);
     if( !SourceTreeToPsiMap.hasTreeElement( element ) )
@@ -312,7 +295,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     ASTNode treeElement = element.getNode();
     final PsiFile file = element.getContainingFile();
     if (ExternalFormatProcessor.useExternalFormatter(file)) {
-      return ExternalFormatProcessor.formatElement(element, TextRange.create(startOffset, endOffset), canChangeWhiteSpacesOnly, keepLineBreaks);
+      return ExternalFormatProcessor.formatElement(element, TextRange.create(startOffset, endOffset), canChangeWhiteSpacesOnly);
     }
 
     final CodeFormatterFacade codeFormatter = new CodeFormatterFacade(getSettings(file), element.getLanguage());

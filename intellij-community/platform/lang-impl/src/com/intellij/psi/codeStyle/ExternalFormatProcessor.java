@@ -113,12 +113,11 @@ public interface ExternalFormatProcessor {
   @NotNull
   static PsiElement formatElement(@NotNull PsiElement elementToFormat,
                                   @NotNull TextRange range,
-                                  boolean canChangeWhiteSpacesOnly,
-                                  boolean keepLineBreaks) {
+                                  boolean canChangeWhiteSpacesOnly) {
     final PsiFile file = elementToFormat.getContainingFile();
     final Document document = file.getViewProvider().getDocument();
     if (document != null) {
-      final TextRange rangeAfterFormat = formatRangeInFile(file, range, canChangeWhiteSpacesOnly, keepLineBreaks);
+      final TextRange rangeAfterFormat = formatRangeInFile(file, range, canChangeWhiteSpacesOnly, false);
       if (rangeAfterFormat != null) {
         PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
         if (!elementToFormat.isValid()) {
