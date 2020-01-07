@@ -117,7 +117,11 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         val importedFqName = importDirective.importedFqName ?: return false
         val importedDescriptors = importDirective.containingKtFile.resolveImportReference(importedFqName)
         val importableTargets = unwrappedTargets.mapNotNull {
-            if (it is KtConstructor<*>) it.containingClassOrObject else it
+            when {
+                it is KtConstructor<*> -> it.containingClassOrObject
+                it is PsiMethod && it.isConstructor -> it.containingClass
+                else -> it
+            }
         }
 
         val project = element.project

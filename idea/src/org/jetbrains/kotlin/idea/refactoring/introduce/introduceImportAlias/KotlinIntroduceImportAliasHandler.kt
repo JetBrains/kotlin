@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceImportAlias
 
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -43,6 +43,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
     const val REFACTORING_NAME = "Introduce Import Alias"
+
+    @get:TestOnly
+    var suggestedImportAliasNames: Collection<String> = emptyList()
 
     fun doRefactoring(project: Project, editor: Editor, element: KtNameReferenceExpression) {
         val fqName = element.resolveMainReferenceToDescriptors().firstOrNull()?.importableFqName ?: return
@@ -82,6 +85,7 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
 
         val suggestionsName = KotlinNameSuggester.suggestNamesByFqName(fqName, validator = validator)
         val newName = suggestionsName.first()
+        suggestedImportAliasNames = suggestionsName
         val newDirective = ImportInsertHelperImpl.addImport(project, file, fqName, false, Name.identifier(newName))
 
         replaceUsages(usages, newName)
@@ -89,9 +93,7 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
 
         if (elementInImportDirective) editor.moveCaret(newDirective.alias?.nameIdentifier?.textOffset ?: newDirective.endOffset)
 
-        if (!ApplicationManager.getApplication().isUnitTestMode) {
-            invokeRename(project, editor, newDirective.alias, suggestionsName)
-        }
+        invokeRename(project, editor, newDirective.alias, suggestionsName)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {

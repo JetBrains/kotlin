@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
+import org.jetbrains.kotlin.addImportAlias.AbstractAddImportAliasTest
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
@@ -690,6 +691,10 @@ fun main(args: Array<String>) {
         }
         testClass<AbstractAddImportTest> {
             model("addImport", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractAddImportAliasTest> {
+            model("addImportAlias", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractSmartSelectionTest> {
