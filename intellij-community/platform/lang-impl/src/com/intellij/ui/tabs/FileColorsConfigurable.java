@@ -16,6 +16,7 @@
 
 package com.intellij.ui.tabs;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -41,7 +42,7 @@ public class FileColorsConfigurable implements SearchableConfigurable, Configura
   @Override
   @Nls
   public String getDisplayName() {
-    return "File Colors";
+    return IdeBundle.message("configurable.file.colors");
   }
 
   @Override
