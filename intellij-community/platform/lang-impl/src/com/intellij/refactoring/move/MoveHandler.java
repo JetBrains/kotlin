@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class MoveHandler implements RefactoringActionHandler {
   /**
-   * Use {code {@link #getRefactoringName()}} instead
+   * @deprecated Use {code {@link #getRefactoringName()}} instead
    */
   @Deprecated
   public static final String REFACTORING_NAME = "Move";
@@ -127,7 +127,7 @@ public class MoveHandler implements RefactoringActionHandler {
 
   /**
    * Performs some extra checks (that canMove does not)
-   * May replace some elements with others which actulaly shall be moved (e.g. directory->package)
+   * May replace some elements with others which actually shall be moved (e.g. directory->package)
    */
   @Nullable
   public static PsiElement[] adjustForMove(Project project, final PsiElement[] sourceElements, final PsiElement targetElement) {

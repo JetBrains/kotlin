@@ -131,7 +131,7 @@ public class MoveFilesOrDirectoriesUtil {
                              MoveCallback moveCallback,
                              Runnable doneCallback) {
     CommandProcessor.getInstance().executeCommand(project, () -> {
-      Collection<PsiElement> toCheck = ContainerUtil.newArrayList((PsiElement)targetDirectory);
+      Collection<PsiElement> toCheck = ContainerUtil.newArrayList(targetDirectory);
       for (PsiElement e : adjustedElements) {
         toCheck.add(e instanceof PsiFileSystemItem && e.getParent() != null ? e.getParent() : e);
       }
