@@ -58,6 +58,7 @@ class FrameSearcher {
   @NotNull
   ArrayList<SearchResult> findAllMatchesAtFrame() {
     String frameText;
+    boolean isNeedAfterFrameEndSymbol;
     FindResult ijFindResult;
     int offset;
     String contextPrefix;
@@ -65,7 +66,11 @@ class FrameSearcher {
     String contextPostfix;
     ArrayList<SearchResult> resultsList;
 
-    frameText = beforeFrameStartSymbol + curPageText + tailText + afterFrameEndSymbol;
+    frameText = beforeFrameStartSymbol + curPageText + tailText;
+    isNeedAfterFrameEndSymbol = !options.regularExpression && options.wholeWords;  // using of postfix symbol may break regex search
+    if (isNeedAfterFrameEndSymbol) {
+      frameText += afterFrameEndSymbol;
+    }
     offset = 1;  // the prefix symbol can't be a part of any search result
     resultsList = new ArrayList<>();
 
@@ -82,16 +87,19 @@ class FrameSearcher {
       foundString = calculateFoundString(frameText, ijFindResult);
       contextPostfix = calculateContextPostfix(frameText, ijFindResult, options);
 
-      if (ijFindResult.getEndOffset() != frameText.length()) { // the postfix symbol can't be a part of any search result
-        resultsList.add(new SearchResult(
-          resultStartPos.pageNumber,
-          resultStartPos.symbolOffsetInPage,
-          resultEndPos.pageNumber,
-          resultEndPos.symbolOffsetInPage,
-          contextPrefix,
-          foundString,
-          contextPostfix));
+      if (resultStartPos.pageNumber != curPageNumber ||
+          isNeedAfterFrameEndSymbol && ijFindResult.getEndOffset() == frameText.length()) { // the postfix symbol (if used) can't be a part of any search result
+        return resultsList;
       }
+
+      resultsList.add(new SearchResult(
+        resultStartPos.pageNumber,
+        resultStartPos.symbolOffsetInPage,
+        resultEndPos.pageNumber,
+        resultEndPos.symbolOffsetInPage,
+        contextPrefix,
+        foundString,
+        contextPostfix));
 
       offset = ijFindResult.getEndOffset();
     }

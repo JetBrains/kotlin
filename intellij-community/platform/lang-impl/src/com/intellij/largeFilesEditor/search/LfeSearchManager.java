@@ -3,10 +3,9 @@ package com.intellij.largeFilesEditor.search;
 
 import com.intellij.find.SearchReplaceComponent;
 import com.intellij.largeFilesEditor.editor.LargeFileEditor;
+import com.intellij.largeFilesEditor.editor.Page;
 import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.CaretEvent;
-import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.CalledInAwt;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +41,7 @@ public interface LfeSearchManager {
 
   void dispose();
 
-  List<TextRange> getAllSearchResultsInDocument(Document document);
+  List<SearchResult> getSearchResultsInPage(Page page);
 
   boolean isSearchWorkingNow();
 }

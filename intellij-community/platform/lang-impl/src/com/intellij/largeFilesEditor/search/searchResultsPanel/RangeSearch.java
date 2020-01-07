@@ -79,6 +79,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
   private final ActionToolbar myActionToolbar;
 
   private RangeSearchTask lastExecutedRangeSearchTask;
+  private boolean inBackground;
 
   private final List<EdtRangeSearchEventsListener> myEdtRangeSearchEventsListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 
@@ -401,6 +402,12 @@ public class RangeSearch implements RangeSearchTask.Callback {
   }
 
   public void runNewSearch(SearchTaskOptions options, FileDataProviderForSearch fileDataProviderForSearch) {
+    runNewSearch(options, fileDataProviderForSearch, true);
+  }
+
+  public void runNewSearch(SearchTaskOptions options, FileDataProviderForSearch fileDataProviderForSearch, boolean inBackground) {
+    this.inBackground = inBackground;
+
     long pagesAmount;
     try {
       pagesAmount = fileDataProviderForSearch.getPagesAmount();
@@ -431,67 +438,92 @@ public class RangeSearch implements RangeSearchTask.Callback {
     final RangeSearchTask newRangeSearchTask = new RangeSearchTask(
       searchTaskOptions, myProject, fileDataProviderForSearch, this);
     lastExecutedRangeSearchTask = newRangeSearchTask;
-    String title = newRangeSearchTask.getTitleForBackgroundableTask();
-    Task.Backgroundable task = new Task.Backgroundable(null, title, true) {
-      @Override
-      public void run(@NotNull ProgressIndicator indicator) {
-        newRangeSearchTask.setProgressIndicator(indicator);
-        newRangeSearchTask.run();
-      }
-    };
-    ProgressManager.getInstance().run(task);
-
-    setAdditionalStatusText(null);
+    if (inBackground) {
+      String title = newRangeSearchTask.getTitleForBackgroundableTask();
+      Task.Backgroundable task = new Task.Backgroundable(null, title, true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          newRangeSearchTask.setProgressIndicator(indicator);
+          newRangeSearchTask.run();
+        }
+      };
+      ProgressManager.getInstance().run(task);
+      setAdditionalStatusText(null);
+    }
+    else {
+      newRangeSearchTask.run();
+    }
   }
 
   @Override
   public void tellSearchIsFinished(RangeSearchTask caller, long lastScannedPageNumber) {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      SearchTaskOptions options = caller.getOptions();
-      if (!caller.isShouldStop()) {
-        if (options.searchForwardDirection) {
-          setRightBorderPageNumber(lastScannedPageNumber);
-        }
-        else {
-          setLeftBorderPageNumber(lastScannedPageNumber);
-        }
-        setAdditionalStatusText("Search complete.");
-      }
-      callScheduledUpdate();
+    if (inBackground) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        onSearchIsFinished(caller, lastScannedPageNumber);
+      });
+    }
+    else {
+      onSearchIsFinished(caller, lastScannedPageNumber);
+    }
+  }
 
-      for (EdtRangeSearchEventsListener listener : myEdtRangeSearchEventsListeners) {
-        listener.onSearchFinished();
+  protected void onSearchIsFinished(RangeSearchTask caller, long lastScannedPageNumber) {
+    SearchTaskOptions options = caller.getOptions();
+    if (!caller.isShouldStop()) {
+      if (options.searchForwardDirection) {
+        setRightBorderPageNumber(lastScannedPageNumber);
       }
-    });
+      else {
+        setLeftBorderPageNumber(lastScannedPageNumber);
+      }
+      setAdditionalStatusText("Search complete.");
+    }
+    callScheduledUpdate();
+    fireSearchFinished();
+  }
+
+  private void fireSearchFinished() {
+    for (EdtRangeSearchEventsListener listener : myEdtRangeSearchEventsListeners) {
+      listener.onSearchFinished();
+    }
   }
 
   @Override
   public void tellFrameSearchResultsFound(RangeSearchTask caller,
                                           long curPageNumber,
                                           ArrayList<SearchResult> allMatchesAtFrame) {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      if (caller != lastExecutedRangeSearchTask  // means new search task has been already launched
-          || caller.isShouldStop()) {
-        return;
-      }
+    if (inBackground) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        onFrameSearchResultsFound(caller, curPageNumber, allMatchesAtFrame);
+      });
+    }
+    else {
+      onFrameSearchResultsFound(caller, curPageNumber, allMatchesAtFrame);
+    }
+  }
 
-      SearchTaskOptions options = caller.getOptions();
+  protected void onFrameSearchResultsFound(RangeSearchTask caller, long curPageNumber, ArrayList<SearchResult> allMatchesAtFrame) {
+    if (caller != lastExecutedRangeSearchTask  // means new search task has been already launched
+        || caller.isShouldStop()) {
+      return;
+    }
 
-      if (options.searchForwardDirection) {
-        addSearchResultsIntoEnd(allMatchesAtFrame);
-        setRightBorderPageNumber(curPageNumber);
-      }
-      else {
-        addSearchResultsIntoBeginning(allMatchesAtFrame);
-        setLeftBorderPageNumber(curPageNumber);
-      }
+    SearchTaskOptions options = caller.getOptions();
 
-      if (getAmountOfStoredSearchResults() > options.criticalAmountOfSearchResults) {
-        stopSearchTaskIfItExists();
-        setAdditionalStatusText("Search stopped because too many results were found.");
-        callScheduledUpdate();
-      }
-    });
+    if (options.searchForwardDirection) {
+      addSearchResultsIntoEnd(allMatchesAtFrame);
+      setRightBorderPageNumber(curPageNumber);
+    }
+    else {
+      addSearchResultsIntoBeginning(allMatchesAtFrame);
+      setLeftBorderPageNumber(curPageNumber);
+    }
+
+    if (getAmountOfStoredSearchResults() > options.criticalAmountOfSearchResults) {
+      stopSearchTaskIfItExists();
+      setAdditionalStatusText("Search stopped because too many results were found.");
+      callScheduledUpdate();
+    }
   }
 
   @Override
@@ -499,22 +531,40 @@ public class RangeSearch implements RangeSearchTask.Callback {
     callScheduledUpdate();
 
     if (!myEdtRangeSearchEventsListeners.isEmpty()) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        for (EdtRangeSearchEventsListener listener : myEdtRangeSearchEventsListeners) {
-          listener.onSearchStopped();
-        }
-      });
+      if (inBackground) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+          fireSearchStopped();
+        });
+      }
+      else {
+        fireSearchStopped();
+      }
+    }
+  }
+
+  protected void fireSearchStopped() {
+    for (EdtRangeSearchEventsListener listener : myEdtRangeSearchEventsListeners) {
+      listener.onSearchStopped();
     }
   }
 
   @Override
   public void tellSearchCatchedException(RangeSearchTask caller, IOException e) {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      if (!caller.isShouldStop()) {
-        setAdditionalStatusText("Search stopped because something went wrong.");
-        logger.warn(e);
-      }
-    });
+    if (inBackground) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        onSearchCatchedException(caller, e);
+      });
+    }
+    else {
+      onSearchCatchedException(caller, e);
+    }
+  }
+
+  protected void onSearchCatchedException(RangeSearchTask caller, IOException e) {
+    if (!caller.isShouldStop()) {
+      setAdditionalStatusText("Search stopped because something went wrong.");
+      logger.warn(e);
+    }
   }
 
   private void stopSearchTaskIfItExists() {
@@ -543,8 +593,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     myEdtRangeSearchEventsListeners.remove(listener);
   }
 
-  @TestOnly
-  List<SearchResult> getSearchResultsList() {
+  public List<SearchResult> getSearchResultsList() {
     return myResultsListModel.getItems();
   }
 
@@ -569,7 +618,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
       coloredListCellRenderer.setBackground(UIUtil.getListBackground(selected, hasFocus));
 
       coloredListCellRenderer.append(mySearchResult.contextPrefix);
-      coloredListCellRenderer.append(mySearchResult.stringToFind, attrForMatchers);
+      coloredListCellRenderer.append(mySearchResult.foundString, attrForMatchers);
       coloredListCellRenderer.append(mySearchResult.contextPostfix);
     }
 

@@ -74,6 +74,10 @@ public abstract class SearchTaskBase implements Runnable {
            || options.leftBoundPageNumber != -1 && curPageNumber < options.leftBoundPageNumber;
   }
 
+  static int getTailLength(SearchTaskOptions options) {
+    return options.regularExpression ? Integer.MAX_VALUE : options.stringToFind.length() - 1;
+  }
+
   static String getTailFromPage(String nextPageText, int tailLength) {
     return tailLength < nextPageText.length() ?
            nextPageText.substring(0, tailLength) : nextPageText;

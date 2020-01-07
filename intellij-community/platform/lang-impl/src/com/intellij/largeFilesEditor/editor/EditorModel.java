@@ -387,8 +387,9 @@ public class EditorModel {
   private void updateSearchResultsHighlighting() {
     clearHighlightedSearchResults();
 
-    List<TextRange> searchResults = dataProvider.getAllSearchResultsInDocument(documentOfPagesModel.getDocument());
-    if (searchResults != null && !searchResults.isEmpty()) {
+    List<TextRange> searchResults = getAllSearchResultsRangesInDocument();
+
+    if (!searchResults.isEmpty()) {
       HighlightManager highlightManager = HighlightManager.getInstance(dataProvider.getProject());
       TextAttributes textAttributes = EditorColorsManager.getInstance().getGlobalScheme()
         .getAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
@@ -401,6 +402,27 @@ public class EditorModel {
           textAttributes, true, pageRangeHighlighters);
       }
     }
+  }
+
+  private List<TextRange> getAllSearchResultsRangesInDocument() {
+    List<TextRange> searchResultsRanges = new ArrayList<>();
+    for (int i = 0; i < documentOfPagesModel.getPagesList().size(); i++) {
+      Page page = documentOfPagesModel.getPagesList().get(i);
+      List<SearchResult> searchResults = dataProvider.getSearchResultsInPage(page);
+      if (searchResults != null) {
+        for (SearchResult result : searchResults) {
+          searchResultsRanges.add(new TextRange(
+            documentOfPagesModel.getSymbolOffsetToStartOfPage(
+              documentOfPagesModel.getIndexOfPageByPageNumber(result.startPosition.pageNumber))
+            + result.startPosition.symbolOffsetInPage,
+            documentOfPagesModel.getSymbolOffsetToStartOfPage(
+              documentOfPagesModel.getIndexOfPageByPageNumber(result.endPostion.pageNumber))
+            + result.endPostion.symbolOffsetInPage
+          ));
+        }
+      }
+    }
+    return searchResultsRanges;
   }
 
   private void clearHighlightedSearchResults() {
@@ -993,6 +1015,6 @@ public class EditorModel {
 
     void requestReadPage(long pageNumber, ReadingPageResultHandler readingPageResultHandler);
 
-    List<TextRange> getAllSearchResultsInDocument(Document document);
+    List<SearchResult> getSearchResultsInPage(Page page);
   }
 }

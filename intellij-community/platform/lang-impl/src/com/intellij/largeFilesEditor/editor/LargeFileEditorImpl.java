@@ -3,21 +3,20 @@ package com.intellij.largeFilesEditor.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.largeFilesEditor.PlatformActionsReplacer;
+import com.intellij.largeFilesEditor.encoding.EncodingWidget;
 import com.intellij.largeFilesEditor.encoding.LargeFileEditorAccess;
 import com.intellij.largeFilesEditor.encoding.LargeFileEditorAccessorImpl;
-import com.intellij.largeFilesEditor.encoding.EncodingWidget;
 import com.intellij.largeFilesEditor.file.LargeFileManager;
 import com.intellij.largeFilesEditor.file.LargeFileManagerImpl;
 import com.intellij.largeFilesEditor.file.ReadingPageResultHandler;
 import com.intellij.largeFilesEditor.search.LfeSearchManager;
 import com.intellij.largeFilesEditor.search.LfeSearchManagerImpl;
-import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.RangeSearchCreatorImpl;
+import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.undo.UndoUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.editor.event.CaretListener;
@@ -30,7 +29,6 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.StatusBar;
@@ -334,9 +332,9 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
       }
 
       @Override
-      public List<TextRange> getAllSearchResultsInDocument(Document document) {
+      public List<SearchResult> getSearchResultsInPage(Page page) {
         if (searchManager != null) {
-          return searchManager.getAllSearchResultsInDocument(document);
+          return searchManager.getSearchResultsInPage(page);
         }
         return null;
       }

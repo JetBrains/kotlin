@@ -37,7 +37,7 @@ public class CloseSearchTask extends SearchTaskBase {
     int index;
 
     searcher = createFrameSearcher(options, project);
-    tailLength = options.stringToFind.length() - 1;
+    tailLength = getTailLength(options);
 
     try {
       /* preparing init data... */
