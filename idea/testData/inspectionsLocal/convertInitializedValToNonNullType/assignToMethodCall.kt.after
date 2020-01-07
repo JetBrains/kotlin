@@ -1,0 +1,5 @@
+fun foo() {
+    val s1: String = bar()
+}
+
+fun bar(): String = ""

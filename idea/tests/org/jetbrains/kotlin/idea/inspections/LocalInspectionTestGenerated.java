@@ -3259,9 +3259,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/convertInitializedValToNonNullType"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("assignToMethodCall.kt")
+        public void testAssignToMethodCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/assignToMethodCall.kt");
+        }
+
+        @TestMetadata("assignToVariable.kt")
+        public void testAssignToVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/assignToVariable.kt");
+        }
+
         @TestMetadata("basic.kt")
         public void testBasic() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/basic.kt");
+        }
+
+        @TestMetadata("negative.kt")
+        public void testNegative() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertInitializedValToNonNullType/negative.kt");
         }
     }
 
