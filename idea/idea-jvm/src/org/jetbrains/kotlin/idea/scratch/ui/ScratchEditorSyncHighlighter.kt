@@ -72,16 +72,17 @@ private fun configureHighlightUpdateOnDocumentChange(
     previewEditor: EditorEx,
     highlighter: ScratchEditorSyncHighlighter
 ) {
+    val project = sourceEditor.project!!
     val updateHighlightOnDocumentChangeListener = object : DocumentListener {
         override fun documentChanged(event: DocumentEvent) {
-            PsiDocumentManager.getInstance(sourceEditor.project!!).performWhenAllCommitted {
+            PsiDocumentManager.getInstance(project).performWhenAllCommitted {
                 highlighter.highlightByCurrentlyFocusedEditor()
             }
         }
     }
 
-    previewEditor.document.addDocumentListener(updateHighlightOnDocumentChangeListener)
-    sourceEditor.document.addDocumentListener(updateHighlightOnDocumentChangeListener)
+    previewEditor.document.addDocumentListener(updateHighlightOnDocumentChangeListener, project)
+    sourceEditor.document.addDocumentListener(updateHighlightOnDocumentChangeListener, project)
 }
 
 /**
