@@ -426,9 +426,6 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   @NotNull
   private static Icon removeVisibilityIfNeeded(@Nullable Editor editor, @NotNull Icon icon, @NotNull Icon standard) {
     if (!Registry.is("ide.completion.show.visibility.icon")) {
-      if (icon instanceof DeferredIcon) {
-        icon = ((DeferredIcon)icon).evaluate();
-      }
       if (icon instanceof RowIcon) {
         RowIcon rowIcon = (RowIcon)icon;
         if (rowIcon.getIconCount() >= 1) {
