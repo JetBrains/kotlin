@@ -9508,6 +9508,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/moveTypeAliasToTopLevel")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveTypeAliasToTopLevel extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMoveTypeAliasToTopLevel() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/moveTypeAliasToTopLevel"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("inClass.kt")
+        public void testInClass() throws Exception {
+            runTest("idea/testData/quickfix/moveTypeAliasToTopLevel/inClass.kt");
+        }
+
+        @TestMetadata("inClass2.kt")
+        public void testInClass2() throws Exception {
+            runTest("idea/testData/quickfix/moveTypeAliasToTopLevel/inClass2.kt");
+        }
+
+        @TestMetadata("inFunction.kt")
+        public void testInFunction() throws Exception {
+            runTest("idea/testData/quickfix/moveTypeAliasToTopLevel/inFunction.kt");
+        }
+
+        @TestMetadata("inFunction2.kt")
+        public void testInFunction2() throws Exception {
+            runTest("idea/testData/quickfix/moveTypeAliasToTopLevel/inFunction2.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/nullables")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -3443,6 +3443,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/moveTypeAliasToTopLevel")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveTypeAliasToTopLevel extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMoveTypeAliasToTopLevel() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/moveTypeAliasToTopLevel"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), null, true);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/nullables")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
