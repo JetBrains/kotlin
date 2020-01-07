@@ -1,0 +1,10 @@
+// "Move typealias to top level" "true"
+fun bar() {
+
+    fun baz(foo: Foo) {
+    }
+}
+
+typealias Foo = String
+
+fun qux() {}

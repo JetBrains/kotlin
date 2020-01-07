@@ -644,5 +644,7 @@ class QuickFixRegistrar : QuickFixContributor {
         TOO_MANY_ARGUMENTS.registerFactory(RemoveArgumentFix)
 
         FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS.registerFactory(RemoveModifierFix.createRemoveFunFromInterfaceFactory())
+
+        TOPLEVEL_TYPEALIASES_ONLY.registerFactory(MoveTypeAliasToTopLevelFix)
     }
 }
