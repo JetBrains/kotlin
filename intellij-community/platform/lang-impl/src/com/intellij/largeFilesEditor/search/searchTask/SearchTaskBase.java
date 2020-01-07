@@ -80,8 +80,8 @@ public abstract class SearchTaskBase implements Runnable {
   }
 
   static char getPostfixSymbol(String nextPageText, int tailLength) {
-    return tailLength + 1 < nextPageText.length() ?
-           nextPageText.charAt(tailLength + 1) : FrameSearcher.NOT_EXISTING_BORDERING_SYMBOL;
+    return tailLength < nextPageText.length() ?
+           nextPageText.charAt(tailLength) : FrameSearcher.NOT_EXISTING_BORDERING_SYMBOL;
   }
 
   static char getPrefixSymbol(String prevPageText) {
