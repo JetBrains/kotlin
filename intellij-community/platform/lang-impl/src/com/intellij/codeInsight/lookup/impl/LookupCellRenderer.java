@@ -492,6 +492,9 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   int updateMaximumWidth(final LookupElementPresentation p, LookupElement item) {
     Icon icon = p.getIcon();
     if (icon != null && (icon.getIconWidth() > myEmptyIcon.getIconWidth() || icon.getIconHeight() > myEmptyIcon.getIconHeight())) {
+      if (icon instanceof DeferredIcon) {
+        icon = ((DeferredIcon)icon).getBaseIcon();
+      }
       icon = removeVisibilityIfNeeded(myLookup.getEditor(), icon, myEmptyIcon);
       myEmptyIcon = EmptyIcon.create(Math.max(icon.getIconWidth(), myEmptyIcon.getIconWidth()),
                                      Math.max(icon.getIconHeight(), myEmptyIcon.getIconHeight()));

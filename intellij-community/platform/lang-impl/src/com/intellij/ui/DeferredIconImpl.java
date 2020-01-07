@@ -111,6 +111,12 @@ public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIco
     checkDelegationDepth();
   }
 
+  @NotNull
+  @Override
+  public Icon getBaseIcon() {
+    return myDelegateIcon;
+  }
+
   private void checkDelegationDepth() {
     int depth = 0;
     DeferredIconImpl<?> each = this;
