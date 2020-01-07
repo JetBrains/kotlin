@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.extensions.IrLoweringExtension
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
+import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
@@ -51,12 +52,19 @@ val ComposerParameterPhase = makeIrModulePhase(
     description = "Transform @Composable functions to have extra Composer parameter"
 )
 
+val ComposerIntrinsicPhase = makeIrModulePhase(
+    ::ComposerIntrinsicTransformer,
+    name = "ComposerIntrinsicPhase",
+    description = "Replace @Composable intrinsics with their correct values"
+)
+
 class ComposeIrLoweringExtension : IrLoweringExtension {
     override fun interceptLoweringPhases(
         phases: CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>
     ): CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment> {
         if (ComposeFlags.COMPOSER_PARAM) {
             return ComposerParameterPhase then
+                    ComposerIntrinsicPhase then
                     phases
         }
         return FrameClassGenPhase then

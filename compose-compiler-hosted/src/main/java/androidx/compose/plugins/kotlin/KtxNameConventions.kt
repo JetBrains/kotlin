@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.name.Name
 object KtxNameConventions {
     val COMPOSER = Name.identifier("composer")
     val COMPOSER_PARAMETER = Name.identifier("\$composer")
+    val CURRENT_COMPOSER_INTRINSIC = Name.special("<get-currentComposerIntrinsic>")
     val EMIT = Name.identifier("emit")
     val CALL = Name.identifier("call")
     val START_EXPR = Name.identifier("startExpr")
