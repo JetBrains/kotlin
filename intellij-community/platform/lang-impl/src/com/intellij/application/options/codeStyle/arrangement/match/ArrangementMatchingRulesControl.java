@@ -47,8 +47,6 @@ import java.awt.event.MouseEvent;
  * @author Denis Zhdanov
  */
 public class ArrangementMatchingRulesControl extends JBTable {
-  @NotNull private static final JLabel EMPTY_RENDERER = new JLabel(ApplicationBundle.message("arrangement.text.empty.rule"));
-
   @NotNull protected final IntObjectMap<ArrangementListRowDecorator> myComponents   = new IntObjectMap<>();
   @NotNull private final TIntArrayList mySelectedRows = new TIntArrayList();
 
@@ -470,7 +468,7 @@ public class ArrangementMatchingRulesControl extends JBTable {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       if (isEditing() && getEditingRow() == row) {
-        return EMPTY_RENDERER;
+        return new JLabel(ApplicationBundle.message("arrangement.text.empty.rule"));
       }
       if (value instanceof ArrangementRepresentationAware) {
         return adjustHeight(((ArrangementRepresentationAware)value).getComponent(), row);
@@ -479,7 +477,7 @@ public class ArrangementMatchingRulesControl extends JBTable {
       ArrangementListRowDecorator component = myComponents.get(row);
       if (component == null) {
         if (!(value instanceof StdArrangementMatchRule)) {
-          return EMPTY_RENDERER;
+          return new JLabel(ApplicationBundle.message("arrangement.text.empty.rule"));
         }
         StdArrangementMatchRule rule = (StdArrangementMatchRule)value;
         final boolean allowModifications = allowModifications(rule);
