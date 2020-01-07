@@ -387,18 +387,18 @@ public class EditorModel {
   private void updateSearchResultsHighlighting() {
     clearHighlightedSearchResults();
 
-    List<TextRange> searchResults = getAllSearchResultsRangesInDocument();
+    List<TextRange> highlightRanges = getAllSearchResultsRangesInDocument();
 
-    if (!searchResults.isEmpty()) {
+    if (!highlightRanges.isEmpty()) {
       HighlightManager highlightManager = HighlightManager.getInstance(dataProvider.getProject());
       TextAttributes textAttributes = EditorColorsManager.getInstance().getGlobalScheme()
         .getAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
 
-      for (TextRange searchResult : searchResults) {
+      for (TextRange range : highlightRanges) {
         highlightManager.addRangeHighlight(
           editor,
-          searchResult.getStartOffset(),
-          searchResult.getEndOffset(),
+          range.getStartOffset(),
+          range.getEndOffset(),
           textAttributes, true, pageRangeHighlighters);
       }
     }
@@ -411,14 +411,17 @@ public class EditorModel {
       List<SearchResult> searchResults = dataProvider.getSearchResultsInPage(page);
       if (searchResults != null) {
         for (SearchResult result : searchResults) {
-          searchResultsRanges.add(new TextRange(
-            documentOfPagesModel.getSymbolOffsetToStartOfPage(
-              documentOfPagesModel.getIndexOfPageByPageNumber(result.startPosition.pageNumber))
-            + result.startPosition.symbolOffsetInPage,
-            documentOfPagesModel.getSymbolOffsetToStartOfPage(
-              documentOfPagesModel.getIndexOfPageByPageNumber(result.endPostion.pageNumber))
-            + result.endPostion.symbolOffsetInPage
-          ));
+          int from = documentOfPagesModel.getSymbolOffsetToStartOfPage(
+            documentOfPagesModel.getIndexOfPageByPageNumber(result.startPosition.pageNumber))
+                     + result.startPosition.symbolOffsetInPage;
+          int to = documentOfPagesModel.getSymbolOffsetToStartOfPage(
+            documentOfPagesModel.getIndexOfPageByPageNumber(result.endPostion.pageNumber))
+                   + result.endPostion.symbolOffsetInPage;
+          if (from < 0) from = 0;
+          if (to > documentOfPagesModel.getDocument().getTextLength()) to = documentOfPagesModel.getDocument().getTextLength();
+          if (from < to) {
+            searchResultsRanges.add(new TextRange(from, to));
+          }
         }
       }
     }
