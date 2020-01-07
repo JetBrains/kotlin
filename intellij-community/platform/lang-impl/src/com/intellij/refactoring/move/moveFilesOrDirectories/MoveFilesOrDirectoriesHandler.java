@@ -26,6 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import org.jetbrains.annotations.NotNull;
@@ -115,11 +116,6 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
   @Nullable
   @Override
   public String getActionName(@NotNull PsiElement[] elements) {
-    return getMoveOrCopyActionName(elements, "Move");
-  }
-
-  @NotNull
-  public static String getMoveOrCopyActionName(@NotNull PsiElement[] elements, final String verb) {
     int fileCount = 0, directoryCount = 0;
     for (PsiElement element : elements) {
       if (element instanceof PsiFile) {
@@ -130,11 +126,11 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
       }
     }
     if (directoryCount == 0) {
-      return fileCount == 1 ? verb + " File..." : verb + " Files...";
+      return fileCount == 1 ? RefactoringBundle.message("move.file") : RefactoringBundle.message("move.files");
     }
     if (fileCount == 0) {
-      return directoryCount == 1 ? verb + " Directory..." : verb + " Directories...";
+      return directoryCount == 1 ? RefactoringBundle.message("move.directory") : RefactoringBundle.message("move.directories.with.dialog");
     }
-    return verb + " Files and Directories...";
+    return RefactoringBundle.message("move.files.and.directories");
   }
 }
