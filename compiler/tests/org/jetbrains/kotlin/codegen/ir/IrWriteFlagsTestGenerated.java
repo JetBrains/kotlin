@@ -902,6 +902,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("enumFields.kt")
+        public void testEnumFields() throws Exception {
+            runTest("compiler/testData/writeFlags/property/enumFields.kt");
+        }
+
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
