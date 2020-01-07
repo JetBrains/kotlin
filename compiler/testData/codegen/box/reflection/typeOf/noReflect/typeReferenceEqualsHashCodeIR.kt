@@ -1,4 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
+// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM_IR
 // WITH_RUNTIME
 // Separate test is needed for IR because of different ways type arguments of typeOf are calculated.
