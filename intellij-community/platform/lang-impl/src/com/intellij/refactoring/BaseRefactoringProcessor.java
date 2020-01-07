@@ -56,6 +56,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -683,6 +684,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
     return null;
   }
 
+  @NonNls
   @Nullable
   protected String getRefactoringId() {
     return null;
