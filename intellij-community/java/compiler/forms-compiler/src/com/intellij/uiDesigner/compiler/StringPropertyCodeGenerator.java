@@ -22,14 +22,18 @@ import java.util.Set;
 /**
  * @author yole
  */
-public class StringPropertyCodeGenerator extends PropertyCodeGenerator implements Opcodes {
+public final class StringPropertyCodeGenerator extends PropertyCodeGenerator implements Opcodes {
   private static final Type myResourceBundleType = Type.getType(ResourceBundle.class);
-  private final Method myGetBundleMethod = Method.getMethod("java.util.ResourceBundle getBundle(java.lang.String)");
-  private final Method myGetStringMethod = Method.getMethod("java.lang.String getString(java.lang.String)");
+  private static final Type stringType = Type.getType(String.class);
+
+  private static final Method myGetBundleMethod = new Method("getBundle", myResourceBundleType,
+                                                             new Type[]{stringType, Type.getType(Class.class)});
+  private static final Method myGetStringMethod = new Method("getString", stringType, new Type[]{stringType});
+
   private static final Method myLoadLabelTextMethod = new Method(AsmCodeGenerator.LOAD_LABEL_TEXT_METHOD, Type.VOID_TYPE,
-                                                                 new Type[] { Type.getType(JLabel.class), Type.getType(String.class) } );
+                                                                 new Type[]{Type.getType(JLabel.class), stringType});
   private static final Method myLoadButtonTextMethod = new Method(AsmCodeGenerator.LOAD_BUTTON_TEXT_METHOD, Type.VOID_TYPE,
-                                                                 new Type[] { Type.getType(AbstractButton.class), Type.getType(String.class) } );
+                                                                  new Type[]{Type.getType(AbstractButton.class), stringType});
 
   private final Set<String> myClassesRequiringLoadLabelText = new HashSet<String>();
   private final Set<String> myClassesRequiringLoadButtonText = new HashSet<String>();
@@ -77,8 +81,7 @@ public class StringPropertyCodeGenerator extends PropertyCodeGenerator implement
         generator.loadLocal(componentLocal);
         generator.push(textWithMnemonic.myText);
         generator.invokeVirtual(Type.getType(componentClass.getDescriptor()),
-                                new Method(property.getWriteMethodName(),
-                                           Type.VOID_TYPE, new Type[] { Type.getType(String.class) } ));
+                                new Method(property.getWriteMethodName(), Type.VOID_TYPE, new Type[]{stringType}));
 
         String setMnemonicMethodName;
         if (abstractButtonClass.isAssignableFrom(componentClass)) {
@@ -118,13 +121,16 @@ public class StringPropertyCodeGenerator extends PropertyCodeGenerator implement
       generator.loadThis();
       generator.loadLocal(componentLocal);
 
+      Type formClass = Type.getType("L" + formClassName + ";");
+
       generator.push(propertyValue.getBundleName());
+      generator.push(formClass);
       generator.invokeStatic(myDynamicBundleType, myGetBundleMethod);
 
       generator.push(propertyValue.getKey());
       generator.invokeVirtual(myResourceBundleType, myGetStringMethod);
 
-      generator.invokeVirtual(Type.getType("L" + formClassName + ";"), method);
+      generator.invokeVirtual(formClass, method);
       return true;
     }
     return false;
