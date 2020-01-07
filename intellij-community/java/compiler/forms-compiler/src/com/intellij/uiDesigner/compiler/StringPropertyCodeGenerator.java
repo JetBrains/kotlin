@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.uiDesigner.compiler;
 
 import com.intellij.compiler.instrumentation.InstrumentationClassFinder;
@@ -65,62 +65,67 @@ public class StringPropertyCodeGenerator extends PropertyCodeGenerator implement
                                         final String formClassName) throws IOException, ClassNotFoundException {
     final InstrumentationClassFinder.PseudoClass abstractButtonClass = componentClass.getFinder().loadClass(AbstractButton.class.getName());
     final InstrumentationClassFinder.PseudoClass jLabelClass = componentClass.getFinder().loadClass(JLabel.class.getName());
-    if ("text".equals(property.getName()) &&
-        (abstractButtonClass.isAssignableFrom(componentClass) || jLabelClass.isAssignableFrom(componentClass))) {
-      final StringDescriptor propertyValue = (StringDescriptor)lwComponent.getPropertyValue(property);
-      if (propertyValue.getValue() != null) {
-        final SupportCode.TextWithMnemonic textWithMnemonic = SupportCode.parseText(propertyValue.getValue());
-        if (textWithMnemonic.myMnemonicIndex >= 0) {
-          generator.loadLocal(componentLocal);
-          generator.push(textWithMnemonic.myText);
-          generator.invokeVirtual(Type.getType(componentClass.getDescriptor()),
-                                  new Method(property.getWriteMethodName(),
-                                             Type.VOID_TYPE, new Type[] { Type.getType(String.class) } ));
+    if (!"text".equals(property.getName()) ||
+        (!abstractButtonClass.isAssignableFrom(componentClass) && !jLabelClass.isAssignableFrom(componentClass))) {
+      return false;
+    }
 
-          String setMnemonicMethodName;
-          if (abstractButtonClass.isAssignableFrom(componentClass)) {
-            setMnemonicMethodName = "setMnemonic";
-          }
-          else {
-            setMnemonicMethodName = "setDisplayedMnemonic";
-          }
+    final StringDescriptor propertyValue = (StringDescriptor)lwComponent.getPropertyValue(property);
+    if (propertyValue.getValue() != null) {
+      final SupportCode.TextWithMnemonic textWithMnemonic = SupportCode.parseText(propertyValue.getValue());
+      if (textWithMnemonic.myMnemonicIndex >= 0) {
+        generator.loadLocal(componentLocal);
+        generator.push(textWithMnemonic.myText);
+        generator.invokeVirtual(Type.getType(componentClass.getDescriptor()),
+                                new Method(property.getWriteMethodName(),
+                                           Type.VOID_TYPE, new Type[] { Type.getType(String.class) } ));
 
-          generator.loadLocal(componentLocal);
-          generator.push(textWithMnemonic.getMnemonicChar());
-          generator.invokeVirtual(Type.getType(componentClass.getDescriptor()),
-                                  new Method(setMnemonicMethodName,
-                                             Type.VOID_TYPE, new Type[] { Type.CHAR_TYPE } ));
-
-          if (myHaveSetDisplayedMnemonicIndex) {
-            generator.loadLocal(componentLocal);
-            generator.push(textWithMnemonic.myMnemonicIndex);
-            generator.invokeVirtual(Type.getType(componentClass.getDescriptor()),
-                                    new Method("setDisplayedMnemonicIndex",
-                                               Type.VOID_TYPE, new Type[] { Type.INT_TYPE } ));
-          }
-          return true;
-        }
-      }
-      else {
-        Method method;
+        String setMnemonicMethodName;
         if (abstractButtonClass.isAssignableFrom(componentClass)) {
-          myClassesRequiringLoadButtonText.add(formClassName);
-          method = myLoadButtonTextMethod;
+          setMnemonicMethodName = "setMnemonic";
         }
         else {
-          myClassesRequiringLoadLabelText.add(formClassName);
-          method = myLoadLabelTextMethod;
+          setMnemonicMethodName = "setDisplayedMnemonic";
         }
 
-        generator.loadThis();
         generator.loadLocal(componentLocal);
-        generator.push(propertyValue.getBundleName());
-        generator.invokeStatic(myDynamicBundleType, myGetBundleMethod);
-        generator.push(propertyValue.getKey());
-        generator.invokeVirtual(myResourceBundleType, myGetStringMethod);
-        generator.invokeVirtual(Type.getType("L" + formClassName + ";"), method);
+        generator.push(textWithMnemonic.getMnemonicChar());
+        generator.invokeVirtual(Type.getType(componentClass.getDescriptor()),
+                                new Method(setMnemonicMethodName,
+                                           Type.VOID_TYPE, new Type[] { Type.CHAR_TYPE } ));
+
+        if (myHaveSetDisplayedMnemonicIndex) {
+          generator.loadLocal(componentLocal);
+          generator.push(textWithMnemonic.myMnemonicIndex);
+          generator.invokeVirtual(Type.getType(componentClass.getDescriptor()),
+                                  new Method("setDisplayedMnemonicIndex",
+                                             Type.VOID_TYPE, new Type[] { Type.INT_TYPE } ));
+        }
         return true;
       }
+    }
+    else {
+      Method method;
+      if (abstractButtonClass.isAssignableFrom(componentClass)) {
+        myClassesRequiringLoadButtonText.add(formClassName);
+        method = myLoadButtonTextMethod;
+      }
+      else {
+        myClassesRequiringLoadLabelText.add(formClassName);
+        method = myLoadLabelTextMethod;
+      }
+
+      generator.loadThis();
+      generator.loadLocal(componentLocal);
+
+      generator.push(propertyValue.getBundleName());
+      generator.invokeStatic(myDynamicBundleType, myGetBundleMethod);
+
+      generator.push(propertyValue.getKey());
+      generator.invokeVirtual(myResourceBundleType, myGetStringMethod);
+
+      generator.invokeVirtual(Type.getType("L" + formClassName + ";"), method);
+      return true;
     }
     return false;
   }
