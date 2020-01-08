@@ -80,6 +80,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/function/Reference.kt");
         }
 
+        @TestMetadata("ReferenceReceiver.kt")
+        public void testReferenceReceiver() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/ReferenceReceiver.kt");
+        }
+
         @TestMetadata("ReturnNotInTheEnd.kt")
         public void testReturnNotInTheEnd() throws Exception {
             runTest("idea/testData/refactoring/inline/function/ReturnNotInTheEnd.kt");

@@ -142,6 +142,7 @@ private fun UsageReplacementStrategy.specialUsageProcessing(
 ): Boolean {
     when (val usageParent = usage.parent) {
         is KtCallableReferenceExpression -> {
+            if (usageParent.callableReference != usage) return false
             val grandParent = usageParent.parent
             ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
             (grandParent as? KtElement)?.let {
