@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 inline fun foo(x: (Int, Station) -> Unit) {
     x(1, Station(null, "", 1))
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 data class A(val x: String, val y: Int)
 
 fun foo(a: A, block: (A) -> String): String = block(a)
