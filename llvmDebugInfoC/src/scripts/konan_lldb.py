@@ -362,6 +362,9 @@ def print_this_command(debugger, command, result, internal_dict):
 def clear_cache_command(debugger, command, result, internal_dict):
     SYNTHETIC_OBJECT_LAYOUT_CACHE.clear()
 
+def type_name_command(debugger, command, result, internal_dict):
+    result.AppendMessage(evaluate('(char *)Konan_DebugGetTypeName({})'.format(command)).summary)
+
 def __lldb_init_module(debugger, _):
     __FACTORY['object'] = lambda x, y, z: KonanObjectSyntheticProvider(x, y, z)
     __FACTORY['array'] = lambda x, y, z: KonanArraySyntheticProvider(x, z)
@@ -383,3 +386,4 @@ def __lldb_init_module(debugger, _):
     debugger.HandleCommand('type category enable Kotlin')
     debugger.HandleCommand('command script add -f {}.print_this_command print_this'.format(__name__))
     debugger.HandleCommand('command script add -f {}.clear_cache_command clear_kotlin_cache'.format(__name__))
+    debugger.HandleCommand('command script add -f {}.type_name_command type_name'.format(__name__))
