@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionUVariable
 import java.lang.ref.WeakReference
@@ -294,7 +295,17 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
     val typeInfo = TypeInfo.fromString(javaType, false)
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return UastErrorType
 
-    return ClsTypeElementImpl(lightDeclaration ?: context, typeText, '\u0000').type
+    val parent: PsiElement = lightDeclaration ?: context
+    if (parent.containingFile == null) {
+        Logger.getInstance("org.jetbrains.uast.kotlin.KotlinInternalUastUtils")
+            .error(
+                "initialising ClsTypeElementImpl with null-file parent = $parent (of ${parent.javaClass}) " +
+                        "containing class = ${parent.safeAs<PsiMethod>()?.containingClass}, " +
+                        "lightDeclaration = $lightDeclaration (of ${lightDeclaration?.javaClass})," +
+                        " context = $context (of ${context.javaClass})"
+            )
+    }
+    return ClsTypeElementImpl(parent, typeText, '\u0000').type
 }
 
 private fun KotlinType.containsLocalTypes(): Boolean {
