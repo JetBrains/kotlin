@@ -71,14 +71,15 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
                     coroutineStackFrameList.add(RunningCoroutineStackFrameItem(runningStackFrameProxy, xStackFrame))
                 }
             }
-        } else if (coroutine.state == CoroutineInfoData.State.SUSPENDED || coroutine.activeThread == null) {
+        } else if ((coroutine.state == CoroutineInfoData.State.SUSPENDED || coroutine.activeThread == null) && coroutine.lastObservedFrameFieldRef is ObjectReference) {
             // to get frames from CoroutineInfo anyway
             // the thread is paused on breakpoint - it has at least one frame
             val suspendedStackTrace = coroutine.stackTrace.take(creationFrameSeparatorIndex + 1)
             for (suspendedFrame in suspendedStackTrace) {
                 val suspendedXStackFrame = stackFrame(positionManager, firstSuspendedStackFrameProxyImpl, suspendedFrame)
+
                 coroutineStackFrameList.add(
-                    SuspendCoroutineStackFrameItem(firstSuspendedStackFrameProxyImpl, suspendedFrame, suspendedXStackFrame)
+                    SuspendCoroutineStackFrameItem(firstSuspendedStackFrameProxyImpl, suspendedFrame, suspendedXStackFrame, coroutine.lastObservedFrameFieldRef)
                 )
             }
         }
@@ -167,10 +168,6 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
     private fun isResumeMethodFrame(frame: StackFrameProxyImpl) =
         frame.safeLocation()?.safeMethod()?.name() == "resumeWith"
 
-    /**
-     * Should be invoked on manager thread
-     * This code was migrated from previous implementation, has to be refactored @TODO
-     */
     private fun createSyntheticStackFrame(
         descriptor: SuspendStackFrameDescriptor,
         pos: XSourcePosition,
@@ -206,6 +203,7 @@ class CreationCoroutineStackFrameItem(
     val location: Location
 ) : CoroutineStackFrameItem(frame, stackFrame) {
     override fun location() = location
+
     fun emptyDescriptor() =
         EmptyStackFrameDescriptor(stackTraceElement, frame)
 }
@@ -213,9 +211,13 @@ class CreationCoroutineStackFrameItem(
 class SuspendCoroutineStackFrameItem(
     frame: StackFrameProxyImpl,
     val stackTraceElement: StackTraceElement,
-    stackFrame: XStackFrame
+    stackFrame: XStackFrame,
+    val lastObservedFrameFieldRef: ObjectReference
 ) : CoroutineStackFrameItem(frame, stackFrame) {
     override fun location() = frame.location()
+
+    fun emptyDescriptor() =
+        EmptyStackFrameDescriptor(stackTraceElement, frame)
 }
 
 class AsyncCoroutineStackFrameItem(

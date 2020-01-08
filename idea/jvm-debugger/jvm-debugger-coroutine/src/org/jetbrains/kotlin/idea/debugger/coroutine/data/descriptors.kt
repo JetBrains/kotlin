@@ -35,7 +35,7 @@ class CoroutineStackTraceData(
         val lookupContinuation = LookupContinuation(context, frame)
 
         // retrieve continuation only if suspend method
-        val continuation = lookupContinuation.findContinuation(infoData)
+        val continuation = lookupContinuation.findContinuation(infoData.lastObservedFrameFieldRef)
 
         return if (continuation is ObjectReference)
             SuspendStackFrameDescriptor(infoData, frame, proxy, continuation)

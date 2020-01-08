@@ -19,7 +19,7 @@ data class CoroutineInfoData(
     val stackTrace: List<StackTraceElement>,
     // links to jdi.* references
     val activeThread: ThreadReference? = null, // for suspended coroutines should be null
-    val frame: ObjectReference?
+    val lastObservedFrameFieldRef: ObjectReference?
 ) {
     var stackFrameList = mutableListOf<CoroutineStackFrameItem>()
 

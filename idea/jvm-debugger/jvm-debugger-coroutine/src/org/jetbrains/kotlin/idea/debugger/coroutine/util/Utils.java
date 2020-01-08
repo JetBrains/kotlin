@@ -13,7 +13,7 @@ public class Utils {
             Object instance,
             String methodName,
             Object... args) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-
+        @SuppressWarnings("rawtypes")
         Class[] classes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
             if(args[i] instanceof ReflectionSpecificType)
@@ -23,10 +23,10 @@ public class Utils {
         }
         Method method = instance.getClass().getDeclaredMethod(methodName, classes);
         method.setAccessible(true);
-        Object r = method.invoke(instance, args);
-        return r;
+        return method.invoke(instance, args);
     }
 
+    @SuppressWarnings("rawtypes")
     public interface ReflectionSpecificType {
         Class specificClass();
     }

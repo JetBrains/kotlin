@@ -10,12 +10,14 @@ import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.extensions.Extensions
+import io.ktor.util.findAllSupertypes
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.getSafe
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
 abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithStepping() {
@@ -81,9 +83,10 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
         appendln("Async stack trace:")
         for (item in trace) {
             append(MARGIN).appendln(item.toString())
+            val declaredFields = listDeclaredFields(item.javaClass)
 
             @Suppress("UNCHECKED_CAST")
-            val variablesField = item.javaClass.declaredFields
+            val variablesField = declaredFields
                 .first { !Modifier.isStatic(it.modifiers) && it.type == List::class.java }
 
             @Suppress("UNCHECKED_CAST")
@@ -99,5 +102,15 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
                 }
             }
         }
+    }
+
+    private fun listDeclaredFields(cls: Class<in Any>): MutableList<Field> {
+        var clazz = cls
+        val declaredFields = mutableListOf<Field>()
+        while (clazz != Class.forName("java.lang.Object")) {
+            declaredFields.addAll(clazz.declaredFields)
+            clazz = clazz.superclass
+        }
+        return declaredFields
     }
 }

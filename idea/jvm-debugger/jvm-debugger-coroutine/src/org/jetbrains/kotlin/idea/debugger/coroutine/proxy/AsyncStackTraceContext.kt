@@ -36,7 +36,11 @@ class AsyncStackTraceContext(
     fun getAsyncStackTraceIfAny() : List<CoroutineAsyncStackFrameItem> {
         val continuation = locateContinuation() ?: return emptyList()
         val frames = mutableListOf<CoroutineAsyncStackFrameItem>()
-        collectFramesRecursively(continuation, frames)
+        try {
+            collectFramesRecursively(continuation, frames)
+        } catch (e: Exception) {
+            log.error("Error while looking for variables.", e)
+        }
         return frames
     }
 
@@ -71,9 +75,9 @@ class AsyncStackTraceContext(
         val baseContinuationSupertype = findBaseContinuationSuperSupertype(continuationType) ?: return
 
         val location = createLocation(continuation)
-        val spilledVariables = getSpilledVariables(continuation) ?: emptyList()
 
         location?.let {
+            val spilledVariables = getSpilledVariables(continuation) ?: emptyList()
             consumer.add(CoroutineAsyncStackFrameItem(location, spilledVariables))
         }
 
@@ -86,7 +90,9 @@ class AsyncStackTraceContext(
         val instance = invokeGetStackTraceElement(continuation) ?: return null
         val className = context.invokeMethodAsString(instance, "getClassName") ?: return null
         val methodName = context.invokeMethodAsString(instance, "getMethodName") ?: return null
-        val lineNumber = context.invokeMethodAsInt(instance,"getLineNumber") ?: return null
+        val lineNumber = context.invokeMethodAsInt(instance,"getLineNumber")?.takeIf {
+            it >= 0
+        } ?: return null
         val locationClass = context.findClassSafe(className) ?: return null
         log.warn("Got location of ${className}.${methodName}:${lineNumber} in ${locationClass}")
         return GeneratedLocation(context.debugProcess, locationClass, methodName, lineNumber)
