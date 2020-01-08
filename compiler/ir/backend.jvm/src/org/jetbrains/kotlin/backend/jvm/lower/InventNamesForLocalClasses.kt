@@ -108,12 +108,6 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                         localFunctionNames[(declaration as IrFunction).symbol] = name
                     }
                 }
-                declaration is IrFunction && declaration.parent !is IrClass -> {
-                    // In the old backend, only names of non-local functions are stored in names of anonymous classes. All other names
-                    // are replaced with indices. For example, a local class `L` in a top-level function `f` will have the name `...$f$L`,
-                    // but inside a local function `g` (which is in `f`) it will have the name `...$f$1$L` (_not_ `...$f$g$L`).
-                    inventName(null, data)
-                }
                 enclosingName != null -> "$enclosingName$$simpleName"
                 else -> simpleName
             }
