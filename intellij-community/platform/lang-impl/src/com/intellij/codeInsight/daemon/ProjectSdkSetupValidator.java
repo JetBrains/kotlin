@@ -23,12 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * <stong>This extension point is not executed any more</stong>
- *
- * @deprecated {@link com.intellij.openapi.projectRoots.impl.UnknownSdkTracker} takes care about
- *             possible actions to fix the Sdks in the project.
+ * @author Pavel.Dolgov
  */
-@Deprecated
 public interface ProjectSdkSetupValidator {
   ExtensionPointName<ProjectSdkSetupValidator> EP_NAME = ExtensionPointName.create("com.intellij.projectSdkSetupValidator");
 
