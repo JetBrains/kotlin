@@ -9,6 +9,7 @@ dependencies {
     testCompile(project(":idea:jvm-debugger:jvm-debugger-core"))
     testCompile(project(":idea:jvm-debugger:jvm-debugger-evaluation"))
     testCompile(project(":idea:jvm-debugger:jvm-debugger-sequence"))
+    testCompile(project(":idea:jvm-debugger:jvm-debugger-coroutine"))
     testCompile(project(":compiler:backend"))
     testCompile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
