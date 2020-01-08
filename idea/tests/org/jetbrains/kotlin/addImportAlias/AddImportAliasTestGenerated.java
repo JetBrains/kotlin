@@ -33,6 +33,11 @@ public class AddImportAliasTestGenerated extends AbstractAddImportAliasTest {
         runTest("idea/testData/addImportAlias/JavaAlias.kt");
     }
 
+    @TestMetadata("KDocAlias.kt")
+    public void testKDocAlias() throws Exception {
+        runTest("idea/testData/addImportAlias/KDocAlias.kt");
+    }
+
     @TestMetadata("SimpleAlias.kt")
     public void testSimpleAlias() throws Exception {
         runTest("idea/testData/addImportAlias/SimpleAlias.kt");
