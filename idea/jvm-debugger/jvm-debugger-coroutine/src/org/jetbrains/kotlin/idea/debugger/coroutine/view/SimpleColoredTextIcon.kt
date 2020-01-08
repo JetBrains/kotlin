@@ -8,18 +8,25 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.view
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.settings.ThreadsViewSettings
 import com.intellij.icons.AllIcons
+import com.intellij.ide.highlighter.JavaHighlightingColors
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.CodeInsightColors
+import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.ui.ColoredTextContainer
 import com.intellij.ui.SimpleColoredComponent
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.xdebugger.frame.presentation.XValuePresentation
 import com.intellij.xdebugger.impl.ui.DebuggerUIUtil
 import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
+import com.intellij.xdebugger.ui.DebuggerColors
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
+import java.awt.Color
 import javax.swing.Icon
 
 class SimpleColoredTextIcon(val icon: Icon?, val hasChildrens: Boolean) {
@@ -45,14 +52,18 @@ class SimpleColoredTextIcon(val icon: Icon?, val hasChildrens: Boolean) {
         for (i in 0 until size) {
             val text: String = texts.get(i)
             val attribute: TextAttributesKey = textKeyAttributes.get(i)
+            val simpleTextAttrinbute = toSimpleTextAttribute(attribute)
 
-            component.append(text, when(attribute) {
-                CoroutineDebuggerColors.REGULAR_ATTRIBUTES -> SimpleTextAttributes.REGULAR_ATTRIBUTES
-                CoroutineDebuggerColors.VALUE_ATTRIBUTES -> XDebuggerUIConstants.VALUE_NAME_ATTRIBUTES
-                else -> SimpleTextAttributes.REGULAR_ATTRIBUTES
-            })
+            component.append(text, simpleTextAttrinbute)
         }
     }
+
+    private fun toSimpleTextAttribute(attribute: TextAttributesKey) =
+        when (attribute) {
+            CoroutineDebuggerColors.REGULAR_ATTRIBUTES -> SimpleTextAttributes.REGULAR_ATTRIBUTES
+            CoroutineDebuggerColors.VALUE_ATTRIBUTES -> XDebuggerUIConstants.VALUE_NAME_ATTRIBUTES
+            else -> SimpleTextAttributes.REGULAR_ATTRIBUTES
+        }
 
     fun forEachTextBlock(f: (Pair<String, TextAttributesKey>) -> Unit) {
         for (pair in texts zip textKeyAttributes)
@@ -83,14 +94,13 @@ class SimpleColoredTextIcon(val icon: Icon?, val hasChildrens: Boolean) {
 
 interface CoroutineDebuggerColors {
     companion object {
-        val REGULAR_ATTRIBUTES =
-            TextAttributesKey.createTextAttributesKey("REGULAR_ATTRIBUTES", HighlighterColors.NO_HIGHLIGHTING)
-        val VALUE_ATTRIBUTES =
-            TextAttributesKey.createTextAttributesKey("VALUE_ATTRIBUTES", CodeInsightColors.WARNINGS_ATTRIBUTES)
+        val REGULAR_ATTRIBUTES = HighlighterColors.TEXT
+        val VALUE_ATTRIBUTES = TextAttributesKey.createTextAttributesKey("KOTLIN_COROUTINE_DEBUGGER_VALUE", HighlighterColors.TEXT)
     }
 }
 
 class SimpleColoredTextIconPresentationRenderer {
+    val log by logger
     private val settings: ThreadsViewSettings = ThreadsViewSettings.getInstance()
 
     fun render(infoData: CoroutineInfoData): SimpleColoredTextIcon {
@@ -157,7 +167,10 @@ class SimpleColoredTextIconPresentationRenderer {
         }
         if (settings.SHOW_SOURCE_NAME) {
             label.append(", ")
-            val sourceName = DebuggerUtilsEx.getSourceName(location) { e: Throwable? -> "Unknown Source" }
+            val sourceName = DebuggerUtilsEx.getSourceName(location) { e: Throwable? ->
+                log.error("Error while trying to resolve sourceName for location", e, location.toString())
+                "Unknown Source"
+            }
             label.append(sourceName)
         }
         return label

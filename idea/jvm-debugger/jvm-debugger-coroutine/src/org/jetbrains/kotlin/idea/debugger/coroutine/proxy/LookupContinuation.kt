@@ -35,11 +35,11 @@ class LookupContinuation(val context: ExecutionContext, val frame: StackTraceEle
      * Gets current CoroutineInfo.lastObservedFrame and finds next frames in it until null or needed stackTraceElement is found
      * @return null if matching continuation is not found or is not BaseContinuationImpl
      */
-    fun findContinuation(infoData: CoroutineInfoData): ObjectReference? {
+    fun findContinuation(initialContinuation: ObjectReference?): ObjectReference? {
         if (!isApplicable())
             return null
 
-        var continuation = infoData.frame ?: return null
+        var continuation = initialContinuation ?: return null
         val baseType = "kotlin.coroutines.jvm.internal.BaseContinuationImpl"
         val getTrace = (continuation.type() as ClassType).concreteMethodByName(
             "getStackTraceElement",
@@ -80,5 +80,16 @@ class LookupContinuation(val context: ExecutionContext, val frame: StackTraceEle
         if (!type.isSubtype("kotlin.coroutines.jvm.internal.BaseContinuationImpl")) return null
         val next = type.concreteMethodByName("getCompletion", "()Lkotlin/coroutines/Continuation;")
         return context.invokeMethod(continuation, next, emptyList()) as? ObjectReference
+    }
+
+    fun findGetStackTraceElementMethodRef(continuation: ObjectReference): Method =
+        (continuation.type() as ClassType).concreteMethodByName("getStackTraceElement", "()Ljava/lang/StackTraceElement;")
+
+    fun createAsyncStackTraceContext(stackTraceElementMethodRef: Method) =
+        AsyncStackTraceContext(context, stackTraceElementMethodRef)
+
+    fun createAsyncStackTraceContext(continuation: ObjectReference): AsyncStackTraceContext? {
+        val getStackTraceElementMethodRef = findGetStackTraceElementMethodRef(continuation)
+        return createAsyncStackTraceContext(getStackTraceElementMethodRef)
     }
 }

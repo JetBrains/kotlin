@@ -1,0 +1,21 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.idea.debugger.coroutine
+
+import com.intellij.ui.components.JBLabel
+import org.jetbrains.kotlin.idea.debugger.coroutine.override.com.intellij.ui.SimpleListCellRenderer
+import javax.swing.ListCellRenderer
+
+class VersionedImplementationProvider() {
+    fun comboboxListCellRenderer(): ListCellRenderer<in String>? =
+        SimpleListCellRenderer.create<String> { label: JBLabel, value: String?, index: Int ->
+            if (value != null) {
+                label.text = value
+            } else if (index >= 0) {
+                label.text = "Loading..."
+            }
+        }
+}

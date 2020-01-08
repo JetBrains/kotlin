@@ -19,12 +19,12 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
     override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<CoroutineAsyncStackFrameItem>? {
         val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) } ?: emptyList()
-        return null
+        return stackFrameList
     }
 
     fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem>? {
         val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) } ?: emptyList()
-        return null
+        return stackFrameList
     }
 
     fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem> {

@@ -235,8 +235,8 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
     }
 
     private inner class MergeStackTracesAction : ToggleAction(
-        "Merge Identical Stacktraces",
-        "Group coroutines with identical stacktraces",
+        "Merge Identical Stacktrace",
+        "Group coroutines with identical stacktrace",
         AllIcons.Actions.Collapseall
     ), DumbAware {
 
