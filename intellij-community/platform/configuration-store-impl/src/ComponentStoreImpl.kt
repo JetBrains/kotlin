@@ -570,6 +570,10 @@ abstract class ComponentStoreImpl : IComponentStore {
     components.remove(name)
   }
 
+  override fun release() {
+    components.clear()
+  }
+
   override fun toString() = storageManager.componentManager.toString()
 }
 
