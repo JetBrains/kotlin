@@ -1,14 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl;
 
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleTypeId;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Collects usages of all possible SDK references in the project,
@@ -45,8 +42,6 @@ public final class SdkUsagesCollector {
     private final String myUsagePresentableText;
     private final String mySdkName;
     private final String mySdkTypeName;
-    private Consumer<Sdk> mySdkSetAction = null;
-    private Runnable myProjectSdkSetAction = null;
 
     public SdkUsage(@NotNull String usagePresentableText,
                     @Nullable String sdkName,
@@ -74,45 +69,6 @@ public final class SdkUsagesCollector {
     public String getSdkTypeName() {
       return mySdkTypeName;
     }
-
-    /**
-     * @return an action to change the currently selected SDK
-     * to a given SDK. Return {@code null} to disallow that action
-     */
-    @Nullable
-    public Consumer<Sdk> getSdkSetAction() {
-      return mySdkSetAction;
-    }
-
-    /**
-     * Sets the action for {@link #getSdkSetAction()}
-     * @see #getSdkSetAction()
-     */
-    @NotNull
-    public SdkUsage withSetSdkAction(@NotNull Consumer<Sdk> setSdkAction) {
-      mySdkSetAction = setSdkAction;
-      return this;
-    }
-
-    /**
-     * @return an action to change the currently selected SDK
-     * to a project SDK. The action should work no matter if project SDK is valid or not.
-     * Return {@code null} to disallow that action
-     */
-    @Nullable
-    public Runnable getProjectSdkSetAction() {
-      return myProjectSdkSetAction;
-    }
-
-    /**
-     * Sets the action for {@link #getProjectSdkSetAction()}
-     * @see #getProjectSdkSetAction()
-     */
-    @NotNull
-    public SdkUsage withSetProjectSdkAction(@NotNull Runnable setProjectSdkAction) {
-      myProjectSdkSetAction = setProjectSdkAction;
-      return this;
-    }
   }
 
   /**
@@ -133,10 +89,7 @@ public final class SdkUsagesCollector {
       String sdkName = manager.getProjectSdkName();
       String sdkType = manager.getProjectSdkTypeName();
 
-      SdkUsage usage = new SdkUsage("project", sdkName, sdkType)
-        .withSetSdkAction(sdk -> WriteAction.run(() -> ProjectRootManager.getInstance(project).setProjectSdk(sdk)));
-
-      return Collections.singletonList(usage);
+      return Collections.singletonList(new SdkUsage("project", sdkName, sdkType));
     }
   }
 
@@ -158,6 +111,11 @@ public final class SdkUsagesCollector {
       String jdkName = null;
       String jdkType = null;
 
+      // we do not track usages from external system provided modules
+      if (manager.getExternalSource() != null) {
+        return;
+      }
+
       for (OrderEntry orderEntry : manager.getOrderEntries()) {
         if (!(orderEntry instanceof JdkOrderEntry)) continue;
 
@@ -171,25 +129,7 @@ public final class SdkUsagesCollector {
         Logger.getInstance(getClass()).error("Unexpected OrderEntry: " + orderEntry.getClass().getName() + ": " + orderEntry);
       }
 
-      SdkUsage usage = new SdkUsage("module \"" + module.getName() + "\"", jdkName, jdkType)
-        .withSetProjectSdkAction(() -> {
-          WriteAction.run(() -> {
-            if (module.isDisposed()) return;
-            ModifiableRootModel mod = ModuleRootManager.getInstance(module).getModifiableModel();
-            mod.inheritSdk();
-            mod.commit();
-          });
-        })
-        .withSetSdkAction(sdk -> {
-          WriteAction.run(() -> {
-            if (module.isDisposed()) return;
-            ModifiableRootModel mod = ModuleRootManager.getInstance(module).getModifiableModel();
-            mod.setSdk(sdk);
-            mod.commit();
-          });
-        });
-
-      usages.add(usage);
+      usages.add(new SdkUsage("module \"" + module.getName() + "\"", jdkName, jdkType));
     }
   }
 }

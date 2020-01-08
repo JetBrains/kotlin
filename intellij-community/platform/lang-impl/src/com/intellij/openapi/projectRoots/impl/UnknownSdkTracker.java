@@ -32,8 +32,8 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracke
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.TripleFunction;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,35 +58,72 @@ public class UnknownSdkTracker {
     myProject = project;
   }
 
+  //TODO: call update on ProjectSdkTable change (otherwise ProjectSdkValidation notifications will not disappear)
   public void updateUnknownSdks() {
     if (!UnknownSdkResolver.EP_NAME.hasAnyExtensions()) return;
-
-    ProgressManager.getInstance()
-      .run(new Task.Backgroundable(myProject, "Resolving SDKs", false, ALWAYS_BACKGROUND) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          updateUnknownSdksWithProgress(indicator);
-        }
-      });
-  }
-
-  private void updateUnknownSdksWithProgress(@NotNull ProgressIndicator indicator) {
-    List<SdkUsage> unsetSdks = new ArrayList<>();
     List<String> missingSdks = new ArrayList<>();
     List<UnknownSdk> fixable = new ArrayList<>();
-    ReadAction.run(() -> collectAndGroupSdkUsages(unsetSdks, missingSdks, fixable));
 
-    List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
-    Map<UnknownSdk, LocalSdkFix> localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
-    Map<UnknownSdk, DownloadSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
-    fixable.forEach(it -> missingSdks.add(it.getSdkName()));
+    ReadAction.nonBlocking(() -> {
+      collectAndGroupSdkUsages(missingSdks, fixable);
+    })
+    .expireWith(myProject)
+    .coalesceBy(this)
+    .submit(AppExecutorUtil.getAppExecutorService())
+    .onSuccess((__) -> {
+      onFixableAndMissingSdksCollected( missingSdks, fixable);
+    });
+  }
 
+  private void onFixableAndMissingSdksCollected(@NotNull List<String> missingSdks,
+                                                @NotNull List<UnknownSdk> fixable) {
+
+
+    if (!fixable.isEmpty()) {
+      ProgressManager.getInstance()
+        .run(new Task.Backgroundable(myProject, "Resolving SDKs", false, ALWAYS_BACKGROUND) {
+               @Override
+               public void run(@NotNull ProgressIndicator indicator) {
+                 indicator.setText("Resolving missing SDKs...");
+                 List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
+
+                 indicator.setText("Looking for local SDKs...");
+                 Map<UnknownSdk, LocalSdkFix> localFixes =
+                   findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
+
+                 indicator.setText("Looking for downloadable SDKs...");
+                 Map<UnknownSdk, DownloadSdkFix> downloadFixes =
+                   findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
+                 fixable.forEach(it -> missingSdks.add(it.getSdkName()));
+
+                 ApplicationManager.getApplication().invokeLater(() -> {
+                   indicator.setText("Configuring SDKs...");
+                   configureLocalSdks(localFixes);
+                 });
+
+                 showStatus(missingSdks, localFixes, downloadFixes);
+               }
+             }
+        );
+    } else {
+      showStatus(missingSdks, Collections.emptyMap(), Collections.emptyMap());
+    }
+  }
+
+  private void showStatus(@NotNull List<String> missingSdks,
+                          @NotNull Map<UnknownSdk, LocalSdkFix> localFixes,
+                          @NotNull Map<UnknownSdk, DownloadSdkFix> downloadFixes) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      indicator.setText("Configuring SDKs...");
-      configureLocalSdks(localFixes);
+      UnknownSdkBalloonNotification
+        .getInstance(myProject)
+        .notifyFixedSdks(localFixes);
 
-      UnknownSdkBalloonNotification.getInstance(myProject).notifyFixedSdks(localFixes);
-      UnknownSdkEditorNotification.getInstance(myProject).showNotifications(unsetSdks, missingSdks, downloadFixes);
+      UnknownSdkEditorNotification
+        .getInstance(myProject)
+        .showNotifications(missingSdks.isEmpty() && downloadFixes.isEmpty(),
+                           missingSdks,
+                           downloadFixes);
+
     }, myProject.getDisposed());
   }
 
@@ -105,13 +142,15 @@ public class UnknownSdkTracker {
   /**
    * Collects all SDK usages from the project model and splits them
    * into the specified groups
-   * @param undefinedSdks all usages where SDK is not set, e.g. lack of Project or Module SDK
    * @param totallyUnknownSdks all named SDKs that are not present and where SdkType is missing or contains different values
    * @param resolvableSdks all usages where fix extension points from {@link UnknownSdkResolver#EP_NAME} are possible to apply
    */
-  private void collectAndGroupSdkUsages(@NotNull List<SdkUsage> undefinedSdks,
-                                        @NotNull List<String> totallyUnknownSdks,
+  private void collectAndGroupSdkUsages(@NotNull List<String> totallyUnknownSdks,
                                         @NotNull List<UnknownSdk> resolvableSdks) {
+    //task is executed under non-blocking ReadAction, thus must be cleared on every run
+
+    totallyUnknownSdks.clear();
+    resolvableSdks.clear();
     SetMultimap<String, String> sdkToTypes = MultimapBuilder
       .treeKeys(String.CASE_INSENSITIVE_ORDER)
       .hashSetValues()
@@ -122,7 +161,6 @@ public class UnknownSdkTracker {
       String sdkName = usage.getSdkName();
 
       if (sdkName == null) {
-        undefinedSdks.add(usage);
         continue;
       }
 
@@ -179,14 +217,14 @@ public class UnknownSdkTracker {
       downloadTracker.registerSdkDownload(sdk, task);
       downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), __ -> Disposer.dispose(lifetime));
       downloadTracker.startSdkDownloadIfNeeded(sdk);
-      registerNewSdkInJdkTable(info, sdk);
+      registerNewSdkInJdkTable(info.getSdkName(), sdk);
+      updateUnknownSdks();
     });
   }
 
   public void showSdkSelectionPopup(@Nullable String sdkName,
                                     @Nullable SdkType sdkType,
-                                    @NotNull JComponent underneathRightOfComponent,
-                                    @NotNull Consumer<? super Sdk> onSelectionMade) {
+                                    @NotNull JComponent underneathRightOfComponent) {
     ProjectSdksModel model = new ProjectSdksModel();
     SdkListModelBuilder modelBuilder = new SdkListModelBuilder(
       myProject,
@@ -206,7 +244,7 @@ public class UnknownSdkTracker {
         if (item instanceof SdkListItem.SdkItem) {
           Sdk sdk = ((SdkListItem.SdkItem)item).getSdk();
           registerNewSdkInJdkTable(sdkName, sdk);
-          onSelectionMade.consume(sdk);
+          updateUnknownSdks();
         }
       }
 
@@ -222,7 +260,9 @@ public class UnknownSdkTracker {
     }).showUnderneathToTheRightOf(underneathRightOfComponent);
   }
 
-  private static void configureLocalSdks(@NotNull Map<UnknownSdk, LocalSdkFix> localFixes) {
+  private void configureLocalSdks(@NotNull Map<UnknownSdk, LocalSdkFix> localFixes) {
+    if (localFixes.isEmpty()) return;
+
     for (Map.Entry<UnknownSdk, LocalSdkFix> e : localFixes.entrySet()) {
       UnknownSdk info = e.getKey();
       LocalSdkFix fix = e.getValue();
@@ -239,9 +279,11 @@ public class UnknownSdkTracker {
         LOG.warn("Failed to setupPaths for " + sdk + ". " + error.getMessage(), error);
       }
 
-      registerNewSdkInJdkTable(info, sdk);
+      registerNewSdkInJdkTable(info.getSdkName(), sdk);
       LOG.info("Automatically set Sdk " + info.getSdkName() + " to " + fix.getExistingSdkHome());
     }
+
+    updateUnknownSdks();
   }
 
   @NotNull
@@ -267,10 +309,6 @@ public class UnknownSdkTracker {
   @NotNull
   private static Sdk createSdkPrototype(@NotNull UnknownSdk info) {
     return ProjectJdkTable.getInstance().createSdk(info.getSdkName(), info.getSdkType());
-  }
-
-  private static void registerNewSdkInJdkTable(@NotNull UnknownSdk info, @NotNull Sdk sdk) {
-    registerNewSdkInJdkTable(info.getSdkName(), sdk);
   }
 
   private static void registerNewSdkInJdkTable(@Nullable String sdkName, @NotNull Sdk sdk) {

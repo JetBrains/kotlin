@@ -2,19 +2,16 @@
 package com.intellij.openapi.projectRoots.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.codeInsight.daemon.impl.SdkSetupNotificationProvider;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.impl.SdkUsagesCollector.SdkUsage;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.util.SmartList;
@@ -23,12 +20,13 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.Map;
+import java.util.Set;
 
 public class UnknownSdkEditorNotification implements Disposable {
-  public static final Key<List<MissingSdkNotificationPanel>> NOTIFICATIONS = Key.create("notifications added to the editor");
+  public static final Key<List<EditorNotificationPanel>> NOTIFICATIONS = Key.create("notifications added to the editor");
   private static final Key<?> EDITOR_NOTIFICATIONS_KEY = Key.create("SdkSetupNotificationNew");
 
   @NotNull
@@ -55,7 +53,7 @@ public class UnknownSdkEditorNotification implements Disposable {
       });
   }
 
-  private void setupPanel(@NotNull MissingSdkNotificationPanel panel,
+  private void setupPanel(@NotNull EditorNotificationPanel panel,
                           @NotNull String sdkName,
                           @Nullable UnknownSdk unknownSdk,
                           @Nullable DownloadSdkFix fix) {
@@ -67,7 +65,6 @@ public class UnknownSdkEditorNotification implements Disposable {
 
     if (fix != null && unknownSdk != null) {
       panel.createActionLabel("Download " + fix.getDownloadDescription(), () -> {
-        removeNotification(panel);
         UnknownSdkTracker.getInstance(myProject).applyDownloadableFix(unknownSdk, fix);
       });
     }
@@ -76,7 +73,7 @@ public class UnknownSdkEditorNotification implements Disposable {
                             () -> {
                               UnknownSdkTracker
                                 .getInstance(myProject)
-                                .showSdkSelectionPopup(sdkName, sdkType, parentJComponentOrSelf(panel), sdk -> removeNotification(panel));
+                                .showSdkSelectionPopup(sdkName, sdkType, parentJComponentOrSelf(panel));
                             }
     );
   }
@@ -91,33 +88,6 @@ public class UnknownSdkEditorNotification implements Disposable {
     return panel;
   }
 
-  private void setupPanel(@NotNull MissingSdkNotificationPanel panel,
-                          @NotNull String source,
-                          @Nullable Runnable setProjectSdk,
-                          @Nullable Consumer<Sdk> setSdk) {
-
-    panel.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
-    panel.setText("SDK is not set for " + source);
-
-    if (setProjectSdk != null) {
-      panel.createActionLabel("Use Project SDK", () -> {
-        setProjectSdk.run();
-        removeNotification(panel);
-      });
-    }
-
-    if (setSdk != null) {
-      panel.createActionLabel("Configure...", () -> {
-        UnknownSdkTracker
-          .getInstance(myProject)
-          .showSdkSelectionPopup(null, null, parentJComponentOrSelf(panel), sdk -> {
-            setSdk.accept(sdk);
-            removeNotification(panel);
-          });
-      });
-    }
-  }
-
   @Override
   public void dispose() { }
 
@@ -126,34 +96,20 @@ public class UnknownSdkEditorNotification implements Disposable {
     return ImmutableList.copyOf(myNotifications);
   }
 
-  public void showNotifications(@NotNull List<SdkUsage> unsetSdks,
+  public void showNotifications(boolean allowProjectSdkValidation,
                                 @NotNull List<String> unifiableSdkNames,
                                 @NotNull Map<UnknownSdk, DownloadSdkFix> files) {
-    if (!Registry.is("sdk.auto.use.editor.notification")) return;
-
     myNotifications.clear();
 
-    if (ApplicationManager.getApplication().isUnitTestMode() || Registry.is("sdk.auto.use.editor.notification.for.unset")) {
-      for (SdkUsage usage : unsetSdks) {
-        myNotifications.add(new SdkFixInfo() {
-          @Override
-          public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
-            setupPanel(panel, usage.getUsagePresentableText(), usage.getProjectSdkSetAction(), usage.getSdkSetAction());
-          }
-
-          @Override
-          public String toString() {
-            return "SdkFixInfo { sdkUsage: " + usage.getUsagePresentableText() + " }";
-          }
-        });
-      }
+    if (allowProjectSdkValidation) {
+      myNotifications.add(myProject.getService(SdkSetupNotificationProvider.class));
     }
 
     for (String name : unifiableSdkNames) {
-      myNotifications.add(new SdkFixInfo() {
+      myNotifications.add(new SimpleSdkFixInfo() {
         @Override
-        public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
-          setupPanel(panel, name, (UnknownSdk)null, null);
+        public void setupNotificationPanel(@NotNull EditorNotificationPanel panel) {
+          setupPanel(panel, name, null, null);
         }
 
         @Override
@@ -166,9 +122,9 @@ public class UnknownSdkEditorNotification implements Disposable {
     for (Map.Entry<UnknownSdk, DownloadSdkFix> e : files.entrySet()) {
       UnknownSdk key = e.getKey();
       DownloadSdkFix fix = e.getValue();
-      myNotifications.add(new SdkFixInfo() {
+      myNotifications.add(new SimpleSdkFixInfo() {
         @Override
-        public void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel) {
+        public void setupNotificationPanel(@NotNull EditorNotificationPanel panel) {
           setupPanel(panel, key.getSdkName(), key, fix);
         }
 
@@ -184,26 +140,10 @@ public class UnknownSdkEditorNotification implements Disposable {
     }
   }
 
-  private void removeNotification(@NotNull MissingSdkNotificationPanel expiredPanel) {
-    myNotifications.remove(expiredPanel.myInfo);
-
-    for (FileEditor editor : myFileEditorManager.getAllEditors()) {
-      List<MissingSdkNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS);
-      if (notifications == null) continue;
-
-      for (MissingSdkNotificationPanel panel : new ArrayList<>(notifications)) {
-        if (panel.myInfo.equals(expiredPanel.myInfo)) {
-          myFileEditorManager.removeTopComponent(editor, panel);
-          notifications.remove(panel);
-        }
-      }
-    }
-  }
-
   private void updateEditorNotifications(@NotNull FileEditor editor) {
     if (!editor.isValid()) return;
 
-    List<MissingSdkNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS);
+    List<EditorNotificationPanel> notifications = editor.getUserData(NOTIFICATIONS);
     if (notifications != null) {
       for (JComponent component : notifications) {
         myFileEditorManager.removeTopComponent(editor, component);
@@ -216,30 +156,37 @@ public class UnknownSdkEditorNotification implements Disposable {
     }
 
     for (SdkFixInfo info : myNotifications) {
-      MissingSdkNotificationPanel notification = new MissingSdkNotificationPanel(info);
-      notification.setProject(myProject);
-      notification.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
-      info.setupNotificationPanel(notification);
+      VirtualFile file = editor.getFile();
+      if (file == null) continue;
+
+      EditorNotificationPanel notification = info.createNotificationPanel(file, editor, myProject);
+      if (notification == null) continue;
 
       notifications.add(notification);
       myFileEditorManager.addTopComponent(editor, notification);
     }
   }
 
-  public static class MissingSdkNotificationPanel extends EditorNotificationPanel {
-    private final SdkFixInfo myInfo;
-
-    private MissingSdkNotificationPanel(@NotNull final SdkFixInfo info) {
-      myInfo = info;
-    }
-
-    @NotNull
-    public SdkFixInfo getInfo() {
-      return myInfo;
-    }
+  public interface SdkFixInfo {
+    @Nullable
+    EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file,
+                                                    @NotNull FileEditor fileEditor,
+                                                    @NotNull Project project);
   }
 
-  public interface SdkFixInfo {
-    void setupNotificationPanel(@NotNull MissingSdkNotificationPanel panel);
+  private abstract class SimpleSdkFixInfo implements SdkFixInfo {
+    protected abstract void setupNotificationPanel(@NotNull EditorNotificationPanel panel);
+
+    @NotNull
+    @Override
+    public final EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file,
+                                                                 @NotNull FileEditor fileEditor,
+                                                                 @NotNull Project project) {
+      EditorNotificationPanel notification = new EditorNotificationPanel();
+      notification.setProject(myProject);
+      notification.setProviderKey(EDITOR_NOTIFICATIONS_KEY);
+      setupNotificationPanel(notification);
+      return notification;
+    }
   }
 }
