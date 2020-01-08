@@ -77,7 +77,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.configureAdvancedJvmOptions(arguments)
 
         if (arguments.buildFile == null && !arguments.version  && !arguments.allowNoSourceFiles &&
-            (arguments.script || arguments.expressions != null || arguments.freeArgs.isEmpty())) {
+            (arguments.script || arguments.expression != null || arguments.freeArgs.isEmpty())) {
 
             // script or repl
             if (arguments.script && arguments.freeArgs.isEmpty()) {
@@ -92,7 +92,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
-            if (arguments.script || arguments.expressions != null) {
+            if (arguments.script || arguments.expression != null) {
                 val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
                     messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")

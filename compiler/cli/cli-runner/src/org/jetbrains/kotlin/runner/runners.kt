@@ -147,14 +147,11 @@ class ScriptRunner(private val path: String) : RunnerWithCompiler() {
     }
 }
 
-class ExpressionRunner(private val code: List<String>) : RunnerWithCompiler() {
+class ExpressionRunner(private val code: String) : RunnerWithCompiler() {
     override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
         val compilerArgs = ArrayList<String>().apply {
             addClasspathArgIfNeeded(classpath)
-            code.forEach {
-                add("-Xexpression")
-                add(it)
-            }
+            add("-Xexpression=$code")
             addAll(arguments)
         }
         runCompiler(compilerClasspath, compilerArgs)

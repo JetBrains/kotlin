@@ -99,7 +99,7 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::commonSources,
         K2JVMCompilerArguments::allWarningsAsErrors,
         K2JVMCompilerArguments::script,
-        K2JVMCompilerArguments::expressions,
+        K2JVMCompilerArguments::expression,
         K2JVMCompilerArguments::scriptTemplates,
         K2JVMCompilerArguments::scriptResolverEnvironment,
         K2JVMCompilerArguments::disableStandardScript,

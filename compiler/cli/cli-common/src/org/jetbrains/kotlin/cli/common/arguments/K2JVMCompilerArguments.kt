@@ -50,7 +50,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noReflect: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xexpression", description = "Evaluate the given string as a Kotlin script")
-    var expressions: Array<String>? by FreezableVar(null)
+    var expression: String? by FreezableVar(null)
 
     @Argument(
         value = "-script-templates",

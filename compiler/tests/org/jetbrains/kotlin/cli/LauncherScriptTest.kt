@@ -149,4 +149,16 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
                 workDirectory = tmpdir
         )
     }
+
+    fun testRunnerExpression() {
+        runProcess(
+            "kotlin",
+            "-e",
+            "val x = 2; (args + listOf(2,1).map { (it * x).toString() }).joinToString()",
+            "--",
+            "a",
+            "b",
+            expectedStdout = "a, b, 4, 2\n"
+        )
+    }
 }
