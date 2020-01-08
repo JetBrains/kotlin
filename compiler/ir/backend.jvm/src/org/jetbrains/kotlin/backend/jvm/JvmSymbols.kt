@@ -221,7 +221,7 @@ class JvmSymbols(
                 addValueParameter("completion", continuationType.makeNullable())
             }
             klass.addFunction("invokeSuspend", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-                addValueParameter("result", resultClassStub.typeWith(irBuiltIns.anyNType))
+                addValueParameter("\$result", resultClassStub.typeWith(irBuiltIns.anyNType))
             }
         }
 
@@ -241,7 +241,7 @@ class JvmSymbols(
             addValueParameter("completion", continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
         }
         klass.addFunction("invokeSuspend", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-            addValueParameter("result", resultClassStub.typeWith(irBuiltIns.anyNType))
+            addValueParameter("\$result", resultClassStub.typeWith(irBuiltIns.anyNType))
         }
         klass.addFunction("create", continuationClass.typeWith(irBuiltIns.unitType)).apply {
             addValueParameter("completion", continuationClass.typeWith(irBuiltIns.nothingType))
