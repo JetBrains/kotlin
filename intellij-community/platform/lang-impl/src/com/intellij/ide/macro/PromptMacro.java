@@ -47,6 +47,6 @@ public final class PromptMacro extends PromptingMacro implements SecondQueueExpa
 
   @Override
   public void cachePreview(@NotNull DataContext dataContext) {
-    myCachedPreview = IdeBundle.message("macro.prompt.preview");
+    myCachedPreview = "<params>";
   }
 }
