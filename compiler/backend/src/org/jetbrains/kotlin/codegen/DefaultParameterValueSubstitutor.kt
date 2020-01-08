@@ -150,7 +150,11 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             FunctionCodegen.getThrownExceptions(functionDescriptor, typeMapper)
         )
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(functionDescriptor, signature.returnType)
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(
+            functionDescriptor,
+            signature.returnType,
+            functionDescriptor.returnType
+        )
 
         if (state.classBuilderMode == ClassBuilderMode.KAPT3) {
             mv.visitAnnotation(ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS, false)

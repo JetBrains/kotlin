@@ -14,6 +14,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.util.Textifier
+import org.jetbrains.org.objectweb.asm.util.TraceFieldVisitor
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.File
 
@@ -75,7 +76,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
             appendln(" {")
 
-            fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it).withMargin() }
+            fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it, showTypeAnnotations).withMargin() }
 
             if (fields.isNotEmpty()) {
                 appendln().appendln()
@@ -90,11 +91,25 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         }
     }
 
-    private fun renderField(field: FieldNode) = buildString {
+    private fun renderField(field: FieldNode, showTypeAnnotations: Boolean) = buildString {
         renderVisibilityModifiers(field.access)
         renderModalityModifiers(field.access)
         append(Type.getType(field.desc).className).append(' ')
         append(field.name)
+
+        if (showTypeAnnotations) {
+            val textifier = Textifier()
+            val visitor = TraceFieldVisitor(textifier)
+            field.visibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, true))
+            }
+            field.invisibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, false))
+            }
+            textifier.getText().takeIf { it.isNotEmpty() }?.let {
+                append("\n${textifier.getText().joinToString("").trimEnd()}")
+            }
+        }
     }
 
     private fun renderMethod(

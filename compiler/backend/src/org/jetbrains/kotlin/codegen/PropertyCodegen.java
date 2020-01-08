@@ -270,7 +270,7 @@ public class PropertyCodegen {
         PropertyGetterDescriptor getter = descriptor.getGetter();
         assert getter != null : "Annotation property should have a getter: " + descriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, getter, asmMethod);
-        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(getter, asmMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(getter, asmMethod.getReturnType(), null);
 
         KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
         if (defaultValue != null) {
@@ -417,7 +417,8 @@ public class PropertyCodegen {
             );
 
             if (annotatedField != null) {
-                AnnotationCodegen.forField(fv, memberCodegen, state).genAnnotations(annotatedField, type);
+                AnnotationCodegen.forField(fv, memberCodegen, state)
+                        .genAnnotations(annotatedField, type, propertyDescriptor.getType());
             }
         }
     }

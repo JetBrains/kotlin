@@ -174,6 +174,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/notYetSupported.kt");
         }
 
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/property.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple.kt");

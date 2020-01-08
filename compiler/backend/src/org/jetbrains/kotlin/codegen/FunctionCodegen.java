@@ -303,7 +303,9 @@ public class FunctionCodegen {
             annotationsOwner = functionDescriptor;
         }
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(annotationsOwner, asmMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state)
+                .genAnnotations(annotationsOwner, asmMethod.getReturnType(), functionDescriptor.getReturnType());
+
         generateParameterAnnotations(annotationsOwner, mv, jvmSignature, memberCodegen, state);
     }
 
@@ -544,13 +546,9 @@ public class FunctionCodegen {
                 //noinspection ConstantConditions
                 int parameterIndex = i - syntheticParameterCount;
                 AnnotationCodegen.forParameter(parameterIndex, mv, innerClassConsumer, state)
-                        .genAnnotations(annotated, parameterSignature.getAsmType());
-
-                AnnotationCodegen.writeTypeAnnotations(mv, state, parameterIndex, annotated.getType(), innerClassConsumer);
+                        .genAnnotations(annotated, parameterSignature.getAsmType(), annotated.getReturnType());
             }
         }
-
-        AnnotationCodegen.writeTypeAnnotations(mv, state, -1, functionDescriptor.getReturnType(), innerClassConsumer);
     }
 
     @Nullable

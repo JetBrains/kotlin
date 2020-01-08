@@ -1,0 +1,121 @@
+public final class foo/Kotlin$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final java.lang.String getCompanionVarProperty()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final java.lang.String getJvmStatic()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public static void jvmStatic$annotations()
+
+    public final void setCompanionVarProperty(java.lang.String <set-?>)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+
+    public final void setJvmStatic(java.lang.String <set-?>)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public final static foo.Kotlin$Companion Companion
+
+    private static java.lang.String companionVarProperty
+      @Lfoo/TypeAnn;([name="1"]) : FIELD, null
+      @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
+
+    private java.lang.String customSetter
+      @Lfoo/TypeAnn;([name="1"]) : FIELD, null
+      @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
+
+    public java.lang.String jvmField
+      @Lfoo/TypeAnn;([name="1"]) : FIELD, null
+      @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
+
+    private static java.lang.String jvmStatic
+      @Lfoo/TypeAnn;([name="1"]) : FIELD, null
+      @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
+
+    public java.lang.String lateinitProp
+      @Lfoo/TypeAnn;([name="1"]) : FIELD, null
+      @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
+
+    private final java.lang.String valProp
+      @Lfoo/TypeAnn;([name="1"]) : FIELD, null
+      @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
+
+    private java.lang.String varProp
+      @Lfoo/TypeAnn;([name="1"]) : FIELD, null
+      @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
+
+    static void <clinit>()
+
+    public void <init>()
+
+    public final static java.lang.String access$getCompanionVarProperty$cp()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final static java.lang.String access$getJvmStatic$cp()
+
+    public final static void access$setCompanionVarProperty$cp(java.lang.String <set-?>)
+
+    public final static void access$setJvmStatic$cp(java.lang.String <set-?>)
+
+    public final int getAnnotatedGetter()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final java.lang.String getCustomSetter()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final static java.lang.String getJvmStatic()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final java.lang.String getLateinitProp()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final int getUnannotatedGetter()
+
+    public final java.lang.String getValProp()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final java.lang.String getVarProp()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final void setCustomSetter(java.lang.String field)
+
+    public final static void setJvmStatic(java.lang.String <set-?>)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+
+    public final void setLateinitProp(java.lang.String <set-?>)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+
+    public final void setVarProp(java.lang.String <set-?>)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}

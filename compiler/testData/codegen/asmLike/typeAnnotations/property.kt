@@ -37,7 +37,16 @@ class Kotlin {
 
     lateinit var lateinitProp: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String
 
+    val annotatedGetter: Int
+        get(): @TypeAnn("1") @TypeAnnBinary @TypeAnnSource  Int = 123
+
+    val unannotatedGetter: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource Int
+        get(): Int = 123
+
     companion object {
         var companionVarProperty: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String = "123"
+
+        @JvmStatic
+        var jvmStatic: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String = "123"
     }
 }
