@@ -193,5 +193,10 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
         public void testStaticNested() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/staticNested.kt");
         }
+
+        @TestMetadata("syntheticAccessors.kt")
+        public void testSyntheticAccessors() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/syntheticAccessors.kt");
+        }
     }
 }

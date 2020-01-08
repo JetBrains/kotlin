@@ -18,18 +18,15 @@ annotation class TypeAnnSource
 
 class Kotlin {
 
-    fun foo(s: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String) {
-    }
-
-    fun foo2(): @TypeAnn("2") @TypeAnnBinary @TypeAnnSource String {
+    private fun foo(s: @TypeAnn("1") @TypeAnnBinary @TypeAnnSource String): @TypeAnn("2") @TypeAnnBinary @TypeAnnSource String {
         return "OK"
     }
 
-    fun fooArray(s: Array<@TypeAnn("3") @TypeAnnBinary @TypeAnnSource String>) {
-    }
+    inner class A {
 
-    fun fooArray2(): Array<@TypeAnn("4") @TypeAnnBinary @TypeAnnSource String>? {
-        return null
+        fun fooArray2() {
+            foo("123")
+        }
     }
 
 }

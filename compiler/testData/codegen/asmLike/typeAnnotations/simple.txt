@@ -1,19 +1,7 @@
-final class foo/Kotlin$fooArray2$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    final foo.Kotlin this$0
-
-    void <init>(foo.Kotlin p0)
-
-    public java.lang.Object invoke()
-
-    public final void invoke()
-}
-
 public final class foo/Kotlin : java/lang/Object {
     public void <init>()
 
-    public final static void access$foo(foo.Kotlin $this, java.lang.String s)
-
-    private final void foo(java.lang.String s)
+    public final void foo(java.lang.String s)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
 

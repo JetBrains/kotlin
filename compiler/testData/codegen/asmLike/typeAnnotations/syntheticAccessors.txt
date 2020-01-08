@@ -1,0 +1,31 @@
+public final class foo/Kotlin$A : java/lang/Object {
+    final foo.Kotlin this$0
+
+    public void <init>(foo.Kotlin $outer)
+
+    public final void fooArray2()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final static java.lang.String access$foo(foo.Kotlin $this, java.lang.String s)
+
+    private final java.lang.String foo(java.lang.String s)
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}
