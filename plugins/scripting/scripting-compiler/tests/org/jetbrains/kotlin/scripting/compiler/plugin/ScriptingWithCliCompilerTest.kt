@@ -60,6 +60,16 @@ class ScriptingWithCliCompilerTest {
         )
     }
 
+    @Test
+    fun testExpressionWithComma() {
+        runWithK2JVMCompiler(
+            arrayOf(
+                "-Xexpression",
+                "listOf(1,2)"
+            ),
+            listOf("\\[1, 2\\]")
+        )
+    }
 
     private fun getMainKtsClassPath(): List<File> {
         return listOf(

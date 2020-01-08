@@ -47,6 +47,6 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
     }
 
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean =
-        arguments is K2JVMCompilerArguments && (arguments.script || arguments.expressions != null)
+        arguments is K2JVMCompilerArguments && (arguments.script || arguments.expression != null)
 }
 

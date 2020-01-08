@@ -230,6 +230,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/explicitlyDisabledSamConversions.args");
         }
 
+        @TestMetadata("expression1.args")
+        public void testExpression1() throws Exception {
+            runTest("compiler/testData/cli/jvm/expression1.args");
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
