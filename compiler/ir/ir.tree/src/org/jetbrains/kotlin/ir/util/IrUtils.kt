@@ -583,7 +583,16 @@ private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
     argumentsAsReceivers: Boolean = false
 ) {
     copyTypeArgumentsFrom(src)
+    copyValueArgumentsFrom(src, srcFunction, destFunction, receiversAsArguments, argumentsAsReceivers)
+}
 
+fun IrMemberAccessExpression.copyValueArgumentsFrom(
+    src: IrMemberAccessExpression,
+    srcFunction: IrFunction,
+    destFunction: IrFunction,
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
+) {
     var destValueArgumentIndex = 0
     var srcValueArgumentIndex = 0
 

@@ -209,3 +209,51 @@ fun IrBody.replaceThisByStaticReference(
             return super.visitGetValue(expression)
         }
     }, null)
+
+
+// TODO: Interface Parameters
+//
+// The call sites using this function share that they are calling an
+// interface method that has been moved to a DefaultImpls class. In that
+// process, the type parameters of the interface are introduced as the first
+// parameters to the method. When rewriting calls to point to the new method,
+// the instantiation `S,T` of the interface type `I<S,T>` for the _calling_
+// class `C` gives the proper instantiation fo arguments.
+//
+// We essentially want to answer the type query:
+//
+// C <: I<?S,?T>
+//
+// And put that instantiation as the first type parameters to the call, filling
+// in whatever type arguments are provided at call the call site for the rest.
+// The front-end type checking guarantees this is well-formed.
+//
+// For now, we put `Any?`.
+fun createPlaceholderAnyNType(irBuiltIns: IrBuiltIns): IrType =
+    irBuiltIns.anyNType
+
+fun createDelegatingCallWithPlaceholderTypeArguments(existingCall: IrCall, redirectTarget: IrFunction, irBuiltIns: IrBuiltIns): IrCall =
+    IrCallImpl(
+        existingCall.startOffset,
+        existingCall.endOffset,
+        existingCall.type,
+        redirectTarget.symbol,
+        typeArgumentsCount = redirectTarget.typeParameters.size,
+        valueArgumentsCount = redirectTarget.valueParameters.size,
+        origin = existingCall.origin
+    ).apply {
+        copyValueArgumentsFrom(
+            existingCall,
+            existingCall.symbol.owner,
+            this.symbol.owner,
+            receiversAsArguments = true,
+            argumentsAsReceivers = false
+        )
+        var offset = 0
+        existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
+            putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))
+        }
+        for (i in 0 until (existingCall.typeArgumentsCount)) {
+            putTypeArgument(i + offset, existingCall.getTypeArgument(i))
+        }
+    }
