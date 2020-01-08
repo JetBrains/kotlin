@@ -13,6 +13,8 @@ import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.compiler.util.InspectionValidator;
 import com.intellij.openapi.compiler.util.InspectionValidatorWrapper;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
@@ -80,23 +82,42 @@ public class CompilerManagerImpl extends CompilerManager {
   public CompilerManagerImpl(@NotNull Project project) {
     myProject = project;
     myEventPublisher = project.getMessageBus().syncPublisher(CompilerTopics.COMPILATION_STATUS);
+    Compiler.EP_NAME.addExtensionPointListener(project, new ExtensionPointListener<Compiler>() {
+      @Override
+      public void extensionAdded(@NotNull Compiler compiler, @NotNull PluginDescriptor pluginDescriptor) {
+        addCompiler(compiler);
+      }
 
+      @Override
+      public void extensionRemoved(@NotNull Compiler compiler, @NotNull PluginDescriptor pluginDescriptor) {
+        removeCompiler(compiler);
+      }
+    }, project);
+    InspectionValidator.EP_NAME.addExtensionPointListener(project, new ExtensionPointListener<InspectionValidator>() {
+      @Override
+      public void extensionAdded(@NotNull InspectionValidator validator, @NotNull PluginDescriptor pluginDescriptor) {
+        addInspectionValidator(project, validator);
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull InspectionValidator validator, @NotNull PluginDescriptor pluginDescriptor) {
+        removeInspectionValidator(validator);
+      }
+    }, project);
     // predefined compilers
     for (Compiler compiler : Compiler.EP_NAME.getExtensions(myProject)) {
       addCompiler(compiler);
     }
     for (CompilerFactory factory : CompilerFactory.EP_NAME.getExtensionList(project)) {
       Compiler[] compilers = factory.createCompilers(this);
-      for (Compiler compiler : compilers) {
-        addCompiler(compiler);
+      if (compilers != null) {
+        for (Compiler compiler : compilers) {
+          addCompiler(compiler);
+        }
       }
     }
 
-    for (InspectionValidator validator : InspectionValidator.EP_NAME.getExtensionList(project)) {
-      addCompiler(
-        new InspectionValidatorWrapper(this, InspectionManager.getInstance(project), InspectionProjectProfileManager.getInstance(project),
-                                       PsiDocumentManager.getInstance(project), PsiManager.getInstance(project), validator));
-    }
+    InspectionValidator.EP_NAME.extensions(project).forEach(validator -> addInspectionValidator(project, validator));
     addCompilableFileType(StdFileTypes.JAVA);
 
     final File projectGeneratedSrcRoot = CompilerPaths.getGeneratedDataDirectory(project);
@@ -114,6 +135,23 @@ public class CompilerManagerImpl extends CompilerManager {
         FileUtil.delete(CompilerPaths.getCompilerSystemDirectory(project));
       }
     });
+  }
+
+  private void addInspectionValidator(@NotNull Project project, InspectionValidator validator) {
+    addCompiler(new InspectionValidatorWrapper(
+      this, InspectionManager.getInstance(project), InspectionProjectProfileManager.getInstance(project), PsiDocumentManager.getInstance(project), PsiManager.getInstance(project), validator
+    ));
+  }
+
+  public void removeInspectionValidator(InspectionValidator validator) {
+    for (Compiler compiler : myCompilers) {
+      if (compiler instanceof InspectionValidatorWrapper) {
+        if (((InspectionValidatorWrapper)compiler).getValidator() == validator) {
+          removeCompiler(compiler);
+          break;
+        }
+      }
+    }
   }
 
   // returns true if all javacs terminated
@@ -158,9 +196,12 @@ public class CompilerManagerImpl extends CompilerManager {
 
   @Override
   public final void removeCompiler(@NotNull Compiler compiler) {
-    for (List<CompileTask> tasks : Arrays.asList(myBeforeTasks, myAfterTasks)) {
-      tasks.removeIf(
-        task -> task instanceof FileProcessingCompilerAdapterTask && ((FileProcessingCompilerAdapterTask)task).getCompiler() == compiler);
+    if (myCompilers.remove(compiler)) {
+      for (List<CompileTask> tasks : Arrays.asList(myBeforeTasks, myAfterTasks)) {
+        tasks.removeIf(
+          task -> task instanceof FileProcessingCompilerAdapterTask && ((FileProcessingCompilerAdapterTask)task).getCompiler() == compiler
+        );
+      }
     }
   }
 

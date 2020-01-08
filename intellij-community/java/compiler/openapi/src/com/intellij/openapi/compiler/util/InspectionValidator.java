@@ -23,7 +23,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -39,8 +39,7 @@ import java.util.Map;
  * @author peter
  */
 public abstract class InspectionValidator {
-  public static final ExtensionPointName<InspectionValidator> EP_NAME =
-    ExtensionPointName.create("com.intellij.compiler.inspectionValidator");
+  public static final ProjectExtensionPointName<InspectionValidator> EP_NAME = new ProjectExtensionPointName<>("com.intellij.compiler.inspectionValidator");
   private final String myDescription;
   private final String myProgressIndicatorText;
 

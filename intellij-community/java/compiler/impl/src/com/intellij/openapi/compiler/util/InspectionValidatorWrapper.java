@@ -78,6 +78,10 @@ public class InspectionValidatorWrapper implements Validator {
     myValidator = validator;
   }
 
+  public InspectionValidator getValidator() {
+    return myValidator;
+  }
+
   public static boolean isCompilationThread() {
     return ourCompilationThreads.get().booleanValue();
   }
