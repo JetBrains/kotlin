@@ -48,9 +48,6 @@ public class SequentialModalProgressTask extends Task.Modal {
     catch (Exception e) {
       LOG.info("Unexpected exception occurred during processing sequential task '" + myTitle + "'", e);
     }
-    finally {
-      indicator.stop();
-    }
   }
 
   public void doRun(@NotNull ProgressIndicator indicator) {
