@@ -1,0 +1,3 @@
+package
+
+public fun test(/*0*/ mh: java.lang.invoke.MethodHandle): kotlin.Unit

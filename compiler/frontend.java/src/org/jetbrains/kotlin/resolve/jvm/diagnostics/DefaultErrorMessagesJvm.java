@@ -152,6 +152,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
         MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
         MAP.put(TAILREC_WITH_DEFAULTS, "Computation order of non-constant default arguments in tail-recursive functions will change in 1.4. See KT-31540 for more details");
+
+        String spreadOnPolymorphicSignature = "Spread operator is prohibited for arguments to signature-polymorphic calls";
+        MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL, spreadOnPolymorphicSignature);
+        MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR, spreadOnPolymorphicSignature);
     }
 
     @NotNull

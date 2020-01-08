@@ -127,6 +127,8 @@ enum class LanguageFeature(
     ProperIeee754Comparisons(KOTLIN_1_4, kind = BUG_FIX),
     FunctionalInterfaceConversion(KOTLIN_1_4, kind = UNSTABLE_FEATURE),
 
+    ProhibitSpreadOnSignaturePolymorphicCall(KOTLIN_1_5, kind = BUG_FIX),
+
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
 

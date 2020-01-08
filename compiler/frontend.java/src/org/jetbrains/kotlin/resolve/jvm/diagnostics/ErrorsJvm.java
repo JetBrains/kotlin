@@ -134,6 +134,9 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtNamedFunction> TAILREC_WITH_DEFAULTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 
+    DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

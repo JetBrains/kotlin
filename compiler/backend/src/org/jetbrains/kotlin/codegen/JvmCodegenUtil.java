@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
@@ -368,7 +368,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isPolymorphicSignature(@NotNull FunctionDescriptor descriptor) {
-        return descriptor.getAnnotations().hasAnnotation(new FqName("java.lang.invoke.MethodHandle.PolymorphicSignature"));
+        return descriptor.getAnnotations().hasAnnotation(PolymorphicSignatureCallChecker.polymorphicSignatureFqName);
     }
 
     @NotNull
