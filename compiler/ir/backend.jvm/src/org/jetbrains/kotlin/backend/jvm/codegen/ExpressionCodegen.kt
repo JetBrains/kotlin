@@ -482,7 +482,7 @@ class ExpressionCodegen(
             irFunction.shouldNotContainSuspendMarkers() -> false
             // Noinline function are always suspension points
             !owner.isInline -> true
-            // The suspend intrinsics are, albeit inline, are also suspension points
+            // The suspend intrinsics are, albeit inline, also suspension points
             owner.fqNameForIrSerialization == FqName("kotlin.coroutines.intrinsics.IntrinsicsKt.suspendCoroutineUninterceptedOrReturn") -> true
             // Inside $$forInline functions crossinline calls are (usually) not suspension points, otherwise, flow will be pessimized
             (dispatchReceiver as? IrGetField)?.symbol?.owner?.origin ==
@@ -656,6 +656,13 @@ class ExpressionCodegen(
         val returnType = if (owner == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(owner)
         val afterReturnLabel = Label()
         expression.value.accept(this, data).coerce(returnType, owner.returnType).materialize()
+        // We replaced COERTION_TO_UNIT with IrReturn during TailCallOptimizationLowering.
+        // Generate POP GETSTATIC kotlin/Unit.INSTANCE now.
+        // Otherwise, tail-call optimization will not work. See tailSuspendUnitFun.kt test.
+        if (expression in context.suspendTailCallsWithUnitReplacement) {
+            mv.pop()
+            mv.getstatic("kotlin/Unit", "INSTANCE", "Lkotlin/Unit;")
+        }
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
         expression.markLineNumber(startOffset = true)
         if (isNonLocalReturn) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
+import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
@@ -43,7 +45,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal val addContinuationPhase = makeIrFilePhase(
     ::AddContinuationLowering,
     "AddContinuation",
-    "Add continuation classes to suspend functions and transform suspend lambdas into continuations"
+    "Add continuation classes to suspend functions and transform suspend lambdas into continuations",
+    prerequisite = setOf(localDeclarationsPhase, tailCallOptimizationPhase)
 )
 
 private class AddContinuationLowering(private val context: JvmBackendContext) : FileLoweringPass {
