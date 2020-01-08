@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -378,6 +379,10 @@ fun IrFunction.isFakeOverriddenFromAny(): Boolean {
 }
 
 fun IrCall.isSuperToAny() = superQualifierSymbol?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false
+
+
+fun IrDeclaration.hasInterfaceParent() =
+    parent.safeAs<IrClass>()?.isInterface == true
 
 fun IrDeclaration.isEffectivelyExternal(): Boolean {
 

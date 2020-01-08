@@ -289,7 +289,7 @@ private val jvmFilePhases =
         defaultArgumentInjectorPhase then
 
         interfacePhase then
-        interfaceDelegationPhase then
+        inheritedDefaultMethodsOnClassesPhase then
         interfaceSuperCallsPhase then
         interfaceDefaultCallsPhase then
         interfaceObjectCallsPhase then
