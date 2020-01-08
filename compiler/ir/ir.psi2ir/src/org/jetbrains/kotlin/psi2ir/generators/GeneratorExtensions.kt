@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
 open class GeneratorExtensions : StubGeneratorExtensions() {
@@ -34,6 +32,8 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
     }
 
     open fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? = null
+
+    open fun computeParameterName(descriptor: ParameterDescriptor): Name = descriptor.name
 
     open val enhancedNullability: EnhancedNullability
         get() = EnhancedNullability

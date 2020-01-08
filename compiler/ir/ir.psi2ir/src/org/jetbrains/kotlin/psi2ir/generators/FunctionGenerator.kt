@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -318,14 +319,26 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrValueParameter =
         declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement)
 
-    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement) =
-        context.symbolTable.declareValueParameter(
-            ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
-            ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
-            IrDeclarationOrigin.DEFINED,
-            descriptor, descriptor.type.toIrType(),
-            (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
-        )
+    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
+        val valueParameterDescriptor = descriptor.safeAs<ValueParameterDescriptor>()
+        val origin = IrDeclarationOrigin.DEFINED
+        val startOffset = ktElement?.pureStartOffset ?: irOwnerElement.startOffset
+        val endOffset = ktElement?.pureEndOffset ?: irOwnerElement.endOffset
+        val index = valueParameterDescriptor?.index ?: -1
+        val varargElementIrType = valueParameterDescriptor?.varargElementType?.toIrType()
+        val type = descriptor.type.toIrType()
+        return context.symbolTable.declareValueParameter(
+            startOffset, endOffset, origin, descriptor, type, varargElementIrType
+        ) { symbol ->
+            IrValueParameterImpl(
+                startOffset, endOffset, origin, symbol,
+                context.extensions.computeParameterName(descriptor),
+                index, type, varargElementIrType,
+                valueParameterDescriptor?.isCrossinline ?: false,
+                valueParameterDescriptor?.isNoinline ?: false
+            )
+        }
+    }
 
     private fun generateDefaultAnnotationParameterValue(
         valueExpression: KtExpression,

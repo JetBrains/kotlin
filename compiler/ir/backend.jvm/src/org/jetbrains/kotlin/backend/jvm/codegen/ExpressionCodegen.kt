@@ -291,10 +291,6 @@ class ExpressionCodegen(
     }
 
     private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label, endLabel: Label, isReceiver: Boolean) {
-        // TODO: old code has a special treatment for destructuring lambda parameters.
-        // There is no (easy) way to reproduce it with IR structures.
-        // Does not show up in tests, but might come to bite us at some point.
-
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {

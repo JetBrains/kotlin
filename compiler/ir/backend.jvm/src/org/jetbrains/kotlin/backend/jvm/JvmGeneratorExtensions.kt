@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.codegen.SamType
+import org.jetbrains.kotlin.codegen.getNameForDestructuredParameterOrNull
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -20,7 +21,11 @@ import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -29,6 +34,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : GeneratorExtensions() {
     val classNameOverride = mutableMapOf<IrClass, JvmClassName>()
@@ -73,6 +79,17 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
             descriptor.visibility
         else
             null
+
+    override fun computeParameterName(descriptor: ParameterDescriptor): Name {
+        // Consistent with naming on old (non-IR) backend; see FunctionCodegen.java.
+        if (descriptor is ValueParameterDescriptor) {
+            getNameForDestructuredParameterOrNull(descriptor)?.let { return Name.identifier(it) }
+            if (DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)?.safeAs<KtParameter>()?.isSingleUnderscore == true) {
+                return Name.identifier("\$noName_${descriptor.index}")
+            }
+        }
+        return descriptor.name
+    }
 
     override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? =
         if (descriptor is JavaCallableMemberDescriptor || descriptor is JavaClassDescriptor)
