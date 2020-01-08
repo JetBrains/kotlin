@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -517,8 +518,12 @@ internal object KotlinConverter {
                             val lightMethod = LightClassUtil.getLightClassMethod(original)
                             if (lightMethod != null)
                                 convertDeclaration(lightMethod, givenParent, expectedTypes)
-                            else
-                                KotlinUMethodWithFakeLightDelegate(original, givenParent)
+                            else {
+                                val ktLightClass = original.containingClassOrObject?.toLightClass()
+                                    ?: original.containingKtFile.findFacadeClass()
+                                    ?: return null
+                                KotlinUMethodWithFakeLightDelegate(original, ktLightClass, givenParent)
+                            }
                         }
                     }
 
