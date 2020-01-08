@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "KAssert.h"
+#include "KString.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Porting.h"
@@ -174,6 +175,17 @@ RUNTIME_USED const char* Konan_DebugGetFieldName(KRef obj, int index) {
     return nullptr;
 
   return extendedTypeInfo->fieldNames_[index];
+}
+
+RUNTIME_USED const char* Konan_DebugGetTypeName(KRef obj) {
+  if (obj == nullptr)
+    return nullptr;
+
+  auto type_info = obj->type_info();
+  if (type_info == nullptr)
+    return "<unknown>";
+
+  return CreateCStringFromString(type_info->relativeName_);
 }
 
 }  // extern "C"

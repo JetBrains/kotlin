@@ -60,6 +60,9 @@ RUNTIME_USED void* Konan_DebugGetFieldAddress(KRef obj, int index);
 // Compute address of field or an array element at the index, or null, if incorrect.
 RUNTIME_USED const char* Konan_DebugGetFieldName(KRef obj, int index);
 
+// Returns name of type.
+RUNTIME_USED const char* Konan_DebugGetTypeName(KRef obj);
+
 #ifdef __cplusplus
 }
 #endif
