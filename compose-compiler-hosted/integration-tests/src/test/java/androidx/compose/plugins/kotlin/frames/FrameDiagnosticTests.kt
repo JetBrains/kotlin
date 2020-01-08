@@ -53,4 +53,19 @@ class FrameDiagnosticTests : AbstractComposeDiagnosticsTest() {
         }
         """
     )
+
+    fun testModel_Report_Nested_Inheritance() = doTest(
+        """
+        import androidx.compose.Model
+
+        open class NonModel { }
+
+        class Tests {
+            @Model
+            class <!UNSUPPORTED_MODEL_INHERITANCE!>MyModel<!> : NonModel() {
+              var strValue = "default"
+            }
+        }
+        """
+    )
 }

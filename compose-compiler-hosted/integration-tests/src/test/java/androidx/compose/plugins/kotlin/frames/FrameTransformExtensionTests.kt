@@ -309,6 +309,33 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
         }
     """)
 
+    fun testModel_NestedClass() = testFile("""
+        import androidx.compose.Model
+
+        class Test {
+          @Model
+          class MyModel {
+            var value: String = "default"
+          }
+
+          fun test() {
+            val instance = frame { MyModel() }
+            val frame1 = suspended {
+              instance.value = "new value"
+            }
+            frame {
+              instance.value.expectEqual("default")
+            }
+            restored(frame1) {
+              instance.value.expectEqual("new value")
+            }
+            frame {
+              instance.value.expectEqual("new value")
+            }
+          }
+        }
+    """)
+
     override fun helperFiles(): List<KtFile> = listOf(sourceFile("Helpers.kt",
         HELPERS
     ))
@@ -349,11 +376,11 @@ const val HELPERS = """
     }
 
     fun Any.expectEqual(expected: Any) {
-      expect(this, expected)
+      expect(expected, this)
     }
 
     fun expect(expected: Any, received: Any) {
       if (expected != received) {
-        throw Exception("Expected ${'$'}expected but received ${'$'}received")
+        throw Exception("Expected \"${'$'}expected\" but received \"${'$'}received\"")
       }
     }"""
