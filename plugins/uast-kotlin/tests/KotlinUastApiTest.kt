@@ -595,6 +595,26 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
+    @Test
+    fun testReifiedReturnTypes() {
+        doTest("ReifiedReturnType") { _, file ->
+            val methods = file.classes.flatMap { it.methods.asIterable() }
+            assertEquals("""
+                function1 -> PsiType:void
+                function2 -> PsiType:T
+                function3 -> PsiType:void
+                function4 -> PsiType:T
+                function5 -> PsiType:int
+                function6 -> PsiType:T
+                function7 -> PsiType:T
+                function8 -> PsiType:T
+                function9 -> PsiType:T
+                function10 -> PsiType:T
+                function11 -> PsiType:T
+            """.trimIndent(), methods.joinToString("\n") { m -> m.name + " -> " + m.returnType.toString() })
+        }
+    }
+
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =

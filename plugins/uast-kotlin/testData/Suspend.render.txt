@@ -11,7 +11,7 @@ public final class Context {
         return suspendPrivate()
     }
     public fun Context() = UastEmptyExpression
-    fun suspendPrivate() {
+    fun suspendPrivate() : int {
         return inner()
     }
 }
