@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CREATE_METHOD_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -218,10 +222,10 @@ class JvmSymbols(
             val continuationType = continuationClass.typeWith(irBuiltIns.anyNType)
             klass.superTypes += continuationType
             klass.addConstructor().apply {
-                addValueParameter("completion", continuationType.makeNullable())
+                addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType.makeNullable())
             }
-            klass.addFunction("invokeSuspend", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-                addValueParameter("result", resultClassStub.typeWith(irBuiltIns.anyNType))
+            klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT).apply {
+                addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
             }
         }
 
@@ -238,17 +242,17 @@ class JvmSymbols(
         klass.superTypes += suspendFunctionInterface.defaultType
         klass.addConstructor().apply {
             addValueParameter("arity", irBuiltIns.intType)
-            addValueParameter("completion", continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
+            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
         }
-        klass.addFunction("invokeSuspend", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-            addValueParameter("result", resultClassStub.typeWith(irBuiltIns.anyNType))
+        klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT).apply {
+            addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
         }
-        klass.addFunction("create", continuationClass.typeWith(irBuiltIns.unitType)).apply {
-            addValueParameter("completion", continuationClass.typeWith(irBuiltIns.nothingType))
+        klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType)).apply {
+            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
         }
-        klass.addFunction("create", continuationClass.typeWith(irBuiltIns.unitType)).apply {
+        klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType)).apply {
             addValueParameter("value", irBuiltIns.anyNType)
-            addValueParameter("completion", continuationClass.typeWith(irBuiltIns.nothingType))
+            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
         }
     }
 
