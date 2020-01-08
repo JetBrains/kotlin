@@ -902,6 +902,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("enumFields.kt")
+        public void testEnumFields() throws Exception {
+            runTest("compiler/testData/writeFlags/property/enumFields.kt");
+        }
+
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

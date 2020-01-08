@@ -257,7 +257,6 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             val irValuesInitializer = createSyntheticValuesFieldInitializerExpression()
 
             val descriptor = WrappedFieldDescriptor()
-            // TODO: mark ACC_SYNTHETIC
             return IrFieldImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
                 IrFieldSymbolImpl(descriptor),

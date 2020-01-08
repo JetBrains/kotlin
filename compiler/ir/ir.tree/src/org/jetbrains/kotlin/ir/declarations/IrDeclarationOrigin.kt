@@ -49,7 +49,7 @@ interface IrDeclarationOrigin {
     object BRIDGE_SPECIAL: IrDeclarationOriginImpl("BRIDGE_SPECIAL")
 
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
-    object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES")
+    object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES", isSynthetic = true)
     object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
 
     val isSynthetic: Boolean get() = false
