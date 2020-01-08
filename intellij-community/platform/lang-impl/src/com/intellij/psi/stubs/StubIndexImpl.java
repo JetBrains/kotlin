@@ -68,7 +68,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     private final TObjectIntHashMap<ID<?, ?>> myIndexIdToVersionMap = new TObjectIntHashMap<>();
   }
 
-  private final Map<StubIndexKey<?, ?>, CachedValue<Map<CompositeKey, StubIdList>>> myCachedStubIds = FactoryMap.createMap(k -> {
+  private final Map<StubIndexKey<?, ?>, CachedValue<Map<CompositeKey<?>, StubIdList>>> myCachedStubIds = FactoryMap.createMap(k -> {
     UpdatableIndex<Integer, SerializedStubTree, FileContent> index = getStubUpdatingIndex();
     ModificationTracker tracker = index::getModificationStamp;
     return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(ContainerUtil.newConcurrentMap(), tracker));
@@ -99,11 +99,12 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   @NotNull
-  public static <K, I> FileBasedIndexExtension<K, Void> wrapStubIndexExtension(StubIndexExtension<K, ?> extension) {
+  public static <K> FileBasedIndexExtension<K, Void> wrapStubIndexExtension(StubIndexExtension<K, ?> extension) {
     return new FileBasedIndexExtension<K, Void>() {
       @NotNull
       @Override
       public ID<K, Void> getName() {
+        //noinspection unchecked
         return (ID<K, Void>)extension.getKey();
       }
 
@@ -147,11 +148,12 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
       @Override
       public boolean traceKeyHashToVirtualFileMapping() {
-        return extension instanceof StringStubIndexExtension && ((StringStubIndexExtension)extension).traceKeyHashToVirtualFileMapping();
+        return extension instanceof StringStubIndexExtension && ((StringStubIndexExtension<?>)extension).traceKeyHashToVirtualFileMapping();
       }
     };
   }
 
+  @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
   private static <K> void registerIndexer(@NotNull final StubIndexExtension<K, ?> extension, final boolean forceClean,
                                           @NotNull AsyncState state, @NotNull IndicesRegistrationResult registrationResultSink)
     throws IOException {
@@ -242,6 +244,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   @Override
   @NotNull
   <K> TObjectHashingStrategy<K> getKeyHashingStrategy(StubIndexKey<K, ?> stubIndexKey) {
+    //noinspection unchecked
     return (TObjectHashingStrategy<K>)getAsyncState().myKeyHashingStrategies.get(stubIndexKey);
   }
 
@@ -387,7 +390,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
           continue;
         }
 
-        StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey(key, id), __ -> {
+        StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey<>(key, id), __ -> {
           return myStubProcessingHelper.retrieveStubIdList(indexKey, key, file);
         });
         if (list == null) {
@@ -463,7 +466,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
   @Override
   @NotNull
-  public <K> Collection<K> getAllKeys(@NotNull StubIndexKey<K, ?> indexKey, @NotNull Project project) {
+  public <K> Collection<K> getAllKeys(@SuppressWarnings("BoundedWildcard") @NotNull StubIndexKey<K, ?> indexKey, @NotNull Project project) {
     Set<K> allKeys = new THashSet<>();
     processAllKeys(indexKey, project, Processors.cancelableCollectProcessor(allKeys));
     return allKeys;
@@ -733,7 +736,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
       boolean forceClean = Boolean.TRUE == ourForcedClean.getAndSet(Boolean.FALSE);
       while(extensionsIterator.hasNext()) {
-        StubIndexExtension extension = extensionsIterator.next();
+        StubIndexExtension<?, ?> extension = extensionsIterator.next();
         if (extension == null) break;
         extension.getKey(); // initialize stub index keys
 
