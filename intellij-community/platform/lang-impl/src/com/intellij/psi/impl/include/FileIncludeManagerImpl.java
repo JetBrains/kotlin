@@ -1,11 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.include;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -35,7 +35,7 @@ import java.util.*;
 /**
  * @author Dmitry Avdeev
  */
-public final class FileIncludeManagerImpl extends FileIncludeManager {
+public final class FileIncludeManagerImpl extends FileIncludeManager implements Disposable {
   private final Project myProject;
   private final PsiManager myPsiManager;
   private final PsiFileFactory myPsiFileFactory;
@@ -120,7 +120,7 @@ public final class FileIncludeManagerImpl extends FileIncludeManager {
 
   private final Map<String, FileIncludeProvider> myProviderMap = new HashMap<>();
 
-  public FileIncludeManagerImpl(Project project) {
+  public FileIncludeManagerImpl(@NotNull Project project) {
     myProject = project;
     myPsiManager = PsiManager.getInstance(project);
     myPsiFileFactory = PsiFileFactory.getInstance(myProject);
@@ -136,9 +136,11 @@ public final class FileIncludeManagerImpl extends FileIncludeManager {
       public void extensionRemoved(@NotNull FileIncludeProvider provider, @NotNull PluginDescriptor pluginDescriptor) {
         myProviderMap.remove(provider.getId());
       }
-    }, true, project);
+    }, true, this);
+  }
 
-    Disposer.register(project, myProviderMap::clear);
+  @Override
+  public void dispose() {
   }
 
   @Override
