@@ -68,11 +68,11 @@ open class FunctionCodegen(
                 functionView,
                 signature.asmMethod.returnType
             )
-        }
-
-
-        if (irFunction !is IrConstructor || !irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations()) {
-            generateParameterAnnotations(functionView, methodVisitor, signature, classCodegen, context)
+            // Not generating parameter annotations for default stubs fixes KT-7892, though
+            // this certainly looks like a workaround for a javac bug.
+            if (irFunction !is IrConstructor || !irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations()) {
+                generateParameterAnnotations(functionView, methodVisitor, signature, classCodegen, context)
+            }
         }
 
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
