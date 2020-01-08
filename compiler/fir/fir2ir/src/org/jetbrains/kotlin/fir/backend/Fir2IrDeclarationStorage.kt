@@ -303,15 +303,19 @@ class Fir2IrDeclarationStorage(
 
     private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType): T {
         val parent = this
+        val descriptor = WrappedValueParameterDescriptor()
         valueParameters += irSymbolTable.declareValueParameter(
-            startOffset, endOffset, origin, WrappedValueParameterDescriptor(), type
+            startOffset, endOffset, origin, descriptor, type
         ) { symbol ->
             IrValueParameterImpl(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
                 Name.special("<set-?>"), 0, type,
                 varargElementType = null,
                 isCrossinline = false, isNoinline = false
-            ).apply { this.parent = parent }
+            ).apply {
+                this.parent = parent
+                descriptor.bind(this)
+            }
         }
         return this
     }
