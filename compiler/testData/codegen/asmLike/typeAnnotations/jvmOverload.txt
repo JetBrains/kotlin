@@ -2,13 +2,13 @@ public final class foo/FooClass : java/lang/Object {
     public void <init>()
 
     public final java.lang.Object foo(java.lang.String s, int x)
+      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
-      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
 
     public final java.lang.Object foo(java.lang.String s)
-      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
 
     public final java.lang.Object foo()
       @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null

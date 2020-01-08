@@ -6,9 +6,9 @@ public final class foo/Foo : java/lang/Object {
     private void <init>()
 
     public final static java.lang.Object foo(java.lang.String s, int x)
+      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
-      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
 }
 
 public final class foo/FooClass$Companion : java/lang/Object {
@@ -17,9 +17,9 @@ public final class foo/FooClass$Companion : java/lang/Object {
     public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
     public final java.lang.Object foo(java.lang.String s, int x)
+      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
-      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
 }
 
 public final class foo/FooClass : java/lang/Object {
@@ -30,9 +30,9 @@ public final class foo/FooClass : java/lang/Object {
     public void <init>()
 
     public final static java.lang.Object foo(java.lang.String s, int x)
+      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
-      @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
