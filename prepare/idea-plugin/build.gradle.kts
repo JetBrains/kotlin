@@ -33,6 +33,7 @@ val projectsToShadow by extra(listOf(
         ":idea:jvm-debugger:jvm-debugger-util",
         ":idea:jvm-debugger:jvm-debugger-core",
         ":idea:jvm-debugger:jvm-debugger-evaluation",
+        ":idea:jvm-debugger:jvm-debugger-coroutine",
         ":idea:jvm-debugger:jvm-debugger-sequence",
         ":idea:scripting-support",
         ":idea:idea-j2k",

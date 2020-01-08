@@ -57,7 +57,7 @@
         <group id="Kotlin.XDebugger.Actions">
 <!--            TODO(design)-->
             <action id="Kotlin.XDebugger.CoroutinesDump"
-                class="org.jetbrains.kotlin.idea.debugger.coroutines.command.CoroutineDumpAction"
+                class="org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineDumpAction"
             text="Get Coroutines Dump"
             icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
         </group>
@@ -90,7 +90,7 @@
 
         <applicationService serviceImplementation="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState"/>
 
-        <debugger.asyncStackTraceProvider implementation="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineAsyncStackTraceProvider"/>
+        <debugger.asyncStackTraceProvider implementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider"/>
         <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinSmartStepIntoHandler"/>
         <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerFactory"/>
         <debugger.codeFragmentFactory implementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory"/>
@@ -111,7 +111,7 @@
         <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFunctionBreakpointHandlerFactory"/>
         <debugger.jvmSteppingCommandProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingCommandProvider"/>
         <debugger.simplePropertyGetterProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSimpleGetterProvider"/>
-        <runConfigurationExtension implementation="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutinesDebugConfigurationExtension"/>
+        <runConfigurationExtension implementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebugConfigurationExtension"/>
 
         <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
         <projectTemplatesFactory implementation="org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory" />
