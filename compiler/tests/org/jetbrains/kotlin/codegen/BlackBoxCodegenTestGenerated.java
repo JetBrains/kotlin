@@ -27658,6 +27658,29 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/throws")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Throws extends AbstractBlackBoxCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInThrows() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/throws"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("delegationAndThrows.kt")
+        public void testDelegationAndThrows() throws Exception {
+            runTest("compiler/testData/codegen/box/throws/delegationAndThrows.kt");
+        }
+
+        @TestMetadata("delegationAndThrows_1_3.kt")
+        public void testDelegationAndThrows_1_3() throws Exception {
+            runTest("compiler/testData/codegen/box/throws/delegationAndThrows_1_3.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/toArray")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

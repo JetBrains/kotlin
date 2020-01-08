@@ -123,6 +123,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/delegatedDefault.kt");
     }
 
+    @TestMetadata("delegationAndAnnotations.kt")
+    public void testDelegationAndAnnotations() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/delegationAndAnnotations.kt");
+    }
+
     @TestMetadata("doublyNestedClass.kt")
     public void testDoublyNestedClass() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/doublyNestedClass.kt");

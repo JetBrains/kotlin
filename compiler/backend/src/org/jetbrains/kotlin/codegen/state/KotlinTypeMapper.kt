@@ -83,7 +83,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
     val bindingContext: BindingContext,
     val classBuilderMode: ClassBuilderMode,
     private val moduleName: String,
-    private val languageVersionSettings: LanguageVersionSettings,
+    val languageVersionSettings: LanguageVersionSettings,
     private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,

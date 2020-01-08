@@ -187,21 +187,25 @@ open class FunctionCodegen(
                 synchronizedFlag
     }
 
-    protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-        // @Throws(vararg exceptionClasses: KClass<out Throwable>)
-        val exceptions = irFunction.getAnnotation(FqName("kotlin.jvm.Throws"))?.getValueArgument(0)?.let {
-            (it as IrVararg).elements.map { exceptionClass ->
-                classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
-            }.toTypedArray()
-        }
-
-        return classCodegen.visitor.newMethod(
+    protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor =
+        classCodegen.visitor.newMethod(
             irFunction.OtherOrigin,
             flags,
             signature.asmMethod.name, signature.asmMethod.descriptor,
             if (flags.and(Opcodes.ACC_SYNTHETIC) != 0) null else signature.genericsSignature,
-            exceptions
+            getThrownExceptions(irFunction)?.toTypedArray()
         )
+
+    private fun getThrownExceptions(function: IrFunction): List<String>? {
+        if (state.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
+            function.origin == IrDeclarationOrigin.DELEGATED_MEMBER
+        ) return null
+
+        // @Throws(vararg exceptionClasses: KClass<out Throwable>)
+        val exceptionClasses = function.getAnnotation(FqName("kotlin.jvm.Throws"))?.getValueArgument(0) ?: return null
+        return (exceptionClasses as IrVararg).elements.map { exceptionClass ->
+            classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
+        }
     }
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {

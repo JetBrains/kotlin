@@ -124,6 +124,7 @@ enum class LanguageFeature(
     AllowContractsForNonOverridableMembers(KOTLIN_1_4),
     AllowReifiedGenericsInContracts(KOTLIN_1_4),
     ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_4, kind = BUG_FIX),
+    DoNotGenerateThrowsForDelegatedKotlinMembers(KOTLIN_1_4),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
