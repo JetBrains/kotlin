@@ -4,8 +4,8 @@ public final class ReifiedKt {
     public static final fun systemService2(@org.jetbrains.annotations.NotNull $this$systemService2: test.pkg.Context) : error.NonExistentClass {
         return <anonymous class>(java.lang.String.java)
     }
-    fun systemService1() {
-        return <anonymous class>(java.lang.Object.java)
+    fun systemService1() : <ErrorType> {
+        return <anonymous class>(T.java)
     }
 }
 
@@ -14,7 +14,7 @@ public final class Context {
         return <anonymous class>(java.lang.String.java)
     }
     public fun Context() = UastEmptyExpression
-    fun ownSystemService1() {
-        return <anonymous class>(java.lang.Object.java)
+    fun ownSystemService1() : <ErrorType> {
+        return <anonymous class>(T.java)
     }
 }

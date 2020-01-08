@@ -5,6 +5,6 @@ public final class Test {
     }
     public fun Test() = UastEmptyExpression
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "nothing")
-    fun test2() {
+    fun test2() : void {
     }
 }

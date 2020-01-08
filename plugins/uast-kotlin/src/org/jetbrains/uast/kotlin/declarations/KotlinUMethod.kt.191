@@ -20,17 +20,18 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameterListBuilder
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.isGetter
-import org.jetbrains.kotlin.asJava.elements.isSetter
+import com.intellij.psi.impl.light.LightTypeParameterBuilder
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.kotlin.*
@@ -162,6 +163,22 @@ private fun buildLightMethodFake(original: KtFunction): PsiMethod = object : Lig
 
     init {
         containingClass = original.containingClassOrObject?.toLightClass() ?: original.containingKtFile.findFacadeClass()
+    }
+
+    private val _buildTypeParameterList by lazy {
+        KotlinLightTypeParameterListBuilder(this).also { paramList ->
+            for ((i, p) in original.typeParameters.withIndex()) {
+                paramList.addParameter(LightTypeParameterBuilder(p.name ?: "__no_name__", this, i))
+            }
+        }
+    }
+
+    override fun getTypeParameterList(): PsiTypeParameterList? = _buildTypeParameterList
+
+    override fun getReturnType(): PsiType? {
+        val context = original.analyze()
+        val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, original).safeAs<CallableDescriptor>() ?: return null
+        return descriptor.returnType?.toPsiType(this, original, false)
     }
 
     override fun getParent(): PsiElement? = containingClass
