@@ -2336,7 +2336,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             var output = ArrayList<String>()
 
             class NotStable { val value = 10 }
-            
+
             @Stable
             class StableClass {
                 override fun equals(other: Any?) = true
@@ -2346,6 +2346,9 @@ class FcsCodegenTests : AbstractCodegenTest() {
               One,
               Two
             }
+
+            val mutableStateType = mutableStateOf(1)
+            val stateType: State<Int> = mutableStateType
 
             @Composable
             fun MemoInt(a: Int) {
@@ -2382,11 +2385,23 @@ class FcsCodegenTests : AbstractCodegenTest() {
               output.add("MemoEnum")
               Button(text="memo ${'$'}{a}")
             }
-            
+
             @Composable
             fun MemoStable(a: StableClass) {
               output.add("MemoStable")
               Button(text="memo stable")
+            }
+
+            @Composable
+            fun MemoMutableState(a: MutableState<Int>) {
+              output.add("MemoMutableState")
+              Button(text="memo ${'$'}{a.value}")
+            }
+
+            @Composable
+            fun MemoState(a: State<Int>) {
+              output.add("MemoState")
+              Button(text="memo ${'$'}{a.value}")
             }
 
             @Composable
@@ -2397,7 +2412,9 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 d: NotStable,
                 e: ValueHolder,
                 f: EnumState,
-                g: StableClass
+                g: StableClass,
+                h: MutableState<Int>,
+                i: State<Int>
             ) {
               val am = a + m.count
               output.add("TestSkipping a=${'$'}a am=${'$'}am")
@@ -2408,11 +2425,23 @@ class FcsCodegenTests : AbstractCodegenTest() {
               MemoModel(a=e)
               MemoEnum(a=f)
               MemoStable(a=g)
+              MemoMutableState(h)
+              MemoState(i)
             }
 
             @Composable
             fun Main(v: ValueHolder, n: NotStable) {
-              TestSkipping(a=1, b=1f, c=2.0, d=NotStable(), e=v, f=EnumState.One, g=StableClass())
+              TestSkipping(
+                a=1,
+                b=1f,
+                c=2.0,
+                d=NotStable(),
+                e=v,
+                f=EnumState.One,
+                g=StableClass(),
+                h=mutableStateType,
+                i=stateType
+              )
             }
         """, {
             mapOf(
@@ -2426,7 +2455,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
             // Expect that all the methods are called in order
             assertEquals(
                 "TestSkipping a=1 am=1, MemoInt a=1, MemoFloat, " +
-                        "MemoDouble, MemoNotStable, MemoModelHolder, MemoEnum, MemoStable",
+                        "MemoDouble, MemoNotStable, MemoModelHolder, MemoEnum, MemoStable, " +
+                        "MemoMutableState, MemoState",
                 output.joinToString()
             )
             output.clear()
