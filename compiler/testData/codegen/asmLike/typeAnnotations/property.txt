@@ -58,8 +58,6 @@ public final class foo/Kotlin : java/lang/Object {
     public void <init>()
 
     public final static java.lang.String access$getCompanionVarProperty$cp()
-      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
-      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final static java.lang.String access$getJvmStatic$cp()
 
