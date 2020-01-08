@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -487,7 +484,7 @@ private data class SignatureWithSource(val signature: Method, val source: IrSimp
 
 
 fun IrSimpleFunction.overriddenInClasses(): Sequence<IrSimpleFunction> =
-    allOverridden().filter { !(it.parent.safeAs<IrClass>()?.isInterface ?: true) }
+    allOverridden().filterNot(IrDeclaration::hasInterfaceParent)
 
 fun IrSimpleFunction.isCollectionStub(): Boolean =
     origin == IrDeclarationOrigin.IR_BUILTINS_STUB

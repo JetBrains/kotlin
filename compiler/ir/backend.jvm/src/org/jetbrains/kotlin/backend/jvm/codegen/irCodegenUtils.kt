@@ -170,7 +170,7 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
 //        return ACC_PUBLIC
 //    }
     if (this is IrClass && Visibilities.isPrivate(visibility) &&
-        parent.safeAs<IrClass>()?.isInterface ?: false
+        hasInterfaceParent()
     ) { // TODO: non-intrinsic
         return Opcodes.ACC_PUBLIC
     }
