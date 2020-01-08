@@ -31,9 +31,10 @@ public interface UnknownSdkResolver {
 
   interface UnknownSdkLookup {
     /**
-     * The implementation should check local machine for a possible matching SDK
+     * The implementation should check on a local machine (both in existing SDKs and on the disk)
+     * for a possible matching SDK
      *
-     * @return the best possible fix or {@code null} if there is no fix possible
+     * @return best match or {@code null} if there is no fix found
      */
     @Nullable
     LocalSdkFix proposeLocalFix(@NotNull UnknownSdk sdk, @NotNull ProgressIndicator indicator);
@@ -42,7 +43,7 @@ public interface UnknownSdkResolver {
      * Checks the internet for a possible download to fix the SDK.
      *
      * @return the best possible download for {@link com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker},
-     * or {@code null} if there is no fix possible
+     * or {@code null} if there is no fix found
      */
     @Nullable
     DownloadSdkFix proposeDownload(@NotNull UnknownSdk sdk, @NotNull ProgressIndicator indicator);
