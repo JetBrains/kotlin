@@ -194,7 +194,12 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     }
 
     if (result is KotlinUDestructuringDeclarationExpression &&
-        element.psi == (parent as KtDestructuringDeclaration).initializer) {
+        when (parent) {
+            is KtDestructuringDeclaration -> parent.initializer?.let { it == element.psi } == true
+            is KtDeclarationModifierList -> parent == element.sourcePsi?.parent
+            else -> false
+        }
+    ) {
         return result.tempVarAssignment
     }
 
