@@ -112,7 +112,9 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
 
     val element = element
 
-    if (candidateTarget is KtImportAlias && element is KtSimpleNameExpression && element.getReferencedName() == candidateTarget.name) {
+    if (candidateTarget is KtImportAlias &&
+        (element is KtSimpleNameExpression && element.getReferencedName() == candidateTarget.name ||
+                this is KDocReference && this.canonicalText == candidateTarget.name)) {
         val importDirective = candidateTarget.importDirective ?: return false
         val importedFqName = importDirective.importedFqName ?: return false
         val importedDescriptors = importDirective.containingKtFile.resolveImportReference(importedFqName)
