@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
 import com.intellij.diagnostic.PluginException;
@@ -37,7 +37,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
   private static final Logger LOG = Logger.getInstance(ServiceModel.class);
 
   private final Project myProject;
-  private final Invoker myInvoker = new Invoker.Background(this);
+  private final Invoker myInvoker = Invoker.forBackgroundThreadWithReadAction(this);
   private final List<ServiceViewItem> myRoots = new CopyOnWriteArrayList<>();
   private volatile boolean myRootsInitialized;
 

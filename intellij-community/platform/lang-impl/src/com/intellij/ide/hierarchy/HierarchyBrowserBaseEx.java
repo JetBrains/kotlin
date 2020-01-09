@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.hierarchy;
 
 import com.intellij.icons.AllIcons;
@@ -371,9 +371,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
         if (structure == null) {
           return;
         }
-        Comparator<NodeDescriptor> comparator = getComparator();
-        StructureTreeModel myModel = comparator == null ? new StructureTreeModel<>(structure, sheet)
-                                                        : new StructureTreeModel<>(structure, comparator, sheet);
+        StructureTreeModel myModel = new StructureTreeModel<>(structure, sheet, getComparator());
         AsyncTreeModel atm = new AsyncTreeModel(myModel, sheet);
         tree.setModel(atm);
 

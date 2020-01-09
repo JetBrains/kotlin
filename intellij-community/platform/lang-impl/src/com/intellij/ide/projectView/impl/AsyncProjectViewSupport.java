@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.CopyPasteUtil;
@@ -51,7 +51,7 @@ class AsyncProjectViewSupport {
                           @NotNull JTree tree,
                           @NotNull AbstractTreeStructure structure,
                           @NotNull Comparator<NodeDescriptor> comparator) {
-    myStructureTreeModel = new StructureTreeModel<>(structure, comparator, parent);
+    myStructureTreeModel = new StructureTreeModel<>(structure, parent, comparator);
     myAsyncTreeModel = new AsyncTreeModel(myStructureTreeModel, parent);
     myAsyncTreeModel.setRootImmediately(myStructureTreeModel.getRootImmediately());
     myNodeUpdater = new ProjectFileNodeUpdater(project, myStructureTreeModel.getInvoker()) {
