@@ -80,63 +80,6 @@ class IrBuiltIns(
         return symbol.symbol
     }
 
-    private fun defineEnumValueOfOperator(): IrSimpleFunctionSymbol {
-        val name = Name.identifier("enumValueOf")
-        val typeParameterDescriptor: TypeParameterDescriptor
-        val valueParameterDescriptor: ValueParameterDescriptor
-        val descriptor = SimpleFunctionDescriptorImpl.create(
-            packageFragmentDescriptor,
-            Annotations.EMPTY,
-            name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            SourceElement.NO_SOURCE
-        ).apply {
-            typeParameterDescriptor = TypeParameterDescriptorImpl.createWithDefaultBound(
-                this, Annotations.EMPTY, true, Variance.INVARIANT, Name.identifier("T0"), 0, LockBasedStorageManager.NO_LOCKS
-            )
-
-            valueParameterDescriptor = ValueParameterDescriptorImpl(
-                this, null, 0, Annotations.EMPTY, Name.identifier("arg0"), string,
-                false, false, false, null, SourceElement.NO_SOURCE
-            )
-
-            val returnType = typeParameterDescriptor.typeConstructor.makeNonNullType()
-
-            initialize(null, null, listOf(typeParameterDescriptor), listOf(valueParameterDescriptor), returnType, Modality.FINAL, Visibilities.PUBLIC)
-        }
-
-        val returnKotlinType = descriptor.returnType
-        val typeParameterSymbol = IrTypeParameterSymbolImpl(typeParameterDescriptor)
-        val typeParameter = IrBuiltInOperatorTypeParameter(typeParameterSymbol, Variance.INVARIANT, 0, true).apply {
-            superTypes += anyNType
-        }
-
-        val returnIrType = IrSimpleTypeBuilder().run {
-            classifier = typeParameterSymbol
-            kotlinType = returnKotlinType
-            buildSimpleType()
-        }
-
-        return symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, descriptor) {
-            val operator = IrBuiltInOperator(it, name, returnIrType, ":enum")
-            operator.parent = packageFragment
-            packageFragment.declarations += operator
-
-            val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
-            val valueParameter = IrBuiltInOperatorValueParameter(valueParameterSymbol, 0, stringType)
-
-            valueParameter.parent = operator
-            typeParameter.parent = operator
-
-            operator.valueParameters += valueParameter
-            operator.typeParameters += typeParameter
-
-            irBuiltInsSymbols += operator
-
-            operator
-        }.symbol
-    }
-
     private fun defineCheckNotNullOperator(): IrSimpleFunctionSymbol {
         val name = Name.identifier("CHECK_NOT_NULL")
         val typeParameterDescriptor: TypeParameterDescriptor
@@ -342,7 +285,6 @@ class IrBuiltIns(
     val noWhenBranchMatchedExceptionSymbol = defineOperator(OperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType, listOf())
     val illegalArgumentExceptionSymbol = defineOperator(OperatorNames.ILLEGAL_ARGUMENT_EXCEPTION, nothingType, listOf(stringType))
 
-    val enumValueOfSymbol = defineEnumValueOfOperator()
     val checkNotNullSymbol = defineCheckNotNullOperator()
 
     val checkNotNull = checkNotNullSymbol.descriptor
