@@ -80,7 +80,8 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
       }
       row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.name.label")) {
         textField(entityNameProperty)
-          .withValidationOnProperty { validateName() }
+          .withValidationOnApply { validateName() }
+          .withValidationOnInput { validateName() }
           .focused()
       }
       row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.location.label")) {
@@ -88,22 +89,26 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
         val fileChosen = { file: VirtualFile -> getUiPath(file.path) }
         val title = IdeBundle.message("title.select.project.file.directory", context.presentationName)
         textFieldWithBrowseButton(locationProperty, title, context.project, fileChooserDescriptor, fileChosen)
-          .withValidationOnProperty { validateLocation() }
+          .withValidationOnApply { validateLocation() }
+          .withValidationOnInput { validateLocation() }
       }
       hideableRow(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.coordinates.title")) {
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.label")) {
           textField(groupIdProperty)
-            .withValidationOnProperty { validateGroupId() }
+            .withValidationOnApply { validateGroupId() }
+            .withValidationOnInput { validateGroupId() }
             .comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.help"))
         }
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.label")) {
           textField(artifactIdProperty)
-            .withValidationOnProperty { validateArtifactId() }
+            .withValidationOnApply { validateArtifactId() }
+            .withValidationOnInput { validateArtifactId() }
             .comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.help", context.presentationName))
         }
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.label")) {
           textField(versionProperty)
-            .withValidationOnProperty { validateVersion() }
+            .withValidationOnApply { validateVersion() }
+            .withValidationOnInput { validateVersion() }
         }
       }
     }.apply {
