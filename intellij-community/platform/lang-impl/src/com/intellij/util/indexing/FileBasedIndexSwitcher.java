@@ -25,6 +25,7 @@ public class FileBasedIndexSwitcher {
         LOG.assertTrue(ApplicationManager.getApplication().isWriteAccessAllowed());
         myFileBasedIndex.performShutdown(true);
         myFileBasedIndex.dropRegisteredIndexes();
+        IndexingStamp.flushCaches();
     }
 
     public void turnOn() {
