@@ -651,15 +651,21 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
                              @NotNull DumbModeAccessType dumbModeAccessType) {
     assert ApplicationManager.getApplication().isReadAccessAllowed();
     if (DumbService.isDumb(project) && FileBasedIndex.isIndexAccessDuringDumbModeEnabled()) {
-      if (ourDumbModeAccessType.get() != null) {
-        throw new AssertionError("reentrant dumb mode ignorance");
+      boolean setAccessType = true;
+      DumbModeAccessType currentAccessType = ourDumbModeAccessType.get();
+      if (currentAccessType != null) {
+        if (currentAccessType == dumbModeAccessType) {
+          setAccessType = false;
+        } else {
+          throw new AssertionError("Reentrant dumb mode ignorance. Current mode: " + currentAccessType + ", Requested mode: " + dumbModeAccessType);
+        }
       }
-      ourDumbModeAccessType.set(dumbModeAccessType);
+      if (setAccessType) ourDumbModeAccessType.set(dumbModeAccessType);
       try {
         runnable.run();
       }
       finally {
-        ourDumbModeAccessType.set(null);
+        if (setAccessType) ourDumbModeAccessType.set(null);
       }
     } else {
       runnable.run();
