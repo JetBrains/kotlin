@@ -4022,6 +4022,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("AccesssThisInsideAnonClass.java")
+        public void testAccesssThisInsideAnonClass() throws Exception {
+            runTest("nj2k/testData/newJ2k/objectLiteral/AccesssThisInsideAnonClass.java");
+        }
+
+        @TestMetadata("AccesssThisInsideAnonClass2.java")
+        public void testAccesssThisInsideAnonClass2() throws Exception {
+            runTest("nj2k/testData/newJ2k/objectLiteral/AccesssThisInsideAnonClass2.java");
+        }
+
         public void testAllFilesPresentInObjectLiteral() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/newJ2k/objectLiteral"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
         }
