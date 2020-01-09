@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
@@ -867,6 +869,20 @@ class Fir2IrVisitor(
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
+        val calleeReference = thisReceiverExpression.calleeReference
+        if (calleeReference.labelName == null && calleeReference.boundSymbol is FirRegularClassSymbol) {
+            val dispatchReceiver = this.functionStack.lastOrNull()?.dispatchReceiverParameter
+            if (dispatchReceiver != null) {
+                // Use the dispatch receiver of the containing function
+                return IrGetValueImpl(
+                    thisReceiverExpression.psi?.startOffsetSkippingComments ?: -1,
+                    thisReceiverExpression.psi?.endOffset ?: -1,
+                    dispatchReceiver.type,
+                    dispatchReceiver.symbol
+                )
+            }
+        }
+        // TODO handle qualified "this" in instance methods of non-inner classes (inner class cases are handled by InnerClassesLowering)
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 

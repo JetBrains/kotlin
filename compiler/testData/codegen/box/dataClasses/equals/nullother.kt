@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class Dummy {
   override fun equals(other: Any?) = true
 }

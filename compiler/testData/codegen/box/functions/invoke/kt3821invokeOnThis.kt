@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 //KT-3821 Invoke convention doesn't work for `this`
 
 class A() {
