@@ -14,6 +14,8 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.PathUtil
 import org.jetbrains.annotations.TestOnly
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 @State(
     name = "KotlinBuildScriptsModificationInfo",
@@ -44,43 +46,17 @@ class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent
         return storage.lastModifiedTimeStampExcept(file) < timeStamp
     }
 
-    class Storage(
-        private var lastModifiedTS: Long = 0,
-        private var lastModifiedFiles: MutableSet<String> = hashSetOf(),
-        private var previousModifiedTS: Long = 0,
-        private var previousModifiedFiles: MutableSet<String> = hashSetOf()
-    ) {
+    class Storage {
+        private val lastModifiedFiles = LastModifiedFiles()
+
         fun lastModifiedTimeStampExcept(file: VirtualFile): Long {
             val fileId = getFileId(file)
-            synchronized(this) {
-                if (lastModifiedFiles.contains(fileId) && lastModifiedFiles.size == 1) {
-                    return previousModifiedTS
-                }
-                return lastModifiedTS
-            }
-
+            return lastModifiedFiles.lastModifiedTimeStampExcept(fileId)
         }
 
         fun fileChanged(file: VirtualFile, ts: Long) {
             val fileId = getFileId(file)
-            synchronized(this) {
-                when {
-                    ts > lastModifiedTS -> {
-                        previousModifiedFiles = lastModifiedFiles
-                        previousModifiedTS = lastModifiedTS
-
-                        lastModifiedFiles = hashSetOf(fileId)
-                        lastModifiedTS = ts
-                    }
-                    ts == lastModifiedTS -> {
-                        lastModifiedFiles.add(fileId)
-                    }
-                    ts == previousModifiedTS -> {
-                        previousModifiedFiles.add(fileId)
-                    }
-                    else -> {}
-                }
-            }
+            lastModifiedFiles.fileChanged(ts, fileId)
         }
 
         private fun getFileId(file: VirtualFile): String {
