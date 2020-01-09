@@ -8,15 +8,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.io.File;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -56,6 +54,9 @@ public class SdkDetector {
                                         @NotNull ModalityState callbackModality,
                                         @NotNull DetectedSdkListener listener) {
     ApplicationManager.getApplication().assertIsDispatchThread();
+    if (!isDetectorEnabled()) {
+      return;
+    }
 
     EdtDetectedSdkListener actualListener = new EdtDetectedSdkListener(callbackModality, listener);
     synchronized (myPublicationLock) {
@@ -107,6 +108,10 @@ public class SdkDetector {
     }
   };
 
+  private static boolean isDetectorEnabled() {
+    return Registry.is("sdk.detector.enabled");
+  }
+
   /**
    * Run Sdk detection assuming called in a background thread
    */
@@ -115,7 +120,9 @@ public class SdkDetector {
                          @NotNull DetectedSdkListener callback) {
     callback.onSearchStarted();
     try {
-      detect(type, indicator, callback);
+      if (isDetectorEnabled()) {
+        detect(type, indicator, callback);
+      }
     } finally {
       callback.onSearchCompleted();
     }
