@@ -14,6 +14,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.gradle.util.GradleVersion;
@@ -1555,15 +1556,139 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
   public void testAnnotationProcessorDependencies() throws Exception {
     importProject(
       "apply plugin: 'java'\n" +
-    "\n" +
-    "dependencies {\n" +
-    "    compileOnly 'org.projectlombok:lombok:1.16.2'\n" +
-    "    testCompileOnly 'org.projectlombok:lombok:1.16.2'\n" +
-    "    annotationProcessor 'org.projectlombok:lombok:1.16.2'\n" +
-    "}\n");
+      "\n" +
+      "dependencies {\n" +
+      "    compileOnly 'org.projectlombok:lombok:1.16.2'\n" +
+      "    testCompileOnly 'org.projectlombok:lombok:1.16.2'\n" +
+      "    annotationProcessor 'org.projectlombok:lombok:1.16.2'\n" +
+      "}\n");
 
     final String depName = "Gradle: org.projectlombok:lombok:1.16.2";
     assertModuleLibDepScope("project.main", depName, DependencyScope.PROVIDED);
+  }
 
+  @Test // https://youtrack.jetbrains.com/issue/IDEA-223152
+  @TargetVersions("5.3+")
+  public void testTransformedProjectDependency() throws Exception {
+    createSettingsFile("include 'lib-1'\n" +
+                       "include 'lib-2'\n");
+
+    importProject(
+      "import java.nio.file.Files\n" +
+      "import java.util.zip.ZipEntry\n" +
+      "import java.util.zip.ZipException\n" +
+      "import java.util.zip.ZipFile\n" +
+      "import org.gradle.api.artifacts.transform.TransformParameters\n" +
+      "\n" +
+      "abstract class Unzip implements TransformAction<TransformParameters.None> {\n" +
+      "    @InputArtifact\n" +
+      "    abstract Provider<FileSystemLocation> getInputArtifact()\n" +
+      "\n" +
+      "    @Override\n" +
+      "    void transform(TransformOutputs outputs) {\n" +
+      "        def input = inputArtifact.get().asFile\n" +
+      "        def unzipDir = outputs.dir(input.name)\n" +
+      "        unzipTo(input, unzipDir)\n" +
+      "    }\n" +
+      "\n" +
+      "    private static void unzipTo(File zipFile, File unzipDir) {\n" +
+      "        new ZipFile(zipFile).withCloseable { zip ->\n" +
+      "            def outputDirectoryCanonicalPath = unzipDir.canonicalPath\n" +
+      "            for (entry in zip.entries()) {\n" +
+      "                unzipEntryTo(unzipDir, outputDirectoryCanonicalPath, zip, entry)\n" +
+      "            }\n" +
+      "        }\n" +
+      "    }\n" +
+      "\n" +
+      "    private static unzipEntryTo(File outputDirectory, String outputDirectoryCanonicalPath, ZipFile zip, ZipEntry entry) {\n" +
+      "        def output = new File(outputDirectory, entry.name)\n" +
+      "        if (!output.canonicalPath.startsWith(outputDirectoryCanonicalPath)) {\n" +
+      "            throw new ZipException(\"Zip entry '${entry.name}' is outside of the output directory\")\n" +
+      "        }\n" +
+      "        if (entry.isDirectory()) {\n" +
+      "            output.mkdirs()\n" +
+      "        } else {\n" +
+      "            output.parentFile.mkdirs()\n" +
+      "            zip.getInputStream(entry).withCloseable { Files.copy(it, output.toPath()) }\n" +
+      "        }\n" +
+      "    }\n" +
+      "}\n" +
+      "\n" +
+      "allprojects {\n" +
+      "    apply plugin: 'java'\n" +
+      "\n" +
+      "    repositories {\n" +
+      "        jcenter()\n" +
+      "    }\n" +
+      "}\n" +
+      "\n" +
+      "def processed = Attribute.of('processed', Boolean)\n" +
+      "def artifactType = Attribute.of('artifactType', String)\n" +
+      "\n" +
+      "\n" +
+      "dependencies {\n" +
+      "    attributesSchema {\n" +
+      "        attribute(processed)\n" +
+      "    }\n" +
+      "\n" +
+      "    artifactTypes.getByName(\"jar\") {\n" +
+      "        attributes.attribute(processed, false);\n" +
+      "    }\n" +
+      "\n" +
+      "    registerTransform(Unzip) {\n" +
+      "        from.attribute(artifactType, 'jar').attribute(processed, false)\n" +
+      "        to.attribute(artifactType, 'java-classes-directory').attribute(processed, true)\n" +
+      "    }\n" +
+      "\n" +
+      "    implementation project(':lib-1')\n" +
+      "    implementation project(':lib-2')\n" +
+      "}\n" +
+      "\n" +
+      "\n" +
+      "configurations.all {\n" +
+      "    afterEvaluate {\n" +
+      "        if (canBeResolved) {\n" +
+      "            attributes.attribute(processed, true)\n" +
+      "        }\n" +
+      "    }\n" +
+      "}"
+    );
+
+    assertModules("project", "project.main", "project.test",
+                  "project.lib-1", "project.lib-1.main", "project.lib-1.test",
+                  "project.lib-2", "project.lib-2.main", "project.lib-2.test");
+
+    assertModuleModuleDepScope("project.test", "project.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-1.test", "project.lib-1.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-2.test", "project.lib-2.main", DependencyScope.COMPILE);
+
+    assertModuleModuleDeps("project.main", "project.lib-1.main", "project.lib-2.main");
+
+    runBuildTask();
+    importProject();
+
+    assertModules("project", "project.main", "project.test",
+                  "project.lib-1", "project.lib-1.main", "project.lib-1.test",
+                  "project.lib-2", "project.lib-2.main", "project.lib-2.test");
+
+    assertModuleModuleDepScope("project.test", "project.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-1.test", "project.lib-1.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-2.test", "project.lib-2.main", DependencyScope.COMPILE);
+
+    assertModuleModuleDeps("project.main", ArrayUtil.EMPTY_STRING_ARRAY);
+
+    assertModuleLibDeps((actual, expected) -> {
+      return actual.contains("build/.transforms/") && new File(actual).getName().equals(new File(expected).getName());
+    }, "project.main", "lib-1.jar", "lib-2.jar");
+  }
+
+
+  private void runBuildTask() {
+    ExternalSystemTaskExecutionSettings settings = new ExternalSystemTaskExecutionSettings();
+    settings.setExternalProjectPath(getProjectPath());
+    settings.setTaskNames(Collections.singletonList("build"));
+    settings.setExternalSystemIdString(GradleConstants.SYSTEM_ID.getId());
+    ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, myProject, GradleConstants.SYSTEM_ID, null,
+                               ProgressExecutionMode.NO_PROGRESS_SYNC);
   }
 }

@@ -58,6 +58,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -67,6 +68,9 @@ import java.util.jar.Manifest;
  * @author Vladislav.Soroka
  */
 public abstract class ExternalSystemTestCase extends UsefulTestCase {
+
+  private static final BiPredicate<Object, Object> EQUALS_PREDICATE = (t, u) -> Objects.equals(t, u);
+
   private File ourTempDir;
 
   protected IdeaProjectTestFixture myTestFixture;
@@ -548,6 +552,10 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
   }
 
   protected static <T, U> void assertOrderedElementsAreEqual(Collection<U> actual, T... expected) {
+    assertOrderedElementsAreEqual(equalsPredicate(), actual, expected);
+  }
+
+  protected static <T, U> void assertOrderedElementsAreEqual(BiPredicate<U, T> predicate, Collection<U> actual, T... expected) {
     String s = "\nexpected: " + Arrays.asList(expected) + "\nactual: " + new ArrayList<>(actual);
     assertEquals(s, expected.length, actual.size());
 
@@ -555,7 +563,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
     for (int i = 0; i < expected.length; i++) {
       T expectedElement = expected[i];
       U actualElement = actualList.get(i);
-      assertEquals(s, expectedElement, actualElement);
+      assertTrue(s, predicate.test(actualElement, expectedElement));
     }
   }
 
@@ -573,6 +581,11 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
   protected boolean ignore() {
     printIgnoredMessage(null);
     return true;
+  }
+
+  protected static <T, U> BiPredicate<T, U> equalsPredicate() {
+    //noinspection unchecked
+    return (BiPredicate<T, U>)EQUALS_PREDICATE;
   }
 
   public static void deleteBuildSystemDirectory() {

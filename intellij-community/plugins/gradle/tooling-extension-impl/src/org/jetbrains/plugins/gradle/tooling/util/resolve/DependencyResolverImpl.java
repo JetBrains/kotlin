@@ -2,13 +2,12 @@
 package org.jetbrains.plugins.gradle.tooling.util.resolve;
 
 import org.gradle.api.Action;
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.*;
 import org.gradle.api.artifacts.component.*;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.gradle.api.artifacts.result.ArtifactResult;
-import org.gradle.api.artifacts.result.ComponentArtifactsResult;
-import org.gradle.api.artifacts.result.ResolvedArtifactResult;
+import org.gradle.api.artifacts.result.*;
 import org.gradle.api.component.Artifact;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
@@ -25,6 +24,7 @@ import org.gradle.jvm.JvmLibrary;
 import org.gradle.language.base.artifact.SourcesArtifact;
 import org.gradle.language.java.artifact.JavadocArtifact;
 import org.gradle.util.GradleVersion;
+import org.gradle.util.Path;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -149,9 +149,10 @@ public class DependencyResolverImpl implements DependencyResolver {
       return emptySet();
     }
     LenientConfiguration lenientConfiguration = configuration.getResolvedConfiguration().getLenientConfiguration();
-
+    ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult();
     List<ComponentIdentifier> components = new ArrayList<ComponentIdentifier>();
     Map<ResolvedDependency, Set<ResolvedArtifact>> resolvedArtifacts = new LinkedHashMap<ResolvedDependency, Set<ResolvedArtifact>>();
+    Map<ModuleVersionIdentifier, ResolvedDependencyResult> transformedProjectDependenciesResultMap = null;
     for (ResolvedDependency dependency : lenientConfiguration.getAllModuleDependencies()) {
       try {
         Set<ResolvedArtifact> moduleArtifacts = dependency.getModuleArtifacts();
@@ -161,8 +162,22 @@ public class DependencyResolverImpl implements DependencyResolver {
         }
         resolvedArtifacts.put(dependency, moduleArtifacts);
       }
+      catch (GradleException e) {
+        if (transformedProjectDependenciesResultMap == null) {
+          transformedProjectDependenciesResultMap = new HashMap<ModuleVersionIdentifier, ResolvedDependencyResult>();
+          for (DependencyResult dependencyResult : resolutionResult.getAllDependencies()) {
+            ComponentSelector resultRequested = dependencyResult.getRequested();
+            if (dependencyResult instanceof ResolvedDependencyResult && resultRequested instanceof ProjectComponentSelector) {
+              ResolvedComponentResult resolvedComponentResult = ((ResolvedDependencyResult)dependencyResult).getSelected();
+              ModuleVersionIdentifier selectedResultVersion = resolvedComponentResult.getModuleVersion();
+              transformedProjectDependenciesResultMap.put(selectedResultVersion, (ResolvedDependencyResult)dependencyResult);
+            }
+          }
+        }
+        resolvedArtifacts.put(dependency, Collections.<ResolvedArtifact>emptySet());
+      }
       catch (Exception ignore) {
-        // ignore org.gradle.internal.resolve.ArtifactResolveException
+        // ignore other artifact resolution exceptions
       }
     }
     Map<ComponentIdentifier, ComponentArtifactsResult> auxiliaryArtifactsMap = buildAuxiliaryArtifactsMap(configuration, components);
@@ -203,8 +218,8 @@ public class DependencyResolverImpl implements DependencyResolver {
           }
 
           ProjectComponentIdentifier projectComponentIdentifier = (ProjectComponentIdentifier)artifact.getId().getComponentIdentifier();
-          String projectName = projectComponentIdentifier.getProjectName(); // since 4.5
-          String key = projectName + "_" + resolvedDependency.getConfiguration();
+          String projectPath = projectComponentIdentifier.getProjectPath();
+          String key = projectPath + "_" + resolvedDependency.getConfiguration();
           DefaultExternalProjectDependency projectDependency = resolvedProjectDependencies.get(key);
           if (projectDependency != null) {
             Set<File> projectDependencyArtifacts = new LinkedHashSet<File>(projectDependency.getProjectDependencyArtifacts());
@@ -220,11 +235,12 @@ public class DependencyResolverImpl implements DependencyResolver {
             resolvedProjectDependencies.put(key, projectDependency);
           }
           dependency = projectDependency;
+          String projectName = projectComponentIdentifier.getProjectName(); // since 4.5
           projectDependency.setName(projectName);
           projectDependency.setGroup(resolvedDependency.getModuleGroup());
           projectDependency.setVersion(resolvedDependency.getModuleVersion());
           projectDependency.setScope(scope);
-          projectDependency.setProjectPath(projectComponentIdentifier.getProjectPath());
+          projectDependency.setProjectPath(projectPath);
           projectDependency.setConfigurationName(resolvedDependency.getConfiguration());
           Set<File> projectArtifacts = singleton(artifactFile);
           projectDependency.setProjectDependencyArtifacts(projectArtifacts);
@@ -261,6 +277,13 @@ public class DependencyResolverImpl implements DependencyResolver {
         }
         artifactDependencies.add(dependency);
       }
+
+      if (transformedProjectDependenciesResultMap == null || !artifacts.isEmpty()) continue;
+      ExternalProjectDependency projectDependency = getFailedToTransformProjectArtifactDependency(
+        resolvedDependency, transformedProjectDependenciesResultMap, resolvedProjectDependencies, scope);
+      if (projectDependency != null) {
+        artifactDependencies.add(projectDependency);
+      }
     }
 
     Collection<FileCollectionDependency> otherFileDependencies = resolveOtherFileDependencies(resolvedFiles, configuration, scope);
@@ -271,6 +294,42 @@ public class DependencyResolverImpl implements DependencyResolver {
     result.addAll(artifactDependencies);
     addUnresolvedDependencies(result, lenientConfiguration, scope);
     return result;
+  }
+
+  @Nullable
+  private ExternalProjectDependency getFailedToTransformProjectArtifactDependency(@NotNull ResolvedDependency resolvedDependency,
+                                                                                  @NotNull Map<ModuleVersionIdentifier, ResolvedDependencyResult> transformedProjectDependenciesResultMap,
+                                                                                  @NotNull Map<String, DefaultExternalProjectDependency> resolvedProjectDependencies,
+                                                                                  @Nullable String scope) {
+    ModuleVersionIdentifier moduleVersionIdentifier = resolvedDependency.getModule().getId();
+    ResolvedDependencyResult resolvedDependencyResult = transformedProjectDependenciesResultMap.get(moduleVersionIdentifier);
+    if (resolvedDependencyResult == null) return null;
+
+    ProjectComponentSelector dependencyResultRequested = (ProjectComponentSelector)resolvedDependencyResult.getRequested();
+    String projectPath = dependencyResultRequested.getProjectPath();
+    String key = projectPath + "_" + resolvedDependency.getConfiguration();
+    DefaultExternalProjectDependency projectDependency = resolvedProjectDependencies.get(key);
+    if (projectDependency != null) return null;
+
+    projectDependency = new DefaultExternalProjectDependency();
+    resolvedProjectDependencies.put(key, projectDependency);
+    String projectName = Path.path(projectPath).getName();
+    projectDependency.setName(projectName);
+    projectDependency.setGroup(resolvedDependency.getModuleGroup());
+    projectDependency.setVersion(resolvedDependency.getModuleVersion());
+    projectDependency.setScope(scope);
+    projectDependency.setProjectPath(projectPath);
+    projectDependency.setConfigurationName(resolvedDependency.getConfiguration());
+    Project project = myProject.findProject(projectPath);
+    if (project == null) return null;
+
+    Configuration configuration1 = project.getConfigurations().findByName(resolvedDependency.getConfiguration());
+    if (configuration1 == null) return null;
+
+    Set<File> projectArtifacts = configuration1.getArtifacts().getFiles().getFiles();
+    projectDependency.setProjectDependencyArtifacts(projectArtifacts);
+    projectDependency.setProjectDependencyArtifactsSources(findArtifactSources(projectArtifacts, mySourceSetFinder));
+    return projectDependency;
   }
 
   @NotNull
