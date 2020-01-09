@@ -17,18 +17,15 @@ package com.intellij.openapi.compiler;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
- * A tag interface indicating that the compiler will generate Java sources.
- * This affects the order of compiler calls.
- * The sequence in which compilers are called:
- * SourceGeneratingCompiler -> SourceInstrumentingCompiler -> TranslatingCompiler ->  ClassInstrumentingCompiler -> ClassPostProcessingCompiler -> PackagingCompiler -> Validator
- *
- * @deprecated this interface is part of the obsolete build system which runs as part of the IDE process. Since IDEA 12 plugins need to
- * integrate into 'external build system' instead (https://confluence.jetbrains.com/display/IDEADEV/External+Builder+API+and+Plugins).
- * Since IDEA 13 users cannot switch to the old build system via UI and it will be completely removed in IDEA 14.
+ * @deprecated this interface is part of the obsolete build system which runs as part of the IDE process. Since IDEA 15 implementations of
+ * this class aren't used by the IDE, you should integrate into 'external build system' instead
+ * (http://www.jetbrains.org/intellij/sdk/docs/reference_guide/frameworks_and_external_apis/external_builder_api.html).
  */
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.3")
 public interface SourceGeneratingCompiler extends GeneratingCompiler {
   
   /**

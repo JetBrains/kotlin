@@ -5,11 +5,14 @@ import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Base interface for a custom compiler which participates in the IDEA build process.
- *
- * @see CompilerManager#addCompiler(Compiler)
- * @see CompilerManager#removeCompiler(Compiler)
+ * Base interface for a custom compiler which participates in the build process and should be executed inside the IDE process.
+ * @deprecated since IDEA 15 compilers need to be executed inside a separate (external) build process, see
+ * <a href="http://www.jetbrains.org/intellij/sdk/docs/reference_guide/frameworks_and_external_apis/external_builder_api.html">this guide</a>
+ * for details. If you need to run some code inside the IDE process before the external build process starts or after it finishes, use
+ * {@link CompileTask} extension point instead. Implementations of this class aren't used by the IDE (except those which implement
+ * {@link Validator} or {@link SourceInstrumentingCompiler}).
  */
+@Deprecated
 public interface Compiler {
   ProjectExtensionPointName<Compiler> EP_NAME = new ProjectExtensionPointName<>("com.intellij.compiler");
 
