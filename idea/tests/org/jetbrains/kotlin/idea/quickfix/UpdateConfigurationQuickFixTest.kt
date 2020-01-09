@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.configureKotlinFacet
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -166,7 +168,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
     }
 
     fun testAddKotlinReflect() {
-        configureRuntime("mockRuntime11")
+        configureRuntime("actualRuntime")
         myFixture.configureByText(
             "foo.kt", """class Foo(val prop: Any) {
                 fun func() {}
@@ -185,8 +187,12 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
 
     private fun configureRuntime(path: String) {
         val name = if (path == "mockRuntime106") "kotlin-runtime.jar" else "kotlin-stdlib.jar"
+        val sourcePath = when (path) {
+            "actualRuntime" -> PathUtil.kotlinPathsForIdeaPlugin.jar(KotlinPaths.Jar.StdLib)
+            else -> File("idea/testData/configuration/$path/$name")
+        }
         val tempFile = File(FileUtil.createTempDirectory("kotlin-update-configuration", null), name)
-        FileUtil.copy(File("idea/testData/configuration/$path/$name"), tempFile)
+        FileUtil.copy(sourcePath, tempFile)
         val tempVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tempFile) ?: error("Can't find file: $tempFile")
 
         updateModel(myFixture.module) { model ->
