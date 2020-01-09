@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -144,7 +145,7 @@ class FirSamResolverImpl(
             newTypeParameter.bounds += oldTypeParameter.bounds.mapNotNull { typeRef ->
                 FirResolvedTypeRefImpl(
                     typeRef.source,
-                    substitutor.substituteOrSelf(typeRef.coneTypeSafe<ConeKotlinType>() ?: return@mapNotNull null)
+                    substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null)
                 )
             }
         }
@@ -250,11 +251,10 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
     val classUseSiteMemberScope = this.scope(ConeSubstitutor.Empty, session, scopeSession)
 
     for (candidateName in samCandidateNames) {
-        if (classUseSiteMemberScope == null) break
         if (metIncorrectMember) break
 
         classUseSiteMemberScope.processPropertiesByName(candidateName) {
-            if ((it as? FirProperty)?.modality == Modality.ABSTRACT) {
+            if ((it as? FirPropertySymbol)?.fir?.modality == Modality.ABSTRACT) {
                 metIncorrectMember = true
                 ProcessorAction.STOP
             } else {
