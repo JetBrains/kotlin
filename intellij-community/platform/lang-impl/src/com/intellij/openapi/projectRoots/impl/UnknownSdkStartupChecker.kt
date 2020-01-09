@@ -2,20 +2,16 @@
 package com.intellij.openapi.projectRoots.impl
 
 import com.intellij.ProjectTopics
-import com.intellij.application.subscribe
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.startup.StartupActivity
 
-internal class UnknownSdkStartupChecker : StartupActivity.DumbAware, Disposable {
-  override fun dispose() = Unit
-
+internal class UnknownSdkStartupChecker : StartupActivity.DumbAware {
   override fun runActivity(project: Project) {
     checkUnknownSdks(project)
 
-    ProjectTopics.PROJECT_ROOTS.subscribe(this, object: ModuleRootListener {
+    project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object: ModuleRootListener {
       override fun rootsChanged(event: ModuleRootEvent) {
         checkUnknownSdks(event.project)
       }
