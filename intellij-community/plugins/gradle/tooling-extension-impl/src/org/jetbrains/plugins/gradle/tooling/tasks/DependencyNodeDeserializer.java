@@ -11,10 +11,10 @@ public class DependencyNodeDeserializer implements JsonDeserializer<DependencyNo
   @Override
   public DependencyNode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
     JsonObject jsonObject = json.getAsJsonObject();
-    if (jsonObject.get("configurationName") != null) {
+    if (jsonObject.get("scope") != null) {
       return context.deserialize(json, DependencyScopeNode.class);
     }
-    else if (jsonObject.get("projectPath") != null) {
+    else if (jsonObject.get("projectName") != null) {
       return context.deserialize(json, ProjectDependencyNodeImpl.class);
     }
     else if (jsonObject.get("module") != null) {
