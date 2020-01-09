@@ -73,7 +73,7 @@ SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
 TO_STRING_DEPTH = 2
 ARRAY_TO_STRING_LIMIT = 10
 
-def kotlin_object_type_summary(lldb_val, internal_dict = []):
+def kotlin_object_type_summary(lldb_val, internal_dict = {}):
     """Hook that is run by lldb to display a Kotlin object."""
     log(lambda: "kotlin_object_type_summary({:#x})".format(lldb_val.unsigned))
     fallback = lldb_val.GetValue()
@@ -97,7 +97,7 @@ def select_provider(lldb_val, tip, internal_dict):
         else __FACTORY['object'](lldb_val, tip, internal_dict)
 
 class KonanHelperProvider(lldb.SBSyntheticValueProvider):
-    def __init__(self, valobj, amString, internal_dict = []):
+    def __init__(self, valobj, amString, internal_dict = {}):
         self._target = lldb.debugger.GetSelectedTarget()
         self._process = self._target.GetProcess()
         self._valobj = valobj
