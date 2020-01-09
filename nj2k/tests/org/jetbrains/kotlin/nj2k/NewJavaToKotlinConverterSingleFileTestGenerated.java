@@ -436,6 +436,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/assignmentExpression/bitOperationPriorityComments.java");
         }
 
+        @TestMetadata("compoundAssignmentPriority.java")
+        public void testCompoundAssignmentPriority() throws Exception {
+            runTest("nj2k/testData/newJ2k/assignmentExpression/compoundAssignmentPriority.java");
+        }
+
+        @TestMetadata("compoundAssignmentPriority2.java")
+        public void testCompoundAssignmentPriority2() throws Exception {
+            runTest("nj2k/testData/newJ2k/assignmentExpression/compoundAssignmentPriority2.java");
+        }
+
         @TestMetadata("declarationAssignmentsChain.java")
         public void testDeclarationAssignmentsChain() throws Exception {
             runTest("nj2k/testData/newJ2k/assignmentExpression/declarationAssignmentsChain.java");
