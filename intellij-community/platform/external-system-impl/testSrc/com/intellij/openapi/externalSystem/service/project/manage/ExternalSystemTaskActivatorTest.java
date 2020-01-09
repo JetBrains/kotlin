@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.execution.configurations.ConfigurationType;
@@ -24,13 +24,14 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.KeyWithDefaultValue;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.task.ProjectTaskManager;
 import com.intellij.task.ProjectTaskRunner;
 import com.intellij.testFramework.ExtensionTestUtil;
 import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
-import one.util.streamex.StreamEx;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
@@ -46,18 +47,19 @@ import static java.util.Collections.emptyList;
 public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
   private static final Key<StringBuilder> TASKS_TRACE = KeyWithDefaultValue.create("tasks trace", StringBuilder::new);
   private static final String TEST_MODULE_NAME = "MyModule";
+  private RegistryValue registryValue;
 
   @Override
   public void setUp() throws Exception {
     edt(() -> super.setUp());
     TestExternalSystemManager testExternalSystemManager = new MyTestExternalSystemManager();
-    List<ExternalSystemManager<?, ?, ?, ?, ?>> externalSystemManagers =
-      StreamEx.of(ExternalSystemManager.EP_NAME.extensions()).append(testExternalSystemManager).toList();
+    List<ExternalSystemManager<?, ?, ?, ?, ?>> externalSystemManagers = ContainerUtil.concat(ExternalSystemManager.EP_NAME.getExtensionList(), Collections.singletonList(testExternalSystemManager));
     ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, externalSystemManagers, getTestRootDisposable());
     ExtensionTestUtil.maskExtensions(ConfigurationType.CONFIGURATION_TYPE_EP,
                                      Collections.<ConfigurationType>singletonList(new TestTaskConfigurationType()), getTestRootDisposable());
     ExtensionTestUtil.maskExtensions(ProjectTaskRunner.EP_NAME, emptyList(), getTestRootDisposable());
-    Registry.addKey(TEST_EXTERNAL_SYSTEM_ID.getId() + USE_IN_PROCESS_COMMUNICATION_REGISTRY_KEY_SUFFIX, "", true, false);
+    registryValue = Registry.get(TEST_EXTERNAL_SYSTEM_ID.getId() + USE_IN_PROCESS_COMMUNICATION_REGISTRY_KEY_SUFFIX);
+    registryValue.setValue(true);
 
     String projectPath = "/project/path";
     TestExternalProjectSettings projectSettings = new TestExternalProjectSettings();
@@ -68,6 +70,10 @@ public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
 
   @Override
   public void tearDown() throws Exception {
+    if (registryValue != null) {
+      Registry.removeKey(registryValue.getKey());
+      registryValue = null;
+    }
     edt(() -> super.tearDown());
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
@@ -24,11 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author Denis Zhdanov
- */
-public class RemoteExternalSystemFacadeImpl<S extends ExternalSystemExecutionSettings> extends AbstractExternalSystemFacadeImpl<S> {
-
+public final class RemoteExternalSystemFacadeImpl<S extends ExternalSystemExecutionSettings> extends AbstractExternalSystemFacadeImpl<S> {
   private static final long DEFAULT_REMOTE_PROCESS_TTL_IN_MS = TimeUnit.MILLISECONDS.convert(3, TimeUnit.MINUTES);
 
   private final AtomicInteger myCallsInProgressNumber = new AtomicInteger();
@@ -73,11 +69,9 @@ public class RemoteExternalSystemFacadeImpl<S extends ExternalSystemExecutionSet
     }
 
     // running the code indicates remote communication mode with external system
-    Registry.get(
-      System.getProperty(ExternalSystemConstants.EXTERNAL_SYSTEM_ID_KEY) +
-      ExternalSystemConstants.USE_IN_PROCESS_COMMUNICATION_REGISTRY_KEY_SUFFIX).setValue(false);
+    Registry.get(System.getProperty(ExternalSystemConstants.EXTERNAL_SYSTEM_ID_KEY) + ExternalSystemConstants.USE_IN_PROCESS_COMMUNICATION_REGISTRY_KEY_SUFFIX).setValue(false);
 
-    RemoteExternalSystemFacadeImpl facade = new RemoteExternalSystemFacadeImpl(resolverClass, buildManagerClass);
+    RemoteExternalSystemFacadeImpl<?> facade = new RemoteExternalSystemFacadeImpl(resolverClass, buildManagerClass);
     facade.init();
     start(facade);
   }
