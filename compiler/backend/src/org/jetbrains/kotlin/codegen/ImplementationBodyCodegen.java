@@ -83,7 +83,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.org.objectweb.asm.Type.getObjectType;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
-    private static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
+    public static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
     private Type superClassAsmType;
     @NotNull
     private SuperClassInfo superClassInfo;
