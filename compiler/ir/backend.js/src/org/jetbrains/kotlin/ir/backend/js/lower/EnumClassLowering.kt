@@ -125,9 +125,6 @@ class EnumClassConstructorTransformer(val context: CommonBackendContext, private
     private val loweredEnumConstructors = HashMap<IrConstructorSymbol, IrConstructor>()
 
     fun transform(): List<IrDeclaration> {
-        // Make sure InstanceInitializer exists
-        insertInstanceInitializer()
-
         // Add `name` and `ordinal` parameters to enum class constructors
         lowerEnumConstructorsSignature()
 
@@ -147,33 +144,6 @@ class EnumClassConstructorTransformer(val context: CommonBackendContext, private
         lowerEnumEntryInitializerExpression()
 
         return listOf(irClass)
-    }
-
-    private fun insertInstanceInitializer() {
-        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitClass(declaration: IrClass) = declaration
-
-            override fun visitConstructor(declaration: IrConstructor): IrStatement {
-                declaration.transformChildrenVoid(this)
-
-                val blockBody = declaration.body as IrBlockBody
-
-                if (!blockBody.statements.any { it is IrInstanceInitializerCall }) {
-                    blockBody.statements.transformFlat {
-                        if (it is IrEnumConstructorCall)
-                            listOf(
-                                it, IrInstanceInitializerCallImpl(
-                                    declaration.startOffset, declaration.startOffset,
-                                    irClass.symbol, context.irBuiltIns.unitType
-                                )
-                            )
-                        else null
-                    }
-                }
-
-                return declaration
-            }
-        })
     }
 
     private fun lowerEnumConstructorsSignature() {
