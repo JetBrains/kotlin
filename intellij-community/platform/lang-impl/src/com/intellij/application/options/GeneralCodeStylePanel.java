@@ -24,6 +24,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.options.ConfigurationException;
@@ -64,7 +66,7 @@ import java.util.regex.PatternSyntaxException;
 public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
   @SuppressWarnings("UnusedDeclaration")
   private static final Logger LOG = Logger.getInstance(GeneralCodeStylePanel.class);
-  private final List<GeneralCodeStyleOptionsProvider> myAdditionalOptions;
+  private List<GeneralCodeStyleOptionsProvider> myAdditionalOptions;
 
   private IntegerField myRightMarginField;
 
@@ -118,15 +120,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     myScrollPane.setViewport(new GradientViewport(myPanel, JBUI.insetsTop(5), true));
 
     myAdditionalSettingsPanel.setLayout(new VerticalFlowLayout(true, true));
-    myAdditionalSettingsPanel.removeAll();
-    myAdditionalOptions = ConfigurableWrapper.createConfigurables(GeneralCodeStyleOptionsProviderEP.EP_NAME);
-    for (GeneralCodeStyleOptionsProvider provider : myAdditionalOptions) {
-      JComponent generalSettingsComponent = provider.createComponent();
-      if (generalSettingsComponent != null) {
-        myAdditionalSettingsPanel.add(Box.createRigidArea(JBUI.size(0, 5)));
-        myAdditionalSettingsPanel.add(generalSettingsComponent);
-      }
-    }
+    updateGeneralOptionsPanel();
 
     myVisualGuidesLabel.setText(ApplicationBundle.message("settings.code.style.visual.guides") + ":");
     myVisualGuidesHint.setForeground(JBColor.GRAY);
@@ -145,6 +139,32 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
       //noinspection AssignmentToStaticFieldFromInstanceMethod
       ourSelectedTabIndex = myTabbedPane.getSelectedIndex();
     });
+    GeneralCodeStyleOptionsProviderEP.EP_NAME.addExtensionPointListener(
+      new ExtensionPointListener<GeneralCodeStyleOptionsProviderEP>() {
+        @Override
+        public void extensionAdded(@NotNull GeneralCodeStyleOptionsProviderEP extension,
+                                   @NotNull PluginDescriptor pluginDescriptor) {
+          updateGeneralOptionsPanel();
+        }
+
+        @Override
+        public void extensionRemoved(@NotNull GeneralCodeStyleOptionsProviderEP extension,
+                                     @NotNull PluginDescriptor pluginDescriptor) {
+          updateGeneralOptionsPanel();
+        }
+      }, this);
+  }
+
+  private void updateGeneralOptionsPanel() {
+    myAdditionalSettingsPanel.removeAll();
+    myAdditionalOptions = ConfigurableWrapper.createConfigurables(GeneralCodeStyleOptionsProviderEP.EP_NAME);
+    for (GeneralCodeStyleOptionsProvider provider : myAdditionalOptions) {
+      JComponent generalSettingsComponent = provider.createComponent();
+      if (generalSettingsComponent != null) {
+        myAdditionalSettingsPanel.add(Box.createRigidArea(JBUI.size(0, 5)));
+        myAdditionalSettingsPanel.add(generalSettingsComponent);
+      }
+    }
   }
 
 
