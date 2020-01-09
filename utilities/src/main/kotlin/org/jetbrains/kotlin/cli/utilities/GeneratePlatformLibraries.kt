@@ -9,40 +9,139 @@ import org.jetbrains.kotlin.cli.bc.K2Native
 import org.jetbrains.kotlin.konan.file.File
 import java.util.concurrent.*
 import kotlinx.cli.*
+import org.jetbrains.kotlin.backend.konan.CachedLibraries
+import org.jetbrains.kotlin.backend.konan.OutputFiles
+import org.jetbrains.kotlin.backend.konan.files.renameAtomic
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.customerDistribution
+import org.jetbrains.kotlin.konan.util.visibleName
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.system.exitProcess
+import java.io.File as JFile
 
+// TODO: We definitely need to unify logging in different parts of the compiler.
+private class Logger(val level: Level = Level.NORMAL) {
+
+    fun log(message: String) {
+        println(message)
+    }
+
+    fun verbose(message: String) {
+        if (level == Level.VERBOSE) {
+            println(message)
+        }
+    }
+
+    enum class Level {
+        NORMAL, VERBOSE
+    }
+}
+
+private fun Logger.logFailedLibraries(built: Map<DefFile, ProcessingStatus>) {
+    log("Processing platform libraries finished with errors.")
+    built.forEach { (def, status) ->
+        if (status is ProcessingStatus.FAIL) {
+            log("    ${def.name}: ${status.error}")
+        }
+    }
+}
+
+private fun Logger.logStackTrace(error: Throwable) {
+    val stringWriter = StringWriter()
+    error.printStackTrace(PrintWriter(stringWriter))
+    verbose(stringWriter.toString())
+}
+
+private fun createTempDir(prefix: String, parent: File): File =
+        File(createTempDir(prefix, directory = JFile(parent.absolutePath)).absolutePath)
+
+private sealed class ProcessingStatus {
+    object WAIT: ProcessingStatus()
+    object SUCCESS: ProcessingStatus()
+    object FAILED_DEPENDENCIES: ProcessingStatus()
+    class FAIL(val error: Throwable) : ProcessingStatus()
+}
+
+// TODO: Use Distribution's paths after compiler update.
 fun generatePlatformLibraries(args: Array<String>) {
+    // IMPORTANT! These command line keys are used by the Gradle plugin to configure platform libraries generation,
+    // so any changes in them must be reflected at the Gradle plugin side too.
+    // See org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator in the Big Kotlin repo.
     val argParser = ArgParser("generate-platform", prefixStyle = ArgParser.OptionPrefixStyle.JVM)
     val inputDirectoryPath by argParser.option(
-            ArgType.String, "input-directory", "i", "Input directory").required()
+            ArgType.String,
+            "input-directory", "i",
+            "Input directory. Default value is <dist>/konan/platformDef/<target_family>"
+    )
     val outputDirectoryPath by argParser.option(
-            ArgType.String, "output-directory", "o", "Output directory").required()
-    val target by argParser.option(
+            ArgType.String,
+            "output-directory", "o",
+            "Output directory. Default value is <dist>/klib/platform/<target>"
+    )
+    val targetName by argParser.option(
             ArgType.String, "target", "t", "Compilation target").required()
     val saveTemps by argParser.option(
             ArgType.Boolean, "save-temps", "s", "Save temporary files").default(false)
     val stdlibPath by argParser.option(
-            ArgType.String, "stdlib-path", "S", "Place where stdlib is located")
+            ArgType.String,
+            "stdlib-path", "S",
+            "Place where stdlib is located. Default value is <dist>/klib/common/stdlib"
+    )
+
+    val dynamicCacheKind = CompilerOutputKind.DYNAMIC_CACHE.visibleName
+    val staticCacheKind = CompilerOutputKind.STATIC_CACHE.visibleName
     val cacheKind by argParser.option(
-            ArgType.String, "cache-kind", "k", "Type of cache").default("dynamic_cache")
+            ArgType.Choice(listOf(dynamicCacheKind, staticCacheKind)), "cache-kind", "k", "Type of cache."
+    ).default(dynamicCacheKind)
+
     val cacheDirectoryPath by argParser.option(
             ArgType.String, "cache-directory", "c", "Cache output directory")
 
+    val verbose by argParser.option(
+            ArgType.Boolean,
+            "verbose", "v",
+            "Show verbose log messages"
+    ).default(false)
+
+    val cacheArgs by argParser.option(
+            ArgType.String, "cache-arg",
+            description = "An argument passed to compiler during cache building. Used only if -cache-directory is specified."
+    ).multiple()
+
     argParser.parse(args)
 
-    val inputDirectory = File(inputDirectoryPath)
-    val outputDirectory = File(outputDirectoryPath)
+    val distribution = customerDistribution()
+    val target = HostManager(distribution).targetByName(targetName)
+
+    val inputDirectory = inputDirectoryPath?.File()
+            ?: File(distribution.konanSubdir, "platformDef").child(target.family.visibleName)
+
+    val outputDirectory = outputDirectoryPath?.File()
+            ?: File(distribution.klib, "platform").child(target.visibleName)
+
     val cacheDirectory = cacheDirectoryPath?.File()
 
     if (!inputDirectory.exists) throw Error("input directory doesn't exist")
     if (!outputDirectory.exists) {
         outputDirectory.mkdirs()
     }
-    cacheDirectory?.mkdirs()
-    File("${outputDirectoryPath}/../cache").mkdirs()
+    if (cacheDirectory != null && !cacheDirectory.exists) {
+        cacheDirectory.mkdirs()
+    }
 
-    val stdlibFile = stdlibPath?.File()
+    val stdlibFile = stdlibPath?.File() ?: File(distribution.stdlib)
 
-    generatePlatformLibraries(target, inputDirectory, outputDirectory, saveTemps, cacheDirectory, stdlibFile, cacheKind)
+    val logger = Logger(if (verbose) Logger.Level.VERBOSE else Logger.Level.NORMAL)
+
+    generatePlatformLibraries(
+            target, inputDirectory, outputDirectory,
+            saveTemps, cacheDirectory, stdlibFile,
+            cacheKind, cacheArgs, logger
+    )
 }
 
 private class DefFile(val name: String, val depends: MutableList<DefFile>) {
@@ -74,49 +173,132 @@ private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
     return result
 }
 
-private fun generatePlatformLibraries(target: String, inputDirectory: File, outputDirectory: File,
-                                      saveTemps: Boolean, cacheDirectory: File?, stdlibFile: File?,
-                                      cacheKind: String) {
-    fun buildKlib(def: DefFile) {
-        val file = File("$inputDirectory/${def.name}.def")
-        File("${outputDirectory.absolutePath}/build-${def.name}").mkdirs()
-        val outKlib = "${outputDirectory.absolutePath}/build-${def.name}/${def.name}.klib"
-        val args = arrayOf("-o", outKlib,
-                "-target", target,
-                "-def", file.absolutePath,
-                "-compiler-option", "-fmodules-cache-path=$outputDirectory/clangModulesCache",
-                "-repo",  "${outputDirectory.absolutePath}",
-                "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs",
-                *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.name}") }.toTypedArray())
-        println("Processing ${def.name}...")
-        try {
-            invokeInterop("native", args)?.let { K2Native.mainNoExit(it) }
-            org.jetbrains.kotlin.cli.klib.main(arrayOf("install", outKlib,
-                    "-target", target,
-                    "-repository", "${outputDirectory.absolutePath}"
-            ))
-            if (cacheDirectory != null)
-                K2Native.mainNoExit(arrayOf("-p", cacheKind,
-                    "-target", target,
-                    "-repo", "${outputDirectory.absolutePath}",
-                    "-Xadd-cache=${outputDirectory.absolutePath}/${def.name}",
-                    "-Xcache-directory=${cacheDirectory.absolutePath}"))
-        } finally {
-            if (!saveTemps) {
-                File("$outputDirectory/build-${def.name}").deleteRecursively()
-            }
-        }
-    }
-    if (cacheDirectory != null) {
-        val stdlib = stdlibFile ?: inputDirectory.parentFile.parentFile.parentFile.child("klib/common/stdlib")
-        println("Caching standard library ${stdlib.absolutePath} to ${cacheDirectory.absolutePath}...")
-        K2Native.mainNoExit(arrayOf("-p", cacheKind,
-                "-target", target,
-                "-Xadd-cache=${stdlib.absolutePath}",
-                "-Xcache-directory=${cacheDirectory.absolutePath}"))
+private fun generateLibrary(
+        target: KonanTarget,
+        def: DefFile,
+        inputDirectory: File,
+        outputDirectory: File,
+        tmpDirectory: File,
+        logger: Logger
+) {
+    val defFile = inputDirectory.child("${def.name}.def")
+    val outKlib = outputDirectory.child(def.name)
+
+    if (outKlib.exists) {
+        logger.verbose("Skip generating ${def.name} as it's already generated")
+        return
     }
 
-    println("Generating platform libraries from $inputDirectory to $outputDirectory for $target")
+    val tmpKlib = tmpDirectory.child(def.name)
+
+    try {
+        val cinteropArgs = arrayOf(
+                "-o", tmpKlib.absolutePath,
+                "-target", target.visibleName,
+                "-def", defFile.absolutePath,
+                "-compiler-option", "-fmodules-cache-path=${tmpDirectory.child("clangModulesCache").absolutePath}",
+                "-repo", outputDirectory.absolutePath,
+                "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs", "-nopack",
+                *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.name}") }.toTypedArray()
+        )
+        logger.verbose("Run cinterop with args: ${cinteropArgs.joinToString(separator = " ")}")
+        invokeInterop("native", cinteropArgs)?.let { K2Native.mainNoExit(it) }
+
+        // Atomically move the generated library to the destination path.
+        if (!renameAtomic(tmpKlib.absolutePath, outKlib.absolutePath, replaceExisting = false)) {
+            tmpKlib.deleteRecursively()
+        }
+    } finally {
+        tmpKlib.deleteRecursively()
+    }
+}
+
+private fun getCacheFile(
+        libraryName: String,
+        target: KonanTarget,
+        cacheDirectory: File,
+        cacheKind: String
+): File {
+    val cacheBaseName = CachedLibraries.getCachedLibraryName(libraryName)
+    val cacheOutputKind = CompilerOutputKind.valueOf(cacheKind.toUpperCase())
+    return OutputFiles(cacheDirectory.child(cacheBaseName).absolutePath, target, cacheOutputKind).mainFile.File()
+}
+
+private fun buildCache(
+        target: KonanTarget,
+        def: DefFile,
+        outputDirectory: File,
+        cacheDirectory: File,
+        cacheKind: String,
+        cacheArgs: List<String>,
+        logger: Logger
+) {
+    val cacheFile = getCacheFile(def.name, target, cacheDirectory, cacheKind)
+    if (cacheFile.exists) {
+        logger.verbose("Skip precompiling ${def.name} as it's already precompiled")
+        return
+    }
+
+    val compilerArgs = arrayOf(
+            "-p", cacheKind,
+            "-target", target.visibleName,
+            "-repo", outputDirectory.absolutePath,
+            "-Xadd-cache=${outputDirectory.absolutePath}/${def.name}",
+            "-Xcache-directory=${cacheDirectory.absolutePath}",
+            *cacheArgs.toTypedArray()
+    )
+    logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
+    K2Native.mainNoExit(compilerArgs)
+}
+
+private fun buildStdlibCache(
+        target: KonanTarget,
+        stdlib: File,
+        cacheDirectory: File,
+        cacheKind: String,
+        cacheArgs: List<String>,
+        logger: Logger
+) {
+    val stdlibCacheFile = getCacheFile("stdlib", target, cacheDirectory, cacheKind)
+    if (stdlibCacheFile.exists) {
+        logger.verbose("Skip precompiling standard library as it's already precompiled")
+        return
+    }
+
+    logger.log("Precompiling standard library...")
+    val compilerArgs = arrayOf(
+            "-p", cacheKind,
+            "-target", target.visibleName,
+            "-Xadd-cache=${stdlib.absolutePath}",
+            "-Xcache-directory=${cacheDirectory.absolutePath}",
+            *cacheArgs.toTypedArray()
+    )
+    logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
+    K2Native.mainNoExit(compilerArgs)
+}
+
+private fun generatePlatformLibraries(target: KonanTarget, inputDirectory: File, outputDirectory: File,
+                                      saveTemps: Boolean, cacheDirectory: File?, stdlibFile: File,
+                                      cacheKind: String, cacheArgs: List<String>,
+                                      logger: Logger) {
+    if (cacheDirectory != null) {
+        buildStdlibCache(target, stdlibFile, cacheDirectory, cacheKind, cacheArgs, logger)
+    }
+
+    logger.verbose("Generating platform libraries from $inputDirectory to $outputDirectory for ${target.visibleName}")
+    if (cacheDirectory != null) {
+        logger.verbose("Precompiling platform libraries to $cacheDirectory (cache kind: $cacheKind)")
+    }
+
+    val tmpDirectory = createTempDir("build-", outputDirectory)
+    // Delete the tmp directory in case of execution interruption.
+    val deleteTmpHook = Thread {
+        if (!saveTemps) {
+            tmpDirectory.deleteRecursively()
+        }
+    }
+    Runtime.getRuntime().addShutdownHook(deleteTmpHook)
+
     // Build dependencies graph.
     val defFiles = mutableMapOf<String, DefFile>()
     val dependsRegex = Regex("^depends = (.*)")
@@ -141,31 +323,52 @@ private fun generatePlatformLibraries(target: String, inputDirectory: File, outp
     val executorPool = ThreadPoolExecutor(numCores, numCores,
             10, TimeUnit.SECONDS, ArrayBlockingQueue(1000),
             Executors.defaultThreadFactory(), RejectedExecutionHandler { r, _ ->
-        println("Execution rejected: $r")
+        logger.log("Execution rejected: $r")
         throw Error("Must not happen!")
     })
-    val built = ConcurrentHashMap(sorted.associateWith { 0 })
+    val built = ConcurrentHashMap(sorted.associateWith<DefFile, ProcessingStatus> { ProcessingStatus.WAIT })
     // Now run interop tool on toposorted dependencies.
-    sorted.forEach { def ->
-        executorPool.execute {
-            // A bit ugly, we just block here until all dependencies are built.
-            while (def.depends.any { built[it] == 0 }) {
-                Thread.sleep(100)
-            }
-            try {
-                if (def.depends.any { built[it] == 2 }) {
-                    throw Error("There are failed dependencies for $def")
+    val countTotal = sorted.size
+    val countProcessed = AtomicInteger(0)
+    try {
+        tmpDirectory.mkdirs()
+        sorted.forEach { def ->
+            executorPool.execute {
+                // A bit ugly, we just block here until all dependencies are built.
+                while (def.depends.any { built[it] == ProcessingStatus.WAIT }) {
+                    Thread.sleep(100)
                 }
-                buildKlib(def)
-                built[def] = 1
-            } catch(e: Throwable) {
-                built[def] = 2
-                throw e
+                try {
+                    if (def.depends.any { built[it] is ProcessingStatus.FAIL }) {
+                        built[def] = ProcessingStatus.FAILED_DEPENDENCIES
+                        return@execute
+                    }
+
+                    logger.log("Processing ${def.name} (${countProcessed.incrementAndGet()}/$countTotal)...")
+                    generateLibrary(target, def, inputDirectory, outputDirectory, tmpDirectory, logger)
+                    if (cacheDirectory != null) {
+                        buildCache(target, def, outputDirectory, cacheDirectory, cacheKind, cacheArgs, logger)
+                    }
+
+                    built[def] = ProcessingStatus.SUCCESS
+                } catch (e: Throwable) {
+                    built[def] = ProcessingStatus.FAIL(e)
+                    logger.logStackTrace(e)
+                }
             }
         }
-    }
-    executorPool.shutdown()
-    if (!saveTemps) {
-        File("${outputDirectory.absolutePath}/clangModulesCache").deleteRecursively()
+        executorPool.shutdown()
+        executorPool.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS)
+
+        if (built.values.any { it != ProcessingStatus.SUCCESS }) {
+            logger.logFailedLibraries(built)
+            exitProcess(-1)
+        }
+
+    } finally {
+        if (!saveTemps) {
+            tmpDirectory.deleteRecursively()
+        }
+        Runtime.getRuntime().removeShutdownHook(deleteTmpHook)
     }
 }

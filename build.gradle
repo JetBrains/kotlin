@@ -490,7 +490,7 @@ task distPlatformLibs {
 }
 
 task dist {
-    dependsOn 'distCompiler', 'distRuntime', 'distEndorsedLibraries'
+    dependsOn 'distCompiler', 'distRuntime', 'distEndorsedLibraries', 'distDef'
 }
 
 task crossDist {

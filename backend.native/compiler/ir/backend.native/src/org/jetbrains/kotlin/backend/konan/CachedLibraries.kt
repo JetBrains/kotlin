@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-internal class CachedLibraries(
+class CachedLibraries(
         private val target: KonanTarget,
         allLibraries: List<KotlinLibrary>,
         explicitCaches: Map<KotlinLibrary, String>,
@@ -74,6 +74,7 @@ internal class CachedLibraries(
     }
 
     companion object {
-        fun getCachedLibraryName(library: KotlinLibrary): String = "${library.uniqueName}-cache"
+        fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
+        fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
     }
 }

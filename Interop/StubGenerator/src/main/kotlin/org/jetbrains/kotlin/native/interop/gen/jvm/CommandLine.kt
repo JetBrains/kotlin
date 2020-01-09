@@ -26,6 +26,7 @@ const val NODEFAULTLIBS = "no-default-libs"
 const val NOENDORSEDLIBS = "no-endorsed-libs"
 const val PURGE_USER_LIBS = "Xpurge-user-libs"
 const val TEMP_DIR = "Xtemporary-files-dir"
+const val NOPACK = "nopack"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -59,6 +60,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             description = "don't link the endorsed libraries from dist automatically").default(false)
     val purgeUserLibs by argParser.option(ArgType.Boolean, PURGE_USER_LIBS,
             description = "don't link unused libraries even explicitly specified").default(false)
+    val nopack by argParser.option(ArgType.Boolean, fullName = NOPACK,
+            description = "Don't pack the produced library into a klib file").default(false)
     val tempDir by argParser.option(ArgType.String, TEMP_DIR,
             description = "save temporary files to the given directory")
     val kotlincOption by argParser.option(ArgType.String, "Xkotlinc-option",
