@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-class SpeedSearchHelper {
+public class SpeedSearchHelper {
   private final @Nullable SpeedSearchSupply mySpeedSearch;
   private @Nullable       String            mySearchString;
 
@@ -19,7 +19,7 @@ class SpeedSearchHelper {
     this(null);
   }
 
-  SpeedSearchHelper(@Nullable SpeedSearchSupply search) {
+  public SpeedSearchHelper(@Nullable SpeedSearchSupply search) {
     mySpeedSearch = search;
   }
 
@@ -29,14 +29,14 @@ class SpeedSearchHelper {
     return ObjectUtils.notNull(mySearchString, "");
   }
 
-  void find(@NotNull String searchString) {
+  public void find(@NotNull String searchString) {
     mySearchString = searchString;
     if (mySpeedSearch != null) {
       mySpeedSearch.findAndSelectElement(searchString);
     }
   }
 
-  void setLabelText(@NotNull SimpleColoredComponent label,
+  public void setLabelText(@NotNull SimpleColoredComponent label,
                     @NotNull String text,
                     int style,
                     @Nullable Color foreground,
