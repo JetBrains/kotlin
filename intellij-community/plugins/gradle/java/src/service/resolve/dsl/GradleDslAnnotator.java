@@ -61,7 +61,7 @@ public class GradleDslAnnotator implements Annotator {
 
         PsiElement nameElement = referenceExpression.getReferenceNameElement();
         if (nameElement != null) {
-          holder.createInfoAnnotation(nameElement, null).setTextAttributes(MAP_KEY);
+          holder.newSilentAnnotation(com.intellij.lang.annotation.HighlightSeverity.INFORMATION).range(nameElement).textAttributes(MAP_KEY).create();
         }
       }
     }
