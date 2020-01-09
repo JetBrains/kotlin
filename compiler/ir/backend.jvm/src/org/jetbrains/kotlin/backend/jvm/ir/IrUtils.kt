@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -88,6 +91,25 @@ val IrType.erasedUpperBound: IrClass
         else -> throw IllegalStateException()
     }
 
+/**
+ * Get the default null/0 value for the type.
+ *
+ * This handles unboxing of non-nullable inline class types to their underlying types and produces
+ * a null/0 default value for the resulting type. When such unboxing takes place it ensures that
+ * the value is not reboxed and reunboxed by the codegen by using the unsafeCoerceIntrinsic.
+ */
+fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendContext): IrExpression {
+    if (this !is IrSimpleType || hasQuestionMark || classOrNull?.owner?.isInline != true)
+        return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
+
+    val underlyingType = unboxInlineClass()
+    val defaultValueForUnderlyingType = IrConstImpl.defaultValueForType(startOffset, endOffset, underlyingType)
+    return IrCallImpl(startOffset, endOffset, this, context.ir.symbols.unsafeCoerceIntrinsic).also {
+        it.putTypeArgument(0, underlyingType) // from
+        it.putTypeArgument(1, this) // to
+        it.putValueArgument(0, defaultValueForUnderlyingType)
+    }
+}
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
