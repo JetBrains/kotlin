@@ -910,7 +910,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         UpdateTask<Document> task = myRegisteredIndexes.getUnsavedDataUpdateTask(indexId);
         assert task != null : "Task for unsaved data indexing was not initialized for index " + indexId;
 
-        if(runUpdate(true, () -> task.processAll(documentsToProcessForProject, project)) &&
+        if(myStorageBufferingHandler.runUpdate(true, () -> task.processAll(documentsToProcessForProject, project)) &&
            documentsToProcessForProject.size() == documents.size() &&
            !hasActiveTransactions()
           ) {
@@ -999,42 +999,23 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     });
   }
 
-  private final StorageGuard myStorageLock = new StorageGuard();
-  private volatile boolean myPreviousDataBufferingState;
-  private final Object myBufferingStateUpdateLock = new Object();
+  private final StorageBufferingHandler myStorageBufferingHandler = new StorageBufferingHandler() {
+    @NotNull
+    @Override
+    protected Stream<UpdatableIndex<?, ?, ?>> getIndexes() {
+      IndexConfiguration state = getState();
+      return state.getIndexIDs().stream().map(id -> state.getIndex(id));
+    }
+  };
 
-  @ApiStatus.Experimental
+  @ApiStatus.Internal
   public void runCleanupAction(@NotNull Runnable cleanupAction) {
     Computable<Boolean> updateComputable = () -> {
       cleanupAction.run();
       return true;
     };
-    runUpdate(false, updateComputable);
-    runUpdate(true, updateComputable);
-  }
-
-  private boolean runUpdate(boolean transientInMemoryIndices, Computable<Boolean> update) {
-    StorageGuard.StorageModeExitHandler storageModeExitHandler = myStorageLock.enter(transientInMemoryIndices);
-
-    if (myPreviousDataBufferingState != transientInMemoryIndices) {
-      synchronized (myBufferingStateUpdateLock) {
-        if (myPreviousDataBufferingState != transientInMemoryIndices) {
-          IndexConfiguration state = getState();
-          for (ID<?, ?> indexId : state.getIndexIDs()) {
-            final UpdatableIndex<?, ?, FileContent> index = state.getIndex(indexId);
-            assert index != null;
-            index.setBufferingEnabled(transientInMemoryIndices);
-          }
-          myPreviousDataBufferingState = transientInMemoryIndices;
-        }
-      }
-    }
-
-    try {
-      return update.compute();
-    } finally {
-      storageModeExitHandler.leave();
-    }
+    myStorageBufferingHandler.runUpdate(false, updateComputable);
+    myStorageBufferingHandler.runUpdate(true, updateComputable);
   }
 
   private void cleanupMemoryStorage(boolean skipPsiBasedIndices) {
@@ -1362,7 +1343,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
                               @NotNull Computable<Boolean> update,
                               @Nullable IndexedFile file,
                               int inputId) {
-    if (runUpdate(false, update)) {
+    if (myStorageBufferingHandler.runUpdate(false, update)) {
       ConcurrencyUtil.withLock(myReadLock, () -> {
         UpdatableIndex<?, ?, FileContent> index = getIndex(indexId);
         if (file != null) {
