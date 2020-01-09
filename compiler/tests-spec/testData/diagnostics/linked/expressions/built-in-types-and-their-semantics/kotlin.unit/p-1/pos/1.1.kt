@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // !LANGUAGE: +NewInference
 // SKIP_TXT
 
@@ -11,35 +12,32 @@
  * HELPERS: checkType
  */
 
-
 // TESTCASE NUMBER: 1
-
-fun foo() {
+fun foo1() {
     val proc = "case 1"
 }
 
-class Case1() {
-    checkType<Unit>(foo())
+fun case1() {
+    foo1() checkType { check<Unit>() }
 }
 
 // TESTCASE NUMBER: 2
-
-fun case2foo(m: String, bar: (m: String) -> Unit) {
-    bar(m)
+fun case2foo(m: String, bar: () -> Unit) {
+    bar()
 }
 
 
 class Case2Boo {
-    fun buz(m: String) {
+    fun buz() {
         val proc = "case 2"
     }
 }
 
 
-class Case2() {
+fun case2() {
     val boo = Case2Boo()
     val res = case2foo("s", boo::buz)
-    checkType<Unit>(res)
+    res checkType { check<Unit>() }
 }
 
 // TESTCASE NUMBER: 3
@@ -50,23 +48,20 @@ interface Processable<T> {
 class Processor : Processable<Unit> {
     override fun process() {
         val proc = "case 3"
-
     }
 }
 
-class Case3() {
+fun case3() {
     val p1 = Processor().process()
-    checkType<Unit>(p1)
-
+    p1 checkType { check<Unit>() }
 }
 
 // TESTCASE NUMBER: 4
-
-class Case4() {
+fun case4() {
     val p2 = object : Processable<Unit> {
         override fun process() {
             val proc = "case 4"
         }
     }
-    checkType<Unit>(p2)
+    p2.process() checkType { check<Unit>() }
 }

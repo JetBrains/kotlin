@@ -5,6 +5,7 @@
  *
  * SPEC VERSION: 0.1-213
  * PLACE: expressions, built-in-types-and-their-semantics, kotlin.unit -> paragraph 1 -> sentence 1
+ * RELEVANT PLACES: expressions, equality-expressions, reference-equality-expressions -> paragraph 1 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: todo
  */
@@ -20,7 +21,7 @@ fun foo2(): Unit {
 fun foo3(): Unit {
 }
 
-fun box(){
+fun box(): String {
     val u1 = foo1()
     val u2 = foo2()
     val u3 = foo3()

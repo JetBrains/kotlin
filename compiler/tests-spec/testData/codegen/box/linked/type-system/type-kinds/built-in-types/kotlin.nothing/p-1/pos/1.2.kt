@@ -6,16 +6,16 @@
  * SPEC VERSION: 0.1-213
  * PLACE: type-system, type-kinds, built-in-types, kotlin.nothing -> paragraph 1 -> sentence 1
  * NUMBER: 2
- * DESCRIPTION: todo
+ * DESCRIPTION: check the allowance of returning Nothing where String is expected
  */
 
 
 fun foo(s: String?): String {
-    val data = s ?: throw IllegalArgumentException("not null string is expected");
+    return s ?: throw IllegalArgumentException("not null string is expected");
 }
 
-fun box() {
-    val result = "NOK"
+fun box(): String {
+    var result = "NOK"
     val b = foo("")
     try {
         val a = foo(null)
