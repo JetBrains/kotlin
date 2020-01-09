@@ -78,6 +78,13 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
                     JKClassType(JKUnresolvedClassSymbol(type.rawType().canonicalText, this), parameters)
                 is PsiTypeParameter ->
                     JKTypeParameterType(symbolProvider.provideDirectSymbol(target) as JKTypeParameterSymbol)
+                is PsiAnonymousClass -> {
+                    /*
+                     If anonymous class is declared inside the converting code, we will not be able to access JKUniverseClassSymbol's target
+                     And get UninitializedPropertyAccessException exception, so it is ok to use base class for now
+                    */
+                    createPsiType(target.baseClassType)
+                }
                 else -> {
                     JKClassType(
                         target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
