@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.target
 
 import com.intellij.openapi.components.*
@@ -9,6 +9,11 @@ import com.intellij.util.xmlb.annotations.XCollection
 
 @State(name = "RemoteTargetsManager", storages = [Storage("remote-targets.xml")])
 class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsManager.TargetsListState> {
+  companion object {
+    @JvmStatic
+    val instance: TargetEnvironmentsManager
+      get() = service()
+  }
 
   val targets: ContributedConfigurationsList<TargetEnvironmentConfiguration, TargetEnvironmentType<*>> = TargetsList()
 
@@ -43,11 +48,6 @@ class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsMan
     }
   }
 
-  companion object {
-    @JvmStatic
-    val instance: TargetEnvironmentsManager = ServiceManager.getService(TargetEnvironmentsManager::class.java)
-  }
-
   internal class TargetsList : ContributedConfigurationsList<TargetEnvironmentConfiguration, TargetEnvironmentType<*>>(TargetEnvironmentType.EXTENSION_NAME) {
     override fun toBaseState(config: TargetEnvironmentConfiguration): OneTargetState =
       OneTargetState().also {
@@ -68,7 +68,6 @@ class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsMan
     @get: XCollection(style = XCollection.Style.v2)
     var targets by list<OneTargetState>()
   }
-
 
   @Tag("target")
   class OneTargetState : ContributedConfigurationsList.ContributedStateBase() {
