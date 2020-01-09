@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.parenthesizeIfBinaryExpression
 import org.jetbrains.kotlin.nj2k.tree.*
-
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
@@ -141,7 +141,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
                 field,
                 JKBinaryExpression(
                     field.copyTreeAndDetach(),
-                    expression,
+                    expression.parenthesizeIfBinaryExpression(),
                     JKKtOperatorImpl(
                         onlyJavaAssignTokensToKotlinOnes[operator.token]!!,
                         operator.returnType
