@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.structureView.newStructureView;
 
@@ -326,7 +326,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
   public void restoreState() {
     TreeState state = myFileEditor == null ? null : myFileEditor.getUserData(STRUCTURE_VIEW_STATE_KEY);
     if (state == null) {
-      if (!Boolean.TRUE.equals(UIUtil.getClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY))) {
+      if (!Boolean.TRUE.equals(ComponentUtil.getClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY))) {
         TreeUtil.expand(getTree(), getMinimumExpandDepth(myTreeModel));
       }
     }
@@ -1017,7 +1017,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
     @Override
     public void treeNodesInserted(TreeModelEvent e) {
       TreePath parentPath = e.getTreePath();
-      if (Boolean.TRUE.equals(UIUtil.getClientProperty(tree, STRUCTURE_VIEW_STATE_RESTORED_KEY))) return;
+      if (Boolean.TRUE.equals(ComponentUtil.getClientProperty(tree, STRUCTURE_VIEW_STATE_RESTORED_KEY))) return;
       if (parentPath == null || parentPath.getPathCount() > autoExpandDepth.asInteger() - 1) return;
       Object[] children = e.getChildren();
       if (smartExpand && children.length == 1) {

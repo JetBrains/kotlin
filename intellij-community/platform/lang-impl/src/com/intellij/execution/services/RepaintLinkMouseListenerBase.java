@@ -1,9 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vcs.changes.issueLinks.LinkMouseListenerBase;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public abstract class RepaintLinkMouseListenerBase<T> extends LinkMouseListenerB
     JComponent component = (JComponent)e.getSource();
     Object tag = getTagAt(e);
     UIUtil.setCursor(component, tag != null ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
-    if (!Comparing.equal(tag, UIUtil.getClientProperty(component, ACTIVE_TAG))) {
+    if (!Comparing.equal(tag, ComponentUtil.getClientProperty(component, ACTIVE_TAG))) {
       UIUtil.putClientProperty(component, ACTIVE_TAG, tag);
       repaintComponent(e);
     }
@@ -46,7 +47,7 @@ public abstract class RepaintLinkMouseListenerBase<T> extends LinkMouseListenerB
       @Override
       public void mouseExited(MouseEvent e) {
         JComponent component = (JComponent)e.getSource();
-        Object tag = UIUtil.getClientProperty(component, ACTIVE_TAG);
+        Object tag = ComponentUtil.getClientProperty(component, ACTIVE_TAG);
         if (tag != null) {
           UIUtil.putClientProperty(component, ACTIVE_TAG, null);
           repaintComponent(e);
