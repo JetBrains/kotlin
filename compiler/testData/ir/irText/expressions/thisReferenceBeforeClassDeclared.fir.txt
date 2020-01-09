@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.WithCompanion.Companion
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun foo (): <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion'
-            GET_VAR '<this>: <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion' type=<root>.WithCompanion.Companion origin=null
+            GET_VAR '<this>: <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion.foo' type=<root>.WithCompanion.Companion origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

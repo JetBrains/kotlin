@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class T4(
   val c1: Boolean,
   val c2: Boolean,

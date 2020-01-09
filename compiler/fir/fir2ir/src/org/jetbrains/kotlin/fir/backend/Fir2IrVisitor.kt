@@ -877,6 +877,17 @@ class Fir2IrVisitor(
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
+        val calleeReference = thisReceiverExpression.calleeReference
+        if (calleeReference.labelName == null && calleeReference.boundSymbol is FirRegularClassSymbol) {
+            val dispatchReceiver = this.functionStack.lastOrNull()?.dispatchReceiverParameter
+            if (dispatchReceiver != null) {
+                // Use the dispatch receiver of the containing function
+                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                    IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+                }
+            }
+        }
+        // TODO handle qualified "this" in instance methods of non-inner classes (inner class cases are handled by InnerClassesLowering)
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 

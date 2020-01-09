@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
               $this: GET_VAR 'receiver: kotlin.String declared in <root>.Host.StringDelegate.getValue' type=kotlin.String origin=null
               other: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.Host.StringDelegate' type=kotlin.String origin=null
-                $this: GET_VAR '<this>: <root>.Host.StringDelegate declared in <root>.Host.StringDelegate' type=<root>.Host.StringDelegate origin=null
+                $this: GET_VAR '<this>: <root>.Host.StringDelegate declared in <root>.Host.StringDelegate.getValue' type=<root>.Host.StringDelegate origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

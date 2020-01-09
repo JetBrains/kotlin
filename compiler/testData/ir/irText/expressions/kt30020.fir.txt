@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/kt30020.kt
       BLOCK_BODY
         CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
           <T>: kotlin.Int
-          $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML' type=<root>.AML origin=null
+          $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML.testExplicitThis' type=<root>.AML origin=null
           element: CONST Int type=kotlin.Int value=200
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AML.Inner

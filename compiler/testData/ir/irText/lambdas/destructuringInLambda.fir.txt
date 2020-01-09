@@ -34,23 +34,23 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.A'
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.component1' type=<root>.A origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.A'
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.component2' type=<root>.A origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.A, x:kotlin.Int, y:kotlin.Int) returnType:<root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
         EXPRESSION_BODY
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
       VALUE_PARAMETER name:y index:1 type:kotlin.Int
         EXPRESSION_BODY
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

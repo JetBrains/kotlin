@@ -46,33 +46,33 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.Test1'
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=null
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
+            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component1' type=<root>.Test1 origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.Test1'
           CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test1' type=kotlin.String origin=null
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
+            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component2' type=<root>.Test1 origin=null
     FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any declared in <root>.Test1'
           CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=null
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
+            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component3' type=<root>.Test1 origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test1, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.Test1
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
         EXPRESSION_BODY
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=null
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
+            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       VALUE_PARAMETER name:y index:1 type:kotlin.String
         EXPRESSION_BODY
           CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test1' type=kotlin.String origin=null
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
+            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       VALUE_PARAMETER name:z index:2 type:kotlin.Any
         EXPRESSION_BODY
           CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=null
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
+            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -110,13 +110,13 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Any? declared in <root>.Test2'
           CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=null
-            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
+            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.component1' type=<root>.Test2 origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, x:kotlin.Any?) returnType:<root>.Test2
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       VALUE_PARAMETER name:x index:0 type:kotlin.Any?
         EXPRESSION_BODY
           CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=null
-            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
+            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.copy' type=<root>.Test2 origin=null
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -190,43 +190,43 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Double declared in <root>.Test3'
           CALL 'public final fun <get-d> (): kotlin.Double declared in <root>.Test3' type=kotlin.Double origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component1' type=<root>.Test3 origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double?
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Double? declared in <root>.Test3'
           CALL 'public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3' type=kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component2' type=<root>.Test3 origin=null
     FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Float declared in <root>.Test3'
           CALL 'public final fun <get-f> (): kotlin.Float declared in <root>.Test3' type=kotlin.Float origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component3' type=<root>.Test3 origin=null
     FUN name:component4 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float?
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component4 (): kotlin.Float? declared in <root>.Test3'
           CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component4' type=<root>.Test3 origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test3, d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:<root>.Test3
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       VALUE_PARAMETER name:d index:0 type:kotlin.Double
         EXPRESSION_BODY
           CALL 'public final fun <get-d> (): kotlin.Double declared in <root>.Test3' type=kotlin.Double origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       VALUE_PARAMETER name:dn index:1 type:kotlin.Double?
         EXPRESSION_BODY
           CALL 'public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3' type=kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       VALUE_PARAMETER name:f index:2 type:kotlin.Float
         EXPRESSION_BODY
           CALL 'public final fun <get-f> (): kotlin.Float declared in <root>.Test3' type=kotlin.Float origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       VALUE_PARAMETER name:df index:3 type:kotlin.Float?
         EXPRESSION_BODY
           CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=null
-            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3' type=<root>.Test3 origin=null
+            $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

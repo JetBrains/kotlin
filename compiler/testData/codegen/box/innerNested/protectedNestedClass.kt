@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // See KT-9246 IllegalAccessError when trying to access protected nested class from parent class
 // FILE: a.kt
 

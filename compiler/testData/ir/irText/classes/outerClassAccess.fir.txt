@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
         BLOCK_BODY
           CALL 'public final fun foo (): kotlin.Unit declared in <root>.Outer' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+            $this: GET_VAR '<this>: <root>.Outer.Inner declared in <root>.Outer.Inner.test' type=<root>.Outer.Inner origin=null
       CLASS CLASS name:Inner2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner.Inner2
         CONSTRUCTOR visibility:public <> () returnType:<root>.Outer.Inner.Inner2 [primary]
@@ -29,9 +29,9 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner.Inner2
           BLOCK_BODY
             CALL 'public final fun test (): kotlin.Unit declared in <root>.Outer.Inner' type=kotlin.Unit origin=null
-              $this: GET_VAR '<this>: <root>.Outer.Inner declared in <root>.Outer.Inner' type=<root>.Outer.Inner origin=null
+              $this: GET_VAR '<this>: <root>.Outer.Inner.Inner2 declared in <root>.Outer.Inner.Inner2.test2' type=<root>.Outer.Inner.Inner2 origin=null
             CALL 'public final fun foo (): kotlin.Unit declared in <root>.Outer' type=kotlin.Unit origin=null
-              $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
+              $this: GET_VAR '<this>: <root>.Outer.Inner.Inner2 declared in <root>.Outer.Inner.Inner2.test2' type=<root>.Outer.Inner.Inner2 origin=null
         FUN name:test3 visibility:public modality:FINAL <> ($this:<root>.Outer.Inner.Inner2, $receiver:<root>.Outer) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner.Inner2
           $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer

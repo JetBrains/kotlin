@@ -37,23 +37,23 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test declared in <root>.Test'
           CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=T of <root>.Test origin=null
-            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test<T of <root>.Test> origin=null
+            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.component1' type=<root>.Test origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.Test'
           CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=kotlin.String origin=null
-            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test<T of <root>.Test> origin=null
+            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.component2' type=<root>.Test origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test, x:T of <root>.Test, y:kotlin.String) returnType:<root>.Test<T of <root>.Test>
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test
         EXPRESSION_BODY
           CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=T of <root>.Test origin=null
-            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test<T of <root>.Test> origin=null
+            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.copy' type=<root>.Test origin=null
       VALUE_PARAMETER name:y index:1 type:kotlin.String
         EXPRESSION_BODY
           CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=kotlin.String origin=null
-            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test<T of <root>.Test> origin=null
+            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.copy' type=<root>.Test origin=null
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
