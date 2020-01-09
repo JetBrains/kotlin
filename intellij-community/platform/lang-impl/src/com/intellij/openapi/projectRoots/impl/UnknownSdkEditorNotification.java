@@ -2,7 +2,6 @@
 package com.intellij.openapi.projectRoots.impl;
 
 import com.google.common.collect.ImmutableList;
-import com.intellij.codeInsight.daemon.impl.SdkSetupNotificationProvider;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -14,6 +13,7 @@ import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.EditorNotifications;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UnknownSdkEditorNotification implements Disposable {
   public static final Key<List<EditorNotificationPanel>> NOTIFICATIONS = Key.create("notifications added to the editor");
@@ -36,6 +37,7 @@ public class UnknownSdkEditorNotification implements Disposable {
 
   private final Project myProject;
   private final FileEditorManager myFileEditorManager;
+  private final AtomicBoolean myAllowProjectSdkNotifications = new AtomicBoolean(false);
   private final Set<SdkFixInfo> myNotifications = new LinkedHashSet<>();
 
   UnknownSdkEditorNotification(@NotNull Project project) {
@@ -51,6 +53,10 @@ public class UnknownSdkEditorNotification implements Disposable {
           }
         }
       });
+  }
+
+  public boolean allowProjectSdkNotifications() {
+    return myAllowProjectSdkNotifications.get();
   }
 
   private void setupPanel(@NotNull EditorNotificationPanel panel,
@@ -101,9 +107,8 @@ public class UnknownSdkEditorNotification implements Disposable {
                                 @NotNull Map<UnknownSdk, DownloadSdkFix> files) {
     myNotifications.clear();
 
-    if (allowProjectSdkValidation) {
-      myNotifications.add(myProject.getService(SdkSetupNotificationProvider.class));
-    }
+    myAllowProjectSdkNotifications.getAndSet(allowProjectSdkValidation);
+    EditorNotifications.getInstance(myProject).updateAllNotifications();
 
     for (String name : unifiableSdkNames) {
       myNotifications.add(new SimpleSdkFixInfo() {
