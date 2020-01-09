@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -103,6 +103,7 @@ private val unitClassId = ClassId.topLevel(FqName("kotlin.Unit"))
 private fun FirTypeRef.isVoid(): Boolean {
     return when (this) {
         is FirJavaTypeRef -> {
+            val type = type
             type is JavaPrimitiveType && type.type == null
         }
         is FirResolvedTypeRef -> {
