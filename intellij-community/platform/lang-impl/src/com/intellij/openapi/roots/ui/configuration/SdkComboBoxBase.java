@@ -1,10 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
@@ -23,7 +23,7 @@ public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
       }
     });
 
-    UIUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
+    ComponentUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
     setMinimumAndPreferredWidth(JBUI.scale(300));
     setMaximumRowCount(30);
     setSwingPopup(false);

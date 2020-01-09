@@ -31,7 +31,7 @@ public abstract class RepaintLinkMouseListenerBase<T> extends LinkMouseListenerB
     Object tag = getTagAt(e);
     UIUtil.setCursor(component, tag != null ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
     if (!Comparing.equal(tag, ComponentUtil.getClientProperty(component, ACTIVE_TAG))) {
-      UIUtil.putClientProperty(component, ACTIVE_TAG, tag);
+      ComponentUtil.putClientProperty(component, ACTIVE_TAG, tag);
       repaintComponent(e);
     }
   }
@@ -49,7 +49,7 @@ public abstract class RepaintLinkMouseListenerBase<T> extends LinkMouseListenerB
         JComponent component = (JComponent)e.getSource();
         Object tag = ComponentUtil.getClientProperty(component, ACTIVE_TAG);
         if (tag != null) {
-          UIUtil.putClientProperty(component, ACTIVE_TAG, null);
+          ComponentUtil.putClientProperty(component, ACTIVE_TAG, null);
           repaintComponent(e);
         }
       }

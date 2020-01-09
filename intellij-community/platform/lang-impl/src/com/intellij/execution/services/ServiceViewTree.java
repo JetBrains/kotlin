@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
@@ -6,12 +6,12 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.containers.Convertor;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +45,7 @@ class ServiceViewTree extends Tree {
     setRootVisible(false);
     setShowsRootHandles(true);
     setCellRenderer(new ServiceViewTreeCellRenderer());
-    UIUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
+    ComponentUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
 
     // listeners
     new TreeSpeedSearch(this, DISPLAY_NAME_CONVERTER, true);

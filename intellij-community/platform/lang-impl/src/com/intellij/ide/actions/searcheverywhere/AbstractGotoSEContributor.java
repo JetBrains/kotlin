@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.codeInsight.navigation.NavigationUtil;
@@ -35,6 +35,7 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.ui.OffsetIcon;
 import com.intellij.ui.TitledSeparator;
 import com.intellij.ui.components.JBList;
@@ -462,9 +463,9 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
     @NotNull @Override
     public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
       JComponent component = new ActionButtonWithText(this, presentation, place, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
-      UIUtil.putClientProperty(component, MnemonicHelper.MNEMONIC_CHECKER, keyCode ->
-        KeyEvent.getExtendedKeyCodeForChar(TOGGLE) == keyCode ||
-        KeyEvent.getExtendedKeyCodeForChar(CHOOSE) == keyCode);
+      ComponentUtil.putClientProperty(component, MnemonicHelper.MNEMONIC_CHECKER, keyCode ->
+          KeyEvent.getExtendedKeyCodeForChar(TOGGLE) == keyCode ||
+          KeyEvent.getExtendedKeyCodeForChar(CHOOSE) == keyCode);
 
       MnemonicHelper.registerMnemonicAction(component, CHOOSE);
       InputMap map = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);

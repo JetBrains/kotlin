@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.application.options.OptionsApplicabilityFilter;
@@ -61,10 +61,7 @@ import com.intellij.openapi.wm.impl.content.ToolWindowContentUi;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.AutoScrollFromSourceHandler;
-import com.intellij.ui.AutoScrollToSourceHandler;
-import com.intellij.ui.GuiUtils;
-import com.intellij.ui.IdeUICustomization;
+import com.intellij.ui.*;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.content.ContentManagerAdapter;
@@ -1357,18 +1354,18 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     MyPanel() {
       super(new BorderLayout());
       Collection<AbstractProjectViewPane> snapshot = new ArrayList<>(myId2Pane.values());
-      UIUtil.putClientProperty(
-        this, UIUtil.NOT_IN_HIERARCHY_COMPONENTS, (Iterable<JComponent>)() -> JBIterable.from(snapshot)
-          .map(pane -> {
-            JComponent last = null;
-            for (Component c : UIUtil.uiParents(pane.getComponentToFocus(), false)) {
-              if (c == this || !(c instanceof JComponent)) return null;
-              last = (JComponent)c;
-            }
-            return last;
-          })
-          .filter(Conditions.notNull())
-          .iterator());
+      ComponentUtil.putClientProperty(this, UIUtil.NOT_IN_HIERARCHY_COMPONENTS,
+                                      (Iterable<? extends Component>)(Iterable<JComponent>)() -> JBIterable.from(snapshot)
+                                        .map(pane -> {
+                                          JComponent last = null;
+                                          for (Component c : UIUtil.uiParents(pane.getComponentToFocus(), false)) {
+                                            if (c == this || !(c instanceof JComponent)) return null;
+                                            last = (JComponent)c;
+                                          }
+                                          return last;
+                                        })
+                                        .filter(Conditions.notNull())
+                                        .iterator());
     }
 
     @Nullable

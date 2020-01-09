@@ -254,7 +254,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
 
   public void rebuild() {
     myStructureTreeModel.getInvoker().invoke(() -> {
-      UIUtil.putClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY, null);
+      ComponentUtil.putClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY, null);
       myTreeStructure.rebuildTree();
       myStructureTreeModel.invalidate();
     });
@@ -314,7 +314,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
     if (myFileEditor != null) {
       myFileEditor.putUserData(STRUCTURE_VIEW_STATE_KEY, state);
     }
-    UIUtil.putClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY, null);
+    ComponentUtil.putClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY, null);
   }
 
   @Override
@@ -331,7 +331,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
       }
     }
     else {
-      UIUtil.putClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY, true);
+      ComponentUtil.putClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY, true);
       state.applyTo(myTree);
       if (myFileEditor != null) {
         myFileEditor.putUserData(STRUCTURE_VIEW_STATE_KEY, null);

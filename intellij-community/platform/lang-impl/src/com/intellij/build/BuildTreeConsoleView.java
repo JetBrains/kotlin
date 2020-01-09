@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
 import com.intellij.build.events.*;
@@ -684,7 +684,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private static Tree initTree(@NotNull AsyncTreeModel model) {
     Tree tree = new Tree(model);
     tree.setLargeModel(true);
-    UIUtil.putClientProperty(tree, ANIMATION_IN_RENDERER_ALLOWED, true);
+    ComponentUtil.putClientProperty(tree, ANIMATION_IN_RENDERER_ALLOWED, true);
     tree.setRootVisible(false);
     EditSourceOnDoubleClickHandler.install(tree);
     EditSourceOnEnterKeyHandler.install(tree, null);
