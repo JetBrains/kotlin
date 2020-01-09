@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.collectRealOverrides
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 
 /**
@@ -21,7 +22,10 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 object SignatureString : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val function = (expression.getValueArgument(0) as IrFunctionReference).symbol.owner
-        val resolved = if (function is IrSimpleFunction) function.collectRealOverrides().first() else function
+        var resolved = if (function is IrSimpleFunction) function.collectRealOverrides().first() else function
+        if (resolved.isSuspend) {
+            resolved = codegen.context.suspendFunctionOriginalToView[resolved] ?: resolved
+        }
         val method = codegen.context.methodSignatureMapper.mapAsmMethod(resolved)
         val descriptor = method.name + method.descriptor
         return object : PromisedValue(codegen, AsmTypes.JAVA_STRING_TYPE, codegen.context.irBuiltIns.stringType) {
