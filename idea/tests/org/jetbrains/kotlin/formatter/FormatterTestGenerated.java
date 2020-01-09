@@ -1205,6 +1205,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @TestMetadata("idea/testData/formatter/trailingComma/enumEntry")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class EnumEntry extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInEnumEntry() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/enumEntry"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("Enum.after.kt")
+                public void testEnum() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/enumEntry/Enum.after.kt");
+                }
+            }
+
             @TestMetadata("idea/testData/formatter/trailingComma/indices")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1782,6 +1800,24 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 @TestMetadata("MultiVariableDeclaration.after.inv.kt")
                 public void testMultiVariableDeclaration() throws Exception {
                     runTest("idea/testData/formatter/trailingComma/destructionDeclaration/MultiVariableDeclaration.after.inv.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/formatter/trailingComma/enumEntry")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class EnumEntry extends AbstractFormatterTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInEnumEntry() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/enumEntry"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                }
+
+                @TestMetadata("Enum.after.inv.kt")
+                public void testEnum() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/enumEntry/Enum.after.inv.kt");
                 }
             }
 

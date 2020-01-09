@@ -262,6 +262,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             between(ENUM_ENTRY, SEMICOLON).spaces(0)
 
+            between(COMMA, SEMICOLON).lineBreakInCodeIf(kotlinCustomSettings.ALLOW_TRAILING_COMMA)
+
             beforeInside(FUN, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             beforeInside(SECONDARY_CONSTRUCTOR, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             beforeInside(CLASS, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
