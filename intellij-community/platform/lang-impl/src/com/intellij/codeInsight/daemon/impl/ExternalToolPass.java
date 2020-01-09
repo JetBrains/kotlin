@@ -222,6 +222,7 @@ public class ExternalToolPass extends ProgressableTextEditorHighlightingPass {
         }
       }
     }
+    myAnnotationHolder.assertAllAnnotationsCreated();
   }
 
   private List<HighlightInfo> getHighlights() {

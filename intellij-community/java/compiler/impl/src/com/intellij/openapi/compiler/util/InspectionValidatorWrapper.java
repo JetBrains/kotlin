@@ -329,6 +329,7 @@ public class InspectionValidatorWrapper implements Validator {
     for (ExternalAnnotator<?, ?> annotator : annotators) {
       processAnnotator(xmlFile, holder, annotator);
     }
+    holder.assertAllAnnotationsCreated();
 
     if (!holder.hasAnnotations()) return Collections.emptyMap();
 
