@@ -32,6 +32,10 @@ class ClassWrapper(
         return className == SpecialNames.NO_NAME_PROVIDED && isObject()
     }
 
+    fun isEnumEntry(): Boolean {
+        return classKind == ClassKind.ENUM_ENTRY
+    }
+
     private fun isObject(): Boolean {
         return classKind == ClassKind.OBJECT
     }

@@ -612,7 +612,7 @@ class DeclarationsConverter(
      * primaryConstructor branch
      */
     private fun convertPrimaryConstructor(primaryConstructor: LighterASTNode?, classWrapper: ClassWrapper): PrimaryConstructor? {
-        if (primaryConstructor == null && classWrapper.hasSecondaryConstructor) return null
+        if (primaryConstructor == null && !classWrapper.isEnumEntry() && classWrapper.hasSecondaryConstructor) return null
         if (classWrapper.isInterface()) return null
 
         var modifiers = Modifier()

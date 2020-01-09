@@ -1,0 +1,54 @@
+FILE: constructorInObject.kt
+    public? final? object A : R|kotlin/Any| {
+        public? constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+        }
+
+    }
+    public? final? enum class B : R|kotlin/Enum<B>| {
+        private constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static enum entry X: R|B| = object : R|B| {
+            public? constructor(): R|anonymous| {
+                super<R|B|>()
+            }
+
+            public? constructor(): R|anonymous| {
+                this<R|anonymous|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<B>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|B| {
+        }
+
+    }
+    public? final? class C : R|kotlin/Any| {
+        public? constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? companion object Companion : R|kotlin/Any| {
+            public? constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public? final? val anonObject: <implicit> = object : R|kotlin/Any| {
+        public? constructor(): <ERROR TYPE REF: Constructor in object> {
+            super<<ERROR TYPE REF: No super type>>()
+        }
+
+    }
+
+        public? get(): <implicit>

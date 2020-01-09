@@ -4,8 +4,10 @@ object A {
 }
 
 enum class B {
+//   constructor B()
+//   │
     X() {
-        <!UNRESOLVED_REFERENCE!>constructor()<!>
+        constructor()
     }
 }
 
@@ -15,6 +17,8 @@ class C {
     }
 }
 
+//  Any
+//  │
 val anonObject = object {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>
+    constructor()
 }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, val stubMode: Boolean) : BaseFirBuilder<PsiElement>(session) {
 
@@ -475,14 +476,21 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
             val delegatedEntrySelfType =
                 FirResolvedTypeRefImpl(source = null, ConeClassLikeTypeImpl(obj.symbol.toLookupTag(), emptyArray(), isNullable = false))
 
-            extractSuperTypeListEntriesTo(obj, delegatedEntrySelfType, delegatedEnumSelfTypeRef, ClassKind.ENUM_ENTRY)
+            extractAnnotationsTo(obj)
+            obj.superTypeRefs += delegatedEnumSelfTypeRef
+            obj.declarations += primaryConstructor.toFirConstructor(
+                superTypeListEntries.firstIsInstanceOrNull(),
+                delegatedEnumSelfTypeRef,
+                delegatedEntrySelfType,
+                owner = this
+            )
 
             for (declaration in declarations) {
                 obj.declarations += declaration.toFirDeclaration(
                     delegatedEnumSelfTypeRef,
-                    delegatedSelfType = null,
+                    delegatedSelfType = delegatedEntrySelfType,
                     this,
-                    hasPrimaryConstructor = false
+                    hasPrimaryConstructor = true
                 )
             }
 

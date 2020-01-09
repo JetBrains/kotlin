@@ -4,32 +4,26 @@ FILE: enums.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static val FIRST: R|Order| = object : R|Order| {
-            public? constructor(): R|Order| {
+        public final static enum entry FIRST: R|Order| = object : R|Order| {
+            public? constructor(): R|anonymous| {
                 super<R|Order|>()
             }
 
         }
 
-
-
-        public final static val SECOND: R|Order| = object : R|Order| {
-            public? constructor(): R|Order| {
+        public final static enum entry SECOND: R|Order| = object : R|Order| {
+            public? constructor(): R|anonymous| {
                 super<R|Order|>()
             }
 
         }
 
-
-
-        public final static val THIRD: R|Order| = object : R|Order| {
-            public? constructor(): R|Order| {
+        public final static enum entry THIRD: R|Order| = object : R|Order| {
+            public? constructor(): R|anonymous| {
                 super<R|Order|>()
             }
 
         }
-
-
 
         public final static fun values(): R|kotlin/Array<Order>| {
         }
@@ -49,9 +43,9 @@ FILE: enums.kt
         internal final? val r: Double = R|<local>/r|
             internal get(): Double
 
-        public final static val MERCURY: R|Planet| = object : Planet {
-            public? constructor(): Planet {
-                super<Planet>(Double(1.0), Double(2.0))
+        public final static enum entry MERCURY: R|Planet| = object : R|Planet| {
+            public? constructor(): R|anonymous| {
+                super<R|Planet|>(Double(1.0), Double(2.0))
             }
 
             public? open? override fun sayHello(): R|kotlin/Unit| {
@@ -60,11 +54,9 @@ FILE: enums.kt
 
         }
 
-
-
-        public final static val VENERA: R|Planet| = object : Planet {
-            public? constructor(): Planet {
-                super<Planet>(Double(3.0), Double(4.0))
+        public final static enum entry VENERA: R|Planet| = object : R|Planet| {
+            public? constructor(): R|anonymous| {
+                super<R|Planet|>(Double(3.0), Double(4.0))
             }
 
             public? open? override fun sayHello(): R|kotlin/Unit| {
@@ -73,11 +65,9 @@ FILE: enums.kt
 
         }
 
-
-
-        public final static val EARTH: R|Planet| = object : Planet {
-            public? constructor(): Planet {
-                super<Planet>(Double(5.0), Double(6.0))
+        public final static enum entry EARTH: R|Planet| = object : R|Planet| {
+            public? constructor(): R|anonymous| {
+                super<R|Planet|>(Double(5.0), Double(6.0))
             }
 
             public? open? override fun sayHello(): R|kotlin/Unit| {
@@ -85,8 +75,6 @@ FILE: enums.kt
             }
 
         }
-
-
 
         public? final? val g: Double = G#.times#(m#).div#(r#.times#(r#))
             public? get(): Double

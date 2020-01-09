@@ -21,9 +21,9 @@ FILE: enums2.kt
         public? final? val x: Some = R|<local>/x|
             public? get(): Some
 
-        public final static val FIRST: R|SomeEnum| = object : SomeEnum {
-            public? constructor(): SomeEnum {
-                super<SomeEnum>(O1#)
+        public final static enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
+            public? constructor(): R|anonymous| {
+                super<R|SomeEnum|>(O1#)
             }
 
             public? open? override fun check(y: Some): Boolean {
@@ -32,11 +32,9 @@ FILE: enums2.kt
 
         }
 
-
-
-        public final static val SECOND: R|SomeEnum| = object : SomeEnum {
-            public? constructor(): SomeEnum {
-                super<SomeEnum>(O2#)
+        public final static enum entry SECOND: R|SomeEnum| = object : R|SomeEnum| {
+            public? constructor(): R|anonymous| {
+                super<R|SomeEnum|>(O2#)
             }
 
             public? open? override fun check(y: Some): Boolean {
@@ -44,8 +42,6 @@ FILE: enums2.kt
             }
 
         }
-
-
 
         public? abstract fun check(y: Some): Boolean
 

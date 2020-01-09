@@ -1,0 +1,62 @@
+FILE: annotation.kt
+    @Target(AnnotationTarget#.ANNOTATION_CLASS#) public? final? annotation class base : R|kotlin/Annotation| {
+        public? constructor(): R|base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @base() public? final? annotation class derived : R|kotlin/Annotation| {
+        public? constructor(): R|derived| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @base() public? final? class correct : R|kotlin/Any| {
+        public? constructor(@base() x: Int): R|correct| {
+            super<R|kotlin/Any|>()
+        }
+
+        @base() public? final? val x: Int = R|<local>/x|
+            public? get(): Int
+
+        @base() public? constructor(): R|correct| {
+            this<R|correct|>(IntegerLiteral(0))
+        }
+
+    }
+    @base() public? final? enum class My : R|kotlin/Enum<My>| {
+        private constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static enum entry FIRST: R|My| = @base() object : R|My| {
+            public? constructor(): R|anonymous| {
+                super<R|My|>()
+            }
+
+        }
+
+        public final static enum entry SECOND: R|My| = @base() object : R|My| {
+            public? constructor(): R|anonymous| {
+                super<R|My|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<My>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|My| {
+        }
+
+    }
+    @base() public? final? fun foo(@base() y: @base() Int): Int {
+        @base() local final? fun bar(@base() z: @base() Int): <implicit> {
+            ^bar z#.plus#(IntegerLiteral(1))
+        }
+
+        @base() lval local: <implicit> = bar#(y#)
+        ^foo local#
+    }
+    @base() public? final? val z: <implicit> = IntegerLiteral(0)
+        public? get(): <implicit>

@@ -5,7 +5,7 @@ object A {
 
 enum class B {
     X() {
-        <!UNRESOLVED_REFERENCE!>constructor()<!>
+        constructor()
     }
 }
 
@@ -16,5 +16,5 @@ class C {
 }
 
 val anonObject = object {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>
+    constructor()
 }
