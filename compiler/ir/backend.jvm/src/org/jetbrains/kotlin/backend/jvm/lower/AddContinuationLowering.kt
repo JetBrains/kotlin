@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -69,7 +71,11 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
                     val expressionArguments = expression.getArguments().map { it.second }
                     irBlock {
-                        +generateContinuationClassForLambda(info, currentDeclarationParent)
+                        +generateContinuationClassForLambda(
+                            info,
+                            currentDeclarationParent,
+                            (currentFunction?.irElement as? IrFunction)?.isInline == true
+                        )
                         val constructor = info.constructor
                         assert(constructor.valueParameters.size == expressionArguments.size + 1) {
                             "Inconsistency between callable reference to suspend lambda and the corresponding continuation"
@@ -90,9 +96,19 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         })
     }
 
-    private fun generateContinuationClassForLambda(info: SuspendLambdaInfo, parent: IrDeclarationParent): IrClass {
+    private fun generateContinuationClassForLambda(
+        info: SuspendLambdaInfo,
+        parent: IrDeclarationParent,
+        insideInlineFunction: Boolean
+    ): IrClass {
         val suspendLambda = context.ir.symbols.suspendLambdaClass.owner
-        return suspendLambda.createContinuationClassFor(parent, JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA).apply {
+        return suspendLambda.createContinuationClassFor(
+            parent,
+            JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA,
+            // Since inline functions can be inlined to different package, we should generate lambdas inside these functions
+            // as public
+            if (insideInlineFunction) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+        ).apply {
             copyAttributes(info.reference)
             copyTypeParametersFrom(info.function)
             val functionNClass = context.ir.symbols.getJvmFunctionClass(info.arity + 1)
@@ -341,10 +357,14 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
-    private fun IrClass.createContinuationClassFor(parent: IrDeclarationParent, newOrigin: IrDeclarationOrigin): IrClass = buildClass {
+    private fun IrClass.createContinuationClassFor(
+        parent: IrDeclarationParent,
+        newOrigin: IrDeclarationOrigin,
+        newVisibility: Visibility
+    ): IrClass = buildClass {
         name = Name.special("<Continuation>")
         origin = newOrigin
-        visibility = JavaVisibilities.PACKAGE_VISIBILITY
+        visibility = newVisibility
     }.also { irClass ->
         irClass.createImplicitParameterDeclarationWithWrappedDescriptor()
         irClass.superTypes.add(defaultType)
@@ -394,7 +414,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         attributeContainer: IrAttributeContainer
     ): IrClass {
         return context.ir.symbols.continuationImplClass.owner
-            .createContinuationClassFor(irFunction, JvmLoweredDeclarationOrigin.CONTINUATION_CLASS)
+            .createContinuationClassFor(irFunction, JvmLoweredDeclarationOrigin.CONTINUATION_CLASS, JavaVisibilities.PACKAGE_VISIBILITY)
             .apply {
                 copyTypeParametersFrom(irFunction)
                 val resultField = addField(
