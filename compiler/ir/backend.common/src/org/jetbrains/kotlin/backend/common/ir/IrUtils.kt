@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
@@ -176,17 +175,35 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
     }
 }
 
-fun IrFunction.copyValueParametersFrom(from: IrFunction) {
-    // TODO: should dispatch receiver be copied?
+private fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
         IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
             it.parent = this
         }
     }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
+}
 
+fun IrFunction.copyValueParametersFrom(from: IrFunction) {
+    copyReceiverParametersFrom(from)
     val shift = valueParameters.size
     valueParameters += from.valueParameters.map { it.copyTo(this, index = it.index + shift) }
+}
+
+fun IrFunction.copyValueParametersInsertingContinuationFrom(from: IrFunction, insertContinuation: () -> Unit) {
+    copyReceiverParametersFrom(from)
+    val shift = valueParameters.size
+    var additionalShift = 0
+    from.valueParameters.forEach {
+        // The continuation parameter goes before the default argument mask and handler.
+        if (it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION) {
+            insertContinuation()
+            additionalShift = 1
+        }
+        valueParameters.add(it.copyTo(this, index = it.index + shift + additionalShift))
+    }
+    // If there was no default argument mask and handler, the continuation goes last.
+    if (additionalShift == 0) insertContinuation()
 }
 
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {

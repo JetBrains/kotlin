@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.copyValueParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.copyValueParametersInsertingContinuationFrom
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -165,16 +165,21 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
 
         it.copyAttributes(this)
         it.copyTypeParametersFrom(this)
-        it.copyValueParametersFrom(this)
-        // TODO: this should come before the default masks, if they exist; otherwise, this is not binary
-        //       compatible with the non-IR backend
-        it.addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType)
+
+        // Copy the value parameters and insert the continuation parameter. The continuation parameter
+        // goes before the default argument mask and handler for default argument stubs.
+        // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
+        // That would avoid the reshuffling both here and in createSuspendFunctionClassViewIfNeeded.
+        var continuationValueParam: IrValueParameter? = null
+        it.copyValueParametersInsertingContinuationFrom(this) {
+            continuationValueParam = it.addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType)
+        }
 
         // Add the suspend function view to the map before transforming the body to make sure
         // that recursive suspend functions do not lead to unbounded recursion at compile time.
         context.recordSuspendFunctionView(this, it)
 
-        val valueParametersMapping = explicitParameters.zip(it.explicitParameters).toMap()
+        val valueParametersMapping = explicitParameters.zip(it.explicitParameters.filter { it != continuationValueParam }).toMap()
         it.body = body?.deepCopyWithSymbols(this)
         it.body?.transformChildrenVoid(object : VariableRemapper(valueParametersMapping) {
             // Do not cross class boundaries inside functions. Otherwise, callable references will try to access wrong $completion.
@@ -198,18 +203,29 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
-        for (i in 0 until valueArgumentsCount) {
-            it.putValueArgument(i, getValueArgument(i))
-        }
+        // Locate the caller continuation parameter. The continuation parameter is before default argument mask and handler params.
+        val callerHasDefaultMask = caller.valueParameters.lastOrNull()?.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION
+        val callerContinuationIndex = caller.valueParameters.size - 1 - (if (callerHasDefaultMask) 2 else 0)
         val continuationParameter =
             when {
                 caller.isInvokeSuspendOfLambda() || caller.isInvokeSuspendOfContinuation() ||
                         caller.isInvokeSuspendForInlineOfLambda() ->
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!.symbol)
                 callerIsInlineLambda -> context.fakeContinuation
-                else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters.last().symbol)
+                else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters[callerContinuationIndex].symbol)
             }
-        it.putValueArgument(valueArgumentsCount, continuationParameter)
+        // If the suspend function view that we are calling has default parameters, we need to make sure to pass the
+        // continuation before the default parameter mask and handler.
+        val hasDefaultMask = view.valueParameters.last().origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION
+        val continuationIndex = valueArgumentsCount - (if (hasDefaultMask) 2 else 0)
+        for (i in 0 until continuationIndex) {
+            it.putValueArgument(i, getValueArgument(i))
+        }
+        it.putValueArgument(continuationIndex, continuationParameter)
+        if (hasDefaultMask) {
+            it.putValueArgument(valueArgumentsCount - 1, getValueArgument(continuationIndex))
+            it.putValueArgument(valueArgumentsCount, getValueArgument(continuationIndex + 1))
+        }
     }
 }
 
