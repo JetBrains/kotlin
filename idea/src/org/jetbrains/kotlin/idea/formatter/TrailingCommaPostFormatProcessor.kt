@@ -16,6 +16,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.idea.util.needTrailingComma
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -182,16 +183,21 @@ private fun correctComma(comma: PsiElement, factory: KtPsiFactory): Boolean {
     }
 }
 
+private val RIGHT_BARRIERS = TokenSet.create(KtTokens.RBRACKET, KtTokens.RPAR, KtTokens.RBRACE, KtTokens.GT, KtTokens.ARROW)
+private val LEFT_BARRIERS = TokenSet.create(KtTokens.LBRACKET, KtTokens.LPAR, KtTokens.LBRACE, KtTokens.LT)
+
 private val PsiElement.lastCommaOwnerOrComma: PsiElement?
     get() {
         val lastChild = lastSignificantChild ?: return null
         val withSelf = when (lastChild.safeAs<ASTNode>()?.elementType) {
             KtTokens.COMMA -> return lastChild
-            KtTokens.RBRACKET, KtTokens.RPAR, KtTokens.RBRACE, KtTokens.GT, KtTokens.ARROW -> false
+            in RIGHT_BARRIERS -> false
             else -> true
         }
 
-        return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)
+        return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)?.takeIf {
+            it.safeAs<ASTNode>()?.elementType !in LEFT_BARRIERS
+        }
     }
 
 private val PsiElement.lastSignificantChild: PsiElement?
