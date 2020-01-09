@@ -1590,6 +1590,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/detectProperties/kt-32253.java");
         }
 
+        @TestMetadata("kt-35739.java")
+        public void testKt_35739() throws Exception {
+            runTest("nj2k/testData/newJ2k/detectProperties/kt-35739.java");
+        }
+
         @TestMetadata("NoBackingField.java")
         public void testNoBackingField() throws Exception {
             runTest("nj2k/testData/newJ2k/detectProperties/NoBackingField.java");
