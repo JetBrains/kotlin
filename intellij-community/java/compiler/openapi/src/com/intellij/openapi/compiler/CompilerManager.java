@@ -44,8 +44,9 @@ public abstract class CompilerManager {
   /**
    * Registers a custom compiler.
    *
-   * @param compiler the compiler to register.
+   * @deprecated use {@link CompileTask} extension instead
    */
+  @Deprecated
   public abstract void addCompiler(@NotNull Compiler compiler);
 
   /**
@@ -66,8 +67,9 @@ public abstract class CompilerManager {
   /**
    * Unregisters a custom compiler.
    *
-   * @param compiler the compiler to unregister.
+   * @deprecated use {@link CompileTask} extension instead
    */
+  @Deprecated
   public abstract void removeCompiler(@NotNull Compiler compiler);
 
   /**
