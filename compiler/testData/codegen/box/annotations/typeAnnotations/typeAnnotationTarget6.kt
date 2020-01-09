@@ -3,44 +3,25 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
 // FULL_JDK
-
-// FILE: A.kt
-// JVM_TARGET: 1.6
-
-import java.lang.reflect.AnnotatedType
-import kotlin.reflect.jvm.javaMethod
-import kotlin.test.fail
-
-@Target(AnnotationTarget.TYPE)
-annotation class TypeAnn
-
-// FILE: B.kt
 // JVM_TARGET: 1.8
 
 import java.lang.reflect.AnnotatedType
 import kotlin.reflect.jvm.javaMethod
 import kotlin.test.fail
 
-class Kotlin {
-
-    fun foo(s: @TypeAnn String) {
-    }
-
-    fun foo2(): @TypeAnn String {
-        return "OK"
-    }
-}
+fun foo(): String.() -> Unit = {}
 
 fun box(): String {
 
     checkTypeAnnotation(
-        Kotlin::foo.javaMethod!!.annotatedParameterTypes.single(),
-        "class java.lang.String",
+        ::foo.javaMethod!!.annotatedReturnType,
+        "kotlin.jvm.functions.Function1<java.lang.String, kotlin.Unit>",
         "",
         "foo"
     )
 
-    checkTypeAnnotation(Kotlin::foo2.javaMethod!!.annotatedReturnType, "class java.lang.String", "", "foo2")
+    val typeAnnotation = ::foo.returnType.annotations.single().toString()
+    if (typeAnnotation != "@kotlin.ExtensionFunctionType()") return "can't find type annotations: $typeAnnotation"
 
     return "OK"
 }
