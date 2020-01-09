@@ -46,7 +46,7 @@ class JvmDeclarationFactory(
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
     private val defaultImplsRedirections = HashMap<IrSimpleFunction, IrSimpleFunction>()
 
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, entryType: IrType): IrField =
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
             buildField {
                 setSourceRange(enumEntry)

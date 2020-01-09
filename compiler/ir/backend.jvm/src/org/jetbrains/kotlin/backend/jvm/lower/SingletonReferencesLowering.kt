@@ -46,7 +46,7 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : File
             // must be replaced with `SomeEnumEntry.this`.
             IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, appropriateThis.symbol)
         } else {
-            val entrySymbol = context.declarationFactory.getFieldForEnumEntry(expression.symbol.owner, expression.type)
+            val entrySymbol = context.declarationFactory.getFieldForEnumEntry(expression.symbol.owner)
             IrGetFieldImpl(expression.startOffset, expression.endOffset, entrySymbol.symbol, expression.type)
         }
     }
