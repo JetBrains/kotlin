@@ -23,6 +23,7 @@
 
 import lldb
 import struct
+import re
 
 NULL = 'null'
 
@@ -362,8 +363,57 @@ def print_this_command(debugger, command, result, internal_dict):
 def clear_cache_command(debugger, command, result, internal_dict):
     SYNTHETIC_OBJECT_LAYOUT_CACHE.clear()
 
+
 def type_name_command(debugger, command, result, internal_dict):
     result.AppendMessage(evaluate('(char *)Konan_DebugGetTypeName({})'.format(command)).summary)
+
+__KONAN_VARIABLE = re.compile('kvar:(.*)#internal')
+__KONAN_VARIABLE_TYPE = re.compile('^kfun:<get-(.*)>\\(\\)(.*)$')
+__TYPES_KONAN_TO_C = {
+   'kotlin.Byte': ('int8_t', lambda v: v.signed),
+   'kotlin.Short': ('short', lambda v: v.signed),
+   'kotlin.Int': ('int', lambda v: v.signed),
+   'kotlin.Long': ('long', lambda v: v.signed),
+   'kotlin.UByte': ('int8_t', lambda v: v.unsigned),
+   'kotlin.UShort': ('short', lambda v: v.unsigned),
+   'kotlin.UInt': ('int', lambda v: v.unsigned),
+   'kotlin.ULong': ('long', lambda v: v.unsigned),
+   'kotlin.Char': ('short', lambda v: v.signed),
+   'kotlin.Boolean': ('bool', lambda v: v.signed),
+   'kotlin.Float': ('float', lambda v: v.value),
+   'kotlin.Double': ('double', lambda v: v.value)
+}
+
+def konan_globals_command(debugger, command, result, internal_dict):
+    target = debugger.GetSelectedTarget()
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+    frame = thread.GetSelectedFrame()
+
+    konan_variable_symbols = list(filter(lambda v: __KONAN_VARIABLE.match(v.name), frame.GetModule().symbols))
+    visited = list()
+    for symbol in konan_variable_symbols:
+       name = __KONAN_VARIABLE.search(symbol.name).group(1)
+
+       if name in visited:
+           continue
+       visited.append(name)
+
+       getters = list(filter(lambda v: re.match('^kfun:<get-{}>\\(\\).*$'.format(name), v.name), frame.module.symbols))
+       if not getters:
+           result.AppendMessage("storage not found for name:{}".format(name))
+           continue
+
+       getter_functions = frame.module.FindFunctions(getters[0].name)
+       if not getter_functions:
+           continue
+
+       address = getter_functions[0].function.GetStartAddress().GetLoadAddress(target)
+       type = __KONAN_VARIABLE_TYPE.search(getters[0].name).group(2)
+       (c_type, extractor) = __TYPES_KONAN_TO_C[type] if type in __TYPES_KONAN_TO_C.keys() else ('struct ObjHeader *', lambda v: kotlin_object_type_summary(v))
+       value = evaluate('(({0} (*)()){1:#x})()'.format(c_type, address))
+       str_value = extractor(value)
+       result.AppendMessage('{} {}: {}'.format(type, name, str_value))
 
 def __lldb_init_module(debugger, _):
     __FACTORY['object'] = lambda x, y, z: KonanObjectSyntheticProvider(x, y, z)
@@ -387,3 +437,4 @@ def __lldb_init_module(debugger, _):
     debugger.HandleCommand('command script add -f {}.print_this_command print_this'.format(__name__))
     debugger.HandleCommand('command script add -f {}.clear_cache_command clear_kotlin_cache'.format(__name__))
     debugger.HandleCommand('command script add -f {}.type_name_command type_name'.format(__name__))
+    debugger.HandleCommand('command script add -f {}.konan_globals_command konan_globals'.format(__name__))
