@@ -12,7 +12,7 @@ public class HierarchyScopeType {
     myGetName = getName;
   }
 
-  String getName() {
+  public String getName() {
     return myGetName.get();
   }
 }

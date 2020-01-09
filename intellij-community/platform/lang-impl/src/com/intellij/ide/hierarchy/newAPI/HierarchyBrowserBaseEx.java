@@ -490,7 +490,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   }
 
   @NotNull
-  public StructureTreeModel getTreeModel(@NotNull String viewType) {
+  public StructureTreeModel getTreeModel(@NotNull HierarchyScopeType viewType) {
     return myType2Sheet.get(viewType).myStructureTreeModel;
   }
 
