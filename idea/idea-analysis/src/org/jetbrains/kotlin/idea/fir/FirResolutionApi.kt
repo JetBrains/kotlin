@@ -99,7 +99,7 @@ fun KtCallableDeclaration.getOrBuildFir(
 fun KtClassOrObject.getOrBuildFir(
     state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
-): FirRegularClass {
+): FirMemberDeclaration {
     val session = state.getSession(this)
 
     val file = this.containingKtFile
@@ -108,14 +108,20 @@ fun KtClassOrObject.getOrBuildFir(
 
     val firProvider = FirProvider.getInstance(session) as FirIdeProvider
     val firFile = firProvider.getOrBuildFile(file)
-    val firClass = firProvider.getFirClassifierByFqName(ClassId(packageFqName, klassFqName, false)) as FirRegularClass
-    if (firClass.resolvePhase >= phase) {
-        return firClass
+
+    val firClassOrEnumEntry = if (this is KtEnumEntry) {
+        val firEnumClass = firProvider.getFirClassifierByFqName(ClassId(packageFqName, klassFqName.parent(), false)) as FirRegularClass
+        firEnumClass.declarations.first { it is FirEnumEntry && it.name == this.nameAsSafeName } as FirMemberDeclaration
+    } else {
+        firProvider.getFirClassifierByFqName(ClassId(packageFqName, klassFqName, false)) as FirRegularClass
+    }
+    if (firClassOrEnumEntry.resolvePhase >= phase) {
+        return firClassOrEnumEntry
     }
     synchronized(firFile) {
-        firClass.runResolve(firFile, firProvider, phase, state)
+        firClassOrEnumEntry.runResolve(firFile, firProvider, phase, state)
     }
-    return firClass
+    return firClassOrEnumEntry
 }
 
 private fun KtFile.getOrBuildRawFirFile(state: FirModuleResolveState): Pair<FirIdeProvider, FirFile> {
