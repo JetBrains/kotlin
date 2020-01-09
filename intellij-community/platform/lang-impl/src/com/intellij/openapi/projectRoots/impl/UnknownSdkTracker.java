@@ -69,25 +69,26 @@ public class UnknownSdkTracker implements Disposable {
       @Override
       public void run() {
         if (!Registry.is("unknown.sdk") || !UnknownSdkResolver.EP_NAME.hasAnyExtensions()) {
-          showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
+          showStatus(Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
           return;
         }
 
         new UnknownSdkCollector(myProject)
           .collectSdksPromise(snapshot -> {
-            onFixableAndMissingSdksCollected(
-              new ArrayList<>(snapshot.getTotallyUnknownSdks()),
-              new ArrayList<>(snapshot.getResolvableSdks())
-            );
+            onFixableAndMissingSdksCollected(snapshot);
           });
       }
     });
   }
 
-  private void onFixableAndMissingSdksCollected(@NotNull List<String> missingSdks,
-                                                @NotNull List<UnknownSdk> fixable) {
+  private void onFixableAndMissingSdksCollected(@NotNull UnknownSdkSnapshot snapshot) {
+    final Map<String, SdkType> missingSdks = new LinkedHashMap<>();
+    final List<UnknownSdk> fixable = new ArrayList<>(snapshot.getResolvableSdks());
+    for (String sdk : snapshot.getTotallyUnknownSdks()) {
+      missingSdks.put(sdk, null);
+    }
 
-    if (fixable.isEmpty()) {
+    if (snapshot.getResolvableSdks().isEmpty()) {
       showStatus(missingSdks, Collections.emptyMap(), Collections.emptyMap());
       return;
     }
@@ -104,7 +105,7 @@ public class UnknownSdkTracker implements Disposable {
 
                indicator.setText("Looking for downloadable SDKs...");
                Map<UnknownSdk, DownloadSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
-               fixable.forEach(it -> missingSdks.add(it.getSdkName()));
+               fixable.forEach(it -> missingSdks.put(it.getSdkName(), it.getSdkType()));
 
                if (!localFixes.isEmpty()) {
                  ApplicationManager.getApplication().invokeLater(() -> {
@@ -119,7 +120,7 @@ public class UnknownSdkTracker implements Disposable {
       );
   }
 
-  private void showStatus(@NotNull List<String> missingSdks,
+  private void showStatus(@NotNull Map<String, SdkType> missingSdks,
                           @NotNull Map<UnknownSdk, LocalSdkFix> localFixes,
                           @NotNull Map<UnknownSdk, DownloadSdkFix> downloadFixes) {
     UnknownSdkBalloonNotification
