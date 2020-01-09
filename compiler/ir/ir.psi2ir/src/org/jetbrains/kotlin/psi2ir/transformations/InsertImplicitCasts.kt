@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -94,7 +95,9 @@ internal class InsertImplicitCasts(
 
     private fun IrMemberAccessExpression.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
         dispatchReceiver = dispatchReceiver?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
-        extensionReceiver = extensionReceiver?.cast(substitutedDescriptor.extensionReceiverParameter?.type)
+        val extensionReceiverType = substitutedDescriptor.extensionReceiverParameter?.type
+        val originalExtensionReceiverType = substitutedDescriptor.original.extensionReceiverParameter?.type
+        extensionReceiver = extensionReceiver?.cast(extensionReceiverType, originalExtensionReceiverType)
     }
 
     private fun getEffectiveDispatchReceiverType(descriptor: CallableDescriptor): KotlinType? =
@@ -121,6 +124,7 @@ internal class InsertImplicitCasts(
             for (index in substitutedDescriptor.valueParameters.indices) {
                 val argument = getValueArgument(index) ?: continue
                 val parameterType = substitutedDescriptor.valueParameters[index].type
+                val originalParameterType = substitutedDescriptor.original.valueParameters[index].type
 
                 // Hack to support SAM conversions on out-projected types.
                 // See SamType#createByValueParameter and genericSamProjectedOut.kt for more details.
@@ -130,7 +134,7 @@ internal class InsertImplicitCasts(
                     else
                         parameterType
 
-                putValueArgument(index, argument.cast(expectedType))
+                putValueArgument(index, argument.cast(expectedType, originalExpectedType = originalParameterType))
             }
         }
     }
@@ -168,8 +172,12 @@ internal class InsertImplicitCasts(
             value = if (expression.returnTargetSymbol is IrConstructorSymbol) {
                 value.coerceToUnit()
             } else {
-                returnExpressionsToBePostprocessed.add(expression)
-                value.cast(expression.returnTarget.returnType)
+                val returnTargetDescriptor = expression.returnTarget
+                val isLambdaReturnValue = returnTargetDescriptor is AnonymousFunctionDescriptor
+                if (isLambdaReturnValue) {
+                    returnExpressionsToBePostprocessed.add(expression)
+                }
+                value.cast(returnTargetDescriptor.returnType, isLambdaReturnValue = isLambdaReturnValue)
             }
         }
 
@@ -292,15 +300,16 @@ internal class InsertImplicitCasts(
         else
             null
 
-    private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
+    private fun IrExpression.cast(
+        expectedType: KotlinType?,
+        originalExpectedType: KotlinType? = expectedType,
+        isLambdaReturnValue: Boolean = false
+    ): IrExpression {
         if (expectedType == null) return this
         if (expectedType.isError) return this
 
-        if (this is IrFunctionExpression) {
-            val expectedFunctionReturnType = expectedType.getFunctionReturnTypeOrNull()
-            if (expectedFunctionReturnType != null) {
-                expectedFunctionExpressionReturnType[function.descriptor] = expectedFunctionReturnType.toIrType()
-            }
+        if (this is IrFunctionExpression && originalExpectedType != null) {
+            recordExpectedLambdaReturnTypeIfAppropriate(expectedType, originalExpectedType)
         }
 
         // TODO here we can have non-denotable KotlinTypes (both in 'this@cast.type' and 'expectedType').
@@ -319,8 +328,10 @@ internal class InsertImplicitCasts(
                 else
                     implicitCast(expectedType, IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
 
-            (valueType.isNullabilityFlexible() && valueType.containsNull() || valueType.hasEnhancedNullability()) &&
-                    !expectedType.containsNull() ->
+            (valueType.isNullabilityFlexible() && valueType.containsNull()) && !expectedType.containsNull() ->
+                implicitNonNull(valueType, expectedType)
+
+            (valueType.hasEnhancedNullability() && !isLambdaReturnValue) && !expectedType.containsNull() ->
                 implicitNonNull(valueType, expectedType)
 
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
@@ -333,6 +344,20 @@ internal class InsertImplicitCasts(
                 val targetType = if (!valueType.containsNull()) notNullableExpectedType else expectedType
                 implicitCast(targetType, IrTypeOperator.IMPLICIT_CAST)
             }
+        }
+    }
+
+    private fun IrFunctionExpression.recordExpectedLambdaReturnTypeIfAppropriate(
+        expectedType: KotlinType,
+        originalExpectedType: KotlinType
+    ) {
+        // TODO see KT-35849
+
+        val returnTypeFromExpected = expectedType.getFunctionReturnTypeOrNull() ?: return
+        val returnTypeFromOriginalExpected = originalExpectedType.getFunctionReturnTypeOrNull()
+
+        if (returnTypeFromOriginalExpected?.isTypeParameter() != true) {
+            expectedFunctionExpressionReturnType[function.descriptor] = returnTypeFromExpected.toIrType()
         }
     }
 

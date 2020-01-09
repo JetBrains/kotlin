@@ -14644,6 +14644,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inFunctionWithExpressionBodyWithJavaGeneric.kt");
                 }
 
+                @TestMetadata("inLambdaReturnWithExpectedType.kt")
+                public void testInLambdaReturnWithExpectedType() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inLambdaReturnWithExpectedType.kt");
+                }
+
                 @TestMetadata("inLocalFunctionWithExpressionBody.kt")
                 public void testInLocalFunctionWithExpressionBody() throws Exception {
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inLocalFunctionWithExpressionBody.kt");
