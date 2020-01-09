@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -297,7 +298,11 @@ class RemoveRedundantConstructorKeywordProcessing :
 
 
     override fun apply(element: KtPrimaryConstructor) {
-        element.removeRedundantConstructorKeywordAndSpace()
+        element.getConstructorKeyword()?.delete()
+        element.prevSibling
+            ?.safeAs<PsiWhiteSpace>()
+            ?.takeUnless { it.textContains('\n') }
+            ?.delete()
     }
 }
 
