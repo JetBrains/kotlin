@@ -129,6 +129,13 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var irOnly: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xinclude",
+        valueDescription = "<path>",
+        description = "A path to an intermediate library that should be processed in the same manner as source files."
+    )
+    var includes: String? by NullableStringFreezableVar(null)
+
+    @Argument(
         value = "-Xgenerate-dts",
         description = "Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only."
     )

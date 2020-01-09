@@ -47,7 +47,7 @@ class CompilerResult(
 
 fun compile(
     project: Project,
-    files: List<KtFile>,
+    mainModule: MainModule,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
     allDependencies: KotlinLibraryResolveResult,
@@ -57,8 +57,8 @@ fun compile(
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false
 ): CompilerResult {
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, files, configuration, allDependencies, friendDependencies)
+    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
+        loadIr(project, mainModule, configuration, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
 
@@ -72,7 +72,12 @@ fun compile(
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     }
 
-    val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
+    val allModules = when (mainModule) {
+        is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
+        is MainModule.Klib -> dependencyModules
+    }
+
+    val irFiles = allModules.flatMap { it.files }
 
     moduleFragment.files.clear()
     moduleFragment.files += irFiles

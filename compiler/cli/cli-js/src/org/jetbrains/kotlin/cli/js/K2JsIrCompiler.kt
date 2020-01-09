@@ -36,11 +36,11 @@ import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.Logger
-import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
@@ -102,11 +102,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             if (arguments.version) {
                 return OK
             }
-            messageCollector.report(ERROR, "Specify at least one source file or directory", null)
-            return COMPILATION_ERROR
+            if (arguments.includes.isNullOrEmpty()) {
+                messageCollector.report(ERROR, "Specify at least one source file or directory", null)
+                return COMPILATION_ERROR
+            }
         }
 
-        val libraries: List<String> = configureLibraries(arguments.libraries)
+        val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
 
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
@@ -138,7 +140,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         }
 
-        if (sourcesFiles.isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
+        if (sourcesFiles.isEmpty() && !IncrementalCompilation.isEnabledForJs() && arguments.includes.isNullOrEmpty()) {
             messageCollector.report(ERROR, "No source files", null)
             return COMPILATION_ERROR
         }
@@ -200,10 +202,23 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (arguments.irProduceJs) {
             val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
 
+            val includes = arguments.includes
+
+            val mainModule = if (includes != null) {
+                if (sourcesFiles.isNotEmpty()) {
+                    messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
+                }
+                val allLibraries = resolvedLibraries.getFullList()
+                val mainLib = allLibraries.find { it.libraryFile.absolutePath == File(includes).absolutePath }!!
+                MainModule.Klib(mainLib)
+            } else {
+                MainModule.SourceFiles(sourcesFiles)
+            }
+
             val compiledModule = try {
                 compile(
                     projectJs,
-                    sourcesFiles,
+                    mainModule,
                     config.configuration,
                     phaseConfig,
                     allDependencies = resolvedLibraries,

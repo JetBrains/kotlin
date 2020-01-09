@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
@@ -19,8 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -32,10 +31,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetad
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
-import org.jetbrains.kotlin.ir.util.IrDeserializer
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -126,7 +122,7 @@ fun generateKLib(
         icData = emptyList()
     }
 
-    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, MainModule.SourceFiles(files), configuration, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -174,30 +170,63 @@ private fun sortDependencies(dependencies: List<KotlinLibrary>, mapping: Map<Kot
 
 fun loadIr(
     project: Project,
-    files: List<KtFile>,
+    mainModule: MainModule,
     configuration: CompilerConfiguration,
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, mainModule, configuration, allDependencies, friendDependencies)
 
-    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
+    when (mainModule) {
+        is MainModule.SourceFiles -> {
+            val psi2IrContext: GeneratorContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
+            val irBuiltIns = psi2IrContext.irBuiltIns
+            val symbolTable = psi2IrContext.symbolTable
+            val moduleDescriptor = psi2IrContext.moduleDescriptor
 
-    val irBuiltIns = psi2IrContext.irBuiltIns
-    val symbolTable = psi2IrContext.symbolTable
-    val moduleDescriptor = psi2IrContext.moduleDescriptor
+            val deserializer = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable)
 
-    val deserializer = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable)
+            val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
+                deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
+            }
 
-    val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
-        deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
+            deserializer.initializeExpectActualLinker()
+
+            val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, mainModule.files, deserializer)
+            return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, deserializer)
+        }
+        is MainModule.Klib -> {
+            val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModule.lib)
+            val symbolTable = SymbolTable()
+            val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
+            val typeTranslator = TypeTranslator(
+                symbolTable,
+                depsDescriptors.compilerConfiguration.languageVersionSettings,
+                builtIns = moduleDescriptor.builtIns
+            )
+            typeTranslator.constantValueGenerator = constantValueGenerator
+            constantValueGenerator.typeTranslator = typeTranslator
+            val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+            val deserializer = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable)
+
+            val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
+                val strategy =
+                    if (it == mainModule.lib)
+                        DeserializationStrategy.ALL
+                    else
+                        DeserializationStrategy.EXPLICITLY_EXPORTED
+
+                deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it), strategy)
+            }
+            deserializer.initializeExpectActualLinker()
+            val moduleFragment = deserializedModuleFragments.last()
+
+            val irProviders = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable, deserializer)
+            ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+
+            return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, deserializer)
+        }
     }
-
-    deserializer.initializeExpectActualLinker()
-
-    val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, deserializer)
-
-    return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, deserializer)
 }
 
 private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): GeneratorContext {
@@ -277,9 +306,14 @@ fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, Mo
 
 object JsIrCompilationError : Throwable()
 
+sealed class MainModule {
+    class SourceFiles(val files: List<KtFile>) : MainModule()
+    class Klib(val lib: KotlinLibrary) : MainModule()
+}
+
 private class ModulesStructure(
     private val project: Project,
-    private val files: List<KtFile>,
+    private val mainModule: MainModule,
     val compilerConfiguration: CompilerConfiguration,
     val allDependencies: KotlinLibraryResolveResult,
     private val friendDependencies: List<KotlinLibrary>
@@ -299,6 +333,9 @@ private class ModulesStructure(
     val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
 
     fun runAnalysis(): JsAnalysisResult {
+        require(mainModule is MainModule.SourceFiles)
+        val files = mainModule.files
+
         // TODO: Should we not provide default message collector?
         val messageCollector: MessageCollector =
             compilerConfiguration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE

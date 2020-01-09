@@ -4,6 +4,7 @@ where advanced options include:
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
+  -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
   -Xir-dce                   Perform experimental dead code elimination
   -Xir-only                  Disables pre-IR backend
   -Xir-produce-js            Generates JS file using IR backend. Also disables pre-IR backend
