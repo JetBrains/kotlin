@@ -140,9 +140,9 @@ fun generateDestructuringBlock(
                 FirComponentCallImpl(null, generateResolvedAccessExpression(null, container), index + 1),
                 null,
                 isVar,
-                FirPropertySymbol(CallableId(entry.name)), // TODO?
+                FirPropertySymbol(entry.name), // TODO?
                 true,
-                FirDeclarationStatusImpl(Visibilities.LOCAL,  Modality.FINAL)
+                FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
             ).apply {
                 annotations += entry.annotations
                 symbol.bind(this)

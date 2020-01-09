@@ -533,7 +533,7 @@ class ExpressionsConverter(
                         variable.initializer,
                         null,
                         false,
-                        FirPropertySymbol(CallableId(variable.name)),
+                        FirPropertySymbol(variable.name),
                         true,
                         FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
                     )

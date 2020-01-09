@@ -857,7 +857,7 @@ class DeclarationsConverter(
                     )
                 },
                 isVar,
-                FirPropertySymbol(CallableId(propertyName)),
+                FirPropertySymbol(propertyName),
                 true,
                 FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
             ).apply {
@@ -950,7 +950,7 @@ class DeclarationsConverter(
             null,
             null,
             false,
-            FirPropertySymbol(CallableId(name)),
+            FirPropertySymbol(name),
             true,
             FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
         ).apply {

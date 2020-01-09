@@ -279,7 +279,7 @@ internal fun generateDestructuringBlock(
                 FirComponentCallImpl(entrySource, generateResolvedAccessExpression(entrySource, container), index + 1),
                 null,
                 isVar,
-                FirPropertySymbol(CallableId(entry.nameAsSafeName)), // TODO?
+                FirPropertySymbol(entry.nameAsSafeName), // TODO?
                 true,
                 FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
             ).apply {
@@ -302,7 +302,7 @@ fun generateTemporaryVariable(
         initializer,
         null,
         false,
-        FirPropertySymbol(CallableId(name)),
+        FirPropertySymbol(name),
         true,
         FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
     ).apply {

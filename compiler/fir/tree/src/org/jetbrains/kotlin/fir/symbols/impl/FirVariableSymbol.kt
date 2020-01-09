@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.name.Name
 
 open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: CallableId) : FirCallableSymbol<D>() {
 
-    @Deprecated("TODO: Better solution for local vars?")
     constructor(name: Name) : this(CallableId(name))  // TODO?
 }
 
@@ -23,7 +22,10 @@ open class FirPropertySymbol(
     val isFakeOverride: Boolean = false,
     // Actual for fake override only
     override val overriddenSymbol: FirPropertySymbol? = null
-) : FirVariableSymbol<FirProperty>(callableId)
+) : FirVariableSymbol<FirProperty>(callableId) {
+    // TODO: should we use this constructor for local variables?
+    constructor(name: Name) : this(CallableId(name))
+}
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
 
