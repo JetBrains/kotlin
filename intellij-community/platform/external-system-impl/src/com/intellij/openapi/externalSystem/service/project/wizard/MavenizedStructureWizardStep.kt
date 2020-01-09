@@ -10,7 +10,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.externalSystem.util.ui.DataView
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory.createSingleLocalFileDescriptor
 import com.intellij.openapi.observable.properties.GraphPropertyImpl.Companion.graphProperty
-import com.intellij.openapi.observable.properties.ObservableClearableProperty
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.observable.properties.PropertyView.Companion.comap
 import com.intellij.openapi.observable.properties.PropertyView.Companion.map
@@ -77,7 +76,6 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
           parentComboBoxModel.add(EMPTY_VIEW)
           parentComboBoxModel.addAll(parents)
           comboBox(parentComboBoxModel, parentProperty, renderer = getParentRenderer())
-            .withValidationOnProperty { validateParent() }
         }
       }
       row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.name.label")) {
@@ -109,7 +107,7 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
         }
       }
     }.apply {
-      registerValidators(context.disposable) {}
+      registerValidators(context.disposable)
     }
   }
 
@@ -265,12 +263,6 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
     return null
   }
 
-  protected open fun ValidationInfoBuilder.validateParent() = superValidateParent()
-  protected fun ValidationInfoBuilder.superValidateParent(): ValidationInfo? {
-    if (parent.isPresent) return null
-    return warning("Lel")
-  }
-
   override fun updateDataModel() {
     val location = location
     context.projectName = entityName
@@ -292,7 +284,5 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
 
       override val isPresent: Boolean = false
     }
-
-    private fun <T> ObservableClearableProperty<T>.asBinding() = PropertyBinding(::get, ::set)
   }
 }
