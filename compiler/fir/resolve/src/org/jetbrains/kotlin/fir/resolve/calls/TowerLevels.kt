@@ -49,7 +49,7 @@ interface TowerScopeLevel {
             dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
             builtInExtensionFunctionReceiverValue: ReceiverValue? = null
-        ): ProcessorAction
+        )
     }
 
     abstract class StubTowerScopeLevel : TowerScopeLevel {
@@ -102,42 +102,36 @@ class MemberScopeTowerLevel(
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
         explicitExtensionReceiver: AbstractExplicitReceiver<*>?,
-        processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
-    ): ProcessorAction {
-        if (implicitExtensionReceiver != null && explicitExtensionReceiver != null) return ProcessorAction.NEXT
+        processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
+    ) {
+        if (implicitExtensionReceiver != null && explicitExtensionReceiver != null) return
         val extensionReceiver = implicitExtensionReceiver ?: explicitExtensionReceiver
-        val scope = dispatchReceiver.scope(session, scopeSession) ?: return ProcessorAction.NEXT
-        if (scope.processScopeMembers { candidate ->
-                if (candidate is FirCallableSymbol<*> &&
-                    (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
-                ) {
-                    val dispatchReceiverValue = NotNullableReceiverValue(dispatchReceiver)
-                    if (implicitExtensionInvokeMode) {
-                        if (output.consumeCandidate(
-                                candidate, dispatchReceiverValue,
-                                implicitExtensionReceiverValue = implicitExtensionReceiver
-                            ).stop()
-                        ) {
-                            ProcessorAction.STOP
-                        } else {
-                            output.consumeCandidate(
-                                candidate, dispatchReceiverValue,
-                                implicitExtensionReceiverValue = null,
-                                builtInExtensionFunctionReceiverValue = implicitExtensionReceiver
-                            )
-                        }
-                    } else {
-                        output.consumeCandidate(candidate, dispatchReceiverValue, implicitExtensionReceiver, null)
-                    }
-                } else if (candidate is FirClassLikeSymbol<*>) {
-                    output.consumeCandidate(candidate, null, implicitExtensionReceiver, null)
+        val scope = dispatchReceiver.scope(session, scopeSession) ?: return
+        scope.processScopeMembers { candidate ->
+            if (candidate is FirCallableSymbol<*> &&
+                (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
+            ) {
+                val dispatchReceiverValue = NotNullableReceiverValue(dispatchReceiver)
+                if (implicitExtensionInvokeMode) {
+                    output.consumeCandidate(
+                        candidate, dispatchReceiverValue,
+                        implicitExtensionReceiverValue = implicitExtensionReceiver
+                    )
+                    output.consumeCandidate(
+                        candidate, dispatchReceiverValue,
+                        implicitExtensionReceiverValue = null,
+                        builtInExtensionFunctionReceiverValue = implicitExtensionReceiver
+                    )
                 } else {
-                    ProcessorAction.NEXT
+                    output.consumeCandidate(candidate, dispatchReceiverValue, implicitExtensionReceiver, null)
                 }
-            }.stop()
-        ) return ProcessorAction.STOP
+            } else if (candidate is FirClassLikeSymbol<*>) {
+                output.consumeCandidate(candidate, null, implicitExtensionReceiver, null)
+            }
+        }
+
         val withSynthetic = FirSyntheticPropertiesScope(session, scope)
-        return withSynthetic.processScopeMembers { symbol ->
+        withSynthetic.processScopeMembers { symbol ->
             output.consumeCandidate(symbol, NotNullableReceiverValue(dispatchReceiver), implicitExtensionReceiver, null)
         }
     }
@@ -154,7 +148,7 @@ class MemberScopeTowerLevel(
         }
         val explicitExtensionReceiver = if (dispatchReceiver == explicitReceiver) null else explicitReceiver
         val noInnerConstructors = dispatchReceiver is QualifierReceiver
-        return when (token) {
+        when (token) {
             TowerScopeLevel.Token.Properties -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processPropertiesByName(name, symbol.cast())
             }
@@ -165,6 +159,7 @@ class MemberScopeTowerLevel(
                 this.processClassifiersByName(name, symbol.cast())
             }
         }
+        return ProcessorAction.NEXT
     }
 }
 
@@ -201,15 +196,13 @@ class ScopeTowerLevel(
         }
         val extensionReceiver = explicitReceiver ?: implicitExtensionReceiver
         @Suppress("UNCHECKED_CAST")
-        return when (token) {
+        when (token) {
             TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { candidate ->
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue = null,
                         implicitExtensionReceiverValue = implicitExtensionReceiver
                     )
-                } else {
-                    ProcessorAction.NEXT
                 }
             }
             TowerScopeLevel.Token.Functions -> scope.processFunctionsAndConstructorsByName(
@@ -222,8 +215,6 @@ class ScopeTowerLevel(
                         candidate as T, dispatchReceiverValue = null,
                         implicitExtensionReceiverValue = implicitExtensionReceiver
                     )
-                } else {
-                    ProcessorAction.NEXT
                 }
             }
             TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name) {
@@ -233,6 +224,7 @@ class ScopeTowerLevel(
                 )
             }
         }
+        return ProcessorAction.NEXT
     }
 }
 

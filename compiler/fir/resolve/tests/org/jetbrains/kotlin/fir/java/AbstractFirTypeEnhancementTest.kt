@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -196,7 +195,6 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                                         renderer.newLine()
                                         renderedDeclarations += enhanced
                                     }
-                                    ProcessorAction.NEXT
                                 }
                                 is FirJavaMethod -> enhancementScope.processFunctionsByName(declaration.name) { symbol ->
                                     val enhanced = symbol.fir
@@ -205,7 +203,6 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                                         renderer.newLine()
                                         renderedDeclarations += enhanced
                                     }
-                                    ProcessorAction.NEXT
                                 }
                                 is FirJavaField -> enhancementScope.processPropertiesByName(declaration.name) { symbol ->
                                     val enhanced = symbol.fir
@@ -214,7 +211,6 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                                         renderer.newLine()
                                         renderedDeclarations += enhanced
                                     }
-                                    ProcessorAction.NEXT
                                 }
                                 else -> {
                                     declaration.accept(renderer, null)

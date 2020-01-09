@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -55,11 +54,8 @@ private fun FirFile.findCallableMember(
     var result: FirCallableDeclaration<*>? = null
     val processor = { symbol: FirCallableSymbol<*> ->
         val fir = symbol.fir
-        if (fir.psi == callableMember) {
+        if (result == null && fir.psi == callableMember) {
             result = fir
-            ProcessorAction.STOP
-        } else {
-            ProcessorAction.NEXT
         }
     }
     if (callableMember is KtNamedFunction || callableMember is KtConstructor<*>) {

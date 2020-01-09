@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -52,6 +51,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
                 var resolvedSymbol: FirClassifierSymbol<*>? = null
                 scope.processClassifiersByName(typeRef.qualifier.first().name) { symbol ->
+                    if (resolvedSymbol != null) return@processClassifiersByName
                     resolvedSymbol = when (symbol) {
                         is FirClassLikeSymbol<*> -> {
                             if (typeRef.qualifier.size == 1) {
@@ -66,7 +66,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                         }
                         else -> error("!")
                     }
-                    if (resolvedSymbol == null) ProcessorAction.NEXT else ProcessorAction.STOP
                 }
 
                 // TODO: Imports

@@ -111,12 +111,23 @@ FILE fqName:<root> fileName:/kt30020.kt
         public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
       VALUE_PARAMETER name:element index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int, element:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public abstract fun add (index: kotlin.Int, element: E of kotlin.collections.MutableList): kotlin.Unit declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      VALUE_PARAMETER name:element index:1 type:kotlin.Int
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun addAll (index: kotlin.Int, elements: kotlin.collections.Collection<E of kotlin.collections.MutableList>): kotlin.Boolean declared in kotlin.collections.MutableList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
       VALUE_PARAMETER name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+    FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public abstract fun addAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableList>): kotlin.Boolean declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.Int>
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in kotlin.collections.MutableList
@@ -125,6 +136,11 @@ FILE fqName:<root> fileName:/kt30020.kt
       overridden:
         public abstract fun listIterator (): kotlin.collections.MutableListIterator<E of kotlin.collections.MutableList> declared in kotlin.collections.MutableList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+    FUN FAKE_OVERRIDE name:listIterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int) returnType:kotlin.collections.MutableListIterator<kotlin.Int> [fake_override]
+      overridden:
+        public abstract fun listIterator (index: kotlin.Int): kotlin.collections.MutableListIterator<E of kotlin.collections.MutableList> declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, element:kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun remove (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList

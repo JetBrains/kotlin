@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -25,10 +24,10 @@ abstract class FirAbstractSimpleImportingScope(
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        val imports = simpleImports[name] ?: return ProcessorAction.NONE
-        if (imports.isEmpty()) return ProcessorAction.NONE
+        processor: (FirClassifierSymbol<*>) -> Unit
+    ) {
+        val imports = simpleImports[name] ?: return
+        if (imports.isEmpty()) return
         val provider = FirSymbolProvider.getInstance(session)
         for (import in imports) {
             val importedName = import.importedName ?: continue
@@ -36,26 +35,20 @@ abstract class FirAbstractSimpleImportingScope(
                 import.resolvedClassId?.createNestedClassId(importedName)
                     ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
-            if (!processor(symbol)) {
-                return ProcessorAction.STOP
-            }
+            processor(symbol)
         }
-        return ProcessorAction.NEXT
     }
 
     override fun <T : FirCallableSymbol<*>> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        val imports = simpleImports[name] ?: return ProcessorAction.NONE
-        if (imports.isEmpty()) return ProcessorAction.NONE
+        processor: (FirCallableSymbol<*>) -> Unit
+    ) {
+        val imports = simpleImports[name] ?: return
+        if (imports.isEmpty()) return
 
         for (import in imports) {
-            if (processCallables(import, import.importedName!!, token, processor).stop()) {
-                return ProcessorAction.STOP
-            }
+            processCallables(import, import.importedName!!, token, processor)
         }
-        return ProcessorAction.NEXT
     }
 }

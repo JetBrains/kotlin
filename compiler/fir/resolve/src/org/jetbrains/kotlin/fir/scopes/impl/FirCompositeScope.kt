@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -22,44 +19,35 @@ class FirCompositeScope(
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
+        processor: (FirClassifierSymbol<*>) -> Unit
+    ) {
         val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {
-            if (!scope.processClassifiersByName(name, processor)) {
-                return STOP
-            }
+            scope.processClassifiersByName(name, processor)
         }
-        return NEXT
     }
 
     private inline fun <T> processComposite(
-        process: FirScope.(Name, (T) -> ProcessorAction) -> ProcessorAction,
+        process: FirScope.(Name, (T) -> Unit) -> Unit,
         name: Name,
-        noinline processor: (T) -> ProcessorAction
-    ): ProcessorAction {
+        noinline processor: (T) -> Unit
+    ) {
         val unique = mutableSetOf<T>()
         val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {
-            if (!scope.process(name) {
-                    if (unique.add(it)) {
-                        processor(it)
-                    } else {
-                        NEXT
-                    }
+            scope.process(name) {
+                if (unique.add(it)) {
+                    processor(it)
                 }
-            ) {
-                return STOP
             }
         }
-        return NEXT
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         return processComposite(FirScope::processFunctionsByName, name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
         return processComposite(FirScope::processPropertiesByName, name, processor)
     }
 

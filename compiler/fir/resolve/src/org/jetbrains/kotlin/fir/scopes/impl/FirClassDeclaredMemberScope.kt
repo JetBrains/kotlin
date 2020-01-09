@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -48,28 +45,26 @@ class FirClassDeclaredMemberScope(
         result
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
-            if (symbol is FirFunctionSymbol<*> && !processor(symbol)) {
-                return STOP
+            if (symbol is FirFunctionSymbol<*>) {
+                processor(symbol)
             }
         }
-        return NEXT
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
-            if (symbol is FirVariableSymbol && !processor(symbol)) {
-                return STOP
+            if (symbol is FirVariableSymbol) {
+                processor(symbol)
             }
         }
-        return NEXT
     }
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction = nestedClassifierScope.processClassifiersByName(name, processor)
+        processor: (FirClassifierSymbol<*>) -> Unit
+    ) = nestedClassifierScope.processClassifiersByName(name, processor)
 }

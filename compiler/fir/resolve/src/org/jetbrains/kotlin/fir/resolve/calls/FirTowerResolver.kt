@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastIn
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NONE
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
@@ -277,19 +276,16 @@ class FirTowerResolver(
             CallKind.VariableAccess -> {
                 qualifierScope.processPropertiesByName(info.name) {
                     collector.consumeCandidate(0, candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER))
-                    ProcessorAction.NEXT
                 }
                 qualifierScope.processClassifiersByName(info.name) {
                     if (it is FirClassSymbol<*> && it.fir.classKind == ClassKind.OBJECT) {
                         collector.consumeCandidate(0, candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER))
                     }
-                    ProcessorAction.NEXT
                 }
             }
             CallKind.Function -> {
                 qualifierScope.processFunctionsAndConstructorsByName(info.name, session, components) {
                     collector.consumeCandidate(0, candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER))
-                    ProcessorAction.NEXT
                 }
 
                 val invokeReceiverCollector = CandidateCollector(components, components.resolutionStageRunner)
@@ -302,7 +298,6 @@ class FirTowerResolver(
                     invokeReceiverCollector.consumeCandidate(
                         0, invokeReceiverCandidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
                     )
-                    ProcessorAction.NEXT
                 }
                 if (invokeReceiverCollector.isSuccess()) {
                     for (invokeReceiverCandidate in invokeReceiverCollector.bestCandidates()) {

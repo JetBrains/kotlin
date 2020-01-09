@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -30,34 +29,29 @@ abstract class AbstractFirUseSiteMemberScope(
 
     private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         functions.getOrPut(name) {
             doProcessFunctions(name)
         }.forEach {
-            if (processor(it) == ProcessorAction.STOP) return ProcessorAction.STOP
+            processor(it)
         }
-
-        return ProcessorAction.NEXT
     }
 
     private fun doProcessFunctions(
         name: Name
     ): Collection<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
-        if (!declaredMemberScope.processFunctionsByName(name) {
-                val symbol = processInheritedDefaultParameters(it)
-                overrideCandidates += symbol
-                add(symbol)
-                ProcessorAction.NEXT
-            }
-        ) return@apply
+        declaredMemberScope.processFunctionsByName(name) {
+            val symbol = processInheritedDefaultParameters(it)
+            overrideCandidates += symbol
+            add(symbol)
+        }
 
         superTypesScope.processFunctionsByName(name) {
             val overriddenBy = it.getOverridden(overrideCandidates)
             if (overriddenBy == null) {
                 add(it)
             }
-            ProcessorAction.NEXT
         }
     }
 
@@ -68,13 +62,12 @@ abstract class AbstractFirUseSiteMemberScope(
         var foundFir: FirFunction<*>? = null
         superTypesScope.processFunctionsByName(symbol.callableId.callableName) { superSymbol ->
             val superFunctionFir = superSymbol.fir
-            if (superFunctionFir is FirSimpleFunction && overrideChecker.isOverriddenFunction(firSimpleFunction, superFunctionFir) &&
+            if (foundFir == null &&
+                superFunctionFir is FirSimpleFunction &&
+                overrideChecker.isOverriddenFunction(firSimpleFunction, superFunctionFir) &&
                 superFunctionFir.valueParameters.any { parameter -> parameter.defaultValue != null }
             ) {
                 foundFir = superFunctionFir
-                ProcessorAction.STOP
-            } else {
-                ProcessorAction.NEXT
             }
         }
 
@@ -127,11 +120,9 @@ abstract class AbstractFirUseSiteMemberScope(
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        if (!declaredMemberScope.processClassifiersByName(name, processor)) {
-            return ProcessorAction.STOP
-        }
-        return superTypesScope.processClassifiersByName(name, processor)
+        processor: (FirClassifierSymbol<*>) -> Unit
+    ) {
+        declaredMemberScope.processClassifiersByName(name, processor)
+        superTypesScope.processClassifiersByName(name, processor)
     }
 }

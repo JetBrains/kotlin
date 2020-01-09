@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -20,28 +19,26 @@ class JvmMappedScope(
     private val whiteListSignaturesByName: Map<Name, List<String>>
 ) : FirScope() {
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val whiteListSignatures = whiteListSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
-        if (!javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
-                val jvmSignature = symbol.fir.computeJvmDescriptor()
-                if (jvmSignature !in whiteListSignatures) {
-                    ProcessorAction.NEXT
-                } else {
-                    processor(symbol)
-                }
+        javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
+            val jvmSignature = symbol.fir.computeJvmDescriptor()
+            if (jvmSignature in whiteListSignatures) {
+                processor(symbol)
             }
-        ) return ProcessorAction.STOP
+        }
 
-        return declaredMemberScope.processFunctionsByName(name, processor)
+
+        declaredMemberScope.processFunctionsByName(name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return declaredMemberScope.processPropertiesByName(name, processor)
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+        declaredMemberScope.processPropertiesByName(name, processor)
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return declaredMemberScope.processClassifiersByName(name, processor)
+    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
+        declaredMemberScope.processClassifiersByName(name, processor)
     }
 
     companion object {

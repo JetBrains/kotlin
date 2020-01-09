@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -44,14 +43,14 @@ class FirSyntheticPropertiesScope(
     private fun checkGetAndCreateSynthetic(
         name: Name,
         symbol: FirFunctionSymbol<*>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        val fir = symbol.fir as? FirSimpleFunction ?: return ProcessorAction.NEXT
+        processor: (FirCallableSymbol<*>) -> Unit
+    ) {
+        val fir = symbol.fir as? FirSimpleFunction ?: return
 
-        if (fir.typeParameters.isNotEmpty()) return ProcessorAction.NEXT
-        if (fir.valueParameters.isNotEmpty()) return ProcessorAction.NEXT
-        if (fir.isStatic) return ProcessorAction.NEXT
-        if (fir.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.Unit) return ProcessorAction.NEXT
+        if (fir.typeParameters.isNotEmpty()) return
+        if (fir.valueParameters.isNotEmpty()) return
+        if (fir.isStatic) return
+        if (fir.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.Unit) return
 
         val synthetic = SyntheticPropertySymbol(
             accessorId = symbol.callableId,
@@ -59,18 +58,16 @@ class FirSyntheticPropertiesScope(
         )
         synthetic.bind(fir)
 
-        return processor(synthetic)
+        processor(synthetic)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
         val getterNames = possibleGetterNamesByPropertyName(name)
         for (getterName in getterNames) {
-            if (baseScope.processFunctionsByName(getterName) {
-                    checkGetAndCreateSynthetic(name, it, processor)
-                }.stop()
-            ) return ProcessorAction.STOP
+            baseScope.processFunctionsByName(getterName) {
+                checkGetAndCreateSynthetic(name, it, processor)
+            }
         }
-        return ProcessorAction.NEXT
     }
 
     companion object {

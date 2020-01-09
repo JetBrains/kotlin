@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
@@ -180,7 +179,6 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
                                             renderer.newLine()
                                             renderedDeclarations += enhanced
                                         }
-                                        ProcessorAction.NEXT
                                     }
                                 }
                             }

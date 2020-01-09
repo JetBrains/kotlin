@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -256,9 +255,6 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
         classUseSiteMemberScope.processPropertiesByName(candidateName) {
             if ((it as? FirPropertySymbol)?.fir?.modality == Modality.ABSTRACT) {
                 metIncorrectMember = true
-                ProcessorAction.STOP
-            } else {
-                ProcessorAction.NEXT
             }
         }
 
@@ -273,14 +269,12 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
 
             if (firFunction.modality != Modality.ABSTRACT || firFunction
                     .isPublicInObject(checkOnlyName = false)
-            ) return@processFunctionsByName ProcessorAction.NEXT
+            ) return@processFunctionsByName
 
             if (resultMethod != null) {
                 metIncorrectMember = true
-                ProcessorAction.STOP
             } else {
                 resultMethod = firFunction
-                ProcessorAction.NEXT
             }
         }
     }

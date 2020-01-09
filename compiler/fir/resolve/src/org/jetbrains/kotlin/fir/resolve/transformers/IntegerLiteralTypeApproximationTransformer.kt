@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -59,17 +58,19 @@ class IntegerLiteralTypeApproximationTransformer(
         val scope = declaredMemberScope((symbolProvider.getClassLikeSymbolByFqName(receiverClassId) as FirRegularClassSymbol).fir)
         var resultSymbol: FirFunctionSymbol<*>? = null
         scope.processFunctionsByName(operator.name) { symbol ->
+            if (resultSymbol != null) {
+                return@processFunctionsByName
+            }
             if (operator.kind.unary) {
                 resultSymbol = symbol
-                return@processFunctionsByName ProcessorAction.STOP
+                return@processFunctionsByName
             }
             val function = symbol.fir
             val valueParameterType = function.valueParameters.first().returnTypeRef.coneTypeUnsafe<ConeClassLikeType>()
             if (AbstractTypeChecker.isSubtypeOf(inferenceContext, argumentType!!, valueParameterType)) {
                 resultSymbol = symbol
-                return@processFunctionsByName ProcessorAction.STOP
+                return@processFunctionsByName
             }
-            ProcessorAction.NEXT
         }
         // TODO: Maybe resultType = data?
         //   check black box tests
