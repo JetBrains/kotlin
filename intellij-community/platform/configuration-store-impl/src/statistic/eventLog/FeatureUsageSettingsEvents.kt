@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.statistic.eventLog
 
 import com.intellij.configurationStore.jdomSerializer
@@ -10,9 +10,9 @@ import com.intellij.openapi.components.ReportValue
 import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.serialization.MutableAccessor
 import com.intellij.util.concurrency.NonUrgentExecutor
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.serialization.MutableAccessor
 import com.intellij.util.xmlb.BeanBinding
 import org.jdom.Element
 import java.util.*
@@ -37,7 +37,9 @@ object FeatureUsageSettingsEvents {
   fun logDefaultConfigurationState(componentName: String, stateSpec: State, clazz: Class<*>, project: Project?) {
     if (stateSpec.reportStatistic) {
       NonUrgentExecutor.getInstance().execute {
-        if (FeatureUsageLogger.isEnabled()) printer.logDefaultConfigurationState(componentName, clazz, project)
+        if (FeatureUsageLogger.isEnabled()) {
+          printer.logDefaultConfigurationState(componentName, clazz, project)
+        }
       }
     }
   }
@@ -45,7 +47,9 @@ object FeatureUsageSettingsEvents {
   fun logConfigurationState(componentName: String, stateSpec: State, state: Any, project: Project?) {
     if (stateSpec.reportStatistic) {
       NonUrgentExecutor.getInstance().execute {
-        if (FeatureUsageLogger.isEnabled()) printer.logConfigurationState(componentName, state, project)
+        if (FeatureUsageLogger.isEnabled()) {
+          printer.logConfigurationState(componentName, state, project)
+        }
       }
     }
   }
@@ -86,7 +90,7 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
     }
 
     recordedComponents.add(componentName)
-    val eventId: String = if (recordDefault) "option" else "not.default"
+    val eventId = if (recordDefault) "option" else "not.default"
     val isDefaultProject = project?.isDefault == true
     val hash = if (!isDefaultProject) toHash(project) else null
 
