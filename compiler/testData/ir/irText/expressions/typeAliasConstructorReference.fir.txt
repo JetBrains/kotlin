@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/typeAliasConstructorReference.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, <root>.C> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.C' type=kotlin.Function1<kotlin.Int, <root>.C> origin=null
+        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.Int, <root>.C> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, <root>.C>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/typeAliasConstructorReference.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.Int, <root>.Host.Nested> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Host.Nested' type=kotlin.Function1<kotlin.Int, <root>.Host.Nested> origin=null
+        FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Host.Nested' type=kotlin.reflect.KFunction1<kotlin.Int, <root>.Host.Nested> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, <root>.Host.Nested>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
