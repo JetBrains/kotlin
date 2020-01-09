@@ -146,7 +146,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
             kotlin {
                 jvm()
-                // This is for iPhone emulator
+                // This is for iPhone simulator
                 // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
                 iosX64("$nativeTargetName") {
                     binaries {
@@ -179,20 +179,6 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                     $nativeSourceName {
                     }
                     $nativeTestName {
-                    }
-                }
-            }
-
-            task $nativeTestName {
-                def device = project.findProperty("${nativeTargetName}Device")?.toString() ?: "iPhone 8"
-                dependsOn kotlin.targets.$nativeTargetName.binaries.getTest('DEBUG').linkTaskName
-                group = JavaBasePlugin.VERIFICATION_GROUP
-                description = "Runs tests for target '$nativeTargetName' on an iOS simulator"
-
-                doLast {
-                    def binary = kotlin.targets.$nativeTargetName.binaries.getTest('DEBUG').outputFile
-                    exec {
-                        commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
                     }
                 }
             }
