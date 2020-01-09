@@ -182,6 +182,7 @@ private class ConvertGettersAndSettersToPropertyStatefulProcessing(
 
         val ktGetter = factory.createGetter(body, getter.modifiersText)
         ktGetter.filterModifiers()
+        property.add(factory.createNewLine(1))
         return property.add(ktGetter).cast<KtPropertyAccessor>().also {
             if (getter is RealGetter) {
                 getter.function.forAllUsages { usage ->
