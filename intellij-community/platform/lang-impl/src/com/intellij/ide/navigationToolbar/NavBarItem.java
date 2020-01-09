@@ -41,6 +41,10 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
   private final NavBarUI myUI;
 
   public NavBarItem(NavBarPanel panel, Object object, int idx, Disposable parent) {
+    this(panel, object, idx, parent, false);
+  }
+
+  public NavBarItem(NavBarPanel panel, Object object, int idx, Disposable parent, boolean inPopup) {
     myPanel = panel;
     myUI = panel.getNavBarUI();
     myObject = object == null ? null : TreeAnchorizer.getService().createAnchor(object);
@@ -49,7 +53,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
 
     if (object != null) {
       NavBarPresentation presentation = myPanel.getPresentation();
-      myText = presentation.getPresentableText(object);
+      myText = presentation.getPresentableText(object, inPopup);
       myIcon = presentation.getIcon(object);
       myAttributes = presentation.getTextAttributes(object, false);
     }
@@ -82,8 +86,8 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
     update();
   }
 
-  public NavBarItem(NavBarPanel panel, Object object, Disposable parent) {
-    this(panel, object, -1, parent);
+  public NavBarItem(NavBarPanel panel, Object object, Disposable parent, boolean inPopup) {
+    this(panel, object, -1, parent, inPopup);
   }
 
   public Object getObject() {

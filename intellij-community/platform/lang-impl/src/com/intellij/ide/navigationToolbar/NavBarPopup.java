@@ -160,7 +160,7 @@ public class NavBarPopup extends LightweightHint implements Disposable{
           return item;
         }
       }
-      NavBarItem item = new NavBarItem(panel, obj, null);
+      NavBarItem item = new NavBarItem(panel, obj, null, true);
       items.add(item);
       return item;
     });
@@ -170,7 +170,7 @@ public class NavBarPopup extends LightweightHint implements Disposable{
     map.put(ListActions.Right.ID, createMoveAction(panel, 1));
     installEnterAction(list, panel, KeyEvent.VK_ENTER);
     installEscapeAction(list, panel, KeyEvent.VK_ESCAPE);
-    JComponent component = ListWithFilter.wrap(list, new NavBarListWrapper(list), o -> panel.getPresentation().getPresentableText(o));
+    JComponent component = ListWithFilter.wrap(list, new NavBarListWrapper(list), o -> panel.getPresentation().getPresentableText(o, false));
     component.putClientProperty(JBLIST_KEY, list);
     return component;
   }

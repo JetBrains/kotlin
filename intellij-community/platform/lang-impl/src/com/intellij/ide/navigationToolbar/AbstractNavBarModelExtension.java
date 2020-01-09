@@ -4,7 +4,6 @@ package com.intellij.ide.navigationToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,9 +34,5 @@ public abstract class AbstractNavBarModelExtension implements NavBarModelExtensi
   @Override
   public Collection<VirtualFile> additionalRoots(Project project) {
     return Collections.emptyList();
-  }
-
-  public boolean processChildren(Object object, Object rootElement, Processor<Object> processor) {
-    return true;
   }
 }

@@ -7,6 +7,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,11 @@ public interface NavBarModelExtension {
 
   @Nullable
   default Icon getIcon(Object object) { return null; }
+
+  @Nullable
+  default String getPresentableText(Object object, boolean forPopup) {
+    return getPresentableText(object);
+  }
 
   @Nullable
   String getPresentableText(Object object);
@@ -46,5 +52,13 @@ public interface NavBarModelExtension {
 
   default PsiElement getLeafElement(@NotNull DataContext dataContext) {
     return null;
+  }
+
+  default boolean processChildren(Object object, Object rootElement, Processor<Object> processor) {
+    return true;
+  }
+
+  default boolean normalizeChildren() {
+    return true;
   }
 }
