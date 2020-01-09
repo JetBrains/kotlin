@@ -47,25 +47,25 @@ fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
     override fun loadModuleHeader(library: KotlinLibrary): KlibMetadataProtoBuf.Header {
         val virtualFile = getVirtualFile(library, library.moduleHeaderFile)
-        return cache.getCachedModuleHeader(virtualFile)!!
+        return virtualFile?.let { cache.getCachedModuleHeader(virtualFile) } ?: KlibMetadataProtoBuf.Header.getDefaultInstance()
     }
 
     override fun loadPackageFragment(library: KotlinLibrary, packageFqName: String, partName: String): ProtoBuf.PackageFragment {
         val virtualFile = getVirtualFile(library, library.packageFragmentFile(packageFqName, partName))
-        return cache.getCachedPackageFragment(virtualFile)!!
+        return virtualFile?.let { cache.getCachedPackageFragment(virtualFile) } ?: ProtoBuf.PackageFragment.getDefaultInstance()
     }
 
-    private fun getVirtualFile(library: KotlinLibrary, file: KFile): VirtualFile =
+    private fun getVirtualFile(library: KotlinLibrary, file: KFile): VirtualFile? =
         if (library.isZipped) asJarFileSystemFile(library.libraryFile, file) else asLocalFile(file)
 
-    private fun asJarFileSystemFile(jarFile: KFile, localFile: KFile): VirtualFile {
+    private fun asJarFileSystemFile(jarFile: KFile, localFile: KFile): VirtualFile? {
         val fullPath = jarFile.absolutePath + "!" + PathUtil.toSystemIndependentName(localFile.path)
-        return StandardFileSystems.jar().findFileByPath(fullPath) ?: error("File not found: $fullPath")
+        return StandardFileSystems.jar().findFileByPath(fullPath)
     }
 
-    private fun asLocalFile(localFile: KFile): VirtualFile {
+    private fun asLocalFile(localFile: KFile): VirtualFile? {
         val fullPath = localFile.absolutePath
-        return StandardFileSystems.local().findFileByPath(fullPath) ?: error("File not found: $fullPath")
+        return StandardFileSystems.local().findFileByPath(fullPath)
     }
 
     private val cache
