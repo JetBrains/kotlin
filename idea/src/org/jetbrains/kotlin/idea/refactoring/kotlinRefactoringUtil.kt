@@ -298,8 +298,9 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
 
         val attributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
         val selectedRange = with(editor.selectionModel) { TextRange(selectionStart, selectionEnd) }
+        val textLength = editor.document.textLength
         for (r in RangeSplitter.split(affectedRange, Collections.singletonList(selectedRange))) {
-            addHighlighter(r, attributes)
+            if (r.endOffset <= textLength) addHighlighter(r, attributes)
         }
     }
 
