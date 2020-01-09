@@ -6877,6 +6877,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertToBlockBody/annotatedExpr.kt");
         }
 
+        @TestMetadata("annotatedExprBySuppress.kt")
+        public void testAnnotatedExprBySuppress() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/annotatedExprBySuppress.kt");
+        }
+
         @TestMetadata("explicitlyNonUnitFun.kt")
         public void testExplicitlyNonUnitFun() throws Exception {
             runTest("idea/testData/intentions/convertToBlockBody/explicitlyNonUnitFun.kt");

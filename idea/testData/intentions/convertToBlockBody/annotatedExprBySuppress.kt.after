@@ -1,0 +1,4 @@
+fun test(): Int {
+    @Suppress("")
+    return 1
+}
