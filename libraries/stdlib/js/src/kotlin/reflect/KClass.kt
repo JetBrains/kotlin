@@ -16,13 +16,13 @@ package kotlin.reflect
 public actual interface KClass<T : Any> : KClassifier {
     /**
      * The simple name of the class as it was declared in the source code,
-     * or `null` if the class has no name (if, for example, it is an anonymous object literal).
+     * or `null` if the class has no name (if, for example, it is a class of an anonymous object).
      */
     public actual val simpleName: String?
 
     /**
      * The fully qualified dot-separated name of the class,
-     * or `null` if the class is local or it is an anonymous object literal.
+     * or `null` if the class is local or a class of an anonymous object.
      *
      * This property is currently not supported in Kotlin/JS.
      */
