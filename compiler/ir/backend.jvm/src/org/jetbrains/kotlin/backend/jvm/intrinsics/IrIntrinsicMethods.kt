@@ -95,7 +95,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.doubleClass]!!.toKey()!! to Ieee754Equals(Type.DOUBLE_TYPE),
                 irBuiltIns.booleanNotSymbol.toKey()!! to Not,
-                irBuiltIns.enumValueOfSymbol.toKey()!! to IrEnumValueOf,
                 irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,

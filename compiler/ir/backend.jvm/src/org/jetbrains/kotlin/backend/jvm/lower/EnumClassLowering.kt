@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
@@ -466,35 +469,17 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 }
             }
 
-            private fun createEnumValueOfBody(): IrBody {
-                val enumValueOf = context.irBuiltIns.enumValueOfSymbol
-
-                val irValueOfCall =
-                    IrCallImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        irClass.defaultType,
-                        enumValueOf,
-                        enumValueOf.owner.typeParameters.size
+            private fun createEnumValueOfBody(): IrBody =
+                context.createJvmIrBuilder(valueOfFunction.symbol).run {
+                    irExprBody(
+                        irCall(backendContext.ir.symbols.enumValueOfFunction).apply {
+                            putValueArgument(0, with(CallableReferenceLowering) {
+                                javaClassReference(irClass.defaultType, backendContext)
+                            })
+                            putValueArgument(1, irGet(valueOfFunction.valueParameters[0]))
+                        }
                     )
-                irValueOfCall.putTypeArgument(0, irClass.defaultType)
-                irValueOfCall.putValueArgument(
-                    0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunction.valueParameters[0].symbol)
-                )
-
-                return IrBlockBodyImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    listOf(
-                        IrReturnImpl(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            context.irBuiltIns.nothingType,
-                            valueOfFunction.symbol,
-                            irValueOfCall
-                        )
-                    )
-                )
-            }
+                }
 
             private fun createEnumValuesBody(valuesField: IrField): IrBody {
                 val cloneFun = context.irBuiltIns.arrayClass.owner.functions.find { it.name.asString() == "clone" }!!

@@ -586,6 +586,19 @@ class JvmSymbols(
 
     fun typeToStringValueOfFunction(type: IrType): IrSimpleFunctionSymbol =
         valueOfFunctions[type] ?: defaultValueOfFunction
+
+    private val javaLangEnum: IrClassSymbol =
+        createClass(FqName("java.lang.Enum")) { klass ->
+            // The declaration of Enum.valueOf is: `public static <T extends Enum<T>> T valueOf(Class<T> enumType, String name)`
+            // But we only need the following type-erased version to generate correct calls.
+            klass.addFunction("valueOf", klass.defaultType, isStatic = true).apply {
+                addValueParameter("enumType", javaLangClass.starProjectedType)
+                addValueParameter("name", irBuiltIns.stringType)
+            }
+        }
+
+    val enumValueOfFunction: IrSimpleFunctionSymbol =
+        javaLangEnum.functionByName("valueOf")
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
