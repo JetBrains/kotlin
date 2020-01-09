@@ -2,6 +2,7 @@
 package com.intellij.openapi.projectRoots.impl
 
 import com.google.common.collect.MultimapBuilder
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressManager.checkCanceled
@@ -12,15 +13,15 @@ import com.intellij.openapi.roots.ModuleJdkOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.concurrency.AppExecutorUtil
-import org.jetbrains.concurrency.CancellablePromise
 import java.util.*
+import java.util.function.Consumer
 
 data class UnknownSdkSnapshot(
   val totallyUnknownSdks: Set<String>,
   val resolvableSdks: List<UnknownSdk>
 )
 
-private class MissingSdkInfo(
+private data class MissingSdkInfo(
   private val mySdkName: String,
   private val mySdkType: SdkType
 ) : UnknownSdk {
@@ -29,10 +30,15 @@ private class MissingSdkInfo(
 }
 
 class UnknownSdkCollector(private val myProject: Project) {
-  fun collectSdksPromise(): CancellablePromise<UnknownSdkSnapshot> {
-    return ReadAction.nonBlocking<UnknownSdkSnapshot> { collectSdksUnderReadAction() }
+  fun collectSdksPromise(onCompleted: Consumer<UnknownSdkSnapshot>) {
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+      return onCompleted.accept(collectSdksUnderReadAction())
+    }
+
+    ReadAction.nonBlocking<UnknownSdkSnapshot> { collectSdksUnderReadAction() }
       .expireWith(myProject)
       .coalesceBy(this)
+      .finishOnUiThread(ApplicationManager.getApplication().noneModalityState, onCompleted)
       .submit(AppExecutorUtil.getAppExecutorService())
   }
 

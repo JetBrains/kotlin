@@ -68,14 +68,13 @@ public class UnknownSdkTracker implements Disposable {
     myUpdateQueue.run(new Update("update") {
       @Override
       public void run() {
-        if (!Registry.is("unknown.sdk") || UnknownSdkResolver.EP_NAME.hasAnyExtensions()) {
+        if (!Registry.is("unknown.sdk") || !UnknownSdkResolver.EP_NAME.hasAnyExtensions()) {
           showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
           return;
         }
 
         new UnknownSdkCollector(myProject)
-          .collectSdksPromise()
-          .onSuccess(snapshot -> {
+          .collectSdksPromise(snapshot -> {
             onFixableAndMissingSdksCollected(
               new ArrayList<>(snapshot.getTotallyUnknownSdks()),
               new ArrayList<>(snapshot.getResolvableSdks())
@@ -107,10 +106,12 @@ public class UnknownSdkTracker implements Disposable {
                Map<UnknownSdk, DownloadSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
                fixable.forEach(it -> missingSdks.add(it.getSdkName()));
 
-               ApplicationManager.getApplication().invokeLater(() -> {
-                 indicator.setText("Configuring SDKs...");
-                 configureLocalSdks(localFixes);
-               });
+               if (!localFixes.isEmpty()) {
+                 ApplicationManager.getApplication().invokeLater(() -> {
+                   indicator.setText("Configuring SDKs...");
+                   configureLocalSdks(localFixes);
+                 });
+               }
 
                showStatus(missingSdks, localFixes, downloadFixes);
              }
@@ -121,26 +122,23 @@ public class UnknownSdkTracker implements Disposable {
   private void showStatus(@NotNull List<String> missingSdks,
                           @NotNull Map<UnknownSdk, LocalSdkFix> localFixes,
                           @NotNull Map<UnknownSdk, DownloadSdkFix> downloadFixes) {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      UnknownSdkBalloonNotification
-        .getInstance(myProject)
-        .notifyFixedSdks(localFixes);
+    UnknownSdkBalloonNotification
+      .getInstance(myProject)
+      .notifyFixedSdks(localFixes);
 
-      boolean allowProjectSdkExtensions = missingSdks.isEmpty() && downloadFixes.isEmpty();
+    boolean allowProjectSdkExtensions = missingSdks.isEmpty() && downloadFixes.isEmpty();
+    if (!Registry.is("unknown.sdk.show.editor.actions")) {
+      missingSdks.clear();
+      downloadFixes.clear();
+      allowProjectSdkExtensions = true;
+    }
 
-      if (!Registry.is("unknown.sdk.show.editor.actions")) {
-        missingSdks.clear();
-        downloadFixes.clear();
-        allowProjectSdkExtensions = true;
-      }
+    UnknownSdkEditorNotification
+      .getInstance(myProject)
+      .showNotifications(allowProjectSdkExtensions,
+                         missingSdks,
+                         downloadFixes);
 
-      UnknownSdkEditorNotification
-        .getInstance(myProject)
-        .showNotifications(allowProjectSdkExtensions,
-                           missingSdks,
-                           downloadFixes);
-
-    }, myProject.getDisposed());
   }
 
   @NotNull

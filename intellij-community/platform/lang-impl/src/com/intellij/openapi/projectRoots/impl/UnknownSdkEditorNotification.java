@@ -2,7 +2,9 @@
 package com.intellij.openapi.projectRoots.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -20,11 +22,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UnknownSdkEditorNotification implements Disposable {
   public static final Key<List<EditorNotificationPanel>> NOTIFICATIONS = Key.create("notifications added to the editor");
@@ -37,8 +38,8 @@ public class UnknownSdkEditorNotification implements Disposable {
 
   private final Project myProject;
   private final FileEditorManager myFileEditorManager;
-  private final AtomicBoolean myAllowProjectSdkNotifications = new AtomicBoolean(false);
-  private final Set<SdkFixInfo> myNotifications = new LinkedHashSet<>();
+  private final AtomicBoolean myAllowProjectSdkNotifications = new AtomicBoolean(true);
+  private final AtomicReference<Set<SdkFixInfo>> myNotifications = new AtomicReference<>(new LinkedHashSet<>());
 
   UnknownSdkEditorNotification(@NotNull Project project) {
     myProject = project;
@@ -99,19 +100,15 @@ public class UnknownSdkEditorNotification implements Disposable {
 
   @NotNull
   public List<SdkFixInfo> getNotifications() {
-    return ImmutableList.copyOf(myNotifications);
+    return ImmutableList.copyOf(myNotifications.get());
   }
 
   public void showNotifications(boolean allowProjectSdkValidation,
                                 @NotNull List<String> unifiableSdkNames,
                                 @NotNull Map<UnknownSdk, DownloadSdkFix> files) {
-    myNotifications.clear();
-
-    myAllowProjectSdkNotifications.getAndSet(allowProjectSdkValidation);
-    EditorNotifications.getInstance(myProject).updateAllNotifications();
-
+    ImmutableSet.Builder<SdkFixInfo> notifications = ImmutableSet.builder();
     for (String name : unifiableSdkNames) {
-      myNotifications.add(new SimpleSdkFixInfo() {
+      notifications.add(new SimpleSdkFixInfo() {
         @Override
         public void setupNotificationPanel(@NotNull EditorNotificationPanel panel) {
           setupPanel(panel, name, null, null);
@@ -127,7 +124,7 @@ public class UnknownSdkEditorNotification implements Disposable {
     for (Map.Entry<UnknownSdk, DownloadSdkFix> e : files.entrySet()) {
       UnknownSdk key = e.getKey();
       DownloadSdkFix fix = e.getValue();
-      myNotifications.add(new SimpleSdkFixInfo() {
+      notifications.add(new SimpleSdkFixInfo() {
         @Override
         public void setupNotificationPanel(@NotNull EditorNotificationPanel panel) {
           setupPanel(panel, key.getSdkName(), key, fix);
@@ -140,9 +137,15 @@ public class UnknownSdkEditorNotification implements Disposable {
       });
     }
 
-    for (FileEditor editor : myFileEditorManager.getAllEditors()) {
-      updateEditorNotifications(editor);
-    }
+    myAllowProjectSdkNotifications.getAndSet(allowProjectSdkValidation);
+    myNotifications.set(notifications.build());
+    EditorNotifications.getInstance(myProject).updateAllNotifications();
+
+    ApplicationManager.getApplication().invokeLater(() -> {
+      for (FileEditor editor : myFileEditorManager.getAllEditors()) {
+        updateEditorNotifications(editor);
+      }
+    });
   }
 
   private void updateEditorNotifications(@NotNull FileEditor editor) {
@@ -160,7 +163,7 @@ public class UnknownSdkEditorNotification implements Disposable {
       editor.putUserData(NOTIFICATIONS, notifications);
     }
 
-    for (SdkFixInfo info : myNotifications) {
+    for (SdkFixInfo info : myNotifications.get()) {
       VirtualFile file = editor.getFile();
       if (file == null) continue;
 
