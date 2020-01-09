@@ -54,11 +54,15 @@ fun ResolvedCall<*>.isValueArgumentReorderingRequired(): Boolean {
 }
 
 fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContext: BindingContext): Boolean {
-    val delegatingResolvedCall = getDelegationCall().getResolvedCall(bindingContext) ?: return false
     val constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, this) ?: return false
-    val ownerClassDescriptor = constructorDescriptor.containingDeclaration
-    val targetClassDescriptor = delegatingResolvedCall.resultingDescriptor.containingDeclaration
-    return targetClassDescriptor != ownerClassDescriptor
+    val delegatingResolvedCall = getDelegationCall().getResolvedCall(bindingContext)
+    return if (delegatingResolvedCall != null) {
+        val ownerClassDescriptor = constructorDescriptor.containingDeclaration
+        val targetClassDescriptor = delegatingResolvedCall.resultingDescriptor.containingDeclaration
+        targetClassDescriptor != ownerClassDescriptor
+    } else {
+        constructorDescriptor.constructedClass.kind == ClassKind.ENUM_CLASS
+    }
 }
 
 inline fun ClassDescriptor.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
