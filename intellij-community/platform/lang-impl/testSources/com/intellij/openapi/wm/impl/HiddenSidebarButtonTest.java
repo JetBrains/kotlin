@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.wm.impl;
 
 import com.intellij.openapi.util.JDOMUtil;
@@ -17,7 +17,7 @@ public class HiddenSidebarButtonTest extends ToolWindowManagerTestCase {
     boolean[] expectedStripes = {false, true, true};
     boolean[] expectedVisibility = {false, false, true};
 
-    DesktopLayout layout = myManager.getLayout();
+    DesktopLayout layout = manager.getLayout();
     layout.readExternal(JDOMUtil.load(
       "<layout>" +
       "<window_info id=\"TODO\" active=\"false\" anchor=\"bottom\" auto_hide=\"false\" internal_type=\"DOCKED\" type=\"DOCKED\" visible=\"false\"" +
@@ -33,15 +33,15 @@ public class HiddenSidebarButtonTest extends ToolWindowManagerTestCase {
 
     for (ToolWindowEP extension : ToolWindowEP.EP_NAME.getExtensionList()) {
       if (Arrays.asList(ToolWindowId.TODO_VIEW, ToolWindowId.FIND, ToolWindowId.PROJECT_VIEW).contains(extension.id)) {
-        myManager.initToolWindow(extension);
+        manager.initToolWindow(extension);
       }
     }
-    new UsageViewContentManagerImpl(myManager.getProject(), myManager);
+    new UsageViewContentManagerImpl(manager.getProject(), manager);
 
     for (int i = 0; i < toolWindows.length; i++) {
-      assertTrue(myManager.isToolWindowRegistered(toolWindows[i]));
+      assertTrue(manager.isToolWindowRegistered(toolWindows[i]));
       assertEquals(expectedStripes[i], layout.getInfo(toolWindows[i]).isShowStripeButton());
-      assertEquals(expectedVisibility[i], myManager.getStripeButton(toolWindows[i]).isVisible());
+      assertEquals(expectedVisibility[i], manager.getStripeButton(toolWindows[i]).isVisible());
     }
   }
 }

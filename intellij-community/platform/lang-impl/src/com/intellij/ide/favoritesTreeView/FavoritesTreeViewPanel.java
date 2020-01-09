@@ -1,5 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -187,7 +186,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     //AnActionButton exportActionButton = AnActionButton.fromAction(exportToTextFileAction);
     //exportActionButton.setShortcut(exportToTextFileAction.getShortcutSet());
 
-    final ToolbarDecorator decorator = ToolbarDecorator.createDecorator(myTree)
+    ToolbarDecorator decorator = ToolbarDecorator.createDecorator(myTree)
       .initPosition()
       .disableAddAction().disableRemoveAction().disableDownAction().disableUpAction()
       .addExtraAction(addActionButton)
@@ -195,9 +194,9 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       .addExtraAction(deleteActionButton);
       //.addExtraAction(exportActionButton);
 
-    final AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_NEW_ELEMENT);
+    AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_NEW_ELEMENT);
     action.registerCustomShortcutSet(action.getShortcutSet(), myTree);
-    final JPanel panel = decorator.createPanel();
+    JPanel panel = decorator.createPanel();
 
     panel.setBorder(JBUI.Borders.empty());
     add(panel, BorderLayout.CENTER);
