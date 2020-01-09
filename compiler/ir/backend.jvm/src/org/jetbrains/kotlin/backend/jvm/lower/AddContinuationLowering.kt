@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -446,6 +446,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         capturedThisField: IrField?,
         isStaticSuspendImpl: Boolean
     ) {
+        val backendContext = context
         val invokeSuspend = context.ir.symbols.continuationImplClass.owner.functions
             .single { it.name == Name.identifier(INVOKE_SUSPEND_METHOD_NAME) }
         addFunctionOverride(invokeSuspend).also { function ->
@@ -481,15 +482,12 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         it.dispatchReceiver = capturedThisValue
                     }
                     irFunction.extensionReceiverParameter?.let { extensionReceiverParameter ->
-                        it.extensionReceiver = IrConstImpl.defaultValueForType(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, extensionReceiverParameter.type
+                        it.extensionReceiver = extensionReceiverParameter.type.defaultValue(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext
                         )
                     }
                     for ((i, parameter) in irFunction.valueParameters.withIndex()) {
-                        val defaultValueForParameter = IrConstImpl.defaultValueForType(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type
-                        )
-                        it.putValueArgument(i, defaultValueForParameter)
+                        it.putValueArgument(i, parameter.type.defaultValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext))
                     }
                     if (isStaticSuspendImpl) {
                         it.putValueArgument(0, capturedThisValue)
@@ -501,6 +499,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
     private fun createStaticSuspendImpl(irFunction: IrSimpleFunction): IrSimpleFunction {
         // Create static suspend impl method.
+        val backendContext = context
         val static = createStaticFunctionWithReceivers(
             irFunction.parent,
             irFunction.name.toSuspendImplementationName(),
@@ -520,12 +519,14 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     it.putValueArgument(i++, irGet(irFunction.dispatchReceiverParameter!!))
                 }
                 if (irFunction.extensionReceiverParameter != null) {
-                    it.putValueArgument(i++, irNull())
+                    val defaultValueForParameter = irFunction.extensionReceiverParameter!!.type.defaultValue(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext
+                    )
+                    it.putValueArgument(i++, defaultValueForParameter)
+
                 }
                 for (parameter in irFunction.valueParameters) {
-                    val defaultValueForParameter = IrConstImpl.defaultValueForType(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type
-                    )
+                    val defaultValueForParameter = parameter.type.defaultValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext)
                     it.putValueArgument(i++, defaultValueForParameter)
                 }
             })

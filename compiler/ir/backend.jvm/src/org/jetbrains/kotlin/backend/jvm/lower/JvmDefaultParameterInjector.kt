@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterInjector
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
 
 class JvmDefaultParameterInjector(context: JvmBackendContext) :
     DefaultParameterInjector(context, skipInline = false, skipExternalMethods = false) {
@@ -26,15 +23,7 @@ class JvmDefaultParameterInjector(context: JvmBackendContext) :
         nullConst(startOffset, endOffset, irParameter.type)
 
     override fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression {
-        if (type !is IrSimpleType || type.hasQuestionMark || type.classOrNull?.owner?.isInline != true)
-            return super.nullConst(startOffset, endOffset, type)
-
-        val underlyingType = type.unboxInlineClass()
-        return IrCallImpl(startOffset, endOffset, type, context.ir.symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, underlyingType) // from
-            putTypeArgument(1, type) // to
-            putValueArgument(0, super.nullConst(startOffset, endOffset, underlyingType))
-        }
+        return type.defaultValue(startOffset, endOffset, context)
     }
 
     override fun defaultArgumentStubVisibility(function: IrFunction) = function.getJvmVisibilityOfDefaultArgumentStub()
