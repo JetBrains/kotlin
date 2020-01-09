@@ -3,7 +3,7 @@ package com.intellij.openapi.paths;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.openapi.diagnostic.Logger;
@@ -117,24 +117,12 @@ public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebRe
                                                 start + info.myRangeInElement.getEndOffset());
           final String message = getErrorMessage(info.myUrl);
 
-          final Annotation annotation;
-
-          if (displayLevel == HighlightDisplayLevel.ERROR) {
-            annotation = holder.createErrorAnnotation(range, message);
-          }
-          else if (displayLevel == HighlightDisplayLevel.WARNING) {
-            annotation = holder.createWarningAnnotation(range, message);
-          }
-          else if (displayLevel == HighlightDisplayLevel.WEAK_WARNING) {
-            annotation = holder.createInfoAnnotation(range, message);
-          }
-          else {
-            annotation = holder.createWarningAnnotation(range, message);
-          }
+          AnnotationBuilder builder = holder.newAnnotation(displayLevel.getSeverity(), message).range(range);
 
           for (IntentionAction action : getQuickFixes()) {
-            annotation.registerFix(action);
+            builder = builder.withFix(action);
           }
+          builder.create();
         }
       }
     }
