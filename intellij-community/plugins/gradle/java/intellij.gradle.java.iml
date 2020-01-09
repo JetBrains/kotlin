@@ -35,5 +35,6 @@
     <orderEntry type="module" module-name="intellij.maven" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
     <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
   </component>
 </module>
