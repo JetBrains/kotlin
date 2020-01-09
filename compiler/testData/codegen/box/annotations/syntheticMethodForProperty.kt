@@ -4,6 +4,8 @@
 // WITH_RUNTIME
 // FULL_JDK
 
+package test
+
 import java.lang.reflect.Modifier
 import kotlin.test.*
 
@@ -30,7 +32,8 @@ fun check(clazz: Class<*>, expected: Boolean = true) {
             assertTrue(method.isSynthetic())
             assertTrue(Modifier.isStatic(method.modifiers))
             assertTrue(Modifier.isPublic(method.modifiers))
-            assertEquals("[@Anno(value=OK)]", method.declaredAnnotations.toList().toString())
+            val str = method.declaredAnnotations.single().toString()
+            assertTrue("@test.Anno\\(value=\"?OK\"?\\)".toRegex().matches(str), str)
             return
         }
     }
@@ -40,9 +43,9 @@ fun check(clazz: Class<*>, expected: Boolean = true) {
 }
 
 fun box(): String {
-    check(Class.forName("A"))
-    check(Class.forName("SyntheticMethodForPropertyKt"))
-    check(Class.forName("T"), expected = false)
-    check(Class.forName("T\$DefaultImpls"))
+    check(Class.forName("test.A"))
+    check(Class.forName("test.SyntheticMethodForPropertyKt"))
+    check(Class.forName("test.T"), expected = false)
+    check(Class.forName("test.T\$DefaultImpls"))
     return "OK"
 }
