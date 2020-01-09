@@ -255,11 +255,17 @@ public class UnknownSdkTracker implements Disposable {
                                                                   @NotNull List<UnknownSdk> infos,
                                                                   @NotNull List<UnknownSdkLookup> lookups,
                                                                   @NotNull TripleFunction<UnknownSdkLookup, UnknownSdk, ProgressIndicator, R> fun) {
+    indicator.pushState();
+
     Map<UnknownSdk, R> result = new LinkedHashMap<>();
     for (Iterator<UnknownSdk> iterator = infos.iterator(); iterator.hasNext(); ) {
       UnknownSdk info = iterator.next();
       for (UnknownSdkLookup lookup : lookups) {
+
+        indicator.pushState();
         R fix = fun.fun(lookup, info, indicator);
+        indicator.popState();
+
         if (fix != null) {
           result.put(info, fix);
           iterator.remove();
@@ -267,6 +273,8 @@ public class UnknownSdkTracker implements Disposable {
         }
       }
     }
+
+    indicator.popState();
     return result;
   }
 
