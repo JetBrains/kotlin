@@ -209,7 +209,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
             """
                 import androidx.compose.*
 
-                class TextSpanScope internal constructor(val composer: ViewComposition)
+                class TextSpanScope internal constructor(val composer: ViewComposer)
 
                 @Composable fun TextSpanScope.Foo(children: @Composable TextSpanScope.() -> Unit) {
                     children()

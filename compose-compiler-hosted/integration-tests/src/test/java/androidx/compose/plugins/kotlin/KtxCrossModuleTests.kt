@@ -122,7 +122,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                             when (parent) {
                                 is android.view.ViewGroup -> when (child) {
                                     is android.view.View -> child
-                                    is Emittable -> ViewEmitWrapper(composer.composer.context).apply { 
+                                    is Emittable -> ViewEmitWrapper(composer.context).apply { 
                                     emittable = child }
                                     else -> null
                                 }
