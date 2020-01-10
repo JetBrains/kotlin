@@ -252,9 +252,9 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
                                             int[] choice) throws IOException {
     Project project = targetDirectory.getProject();
     List<PsiFile> added = new ArrayList<>();
-    try {
-      targetDirectory.putUserData(PsiDirectoryImpl.UPDATE_ADDED_FILE_KEY, false);
-      PsiManager manager = PsiManager.getInstance(project);
+    PsiManager manager = PsiManager.getInstance(project);
+    ((PsiDirectoryImpl)targetDirectory).executeWithUpdatingAddedFilesDisabled(() ->
+    {
       for (VirtualFile file : files) {
         PsiFileSystemItem item = file.isDirectory() ? manager.findDirectory(file) : manager.findFile(file);
         if (item == null) {
@@ -263,13 +263,10 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
         }
         ContainerUtil.addIfNotNull(added, copyToDirectory(item, newName, targetDirectory, choice, title));
       }
-    }
-    finally {
-      targetDirectory.putUserData(PsiDirectoryImpl.UPDATE_ADDED_FILE_KEY, null);
-    }
+    });
 
     DumbService.getInstance(project).completeJustSubmittedTasks();
-    WriteAction.run(() -> UpdateAddedFileProcessor.updateAddedFiles(added.toArray(PsiFile.EMPTY_ARRAY)));
+    WriteAction.run(() -> UpdateAddedFileProcessor.updateAddedFiles(added));
     return added;
   }
 
