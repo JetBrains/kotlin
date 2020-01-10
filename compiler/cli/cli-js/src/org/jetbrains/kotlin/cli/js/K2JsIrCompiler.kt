@@ -322,7 +322,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     }
 
     override fun executableScriptFileName(): String {
-        return "kotlinc-js -Xir"
+        TODO("Provide a proper way to run the compiler with IR BE")
     }
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
