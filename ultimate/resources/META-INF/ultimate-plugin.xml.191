@@ -1,4 +1,3 @@
 <idea-plugin>
     <depends optional="true" config-file="kotlin-nodejs.xml">NodeJS</depends>
-    <depends optional="true" config-file="kotlin-gradle-testing.xml">org.jetbrains.plugins.gradle.java</depends>
 </idea-plugin>
