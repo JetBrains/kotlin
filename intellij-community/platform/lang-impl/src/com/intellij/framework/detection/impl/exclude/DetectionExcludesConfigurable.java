@@ -22,6 +22,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -280,6 +281,6 @@ public class DetectionExcludesConfigurable implements Configurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return "Framework Detection Excludes";
+    return ProjectBundle.message("configurable.DetectionExcludesConfigurable.display.name");
   }
 }

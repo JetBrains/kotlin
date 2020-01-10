@@ -153,7 +153,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
   @Nls
   @Override
   public String getDisplayName() {
-    return "Postfix Completion";
+    return CodeInsightBundle.message("configurable.PostfixTemplatesConfigurable.display.name");
   }
 
   @Nullable

@@ -8,6 +8,7 @@ import com.intellij.application.options.codeStyle.CodeStyleSchemesModelListener;
 import com.intellij.application.options.codeStyle.CodeStyleSchemesPanel;
 import com.intellij.application.options.codeStyle.group.CodeStyleGroupProvider;
 import com.intellij.application.options.codeStyle.group.CodeStyleGroupProviderFactory;
+import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.extensions.BaseExtensionPointName;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.options.Configurable;
@@ -243,7 +244,7 @@ public class CodeStyleSchemesConfigurable extends SearchableConfigurable.Parent.
 
   @Override
   public String getDisplayName() {
-    return "Code Style";
+    return ApplicationBundle.message("configurable.CodeStyleSchemesConfigurable.display.name");
   }
 
   @Override
