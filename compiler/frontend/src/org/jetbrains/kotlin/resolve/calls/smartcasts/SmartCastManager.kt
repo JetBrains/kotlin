@@ -34,7 +34,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.TypeIntersector
+import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.typeUtil.expandIntersectionTypeIfNecessary
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
@@ -134,7 +138,15 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         else
             listOf(expectedType)
 
-        for (possibleType in c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings)) {
+        val collectedTypes = c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings).toMutableList()
+
+        if (collectedTypes.isNotEmpty() && c.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+            // Sometime expected type may be inferred to be an intersection of all of the smart-cast types
+            val typeToIntersect = collectedTypes + dataFlowValue.type
+            collectedTypes.addIfNotNull(intersectWrappedTypes(typeToIntersect))
+        }
+
+        for (possibleType in collectedTypes) {
             if (expectedTypes.any { argumentTypeResolver.isSubtypeOfForArgumentType(possibleType, it) } &&
                 (additionalPredicate == null || additionalPredicate(possibleType))
             ) {
