@@ -120,6 +120,7 @@ class FirCallResolver(
 
         val info = CallInfo(
             CallKind.Function,
+            functionCall.calleeReference.name,
             explicitReceiver,
             arguments,
             functionCall.safe,
@@ -131,7 +132,6 @@ class FirCallResolver(
         towerResolver.reset()
         val result = towerResolver.runResolver(
             implicitReceiverStack.receiversAsReversed(),
-            functionCall.calleeReference.name,
             info
         )
         val bestCandidates = result.bestCandidates()
@@ -154,6 +154,7 @@ class FirCallResolver(
 
         val info = CallInfo(
             CallKind.VariableAccess,
+            callee.name,
             qualifiedAccess.explicitReceiver,
             emptyList(),
             qualifiedAccess.safe,
@@ -165,7 +166,6 @@ class FirCallResolver(
         towerResolver.reset()
         val result = towerResolver.runResolver(
             implicitReceiverStack.receiversAsReversed(),
-            callee.name,
             info
         )
 
@@ -246,7 +246,6 @@ class FirCallResolver(
         // No reset here!
         val result = towerResolver.runResolver(
             implicitReceiverStack.receiversAsReversed(),
-            callableReferenceAccess.calleeReference.name,
             info,
             collector = CandidateCollector(this, resolutionStageRunner)
         )
@@ -287,8 +286,10 @@ class FirCallResolver(
         typeArguments: List<FirTypeProjection>
     ): FirDelegatedConstructorCall? {
         val scope = symbol.fir.scope(ConeSubstitutor.Empty, session, scopeSession) ?: return null
+        val className = symbol.classId.shortClassName
         val callInfo = CallInfo(
             CallKind.Function,
+            className,
             explicitReceiver = null,
             delegatedConstructorCall.arguments,
             isSafeCall = false,
@@ -300,7 +301,6 @@ class FirCallResolver(
         val candidateFactory = CandidateFactory(this, callInfo)
         val candidates = mutableListOf<Candidate>()
 
-        val className = symbol.classId.shortClassName
         scope.processFunctionsByName(className) {
             if (it is FirConstructorSymbol) {
                 candidates += candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
@@ -338,6 +338,7 @@ class FirCallResolver(
     ): CallInfo {
         return CallInfo(
             CallKind.CallableReference,
+            callableReferenceAccess.calleeReference.name,
             callableReferenceAccess.explicitReceiver,
             emptyList(),
             false,

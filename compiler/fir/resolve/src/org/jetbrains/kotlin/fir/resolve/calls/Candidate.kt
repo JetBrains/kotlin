@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class CallInfo(
     val callKind: CallKind,
+    val name: Name,
 
     val explicitReceiver: FirExpression?,
     val arguments: List<FirExpression>,
@@ -46,20 +48,19 @@ class CallInfo(
 
     fun replaceWithVariableAccess(): CallInfo =
         CallInfo(
-            CallKind.VariableAccess, explicitReceiver, emptyList(),
+            CallKind.VariableAccess, name, explicitReceiver, emptyList(),
             isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs
         )
 
     fun replaceExplicitReceiver(explicitReceiver: FirExpression): CallInfo =
         CallInfo(
-            callKind, explicitReceiver, arguments,
+            callKind, name, explicitReceiver, arguments,
             isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs
         )
 
     fun withReceiverAsArgument(receiverExpression: FirExpression): CallInfo =
         CallInfo(
-            callKind, explicitReceiver,
-            listOf(receiverExpression) + arguments,
+            callKind, name, explicitReceiver, listOf(receiverExpression) + arguments,
             isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs
         )
 }

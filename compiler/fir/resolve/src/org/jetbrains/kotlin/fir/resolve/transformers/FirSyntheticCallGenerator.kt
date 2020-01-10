@@ -120,7 +120,7 @@ class FirSyntheticCallGenerator(
         name: Name,
         callKind: CallKind = CallKind.SyntheticSelect
     ): FirNamedReferenceWithCandidate? {
-        val callInfo = generateCallInfo(arguments, callKind)
+        val callInfo = generateCallInfo(name, arguments, callKind)
         val candidate = generateCandidate(callInfo, function)
         val applicability = resolutionStageRunner.processCandidate(candidate)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
@@ -136,8 +136,9 @@ class FirSyntheticCallGenerator(
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
         )
 
-    private fun generateCallInfo(arguments: List<FirExpression>, callKind: CallKind) = CallInfo(
+    private fun generateCallInfo(name: Name, arguments: List<FirExpression>, callKind: CallKind) = CallInfo(
         callKind = callKind,
+        name = name,
         explicitReceiver = null,
         arguments = arguments,
         isSafeCall = false,
