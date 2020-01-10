@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -94,29 +94,6 @@ private fun removeUselessDeclarations(module: IrModuleFragment, usefulDeclaratio
     }
 }
 
-private fun Iterable<IrDeclaration>.withNested(): Iterable<IrDeclaration> {
-    val result = mutableListOf<IrDeclaration>()
-
-    this.forEach {
-        it.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitBody(body: IrBody) {
-                // Skip
-            }
-
-            override fun visitDeclaration(declaration: IrDeclaration) {
-                super.visitDeclaration(declaration)
-                result += declaration
-            }
-        })
-    }
-
-    return result
-}
-
 fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendContext): Set<IrDeclaration> {
     val queue = ArrayDeque<IrDeclaration>()
     val result = hashSetOf<IrDeclaration>()
@@ -127,6 +104,29 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
             result.add(this)
             queue.addLast(this)
         }
+    }
+
+    fun Iterable<IrDeclaration>.withNested(): Iterable<IrDeclaration> {
+        val result = mutableListOf<IrDeclaration>()
+
+        this.forEach {
+            it.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitBody(body: IrBody) {
+                    // Skip
+                }
+
+                override fun visitDeclaration(declaration: IrDeclaration) {
+                    super.visitDeclaration(declaration)
+                    result += declaration
+                }
+            })
+        }
+
+        return result
     }
 
     // Add roots, including nested declarations
