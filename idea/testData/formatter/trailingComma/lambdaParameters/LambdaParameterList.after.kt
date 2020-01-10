@@ -82,9 +82,7 @@ val x = {
     println("1")
 }
 
-val x = {
-    x: String,
-    ->
+val x = { x: String ->
     println("1")
 }
 

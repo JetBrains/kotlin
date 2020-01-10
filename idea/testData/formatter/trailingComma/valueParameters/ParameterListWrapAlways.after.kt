@@ -117,9 +117,7 @@ class D2 {
 class A3 {
     val x: String
 
-    constructor(
-            x: String,
-    ) {
+    constructor(x: String) {
         this.x = x
     }
 }
@@ -316,9 +314,7 @@ val foo5: (Int) -> Int = fun(
         x,
 ): Int = 42
 
-val foo6: (Int) -> Int = fun(
-        x,
-): Int = 42
+val foo6: (Int) -> Int = fun(x): Int = 42
 
 val foo7: (Int) -> Int = fun(x): Int = 42
 

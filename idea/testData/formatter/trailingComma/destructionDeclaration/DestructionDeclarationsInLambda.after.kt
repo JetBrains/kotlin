@@ -1,16 +1,10 @@
 // SET_TRUE: ALLOW_TRAILING_COMMA
 
-val x: (Pair<Int, Int>, Int) -> Unit = {
-    (
-            x, y,
-    ), /* FIXME: The result should converge in one iteration */ z,
-    ->
+val x: (Pair<Int, Int>, Int) -> Unit = { (x, y), z ->
     println(x)
 }
 
-val x: (Pair<Int, Int>, Int) -> Unit = {
-    (x, y), z,
-    ->
+val x: (Pair<Int, Int>, Int) -> Unit = { (x, y), z ->
     println(x)
 }
 
@@ -55,15 +49,11 @@ val x: (Pair<Int, Int>, Int) -> Unit = {
     println(x)
 }
 
-val x: (Pair<Int, Int>, Int) -> Unit = {
-    (x, y), z,
-    ->
+val x: (Pair<Int, Int>, Int) -> Unit = { (x, y), z ->
     println(x)
 }
 
-val x: (Pair<Int, Int>, Int) -> Unit = {
-    (x, y/**/), z,
-    ->
+val x: (Pair<Int, Int>, Int) -> Unit = { (x, y/**/), z ->
     println(x)
 }
 
@@ -105,9 +95,7 @@ val x: (Pair<Int, Int>, Int) -> Unit = {
 }
 
 val x: (Pair<Int, Int>, Int) -> Unit = {
-    (
-            x, y,
-    ),
+    (x, y),
     z,
     ->
     println(x)

@@ -47,26 +47,27 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiline() = getLineCount() > 1
 
-fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings): Boolean = needTrailingComma(
+fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings, checkTrailingComma: Boolean = true): Boolean = needTrailingComma(
     settings = settings,
-    trailingComma = { valueParameterList?.trailingComma },
+    trailingComma = { if (checkTrailingComma) valueParameterList?.trailingComma else null },
     globalStartOffset = { valueParameterList?.startOffset },
     globalEndOffset = { arrow?.endOffset }
 )
 
-fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings): Boolean = needTrailingComma(
+fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings, checkTrailingComma: Boolean = true): Boolean = needTrailingComma(
     settings = settings,
-    trailingComma = { trailingComma },
+    trailingComma = { if (checkTrailingComma) trailingComma else null },
     additionalCheck = { !isElse },
     globalEndOffset = { arrow?.endOffset }
 )
 
-fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings): Boolean = needTrailingComma(
-    settings = settings,
-    trailingComma = { trailingComma },
-    globalStartOffset = { lPar?.startOffset },
-    globalEndOffset = { rPar?.endOffset }
-)
+fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings, checkTrailingComma: Boolean = true): Boolean =
+    needTrailingComma(
+        settings = settings,
+        trailingComma = { if (checkTrailingComma) trailingComma else null },
+        globalStartOffset = { lPar?.startOffset },
+        globalEndOffset = { rPar?.endOffset }
+    )
 
 fun <T : PsiElement> T.needTrailingComma(
     settings: CodeStyleSettings,
@@ -74,7 +75,7 @@ fun <T : PsiElement> T.needTrailingComma(
     additionalCheck: () -> Boolean = { true },
     globalStartOffset: T.() -> Int? = PsiElement::startOffset,
     globalEndOffset: T.() -> Int? = PsiElement::endOffset
-) = trailingComma() != null || settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA && additionalCheck() && run(fun(): Boolean {
+) = (trailingComma() != null || settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA) && additionalCheck() && run(fun(): Boolean {
     val startOffset = globalStartOffset() ?: return false
     val endOffset = globalEndOffset() ?: return false
     return containsLineBreakInThis(startOffset, endOffset)

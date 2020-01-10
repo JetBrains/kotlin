@@ -29,7 +29,8 @@ fun foo() {
 
     testtest[foofoo, testtest[testtest[foofoo]]]
 
-    testtest[foofoo, fososos, testtest[testtest[foofoo]],]
+    testtest[foofoo, fososos,
+            testtest[testtest[foofoo]],]
 
     testtest[foofoo, testtest[testtest[foofoo,]], testsa]
 
@@ -46,6 +47,9 @@ fun foo() {
     useCallable[Callable { println["Hello world"] }]
 
     useCallable[Callable { println["Hello world"] },]
+
+    useCallable[Callable {
+        println["Hello world"] },]
 
     useCallable[Callable { println["Hello world"] }
     ]
@@ -68,6 +72,9 @@ fun foo() {
     useCallable[{ println["Hello world"] }]
 
     useCallable[{ println["Hello world"] },]
+
+    useCallable[{ println["Hello world"] }
+            ,]
 
     useCallable[{ println["Hello world"] }
     ]

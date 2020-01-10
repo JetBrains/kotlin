@@ -26,28 +26,15 @@ fun foo() {
             foofoo
     )
 
-    testtest(
-            foofoo,
-    )
+    testtest(foofoo)
 
     testtest(foofoo, testtest(testtest(foofoo)))
 
-    testtest(
-            foofoo, fososos, testtest(testtest(foofoo)),
-    )
+    testtest(foofoo, fososos, testtest(testtest(foofoo)))
 
-    testtest(foofoo,
-            testtest(testtest(
-                    foofoo,
-            )),
-            testsa)
+    testtest(foofoo, testtest(testtest(foofoo)), testsa)
 
-    testtest(foofoo,
-            seee,
-            testtest(testtest(
-                    foofoo,
-            )),
-            testsa)
+    testtest(foofoo, seee, testtest(testtest(foofoo)), testsa)
 
     useCallable("A", Callable { println("Hello world") })
 
@@ -59,9 +46,7 @@ fun foo() {
 
     useCallable(Callable { println("Hello world") })
 
-    useCallable(
-            Callable { println("Hello world") },
-    )
+    useCallable(Callable { println("Hello world") })
 
     useCallable(Callable { println("Hello world") }
     )
@@ -83,9 +68,7 @@ fun foo() {
 
     useCallable({ println("Hello world") })
 
-    useCallable(
-            { println("Hello world") },
-    )
+    useCallable({ println("Hello world") })
 
     useCallable({ println("Hello world") }
     )
@@ -107,9 +90,7 @@ fun foo() {
 
     useCallable(foo() { println("Hello world") })
 
-    useCallable(
-            foo() { println("Hello world") },
-    )
+    useCallable(foo() { println("Hello world") })
 
     useCallable(foo() { println("Hello world") }
     )
@@ -208,9 +189,7 @@ fun foo() {
             foofoo
     )
 
-    testtest(
-            foofoo,/**/
-    )
+    testtest(foofoo/**/)
 
     testtest(foofoo, foofoo, foofoo, foofoo/*
      */, /* */ bar
@@ -223,9 +202,7 @@ fun foo() {
             foofoo
     )
 
-    testtest(
-            foofoo,/**/
-    )
+    testtest(foofoo/**/)
 
     testtest(
             foofoo, fososos,/*
@@ -233,39 +210,17 @@ fun foo() {
             testtest(testtest(foofoo)),
     )
 
-    testtest(foofoo,
-            testtest(testtest(
-                    foofoo,
-            )), /**/
-            testsa)
+    testtest(foofoo, testtest(testtest(foofoo)), /**/testsa)
 
-    testtest(foofoo,
-            testtest(testtest(
-                    foofoo,
-            ))/* */, /**/
-            testsa)
+    testtest(foofoo, testtest(testtest(foofoo))/* */, /**/testsa)
 
-    testtest(foofoo,
-            testtest(testtest(
-                    foofoo,
-            ))/*
-    */,
-            testsa)
+    testtest(foofoo, testtest(testtest(foofoo))/*
+    */, testsa)
 
-    testtest(foofoo,
-            seee,
-            testtest(testtest(
-                    foofoo,
-            )), /**/
-            testsa)
+    testtest(foofoo, seee, testtest(testtest(foofoo)), /**/testsa)
 
-    testtest(foofoo,
-            seee,
-            testtest(testtest(
-                    foofoo,
-            )), /*
-    */
-            testsa)
+    testtest(foofoo, seee, testtest(testtest(foofoo)), /*
+    */testsa)
 
     useCallable("B", "C", Callable {
         println("Hello world")
@@ -275,4 +230,37 @@ fun foo() {
 
     useCallable(Callable { println("Hello world") } // ffd
     )
+
+    useCallable(
+            object : Callable<Unit> {
+                override fun call() {
+                    println("Hello world")
+                }
+            },
+    )
+
+    useCallable(
+            foo() {
+                println("Hello world")
+            },
+    )
+
+    useCallable(
+            {
+                println("Hello world")
+            },
+    )
+
+    useCallable(
+            Callable { println("Hello world") },
+    )
+
+    testtest(foofoo, testtest(testtest(
+            foofoo,
+    )), testsa)
+
+    testtest(
+            foofoo, fososos, testtest(testtest(foofoo)),
+    )
+
 }

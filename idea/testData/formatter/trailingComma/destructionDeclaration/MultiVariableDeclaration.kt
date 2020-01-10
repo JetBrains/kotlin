@@ -16,7 +16,18 @@ fun test() {
     val (a,) =
         b
 
+    val (a,
+    ) =
+        b
+
+    val (a
+    ) =
+        b
+
     val (a,) = b
+
+    val (
+        a,) = b
 
     val (a, b
     ) = 1 to 2

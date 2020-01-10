@@ -1,6 +1,6 @@
 // SET_TRUE: ALLOW_TRAILING_COMMA
 
-val x: (Pair<Int, Int>, Int) -> Unit = { (x, y,), /* FIXME: The result should converge in one iteration */ z, ->
+val x: (Pair<Int, Int>, Int) -> Unit = { (x, y,), z, ->
     println(x)
 }
 

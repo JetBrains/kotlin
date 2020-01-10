@@ -21,6 +21,11 @@ fun main() {
         10
     }
 
+    val x: (y: Comparable<Comparable<Number>>, z: Iterable<Iterable<Number>>,
+    ) -> Int = {
+        10
+    }
+
     val x: (y: Comparable<Comparable<Number>>) -> Int = {
         10
     }

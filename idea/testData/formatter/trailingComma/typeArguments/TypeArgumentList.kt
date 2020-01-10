@@ -39,6 +39,9 @@ fun foo() {
 
     testtest<foofoo, fososos, testtest<testtest<foofoo>>,>()
 
+    testtest<foofoo, fososos, testtest<testtest<foofoo>>
+            ,>()
+
     testtest<foofoo, testtest<testtest<foofoo,>>, testsa>()
 
     testtest<foofoo, *, testtest<testtest<foofoo,>>, testsa>()
@@ -88,6 +91,12 @@ fun foo() {
     >()
 
     testtest<foofoo,/**/>()
+
+    testtest<foofoo,/*
+    */>()
+
+    testtest<
+            foofoo,/**/>()
 
     testtest<foofoo, fososos,/*
     */ testtest<testtest<foofoo>>,>()

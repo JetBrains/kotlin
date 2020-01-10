@@ -3,11 +3,7 @@
 @Anno([1])
 fun a() = Unit
 
-@Anno(
-        [
-            1,
-        ],
-)
+@Anno([1])
 fun a() = Unit
 
 @Anno(
@@ -34,11 +30,7 @@ fun a() = Unit
 @Anno([1, 2])
 fun a() = Unit
 
-@Anno(
-        [
-            1, 2,
-        ],
-)
+@Anno([1, 2])
 fun a() = Unit
 
 @Anno(
@@ -65,11 +57,7 @@ fun a() = Unit
 @Anno([1, 2, 2])
 fun a() = Unit
 
-@Anno(
-        [
-            1, 2, 2,
-        ],
-)
+@Anno([1, 2, 2])
 fun a() = Unit
 
 @Anno(

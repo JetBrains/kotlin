@@ -56,9 +56,7 @@ fun foo() {
             foofoo,
     )
 
-    testtest(
-            foofoo,
-    )
+    testtest(foofoo)
 
     testtest(
             foofoo,
@@ -73,22 +71,14 @@ fun foo() {
 
     testtest(
             foofoo,
-            testtest(
-                    testtest(
-                            foofoo,
-                    ),
-            ),
+            testtest(testtest(foofoo)),
             testsa,
     )
 
     testtest(
             foofoo,
             seee,
-            testtest(
-                    testtest(
-                            foofoo,
-                    ),
-            ),
+            testtest(testtest(foofoo)),
             testsa,
     )
 
@@ -110,9 +100,7 @@ fun foo() {
 
     useCallable(Callable { println("Hello world") })
 
-    useCallable(
-            Callable { println("Hello world") },
-    )
+    useCallable(Callable { println("Hello world") })
 
     useCallable(
             Callable { println("Hello world") },
@@ -144,9 +132,7 @@ fun foo() {
 
     useCallable({ println("Hello world") })
 
-    useCallable(
-            { println("Hello world") },
-    )
+    useCallable({ println("Hello world") })
 
     useCallable(
             { println("Hello world") },
@@ -178,9 +164,7 @@ fun foo() {
 
     useCallable(foo() { println("Hello world") })
 
-    useCallable(
-            foo() { println("Hello world") },
-    )
+    useCallable(foo() { println("Hello world") })
 
     useCallable(
             foo() { println("Hello world") },
@@ -325,9 +309,7 @@ fun foo() {
             foofoo,
     )
 
-    testtest(
-            foofoo,/**/
-    )
+    testtest(foofoo/**/)
 
     testtest(
             foofoo,
@@ -347,9 +329,7 @@ fun foo() {
             foofoo,
     )
 
-    testtest(
-            foofoo,/**/
-    )
+    testtest(foofoo/**/)
 
     testtest(
             foofoo,
@@ -360,31 +340,19 @@ fun foo() {
 
     testtest(
             foofoo,
-            testtest(
-                    testtest(
-                            foofoo,
-                    ),
-            ), /**/
+            testtest(testtest(foofoo)), /**/
             testsa,
     )
 
     testtest(
             foofoo,
-            testtest(
-                    testtest(
-                            foofoo,
-                    ),
-            ),/* */ /**/
+            testtest(testtest(foofoo)),/* */ /**/
             testsa,
     )
 
     testtest(
             foofoo,
-            testtest(
-                    testtest(
-                            foofoo,
-                    ),
-            ),/*
+            testtest(testtest(foofoo)),/*
     */
             testsa,
     )
@@ -392,22 +360,14 @@ fun foo() {
     testtest(
             foofoo,
             seee,
-            testtest(
-                    testtest(
-                            foofoo,
-                    ),
-            ), /**/
+            testtest(testtest(foofoo)), /**/
             testsa,
     )
 
     testtest(
             foofoo,
             seee,
-            testtest(
-                    testtest(
-                            foofoo,
-                    ),
-            ), /*
+            testtest(testtest(foofoo)), /*
     */
             testsa,
     )
@@ -426,4 +386,45 @@ fun foo() {
     useCallable(
             Callable { println("Hello world") }, // ffd
     )
+
+    useCallable(
+            object : Callable<Unit> {
+                override fun call() {
+                    println("Hello world")
+                }
+            },
+    )
+
+    useCallable(
+            foo() {
+                println("Hello world")
+            },
+    )
+
+    useCallable(
+            {
+                println("Hello world")
+            },
+    )
+
+    useCallable(
+            Callable { println("Hello world") },
+    )
+
+    testtest(
+            foofoo,
+            testtest(
+                    testtest(
+                            foofoo,
+                    ),
+            ),
+            testsa,
+    )
+
+    testtest(
+            foofoo,
+            fososos,
+            testtest(testtest(foofoo)),
+    )
+
 }

@@ -197,9 +197,7 @@ fun <T> ag() {
 
 }
 
-fun <
-        T,
-        > ag() {
+fun <T> ag() {
 
 }
 

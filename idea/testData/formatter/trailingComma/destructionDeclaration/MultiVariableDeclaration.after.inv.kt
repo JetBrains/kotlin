@@ -11,14 +11,21 @@ fun test() {
     2
 
 
-    val (
-            a, b,
-    ) = 1 to 2
+    val (a, b) = 1 to 2
+
+    val (a) =
+            b
 
     val (
             a,
     ) =
             b
+
+    val (a
+    ) =
+            b
+
+    val (a) = b
 
     val (
             a,
@@ -56,22 +63,14 @@ fun test() {
     to
     2
 
-    val (
-            a, b,/**/
-    ) = 1 to 2
+    val (a, b/**/) = 1 to 2
 
-    val (
-            a,/**/ b,/**//**/
-    ) = 1 to 2
+    val (a/**/, b/**//**/) = 1 to 2
 
-    val (
-            a,/**//**/
-    ) =
+    val (a/**//**/) =
             b
 
-    val (
-            a,
-    ) = b
+    val (a) = b
 
     val (a, b/**/
     ) = 1 to 2

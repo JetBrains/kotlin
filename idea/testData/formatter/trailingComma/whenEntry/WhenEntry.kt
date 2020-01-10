@@ -6,7 +6,19 @@ fun foo(x: Any) = when (x) {
 
 fun foo(x: Any) {
     when (x) {
-        Comparable::class, Iterable::class, String::class, /*// trailing comma*/ -> println(1)
+        Comparable::class, Iterable::class, String::class /*// trailing comma*/ -> println(1)
+        else -> println(3)
+    }
+
+    when (x) {
+        Comparable::class, Iterable::class,
+        String::class /*// trailing comma*/ -> println(1)
+        else -> println(3)
+    }
+
+    when (x) {
+        Comparable::class, Iterable::class,
+        String::class /*// trailing comma*/, -> println(1)
         else -> println(3)
     }
 

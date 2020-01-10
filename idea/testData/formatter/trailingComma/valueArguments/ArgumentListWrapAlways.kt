@@ -205,4 +205,23 @@ fun foo() {
 
     useCallable(Callable { println("Hello world") } // ffd
     )
+
+    useCallable(object : Callable<Unit> { override fun call() { println("Hello world") }
+    },)
+
+    useCallable(foo() { println("Hello world")
+    },)
+
+    useCallable({
+                    println("Hello world") },)
+
+    useCallable(Callable { println("Hello world") }
+                ,)
+
+    testtest(foofoo, testtest(testtest(
+        foofoo,)), testsa)
+
+    testtest(foofoo, fososos, testtest(testtest(foofoo))
+             ,)
+
 }

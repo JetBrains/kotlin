@@ -746,9 +746,7 @@ abstract class KotlinCommonBlock(
                 }
                 if (nodePsi.operationToken == ELVIS && nodePsi.getStrictParentOfType<KtStringTemplateExpression>() == null) {
                     return { childElement ->
-                        if (childElement.elementType == OPERATION_REFERENCE && (childElement.psi as? KtOperationReferenceExpression)
-                                ?.operationSignTokenType == ELVIS
-                        ) {
+                        if (childElement.elementType == OPERATION_REFERENCE && (childElement.psi as? KtOperationReferenceExpression)?.operationSignTokenType == ELVIS) {
                             Wrap.createWrap(settings.kotlinCustomSettings.WRAP_ELVIS_EXPRESSIONS, true)
                         } else {
                             null
@@ -766,11 +764,12 @@ abstract class KotlinCommonBlock(
         fun(childElement: ASTNode): Wrap? = trailingCommaWrappingStrategyWithMultiLineCheck(leftAnchor, rightAnchor)(childElement)
 
     private val ASTNode.withTrailingComma: Boolean
-        get() = when {
-            lastChildNode?.let { getSiblingWithoutWhitespaceAndComments(it) }?.elementType === COMMA -> true
-            settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA -> psi?.let(PsiElement::isMultiline) == true
-            else -> false
-        }
+        get() = if (settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA ||
+            lastChildNode?.let { getSiblingWithoutWhitespaceAndComments(it) }?.elementType === COMMA
+        )
+            psi?.let(PsiElement::isMultiline) == true
+        else
+            false
 
     private fun ASTNode.notDelimiterSiblingNodeInSequence(
         forward: Boolean,
