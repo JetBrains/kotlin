@@ -132,7 +132,8 @@ public class SdkDetector {
                              @NotNull ProgressIndicator indicator,
                              @NotNull DetectedSdkListener callback) {
     try {
-      for (String path : new HashSet<>(type.suggestHomePaths())) {
+      Collection<String> suggestedPaths = type.suggestHomePaths();
+      for (String path : suggestedPaths) {
         indicator.checkCanceled();
 
         if (path == null) continue;
