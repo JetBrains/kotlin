@@ -29,8 +29,7 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
                 GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=3
             BRANCH
-              if: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/ranges/IntRange.contains]>#' type=IrErrorType
-                GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+              if: ERROR_CALL 'Unresolved reference: <Unresolved name: not>#' type=IrErrorType
               then: CONST Int type=kotlin.Int value=4
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
