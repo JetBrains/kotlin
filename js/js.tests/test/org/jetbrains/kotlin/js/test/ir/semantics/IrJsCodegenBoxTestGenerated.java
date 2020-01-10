@@ -9182,6 +9182,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/functions/recursiveIncrementCall.kt");
         }
 
+        @TestMetadata("typeParametersInLocalFunction.kt")
+        public void testTypeParametersInLocalFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/typeParametersInLocalFunction.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/functions/bigArity")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

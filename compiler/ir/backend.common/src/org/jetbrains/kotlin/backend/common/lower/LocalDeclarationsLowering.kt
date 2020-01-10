@@ -588,7 +588,7 @@ class LocalDeclarationsLowering(
             localFunctionContext.capturedTypeParameterToTypeParameter.putAll(
                 capturedTypeParameters.zip(newTypeParameters)
             )
-            newDeclaration.copyTypeParametersFrom(oldDeclaration)
+            newDeclaration.copyTypeParametersFrom(oldDeclaration, parameterMap = localFunctionContext.capturedTypeParameterToTypeParameter)
             // Type parameters of oldDeclaration may depend on captured type parameters, so deal with that after copying.
             newDeclaration.typeParameters.drop(newTypeParameters.size).forEach { tp ->
                 tp.superTypes.replaceAll { localFunctionContext.remapType(it) }
