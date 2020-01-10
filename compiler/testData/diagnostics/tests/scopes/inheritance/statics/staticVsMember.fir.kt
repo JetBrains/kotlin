@@ -27,14 +27,14 @@ open class C: A() {
 
     init {
         val a: String = foo()
-        val b: String = <!AMBIGUITY!>bar<!>
+        val b: String = bar
     }
 }
 
 class E: C() {
     init {
         val a: String = foo()
-        val b: String = <!AMBIGUITY!>bar<!>
+        val b: String = bar
     }
 }
 

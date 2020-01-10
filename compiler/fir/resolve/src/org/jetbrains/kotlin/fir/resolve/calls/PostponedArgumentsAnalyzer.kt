@@ -74,7 +74,8 @@ class PostponedArgumentsAnalyzer(
 
         val callableReferenceAccess = atom.reference
         atom.analyzed = true
-        val (candidate, applicability) = atom.resultingCandidate ?: Pair(null, CandidateApplicability.INAPPLICABLE)
+        val (candidate, applicability) = atom.resultingCandidate
+            ?: Pair(null, CandidateApplicability.INAPPLICABLE)
 
         val namedReference = when {
             candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->

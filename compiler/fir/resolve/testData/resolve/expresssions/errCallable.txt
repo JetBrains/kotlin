@@ -23,5 +23,5 @@ FILE: errCallable.kt
 
     }
     public final fun R|Your|.foo(): R|kotlin/Unit| {
-        lval x: R|kotlin/reflect/KFunction0<Your.Nested>| = ::R|/Your.Nested.Nested|
+        lval x: <ERROR TYPE REF: No result type for initializer> = ::<Unresolved name: Nested>#
     }

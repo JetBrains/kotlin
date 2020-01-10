@@ -29,10 +29,10 @@ FILE: qualifierPriority.kt
         }
 
     }
-    public final val ab: R|kotlin/String| = Q|A|.R|/A.Companion.B|
-        public get(): R|kotlin/String|
-    public final val abc: <ERROR TYPE REF: Unresolved name: C> = Q|A|.R|/A.Companion.B|.<Unresolved name: C>#
-        public get(): <ERROR TYPE REF: Unresolved name: C>
+    public final val ab: R|A.B| = Q|A.B|
+        public get(): R|A.B|
+    public final val abc: R|A.B.C| = Q|A.B.C|
+        public get(): R|A.B.C|
     public final object D : R|kotlin/Any| {
         private constructor(): R|D| {
             super<R|kotlin/Any|>()
@@ -94,7 +94,7 @@ FILE: qualifierPriority.kt
         }
 
     }
-    public final val gh: <ERROR TYPE REF: Ambiguity: H, [/G.H, /G.Companion.H]> = Q|G|.<Ambiguity: H, [/G.H, /G.Companion.H]>#
-        public get(): <ERROR TYPE REF: Ambiguity: H, [/G.H, /G.Companion.H]>
-    public final val gv: <ERROR TYPE REF: Ambiguity: values, [/G.values, /G.Companion.values]> = Q|G|.<Ambiguity: values, [/G.values, /G.Companion.values]>#()
-        public get(): <ERROR TYPE REF: Ambiguity: values, [/G.values, /G.Companion.values]>
+    public final val gh: R|G| = Q|G|.R|/G.H|
+        public get(): R|G|
+    public final val gv: R|kotlin/Array<G>| = Q|G|.R|/G.values|()
+        public get(): R|kotlin/Array<G>|

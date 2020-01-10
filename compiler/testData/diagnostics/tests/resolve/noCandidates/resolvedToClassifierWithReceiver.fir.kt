@@ -34,6 +34,6 @@ fun test(x: X) {
     val interface_as_fun = x.<!UNRESOLVED_REFERENCE!>A<!>()
     val interface_as_val = x.A
 
-    val object_as_fun = x.<!INAPPLICABLE_CANDIDATE!>B<!>()
+    val object_as_fun = x.<!UNRESOLVED_REFERENCE!>B<!>()
     val class_as_val = x.C
 }

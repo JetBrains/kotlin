@@ -8,7 +8,7 @@ class My {
 
     companion object {
         
-        val y = foo()
+        val y = <!UNRESOLVED_REFERENCE!>foo<!>()
 
         val u = bar()
 

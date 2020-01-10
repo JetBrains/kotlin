@@ -9,5 +9,5 @@ class A {
 fun main() {
     val x = A::Nested
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction0<A.Nested>>(x)
+    checkSubtype<KFunction0<A.Nested>>(x)
 }

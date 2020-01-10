@@ -7,5 +7,5 @@ public class A {
 // FILE: B.kt
 fun Any?.bar() = 42
 
-fun f1() = A.bar()
-fun f2() = A.Nested.bar()
+fun f1() = A.<!UNRESOLVED_REFERENCE!>bar<!>()
+fun f2() = A.Nested.<!UNRESOLVED_REFERENCE!>bar<!>()

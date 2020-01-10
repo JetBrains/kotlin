@@ -57,6 +57,6 @@ FILE: main.kt
         R|/foo2|(Q|KotlinClass|::R|/JavaClass.bar|)
         R|/foo3|(Q|KotlinClass|::R|/JavaClass.bar|)
         R|/foo1|(Q|KotlinClass2|::R|/KotlinClass2.Companion.bar|)
-        <Inapplicable(INAPPLICABLE): [/foo2]>#(Q|KotlinClass2|::R|/JavaClass.bar|)
+        <Inapplicable(INAPPLICABLE): [/foo2]>#(Q|KotlinClass2|::R|/KotlinClass2.bar|)
         R|/foo3|(Q|KotlinClass2|::R|/KotlinClass2.Companion.bar|)
     }

@@ -15,7 +15,7 @@ FILE: hashTableWithForEach.kt
                     R|/DEBUG| ->  {
                         ^ Q|java/util/Collections|.R|java/util/Collections.unmodifiableSet|<R|kotlin/collections/MutableMap.MutableEntry<K, V>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/collections/MutableMap.MutableEntry<K, V>|>().R|kotlin/apply|<R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|>(<L> = apply@fun R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
                             this@R|/SomeHashTable|.R|FakeOverride</SomeHashTable.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|K|, value: R|V|): R|kotlin/Unit| {
-                                this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(this@R|/SomeHashTable|.R|/SomeHashTable.Entry.Entry|<R|K|, R|V|>(R|<local>/key|, R|<local>/value|))
+                                this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|/SomeHashTable.Entry.Entry|<R|K|, R|V|>(R|<local>/key|, R|<local>/value|))
                             }
                             )
                         }

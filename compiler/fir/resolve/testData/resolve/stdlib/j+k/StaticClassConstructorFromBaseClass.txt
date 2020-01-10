@@ -5,7 +5,7 @@ FILE: User.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            lval sc: R|AbstractClass.StaticClass| = this@R|/User|.R|/AbstractClass.StaticClass.StaticClass|()
+            lval sc: R|AbstractClass.StaticClass| = R|/AbstractClass.StaticClass.StaticClass|()
         }
 
     }

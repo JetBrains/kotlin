@@ -4,7 +4,7 @@ open class A {
         fun bar() = 1
     }
     init {
-        val a: Int = <!INAPPLICABLE_CANDIDATE!>foo<!>()
+        val a: Int = foo()
         val b: Int = bar()
     }
 }
@@ -14,7 +14,7 @@ open class B: A() {
         fun bar() = ""
     }
     init {
-        val a: String = <!INAPPLICABLE_CANDIDATE!>foo<!>()
+        val a: String = foo()
         val b: String = bar()
     }
 }
@@ -24,14 +24,14 @@ fun B.Companion.foo() = ""
 
 class C: A() {
     init {
-        val a: Int = <!INAPPLICABLE_CANDIDATE!>foo<!>()
+        val a: Int = foo()
         val b: Int = bar()
     }
 }
 
 class D: B() {
     init {
-        val a: String = <!INAPPLICABLE_CANDIDATE!>foo<!>()
+        val a: String = foo()
         val b: String = bar()
     }
 }

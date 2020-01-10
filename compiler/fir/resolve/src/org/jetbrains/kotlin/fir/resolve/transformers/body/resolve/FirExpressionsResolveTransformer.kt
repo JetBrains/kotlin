@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirVariableAssignmentImpl
-import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference

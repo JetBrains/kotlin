@@ -18,7 +18,7 @@ import test.A
 
 fun foo(args: Array<String>) {
     val main2 = A::main
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction1<Array<String>, Unit>>(main2)
-    <!INAPPLICABLE_CANDIDATE!>main2<!>(args)
-    <!INAPPLICABLE_CANDIDATE!>(A::main)(args)<!>
+    checkSubtype<KFunction1<Array<String>, Unit>>(main2)
+    main2(args)
+    (A::main)(args)
 }

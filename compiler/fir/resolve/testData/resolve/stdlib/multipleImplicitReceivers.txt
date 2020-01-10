@@ -27,9 +27,9 @@ FILE: multipleImplicitReceivers.kt
     public final fun test(fooImpl: R|IFoo|, invokeImpl: R|IInvoke|): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/Int|>(Q|A|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|kotlin/with|<R|IFoo|, R|kotlin/Int|>(R|<local>/fooImpl|, <L> = with@fun R|IFoo|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-                this@R|special/anonymous|.R|/IFoo.foo|
+                (this@R|special/anonymous|, this@R|special/anonymous|).R|/IFoo.foo|
                 R|kotlin/with|<R|IInvoke|, R|kotlin/Int|>(R|<local>/invokeImpl|, <L> = with@fun R|IInvoke|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-                    (this@R|special/anonymous|, this@R|special/anonymous|.R|/IFoo.foo|).R|/IInvoke.invoke|()
+                    (this@R|special/anonymous|, (this@R|special/anonymous|, this@R|special/anonymous|).R|/IFoo.foo|).R|/IInvoke.invoke|()
                 }
                 )
             }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
@@ -17,10 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -57,20 +54,17 @@ class ClassDispatchReceiverValue(klassSymbol: FirClassSymbol<*>) : ReceiverValue
 }
 
 // TODO: should inherit just Receiver, not ReceiverValue
-abstract class AbstractExplicitReceiver<E : FirExpression> : ReceiverValue {
+abstract class AbstractExplicitReceiver<E : FirExpression> : Receiver {
     abstract val explicitReceiver: FirExpression
+}
 
+abstract class AbstractExplicitReceiverValue<E : FirExpression> : AbstractExplicitReceiver<E>(), ReceiverValue {
     override val type: ConeKotlinType
         get() = explicitReceiver.typeRef.coneTypeSafe()
             ?: ConeKotlinErrorType("No type calculated for: ${explicitReceiver.renderWithType()}") // TODO: assert here
 
     override val receiverExpression: FirExpression
         get() = explicitReceiver
-}
-
-fun qualifierOrExpressionReceiver(explicitReceiver: FirExpression): AbstractExplicitReceiver<*> {
-    if (explicitReceiver is FirResolvedQualifier) return QualifierReceiver(explicitReceiver)
-    return ExpressionReceiverValue(explicitReceiver)
 }
 
 class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : AbstractExplicitReceiver<FirResolvedQualifier>() {
@@ -95,7 +89,7 @@ class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : A
         return null to null
     }
 
-    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+    fun qualifierScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
         val classId = explicitReceiver.classId ?: return null
 
         val (classSymbol, callablesScope) = getClassSymbolWithCallablesScope(classId, useSiteSession, scopeSession)
@@ -107,22 +101,21 @@ class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : A
                 useSiteSession.firSymbolProvider.getNestedClassifierScope(classId)
             }
 
-            val qualifierScope = FirQualifierScope(callablesScope, classifierScope)
-            if ((klass as? FirRegularClass)?.companionObject == null) {
-                return qualifierScope
-            }
-            val companionScope = super.scope(useSiteSession, scopeSession) ?: return qualifierScope
-            return FirCompositeScope(qualifierScope, companionScope)
+            return FirQualifierScope(callablesScope, classifierScope)
         }
-        return super.scope(useSiteSession, scopeSession)
+        return null
+    }
+
+    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+        return qualifierScope(useSiteSession, scopeSession)
     }
 }
 
-private class ExpressionReceiverValue(
+internal class ExpressionReceiverValue(
     override val explicitReceiver: FirExpression
-) : AbstractExplicitReceiver<FirExpression>(), ReceiverValue
+) : AbstractExplicitReceiverValue<FirExpression>(), ReceiverValue
 
-abstract class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
+sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     val boundSymbol: S,
     type: ConeKotlinType,
     private val useSiteSession: FirSession,
@@ -148,20 +141,29 @@ abstract class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     }
 }
 
-class ImplicitDispatchReceiverValue(
+internal enum class ImplicitDispatchReceiverKind {
+    REGULAR,
+    COMPANION,
+    COMPANION_FROM_SUPERTYPE
+}
+
+class ImplicitDispatchReceiverValue internal constructor(
     boundSymbol: FirClassSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    private val kind: ImplicitDispatchReceiverKind = ImplicitDispatchReceiverKind.REGULAR
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession) {
-    val implicitCompanionScopes: List<FirScope> = run {
-        val klass = boundSymbol.fir as? FirRegularClass ?: return@run emptyList()
-        listOfNotNull(klass.companionObject?.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)) +
-                lookupSuperTypes(klass, lookupInterfaces = false, deep = true, useSiteSession = useSiteSession).mapNotNull {
-                    val superClass = (it as? ConeClassLikeType)?.lookupTag?.toSymbol(useSiteSession)?.fir as? FirRegularClass
-                    superClass?.companionObject?.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)
-                }
-    }
+    internal constructor(
+        boundSymbol: FirClassSymbol<*>, useSiteSession: FirSession, scopeSession: ScopeSession, kind: ImplicitDispatchReceiverKind
+    ) : this(
+        boundSymbol, boundSymbol.constructType(typeArguments = emptyArray(), isNullable = false),
+        useSiteSession, scopeSession, kind
+    )
+
+    val implicitCompanion: Boolean get() = kind != ImplicitDispatchReceiverKind.REGULAR
+
+    val companionFromSupertype: Boolean get() = kind == ImplicitDispatchReceiverKind.COMPANION_FROM_SUPERTYPE
 }
 
 class ImplicitExtensionReceiverValue(

@@ -10,7 +10,7 @@ FILE: nestedClassContructor.kt
             }
 
             public final fun copy(): R|A.B| {
-                ^copy this@R|/A.B|.R|/A.B.B|()
+                ^copy R|/A.B.B|()
             }
 
         }
@@ -46,7 +46,7 @@ FILE: nestedClassContructor.kt
 
         public final fun foo(): R|kotlin/Unit| {
             lval a: R|A| = R|/A.A|()
-            lval c: R|A.C| = this@R|/E|.R|/A.C.C|()
+            lval c: R|A.C| = R|/A.C.C|()
         }
 
     }

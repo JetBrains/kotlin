@@ -5,5 +5,5 @@ class Outer {
 
 fun test() {
     Outer()::Inner
-    Outer()::Nested
+    <!UNRESOLVED_REFERENCE!>Outer()::Nested<!>
 }

@@ -2,7 +2,7 @@ enum class A {
     A1,
     A2;
 
-    fun valueOf(s: String): A = <!AMBIGUITY!>valueOf<!>(s)
+    fun valueOf(s: String): A = valueOf(s)
 
     fun valueOf() = "OK"
 

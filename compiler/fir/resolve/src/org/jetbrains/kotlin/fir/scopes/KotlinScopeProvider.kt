@@ -81,8 +81,6 @@ class KotlinScopeProvider(
     ): FirScope? {
         return when (klass.classKind) {
             ClassKind.ENUM_CLASS -> FirStaticScope(declaredMemberScope(klass))
-            // TODO: should be wrapped with FirStaticScope, non-static callables should be processed separately
-            ClassKind.OBJECT -> getUseSiteMemberScope(klass, ConeSubstitutor.Empty, useSiteSession, scopeSession)
             else -> null
         }
     }

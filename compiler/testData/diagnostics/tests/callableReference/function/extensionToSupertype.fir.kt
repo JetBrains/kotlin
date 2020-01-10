@@ -15,5 +15,5 @@ fun take(f: () -> Unit) {}
 fun test() {
     B::foo checkType { <!UNRESOLVED_REFERENCE!>_<!><KFunction1<B, Unit>>() }
 
-    take(B::foo)
+    <!INAPPLICABLE_CANDIDATE!>take<!>(B::foo)
 }

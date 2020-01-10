@@ -21,7 +21,7 @@ enum class C {
             C.A()
             A()
             //TODO: should be resolved with error
-            this.A()
+            this.<!UNRESOLVED_REFERENCE!>A<!>()
         }
     };
 
@@ -34,7 +34,7 @@ enum class C {
 
 fun f() {
     C.E1.A
-    C.E1.A()
+    C.E1.<!UNRESOLVED_REFERENCE!>A<!>()
     C.E2.B()
 
     C.E2.O

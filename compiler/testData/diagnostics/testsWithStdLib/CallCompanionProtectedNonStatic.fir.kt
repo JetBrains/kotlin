@@ -5,7 +5,7 @@ open class VeryBase {
 open class Base {
     protected fun foo() { 
         bar() // Ok
-        <!INAPPLICABLE_CANDIDATE!>baz<!>() // Ok
+        baz() // Ok
     }
 
     inner class Inner {
@@ -13,7 +13,7 @@ open class Base {
             foo() // Ok
             bar() // Ok
             gav() // Ok
-            <!INAPPLICABLE_CANDIDATE!>baz<!>() // Ok
+            baz() // Ok
         }
     }
 
@@ -22,7 +22,7 @@ open class Base {
             foo() // Ok
             bar() // Ok
             gav() // Ok
-            <!INAPPLICABLE_CANDIDATE!>baz<!>() // Ok
+            baz() // Ok
         }
     }
     

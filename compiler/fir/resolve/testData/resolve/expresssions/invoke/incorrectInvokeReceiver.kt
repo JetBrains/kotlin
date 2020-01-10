@@ -1,8 +1,10 @@
-fun String.invoke() = this
+operator fun String.invoke() = this
 
 val some = ""
 fun sss() {
     val some = 10
 
-    <!INAPPLICABLE_CANDIDATE!>some<!>() // Should be inapplicable
+    // Should be resolved to top-level some,
+    // because with local some invoke isn't applicable
+    some()
 }

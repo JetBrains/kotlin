@@ -434,9 +434,19 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/baseQualifier.kt");
         }
 
+        @TestMetadata("CallBasedInExpressionGenerator.kt")
+        public void testCallBasedInExpressionGenerator() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/CallBasedInExpressionGenerator.kt");
+        }
+
         @TestMetadata("checkArguments.kt")
         public void testCheckArguments() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/checkArguments.kt");
+        }
+
+        @TestMetadata("classifierAccessFromCompanion.kt")
+        public void testClassifierAccessFromCompanion() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/classifierAccessFromCompanion.kt");
         }
 
         @TestMetadata("companion.kt")
@@ -514,6 +524,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/innerQualifier.kt");
         }
 
+        @TestMetadata("innerWithSuperCompanion.kt")
+        public void testInnerWithSuperCompanion() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/innerWithSuperCompanion.kt");
+        }
+
         @TestMetadata("javaFieldCallable.kt")
         public void testJavaFieldCallable() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/javaFieldCallable.kt");
@@ -527,6 +542,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("lambdaWithReceiver.kt")
         public void testLambdaWithReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambdaWithReceiver.kt");
+        }
+
+        @TestMetadata("localClassAccessesContainingClass.kt")
+        public void testLocalClassAccessesContainingClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localClassAccessesContainingClass.kt");
         }
 
         @TestMetadata("localConstructor.kt")
@@ -574,6 +594,16 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/memberExtension.kt");
         }
 
+        @TestMetadata("nestedConstructorCallable.kt")
+        public void testNestedConstructorCallable() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedConstructorCallable.kt");
+        }
+
+        @TestMetadata("nestedObjects.kt")
+        public void testNestedObjects() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedObjects.kt");
+        }
+
         @TestMetadata("nestedVisibility.kt")
         public void testNestedVisibility() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedVisibility.kt");
@@ -592,6 +622,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("objects.kt")
         public void testObjects() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
+        }
+
+        @TestMetadata("outerMemberAccesses.kt")
+        public void testOuterMemberAccesses() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/outerMemberAccesses.kt");
         }
 
         @TestMetadata("outerObject.kt")
@@ -724,6 +759,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extension.kt");
             }
 
+            @TestMetadata("extensionOnObject.kt")
+            public void testExtensionOnObject() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extensionOnObject.kt");
+            }
+
             @TestMetadata("farInvokeExtension.kt")
             public void testFarInvokeExtension() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/farInvokeExtension.kt");
@@ -762,6 +802,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             @TestMetadata("threeReceivers.kt")
             public void testThreeReceivers() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/threeReceivers.kt");
+            }
+
+            @TestMetadata("threeReceiversCorrect.kt")
+            public void testThreeReceiversCorrect() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/threeReceiversCorrect.kt");
             }
         }
 

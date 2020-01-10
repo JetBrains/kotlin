@@ -209,9 +209,7 @@ class FirCallResolver(
                     typeArguments.addAll(qualifiedAccess.typeArguments)
                     resultType = if (classId.isLocal) {
                         typeForQualifierByDeclaration(referencedSymbol.fir, resultType, session)
-                            ?: resultType.resolvedTypeFromPrototype(
-                                session.builtinTypes.unitType.type//StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
-                            )
+                            ?: session.builtinTypes.unitType
                     } else {
                         typeForQualifier(this)
                     }
@@ -252,7 +250,8 @@ class FirCallResolver(
         val result = towerResolver.runResolver(
             implicitReceiverStack.receiversAsReversed(),
             info,
-            collector = CandidateCollector(this, resolutionStageRunner)
+            collector = CandidateCollector(this, resolutionStageRunner),
+            manager = TowerResolveManager(towerResolver)
         )
         val bestCandidates = result.bestCandidates()
         val noSuccessfulCandidates = result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
@@ -316,7 +315,7 @@ class FirCallResolver(
 
     fun <T> selectCandidateFromGivenCandidates(call: T, name: Name, candidates: Collection<Candidate>): T where T : FirResolvable, T : FirCall {
         val result = CandidateCollector(this, resolutionStageRunner)
-        candidates.forEach { result.consumeCandidate(0, it) }
+        candidates.forEach { result.consumeCandidate(TowerGroup.Start, it) }
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()

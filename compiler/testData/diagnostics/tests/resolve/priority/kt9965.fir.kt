@@ -12,9 +12,9 @@ enum class Foo {
 }
 
 fun test() {
-    Foo.<!AMBIGUITY!>values<!>() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Array<Foo>>() }
+    Foo.values() checkType { <!UNRESOLVED_REFERENCE!>_<!><Array<Foo>>() }
     Foo.Companion.values() checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
 
-    Foo.<!AMBIGUITY!>valueOf<!>("") <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Foo>() }
+    Foo.valueOf("") checkType { <!UNRESOLVED_REFERENCE!>_<!><Foo>() }
     Foo.Companion.valueOf("") checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
 }

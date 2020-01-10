@@ -2,7 +2,7 @@ class Outer {
     class Nested {
         fun foo() {
             class Local {
-                val state = outerState
+                val state = <!UNRESOLVED_REFERENCE!>outerState<!>
             }
         }
     }

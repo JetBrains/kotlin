@@ -43,4 +43,9 @@ enum class ProcessorAction {
 
     fun stop() = this == STOP
     fun next() = this != STOP
+
+    operator fun plus(other: ProcessorAction): ProcessorAction {
+        if (this == NEXT || other == NEXT) return NEXT
+        return this
+    }
 }

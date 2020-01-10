@@ -10,5 +10,5 @@ fun test(identifier: SomeClass, fn: String.() -> Unit) {
     <!INAPPLICABLE_CANDIDATE!>identifier<!>()
     <!INAPPLICABLE_CANDIDATE!>identifier<!>(123)
     <!INAPPLICABLE_CANDIDATE!>identifier<!>(1, 2)
-    1.<!UNRESOLVED_REFERENCE!>fn<!>()
+    1.<!INAPPLICABLE_CANDIDATE!>fn<!>()
 }

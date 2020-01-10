@@ -20,7 +20,7 @@ val D.attr: B
 
 fun main() {
     val b =  D()
-    b.attr {} // overload resolution ambiguity
+    b.<!AMBIGUITY!>attr<!> {} // overload resolution ambiguity
 
     val d = b.attr
     d {}      // no error
