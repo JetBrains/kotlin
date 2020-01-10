@@ -26,6 +26,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
@@ -93,7 +94,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private RunAnythingContext mySelectedExecutingContext;
   private final List<RunAnythingContext> myAvailableExecutingContexts = new ArrayList<>();
   private RunAnythingChooseContextAction myChooseContextAction;
-  private final EmptyProgressIndicator myProgressIndicator = new EmptyProgressIndicator();
+  private final ProgressIndicator myProgressIndicator = new EmptyProgressIndicator();
   private final Alarm myListRenderingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
 
   @Nullable
