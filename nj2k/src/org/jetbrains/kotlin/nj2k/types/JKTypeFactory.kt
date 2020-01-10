@@ -116,6 +116,8 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
             JKCapturedType(fromPsiType(type.wildcard) as JKWildCardType)
         is PsiIntersectionType -> // TODO what to do with intersection types? old j2k just took the first conjunct
             fromPsiType(type.representative)
+        is PsiLambdaParameterType -> // Probably, means that we have erroneous Java code
+            JKNoType
         else -> throw Exception("Invalid PSI ${type::class.java}")
     }
 
