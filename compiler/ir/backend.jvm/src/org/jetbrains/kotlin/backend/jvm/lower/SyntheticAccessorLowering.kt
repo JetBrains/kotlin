@@ -48,7 +48,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         irFile.transformChildrenVoid(this)
 
         for (accessor in pendingAccessorsToAdd) {
-            assert(accessor.file == irFile) {
+            assert(accessor.fileOrNull == irFile || accessor.isAllowedToBeAddedToForeignFile()) {
                 "SyntheticAccessorLowering should not attempt to modify other files!\n" +
                         "While lowering this file: ${irFile.render()}\n" +
                         "Trying to add this accessor: ${accessor.render()}"
@@ -560,4 +560,10 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             else -> true
         }
     }
+
+    // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
+    // Since they are intrinsified in the codegen, SyntheticAccessorLowering should not crash on attempt to add accessors for them.
+    private fun IrFunction.isAllowedToBeAddedToForeignFile(): Boolean =
+        (name.asString() == "access\$monitorEnter" || name.asString() == "access\$monitorExit") &&
+                context.irIntrinsics.getIntrinsic(symbol) != null
 }

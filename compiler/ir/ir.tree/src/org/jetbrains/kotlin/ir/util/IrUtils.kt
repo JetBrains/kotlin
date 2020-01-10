@@ -600,15 +600,16 @@ private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
     }
 }
 
-val IrDeclaration.file: IrFile
-    get() = parent.let {
-        when (it) {
-            is IrFile -> it
-            is IrPackageFragment -> TODO("Unknown file")
-            is IrDeclaration -> it.file
-            else -> TODO("Unexpected declaration parent")
-        }
+val IrDeclaration.fileOrNull: IrFile?
+    get() = when (val parent = parent) {
+        is IrFile -> parent
+        is IrPackageFragment -> null
+        is IrDeclaration -> parent.fileOrNull
+        else -> TODO("Unexpected declaration parent")
     }
+
+val IrDeclaration.file: IrFile
+    get() = fileOrNull ?: TODO("Unknown file")
 
 val IrFunction.allTypeParameters: List<IrTypeParameter>
     get() = if (this is IrConstructor)
