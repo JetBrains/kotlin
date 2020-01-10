@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     val shouldBeTrue = 555555555555555555L in 123456789123456789L..987654321987654321L
     if (!shouldBeTrue) return "Fail 1"

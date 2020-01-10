@@ -11,7 +11,7 @@ Crumbs:
   when (xxx)
   …num.SomeLongValue ->
   when (yyy)
-  in Int.MIN_VALUE..… ->
+  !in Int.MIN_VALUE..… ->
   when (zzz)
   is A,… ->
   when (x1)
@@ -31,7 +31,7 @@ Tooltips:
   when (xxx)
   SomeEnum.SomeLongValue ->
   when (yyy)
-  in Int.MIN_VALUE..Int.MAX_VALUE ->
+  !in Int.MIN_VALUE..Int.MAX_VALUE ->
   when (zzz)
   is A,… ->
   when (x1)
