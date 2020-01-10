@@ -442,6 +442,20 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     )
 
+    @Test
+    fun testCircularCall(): Unit = checkApi(
+        """
+            @Composable fun Example() {
+                Example()
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static Example(Landroidx/compose/Composer;)V
+            }
+        """
+    )
+
     override fun setUp() {
         ComposeFlags.COMPOSER_PARAM = true
         super.setUp()

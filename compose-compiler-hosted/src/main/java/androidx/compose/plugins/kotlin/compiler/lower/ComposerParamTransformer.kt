@@ -206,9 +206,7 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         if (isInlinedLambda()) return this
 
         // cache the transformed function with composer parameter
-        return transformedFunctions.getOrPut(this) {
-            copyWithComposerParam().also { transformedFunctionSet.add(it) }
-        }
+        return transformedFunctions[this] ?: copyWithComposerParam()
     }
 
     fun IrFunction.lambdaInvokeWithComposerParamIfNeeded(): IrFunction {
@@ -285,6 +283,12 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         }
         return copy().also { fn ->
             val oldFn = this
+
+            // NOTE: it's important to add these here before we recurse into the body in
+            // order to avoid an infinite loop on circular/recursive calls
+            transformedFunctionSet.add(fn)
+            transformedFunctions[oldFn] = fn
+
             val valueParametersMapping = explicitParameters
                 .zip(fn.explicitParameters)
                 .toMap()
