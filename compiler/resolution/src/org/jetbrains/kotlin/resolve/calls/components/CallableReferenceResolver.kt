@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
+import org.jetbrains.kotlin.resolve.calls.tower.isInapplicable
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
@@ -76,6 +77,10 @@ class CallableReferenceResolver(
         }
 
         if (candidates.size > 1 && resolvedAtom is EagerCallableReferenceAtom) {
+            if (candidates.all { it.resultingApplicability.isInapplicable }) {
+                diagnosticsHolder.addDiagnostic(CallableReferenceCandidatesAmbiguity(argument, candidates))
+            }
+
             resolvedAtom.setAnalyzedResults(
                 candidate = null,
                 subResolvedAtoms = listOf(resolvedAtom.transformToPostponed())
