@@ -26,6 +26,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInSamePackage;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
@@ -33,6 +34,7 @@ import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.i
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
+@SuppressWarnings("rawtypes")
 public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private final T contextDescriptor;
     private final OwnerKind contextKind;
@@ -45,7 +47,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
     private Map<AccessorKey, AccessorForCallableDescriptor<?>> accessors;
     private Map<AccessorKey, AccessorForPropertyDescriptorFactory> propertyAccessorFactories;
-    private AccessorForCompanionObjectInstanceFieldDescriptor accessorForCompanionObjectInstanceFieldDescriptor = null;
+    private final Map<ClassDescriptor, AccessorForCompanionObjectInstanceFieldDescriptor> accessorsForCompanionObjects =
+            new LinkedHashMap<>();
 
     private static class AccessorKey {
         public final DeclarationDescriptor descriptor;
@@ -67,8 +70,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             AccessorKey other = (AccessorKey) obj;
             return descriptor.equals(other.descriptor) &&
                    accessorKind == other.accessorKind &&
-                   (superCallLabelTarget == null ? other.superCallLabelTarget == null
-                                                 : superCallLabelTarget.equals(other.superCallLabelTarget));
+                   Objects.equals(superCallLabelTarget, other.superCallLabelTarget);
         }
 
         @Override
@@ -701,16 +703,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 (withinInline || !isInSamePackage(unwrappedDescriptor, descriptorContext.getContextDescriptor())));
     }
 
-    private static boolean isInSamePackage(DeclarationDescriptor descriptor1, DeclarationDescriptor descriptor2) {
-        PackageFragmentDescriptor package1 =
-                DescriptorUtils.getParentOfType(descriptor1, PackageFragmentDescriptor.class, false);
-        PackageFragmentDescriptor package2 =
-                DescriptorUtils.getParentOfType(descriptor2, PackageFragmentDescriptor.class, false);
-
-        return package2 != null && package1 != null &&
-               package1.getFqName().equals(package2.getFqName());
-    }
-
     private void addChild(@NotNull CodegenContext child) {
         if (shouldAddChild(child.contextDescriptor)) {
             if (childContexts == null) {
@@ -748,29 +740,23 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return enclosingLocalLookup;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     @NotNull
-    public AccessorForCompanionObjectInstanceFieldDescriptor markCompanionObjectDescriptorWithAccessorRequired(@NotNull ClassDescriptor companionObjectDescriptor) {
-        assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Companion object expected: " + companionObjectDescriptor;
-
-        assert accessorForCompanionObjectInstanceFieldDescriptor == null
-               || accessorForCompanionObjectInstanceFieldDescriptor.getCompanionObjectDescriptor() == companionObjectDescriptor
-                : "Unexpected companion object descriptor with accessor required: " + companionObjectDescriptor +
-                  "; should be " + accessorForCompanionObjectInstanceFieldDescriptor.getCompanionObjectDescriptor();
-
-        if (accessorForCompanionObjectInstanceFieldDescriptor == null) {
-            accessorForCompanionObjectInstanceFieldDescriptor =
-                    new AccessorForCompanionObjectInstanceFieldDescriptor(
-                            companionObjectDescriptor,
-                            Name.identifier(JvmCodegenUtil.getCompanionObjectAccessorName(companionObjectDescriptor))
-                    );
-        }
-
-        return accessorForCompanionObjectInstanceFieldDescriptor;
+    public AccessorForCompanionObjectInstanceFieldDescriptor getOrCreateAccessorForCompanionObject(
+            @NotNull ClassDescriptor companionObjectDescriptor
+    ) {
+        return accessorsForCompanionObjects.computeIfAbsent(
+                companionObjectDescriptor,
+                it -> new AccessorForCompanionObjectInstanceFieldDescriptor(
+                        it,
+                        Name.identifier(JvmCodegenUtil.getCompanionObjectAccessorName(it))
+                )
+        );
     }
 
-    @Nullable
-    public AccessorForCompanionObjectInstanceFieldDescriptor getAccessorForCompanionObjectDescriptorIfRequired() {
-        return accessorForCompanionObjectInstanceFieldDescriptor;
+    @NotNull
+    public Collection<AccessorForCompanionObjectInstanceFieldDescriptor> getRequiredAccessorsForCompanionObjects() {
+        return accessorsForCompanionObjects.values();
     }
 
 }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -52,10 +53,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
@@ -739,12 +737,25 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             }
         }
 
-        AccessorForCompanionObjectInstanceFieldDescriptor accessorForCompanionObjectInstanceFieldDescriptor =
-                context.getAccessorForCompanionObjectDescriptorIfRequired();
-        if (accessorForCompanionObjectInstanceFieldDescriptor != null) {
-            generateSyntheticAccessorForCompanionObject(accessorForCompanionObjectInstanceFieldDescriptor);
+        Collection<AccessorForCompanionObjectInstanceFieldDescriptor> accessorsForCompanionObjects =
+                context.getRequiredAccessorsForCompanionObjects();
+        if (!accessorsForCompanionObjects.isEmpty()) {
+            List<AccessorForCompanionObjectInstanceFieldDescriptor> sortedAccessorsForCompanionObjects =
+                    new ArrayList<>(accessorsForCompanionObjects);
+            sortedAccessorsForCompanionObjects.sort(BY_COMPANION_FQN);
+
+            for (AccessorForCompanionObjectInstanceFieldDescriptor accessor : sortedAccessorsForCompanionObjects) {
+                generateSyntheticAccessorForCompanionObject(accessor);
+            }
         }
     }
+
+    private final Comparator<AccessorForCompanionObjectInstanceFieldDescriptor> BY_COMPANION_FQN =
+            (o1, o2) -> {
+                String companionFQN1 = DescriptorUtils.getFqName(o1.getCompanionObjectDescriptor()).asString();
+                String companionFQN2 = DescriptorUtils.getFqName(o2.getCompanionObjectDescriptor()).asString();
+                return companionFQN1.compareTo(companionFQN2);
+            };
 
     private void generateSyntheticAccessorForCompanionObject(@NotNull AccessorForCompanionObjectInstanceFieldDescriptor accessor) {
         ClassDescriptor companionObjectDescriptor = accessor.getCompanionObjectDescriptor();

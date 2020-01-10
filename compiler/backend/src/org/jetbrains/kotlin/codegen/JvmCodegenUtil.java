@@ -151,29 +151,6 @@ public class JvmCodegenUtil {
         return propertyDescriptor.isConst() || hasJvmFieldAnnotation(propertyDescriptor);
     }
 
-    public static boolean couldUseDirectAccessToCompanionObject(
-            @NotNull ClassDescriptor companionObjectDescriptor,
-            @NotNull MethodContext contextBeforeInline
-    ) {
-        if (!Visibilities.isPrivate(companionObjectDescriptor.getVisibility())) {
-            // Non-private companion object can be directly accessed anywhere it's allowed by the front-end.
-            return true;
-        }
-
-        if (isDebuggerContext(contextBeforeInline)) {
-            return true;
-        }
-
-        CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        if (context.isInlineMethodContext()) {
-            // Inline method can be called from a nested class.
-            return false;
-        }
-
-        // Private companion object is directly accessible only from the corresponding class
-        return context.getContextDescriptor().getContainingDeclaration() == companionObjectDescriptor.getContainingDeclaration();
-    }
-
     public static String getCompanionObjectAccessorName(@NotNull ClassDescriptor companionObjectDescriptor) {
         return "access$" + companionObjectDescriptor.getName();
     }
@@ -421,5 +398,24 @@ public class JvmCodegenUtil {
         } else {
             return ((DeserializedClassDescriptor) descriptor).getMetadataVersion().isAtLeast(1, 1, 16);
         }
+    }
+
+    public static boolean isInSamePackage(DeclarationDescriptor descriptor1, DeclarationDescriptor descriptor2) {
+        PackageFragmentDescriptor package1 = DescriptorUtils.getParentOfType(descriptor1, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor package2 = DescriptorUtils.getParentOfType(descriptor2, PackageFragmentDescriptor.class, false);
+
+        return package1 != null && package2 != null &&
+               package1.getFqName().equals(package2.getFqName());
+    }
+
+    // Used mainly for debugging purposes.
+    @SuppressWarnings("unused")
+    public static String dumpContextHierarchy(CodegenContext context) {
+        StringBuilder result = new StringBuilder();
+        int i = 0;
+        for (CodegenContext current = context; current != null; current = current.getParentContext(), ++i) {
+            result.append(i).append(": ").append(current).append('\n');
+        }
+        return result.toString();
     }
 }
