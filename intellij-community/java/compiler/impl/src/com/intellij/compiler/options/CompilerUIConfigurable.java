@@ -307,7 +307,7 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
 
   @Override
   public String getDisplayName() {
-    return "General";
+    return CompilerBundle.message("configurable.CompilerUIConfigurable.display.name");
   }
 
   @Override

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.impl.ConsoleBuffer;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.ui.UISettingsState;
@@ -20,7 +21,6 @@ import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,9 +213,8 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
   }
 
   @Override
-  @Nls
   public String getDisplayName() {
-    return "Console";
+    return ExecutionBundle.message("configurable.ConsoleConfigurable.display.name");
   }
 
   @Override
