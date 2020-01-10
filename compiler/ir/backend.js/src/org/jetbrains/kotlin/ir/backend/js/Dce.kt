@@ -19,9 +19,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import java.util.*
-
-private val PRINT_REACHABILITY_INFO = java.lang.Boolean.getBoolean("kotlin.js.ir.dce.print.reachability.info")
 
 fun eliminateDeadDeclarations(
     module: IrModuleFragment,
@@ -99,7 +98,10 @@ private fun removeUselessDeclarations(module: IrModuleFragment, usefulDeclaratio
 }
 
 fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendContext): Set<IrDeclaration> {
-    val reachabilityInfo: MutableSet<String> = if (PRINT_REACHABILITY_INFO) linkedSetOf() else Collections.emptySet()
+    val printReachabilityInfo =
+        context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
+                java.lang.Boolean.getBoolean("kotlin.js.ir.dce.print.reachability.info")
+    val reachabilityInfo: MutableSet<String> = if (printReachabilityInfo) linkedSetOf() else Collections.emptySet()
 
     val queue = ArrayDeque<IrDeclaration>()
     val result = hashSetOf<IrDeclaration>()
@@ -116,7 +118,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
             return
         }
 
-        if (PRINT_REACHABILITY_INFO) {
+        if (printReachabilityInfo) {
             val fromFqn = (from as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: altFromFqn ?: "<unknown>"
 
             val toFqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
@@ -342,7 +344,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
         }
     }
 
-    if (PRINT_REACHABILITY_INFO) {
+    if (printReachabilityInfo) {
         reachabilityInfo.forEach(::println)
     }
 
