@@ -18,11 +18,7 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.LocalSdkFix;
 import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdkLookup;
-import com.intellij.openapi.roots.ui.configuration.SdkListItem;
-import com.intellij.openapi.roots.ui.configuration.SdkListModelBuilder;
-import com.intellij.openapi.roots.ui.configuration.SdkPopup;
 import com.intellij.openapi.roots.ui.configuration.SdkPopupFactory;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker;
 import com.intellij.openapi.ui.Messages;
@@ -190,39 +186,15 @@ public class UnknownSdkTracker implements Disposable {
   public void showSdkSelectionPopup(@Nullable String sdkName,
                                     @Nullable SdkType sdkType,
                                     @NotNull JComponent underneathRightOfComponent) {
-    ProjectSdksModel model = new ProjectSdksModel();
-    SdkListModelBuilder modelBuilder = new SdkListModelBuilder(
-      myProject,
-      model,
-      sdkType != null ? type -> Objects.equals(type, sdkType) : null,
-      null,
-      null);
-
-    SdkPopupFactory popup = new SdkPopupFactory(
-      myProject,
-      model,
-      modelBuilder
-    );
-
-    popup.createPopup(underneathRightOfComponent, new SdkPopup.SdkPopupListener() {
-      private void handleNewItem(@NotNull SdkListItem item) {
-        if (item instanceof SdkListItem.SdkItem) {
-          Sdk sdk = ((SdkListItem.SdkItem)item).getSdk();
-          registerNewSdkInJdkTable(sdkName, sdk);
-          updateUnknownSdks();
-        }
-      }
-
-      @Override
-      public void onNewItemAdded(@NotNull SdkListItem item) {
-        handleNewItem(item);
-      }
-
-      @Override
-      public void onExistingItemSelected(@NotNull SdkListItem item) {
-        handleNewItem(item);
-      }
-    }).showUnderneathToTheRightOf(underneathRightOfComponent);
+    SdkPopupFactory
+      .newBuilder()
+      .withProject(myProject)
+      .withSdkTypeFilter(type -> sdkType == null || Objects.equals(type, sdkType))
+      .onSdkSelected(sdk -> {
+        registerNewSdkInJdkTable(sdkName, sdk);
+        updateUnknownSdks();
+      })
+      .showUnderneathToTheRightOf(underneathRightOfComponent);
   }
 
   private void configureLocalSdks(@NotNull Map<UnknownSdk, LocalSdkFix> localFixes) {
