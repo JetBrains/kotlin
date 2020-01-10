@@ -5,18 +5,32 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.declarations.isInner
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.TowerDataKind.*
+import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NONE
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 enum class TowerDataKind {
     EMPTY,       // Corresponds to stub tower level which is replaced by receiver-related level
@@ -228,13 +242,100 @@ class FirTowerResolver(
         }
     }
 
+    private fun createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionImpl {
+        val symbol = candidate.symbol as FirCallableSymbol<*>
+        return FirQualifiedAccessExpressionImpl(null).apply {
+            calleeReference = FirNamedReferenceWithCandidate(
+                null,
+                symbol.callableId.callableName,
+                candidate
+            )
+            dispatchReceiver = candidate.dispatchReceiverExpression()
+            typeRef = typeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+        }
+    }
+
+    // Only case when qualifiedReceiver is a package (no classId) is handled here
+    private fun runResolverForFullyQualifiedReceiver(
+        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
+        info: CallInfo,
+        collector: CandidateCollector,
+        qualifiedReceiver: FirResolvedQualifier
+    ): CandidateCollector {
+        val qualifierScope = FirExplicitSimpleImportingScope(
+            listOf(
+                FirResolvedImportImpl(
+                    FirImportImpl(null, FqName.topLevel(info.name), false, null),
+                    qualifiedReceiver.packageFqName,
+                    qualifiedReceiver.relativeClassFqName
+                )
+            ), session, components.scopeSession
+        )
+        val candidateFactory = CandidateFactory(components, info)
+
+        when (info.callKind) {
+            CallKind.VariableAccess -> {
+                qualifierScope.processPropertiesByName(info.name) {
+                    collector.consumeCandidate(0, candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER))
+                    ProcessorAction.NEXT
+                }
+                qualifierScope.processClassifiersByName(info.name) {
+                    if (it is FirClassSymbol<*> && it.fir.classKind == ClassKind.OBJECT) {
+                        collector.consumeCandidate(0, candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER))
+                    }
+                    ProcessorAction.NEXT
+                }
+            }
+            CallKind.Function -> {
+                qualifierScope.processFunctionsAndConstructorsByName(info.name, session, components) {
+                    collector.consumeCandidate(0, candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER))
+                    ProcessorAction.NEXT
+                }
+
+                val invokeReceiverCollector = CandidateCollector(components, components.resolutionStageRunner)
+                val invokeReceiverCandidateFactory = CandidateFactory(
+                    components,
+                    info.replaceWithVariableAccess()
+                )
+
+                qualifierScope.processPropertiesByName(info.name) {
+                    invokeReceiverCollector.consumeCandidate(
+                        0, invokeReceiverCandidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
+                    )
+                    ProcessorAction.NEXT
+                }
+                if (invokeReceiverCollector.isSuccess()) {
+                    for (invokeReceiverCandidate in invokeReceiverCollector.bestCandidates()) {
+                        val invokeReceiverExpression = createExplicitReceiverForInvoke(invokeReceiverCandidate).let {
+                            components.transformQualifiedAccessUsingSmartcastInfo(it)
+                        }
+                        runResolver(
+                            implicitReceiverValues,
+                            info.copy(explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE),
+                            collector
+                        )
+                    }
+                }
+            }
+            CallKind.CallableReference -> return collector
+            else -> throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
+        }
+        return collector
+    }
+
     fun runResolver(
-        implicitReceiverValues: List<ImplicitReceiverValue<*>>, info: CallInfo,
+        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
+        info: CallInfo,
         collector: CandidateCollector = this.collector
     ): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
-        towerDataConsumer = towerDataConsumer(info, collector)
 
+        val receiver = info.explicitReceiver
+        if (receiver is FirResolvedQualifier && receiver.classId == null) {
+            return runResolverForFullyQualifiedReceiver(implicitReceiverValues, info, collector, receiver)
+        }
+
+        towerDataConsumer = towerDataConsumer(info, collector)
         val shouldProcessExtensionsBeforeMembers =
             info.callKind == CallKind.Function && info.name in HIDES_MEMBERS_NAME_LIST
         val shouldProcessExplicitReceiverScopeOnly =

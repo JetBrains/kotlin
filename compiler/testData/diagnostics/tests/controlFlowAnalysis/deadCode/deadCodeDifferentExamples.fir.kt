@@ -151,7 +151,7 @@ fun foo(a : Nothing) : Unit {
 }
 
 fun fail() : Nothing {
-  throw java.lang.<!UNRESOLVED_REFERENCE!>RuntimeException<!>()
+  throw java.lang.RuntimeException()
 }
 
 fun nullIsNotNothing() : Unit {

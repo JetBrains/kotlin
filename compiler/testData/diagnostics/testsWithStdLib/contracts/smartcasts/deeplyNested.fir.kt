@@ -9,7 +9,7 @@ fun myAssert(condition: Boolean) {
     contract {
         returns() implies (condition)
     }
-    if (!condition) throw kotlin.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>("Assertion failed")
+    if (!condition) throw kotlin.IllegalArgumentException("Assertion failed")
 }
 
 fun isString(x: Any?): Boolean {

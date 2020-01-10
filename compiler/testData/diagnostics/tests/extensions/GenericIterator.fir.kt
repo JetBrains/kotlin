@@ -23,7 +23,7 @@ operator fun <T : Any> T?.iterator() = object : MyIterator<T> {
             hasNext = false
             return this@iterator!!
         }
-        throw java.util.<!UNRESOLVED_REFERENCE!>NoSuchElementException<!>()
+        throw java.util.NoSuchElementException()
     }
 }
 

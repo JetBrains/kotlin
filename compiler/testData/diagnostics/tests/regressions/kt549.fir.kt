@@ -3,9 +3,9 @@
 package demo
 
   fun <T> filter(list : Array<T>, filter :  (T) -> Boolean) : List<T> {
-    val answer = java.util.<!UNRESOLVED_REFERENCE!>ArrayList<!><T>();
+    val answer = java.util.ArrayList<T>();
     for (l in list) {
-      if (filter(l)) answer.<!UNRESOLVED_REFERENCE!>add<!>(l)
+      if (filter(l)) answer.add(l)
     }
     return answer;
   }

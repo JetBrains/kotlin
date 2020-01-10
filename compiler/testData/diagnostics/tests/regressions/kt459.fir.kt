@@ -1,7 +1,7 @@
 // KT-459 Type argument inference fails when class names are fully qualified
 
 fun test() {
-  val attributes : java.util.HashMap<String, String> = java.util.<!UNRESOLVED_REFERENCE!>HashMap<!>() // failure!
+  val attributes : java.util.HashMap<String, String> = java.util.HashMap() // failure!
   attributes["href"] = "1" // inference fails, but it shouldn't
 }
 

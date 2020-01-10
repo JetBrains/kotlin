@@ -22,7 +22,7 @@ fun throwIfNotCalled() {
                 return@outer
             }
         }
-        throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>()
+        throw java.lang.IllegalArgumentException()
     }
     // x *is* initialized here, because if myRun was never called -> exception
     // were thrown and control flow wouldn't be here
@@ -39,7 +39,7 @@ fun catchThrowIfNotCalled() {
                     return@outer
                 }
             }
-            throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>()
+            throw java.lang.IllegalArgumentException()
         }
     } catch (ignored: java.lang.IllegalArgumentException) { }
 

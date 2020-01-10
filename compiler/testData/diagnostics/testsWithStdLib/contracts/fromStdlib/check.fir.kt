@@ -18,7 +18,7 @@ fun testCheckWithMessage(x: Any?) {
 }
 
 fun testCheckWithFailingMessage(x: Any?) {
-    check(x is String) { throw kotlin.<!UNRESOLVED_REFERENCE!>IllegalStateException<!>("What a strange idea") }
+    check(x is String) { throw kotlin.IllegalStateException("What a strange idea") }
     x.length
 }
 

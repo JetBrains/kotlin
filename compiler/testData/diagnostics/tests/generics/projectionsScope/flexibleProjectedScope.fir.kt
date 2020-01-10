@@ -11,6 +11,6 @@ public class Clazz<Psi> {
 public fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean) {}
 
 fun test(clazz: Clazz<out Any>) {
-    val result = java.util.<!UNRESOLVED_REFERENCE!>ArrayList<!><Any>()
-    clazz.foo().<!INAPPLICABLE_CANDIDATE!>filterTo<!>(result) { x -> true }
+    val result = java.util.ArrayList<Any>()
+    clazz.foo().filterTo(result) { x -> true }
 }

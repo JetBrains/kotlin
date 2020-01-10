@@ -42,7 +42,7 @@ fun Throwable.fillInStackTrace() = 1
 
 fun foo(x: List<String>, y: Throwable, z: A3) {
     x.stream()
-    java.util.<!UNRESOLVED_REFERENCE!>ArrayList<!><String>().<!UNRESOLVED_REFERENCE!>stream<!>()
+    java.util.ArrayList<String>().stream()
 
     y.fillInStackTrace() checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
 

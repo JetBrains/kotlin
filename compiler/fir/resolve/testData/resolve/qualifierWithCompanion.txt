@@ -1,0 +1,28 @@
+FILE: qualifierWithCompanion.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|my/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object X : R|kotlin/Any| {
+            private constructor(): R|my/A.X| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final val xx: R|my/A| = R|my/A.A|()
+        public get(): R|my/A|
+    public final fun test(): R|kotlin/Unit| {
+        lval x: R|my/A.X| = Q|my/A|
+        Q|my/A|.R|my/A.X.foo|()
+        Q|my/A.X|.R|my/A.X.foo|()
+        local final fun R|my/A|.invoke(): R|kotlin/Unit| {
+        }
+
+        R|my/xx|.R|<local>/invoke|()
+    }

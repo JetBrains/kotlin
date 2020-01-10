@@ -18,14 +18,14 @@ class C : java.util.concurrent.ConcurrentHashMap<String, Int>() {
 }
 
 fun main() {
-    val hm = java.util.concurrent.<!UNRESOLVED_REFERENCE!>ConcurrentHashMap<!><String, Int>()
+    val hm = java.util.concurrent.ConcurrentHashMap<String, Int>()
     "" in hm
     "" !in hm
-    1 <!AMBIGUITY, UNRESOLVED_REFERENCE!>!in<!> hm
-    2 <!AMBIGUITY!>in<!> hm
+    1 !in hm
+    2 in hm
 
     hm.contains("")
-    hm.<!AMBIGUITY!>contains<!>(1)
+    hm.contains(1)
 
     "" in (hm as Map<String, Int>)
     "" !in (hm as Map<String, Int>)

@@ -1,3 +1,3 @@
 // FILE: test.kt
 val fooException = Exception("foo")
-val barException = kotlin.<!UNRESOLVED_REFERENCE!>Exception<!>("bar")
+val barException = kotlin.Exception("bar")

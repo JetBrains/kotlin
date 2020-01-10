@@ -1,9 +1,9 @@
-fun fn(): Nothing = throw java.lang.<!UNRESOLVED_REFERENCE!>RuntimeException<!>("oops")
+fun fn(): Nothing = throw java.lang.RuntimeException("oops")
 
-val x: Nothing = throw java.lang.<!UNRESOLVED_REFERENCE!>RuntimeException<!>("oops")
+val x: Nothing = throw java.lang.RuntimeException("oops")
 
 class SomeClass {
     fun method() {
-        throw java.lang.<!UNRESOLVED_REFERENCE!>AssertionError<!>("!!!")
+        throw java.lang.AssertionError("!!!")
     }
 }

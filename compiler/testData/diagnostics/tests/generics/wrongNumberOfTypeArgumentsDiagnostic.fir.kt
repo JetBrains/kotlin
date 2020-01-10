@@ -10,7 +10,7 @@ fun test1() {
 }
 
 fun test2() {
-    val m0 = java.util.<!UNRESOLVED_REFERENCE!>HashMap<!>()
-    val m1 = java.util.<!UNRESOLVED_REFERENCE!>HashMap<!><String, String, String>()
-    val m2 = java.util.<!UNRESOLVED_REFERENCE!>HashMap<!><String>()
+    val m0 = java.util.HashMap()
+    val m1 = java.util.HashMap<String, String, String>()
+    val m2 = java.util.HashMap<String>()
 }

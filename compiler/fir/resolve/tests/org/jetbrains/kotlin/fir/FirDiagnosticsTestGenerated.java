@@ -178,6 +178,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/problems2.kt");
     }
 
+    @TestMetadata("qualifierWithCompanion.kt")
+    public void testQualifierWithCompanion() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/qualifierWithCompanion.kt");
+    }
+
     @TestMetadata("recursiveCallOnWhenWithSealedClass.kt")
     public void testRecursiveCallOnWhenWithSealedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");

@@ -12,6 +12,6 @@ inline fun myRun(block: () -> Unit): Unit {
 }
 
 fun test() {
-    myRun { throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>() }
+    myRun { throw java.lang.IllegalArgumentException() }
     val x: Int = 42
 }

@@ -12,6 +12,6 @@ inline fun <T> myRun(block: () -> T): T {
 }
 
 fun throwInLambda(): Int {
-    val x = myRun { throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>(); 42 }
+    val x = myRun { throw java.lang.IllegalArgumentException(); 42 }
     return x
 }

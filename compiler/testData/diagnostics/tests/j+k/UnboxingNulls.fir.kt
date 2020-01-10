@@ -9,5 +9,5 @@ package a
 
 fun foo() {
   // If this fails, it means that we have broken the rule that Java returns are always nullable
-  a.<!UNRESOLVED_REFERENCE!>Test<!><Int>().<!UNRESOLVED_REFERENCE!>t<!>() + 1
+  a.Test<Int>().t() + 1
 }

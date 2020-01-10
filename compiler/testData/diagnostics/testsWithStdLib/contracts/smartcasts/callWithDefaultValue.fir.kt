@@ -8,7 +8,7 @@ fun myAssert(condition: Boolean, message: String = "") {
     contract {
         returns() implies (condition)
     }
-    if (!condition) throw kotlin.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>(message)
+    if (!condition) throw kotlin.IllegalArgumentException(message)
 }
 
 fun test(x: Any?) {

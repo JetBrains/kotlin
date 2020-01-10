@@ -140,7 +140,7 @@ fun testCoercionToAny() {
 fun fooWithAnuNullableResult(s: String?, name: String, optional: Boolean): Any? {
     return if (s == null) {
         if (!optional) {
-            throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>("Parameter '$name' was not found in the request")
+            throw java.lang.IllegalArgumentException("Parameter '$name' was not found in the request")
         }
         null
     } else {

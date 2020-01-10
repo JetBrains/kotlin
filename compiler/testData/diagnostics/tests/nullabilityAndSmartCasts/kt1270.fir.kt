@@ -4,8 +4,8 @@
 package kt1270
 
 fun foo() {
-    val sc = <!UNRESOLVED_REFERENCE!>java.util.<!UNRESOLVED_REFERENCE!>HashMap<!><String, SomeClass>()[""]<!>
-    val value = sc.<!UNRESOLVED_REFERENCE!>value<!>
+    val sc = java.util.HashMap<String, SomeClass>()[""]
+    val value = sc.<!INAPPLICABLE_CANDIDATE!>value<!>
 }
 
 private class SomeClass() {
