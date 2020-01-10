@@ -10065,6 +10065,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inference/starApproximationFlexible.kt");
             }
 
+            @TestMetadata("starApproximationFromDifferentTypeParameter.kt")
+            public void testStarApproximationFromDifferentTypeParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/starApproximationFromDifferentTypeParameter.kt");
+            }
+
             @TestMetadata("tooEagerSmartcast.kt")
             public void testTooEagerSmartcast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/tooEagerSmartcast.kt");

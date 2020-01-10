@@ -63,7 +63,7 @@ internal fun captureFromArguments(
     val arguments = type.arguments
     if (arguments.all { it.projectionKind == Variance.INVARIANT }) return null
 
-    val capturedArguments = arguments.map { projection ->
+    val capturedArguments = arguments.zip(type.constructor.parameters).map { (projection, parameter) ->
         if (projection.projectionKind == Variance.INVARIANT) return@map projection
 
         val lowerType =
@@ -73,7 +73,7 @@ internal fun captureFromArguments(
                 null
             }
 
-        NewCapturedType(status, lowerType, projection).asTypeProjection() // todo optimization: do not create type projection
+        NewCapturedType(status, lowerType, projection, parameter).asTypeProjection() // todo optimization: do not create type projection
     }
 
     val substitutor = TypeConstructorSubstitution.create(type.constructor, capturedArguments).buildSubstitutor()
@@ -112,8 +112,9 @@ class NewCapturedType(
     override val annotations: Annotations = Annotations.EMPTY,
     override val isMarkedNullable: Boolean = false
 ) : SimpleType(), CapturedTypeMarker {
-    internal constructor(captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection) :
-            this(captureStatus, NewCapturedTypeConstructor(projection), lowerType)
+    internal constructor(
+        captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection, typeParameter: TypeParameterDescriptor
+    ) : this(captureStatus, NewCapturedTypeConstructor(projection, typeParameter = typeParameter), lowerType)
 
     override val arguments: List<TypeProjection> get() = listOf()
 
@@ -140,7 +141,8 @@ class NewCapturedType(
 class NewCapturedTypeConstructor(
     override val projection: TypeProjection,
     private var supertypesComputation: (() -> List<UnwrappedType>)? = null,
-    private val original: NewCapturedTypeConstructor? = null
+    private val original: NewCapturedTypeConstructor? = null,
+    val typeParameter: TypeParameterDescriptor? = null
 ) : CapturedTypeConstructor {
 
     constructor(
@@ -177,7 +179,8 @@ class NewCapturedTypeConstructor(
                     supertypes.map { it.refine(kotlinTypeRefiner) }
                 }
             },
-            original ?: this
+            original ?: this,
+            typeParameter = typeParameter
         )
 
     override fun equals(other: Any?): Boolean {

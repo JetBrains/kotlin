@@ -144,7 +144,8 @@ fun ConeKotlinType.lowerBoundIfFlexible() = (this as? ConeFlexibleType)?.lowerBo
 
 class ConeCapturedTypeConstructor(
     val projection: ConeKotlinTypeProjection,
-    var supertypes: List<ConeKotlinType>? = null
+    var supertypes: List<ConeKotlinType>? = null,
+    val typeParameterMarker: TypeParameterMarker? = null
 ) : CapturedTypeConstructorMarker
 
 class ConeCapturedType(
@@ -153,11 +154,15 @@ class ConeCapturedType(
     override val nullability: ConeNullability = ConeNullability.NOT_NULL,
     val constructor: ConeCapturedTypeConstructor
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
-    constructor(captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeKotlinTypeProjection) : this(
+    constructor(
+        captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeKotlinTypeProjection,
+        typeParameterMarker: TypeParameterMarker
+    ) : this(
         captureStatus,
         lowerType,
         constructor = ConeCapturedTypeConstructor(
-            projection
+            projection,
+            typeParameterMarker = typeParameterMarker
         )
     )
 

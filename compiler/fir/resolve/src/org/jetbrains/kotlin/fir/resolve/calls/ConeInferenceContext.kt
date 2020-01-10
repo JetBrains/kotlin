@@ -257,6 +257,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.constructor.projection
     }
 
+    override fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? {
+        require(this is ConeCapturedType)
+        return this.constructor.typeParameterMarker
+    }
+
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
         require(this is ConeDefinitelyNotNullType)
         return this.original as SimpleTypeMarker
