@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix.quickfixUtil
+package org.jetbrains.kotlin.idea.util
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiElement
