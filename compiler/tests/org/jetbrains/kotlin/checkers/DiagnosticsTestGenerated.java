@@ -1891,6 +1891,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/callableReference/memberExtensionsImportedFromObjectsUnsupported.kt");
             }
 
+            @TestMetadata("noAmbiguityWhenAllReferencesAreInapplicable.kt")
+            public void testNoAmbiguityWhenAllReferencesAreInapplicable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/noAmbiguityWhenAllReferencesAreInapplicable.kt");
+            }
+
             @TestMetadata("noExceptionOnRedCodeWithArrayLikeCall.kt")
             public void testNoExceptionOnRedCodeWithArrayLikeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/noExceptionOnRedCodeWithArrayLikeCall.kt");
