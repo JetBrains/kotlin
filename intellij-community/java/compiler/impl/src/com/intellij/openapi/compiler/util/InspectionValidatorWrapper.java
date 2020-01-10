@@ -78,8 +78,16 @@ public class InspectionValidatorWrapper implements Validator {
     myValidator = validator;
   }
 
-  public InspectionValidator getValidator() {
-    return myValidator;
+  @NotNull
+  public static InspectionValidatorWrapper create(final Project project, InspectionValidator validator) {
+    return new InspectionValidatorWrapper(
+      CompilerManager.getInstance(project),
+      InspectionManager.getInstance(project),
+      InspectionProjectProfileManager.getInstance(project),
+      PsiDocumentManager.getInstance(project),
+      PsiManager.getInstance(project),
+      validator
+    );
   }
 
   public static boolean isCompilationThread() {
