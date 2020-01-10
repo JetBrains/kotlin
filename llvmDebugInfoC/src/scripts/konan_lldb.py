@@ -66,7 +66,7 @@ def is_instance_of(addr, typeinfo):
     return evaluate("(bool)IsInstance({}, {})".format(addr, typeinfo)).GetValue() == "true"
 
 def is_string_or_array(value):
-    return evaluate("(bool)IsInstance({0}, {1}) ? 1 : ((int)Konan_DebugIsArray({0}) ? 2 : 0)".format(lldb_val_to_ptr(value), _symbol_loaded_address('ktype:kotlin.String'))).unsigned
+    return evaluate("(int)IsInstance({0}, {1}) ? 1 : ((int)Konan_DebugIsArray({0}) ? 2 : 0)".format(lldb_val_to_ptr(value), _symbol_loaded_address('ktype:kotlin.String'))).unsigned
 
 def type_info(value):
     """This method checks self-referencing of pointer of first member of TypeInfo including case when object has an
@@ -201,16 +201,15 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
         self._children_count = 0
         super(KonanStringSyntheticProvider, self).__init__(valobj, True)
         fallback = valobj.GetValue()
+        buff_addr = evaluate("(void *)Konan_DebugBuffer()").unsigned
         buff_len = evaluate(
-            '(int)Konan_DebugObjectToUtf8Array({}, (char *)Konan_DebugBuffer(), (int)Konan_DebugBufferSize());'.format(
-                self._ptr)
-        ).unsigned
+            '(int)Konan_DebugObjectToUtf8Array({}, (void *){:#x}, (int)Konan_DebugBufferSize());'.format(
+                self._ptr, buff_addr)
+        ).signed
 
         if not buff_len:
             self._representation = fallback
             return
-
-        buff_addr = evaluate("(char *)Konan_DebugBuffer()").unsigned
 
         error = lldb.SBError()
         s = self._process.ReadCStringFromMemory(int(buff_addr), int(buff_len), error)
@@ -281,7 +280,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
 
     def _field_name(self, index):
         error = lldb.SBError()
-        name =  self._read_string("(const char *)Konan_DebugGetFieldName({}, (int){})".format(self._ptr, index), error)
+        name =  self._read_string("(void *)Konan_DebugGetFieldName({}, (int){})".format(self._ptr, index), error)
         if not error.Success():
             raise DebuggerException()
         return name
