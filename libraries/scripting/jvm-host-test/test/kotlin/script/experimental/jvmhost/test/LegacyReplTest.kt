@@ -44,6 +44,13 @@ class LegacyReplTest : TestCase() {
         }
     }
 
+    fun testReplSyntaxErrorsChecked() {
+        LegacyTestRepl().use { repl ->
+            val res = repl.compileAndEval(repl.nextCodeLine("data class Q(val x: Int, val: String)"))
+            TestCase.assertTrue("Expected compile error", res.first is ReplCompileResult.Error)
+        }
+    }
+
     fun testReplCodeFormat() {
         LegacyTestRepl().use { repl ->
             val codeLine0 = ReplCodeLine(0, 0, "val l1 = 1\r\nl1\r\n")
