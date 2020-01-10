@@ -96,6 +96,9 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                 )
                     .valueOr { return it }
 
+            val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(snippetKtFile, errorHolder)
+            if (syntaxErrorReport.isHasErrors) return failure(messageCollector)
+
             val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(
                 context,
                 snippetKtFile,
