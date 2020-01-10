@@ -153,6 +153,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun KotlinTypeMarker.mayBeTypeVariable(): Boolean
 
     fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker
+    fun CapturedTypeMarker.typeParameter(): TypeParameterMarker?
 
     fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker
 

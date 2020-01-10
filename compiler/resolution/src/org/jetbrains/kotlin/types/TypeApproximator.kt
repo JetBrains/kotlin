@@ -485,12 +485,14 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()
 
+            val capturedType = argumentType.lowerBoundIfFlexible().asCapturedType()
             val capturedStarProjectionOrNull =
-                argumentType.lowerBoundIfFlexible().asCapturedType()?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
+                capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
 
             if (capturedStarProjectionOrNull != null &&
                 (effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV) &&
-                toSuper
+                toSuper &&
+                capturedType.typeParameter() == parameter
             ) {
                 newArguments[index] = capturedStarProjectionOrNull
                 continue@loop

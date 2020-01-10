@@ -404,6 +404,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.constructor.projection
     }
 
+    override fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? {
+        require(this is NewCapturedType, this::errorMessage)
+        return this.constructor.typeParameter
+    }
+
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
         require(this is NewCapturedType, this::errorMessage)
         return this.captureStatus

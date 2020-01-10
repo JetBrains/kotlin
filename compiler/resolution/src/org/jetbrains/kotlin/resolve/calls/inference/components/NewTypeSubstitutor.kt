@@ -83,7 +83,10 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                 if (innerType is StubType || substitutedInnerType is StubType) {
                     return NewCapturedType(
                         capturedType.captureStatus,
-                        NewCapturedTypeConstructor(TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType)),
+                        NewCapturedTypeConstructor(
+                            TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
+                            typeParameter = typeConstructor.typeParameter
+                        ),
                         lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
                     )
                 } else {

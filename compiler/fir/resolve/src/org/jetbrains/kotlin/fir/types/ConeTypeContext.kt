@@ -318,7 +318,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 null
             }
 
-            ConeCapturedType(status, lowerType, argument as ConeKotlinTypeProjection)
+            ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
         }
 
         for (index in 0 until argumentsCount) {
