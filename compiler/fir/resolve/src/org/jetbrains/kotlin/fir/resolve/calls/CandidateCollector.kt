@@ -80,52 +80,47 @@ class InvokeReceiverCandidateCollector(
     private val invokeConsumer: AccumulatingTowerDataConsumer,
     resolutionStageRunner: ResolutionStageRunner
 ) : CandidateCollector(components, resolutionStageRunner) {
+    private fun createBoundInvokeConsumer(boundInvokeCallInfo: CallInfo): TowerDataConsumer {
+        return createSimpleFunctionConsumer(
+            components.session, OperatorNameConventions.INVOKE,
+            boundInvokeCallInfo, components, towerResolver.collector
+        )
+    }
+
+    private fun createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionImpl {
+        val symbol = candidate.symbol as FirCallableSymbol<*>
+        return FirQualifiedAccessExpressionImpl(null).apply {
+            calleeReference = FirNamedReferenceWithCandidate(
+                null,
+                symbol.callableId.callableName,
+                candidate
+            )
+            dispatchReceiver = candidate.dispatchReceiverExpression()
+            typeRef = towerResolver.typeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+        }
+    }
+
     override fun consumeCandidate(group: Int, candidate: Candidate): CandidateApplicability {
         val applicability = super.consumeCandidate(group, candidate)
 
         if (applicability >= CandidateApplicability.SYNTHETIC_RESOLVED) {
-            val session = components.session
             val symbol = candidate.symbol as FirCallableSymbol<*>
             val extensionReceiverExpression = candidate.extensionReceiverExpression()
             val useExtensionReceiverAsArgument =
                 symbol.fir.receiverTypeRef == null &&
                         candidate.explicitReceiverKind == ExplicitReceiverKind.EXTENSION_RECEIVER &&
                         symbol.fir.returnTypeRef.isExtensionFunctionType()
-            val explicitReceiver = FirQualifiedAccessExpressionImpl(null).apply {
-                calleeReference = FirNamedReferenceWithCandidate(
-                    null,
-                    symbol.callableId.callableName,
-                    candidate
-                )
-                dispatchReceiver = candidate.dispatchReceiverExpression()
+            val explicitReceiver = createExplicitReceiverForInvoke(candidate).apply {
                 extensionReceiver = extensionReceiverExpression.takeIf { !useExtensionReceiverAsArgument } ?: FirNoReceiverExpression
-                typeRef = towerResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
             }.let {
                 components.transformQualifiedAccessUsingSmartcastInfo(it)
             }
-            val boundInvokeCallInfo = CallInfo(
-                invokeCallInfo.callKind,
-                explicitReceiver,
-                invokeCallInfo.arguments,
-                invokeCallInfo.isSafeCall,
-                invokeCallInfo.typeArguments,
-                session,
-                invokeCallInfo.containingFile,
-                invokeCallInfo.implicitReceiverStack,
-                invokeCallInfo.expectedType,
-                invokeCallInfo.outerCSBuilder,
-                invokeCallInfo.lhs
-            ).let {
+            val boundInvokeCallInfo = invokeCallInfo.replaceExplicitReceiver(explicitReceiver).let {
                 if (useExtensionReceiverAsArgument) it.withReceiverAsArgument(extensionReceiverExpression)
                 else it
             }
 
-            invokeConsumer.addConsumerAndProcessAccumulatedData(
-                createSimpleFunctionConsumer(
-                    session, OperatorNameConventions.INVOKE,
-                    boundInvokeCallInfo, towerResolver.components, towerResolver.collector
-                )
-            )
+            invokeConsumer.addConsumerAndProcessAccumulatedData(createBoundInvokeConsumer(boundInvokeCallInfo))
         }
 
         return applicability
