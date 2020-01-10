@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NONE
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 
 enum class TowerDataKind {
     EMPTY,       // Corresponds to stub tower level which is replaced by receiver-related level
@@ -199,13 +203,38 @@ class FirTowerResolver(
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 
     fun runResolver(
-        consumer: TowerDataConsumer,
-        implicitReceiverValues: List<ImplicitReceiverValue<*>>,
-        shouldProcessExtensionsBeforeMembers: Boolean = false,
-        shouldProcessExplicitReceiverScopeOnly: Boolean = false
+        implicitReceiverValues: List<ImplicitReceiverValue<*>>, name: Name, info: CallInfo,
+        collector: CandidateCollector = this.collector
     ): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
-        towerDataConsumer = consumer
+        towerDataConsumer = when (info.callKind) {
+            CallKind.VariableAccess -> {
+                createVariableAndObjectConsumer(session, name, info, components, collector)
+            }
+            CallKind.Function -> {
+                createFunctionConsumer(session, name, info, components, collector, this)
+            }
+            CallKind.CallableReference -> {
+                if (info.stubReceiver == null) {
+                    createCallableReferencesConsumer(session, name, info, components, collector)
+                } else {
+                    PrioritizedTowerDataConsumer(
+                        collector,
+                        createCallableReferencesConsumer(
+                            session, name, info.replaceExplicitReceiver(info.stubReceiver), components, collector
+                        ),
+                        createCallableReferencesConsumer(
+                            session, name, info, components, collector
+                        )
+                    )
+                }
+            }
+            else -> throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
+        }
+        val shouldProcessExtensionsBeforeMembers =
+            info.callKind == CallKind.Function && name in HIDES_MEMBERS_NAME_LIST
+        val shouldProcessExplicitReceiverScopeOnly =
+            info.callKind == CallKind.Function && info.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
 
         var group = 0
 

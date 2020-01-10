@@ -36,10 +36,11 @@ class CallInfo(
     val containingFile: FirFile,
     val implicitReceiverStack: ImplicitReceiverStack,
 
-    // Three properties for callable references only
+    // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
-    val lhs: DoubleColonLHS? = null
+    val lhs: DoubleColonLHS? = null,
+    val stubReceiver: FirExpression? = null
 ) {
     val argumentCount get() = arguments.size
 

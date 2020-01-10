@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 
 class FirCallResolver(
     components: BodyResolveComponents,
@@ -118,7 +117,6 @@ class FirCallResolver(
         val explicitReceiver = functionCall.explicitReceiver
         val arguments = functionCall.arguments
         val typeArguments = functionCall.typeArguments
-        val name = functionCall.calleeReference.name
 
         val info = CallInfo(
             CallKind.Function,
@@ -131,13 +129,10 @@ class FirCallResolver(
             transformer.components.implicitReceiverStack
         )
         towerResolver.reset()
-
-        val consumer = createFunctionConsumer(session, name, info, this, towerResolver.collector, towerResolver)
         val result = towerResolver.runResolver(
-            consumer,
             implicitReceiverStack.receiversAsReversed(),
-            shouldProcessExtensionsBeforeMembers = name in HIDES_MEMBERS_NAME_LIST,
-            shouldProcessExplicitReceiverScopeOnly = explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
+            functionCall.calleeReference.name,
+            info
         )
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
@@ -168,14 +163,11 @@ class FirCallResolver(
             transformer.components.implicitReceiverStack
         )
         towerResolver.reset()
-
-        val consumer = createVariableAndObjectConsumer(
-            session,
+        val result = towerResolver.runResolver(
+            implicitReceiverStack.receiversAsReversed(),
             callee.name,
-            info, this,
-            towerResolver.collector
+            info
         )
-        val result = towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
 
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
@@ -247,15 +239,17 @@ class FirCallResolver(
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
-        val result = CandidateCollector(this, resolutionStageRunner)
-        val consumer =
-            createCallableReferencesConsumerForLHS(
-                callableReferenceAccess, lhs,
-                result, expectedType,
-                constraintSystemBuilder
-            )
-
-        towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
+        val info = createCallableReferencesInfoForLHS(
+            callableReferenceAccess, lhs,
+            expectedType, constraintSystemBuilder
+        )
+        // No reset here!
+        val result = towerResolver.runResolver(
+            implicitReceiverStack.receiversAsReversed(),
+            callableReferenceAccess.calleeReference.name,
+            info,
+            collector = CandidateCollector(this, resolutionStageRunner)
+        )
         val bestCandidates = result.bestCandidates()
         val noSuccessfulCandidates = result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
         val reducedCandidates = if (noSuccessfulCandidates) {
@@ -336,79 +330,29 @@ class FirCallResolver(
         return call.transformCalleeReference(StoreNameReference, nameReference) as T
     }
 
-    private fun createCallableReferencesConsumerForLHS(
+    private fun createCallableReferencesInfoForLHS(
         callableReferenceAccess: FirCallableReferenceAccess,
         lhs: DoubleColonLHS?,
-        resultCollector: CandidateCollector,
         expectedType: ConeKotlinType?,
         outerConstraintSystemBuilder: ConstraintSystemBuilder?
-    ): TowerDataConsumer {
-        val name = callableReferenceAccess.calleeReference.name
-
-        return when (lhs) {
-            is DoubleColonLHS.Expression, null -> createCallableReferencesConsumerForReceiver(
-                name, resultCollector, callableReferenceAccess.explicitReceiver, expectedType, outerConstraintSystemBuilder,
-                lhs
-            )
-            is DoubleColonLHS.Type -> createCallableReferencesConsumerForReceivers(
-                name,
-                resultCollector,
-                expectedType,
-                outerConstraintSystemBuilder,
-                lhs,
-                FirExpressionStub(callableReferenceAccess.source).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) },
-                callableReferenceAccess.explicitReceiver
-            )
-        }
-    }
-
-    private fun createCallableReferencesConsumerForReceivers(
-        name: Name,
-        resultCollector: CandidateCollector,
-        expectedType: ConeKotlinType?,
-        outerConstraintSystemBuilder: ConstraintSystemBuilder?,
-        lhs: DoubleColonLHS?,
-        vararg receivers: FirExpression?
-    ): TowerDataConsumer {
-        if (receivers.size == 1) {
-            return createCallableReferencesConsumerForReceiver(
-                name, resultCollector, receivers[0], expectedType, outerConstraintSystemBuilder, lhs
-            )
-        }
-
-        return PrioritizedTowerDataConsumer(
-            resultCollector,
-            *Array(receivers.size) { index ->
-                createCallableReferencesConsumerForReceiver(
-                    name, resultCollector, receivers[index], expectedType, outerConstraintSystemBuilder, lhs
-                )
-            }
-        )
-    }
-
-    private fun createCallableReferencesConsumerForReceiver(
-        name: Name,
-        resultCollector: CandidateCollector,
-        receiver: FirExpression?,
-        expectedType: ConeKotlinType?,
-        outerConstraintSystemBuilder: ConstraintSystemBuilder?,
-        lhs: DoubleColonLHS?
-    ): TowerDataConsumer {
-        val info = CallInfo(
+    ): CallInfo {
+        return CallInfo(
             CallKind.CallableReference,
-            receiver,
+            callableReferenceAccess.explicitReceiver,
             emptyList(),
             false,
             emptyList(),
             session,
             file,
             transformer.components.implicitReceiverStack,
+            // Additional things for callable reference resolve
             expectedType,
             outerConstraintSystemBuilder,
-            lhs
+            lhs,
+            stubReceiver = if (lhs !is DoubleColonLHS.Type) null else FirExpressionStub(callableReferenceAccess.source).apply {
+                replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type))
+            }
         )
-
-        return createCallableReferencesConsumer(session, name, info, this, resultCollector)
     }
 
     private fun createResolvedNamedReference(
