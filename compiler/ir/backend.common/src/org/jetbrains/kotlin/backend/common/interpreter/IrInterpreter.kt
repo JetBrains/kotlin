@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -79,7 +76,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
 
             return when (code) {
-                Code.RETURN -> when (this) {
+                Code.RETURN -> when (this) { // TODO check label
                     is IrCall, is IrReturnableBlock -> Code.NEXT
                     else -> Code.RETURN
                 }
@@ -215,9 +212,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private fun interpretCall(expression: IrCall, data: Frame): Code {
         val newFrame = InterpreterFrame()
 
-        interpretValueParameters(expression, data).also { if (it != Code.NEXT) return it }
-        val valueParameters = expression.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }
-
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
         rawDispatchReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
@@ -225,7 +219,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val irFunctionReceiver = if (expression.superQualifierSymbol == null) dispatchReceiver else (dispatchReceiver as Complex).superType
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
         val irFunction = irFunctionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
-        irFunctionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getDispatchReceiver()!!, it)) }
+        irFunctionReceiver?.let { receiverState ->
+            // dispatch receiver is null if irFunction is lambda and so there is no need to add it as variable in frame
+            irFunction.symbol.getDispatchReceiver()?.let { newFrame.addVar(Variable(it, receiverState)) }
+        }
 
         // extension receiver processing
         val rawExtensionReceiver = expression.extensionReceiver
@@ -233,7 +230,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val extensionReceiver = rawExtensionReceiver?.let { data.popReturnValue() }
         extensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, it)) }
 
-        newFrame.addAll(valueParameters)
+        // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
+        val receiverAsFirstArgument = if (irFunction.isLocalLambda()) listOfNotNull(irFunction.symbol.getExtensionReceiver()) else listOf()
+        val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
+        interpretValueParameters(expression, data).also { if (it != Code.NEXT) return it }
+        newFrame.addAll(valueParametersDescriptors.map { Variable(it, data.popReturnValue()) })
 
         val isWrapper = (dispatchReceiver is Wrapper && rawExtensionReceiver == null) ||
                 (extensionReceiver is Wrapper && rawDispatchReceiver == null)
@@ -304,6 +305,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private fun interpretBlock(block: IrBlock, data: Frame): Code {
+        if (block.isLambdaFunction()) {
+            val irLambdaFunction = block.statements.filterIsInstance<IrFunctionReference>().first()
+            data.pushReturnValue(Lambda(irLambdaFunction.symbol.owner, irLambdaFunction.type.classOrNull!!.owner))
+            return Code.NEXT
+        }
         return interpretStatements(block.statements, data)
     }
 

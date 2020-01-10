@@ -29,6 +29,7 @@ import java.lang.invoke.MethodType
 
 interface State {
     val fields: MutableList<Variable>
+    val irClass: IrClass
 
     fun getState(descriptor: DeclarationDescriptor): State? {
         return fields.firstOrNull { it.descriptor.equalTo(descriptor) }?.state
@@ -41,18 +42,17 @@ interface State {
 
 class Primitive<T>(var value: T, val type: IrType) : State {
     override val fields: MutableList<Variable> = mutableListOf()
+    override val irClass: IrClass = type.classOrNull!!.owner
 
     init {
-        val properties = type.classOrNull!!.owner.declarations.filterIsInstance<IrProperty>()
+        val properties = irClass.declarations.filterIsInstance<IrProperty>()
         for (property in properties) {
-            val propertySignature = CompileTimeFunction(property.name.asString(), listOf(type.getName()))
+            val propertySignature = CompileTimeFunction(property.name.asString(), listOf(irClass.descriptor.defaultType.toString()))
             val propertyValue = unaryFunctions[propertySignature]?.invoke(value)
                 ?: throw NoSuchMethodException("For given property $propertySignature there is no entry in unary map")
             fields.add(Variable(property.descriptor, Primitive(propertyValue, property.backingField!!.type)))
         }
     }
-
-    private fun IrType.getName() = this.classOrNull!!.descriptor.defaultType.toString()
 
     override fun setState(newVar: Variable) {
         newVar.state as? Primitive<T> ?: throw IllegalArgumentException("Cannot set $newVar in current $this")
@@ -65,7 +65,7 @@ class Primitive<T>(var value: T, val type: IrType) : State {
 
     override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
         // must add property's getter to declaration's list because they are not present in ir class for primitives
-        val declarations = type.classOrNull!!.owner.declarations.map { if (it is IrProperty) it.getter else it }
+        val declarations = irClass.declarations.map { if (it is IrProperty) it.getter else it }
         return declarations.filterIsInstance<IrFunction>()
             .filter { it.descriptor.name == descriptor.name }
             .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
@@ -92,11 +92,11 @@ class Primitive<T>(var value: T, val type: IrType) : State {
     }
 
     override fun toString(): String {
-        return "Primitive(value=$value, type=${type.getName()})"
+        return "Primitive(value=$value, type=${irClass.descriptor.defaultType})"
     }
 }
 
-open class Complex(private var type: IrClass, override val fields: MutableList<Variable>) : State {
+open class Complex(override var irClass: IrClass, override val fields: MutableList<Variable>) : State {
     var superType: Complex? = null
     var instance: Complex? = null
 
@@ -106,7 +106,7 @@ open class Complex(private var type: IrClass, override val fields: MutableList<V
     }
 
     fun getReceiver(): DeclarationDescriptor {
-        return type.thisReceiver!!.descriptor
+        return irClass.thisReceiver!!.descriptor
     }
 
     override fun setState(newVar: Variable) {
@@ -117,31 +117,33 @@ open class Complex(private var type: IrClass, override val fields: MutableList<V
     }
 
     override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
-        return type.declarations.filterIsInstance<IrFunction>()
+        return irClass.declarations.filterIsInstance<IrFunction>()
             .filter { it.descriptor.name == descriptor.name }
             .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
     }
 
     override fun copy(): State {
-        return Complex(type, fields).apply {
+        return Complex(irClass, fields).apply {
             this@apply.superType = this@Complex.superType
             this@apply.instance = this@Complex.instance
         }
     }
 
     override fun toString(): String {
-        return "Complex(obj='${type.fqNameForIrSerialization}', super=$superType, values=$fields)"
+        return "Complex(obj='${irClass.fqNameForIrSerialization}', super=$superType, values=$fields)"
     }
 }
 
-class Wrapper(val value: Any, private val type: IrClass) : Complex(type, mutableListOf()) {
-    private val typeFqName = type.fqNameForIrSerialization.toUnsafe()
-    private val receiverClass = type.defaultType.getClass(true)
+class Wrapper(val value: Any, override var irClass: IrClass) : Complex(irClass, mutableListOf()) {
+    private val typeFqName = irClass.fqNameForIrSerialization.toUnsafe()
+    private val receiverClass = irClass.defaultType.getClass(true)
 
     fun getMethod(irFunction: IrFunction): MethodHandle {
-        // used to get correct java method
+        // intrinsicName is used to get correct java method
         // for example, method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
         val intrinsicName = irFunction.getEvaluateIntrinsicValue()
+
+        // if function is actually a getter, then use property name as method name
         val property = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol?.owner
         val methodName = intrinsicName ?: (property ?: irFunction).name.toString()
 
@@ -182,7 +184,7 @@ class Wrapper(val value: Any, private val type: IrClass) : Complex(type, mutable
             val fqName = this.getFqName()
             val owner = this.classOrNull?.owner
             return when {
-                owner?.hasAnnotation(evaluateIntrinsicAnnotation) == true -> Class.forName(owner.getEvaluateIntrinsicValue())
+                owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 this.isPrimitiveType() -> getPrimitiveClass(fqName!!, asObject)
                 this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
                 //TODO primitive array
@@ -234,10 +236,31 @@ class Wrapper(val value: Any, private val type: IrClass) : Complex(type, mutable
     }
 
     override fun copy(): State {
-        return Wrapper(value, type)
+        return Wrapper(value, irClass)
     }
 
     override fun toString(): String {
         return "Wrapper(obj='$typeFqName', value=$value)"
+    }
+}
+
+class Lambda(val irFunction: IrFunction, override var irClass: IrClass) : Complex(irClass, mutableListOf()) {
+    // irFunction is anonymous declaration, but irCall will contain descriptor of invoke method from Function interface
+    private val invokeDescriptor = irClass.declarations.first().descriptor
+
+    override fun setState(newVar: Variable) {
+        throw UnsupportedOperationException("Method setState is not supported in Lambda class")
+    }
+
+    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
+        return if (invokeDescriptor.equalTo(descriptor)) irFunction else null
+    }
+
+    override fun copy(): State {
+        return Lambda(irFunction, irClass)
+    }
+
+    override fun toString(): String {
+        return "Lambda(${irClass.fqNameForIrSerialization})"
     }
 }

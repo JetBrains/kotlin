@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.backend.common.interpreter.stack.Frame
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Primitive
 import org.jetbrains.kotlin.backend.common.interpreter.stack.State
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Wrapper
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -63,7 +61,8 @@ private fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boo
 }
 
 private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
-    return this is VariableDescriptor && other is VariableDescriptor && this.name == other.name
+    return (this is VariableDescriptor && other is VariableDescriptor && this.name == other.name) ||
+            (this is FunctionInvokeDescriptor && other is FunctionInvokeDescriptor && this.valueParameters.size == other.valueParameters.size)
 }
 
 fun IrCall.isAbstract(): Boolean {
@@ -80,6 +79,14 @@ fun IrFunction.isAbstract(): Boolean {
 
 fun IrFunction.isFakeOverridden(): Boolean {
     return this.symbol.owner.isFakeOverride
+}
+
+fun IrContainerExpression.isLambdaFunction(): Boolean {
+    return this.origin == IrStatementOrigin.LAMBDA || this.origin == IrStatementOrigin.ANONYMOUS_FUNCTION
+}
+
+fun IrDeclaration.isLocalLambda(): Boolean {
+    return this.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
 }
 
 fun State.toIrExpression(expression: IrExpression): IrExpression {
