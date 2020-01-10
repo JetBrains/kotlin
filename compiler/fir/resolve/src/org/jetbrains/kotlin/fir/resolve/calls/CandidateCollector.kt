@@ -19,10 +19,11 @@ open class CandidateCollector(
     val components: BodyResolveComponents,
     val resolutionStageRunner: ResolutionStageRunner
 ) {
-    val groupNumbers = mutableListOf<Int>()
-    val candidates = mutableListOf<Candidate>()
+    private val groupNumbers = mutableListOf<Int>()
+    private val candidates = mutableListOf<Candidate>()
 
     var currentApplicability = CandidateApplicability.HIDDEN
+        private set
 
     fun newDataSet() {
         groupNumbers.clear()
@@ -73,10 +74,10 @@ open class CandidateCollector(
 // Collects properties that potentially could be invoke receivers, like 'propertyName()',
 // and initiates further invoke resolution by adding property-bound invoke consumers
 class InvokeReceiverCandidateCollector(
-    val towerResolver: FirTowerResolver,
-    val invokeCallInfo: CallInfo,
+    private val towerResolver: FirTowerResolver,
+    private val invokeCallInfo: CallInfo,
     components: BodyResolveComponents,
-    val invokeConsumer: AccumulatingTowerDataConsumer,
+    private val invokeConsumer: AccumulatingTowerDataConsumer,
     resolutionStageRunner: ResolutionStageRunner
 ) : CandidateCollector(components, resolutionStageRunner) {
     override fun consumeCandidate(group: Int, candidate: Candidate): CandidateApplicability {
