@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -195,19 +196,72 @@ class KotlinTypeMapper @JvmOverloads constructor(
     }
 
     private fun mapReturnType(descriptor: CallableDescriptor, sw: JvmSignatureWriter?, returnType: KotlinType): Type {
+        val patchedType = patchAnonymousTypeIfNeeded(returnType)
+
         val isAnnotationMethod = isAnnotationClass(descriptor.containingDeclaration)
         if (sw == null || sw.skipGenericSignature()) {
-            return mapType(returnType, sw, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod))
+            return mapType(patchedType, sw, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod))
         }
 
-        val typeMappingModeFromAnnotation = extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod)
+        val typeMappingModeFromAnnotation = extractTypeMappingModeFromAnnotation(descriptor, patchedType, isAnnotationMethod)
         if (typeMappingModeFromAnnotation != null) {
-            return mapType(returnType, sw, typeMappingModeFromAnnotation)
+            return mapType(patchedType, sw, typeMappingModeFromAnnotation)
         }
 
-        val mappingMode = TypeMappingMode.getOptimalModeForReturnType(returnType, isAnnotationMethod)
+        val mappingMode = TypeMappingMode.getOptimalModeForReturnType(patchedType, isAnnotationMethod)
 
-        return mapType(returnType, sw, mappingMode)
+        return mapType(patchedType, sw, mappingMode)
+    }
+
+    fun patchAnonymousTypeIfNeeded(type: KotlinType): KotlinType {
+        if (!classBuilderMode.replaceAnonymousTypesInSignatures) {
+            return type
+        }
+
+        val declaration = type.constructor.declarationDescriptor ?: return type
+
+        if (KotlinBuiltIns.isArray(type)) {
+            val elementTypeProjection = type.arguments.singleOrNull()
+            if (elementTypeProjection != null && !elementTypeProjection.isStarProjection) {
+                return type.builtIns.getArrayType(
+                    elementTypeProjection.projectionKind,
+                    patchAnonymousTypeIfNeeded(elementTypeProjection.type)
+                )
+            }
+        }
+
+        if (isAnonymousObject(declaration) || isLocal(declaration)) {
+            return patchAnonymousTypeIfNeeded(chooseBestNonAnonymousSuperType(type))
+        }
+
+        if (type.arguments.isEmpty()) {
+            return type
+        }
+
+        val arguments = type.arguments.map { typeArg ->
+            if (typeArg.isStarProjection)
+                return@map typeArg
+
+            TypeProjectionImpl(typeArg.projectionKind, patchAnonymousTypeIfNeeded(typeArg.type))
+        }
+
+        return type.replace(newArguments = arguments)
+    }
+
+    private fun chooseBestNonAnonymousSuperType(type: KotlinType): KotlinType {
+        // It doesn't really matter what particular type there will be. It just needs to be stable enough.
+
+        val sortedSuperTypes = type.constructor.supertypes
+            .sortedBy { it.constructor.declarationDescriptor?.name?.asString() ?: "" }
+
+        for (superType in sortedSuperTypes) {
+            val classDescriptor = superType.constructor.declarationDescriptor
+            if (classDescriptor is ClassDescriptor && classDescriptor.kind != ClassKind.INTERFACE) {
+                return superType
+            }
+        }
+
+        return sortedSuperTypes.firstOrNull() ?: type.builtIns.anyType
     }
 
     fun mapSupertype(type: KotlinType, signatureVisitor: JvmSignatureWriter?): Type {

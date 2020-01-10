@@ -386,7 +386,7 @@ public class PropertyCodegen {
         }
 
         KotlinType kotlinType = isDelegate ? getDelegateTypeForProperty(propertyDescriptor, bindingContext) : propertyDescriptor.getType();
-        Type type = typeMapper.mapType(kotlinType);
+        Type type = typeMapper.mapType(typeMapper.patchAnonymousTypeIfNeeded(kotlinType));
 
         ClassBuilder builder = v;
 

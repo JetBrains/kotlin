@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests
 
+import org.jetbrains.kaptlite.test.AbstractStubGeneratorTest
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
@@ -1221,6 +1222,12 @@ fun main(args: Array<String>) {
 
         testClass<AbstractCompileAgainstJvmAbiTest> {
             model("compile", recursive = false, extension = null)
+        }
+    }
+
+    testGroup("plugins/kapt-lite/kapt-lite-compiler-plugin/test", "plugins/kapt-lite/kapt-lite-compiler-plugin/testData") {
+        testClass<AbstractStubGeneratorTest>() {
+            model("stubs")
         }
     }
 

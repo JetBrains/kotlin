@@ -152,7 +152,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
 
         AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(functionDescriptor, signature.returnType)
 
-        if (state.classBuilderMode == ClassBuilderMode.KAPT3) {
+        if (state.classBuilderMode.generateAnnotationForJvmOverloads) {
             mv.visitAnnotation(ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS, false)
         }
 

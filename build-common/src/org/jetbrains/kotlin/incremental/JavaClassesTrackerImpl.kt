@@ -61,7 +61,12 @@ class JavaClassesTrackerImpl(
         classDescriptors.add(classDescriptor)
     }
 
-    override fun onCompletedAnalysis(module: ModuleDescriptor) {
+    override fun onCompletedAnalysis(module: ModuleDescriptor, discardAnalysisResults: Boolean) {
+        if (discardAnalysisResults) {
+            classDescriptors.clear()
+            return
+        }
+
         for (classId in cache.getObsoleteJavaClasses() + untrackedJavaClasses) {
             // Just force the loading obsolete classes
             // We assume here that whenever an LazyJavaClassDescriptor instances is created

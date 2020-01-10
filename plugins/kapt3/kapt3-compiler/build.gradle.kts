@@ -13,6 +13,9 @@ dependencies {
 
     testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
 
+    compileOnly(project(":kapt-lite:kapt-lite-kdoc"))
+    embedded(project(":kapt-lite:kapt-lite-kdoc")) { isTransitive = false }
+
     Platform[192].orHigher {
         testRuntime(intellijPluginDep("java"))
     }

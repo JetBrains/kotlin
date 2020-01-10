@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 interface JavaClassesTracker {
     fun reportClass(classDescriptor: JavaClassDescriptor)
 
-    fun onCompletedAnalysis(module: ModuleDescriptor)
+    fun onCompletedAnalysis(module: ModuleDescriptor, discardAnalysisResults: Boolean)
 
     object Default : JavaClassesTracker {
         override fun reportClass(classDescriptor: JavaClassDescriptor) {}
-        override fun onCompletedAnalysis(module: ModuleDescriptor) {}
+        override fun onCompletedAnalysis(module: ModuleDescriptor, discardAnalysisResults: Boolean) {}
     }
 }

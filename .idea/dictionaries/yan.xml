@@ -7,13 +7,18 @@
       <w>hacky</w>
       <w>impls</w>
       <w>kapt</w>
+      <w>kaptlite</w>
       <w>kotlinc</w>
       <w>parceler</w>
+      <w>renderable</w>
       <w>repl</w>
+      <w>subplugin</w>
+      <w>testdata</w>
       <w>uast</w>
       <w>unbox</w>
       <w>unboxed</w>
       <w>unmute</w>
+      <w>xplugin</w>
     </words>
   </dictionary>
 </component>

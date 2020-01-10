@@ -23,6 +23,8 @@ public class ClassBuilderMode {
     public final boolean generateMetadata;
     public final boolean generateSourceRetentionAnnotations;
     public final boolean generateMultiFileFacadePartClasses;
+    public final boolean generateAnnotationForJvmOverloads;
+    public final boolean replaceAnonymousTypesInSignatures;
     public final boolean mightBeIncorrectCode;
 
     private ClassBuilderMode(
@@ -30,12 +32,16 @@ public class ClassBuilderMode {
             boolean generateMetadata,
             boolean generateSourceRetentionAnnotations,
             boolean generateMultiFileFacadePartClasses,
+            boolean generateAnnotationForJvmOverloads,
+            boolean replaceAnonymousTypesInSignatures,
             boolean mightBeIncorrectCode
     ) {
         this.generateBodies = generateBodies;
         this.generateMetadata = generateMetadata;
         this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
         this.generateMultiFileFacadePartClasses = generateMultiFileFacadePartClasses;
+        this.generateAnnotationForJvmOverloads = generateAnnotationForJvmOverloads;
+        this.replaceAnonymousTypesInSignatures = replaceAnonymousTypesInSignatures;
         this.mightBeIncorrectCode = mightBeIncorrectCode;
     }
 
@@ -47,6 +53,8 @@ public class ClassBuilderMode {
             /* metadata = */ true,
             /* sourceRetention = */ false,
             /* generateMultiFileFacadePartClasses = */ true,
+            /* generateAnnotationForJvmOverloads = */ false,
+            /* replaceAnonymousTypesInSignatures = */ false,
             /* mightBeIncorrectCode = */ false);
 
     /**
@@ -57,6 +65,8 @@ public class ClassBuilderMode {
             /* metadata = */ true,
             /* sourceRetention = */ false,
             /* generateMultiFileFacadePartClasses = */ true,
+            /* generateAnnotationForJvmOverloads = */ false,
+            /* replaceAnonymousTypesInSignatures = */ false,
             /* mightBeIncorrectCode = */ false);
 
     /**
@@ -67,6 +77,8 @@ public class ClassBuilderMode {
             /* metadata = */ false,
             /* sourceRetention = */ true,
             /* generateMultiFileFacadePartClasses = */ false,
+            /* generateAnnotationForJvmOverloads = */ false,
+            /* replaceAnonymousTypesInSignatures = */ false,
             /* mightBeIncorrectCode = */ true);
 
     /**
@@ -77,6 +89,17 @@ public class ClassBuilderMode {
             /* metadata = */ true,
             /* sourceRetention = */ true,
             /* generateMultiFileFacadePartClasses = */ true,
+            /* generateAnnotationForJvmOverloads = */ true,
+            /* replaceAnonymousTypesInSignatures = */ false,
+            /* mightBeIncorrectCode = */ true);
+
+    public final static ClassBuilderMode KAPT_LITE = new ClassBuilderMode(
+            /* bodies = */ false,
+            /* metadata = */ true,
+            /* sourceRetention = */ true,
+            /* generateMultiFileFacadePartClasses = */ true,
+            /* generateAnnotationForJvmOverloads = */ false,
+            /* replaceAnonymousTypesInSignatures = */ true,
             /* mightBeIncorrectCode = */ true);
 
     private final static ClassBuilderMode LIGHT_ANALYSIS_FOR_TESTS = new ClassBuilderMode(
@@ -84,6 +107,8 @@ public class ClassBuilderMode {
             /* metadata = */ true,
             /* sourceRetention = */ false,
             /* generateMultiFileFacadePartClasses = */ true,
+            /* generateAnnotationForJvmOverloads = */ false,
+            /* replaceAnonymousTypesInSignatures = */ false,
             /* mightBeIncorrectCode = */ true);
 
     @TestOnly

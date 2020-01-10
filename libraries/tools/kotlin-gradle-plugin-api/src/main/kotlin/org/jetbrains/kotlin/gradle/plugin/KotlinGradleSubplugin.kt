@@ -29,17 +29,19 @@ open class SubpluginOption(val key: String, private val lazyValue: Lazy<String>)
 
 class FilesSubpluginOption(
     key: String,
-    val files: Iterable<File>,
+    val files: Lazy<Iterable<File>>,
     val kind: FilesOptionKind = FilesOptionKind.INTERNAL,
-    lazyValue: Lazy<String> = lazy { files.joinToString(File.pathSeparator) { it.canonicalPath } }
+    lazyValue: Lazy<String> = lazy { files.value.joinToString(File.pathSeparator) { it.canonicalPath } }
 ) : SubpluginOption(key, lazyValue) {
+
+    constructor(key: String, files: Iterable<File>) : this(key, lazyOf(files))
 
     constructor(
         key: String,
         files: List<File>,
         kind: FilesOptionKind = FilesOptionKind.INTERNAL,
         value: String? = null
-    ) : this(key, files, kind, lazy { value ?: files.joinToString(File.pathSeparator) { it.canonicalPath } })
+    ) : this(key, lazyOf(files), kind, lazy { value ?: files.joinToString(File.pathSeparator) { it.canonicalPath } })
 }
 
 class CompositeSubpluginOption(

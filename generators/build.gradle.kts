@@ -25,6 +25,7 @@ dependencies {
     compile(projectTests(":plugins:android-extensions-ide"))
     compile(projectTests(":kotlin-annotation-processing"))
     compile(projectTests(":kotlin-annotation-processing-cli"))
+    compile(projectTests(":kapt-lite:kapt-lite-compiler-plugin"))
     compile(projectTests(":kotlin-allopen-compiler-plugin"))
     compile(projectTests(":kotlin-noarg-compiler-plugin"))
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))

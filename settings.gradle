@@ -189,6 +189,11 @@ include ":kotlin-build-common",
         ":kotlin-annotation-processing-runtime",
         ":kotlin-annotation-processing-gradle",
         ":kotlin-annotation-processing-embeddable",
+        ":kapt-lite:kapt-lite-signature-parser",
+        ":kapt-lite:kapt-lite-kdoc",
+        ":kapt-lite:kapt-lite-compiler-plugin",
+        ":kapt-lite:kapt-lite-compiler-plugin-embeddable",
+        ":kapt-lite:kapt-lite-javac-plugin",
         ":kotlin-daemon-embeddable",
         ":examples:kotlin-jsr223-local-example",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
@@ -370,6 +375,11 @@ project(':examples:annotation-processor-example').projectDir = "$rootDir/librari
 project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
 project(':kotlin-annotation-processing-gradle').projectDir = "$rootDir/libraries/tools/kotlin-annotation-processing" as File
 project(':kotlin-annotation-processing-embeddable').projectDir = "$rootDir/prepare/kotlin-annotation-processing-embeddable" as File
+project(':kapt-lite:kapt-lite-signature-parser').projectDir = "$rootDir/plugins/kapt-lite/kapt-lite-signature-parser" as File
+project(':kapt-lite:kapt-lite-kdoc').projectDir = "$rootDir/plugins/kapt-lite/kapt-lite-kdoc" as File
+project(':kapt-lite:kapt-lite-compiler-plugin').projectDir = "$rootDir/plugins/kapt-lite/kapt-lite-compiler-plugin" as File
+project(':kapt-lite:kapt-lite-compiler-plugin-embeddable').projectDir = "$rootDir/prepare/kapt-lite-compiler-plugin-embeddable" as File
+project(':kapt-lite:kapt-lite-javac-plugin').projectDir = "$rootDir/plugins/kapt-lite/kapt-lite-javac-plugin" as File
 project(':kotlin-daemon-embeddable').projectDir = "$rootDir/prepare/kotlin-daemon-embeddable" as File
 project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3/kapt3-compiler" as File
 project(':kotlin-annotation-processing-cli').projectDir = "$rootDir/plugins/kapt3/kapt3-cli" as File
