@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.ProjectTopics;
@@ -541,16 +541,20 @@ public final class DaemonListeners implements Disposable {
     }
   }
 
-  private class MyAnActionListener implements AnActionListener {
-    private final AnAction escapeAction;
-
-    private MyAnActionListener() {
-      escapeAction = ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_ESCAPE);
-    }
+  private final class MyAnActionListener implements AnActionListener {
+    private AnAction cachedEscapeAction;
 
     @Override
     public void beforeActionPerformed(@NotNull AnAction action, @NotNull DataContext dataContext, @NotNull AnActionEvent event) {
-      myEscPressed = action == escapeAction;
+      if (cachedEscapeAction == null) {
+        myEscPressed = IdeActions.ACTION_EDITOR_ESCAPE.equals(event.getActionManager().getId(action));
+        if (myEscPressed) {
+          cachedEscapeAction = action;
+        }
+      }
+      else {
+        myEscPressed = cachedEscapeAction == action;
+      }
     }
 
     @Override
