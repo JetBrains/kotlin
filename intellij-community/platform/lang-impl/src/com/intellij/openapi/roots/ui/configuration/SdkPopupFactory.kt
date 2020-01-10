@@ -2,17 +2,24 @@
 package com.intellij.openapi.roots.ui.configuration
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.popup.JBPopupListener
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
 import com.intellij.ui.AnActionButton.AnActionEventWrapper
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.popup.list.ComboBoxPopup
-import com.intellij.util.containers.stream
 import org.jetbrains.annotations.Contract
 import java.awt.Component
 import java.awt.Point
@@ -51,6 +58,7 @@ interface SdkPopup {
   fun showInFocusCenter()
   fun showPopup(e: AnActionEvent)
   fun showUnderneathToTheRightOf(component: Component)
+  fun showInBestPositionFor(editor: Editor)
 }
 
 @Suppress("DataClassPrivateConstructor")
@@ -63,6 +71,10 @@ data class SdkPopupBuilder private constructor(
   val sdkTypeCreateFilter: Condition<SdkTypeId>? = null,
   val sdkFilter: Condition<Sdk>? = null,
 
+  val registerNewSdk : Boolean = false,
+  val updateProjectSdk : Boolean = false,
+  val updateSdkForFile: VirtualFile? = null,
+
   val onItemSelected: Consumer<SdkListItem>? = null,
   val onClosed: Runnable? = null
 ) : SdkPopup {
@@ -70,6 +82,36 @@ data class SdkPopupBuilder private constructor(
   companion object {
     internal fun newBuilder() = SdkPopupBuilder()
   }
+
+  /**
+   * Adds the newly created SDK into the [ProjectJdkTable] automatically.
+   * In some cases it is not needed, this feature is disabled by default
+   */
+  @Contract(pure = true)
+  fun registerNewSdk() = copy(registerNewSdk = true)
+
+  /**
+   * Registers the selected SDK as project SDK.
+   */
+  @Contract(pure = true)
+  fun updateProjectSdkFromSelection() = copy(updateProjectSdk = true)
+
+  /**
+   * Sets a custom module SDK to the selected SDK if there is module and the module uses custom SDK,
+   * sets the project SDK otherwise.
+   */
+  @Contract(pure = true)
+  fun updateSdkForFile(file: PsiFile): SdkPopupBuilder {
+    val virtualFile = file.virtualFile
+    return copy(updateSdkForFile = virtualFile, updateProjectSdk = virtualFile == null)
+  }
+
+  /**
+   * Sets a custom module SDK to the selected SDK if there is module and the module uses custom SDK,
+   * sets the project SDK otherwise.
+   */
+  @Contract(pure = true)
+  fun updateSdkForFile(file: VirtualFile) = copy(updateSdkForFile = file)
 
   @Contract(pure = true)
   fun withProject(project: Project?) = copy(project = project)
@@ -124,9 +166,9 @@ data class SdkPopupBuilder private constructor(
     }
 
     val modelBuilder = if (sdkListModelBuilder != null) {
-      require(sdkTypeFilter == null) { "sdkListModelBuilder was set explicitly via " + this::withSdkListModelBuilder.name }
-      require(sdkTypeCreateFilter == null) { "sdkListModelBuilder was set explicitly via " + this::withSdkListModelBuilder.name }
-      require(sdkFilter == null) { "sdkListModelBuilder was set explicitly via " + this::withSdkListModelBuilder.name }
+      require(sdkTypeFilter == null) { "sdkListModelBuilder was set explicitly via " + ::withSdkListModelBuilder.name }
+      require(sdkTypeCreateFilter == null) { "sdkListModelBuilder was set explicitly via " + ::withSdkListModelBuilder.name }
+      require(sdkFilter == null) { "sdkListModelBuilder was set explicitly via " + ::withSdkListModelBuilder.name }
       sdkListModelBuilder
     }
     else {
@@ -139,8 +181,50 @@ data class SdkPopupBuilder private constructor(
       )
     }
 
+    if (updateProjectSdk && project == null) {
+      require(false) { "Cannot update project SDK when project was not set" }
+    }
+
     val popupListener = object : SdkPopupListener {
-      override fun onNewItemAdded(item: SdkListItem) {
+      override fun onNewItemAddedAndSelected(item: SdkListItem) {
+        if ((updateSdkForFile != null || registerNewSdk || updateProjectSdk) && item is SdkListItem.SdkItem) {
+          val sdk = item.sdk
+          runWriteAction {
+            val jdkTable = ProjectJdkTable.getInstance()
+            if (jdkTable.findJdk(sdk.name) == null) {
+              jdkTable.addJdk(sdk)
+            }
+
+            fun setProjectSdk() {
+              requireNotNull(project) { "project must be set to use " + ::updateProjectSdkFromSelection.name }
+              ProjectRootManager.getInstance(project).projectSdk = sdk
+            }
+
+            if (updateProjectSdk) {
+              setProjectSdk()
+            }
+
+            if (updateSdkForFile != null) {
+              requireNotNull(project) { "project must be set to use " + ::updateProjectSdkFromSelection.name }
+
+              val module = ModuleUtilCore.findModuleForFile(updateSdkForFile, project)
+              if (module != null) {
+                val moduleManager = ModuleRootManager.getInstance(module)
+                if (moduleManager.isSdkInherited) {
+                  if (!updateProjectSdk) {
+                    setProjectSdk()
+                  }
+                } else {
+                  moduleManager.modifiableModel.also {
+                    it.sdk = sdk
+                    it.commit()
+                  }
+                }
+              }
+            }
+          }
+        }
+
         onItemSelected?.accept(item)
       }
 
@@ -156,6 +240,7 @@ data class SdkPopupBuilder private constructor(
     return createSdkPopup(project, sdksModel, ownsModel, modelBuilder, popupListener)
   }
 
+  override fun showInBestPositionFor(editor: Editor) = build().showInBestPositionFor(editor)
   override fun showInFocusCenter() = build().showInFocusCenter()
   override fun showPopup(e: AnActionEvent) = build().showPopup(e)
   override fun showUnderneathToTheRightOf(component: Component) = build().showUnderneathToTheRightOf(component)
@@ -169,7 +254,7 @@ private interface SdkPopupListener {
    * Executed when a new item was created via a user action
    * and added to the model, called after model is refreshed
    */
-  fun onNewItemAdded(item: SdkListItem)
+  fun onNewItemAddedAndSelected(item: SdkListItem)
 
   /**
    * Executed when an existing selectable item was selected
@@ -191,7 +276,7 @@ private fun createSdkPopup(
 
   val onItemSelected = Consumer<SdkListItem> { value ->
     myModelBuilder.processSelectedElement(popup.popupOwner, value,
-                                          listener::onNewItemAdded,
+                                          listener::onNewItemAddedAndSelected,
                                           listener::onExistingItemSelected
     )
   }
