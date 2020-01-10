@@ -5,66 +5,43 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-sealed class CallKind {
-    abstract val resolutionSequence: List<ResolutionStage>
+enum class CallKind(vararg resolutionSequence: ResolutionStage) {
+    VariableAccess(
+        CheckVisibility,
+        DiscriminateSynthetics,
+        CheckExplicitReceiverConsistency,
+        CreateFreshTypeVariableSubstitutorStage,
+        CheckReceivers.Dispatch,
+        CheckReceivers.Extension
+    ),
+    SyntheticSelect(
+        MapArguments,
+        CreateFreshTypeVariableSubstitutorStage,
+        CheckArguments
+    ),
+    Function(
+        CheckVisibility,
+        DiscriminateSynthetics,
+        MapArguments,
+        CheckExplicitReceiverConsistency,
+        CreateFreshTypeVariableSubstitutorStage,
+        CheckReceivers.Dispatch,
+        CheckReceivers.Extension,
+        CheckArguments,
+        EagerResolveOfCallableReferences
+    ),
+    CallableReference(
+        CheckVisibility,
+        DiscriminateSynthetics,
+        CreateFreshTypeVariableSubstitutorStage,
+        CheckCallableReferenceExpectedType
+    ),
+    SyntheticIdForCallableReferencesResolution(
+        MapArguments,
+        CreateFreshTypeVariableSubstitutorStage,
+        CheckArguments,
+        EagerResolveOfCallableReferences
+    );
 
-    /*
-     * Used for resolution of synthetic calls for `when` and `try` expression
-     *   that are equal to `fun <K> select(vararg values: K): K`
-     */
-    object SyntheticSelect : CallKind() {
-        override val resolutionSequence: List<ResolutionStage> = listOf(
-            MapArguments,
-            CreateFreshTypeVariableSubstitutorStage,
-            CheckArguments
-        )
-    }
-
-    /*
-     * Used for resolution of synthetic calls for resolving callable references
-     * beyond any calls like `val x = ::foo` (they're transformed to `val x = id(::foo)`)
-     * It's needed to avoid having different callable references resolution parts within calls and beyond them
-     */
-    object SyntheticIdForCallableReferencesResolution : CallKind() {
-        override val resolutionSequence: List<ResolutionStage> = listOf(
-            MapArguments,
-            CreateFreshTypeVariableSubstitutorStage,
-            CheckArguments,
-            EagerResolveOfCallableReferences
-        )
-    }
-
-    object Function : CallKind() {
-        override val resolutionSequence: List<ResolutionStage> = listOf(
-            CheckVisibility,
-            DiscriminateSynthetics,
-            MapArguments,
-            CheckExplicitReceiverConsistency,
-            CreateFreshTypeVariableSubstitutorStage,
-            CheckReceivers.Dispatch,
-            CheckReceivers.Extension,
-            CheckArguments,
-            EagerResolveOfCallableReferences
-        )
-    }
-
-    object VariableAccess : CallKind() {
-        override val resolutionSequence: List<ResolutionStage> = listOf(
-            CheckVisibility,
-            DiscriminateSynthetics,
-            CheckExplicitReceiverConsistency,
-            CreateFreshTypeVariableSubstitutorStage,
-            CheckReceivers.Dispatch,
-            CheckReceivers.Extension
-        )
-    }
-
-    object CallableReference : CallKind() {
-        override val resolutionSequence: List<ResolutionStage> = listOf(
-            CheckVisibility,
-            DiscriminateSynthetics,
-            CreateFreshTypeVariableSubstitutorStage,
-            CheckCallableReferenceExpectedType
-        )
-    }
+    val resolutionSequence: List<ResolutionStage> = resolutionSequence.toList()
 }
