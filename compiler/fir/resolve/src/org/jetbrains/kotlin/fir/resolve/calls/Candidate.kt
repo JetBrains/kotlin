@@ -43,6 +43,12 @@ class CallInfo(
 ) {
     val argumentCount get() = arguments.size
 
+    fun replaceWithVariableAccess(): CallInfo =
+        CallInfo(
+            CallKind.VariableAccess, explicitReceiver, emptyList(),
+            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs
+        )
+
     fun replaceExplicitReceiver(explicitReceiver: FirExpression): CallInfo =
         CallInfo(
             callKind, explicitReceiver, arguments,

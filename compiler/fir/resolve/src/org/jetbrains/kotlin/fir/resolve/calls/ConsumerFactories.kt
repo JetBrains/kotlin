@@ -63,19 +63,7 @@ fun createFunctionConsumer(
     resultCollector: CandidateCollector,
     towerResolver: FirTowerResolver
 ): TowerDataConsumer {
-    val varCallInfo = CallInfo(
-        CallKind.VariableAccess,
-        callInfo.explicitReceiver,
-        emptyList(),
-        callInfo.isSafeCall,
-        callInfo.typeArguments,
-        bodyResolveComponents.session,
-        callInfo.containingFile,
-        callInfo.implicitReceiverStack,
-        callInfo.expectedType,
-        callInfo.outerCSBuilder,
-        callInfo.lhs
-    )
+    val varCallInfo = callInfo.replaceWithVariableAccess()
     return PrioritizedTowerDataConsumer(
         resultCollector,
         createSimpleConsumer(
