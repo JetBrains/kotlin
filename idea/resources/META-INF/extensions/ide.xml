@@ -92,6 +92,9 @@
         <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
                                      implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
 
+        <scriptDefinitionsProvider id="MainKtsScriptDefinitionSource"
+                                   implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
+
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
