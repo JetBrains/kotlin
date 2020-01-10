@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection;
 
 import com.google.common.collect.Lists;
@@ -6,7 +6,6 @@ import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInspection.ex.*;
 import com.intellij.codeInspection.reference.RefElement;
-import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.conversion.ConversionListener;
 import com.intellij.conversion.ConversionService;
 import com.intellij.diff.tools.util.text.LineOffsetsUtil;
@@ -70,16 +69,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
-/**
- * @author max
- */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class InspectionApplication implements CommandLineInspectionProgressReporter {
-  private static final Logger LOG = Logger.getInstance(InspectionApplication.class);
+public final class InspectionApplication implements CommandLineInspectionProgressReporter {
+  static final Logger LOG = Logger.getInstance(InspectionApplication.class);
 
   public InspectionToolCmdlineOptionHelpProvider myHelpProvider;
   public String myProjectPath;
@@ -115,8 +110,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       reportError("Profile to inspect with is not defined");
       printHelp();
     }
-    IdeaForkJoinWorkerThreadFactory.setupForkJoinCommonPool(true);
-    LOG.info("CPU cores: " + Runtime.getRuntime().availableProcessors() + "; ForkJoinPool.commonPool: " + ForkJoinPool.commonPool() + "; factory: " + ForkJoinPool.commonPool().getFactory());
+
     ApplicationManagerEx.getApplicationEx().setSaveAllowed(false);
     try {
       execute();

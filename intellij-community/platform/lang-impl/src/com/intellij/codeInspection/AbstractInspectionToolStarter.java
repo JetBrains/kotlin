@@ -1,6 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection;
 
+import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.application.ApplicationStarter;
 import com.intellij.util.ArrayUtilRt;
@@ -8,10 +9,8 @@ import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
-/**
- * @author Roman.Chernyatchik
- */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public abstract class AbstractInspectionToolStarter implements ApplicationStarter {
   protected InspectionApplication myApplication;
@@ -70,11 +69,15 @@ public abstract class AbstractInspectionToolStarter implements ApplicationStarte
   @Override
   public void main(@NotNull String[] args) {
     myOptions.beforeStartup();
+
+    IdeaForkJoinWorkerThreadFactory.setupForkJoinCommonPool(true);
+    InspectionApplication.LOG.info("CPU cores: " + Runtime.getRuntime().availableProcessors() + "; ForkJoinPool.commonPool: " + ForkJoinPool.commonPool() + "; factory: " + ForkJoinPool.commonPool().getFactory());
+
     myApplication.startup();
   }
 
-  private static void initApplication(@NotNull final InspectionApplication application,
-                                      @NotNull final InspectionToolCmdlineOptions opts) {
+  private static void initApplication(@NotNull InspectionApplication application,
+                                      @NotNull InspectionToolCmdlineOptions opts) {
     opts.initApplication(application);
   }
 
