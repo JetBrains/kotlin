@@ -110,6 +110,7 @@ public class ProjectSettingsService {
   public void showModuleConfigurationDialog(@Nullable String moduleToSelect, @Nullable String editorNameToSelect) {
   }
 
+  @Nullable
   public Sdk chooseAndSetSdk() {
     return null;
   }
