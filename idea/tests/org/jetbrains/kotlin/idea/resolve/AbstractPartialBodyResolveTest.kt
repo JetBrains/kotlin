@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.getDataFlowAwareTypes
+import org.jetbrains.kotlin.idea.util.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
@@ -151,7 +151,11 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
         }
 
         val nonDataFlowAwareType = bindingContext.getType(expressionWithType)
-        val type = getDataFlowAwareTypes(expressionWithType, bindingContext, nonDataFlowAwareType).singleOrNull() ?: nonDataFlowAwareType
+        val type = getDataFlowAwareTypes(
+            expressionWithType,
+            bindingContext,
+            nonDataFlowAwareType
+        ).singleOrNull() ?: nonDataFlowAwareType
 
         return ResolveData(target, type, processedStatements)
     }
