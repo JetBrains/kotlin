@@ -418,8 +418,8 @@ inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
 }
 
-inline fun KtClassOrObject.safeIsLocal(): Boolean = runReadAction { this.isLocal }
+fun KtClassOrObject.safeIsLocal(): Boolean = runReadAction { this.isLocal }
 
-inline fun KtFile.safeIsScript() = runReadAction { this.isScript() }
+fun KtFile.safeIsScript() = runReadAction { this.isScript() }
 
-inline fun KtFile.safeScript() = runReadAction { this.script }
+fun KtFile.safeScript() = runReadAction { this.script }
