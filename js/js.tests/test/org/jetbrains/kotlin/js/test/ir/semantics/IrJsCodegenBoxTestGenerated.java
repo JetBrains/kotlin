@@ -11593,6 +11593,39 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/ir/primitiveNumberComparisons/mixedNumberTypes.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SerializationRegressions extends AbstractIrJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSerializationRegressions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/serializationRegressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("dispatchReceiverValue.kt")
+            public void testDispatchReceiverValue() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/dispatchReceiverValue.kt");
+            }
+
+            @TestMetadata("genericProperty.kt")
+            public void testGenericProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/genericProperty.kt");
+            }
+
+            @TestMetadata("innerClassInEnumEntryClass.kt")
+            public void testInnerClassInEnumEntryClass() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/innerClassInEnumEntryClass.kt");
+            }
+
+            @TestMetadata("useImportedMember.kt")
+            public void testUseImportedMember() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/useImportedMember.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/javaInterop")
