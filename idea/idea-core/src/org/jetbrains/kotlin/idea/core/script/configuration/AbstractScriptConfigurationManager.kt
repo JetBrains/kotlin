@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -268,16 +268,10 @@ internal abstract class AbstractScriptConfigurationManager(
                 val value2 = _classpathRoots
                 if (value2 != null) return value2
 
-                val value3 = newClassRootsCache()
+                val value3 = ScriptClassRootsCache(project, cache.allApplied())
                 _classpathRoots = value3
                 return value3
             }
-        }
-
-    private fun newClassRootsCache() =
-        object : ScriptClassRootsCache(project, cache.allApplied()) {
-            override fun getConfiguration(file: VirtualFile) =
-                this@AbstractScriptConfigurationManager.getConfiguration(file)
         }
 
     private fun clearClassRootsCaches() {
@@ -297,12 +291,25 @@ internal abstract class AbstractScriptConfigurationManager(
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
     }
 
-    override fun getScriptSdk(file: VirtualFile): Sdk? = classpathRoots.getScriptSdk(file)
+    /**
+     * Returns script classpath roots
+     * Loads script configuration if classpath roots don't contain [file] yet
+     */
+    private fun getActualClasspathRoots(file: VirtualFile): ScriptClassRootsCache {
+        if (classpathRoots.contains(file)) {
+            return classpathRoots
+        }
+
+        getConfiguration(file)
+        return classpathRoots
+    }
+
+    override fun getScriptSdk(file: VirtualFile): Sdk? = getActualClasspathRoots(file).getScriptSdk(file)
 
     override fun getFirstScriptsSdk(): Sdk? = classpathRoots.firstScriptSdk
 
     override fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
-        classpathRoots.getScriptDependenciesClassFilesScope(file)
+        getActualClasspathRoots(file).getScriptDependenciesClassFilesScope(file)
 
     override fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope = classpathRoots.allDependenciesClassFilesScope
 
