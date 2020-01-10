@@ -50,11 +50,23 @@ def evaluate(expr):
     exelog(evallog)
     return result
 
+def _symbol_loaded_address(name, debugger = lldb.debugger):
+    target = debugger.GetSelectedTarget()
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+    frame = thread.GetSelectedFrame()
+    candidates = list(filter(lambda x: x.name == name, frame.module.symbols))
+    # take first
+    for candidate in candidates:
+        address = candidate.GetStartAddress().GetLoadAddress(target)
+        log(lambda: "{} {:#x}".format(name, address))
+        return address
+
 def is_instance_of(addr, typeinfo):
     return evaluate("(bool)IsInstance({}, {})".format(addr, typeinfo)).GetValue() == "true"
 
 def is_string_or_array(value):
-    return evaluate("(bool)IsInstance({0}, theStringTypeInfo) ? 1 : ((int)Konan_DebugIsArray({0}) ? 2 : 0)".format(lldb_val_to_ptr(value))).unsigned
+    return evaluate("(bool)IsInstance({0}, {1}) ? 1 : ((int)Konan_DebugIsArray({0}) ? 2 : 0)".format(lldb_val_to_ptr(value), _symbol_loaded_address('ktype:kotlin.String'))).unsigned
 
 def type_info(value):
     """This method checks self-referencing of pointer of first member of TypeInfo including case when object has an
@@ -348,9 +360,11 @@ class KonanProxyTypeProvider:
     def __init__(self, valobj, internal_dict):
         log(lambda : "proxy: {:#x}".format(valobj.unsigned))
         tip = type_info(valobj)
+        log(lambda : "KonanProxyTypeProvider: tip: {:#x}".format(tip))
         if not tip:
             return
         self._proxy = select_provider(valobj, tip, internal_dict)
+        log(lambda: "KonanProxyTypeProvider: _proxy: {}".format(self._proxy.__class__.__name__))
         self.update()
 
     def __getattr__(self, item):
