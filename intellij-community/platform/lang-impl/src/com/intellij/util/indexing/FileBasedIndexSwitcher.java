@@ -26,7 +26,6 @@ public class FileBasedIndexSwitcher {
         myFileBasedIndex.performShutdown(true);
         myFileBasedIndex.dropRegisteredIndexes();
         IndexingStamp.flushCaches();
-        ID.clearIdRegistry();
     }
 
     public void turnOn() {
