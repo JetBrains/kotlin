@@ -1025,6 +1025,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/newJ2k/comments"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
         }
 
+        @TestMetadata("beginningOfCommentInsideMultilineOne.java")
+        public void testBeginningOfCommentInsideMultilineOne() throws Exception {
+            runTest("nj2k/testData/newJ2k/comments/beginningOfCommentInsideMultilineOne.java");
+        }
+
         @TestMetadata("commentInsideCall.java")
         public void testCommentInsideCall() throws Exception {
             runTest("nj2k/testData/newJ2k/comments/commentInsideCall.java");
