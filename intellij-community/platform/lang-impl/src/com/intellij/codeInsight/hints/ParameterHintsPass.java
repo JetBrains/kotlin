@@ -14,7 +14,6 @@ import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.SyntaxTraverser;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +28,6 @@ import static com.intellij.codeInsight.hints.ParameterHintsPassFactory.putCurren
 public class ParameterHintsPass extends EditorBoundHighlightingPass {
   private final TIntObjectHashMap<List<HintData>> myHints = new TIntObjectHashMap<>();
   private final TIntObjectHashMap<String> myShowOnlyIfExistedBeforeHints = new TIntObjectHashMap<>();
-  private final SyntaxTraverser<PsiElement> myTraverser;
   private final PsiElement myRootElement;
   private final HintInfoFilter myHintInfoFilter;
   private final boolean myForceImmediateUpdate;
@@ -52,7 +50,6 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
                             boolean forceImmediateUpdate) {
     super(editor, element.getContainingFile(), true);
     myRootElement = element;
-    myTraverser = SyntaxTraverser.psiTraverser(element);
     myHintInfoFilter = hintsFilter;
     myForceImmediateUpdate = forceImmediateUpdate;
   }
@@ -67,7 +64,7 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
     if (provider == null || !provider.canShowHintsWhenDisabled() && !isEnabled(language) || DiffUtil.isDiffEditor(myEditor)) return;
     if (!HighlightingLevelManager.getInstance(myFile.getProject()).shouldHighlight(myFile)) return;
 
-    myTraverser.forEach(element -> process(element, provider));
+    provider.createTraversal(myRootElement).forEach(element -> process(element, provider));
   }
 
   private static boolean isEnabled(Language language) {
