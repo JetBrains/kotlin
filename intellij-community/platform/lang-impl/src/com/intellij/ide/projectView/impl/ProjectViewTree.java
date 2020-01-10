@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView.impl;
 
@@ -42,7 +42,7 @@ public class ProjectViewTree extends DnDAwareTree {
 
   public ProjectViewTree(TreeModel model) {
     super((TreeModel)null);
-    setLargeModel(true);
+    setLargeModel(Registry.is("ide.project.view.large.model"));
     setModel(model);
     setCellRenderer(createCellRenderer());
     HintUpdateSupply.installDataContextHintUpdateSupply(this);
