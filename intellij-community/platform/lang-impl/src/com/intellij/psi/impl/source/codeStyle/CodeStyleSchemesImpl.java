@@ -66,14 +66,20 @@ public abstract class CodeStyleSchemesImpl extends CodeStyleSchemes {
         public void extensionAdded(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
           //noinspection deprecation
           ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
-                                       instance -> instance.registerLanguageSettings(getAllSettings(), extension));
+                                       manager -> {
+                                         manager.registerLanguageSettings(getAllSettings(), extension);
+                                         manager.registerCustomSettings(getAllSettings(), extension);
+                                       });
         }
 
         @Override
         public void extensionRemoved(@NotNull LanguageCodeStyleSettingsProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
           //noinspection deprecation
           ObjectUtils.consumeIfNotNull(CodeStyleSettingsManager.getInstance(),
-                                       instance -> instance.unregisterLanguageSettings(getAllSettings(), extension));
+                                       manager -> {
+                                         manager.unregisterLanguageSettings(getAllSettings(), extension);
+                                         manager.unregisterCustomSettings(getAllSettings(), extension);
+                                       });
         }
       }, ApplicationManager.getApplication()
     );
