@@ -1,0 +1,68 @@
+{
+  "3": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A labeled continue expression, denoted continue@Loop, where Loop is a label of a labeled loop statement L, which continue-jumps to the loop L.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A labeled continue expression, denoted continue@Loop, where Loop is a label of a labeled loop statement L, which continue-jumps to the loop L.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A simple continue expression, specified using the continue keyword, which continue-jumps to the innermost loop statement in the current scope",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A simple continue expression, specified using the continue keyword, which continue-jumps to the innermost loop statement in the current scope",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A labeled continue expression, denoted continue@Loop, where Loop is a label of a labeled loop statement L, which continue-jumps to the loop L.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A simple continue expression, specified using the continue keyword, which continue-jumps to the innermost loop statement in the current scope",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A labeled continue expression, denoted continue@Loop, where Loop is a label of a labeled loop statement L, which continue-jumps to the loop L.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/2.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 0,
+          "description": "A simple continue expression, specified using the continue keyword, which continue-jumps to the innermost loop statement in the current scope",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

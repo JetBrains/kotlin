@@ -1,0 +1,42 @@
+{
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 1,
+          "description": "An operator assignment A+\u003dB",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 1,
+          "description": "An operator assignment A+\u003dB",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 1,
+          "description": "An operator assignment A+\u003dB",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 1,
+          "description": "An operator assignment A+\u003dB",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

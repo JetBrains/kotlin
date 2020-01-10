@@ -1,0 +1,15 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 4,
+          "description": "Both left-hand and right-hand sides of an assignment must be expressions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
