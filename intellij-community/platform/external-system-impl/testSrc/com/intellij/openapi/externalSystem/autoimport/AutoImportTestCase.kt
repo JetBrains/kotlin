@@ -13,6 +13,7 @@ import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsBundle
 import com.intellij.openapi.vfs.VfsUtil
@@ -225,13 +226,9 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   }
 
   private fun <S : Any, R> ComponentManager.replaceService(aClass: Class<S>, service: S, action: () -> R): R {
-    val temporaryDisposable = Disposer.newDisposable()
-    try {
-      replaceService(aClass, service, temporaryDisposable)
+    Disposer.newDisposable().use {
+      replaceService(aClass, service, it)
       return action()
-    }
-    finally {
-      Disposer.dispose(temporaryDisposable)
     }
   }
 

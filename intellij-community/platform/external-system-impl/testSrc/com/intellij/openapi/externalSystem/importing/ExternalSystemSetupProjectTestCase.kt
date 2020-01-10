@@ -17,6 +17,7 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.testFramework.TestActionEvent
@@ -96,8 +97,7 @@ interface ExternalSystemSetupProjectTestCase {
   private fun <R> withSelectedFileIfNeeded(selectedFile: VirtualFile?, action: () -> R): R {
     if (selectedFile == null) return action()
 
-    val temporaryDisposable = Disposer.newDisposable()
-    try {
+    Disposer.newDisposable().use {
       ApplicationManager.getApplication().replaceService(FileChooserFactory::class.java, object : FileChooserFactoryImpl() {
         override fun createFileChooser(descriptor: FileChooserDescriptor, project: Project?, parent: Component?): FileChooserDialog {
           return object : FileChooserDialog {
@@ -110,11 +110,8 @@ interface ExternalSystemSetupProjectTestCase {
             }
           }
         }
-      }, temporaryDisposable)
+      }, it)
       return action()
-    }
-    finally {
-      Disposer.dispose(temporaryDisposable)
     }
   }
 

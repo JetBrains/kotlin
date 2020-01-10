@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.ui.AppUIUtil
 import com.intellij.util.ArrayUtilRt
@@ -237,9 +238,8 @@ abstract class ComponentStoreImpl : IComponentStore {
     val saveManager = createSaveSessionProducerManager()
     commitComponent(saveManager, ComponentInfoImpl(component, stateSpec), null)
     val absolutePath = Paths.get(storageManager.expandMacros(findNonDeprecated(getStorageSpecs(component, stateSpec, StateStorageOperation.WRITE)).path)).toAbsolutePath().toString()
-    val newDisposable = Disposer.newDisposable()
-    try {
-      VfsRootAccess.allowRootAccess(newDisposable, absolutePath)
+    Disposer.newDisposable().use {
+      VfsRootAccess.allowRootAccess(it, absolutePath)
       runBlocking {
         val saveResult = saveManager.save()
         saveResult.throwIfErrored()
@@ -248,9 +248,6 @@ abstract class ComponentStoreImpl : IComponentStore {
           LOG.info("saveApplicationComponent is called for ${stateSpec.name} but nothing to save")
         }
       }
-    }
-    finally {
-      Disposer.dispose(newDisposable)
     }
   }
 

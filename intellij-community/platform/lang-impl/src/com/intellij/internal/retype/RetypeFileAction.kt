@@ -18,8 +18,8 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import java.util.*
@@ -143,15 +143,11 @@ private class RetypeQueue(private val project: Project,
   private fun selectFragmentToRetype(editor: Editor) {
     if (editor.document.textLength < 2000) return  // file is small, retype it all
     val fileEditor = FileEditorManager.getInstance(project).selectedEditor ?: return
-    val structureView = fileEditor.structureViewBuilder?.createStructureView(fileEditor, project) ?: return
-    try {
-      val root = structureView.treeModel.root as? PsiTreeElementBase<*> ?: return
+    fileEditor.structureViewBuilder?.createStructureView(fileEditor, project)?.use {
+      val root = it.treeModel.root as? PsiTreeElementBase<*> ?: return
       val range = findRangeOfSuitableElement(root) ?: return
       editor.selectionModel.setSelection(range.startOffset, range.endOffset)
       editor.caretModel.moveToOffset(range.startOffset)
-    }
-    finally {
-      Disposer.dispose(structureView)
     }
   }
 
