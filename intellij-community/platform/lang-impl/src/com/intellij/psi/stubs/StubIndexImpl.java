@@ -9,6 +9,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
@@ -82,6 +84,15 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   private volatile boolean myInitialized;
 
   private StubIndexState myPreviouslyRegistered;
+
+  public StubIndexImpl() {
+    StubIndexExtension.EP_NAME.addExtensionPointListener(new ExtensionPointListener<StubIndexExtension<?, ?>>() {
+      @Override
+      public void extensionRemoved(@NotNull StubIndexExtension<?, ?> extension, @NotNull PluginDescriptor pluginDescriptor) {
+        ID.unloadId(extension.getKey());
+      }
+    }, ApplicationManager.getApplication());
+  }
 
   @Nullable
   static StubIndexImpl getInstanceOrInvalidate() {
