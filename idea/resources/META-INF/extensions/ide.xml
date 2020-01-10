@@ -120,6 +120,10 @@
                      description="Use IDEA project import mechanics to load Kotlin Gradle scripts configuration"
                      defaultValue="false"
                      restartRequired="false"/>
+        <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
+                     description="Allow a trailing comma regardless of plugin version"
+                     defaultValue="false"
+                     restartRequired="false"/>
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
         <registryKey key="kotlin.experimental.project.wizard"
