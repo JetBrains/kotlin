@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.DataManager;
@@ -9,13 +9,14 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.IdeRootPaneNorthExtension;
 import com.intellij.openapi.wm.ex.IdeFrameEx;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.*;
 import com.intellij.util.Consumer;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +63,13 @@ final class SelectInNavBarTarget extends SelectInTargetPsiWrapper implements Dum
           if (navBarExt != null) {
             final JComponent c = navBarExt.getComponent();
             final NavBarPanel panel = (NavBarPanel)c.getClientProperty("NavBarPanel");
-            panel.rebuildAndSelectTail(true);
+            panel.rebuildAndSelectItem((list) -> {
+              if (Registry.is("navBar.show.members")) {
+                int lastDirectory = ContainerUtil.lastIndexOf(list, (item) -> item.getObject() instanceof PsiDirectory || item.getObject() instanceof PsiDirectoryContainer);
+                if (lastDirectory >= 0 && lastDirectory < list.size() - 1) return lastDirectory;
+              }
+              return list.size() - 1;
+            });
           }
         }
       });
