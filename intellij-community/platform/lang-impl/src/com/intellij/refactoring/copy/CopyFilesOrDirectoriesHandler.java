@@ -7,10 +7,12 @@ import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.util.EditorHelper;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.impl.FileChooserUtil;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.Messages;
@@ -21,19 +23,19 @@ import com.intellij.openapi.vfs.encoding.EncodingRegistry;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import com.intellij.psi.impl.file.PsiDirectoryImpl;
+import com.intellij.psi.impl.file.UpdateAddedFileProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
   private static final Logger LOG = Logger.getInstance(CopyFilesOrDirectoriesHandler.class);
@@ -225,22 +227,11 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
 
     String title = RefactoringBundle.message(doClone ? "copy.handler.clone.files.directories" : "copy.handler.copy.files.directories");
     try {
-      PsiFile firstFile = null;
       final int[] choice = files.length > 1 || files[0].isDirectory() ? new int[]{-1} : null;
-      PsiManager manager = PsiManager.getInstance(project);
-      for (VirtualFile file : files) {
-        PsiElement psiElement = file.isDirectory() ? manager.findDirectory(file) : manager.findFile(file);
-        if (psiElement == null) {
-          LOG.info("invalid file: " + file.getExtension());
-          continue;
-        }
-        PsiFile f = copyToDirectory((PsiFileSystemItem)psiElement, newName, targetDirectory, choice, title);
-        if (firstFile == null) {
-          firstFile = f;
-        }
-      }
+      List<PsiFile> added = copyChildren(targetDirectory, files, newName, title, choice);
 
-      if (firstFile != null && openInEditor) {
+      if (!added.isEmpty() && openInEditor) {
+        PsiFile firstFile = added.get(0);
         CopyHandler.updateSelectionInActiveProjectView(firstFile, project, doClone);
         if (!(firstFile instanceof PsiBinaryFile)) {
           EditorHelper.openInEditor(firstFile);
@@ -251,6 +242,35 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
     catch (final IncorrectOperationException | IOException ex) {
       Messages.showErrorDialog(project, ex.getMessage(), RefactoringBundle.message("error.title"));
     }
+  }
+
+  @NotNull
+  private static List<PsiFile> copyChildren(@NotNull PsiDirectory targetDirectory, 
+                                            @NotNull VirtualFile[] files,
+                                            @Nullable String newName,
+                                            String title,
+                                            int[] choice) throws IOException {
+    Project project = targetDirectory.getProject();
+    List<PsiFile> added = new ArrayList<>();
+    try {
+      targetDirectory.putUserData(PsiDirectoryImpl.UPDATE_ADDED_FILE_KEY, false);
+      PsiManager manager = PsiManager.getInstance(project);
+      for (VirtualFile file : files) {
+        PsiFileSystemItem item = file.isDirectory() ? manager.findDirectory(file) : manager.findFile(file);
+        if (item == null) {
+          LOG.info("invalid file: " + file.getExtension());
+          continue;
+        }
+        ContainerUtil.addIfNotNull(added, copyToDirectory(item, newName, targetDirectory, choice, title));
+      }
+    }
+    finally {
+      targetDirectory.putUserData(PsiDirectoryImpl.UPDATE_ADDED_FILE_KEY, null);
+    }
+
+    DumbService.getInstance(project).completeJustSubmittedTasks();
+    WriteAction.run(() -> UpdateAddedFileProcessor.updateAddedFiles(added.toArray(PsiFile.EMPTY_ARRAY)));
+    return added;
   }
 
   /**
@@ -303,22 +323,10 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
       EncodingRegistry.doActionAndRestoreEncoding(directory.getVirtualFile(),
                                                   (ThrowableComputable<VirtualFile, IOException>)() -> subdirectory.getVirtualFile());
 
-      PsiFile firstFile = null;
-      Project project = directory.getProject();
-      PsiManager manager = PsiManager.getInstance(project);
       VirtualFile[] children = directory.getVirtualFile().getChildren();
-      for (VirtualFile file : children) {
-        PsiFileSystemItem item = file.isDirectory() ? manager.findDirectory(file) : manager.findFile(file);
-        if (item == null) {
-          LOG.info("Invalidated item: " + file.getExtension());
-          continue;
-        }
-        PsiFile f = copyToDirectory(item, item.getName(), subdirectory, choice, title);
-        if (firstFile == null) {
-          firstFile = f;
-        }
-      }
-      return firstFile;
+      List<PsiFile> added = copyChildren(subdirectory, children, null, title, choice);
+      
+      return added.isEmpty() ? null : added.get(0);
     }
     else {
       throw new IllegalArgumentException("unexpected elementToCopy: " + elementToCopy);
@@ -345,7 +353,7 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
         selection = choice[0];
       }
 
-      if (selection == 0 && file != existing) {
+      if (selection == 0) {
         WriteCommandAction.writeCommandAction(targetDirectory.getProject())
           .withName(title)
           .run(() -> existing.delete());
