@@ -65,9 +65,6 @@ public class BuildArtifactAction extends DumbAwareAction {
     private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Clean artifact");
   }
 
-  public BuildArtifactAction() {
-    super("Build Artifacts...", "Select and build artifacts configured in the project", null);
-  }
   @Override
   public void update(@NotNull AnActionEvent e) {
     final Project project = getEventProject(e);
