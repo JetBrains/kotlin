@@ -74,11 +74,11 @@ internal class A {
 
     fun kt35593() {
         val number: Number = 1
-        val b: Byte = number.byteValue()
-        val d: Double = number.doubleValue()
-        val f: Float = number.floatValue()
-        val i: Int = number.intValue()
-        val l: Long = number.longValue()
-        val s: Short = number.shortValue()
+        val b = number.toByte()
+        val d = number.toDouble()
+        val f = number.toFloat()
+        val i = number.toInt()
+        val l = number.toLong()
+        val s = number.toShort()
     }
 }
