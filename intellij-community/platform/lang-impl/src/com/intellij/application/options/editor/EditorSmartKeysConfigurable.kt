@@ -16,6 +16,7 @@ import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.EnumComboBoxModel
 import com.intellij.ui.layout.*
+import org.jetbrains.annotations.NonNls
 import java.awt.event.KeyEvent
 import javax.swing.DefaultComboBoxModel
 
@@ -33,7 +34,7 @@ val myCbReformatBlockOnTypingRBrace = CheckboxDescriptor(ApplicationBundle.messa
                                                          codeInsightSettings::REFORMAT_BLOCK_ON_RBRACE.toBinding())
 val myCbCamelWords = CheckboxDescriptor(ApplicationBundle.message("checkbox.use.camelhumps.words"),
                                         PropertyBinding(editorSettings::isCamelWords, editorSettings::setCamelWords))
-val myCbSurroundSelectionOnTyping = CheckboxDescriptor("Surround selection on typing quote or brace",
+val myCbSurroundSelectionOnTyping = CheckboxDescriptor(ApplicationBundle.message("checkbox.surround.selection.on.typing.quote.or.brace"),
                                                        codeInsightSettings::SURROUND_SELECTION_ON_QUOTE_TYPED.toBinding())
 val myCbTabExistsBracketsAndQuotes = CheckboxDescriptor(ApplicationBundle.message("checkbox.tab.exists.brackets.and.quotes"),
                                                         codeInsightSettings::TAB_EXITS_BRACKETS_AND_QUOTES.toBinding())
@@ -65,6 +66,7 @@ val editorSmartKeysOptionDescriptors = listOf(
     , myCbInsertJavadocStubOnEnter
 ).map(CheckboxDescriptor::asOptionDescriptor) + childOptions
 
+@NonNls
 const val ID = "editor.preferences.smartKeys"
 
 /**
@@ -111,7 +113,7 @@ class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompos
       row {
         checkBox(myCbTabExistsBracketsAndQuotes)
       }
-      titledRow("Enter") {
+      titledRow(ApplicationBundle.message("group.enter.title")) {
         row {
           checkBox(myCbSmartIndentOnEnter)
         }
