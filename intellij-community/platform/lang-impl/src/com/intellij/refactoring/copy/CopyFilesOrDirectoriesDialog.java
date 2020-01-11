@@ -34,6 +34,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,15 +46,15 @@ import java.util.List;
 public class CopyFilesOrDirectoriesDialog extends DialogWrapper {
   public static final int MAX_PATH_LENGTH = 70;
 
-  private static final String COPY_OPEN_IN_EDITOR = "Copy.OpenInEditor";
-  private static final String RECENT_KEYS = "CopyFile.RECENT_KEYS";
+  @NonNls private static final String COPY_OPEN_IN_EDITOR = "Copy.OpenInEditor";
+  @NonNls private static final String RECENT_KEYS = "CopyFile.RECENT_KEYS";
 
   public static String shortenPath(@NotNull VirtualFile file) {
     return StringUtil.shortenPathWithEllipsis(file.getPresentableUrl(), MAX_PATH_LENGTH);
   }
 
   public static JCheckBox createOpenInEditorCB() {
-    JCheckBox checkBox = new JCheckBox("Open copy in editor", PropertiesComponent.getInstance().getBoolean(COPY_OPEN_IN_EDITOR, true));
+    JCheckBox checkBox = new JCheckBox(RefactoringBundle.message("open.copy.in.editor"), PropertiesComponent.getInstance().getBoolean(COPY_OPEN_IN_EDITOR, true));
     checkBox.setMnemonic('o');
     return checkBox;
   }
@@ -267,7 +268,7 @@ public class CopyFilesOrDirectoriesDialog extends DialogWrapper {
       }
 
       if (myFileCopy && !PathUtilRt.isValidFileName(newName, false)) {
-        Messages.showErrorDialog(myNewNameField, "Name is not a valid file name");
+        Messages.showErrorDialog(myNewNameField, RefactoringBundle.message("name.is.not.a.valid.file.name"));
         return;
       }
 
