@@ -87,12 +87,12 @@ class EditorAppearanceConfigurable : BoundCompositeConfigurable<UnnamedConfigura
       }
       row {
         checkBox(myCodeLensCheckBox)
-      }.largeGapAfter()
+      }
 
       for (configurable in configurables) {
         row {
-          configurable.createComponent()?.invoke(growX)
-        }.largeGapAfter()
+          configurable.createComponent()?.invoke()
+        }
       }
     }
   }
