@@ -17,40 +17,28 @@ import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.layout.*
 
+// @formatter:off
 private val model = EditorSettingsExternalizable.getInstance()
 private val daemonCodeAnalyzerSettings = DaemonCodeAnalyzerSettings.getInstance()
 private val uiSettings = UISettings.instance
 
-val myCbBlinkCaret = CheckboxDescriptor(ApplicationBundle.message("checkbox.caret.blinking.ms"),
-                                        PropertyBinding(model::isBlinkCaret, model::setBlinkCaret))
-val myCbBlockCursor = CheckboxDescriptor(ApplicationBundle.message("checkbox.use.block.caret"),
-                                         PropertyBinding(model::isBlockCursor, model::setBlockCursor))
-val myCbRightMargin = CheckboxDescriptor(ApplicationBundle.message("checkbox.right.margin"),
-                                         PropertyBinding(model::isRightMarginShown, model::setRightMarginShown))
-val myCbShowLineNumbers = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.line.numbers"),
-                                             PropertyBinding(model::isLineNumbersShown, model::setLineNumbersShown))
-val myCbShowMethodSeparators = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.method.separators"),
-                                                  daemonCodeAnalyzerSettings::SHOW_METHOD_SEPARATORS.toBinding())
-
-val myWhitespacesCheckbox = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.whitespaces"),
-                                               PropertyBinding(model::isWhitespacesShown, model::setWhitespacesShown))
-val myLeadingWhitespacesCheckBox = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.leading.whitespaces"),
-                                                      PropertyBinding(model::isLeadingWhitespacesShown, model::setLeadingWhitespacesShown))
-val myInnerWhitespacesCheckBox = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.inner.whitespaces"),
-                                                    PropertyBinding(model::isInnerWhitespacesShown, model::setInnerWhitespacesShown))
-val myTrailingWhitespacesCheckBox = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.trailing.whitespaces"),
-                                                       PropertyBinding(model::isTrailingWhitespacesShown,
-                                                                       model::setTrailingWhitespacesShown))
-val myShowVerticalIndentGuidesCheckBox = CheckboxDescriptor("Show indent guides",
-                                                            PropertyBinding(model::isIndentGuidesShown, model::setIndentGuidesShown))
-val myFocusModeCheckBox = CheckboxDescriptor("Highlight only current declaration", PropertyBinding(model::isFocusMode, model::setFocusMode))
-val myCbShowIntentionBulbCheckBox = CheckboxDescriptor("Show intention bulb",
-                                                       PropertyBinding(model::isShowIntentionBulb, model::setShowIntentionBulb))
-val myCodeLensCheckBox = CheckboxDescriptor(IdeBundle.message("checkbox.show.editor.preview.popup"),
-                                            uiSettings::showEditorToolTip)
+val myCbBlinkCaret                      = CheckboxDescriptor(ApplicationBundle.message("checkbox.caret.blinking.ms"), PropertyBinding(model::isBlinkCaret, model::setBlinkCaret))
+val myCbBlockCursor                     = CheckboxDescriptor(ApplicationBundle.message("checkbox.use.block.caret"), PropertyBinding(model::isBlockCursor, model::setBlockCursor))
+val myCbRightMargin                     = CheckboxDescriptor(ApplicationBundle.message("checkbox.right.margin"), PropertyBinding(model::isRightMarginShown, model::setRightMarginShown))
+val myCbShowLineNumbers                 = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.line.numbers"), PropertyBinding(model::isLineNumbersShown, model::setLineNumbersShown))
+val myCbShowMethodSeparators            = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.method.separators"), daemonCodeAnalyzerSettings::SHOW_METHOD_SEPARATORS.toBinding())
+val myWhitespacesCheckbox               = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.whitespaces"), PropertyBinding(model::isWhitespacesShown, model::setWhitespacesShown))
+val myLeadingWhitespacesCheckBox        = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.leading.whitespaces"), PropertyBinding(model::isLeadingWhitespacesShown, model::setLeadingWhitespacesShown))
+val myInnerWhitespacesCheckBox          = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.inner.whitespaces"), PropertyBinding(model::isInnerWhitespacesShown, model::setInnerWhitespacesShown))
+val myTrailingWhitespacesCheckBox       = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.trailing.whitespaces"), PropertyBinding(model::isTrailingWhitespacesShown, model::setTrailingWhitespacesShown))
+val myShowVerticalIndentGuidesCheckBox  = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.indent.guides"), PropertyBinding(model::isIndentGuidesShown, model::setIndentGuidesShown))
+val myFocusModeCheckBox                 = CheckboxDescriptor(ApplicationBundle.message("checkbox.highlight.only.current.declaration"), PropertyBinding(model::isFocusMode, model::setFocusMode))
+val myCbShowIntentionBulbCheckBox       = CheckboxDescriptor(ApplicationBundle.message("checkbox.show.intention.bulb"), PropertyBinding(model::isShowIntentionBulb, model::setShowIntentionBulb))
+val myCodeLensCheckBox                  = CheckboxDescriptor(IdeBundle.message("checkbox.show.editor.preview.popup"), uiSettings::showEditorToolTip)
+// @formatter:on
 
 class EditorAppearanceConfigurable : BoundCompositeConfigurable<UnnamedConfigurable>(
-  "Appearance",
+  ApplicationBundle.message("tab.editor.settings.appearance"),
   "reference.settingsdialog.IDE.editor.appearance"
 ), Configurable.WithEpDependencies {
   override fun createPanel(): DialogPanel {
