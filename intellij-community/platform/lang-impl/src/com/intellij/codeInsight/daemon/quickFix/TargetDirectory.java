@@ -16,15 +16,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TargetDirectory {
   private final SmartPsiElementPointer<PsiDirectory> myDirectory;
-  @NotNull
-  private final String[] myPathToCreate;
+  private final String @NotNull [] myPathToCreate;
 
   public TargetDirectory(@NotNull PsiDirectory directory) {
     this(directory, ArrayUtil.EMPTY_STRING_ARRAY);
   }
 
   public TargetDirectory(@NotNull PsiDirectory directory,
-                         @NotNull String[] pathToCreate) {
+                         String @NotNull [] pathToCreate) {
     myDirectory = SmartPointerManager.getInstance(directory.getProject()).createSmartPsiElementPointer(directory);
     myPathToCreate = pathToCreate;
   }

@@ -15,7 +15,7 @@ import java.util.Collection;
 
 public class ProjectLibrariesSettingsImpl extends MultiFilesSettings implements ProjectLibrariesSettings {
 
-  public ProjectLibrariesSettingsImpl(@Nullable Path projectFile, @Nullable File[] librariesFiles,
+  public ProjectLibrariesSettingsImpl(@Nullable Path projectFile, File @Nullable [] librariesFiles,
                                       ConversionContextImpl context) throws CannotConvertException {
     super(projectFile, librariesFiles, context);
   }

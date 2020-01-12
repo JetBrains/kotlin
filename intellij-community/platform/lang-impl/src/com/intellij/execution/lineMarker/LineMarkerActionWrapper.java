@@ -37,9 +37,8 @@ public class LineMarkerActionWrapper extends ActionGroup implements PriorityActi
     copyFrom(origin);
   }
 
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     // This is quickfix for IDEA-208231
     // See com.intellij.codeInsight.daemon.impl.GutterIntentionMenuContributor.addActions(AnAction, List<? super IntentionActionDescriptor>, GutterIconRenderer, AtomicInteger, DataContext)`
     if (myOrigin instanceof ExecutorAction) {

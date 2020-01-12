@@ -232,7 +232,7 @@ public abstract class SmartEnterProcessorWithFixers extends SmartEnterProcessor 
   }
 
   @SafeVarargs
-  protected final void addFixers(@NotNull Fixer<? extends SmartEnterProcessorWithFixers>... fixers) {
+  protected final void addFixers(Fixer<? extends SmartEnterProcessorWithFixers> @NotNull ... fixers) {
     ContainerUtil.addAllNotNull(myFixers, fixers);
   }
 

@@ -88,7 +88,7 @@ class FileTypeKeyDescriptor implements KeyDescriptor<FileType> {
 
         @Nullable
         @Override
-        public String getCharset(@NotNull VirtualFile file, @NotNull byte[] content) {
+        public String getCharset(@NotNull VirtualFile file, byte @NotNull [] content) {
             throw new UnsupportedOperationException();
         }
     }

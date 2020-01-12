@@ -54,8 +54,7 @@ class SuggestedChildRootInfo {
     }
   }
 
-  @NotNull
-  public String[] getRootTypeNames() {
+  public String @NotNull [] getRootTypeNames() {
     final String[] types = ArrayUtilRt.toStringArray(myRootTypeNames.values());
     Arrays.sort(types, String.CASE_INSENSITIVE_ORDER);
     return types;

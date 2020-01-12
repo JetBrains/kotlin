@@ -247,8 +247,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     return myTree;
   }
 
-  @NotNull
-  private PsiElement[] getSelectedPsiElements() {
+  private PsiElement @NotNull [] getSelectedPsiElements() {
     List<PsiElement> elements = JBIterable.of(getSelectedNodeElements()).filterMap(this::getPsiElement).toList();
     return PsiUtilCore.toPsiElementArray(elements);
   }
@@ -435,8 +434,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     return result.isEmpty() ? null : result.toArray(Module.EMPTY_ARRAY);
   }
 
-  @NotNull
-  private Object[] getSelectedNodeElements() {
+  private Object @NotNull [] getSelectedNodeElements() {
     FavoriteTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
     List<Object> result = new ArrayList<>();
     for (FavoriteTreeNodeDescriptor selectedNodeDescriptor : selectedNodeDescriptors) {
@@ -553,8 +551,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       FavoritesTreeViewPanel.this.selectElement(element, virtualFile, requestFocus);
     }
 
-    @Nullable
-    private PsiDirectory[] getSelectedDirectories() {
+    private PsiDirectory @Nullable [] getSelectedDirectories() {
       if (myBuilder == null) return null;
       final Object[] selectedNodeElements = getSelectedNodeElements();
       if (selectedNodeElements.length != 1) return null;
@@ -587,9 +584,8 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       return selectedNodeElements[0] instanceof PsiDirectory ? new PsiDirectory[]{(PsiDirectory)selectedNodeElements[0]} : null;
     }
 
-    @NotNull
     @Override
-    public PsiDirectory[] getDirectories() {
+    public PsiDirectory @NotNull [] getDirectories() {
       final PsiDirectory[] directories = getSelectedDirectories();
       return directories == null ? PsiDirectory.EMPTY_ARRAY : directories;
     }

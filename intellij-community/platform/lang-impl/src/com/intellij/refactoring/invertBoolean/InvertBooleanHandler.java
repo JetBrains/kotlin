@@ -51,7 +51,7 @@ public class InvertBooleanHandler implements RefactoringActionHandler {
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     LOG.assertTrue(elements.length == 1);
     final InvertBooleanDelegate delegate = findDelegate(elements[0], project, null);
     if (delegate == null) {

@@ -21,8 +21,7 @@ public abstract class FacetModelBase implements FacetModel {
   private volatile Facet<?>[] mySortedFacets;
 
   @Override
-  @NotNull
-  public Facet<?>[] getSortedFacets() {
+  public Facet<?> @NotNull [] getSortedFacets() {
     if (mySortedFacets == null) {
       final Facet<?>[] allFacets = getAllFacets();
       if (allFacets.length == 0) {

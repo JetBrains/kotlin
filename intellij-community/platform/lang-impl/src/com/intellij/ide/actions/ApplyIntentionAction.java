@@ -45,8 +45,7 @@ public class ApplyIntentionAction extends AnAction {
     return ReadAction.compute(() -> myAction.getText());
   }
 
-  @Nullable
-  public static ApplyIntentionAction[] getAvailableIntentions(@NotNull Editor editor, @NotNull PsiFile file) {
+  public static ApplyIntentionAction @Nullable [] getAvailableIntentions(@NotNull Editor editor, @NotNull PsiFile file) {
     ShowIntentionsPass.IntentionsInfo info = ShowIntentionsPass.getActionsToShow(editor, file, false);
     if (info.isEmpty()) return null;
 

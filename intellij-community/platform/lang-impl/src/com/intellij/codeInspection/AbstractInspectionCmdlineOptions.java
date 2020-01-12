@@ -33,8 +33,7 @@ public abstract class AbstractInspectionCmdlineOptions implements InspectionTool
   @Nullable
   protected abstract Boolean getRunWithEditorSettingsProperty();
 
-  @NotNull
-  protected abstract String[] optionsBanner();
+  protected abstract String @NotNull [] optionsBanner();
 
   @Override
   public void initApplication(InspectionApplication app) {

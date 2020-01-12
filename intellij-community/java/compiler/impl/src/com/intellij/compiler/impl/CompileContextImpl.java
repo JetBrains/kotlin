@@ -92,9 +92,8 @@ public class CompileContextImpl extends UserDataHolderBase implements CompileCon
     return myProject;
   }
 
-  @NotNull
   @Override
-  public CompilerMessage[] getMessages(@NotNull CompilerMessageCategory category) {
+  public CompilerMessage @NotNull [] getMessages(@NotNull CompilerMessageCategory category) {
     return myMessages.getMessages(category).toArray(CompilerMessage.EMPTY_ARRAY);
   }
 

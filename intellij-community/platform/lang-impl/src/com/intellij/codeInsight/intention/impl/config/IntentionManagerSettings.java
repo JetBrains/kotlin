@@ -38,7 +38,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
 
   private static final class MetaDataKey extends Pair<String, String> {
     private static final Interner<String> ourInterner = new WeakStringInterner();
-    private MetaDataKey(@NotNull String[] categoryNames, @NotNull final String familyName) {
+    private MetaDataKey(String @NotNull [] categoryNames, @NotNull final String familyName) {
       super(StringUtil.join(categoryNames, ":"), ourInterner.intern(familyName));
     }
   }
@@ -103,7 +103,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   }
 
   void registerIntentionMetaData(@NotNull IntentionAction intentionAction,
-                                 @NotNull String[] category,
+                                 String @NotNull [] category,
                                  @NotNull String descriptionDirectoryName) {
     registerMetaData(new IntentionActionMetaData(intentionAction, getClassLoader(intentionAction), category, descriptionDirectoryName));
   }

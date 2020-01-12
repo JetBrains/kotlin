@@ -413,8 +413,7 @@ public class FileTreeModelBuilder {
     }
   }
 
-  @Nullable
-  public static PackageDependenciesNode[] findNodeForPsiElement(PackageDependenciesNode parent, PsiElement element){
+  public static PackageDependenciesNode @Nullable [] findNodeForPsiElement(PackageDependenciesNode parent, PsiElement element){
     final Set<PackageDependenciesNode> result = new HashSet<>();
     for (int i = 0; i < parent.getChildCount(); i++){
       final TreeNode treeNode = parent.getChildAt(i);

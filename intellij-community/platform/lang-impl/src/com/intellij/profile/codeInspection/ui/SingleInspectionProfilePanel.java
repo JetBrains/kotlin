@@ -152,7 +152,7 @@ public class SingleInspectionProfilePanel extends JPanel {
     return AppInspectionProfilesVisibleTreeState.getInstance().getVisibleTreeState(profile);
   }
 
-  private static InspectionConfigTreeNode findGroupNodeByPath(@NotNull String[] path, int idx, @NotNull InspectionConfigTreeNode node) {
+  private static InspectionConfigTreeNode findGroupNodeByPath(String @NotNull [] path, int idx, @NotNull InspectionConfigTreeNode node) {
     if (path.length == idx) {
       return node;
     }

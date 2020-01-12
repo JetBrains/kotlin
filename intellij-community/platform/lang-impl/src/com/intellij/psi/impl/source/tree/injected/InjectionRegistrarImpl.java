@@ -655,16 +655,15 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     return SelfElementInfo.calcActualRangeAfterDocumentEvents(containingFile, document, range, true);
   }
 
-  @NotNull
-  private static ASTNode[] parseFile(@NotNull Language language, Language forcedLanguage,
-                                   @NotNull DocumentWindowImpl documentWindow,
-                                   @NotNull VirtualFile hostVirtualFile,
-                                   @NotNull DocumentEx hostDocument, @NotNull PsiFile hostPsiFile,
-                                   @NotNull Project project,
-                                   @NotNull CharSequence documentText,
-                                   @NotNull List<PlaceInfo> placeInfos,
-                                   @NotNull StringBuilder decodedChars,
-                                   @NotNull String fileName, @NotNull PsiDocumentManagerBase documentManager) {
+  private static ASTNode @NotNull [] parseFile(@NotNull Language language, Language forcedLanguage,
+                                               @NotNull DocumentWindowImpl documentWindow,
+                                               @NotNull VirtualFile hostVirtualFile,
+                                               @NotNull DocumentEx hostDocument, @NotNull PsiFile hostPsiFile,
+                                               @NotNull Project project,
+                                               @NotNull CharSequence documentText,
+                                               @NotNull List<PlaceInfo> placeInfos,
+                                               @NotNull StringBuilder decodedChars,
+                                               @NotNull String fileName, @NotNull PsiDocumentManagerBase documentManager) {
     VirtualFileWindowImpl virtualFile = new VirtualFileWindowImpl(fileName, hostVirtualFile, documentWindow, language, decodedChars);
     Language finalLanguage = forcedLanguage == null ? LanguageSubstitutors.getInstance().substituteLanguage(language, virtualFile, project) : forcedLanguage;
     InjectedFileViewProvider viewProvider = InjectedFileViewProvider.create(PsiManagerEx.getInstanceEx(project), virtualFile, documentWindow, finalLanguage);

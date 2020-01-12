@@ -106,8 +106,7 @@ public class JarArtifactFromModulesDialog extends DialogWrapper {
     return (Module)myModuleComboBox.getSelectedItem();
   }
 
-  @NotNull
-  public Module[] getSelectedModules() {
+  public Module @NotNull [] getSelectedModules() {
     final Module module = getSelectedModule();
     if (module != null) {
       return new Module[]{module};

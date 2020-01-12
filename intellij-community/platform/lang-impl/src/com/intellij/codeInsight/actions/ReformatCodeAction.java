@@ -314,7 +314,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
   }
 
   @Nullable
-  private static ReformatFilesOptions getReformatFilesOptions(@NotNull Project project, @NotNull VirtualFile[] files) {
+  private static ReformatFilesOptions getReformatFilesOptions(@NotNull Project project, VirtualFile @NotNull [] files) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return myTestOptions;
     }

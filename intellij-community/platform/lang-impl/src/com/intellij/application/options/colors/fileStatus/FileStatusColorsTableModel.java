@@ -58,12 +58,12 @@ public class FileStatusColorsTableModel extends AbstractTableModel {
     }
   }
 
-  public FileStatusColorsTableModel(@NotNull FileStatus[] fileStatuses, @NotNull EditorColorsScheme scheme) {
+  public FileStatusColorsTableModel(FileStatus @NotNull [] fileStatuses, @NotNull EditorColorsScheme scheme) {
     myScheme = scheme;
     myDescriptors = createDescriptors(fileStatuses, myScheme);
   }
 
-  private static List<FileStatusColorDescriptor> createDescriptors(@NotNull FileStatus[] fileStatuses, @NotNull EditorColorsScheme scheme) {
+  private static List<FileStatusColorDescriptor> createDescriptors(FileStatus @NotNull [] fileStatuses, @NotNull EditorColorsScheme scheme) {
     EditorColorsScheme baseScheme = scheme instanceof AbstractColorsScheme ? ((AbstractColorsScheme)scheme).getParentScheme() : null;
     List<FileStatusColorDescriptor> descriptors = new ArrayList<>();
     for (FileStatus fileStatus : fileStatuses) {

@@ -107,15 +107,13 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
   @Override
   public abstract LibraryTable.ModifiableModel getModifiableProjectLibrariesModel();
 
-  @NotNull
   @Override
-  public Module[] getModules() {
+  public Module @NotNull [] getModules() {
     return getModifiableModuleModel().getModules();
   }
 
-  @NotNull
   @Override
-  public OrderEntry[] getOrderEntries(@NotNull Module module) {
+  public OrderEntry @NotNull [] getOrderEntries(@NotNull Module module) {
     return getRootModel(module).getOrderEntries();
   }
 
@@ -173,20 +171,17 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
   }
 
   @Override
-  @NotNull
-  public VirtualFile[] getContentRoots(Module module) {
+  public VirtualFile @NotNull [] getContentRoots(Module module) {
     return getRootModel(module).getContentRoots();
   }
 
-  @NotNull
   @Override
-  public VirtualFile[] getSourceRoots(Module module) {
+  public VirtualFile @NotNull [] getSourceRoots(Module module) {
     return getRootModel(module).getSourceRoots();
   }
 
-  @NotNull
   @Override
-  public VirtualFile[] getSourceRoots(Module module, boolean includingTests) {
+  public VirtualFile @NotNull [] getSourceRoots(Module module, boolean includingTests) {
     return getRootModel(module).getSourceRoots(includingTests);
   }
 
@@ -217,8 +212,7 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
   }
 
   @Override
-  @NotNull
-  public Library[] getAllLibraries() {
+  public Library @NotNull [] getAllLibraries() {
     return getModifiableProjectLibrariesModel().getLibraries();
   }
 
@@ -256,9 +250,8 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
     return myModifiableWorkspace;
   }
 
-  @NotNull
   @Override
-  public String[] getLibraryUrls(@NotNull Library library, @NotNull OrderRootType type) {
+  public String @NotNull [] getLibraryUrls(@NotNull Library library, @NotNull OrderRootType type) {
     final Library.ModifiableModel model = myModifiableLibraryModels.get(library);
     if (model != null) {
       return model.getUrls(type);

@@ -73,8 +73,7 @@ public abstract class FacetManagerBase extends FacetManager {
   }
 
   @Override
-  @NotNull
-  public Facet<?>[] getAllFacets() {
+  public Facet<?> @NotNull [] getAllFacets() {
     return getModel().getAllFacets();
   }
 
@@ -111,8 +110,7 @@ public abstract class FacetManagerBase extends FacetManager {
   }
 
   @Override
-  @NotNull
-  public Facet<?>[] getSortedFacets() {
+  public Facet<?> @NotNull [] getSortedFacets() {
     return getModel().getSortedFacets();
   }
 

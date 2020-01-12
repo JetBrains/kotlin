@@ -77,9 +77,8 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
   }
 
 
-  @Nullable
   @Override
-  public PsiElement[] adjustForMove(Project project, PsiElement[] sourceElements, PsiElement targetElement) {
+  public PsiElement @Nullable [] adjustForMove(Project project, PsiElement[] sourceElements, PsiElement targetElement) {
     return PsiTreeUtil.filterAncestors(sourceElements);
   }
 
@@ -115,7 +114,7 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
 
   @Nullable
   @Override
-  public String getActionName(@NotNull PsiElement[] elements) {
+  public String getActionName(PsiElement @NotNull [] elements) {
     int fileCount = 0, directoryCount = 0;
     for (PsiElement element : elements) {
       if (element instanceof PsiFile) {

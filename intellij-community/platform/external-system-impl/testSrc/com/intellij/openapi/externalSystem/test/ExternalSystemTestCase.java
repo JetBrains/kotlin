@@ -405,7 +405,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
     }
   }
 
-  private void build(@NotNull Object[] buildableElements) {
+  private void build(Object @NotNull [] buildableElements) {
     Promise<ProjectTaskManager.Result> promise;
     if (buildableElements instanceof Module[]) {
       promise = ProjectTaskManager.getInstance(myProject).build((Module[])buildableElements);

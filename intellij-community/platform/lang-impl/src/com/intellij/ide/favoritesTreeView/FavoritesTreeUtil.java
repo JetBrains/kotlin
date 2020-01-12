@@ -14,8 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FavoritesTreeUtil {
-  @NotNull
-  public static FavoriteTreeNodeDescriptor[] getSelectedNodeDescriptors(final DnDAwareTree tree) {
+  public static FavoriteTreeNodeDescriptor @NotNull [] getSelectedNodeDescriptors(final DnDAwareTree tree) {
     TreePath[] path = tree.getSelectionPaths();
     if (path == null) {
       return FavoriteTreeNodeDescriptor.EMPTY_ARRAY;

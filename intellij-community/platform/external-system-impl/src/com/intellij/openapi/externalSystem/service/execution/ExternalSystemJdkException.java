@@ -28,13 +28,13 @@ public class ExternalSystemJdkException extends ExternalSystemException {
   public ExternalSystemJdkException(@Nullable String message,
                                     @Nullable String filePath,
                                     @Nullable Throwable cause,
-                                    @NotNull String... quickFixes) {
+                                    String @NotNull ... quickFixes) {
     this(message, cause, quickFixes);
   }
 
   public ExternalSystemJdkException(@Nullable String message,
                                     @Nullable Throwable cause,
-                                    @NotNull String... quickFixes) {
+                                    String @NotNull ... quickFixes) {
     super(message, cause, quickFixes);
   }
 }

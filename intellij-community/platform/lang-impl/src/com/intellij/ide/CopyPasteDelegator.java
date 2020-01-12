@@ -40,14 +40,12 @@ public class CopyPasteDelegator implements CopyPasteSupport {
     myEditable = new MyEditable();
   }
 
-  @NotNull
-  protected PsiElement[] getSelectedElements() {
+  protected PsiElement @NotNull [] getSelectedElements() {
     DataContext dataContext = DataManager.getInstance().getDataContext(myKeyReceiver);
     return ObjectUtils.notNull(LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext), PsiElement.EMPTY_ARRAY);
   }
 
-  @NotNull
-  private PsiElement[] getValidSelectedElements() {
+  private PsiElement @NotNull [] getValidSelectedElements() {
     PsiElement[] selectedElements = getSelectedElements();
     for (PsiElement element : selectedElements) {
       if (element == null || !element.isValid()) {

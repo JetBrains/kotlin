@@ -30,7 +30,7 @@ public class CloseAllUnpinnedViewsAction extends CloseViewsActionBase {
   }
 
   @Override
-  protected boolean isAccepted(@NotNull Content c, @NotNull Content[] selectedContents) {
+  protected boolean isAccepted(@NotNull Content c, Content @NotNull [] selectedContents) {
     return !c.isPinned();
   }
 }

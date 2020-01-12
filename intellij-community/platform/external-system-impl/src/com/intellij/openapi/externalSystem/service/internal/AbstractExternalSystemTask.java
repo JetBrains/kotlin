@@ -114,7 +114,7 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
   }
 
   @Override
-  public void execute(@NotNull final ProgressIndicator indicator, @NotNull ExternalSystemTaskNotificationListener... listeners) {
+  public void execute(@NotNull final ProgressIndicator indicator, ExternalSystemTaskNotificationListener @NotNull ... listeners) {
     indicator.setIndeterminate(true);
     ExternalSystemTaskNotificationListenerAdapter adapter = new ExternalSystemTaskNotificationListenerAdapter() {
       @Override
@@ -134,7 +134,7 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
   }
 
   @Override
-  public void execute(@NotNull ExternalSystemTaskNotificationListener... listeners) {
+  public void execute(ExternalSystemTaskNotificationListener @NotNull ... listeners) {
     if (!compareAndSetState(ExternalSystemTaskState.NOT_STARTED, ExternalSystemTaskState.IN_PROGRESS)) return;
 
     ExternalSystemProgressNotificationManager progressManager = ServiceManager.getService(ExternalSystemProgressNotificationManager.class);
@@ -168,7 +168,7 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
   protected abstract void doExecute() throws Exception;
 
   @Override
-  public boolean cancel(@NotNull final ProgressIndicator indicator, @NotNull ExternalSystemTaskNotificationListener... listeners) {
+  public boolean cancel(@NotNull final ProgressIndicator indicator, ExternalSystemTaskNotificationListener @NotNull ... listeners) {
     indicator.setIndeterminate(true);
     ExternalSystemTaskNotificationListenerAdapter adapter = new ExternalSystemTaskNotificationListenerAdapter() {
       @Override
@@ -188,7 +188,7 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
   }
 
   @Override
-  public boolean cancel(@NotNull ExternalSystemTaskNotificationListener... listeners) {
+  public boolean cancel(ExternalSystemTaskNotificationListener @NotNull ... listeners) {
     ExternalSystemTaskState currentTaskState = getState();
     if (currentTaskState.isStopped()) return true;
 

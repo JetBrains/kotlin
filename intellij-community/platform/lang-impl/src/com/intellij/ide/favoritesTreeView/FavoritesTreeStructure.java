@@ -47,9 +47,8 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
   }
 
 
-  @NotNull
   @Override
-  public Object[] getChildElements(@NotNull Object element) {
+  public Object @NotNull [] getChildElements(@NotNull Object element) {
     if (!(element instanceof AbstractTreeNode)) {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }

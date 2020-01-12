@@ -446,7 +446,7 @@ public final class FindManagerImpl extends FindManager {
 
   @NotNull
   private FindResult doFindString(@NotNull CharSequence text,
-                                         @Nullable char[] textArray,
+                                         char @Nullable [] textArray,
                                          int offset,
                                          @NotNull FindModel findmodel,
                                          @Nullable VirtualFile file) {
@@ -895,7 +895,7 @@ public final class FindManagerImpl extends FindManager {
   }
 
   @Override
-  public void showSettingsAndFindUsages(@NotNull NavigationItem[] targets) {
+  public void showSettingsAndFindUsages(NavigationItem @NotNull [] targets) {
     FindUsagesManager.showSettingsAndFindUsages(targets);
   }
 

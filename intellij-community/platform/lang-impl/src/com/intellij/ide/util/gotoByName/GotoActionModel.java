@@ -320,14 +320,12 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   }
 
   @Override
-  @NotNull
-  public String[] getNames(boolean checkBoxState) {
+  public String @NotNull [] getNames(boolean checkBoxState) {
     return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @Override
-  @NotNull
-  public Object[] getElementsByName(@NotNull String id, boolean checkBoxState, @NotNull String pattern) {
+  public Object @NotNull [] getElementsByName(@NotNull String id, boolean checkBoxState, @NotNull String pattern) {
     return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
@@ -388,8 +386,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   }
 
   @Override
-  @NotNull
-  public String[] getSeparators() {
+  public String @NotNull [] getSeparators() {
     return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 

@@ -464,7 +464,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     return ActionCallback.DONE;
   }
 
-  private void storeDefaultIndices(@NotNull Content[] contents) {
+  private void storeDefaultIndices(Content @NotNull [] contents) {
     //int i = 0;
     for (Content content : contents) {
       content.putUserData(RunnerLayout.DEFAULT_INDEX, getStateFor(content).getTab().getDefaultIndex());

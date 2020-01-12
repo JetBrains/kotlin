@@ -68,8 +68,7 @@ public class DeleteHandler {
       return shouldEnableDeleteAction(elements);
     }
 
-    @Nullable
-    private static PsiElement[] getPsiElements(DataContext dataContext) {
+    private static PsiElement @Nullable [] getPsiElements(DataContext dataContext) {
       PsiElement[] elements = LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext);
       if (elements == null) {
         final PsiElement data = CommonDataKeys.PSI_ELEMENT.getData(dataContext);

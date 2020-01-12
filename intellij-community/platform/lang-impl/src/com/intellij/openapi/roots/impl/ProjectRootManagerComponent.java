@@ -367,7 +367,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
   private final VirtualFilePointerListener myRootsChangedListener = new VirtualFilePointerListener() {
     @Override
-    public void beforeValidityChanged(@NotNull VirtualFilePointer[] pointers) {
+    public void beforeValidityChanged(VirtualFilePointer @NotNull [] pointers) {
       if (myProject.isDisposed()) {
         return;
       }
@@ -389,7 +389,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     }
 
     @Override
-    public void validityChanged(@NotNull VirtualFilePointer[] pointers) {
+    public void validityChanged(VirtualFilePointer @NotNull [] pointers) {
       if (myProject.isDisposed()) {
         return;
       }

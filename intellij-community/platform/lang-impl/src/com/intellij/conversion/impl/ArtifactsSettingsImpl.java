@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 public class ArtifactsSettingsImpl extends MultiFilesSettings implements ArtifactsSettings {
   protected ArtifactsSettingsImpl(@Nullable Path projectFile,
-                                  @Nullable File[] settingsFiles,
+                                  File @Nullable [] settingsFiles,
                                   @NotNull ConversionContextImpl context) throws CannotConvertException {
     super(projectFile, settingsFiles, context);
   }

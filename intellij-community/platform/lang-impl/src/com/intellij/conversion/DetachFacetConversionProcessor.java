@@ -25,7 +25,7 @@ import java.util.Collection;
 public class DetachFacetConversionProcessor extends ConversionProcessor<ModuleSettings> {
   private final String[] myFacetNames;
 
-  public DetachFacetConversionProcessor(@NotNull String... names) {
+  public DetachFacetConversionProcessor(String @NotNull ... names) {
     myFacetNames = names;
   }
 

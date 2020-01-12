@@ -108,8 +108,7 @@ public class GotoClassModel2 extends FilteringGotoByModel<Language> {
   }
 
   @Override
-  @NotNull
-  public String[] getSeparators() {
+  public String @NotNull [] getSeparators() {
     if (mySeparators == null) {
       mySeparators = getSeparatorsFromContributors(getContributors());
     }

@@ -23,9 +23,8 @@ public class CustomFileTypeBraceMatcher implements PairedBraceMatcher {
     new BracePair(L_BRACE, R_BRACE, true),
   };
 
-  @NotNull
   @Override
-  public BracePair[] getPairs() {
+  public BracePair @NotNull [] getPairs() {
     return PAIRS;
   }
 

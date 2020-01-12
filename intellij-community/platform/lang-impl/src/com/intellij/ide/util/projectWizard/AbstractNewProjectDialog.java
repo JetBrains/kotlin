@@ -85,8 +85,7 @@ public abstract class AbstractNewProjectDialog extends DialogWrapper {
   }
 
   @Override
-  @NotNull
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[0];
   }
 

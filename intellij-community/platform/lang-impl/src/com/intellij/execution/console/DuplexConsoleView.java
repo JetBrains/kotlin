@@ -200,9 +200,8 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
   }
 
 
-  @NotNull
   @Override
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     List<AnAction> actions = Lists.newArrayList();
     actions.addAll(mergeConsoleActions(Arrays.asList(myPrimaryConsoleView.createConsoleActions()),
                                        Arrays.asList(mySecondaryConsoleView.createConsoleActions())));

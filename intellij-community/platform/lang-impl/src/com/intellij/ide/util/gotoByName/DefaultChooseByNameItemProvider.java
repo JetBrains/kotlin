@@ -332,7 +332,7 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
 
   @NotNull
   @Override
-  public List<String> filterNames(@NotNull ChooseByNameBase base, @NotNull String[] names, @NotNull String pattern) {
+  public List<String> filterNames(@NotNull ChooseByNameBase base, String @NotNull [] names, @NotNull String pattern) {
     boolean preferStartMatches = pattern.startsWith("*");
     pattern = convertToMatchingPattern(base, pattern);
     if (pattern.isEmpty() && !base.canShowListForEmptyPattern()) return Collections.emptyList();
@@ -349,7 +349,7 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
   }
 
   private static void processNamesByPattern(@NotNull final ChooseByNameViewModel base,
-                                            @NotNull final String[] names,
+                                            final String @NotNull [] names,
                                             @NotNull final String pattern,
                                             final ProgressIndicator indicator,
                                             @NotNull final Consumer<? super MatchResult> consumer,

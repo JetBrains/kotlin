@@ -182,8 +182,7 @@ public class PsiElement2UsageTargetAdapter
     return virtualFile == null ? null : new VirtualFile[]{virtualFile};
   }
 
-  @NotNull
-  public static PsiElement2UsageTargetAdapter[] convert(@NotNull PsiElement[] psiElements) {
+  public static PsiElement2UsageTargetAdapter @NotNull [] convert(PsiElement @NotNull [] psiElements) {
     PsiElement2UsageTargetAdapter[] targets = new PsiElement2UsageTargetAdapter[psiElements.length];
     for (int i = 0; i < targets.length; i++) {
       targets[i] = new PsiElement2UsageTargetAdapter(psiElements[i]);
@@ -192,8 +191,7 @@ public class PsiElement2UsageTargetAdapter
     return targets;
   }
 
-  @NotNull
-  static PsiElement[] convertToPsiElements(@NotNull PsiElement2UsageTargetAdapter[] adapters) {
+  static PsiElement @NotNull [] convertToPsiElements(PsiElement2UsageTargetAdapter @NotNull [] adapters) {
     PsiElement[] targets = new PsiElement[adapters.length];
     for (int i = 0; i < targets.length; i++) {
       targets[i] = adapters[i].getElement();

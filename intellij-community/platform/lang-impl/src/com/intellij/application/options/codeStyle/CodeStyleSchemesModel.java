@@ -422,8 +422,7 @@ public class CodeStyleSchemesModel implements SchemesModel<CodeStyleScheme> {
       myModifiers = modifiers;
     }
 
-    @NotNull
-    public CodeStyleSettingsModifier[] getModifiers() {
+    public CodeStyleSettingsModifier @NotNull [] getModifiers() {
       return myModifiers != null && !myModifiers.isEmpty()
              ? myModifiers.toArray(new CodeStyleSettingsModifier[0])
              : EMPTY_MODIFIER_ARRAY;

@@ -143,13 +143,13 @@ public abstract class ModuleGroupNode extends ProjectViewNode<ModuleGroup> imple
   }
 
   @Override
-  public boolean canDrop(@NotNull TreeNode[] sourceNodes) {
+  public boolean canDrop(TreeNode @NotNull [] sourceNodes) {
     final List<Module> modules = extractModules(sourceNodes);
     return !modules.isEmpty();
   }
 
   @Override
-  public void drop(@NotNull TreeNode[] sourceNodes, @NotNull DataContext dataContext) {
+  public void drop(TreeNode @NotNull [] sourceNodes, @NotNull DataContext dataContext) {
     final List<Module> modules = extractModules(sourceNodes);
     MoveModulesToGroupAction.doMove(modules.toArray(Module.EMPTY_ARRAY), getValue(), null);
   }

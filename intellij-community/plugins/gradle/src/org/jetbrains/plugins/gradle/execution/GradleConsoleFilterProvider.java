@@ -32,9 +32,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GradleConsoleFilterProvider implements ConsoleFilterProvider {
-  @NotNull
   @Override
-  public Filter[] getDefaultFilters(@NotNull Project project) {
+  public Filter @NotNull [] getDefaultFilters(@NotNull Project project) {
     return new Filter[]{
       new GradleConsoleFilter(project),
       new RegexpFilter(project, RegexpFilter.FILE_PATH_MACROS + ":" + RegexpFilter.LINE_MACROS) {

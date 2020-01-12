@@ -77,7 +77,7 @@ public abstract class IntroduceHandler<Target extends IntroduceTarget, Scope ext
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     //not supported
   }
 

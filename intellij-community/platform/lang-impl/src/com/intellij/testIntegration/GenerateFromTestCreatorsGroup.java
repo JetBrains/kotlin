@@ -15,9 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class GenerateFromTestCreatorsGroup extends ActionGroup {
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     if (e == null) {
       return AnAction.EMPTY_ARRAY;
     }

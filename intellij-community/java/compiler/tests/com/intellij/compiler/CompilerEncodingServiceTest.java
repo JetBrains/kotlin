@@ -20,7 +20,7 @@ public class CompilerEncodingServiceTest extends JavaPsiTestCase {
   private static final Charset WINDOWS_1251 = Charset.forName("windows-1251");
   private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
 
-  private Collection<Charset> projectDefaultPlus(@NotNull Charset... charsets) {
+  private Collection<Charset> projectDefaultPlus(Charset @NotNull ... charsets) {
     Set<Charset> result = new THashSet<>();
     result.add(getProjectDefault());
     result.addAll(Arrays.asList(charsets));

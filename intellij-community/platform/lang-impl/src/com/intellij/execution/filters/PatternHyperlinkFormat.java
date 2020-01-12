@@ -28,7 +28,7 @@ public class PatternHyperlinkFormat {
   public PatternHyperlinkFormat(@NotNull Pattern pattern,
                                 boolean zeroBasedLineNumbering,
                                 boolean zeroBasedColumnNumbering,
-                                @NotNull PatternHyperlinkPart... linkParts) {
+                                PatternHyperlinkPart @NotNull ... linkParts) {
     myPattern = pattern;
     myZeroBasedLineNumbering = zeroBasedLineNumbering;
     myZeroBasedColumnNumbering = zeroBasedColumnNumbering;
@@ -48,8 +48,7 @@ public class PatternHyperlinkFormat {
     return myZeroBasedColumnNumbering;
   }
 
-  @NotNull
-  public PatternHyperlinkPart[] getLinkParts() {
+  public PatternHyperlinkPart @NotNull [] getLinkParts() {
     return myLinkParts;
   }
 }

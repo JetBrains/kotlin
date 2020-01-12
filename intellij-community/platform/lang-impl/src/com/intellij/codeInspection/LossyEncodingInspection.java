@@ -65,8 +65,7 @@ public class LossyEncodingInspection extends LocalInspectionTool {
   }
 
   @Override
-  @Nullable
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
     if (InjectedLanguageManager.getInstance(file.getProject()).isInjectedFragment(file)) return null;
     if (!file.isPhysical()) return null;
     FileViewProvider viewProvider = file.getViewProvider();
@@ -109,10 +108,9 @@ public class LossyEncodingInspection extends LocalInspectionTool {
     return true;
   }
 
-  @NotNull
-  private static LocalQuickFix[] getFixes(@NotNull PsiFile file,
-                                          @NotNull VirtualFile virtualFile,
-                                          @NotNull Charset wrongCharset) {
+  private static LocalQuickFix @NotNull [] getFixes(@NotNull PsiFile file,
+                                                    @NotNull VirtualFile virtualFile,
+                                                    @NotNull Charset wrongCharset) {
     Set<Charset> suspects = ContainerUtil.newHashSet(CharsetToolkit.getDefaultSystemCharset(), CharsetToolkit.getPlatformCharset());
     suspects.remove(wrongCharset);
     List<Charset> goodCharsets = ContainerUtil.filter(suspects, c -> isGoodCharset(virtualFile, c));

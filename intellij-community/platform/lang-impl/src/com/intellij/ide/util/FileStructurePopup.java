@@ -833,8 +833,7 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
     return result;
   }
 
-  @NotNull
-  static Shortcut[] extractShortcutFor(@NotNull TreeAction action) {
+  static Shortcut @NotNull [] extractShortcutFor(@NotNull TreeAction action) {
     if (action instanceof ActionShortcutProvider) {
       String actionId = ((ActionShortcutProvider)action).getActionIdForShortcut();
       return KeymapUtil.getActiveKeymapShortcuts(actionId).getShortcuts();

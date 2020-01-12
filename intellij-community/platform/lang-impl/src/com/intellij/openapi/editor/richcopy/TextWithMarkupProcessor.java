@@ -149,8 +149,8 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
   }
 
   private static void logInitial(@NotNull Editor editor,
-                                 @NotNull int[] startOffsets,
-                                 @NotNull int[] endOffsets,
+                                 int @NotNull [] startOffsets,
+                                 int @NotNull [] endOffsets,
                                  int indentSymbolsToStrip,
                                  int firstLineStartOffset) {
     if (!LOG.isDebugEnabled()) {

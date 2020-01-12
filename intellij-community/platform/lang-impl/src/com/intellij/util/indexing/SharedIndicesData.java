@@ -246,7 +246,7 @@ public class SharedIndicesData {
     }
 
     // todo: what about handling changed indices' versions
-    synchronized void appendIndexedState(@NotNull ID<?, ?> indexId, @Nullable byte[] buffer, int size) {
+    synchronized void appendIndexedState(@NotNull ID<?, ?> indexId, byte @Nullable [] buffer, int size) {
       int indexUniqueId = indexId.getUniqueId();
 
       if (indexId2Offset != null) indexId2Offset.remove(indexUniqueId);

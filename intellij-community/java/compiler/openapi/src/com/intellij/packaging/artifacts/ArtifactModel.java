@@ -25,8 +25,7 @@ import java.util.List;
  * @author nik
  */
 public interface ArtifactModel {
-  @NotNull
-  Artifact[] getArtifacts();
+  Artifact @NotNull [] getArtifacts();
 
   @Nullable
   Artifact findArtifact(@NotNull String name);

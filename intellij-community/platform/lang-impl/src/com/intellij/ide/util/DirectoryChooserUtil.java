@@ -50,7 +50,7 @@ public class DirectoryChooserUtil {
 
   @Nullable
   public static PsiDirectory selectDirectory(@NotNull Project project,
-                                             @NotNull PsiDirectory[] packageDirectories,
+                                             PsiDirectory @NotNull [] packageDirectories,
                                              @Nullable PsiDirectory defaultDirectory,
                                              @Nullable String postfixToShow) {
     ProjectFileIndex projectFileIndex = getInstance(project).getFileIndex();
@@ -76,7 +76,7 @@ public class DirectoryChooserUtil {
   }
 
   @Nullable
-  public static PsiDirectory chooseDirectory(@NotNull PsiDirectory[] targetDirectories,
+  public static PsiDirectory chooseDirectory(PsiDirectory @NotNull [] targetDirectories,
                                              @Nullable PsiDirectory initialDirectory,
                                              @NotNull Project project,
                                              @Nullable Map<PsiDirectory, String> relativePathsToCreate) {

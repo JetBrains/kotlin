@@ -68,9 +68,8 @@ public abstract class AbstractFindUsagesDialog extends DialogWrapper {
     setTitle(FindBundle.message(isSingleFile ? "find.usages.in.file.dialog.title" : "find.usages.dialog.title"));
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{getOKAction(), getCancelAction(), getHelpAction()};
   }
 

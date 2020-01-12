@@ -438,7 +438,7 @@ public final class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   public Problem convertToProblem(@Nullable final VirtualFile virtualFile,
                                   final int line,
                                   final int column,
-                                  @NotNull final String[] message) {
+                                  final String @NotNull [] message) {
     if (virtualFile == null || virtualFile.isDirectory() || virtualFile.getFileType().isBinary()) return null;
     HighlightInfo info = ReadAction.compute(() -> {
       TextRange textRange = getTextRange(virtualFile, line, column);

@@ -35,9 +35,8 @@ public final class NavBarIdeView implements IdeView {
     myPanel.hideHint();
   }
 
-  @NotNull
   @Override
-  public PsiDirectory[] getDirectories() {
+  public PsiDirectory @NotNull [] getDirectories() {
     NavBarPopup nodePopup = myPanel.getNodePopup();
     JBIterable<?> selection =
       nodePopup != null && nodePopup.isVisible() ? JBIterable.from(nodePopup.getList().getSelectedValuesList()) :

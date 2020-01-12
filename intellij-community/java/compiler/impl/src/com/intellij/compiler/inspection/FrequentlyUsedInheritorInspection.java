@@ -32,11 +32,10 @@ public class FrequentlyUsedInheritorInspection extends AbstractBaseJavaLocalInsp
   public static final byte MAX_RESULT = 3;
   private static final int PERCENT_THRESHOLD = SystemProperties.getIntProperty("FrequentlyUsedInheritorInspection.percent.threshold", 20);
 
-  @Nullable
   @Override
-  public ProblemDescriptor[] checkClass(@NotNull final PsiClass aClass,
-                                        @NotNull final InspectionManager manager,
-                                        final boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkClass(@NotNull final PsiClass aClass,
+                                                   @NotNull final InspectionManager manager,
+                                                   final boolean isOnTheFly) {
     if (aClass instanceof PsiTypeParameter || aClass.isEnum()) {
       return null;
     }

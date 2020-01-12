@@ -47,9 +47,8 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
     setEnabledInModalContext(true);
   }
 
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     return e != null ? getChildren(e.getDataContext()) : EMPTY_ARRAY;
   }
 

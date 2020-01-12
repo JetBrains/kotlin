@@ -31,6 +31,5 @@ public interface DefaultLiveTemplatesProvider {
    *
    * @return paths to resources, without {@code .xml} extension (e.g. {@code /templates/foo})
    */
-  @Nullable
-  String[] getHiddenLiveTemplateFiles();
+  String @Nullable [] getHiddenLiveTemplateFiles();
 }

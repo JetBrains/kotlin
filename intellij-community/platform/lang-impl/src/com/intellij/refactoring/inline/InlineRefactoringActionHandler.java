@@ -27,7 +27,7 @@ public class InlineRefactoringActionHandler implements RefactoringActionHandler 
   private static final Logger LOG = Logger.getInstance(InlineRefactoringActionHandler.class);
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     LOG.assertTrue(elements.length == 1);
     if (dataContext == null) {
       dataContext = DataManager.getInstance().getDataContext();

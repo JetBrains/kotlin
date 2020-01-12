@@ -45,15 +45,14 @@ public class PatternCompilerFactoryImpl extends PatternCompilerFactory {
   private final Map<List<Class<?>>, PatternCompiler> myCompilers =
     ConcurrentFactoryMap.createMap(key -> new PatternCompilerImpl(key));
 
-  @NotNull
   @Override
-  public Class[] getPatternClasses(String alias) {
+  public Class @NotNull [] getPatternClasses(String alias) {
     return myClasses.get(alias);
   }
 
   @NotNull
   @Override
-  public <T> PatternCompiler<T> getPatternCompiler(@NotNull Class[] patternClasses) {
+  public <T> PatternCompiler<T> getPatternCompiler(Class @NotNull [] patternClasses) {
     return myCompilers.get(Arrays.asList(patternClasses));
   }
 }

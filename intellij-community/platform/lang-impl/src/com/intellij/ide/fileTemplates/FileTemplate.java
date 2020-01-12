@@ -98,6 +98,5 @@ public interface FileTemplate extends Cloneable {
   @NotNull
   FileTemplate clone();
 
-  @NotNull
-  String[] getUnsetAttributes(@NotNull Properties properties, @NotNull Project project) throws ParseException;
+  String @NotNull [] getUnsetAttributes(@NotNull Properties properties, @NotNull Project project) throws ParseException;
 }

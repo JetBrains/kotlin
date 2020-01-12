@@ -297,9 +297,8 @@ public class FileDownloaderImpl implements FileDownloader {
     return this;
   }
 
-  @Nullable
   @Override
-  public VirtualFile[] download() {
+  public VirtualFile @Nullable [] download() {
     List<VirtualFile> files = downloadFilesWithProgress(myDirectoryForDownloadedFilesPath, myProject, myParentComponent);
     return files != null ? VfsUtilCore.toVirtualFileArray(files) : null;
   }

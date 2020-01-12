@@ -28,7 +28,7 @@ public class RunManagerSettingsImpl implements RunManagerSettings {
   private SettingsXmlFile myProjectFile;
   private final List<SettingsXmlFile> mySharedConfigurationFiles;
 
-  public RunManagerSettingsImpl(@NotNull Path workspaceFile, @Nullable Path projectFile, @Nullable File[] sharedConfigurationFiles,
+  public RunManagerSettingsImpl(@NotNull Path workspaceFile, @Nullable Path projectFile, File @Nullable [] sharedConfigurationFiles,
                                 ConversionContextImpl context) throws CannotConvertException {
     if (Files.exists(workspaceFile)) {
       myWorkspaceFile = context.getOrCreateFile(workspaceFile);

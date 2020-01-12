@@ -31,7 +31,7 @@ public abstract class PerformFixesModalTask implements SequentialTask {
   private int myDescriptorIdx = 0;
 
   protected PerformFixesModalTask(@NotNull Project project,
-                                  @NotNull CommonProblemDescriptor[] descriptors) {
+                                  CommonProblemDescriptor @NotNull [] descriptors) {
     this(project, Collections.singletonList(descriptors));
   }
 

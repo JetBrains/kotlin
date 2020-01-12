@@ -32,8 +32,8 @@ public interface ArtifactProblemsHolder {
   void registerError(@NotNull String message, @NotNull String problemTypeId);
 
   void registerError(@NotNull String message, @NotNull String problemTypeId, @Nullable List<PackagingElement<?>> pathToPlace,
-                     @NotNull ArtifactProblemQuickFix... quickFixes);
+                     ArtifactProblemQuickFix @NotNull ... quickFixes);
 
   void registerWarning(@NotNull String message, @NotNull String problemTypeId, @Nullable List<PackagingElement<?>> pathToPlace,
-                       @NotNull ArtifactProblemQuickFix... quickFixes);
+                       ArtifactProblemQuickFix @NotNull ... quickFixes);
 }

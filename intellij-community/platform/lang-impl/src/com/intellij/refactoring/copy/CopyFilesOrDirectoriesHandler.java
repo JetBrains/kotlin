@@ -207,7 +207,7 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
    * @param targetDirectory
    * @param openInEditor
    */
-  private static void copyImpl(@NotNull final VirtualFile[] files,
+  private static void copyImpl(final VirtualFile @NotNull [] files,
                                @Nullable final String newName,
                                @NotNull final PsiDirectory targetDirectory,
                                final boolean doClone,
@@ -283,7 +283,7 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
   public static PsiFile copyToDirectory(@NotNull PsiFileSystemItem elementToCopy,
                                         @Nullable String newName,
                                         @NotNull PsiDirectory targetDirectory,
-                                        @Nullable int[] choice,
+                                        int @Nullable [] choice,
                                         @Nullable String title) throws IncorrectOperationException, IOException {
     ArrayList<PsiFile> added = new ArrayList<>();
     copyToDirectory(elementToCopy, newName, targetDirectory, choice, title, added);

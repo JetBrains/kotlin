@@ -82,8 +82,7 @@ public final class HighlightManagerImpl extends HighlightManager {
     return map;
   }
 
-  @NotNull
-  public RangeHighlighter[] getHighlighters(@NotNull Editor editor) {
+  public RangeHighlighter @NotNull [] getHighlighters(@NotNull Editor editor) {
     Map<RangeHighlighter, HighlightFlags> highlightersMap = getHighlightInfoMap(editor, false);
     if (highlightersMap == null) return RangeHighlighter.EMPTY_ARRAY;
     Set<RangeHighlighter> set = new HashSet<>();
@@ -119,7 +118,7 @@ public final class HighlightManagerImpl extends HighlightManager {
 
   @Override
   public void addOccurrenceHighlights(@NotNull Editor editor,
-                                      @NotNull PsiReference[] occurrences,
+                                      PsiReference @NotNull [] occurrences,
                                       @NotNull TextAttributes attributes,
                                       boolean hideByTextChange,
                                       Collection<? super RangeHighlighter> outHighlighters) {
@@ -203,7 +202,7 @@ public final class HighlightManagerImpl extends HighlightManager {
 
   @Override
   public void addOccurrenceHighlights(@NotNull Editor editor,
-                                      @NotNull PsiElement[] elements,
+                                      PsiElement @NotNull [] elements,
                                       @NotNull TextAttributes attributes,
                                       boolean hideByTextChange,
                                       Collection<? super RangeHighlighter> outHighlighters) {

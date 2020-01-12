@@ -144,8 +144,7 @@ public class InspectionValidatorWrapper implements Validator {
   }
 
   @Override
-  @NotNull
-  public ProcessingItem[] getProcessingItems(final CompileContext context) {
+  public ProcessingItem @NotNull [] getProcessingItems(final CompileContext context) {
     final Project project = context.getProject();
     if (project.isDefault() || !ValidationConfiguration.shouldValidate(this, project)) {
       return ProcessingItem.EMPTY_ARRAY;

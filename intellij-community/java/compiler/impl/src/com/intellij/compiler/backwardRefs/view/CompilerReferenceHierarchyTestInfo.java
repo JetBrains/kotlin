@@ -41,18 +41,15 @@ public class CompilerReferenceHierarchyTestInfo {
     return myHierarchyInfo.getHierarchyChildren();
   }
 
-  @NotNull
-  Module[] getDirtyModules() {
+  Module @NotNull [] getDirtyModules() {
     return myDirtyScopeInfo.getDirtyModules();
   }
 
-  @NotNull
-  Module[] getDirtyUnsavedModules() {
+  Module @NotNull [] getDirtyUnsavedModules() {
     return myDirtyScopeInfo.getDirtyUnsavedModules();
   }
 
-  @NotNull
-  VirtualFile[] getExcludedFiles() {
+  VirtualFile @NotNull [] getExcludedFiles() {
     return myDirtyScopeInfo.getExcludedFiles();
   }
 

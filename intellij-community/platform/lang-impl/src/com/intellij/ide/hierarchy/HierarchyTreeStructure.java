@@ -80,9 +80,8 @@ public abstract class HierarchyTreeStructure extends AbstractTreeStructure {
     return false;
   }
 
-  @NotNull
   @Override
-  public final Object[] getChildElements(@NotNull final Object element) {
+  public final Object @NotNull [] getChildElements(@NotNull final Object element) {
     if (element instanceof HierarchyNodeDescriptor) {
       final HierarchyNodeDescriptor descriptor = (HierarchyNodeDescriptor)element;
       Object[] cachedChildren = descriptor.getCachedChildren();
@@ -129,8 +128,7 @@ public abstract class HierarchyTreeStructure extends AbstractTreeStructure {
     return asyncCommitDocuments(myProject);
   }
 
-  @NotNull
-  protected abstract Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor);
+  protected abstract Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descriptor);
 
   @NotNull
   @Override

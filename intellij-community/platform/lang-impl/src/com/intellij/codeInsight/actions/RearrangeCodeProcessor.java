@@ -47,14 +47,14 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
 
   @SuppressWarnings("unused") // Required for compatibility with external plugins.
   public RearrangeCodeProcessor(@NotNull Project project,
-                                @NotNull PsiFile[] files,
+                                PsiFile @NotNull [] files,
                                 @NotNull String commandName,
                                 @Nullable Runnable postRunnable) {
     this(project, files, commandName, postRunnable, false);
   }
 
   public RearrangeCodeProcessor(@NotNull Project project,
-                                @NotNull PsiFile[] files,
+                                PsiFile @NotNull [] files,
                                 @NotNull String commandName,
                                 @Nullable Runnable postRunnable,
                                 boolean processChangedTextOnly) {

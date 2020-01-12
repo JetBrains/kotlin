@@ -77,9 +77,8 @@ public class ImageDuplicateResultsDialog extends DialogWrapper {
     TreeUtil.promiseSelectFirst(myTree);
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     final Action[] actions = new Action[4];
     actions[0] = new AbstractAction() {
       @Override

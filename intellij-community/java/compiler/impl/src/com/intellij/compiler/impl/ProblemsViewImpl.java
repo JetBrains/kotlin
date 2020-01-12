@@ -99,7 +99,7 @@ final class ProblemsViewImpl extends ProblemsView {
 
   @Override
   public void addMessage(int type,
-                         @NotNull String[] text,
+                         String @NotNull [] text,
                          @Nullable String groupName,
                          @Nullable Navigatable navigatable,
                          @Nullable String exportTextPrefix, @Nullable String rendererTextPrefix, @Nullable UUID sessionId) {

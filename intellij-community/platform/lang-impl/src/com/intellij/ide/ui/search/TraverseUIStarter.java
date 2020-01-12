@@ -72,7 +72,7 @@ public class TraverseUIStarter implements ApplicationStarter {
   }
 
   @Override
-  public void main(@NotNull String[] args) {
+  public void main(String @NotNull [] args) {
     System.out.println("Starting searchable options index builder");
     try {
       startup(OUTPUT_PATH, SPLIT_BY_RESOURCE_PATH);

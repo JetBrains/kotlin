@@ -60,7 +60,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
     myRenameProcessor = canRename ? new RenameProcessor(project, namedElement, newName, false, false) {
       @NotNull
       @Override
-      protected ConflictsDialog createConflictsDialog(@NotNull MultiMap<PsiElement, String> conflicts, @Nullable final UsageInfo[] usages) {
+      protected ConflictsDialog createConflictsDialog(@NotNull MultiMap<PsiElement, String> conflicts, final UsageInfo @Nullable [] usages) {
         return new ConflictsDialog(myProject, conflicts, usages == null ? null : (Runnable)() -> InvertBooleanProcessor.this.execute(usages), false, true);
       }
 
@@ -76,7 +76,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
 
   @Override
   @NotNull
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new InvertBooleanUsageViewDescriptor(myElement);
   }
 
@@ -98,8 +98,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  @NotNull
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     final List<SmartPsiElementPointer> toInvert = new ArrayList<>();
 
     final LinkedHashSet<PsiElement> elementsToInvert = new LinkedHashSet<>();
@@ -136,7 +135,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void refreshElements(@NotNull PsiElement[] elements) {
+  protected void refreshElements(PsiElement @NotNull [] elements) {
     myElement = elements[0];
   }
 
@@ -154,7 +153,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usages) {
+  protected void performRefactoring(UsageInfo @NotNull [] usages) {
     if (myRenameProcessor != null) {
       for (final PsiElement element : myRenameProcessor.getElements()) {
         try {

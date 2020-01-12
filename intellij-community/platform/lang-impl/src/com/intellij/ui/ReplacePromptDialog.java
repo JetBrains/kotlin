@@ -44,9 +44,8 @@ public class ReplacePromptDialog extends DialogWrapper {
     init();
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions(){
+  protected Action @NotNull [] createActions(){
     DoAction replaceAction = new DoAction(UIBundle.message("replace.prompt.replace.button"), FindManager.PromptResult.OK);
     replaceAction.putValue(DEFAULT_ACTION,Boolean.TRUE);
     if (myException == null) {

@@ -211,8 +211,7 @@ public final class FileIncludeManagerImpl extends FileIncludeManager {
       RUNTIME_KEY = Key.create(runtimeKey);
     }
 
-    @NotNull
-    private VirtualFile[] getAllFiles(@NotNull VirtualFile file, boolean compileTimeOnly, boolean recursively) {
+    private VirtualFile @NotNull [] getAllFiles(@NotNull VirtualFile file, boolean compileTimeOnly, boolean recursively) {
       if (recursively) {
         Set<VirtualFile> result = new HashSet<>();
         getAllFilesRecursively(file, compileTimeOnly, result);

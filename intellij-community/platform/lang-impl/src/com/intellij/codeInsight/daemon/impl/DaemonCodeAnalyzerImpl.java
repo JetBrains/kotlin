@@ -274,7 +274,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   public void runPasses(@NotNull PsiFile file,
                         @NotNull Document document,
                         @NotNull List<? extends TextEditor> textEditors,
-                        @NotNull int[] toIgnore,
+                        int @NotNull [] toIgnore,
                         boolean canChangeDocument,
                         @Nullable final Runnable callbackWhileWaiting) throws ProcessCanceledException {
     assert myInitialized;

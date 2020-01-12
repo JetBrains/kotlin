@@ -292,9 +292,8 @@ public class BuildView extends CompositeView<ExecutionConsole>
     return result != null && result;
   }
 
-  @NotNull
   @Override
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     final DefaultActionGroup rerunActionGroup = new DefaultActionGroup();
     AnAction stopAction = null;
     StartBuildEvent startBuildEvent = myStartBuildEventRef.get();

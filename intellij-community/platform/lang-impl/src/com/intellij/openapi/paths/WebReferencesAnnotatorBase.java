@@ -35,8 +35,7 @@ public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebRe
 
   protected static final WebReference[] EMPTY_ARRAY = new WebReference[0];
 
-  @NotNull
-  protected abstract WebReference[] collectWebReferences(@NotNull PsiFile file);
+  protected abstract WebReference @NotNull [] collectWebReferences(@NotNull PsiFile file);
 
   @Nullable
   protected static WebReference lookForWebReference(@NotNull PsiElement element) {
@@ -131,8 +130,7 @@ public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebRe
   @NotNull
   protected abstract String getErrorMessage(@NotNull String url);
 
-  @NotNull
-  protected IntentionAction[] getQuickFixes() {
+  protected IntentionAction @NotNull [] getQuickFixes() {
     return IntentionAction.EMPTY_ARRAY;
   }
   

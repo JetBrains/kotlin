@@ -87,8 +87,7 @@ public class HighlightingSettingsPerFile extends HighlightingLevelManager implem
     return FileHighlightingSetting.FORCE_HIGHLIGHTING;
   }
 
-  @NotNull
-  private static FileHighlightingSetting[] getDefaults(@NotNull PsiFile file){
+  private static FileHighlightingSetting @NotNull [] getDefaults(@NotNull PsiFile file){
     final int rootsCount = file.getViewProvider().getLanguages().size();
     final FileHighlightingSetting[] fileHighlightingSettings = new FileHighlightingSetting[rootsCount];
     for (int i = 0; i < fileHighlightingSettings.length; i++) {

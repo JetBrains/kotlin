@@ -135,7 +135,7 @@ public abstract class AbstractInplaceIntroducer<V extends PsiNameIdentifierOwner
    * @return the declaration
    */
   @Nullable
-  protected abstract V createFieldToStartTemplateOn(boolean replaceAll, @NotNull String[] names);
+  protected abstract V createFieldToStartTemplateOn(boolean replaceAll, String @NotNull [] names);
 
   /**
    * Returns the suggested names for the introduced element.
@@ -144,8 +144,7 @@ public abstract class AbstractInplaceIntroducer<V extends PsiNameIdentifierOwner
    * @param variable   introduced element declaration, if already created.
    * @return the suggested names
    */
-  @NotNull
-  protected abstract String[] suggestNames(boolean replaceAll, @Nullable V variable);
+  protected abstract String @NotNull [] suggestNames(boolean replaceAll, @Nullable V variable);
 
   protected abstract void performIntroduce();
   protected void performPostIntroduceTasks() {}

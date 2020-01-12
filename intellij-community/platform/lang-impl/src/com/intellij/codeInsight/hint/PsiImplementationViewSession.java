@@ -114,8 +114,7 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
   public void dispose() {
   }
 
-  @NotNull
-  static PsiElement[] filterElements(@NotNull final PsiElement[] targetElements) {
+  static PsiElement @NotNull [] filterElements(final PsiElement @NotNull [] targetElements) {
     final Set<PsiElement> unique = new LinkedHashSet<>(Arrays.asList(targetElements));
     for (final PsiElement elt : targetElements) {
       ApplicationManager.getApplication().runReadAction(() -> {
@@ -160,18 +159,16 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
     };
   }
 
-  @NotNull
-  static PsiElement[] getSelfAndImplementations(Editor editor,
-                                                @NotNull PsiElement element,
-                                                @NotNull ImplementationSearcher handler) {
+  static PsiElement @NotNull [] getSelfAndImplementations(Editor editor,
+                                                          @NotNull PsiElement element,
+                                                          @NotNull ImplementationSearcher handler) {
     return getSelfAndImplementations(editor, element, handler, !(element instanceof PomTargetPsiElement));
   }
 
-  @NotNull
-  public static PsiElement[] getSelfAndImplementations(Editor editor,
-                                                        @NotNull PsiElement element,
-                                                        @NotNull ImplementationSearcher handler,
-                                                final boolean includeSelfAlways) {
+  public static PsiElement @NotNull [] getSelfAndImplementations(Editor editor,
+                                                                 @NotNull PsiElement element,
+                                                                 @NotNull ImplementationSearcher handler,
+                                                                 final boolean includeSelfAlways) {
     final PsiElement[] handlerImplementations = handler.searchImplementations(element, editor, includeSelfAlways, true);
     if (handlerImplementations.length > 0) return handlerImplementations;
 

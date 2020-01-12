@@ -96,7 +96,7 @@ public class LookupManagerImpl extends LookupManager {
 
   @Override
   public LookupEx showLookup(@NotNull final Editor editor,
-                           @NotNull LookupElement[] items,
+                           LookupElement @NotNull [] items,
                            @NotNull final String prefix,
                            @NotNull final LookupArranger arranger) {
     for (LookupElement item : items) {
@@ -110,7 +110,7 @@ public class LookupManagerImpl extends LookupManager {
   @NotNull
   @Override
   public LookupImpl createLookup(@NotNull final Editor editor,
-                                 @NotNull LookupElement[] items,
+                                 LookupElement @NotNull [] items,
                                  @NotNull final String prefix,
                                  @NotNull final LookupArranger arranger) {
     hideActiveLookup();

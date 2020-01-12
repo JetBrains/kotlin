@@ -438,7 +438,7 @@ public class GradleInstallationManager {
    * @param files files to process
    * @return {@code true} if one of the given files is from the gradle installation; {@code false} otherwise
    */
-  public boolean isGradleSdk(@Nullable VirtualFile... files) {
+  public boolean isGradleSdk(VirtualFile @Nullable ... files) {
     if (files == null) {
       return false;
     }
@@ -449,12 +449,12 @@ public class GradleInstallationManager {
     return isGradleSdk(arg);
   }
 
-  private boolean isGradleSdk(@Nullable File... files) {
+  private boolean isGradleSdk(File @Nullable ... files) {
     return findGradleJar(files) != null;
   }
 
   @Nullable
-  private File findGradleJar(@Nullable File... files) {
+  private File findGradleJar(File @Nullable ... files) {
     if (files == null) {
       return null;
     }
@@ -579,7 +579,7 @@ public class GradleInstallationManager {
            || isGroovyJar(fileName);
   }
 
-  private void addRoots(@NotNull List<? super File> result, @Nullable File... files) {
+  private void addRoots(@NotNull List<? super File> result, File @Nullable ... files) {
     if (files == null) return;
     for (File file : files) {
       if (file == null || !file.isDirectory()) continue;

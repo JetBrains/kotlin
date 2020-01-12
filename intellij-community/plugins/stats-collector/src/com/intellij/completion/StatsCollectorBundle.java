@@ -9,7 +9,7 @@ import org.jetbrains.annotations.PropertyKey;
 public class StatsCollectorBundle extends DynamicBundle {
   private static final String STATS_COLLECTOR_BUNDLE = "messages.StatsCollectorBundle";
 
-  public static String message(@NotNull @PropertyKey(resourceBundle = STATS_COLLECTOR_BUNDLE) String key, @NotNull Object... params) {
+  public static String message(@NotNull @PropertyKey(resourceBundle = STATS_COLLECTOR_BUNDLE) String key, Object @NotNull ... params) {
     return ourInstance.getMessage(key, params);
   }
 

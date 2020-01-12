@@ -67,7 +67,7 @@ public abstract class AbstractInspectionToolStarter implements ApplicationStarte
   }
 
   @Override
-  public void main(@NotNull String[] args) {
+  public void main(String @NotNull [] args) {
     myOptions.beforeStartup();
 
     IdeaForkJoinWorkerThreadFactory.setupForkJoinCommonPool(true);

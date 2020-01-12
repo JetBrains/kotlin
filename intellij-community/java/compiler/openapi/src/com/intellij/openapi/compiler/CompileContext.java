@@ -60,8 +60,7 @@ public interface CompileContext extends UserDataHolder {
    * @param category the category for which messages are requested.
    * @return all compiler messages of the specified category
    */
-  @NotNull
-  CompilerMessage[] getMessages(@NotNull CompilerMessageCategory category);
+  CompilerMessage @NotNull [] getMessages(@NotNull CompilerMessageCategory category);
 
   /**
    * Returns the count of messages of the specified category added during the current compile session.

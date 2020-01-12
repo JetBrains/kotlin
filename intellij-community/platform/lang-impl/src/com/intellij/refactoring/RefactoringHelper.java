@@ -27,6 +27,6 @@ import org.jetbrains.annotations.NotNull;
 public interface RefactoringHelper<T> {
   ExtensionPointName<RefactoringHelper> EP_NAME = ExtensionPointName.create("com.intellij.refactoring.helper");
 
-  T prepareOperation(@NotNull UsageInfo[] usages);
+  T prepareOperation(UsageInfo @NotNull [] usages);
   void performOperation(@NotNull Project project, T operationData);
 }

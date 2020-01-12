@@ -125,8 +125,7 @@ public class Descriptor {
     return element;
   }
 
-  @NotNull
-  public String[] getGroup() {
+  public String @NotNull [] getGroup() {
     return myGroup;
   }
 

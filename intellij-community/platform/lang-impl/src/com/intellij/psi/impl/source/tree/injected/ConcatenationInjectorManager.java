@@ -38,7 +38,7 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
   private static InjectionResult doCompute(@NotNull PsiFile containingFile,
                                            @NotNull Project project,
                                            @NotNull PsiElement anchor,
-                                           @NotNull PsiElement[] operands) {
+                                           PsiElement @NotNull [] operands) {
     PsiDocumentManager docManager = PsiDocumentManager.getInstance(project);
     InjectionRegistrarImpl registrar = new InjectionRegistrarImpl(project, containingFile, anchor, docManager);
     InjectionResult result = null;

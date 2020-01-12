@@ -139,8 +139,7 @@ class SelectionModelWindow implements SelectionModel {
   }
 
   @Override
-  @NotNull
-  public int[] getBlockSelectionStarts() {
+  public int @NotNull [] getBlockSelectionStarts() {
     int[] result = myHostModel.getBlockSelectionStarts();
     for (int i = 0; i < result.length; i++) {
       result[i] = myDocument.hostToInjected(result[i]);
@@ -149,8 +148,7 @@ class SelectionModelWindow implements SelectionModel {
   }
 
   @Override
-  @NotNull
-  public int[] getBlockSelectionEnds() {
+  public int @NotNull [] getBlockSelectionEnds() {
     int[] result = myHostModel.getBlockSelectionEnds();
     for (int i = 0; i < result.length; i++) {
       result[i] = myDocument.hostToInjected(result[i]);

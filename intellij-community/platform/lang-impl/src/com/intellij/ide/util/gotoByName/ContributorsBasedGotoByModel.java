@@ -45,7 +45,7 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
   protected final Project myProject;
   private final List<ChooseByNameContributor> myContributors;
 
-  protected ContributorsBasedGotoByModel(@NotNull Project project, @NotNull ChooseByNameContributor[] contributors) {
+  protected ContributorsBasedGotoByModel(@NotNull Project project, ChooseByNameContributor @NotNull [] contributors) {
     this(project, Arrays.asList(contributors));
   }
 
@@ -138,9 +138,8 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
     return IdFilter.getProjectIdFilter(myProject, withLibraries);
   }
 
-  @NotNull
   @Override
-  public String[] getNames(final boolean checkBoxState) {
+  public String @NotNull [] getNames(final boolean checkBoxState) {
     final THashSet<String> allNames = new THashSet<>();
 
     Collection<String> result = Collections.synchronizedCollection(allNames);
@@ -164,10 +163,9 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
     return answer;
   }
 
-  @NotNull
-  public Object[] getElementsByName(@NotNull final String name,
-                                    @NotNull final FindSymbolParameters parameters,
-                                    @NotNull final ProgressIndicator canceled) {
+  public Object @NotNull [] getElementsByName(@NotNull final String name,
+                                              @NotNull final FindSymbolParameters parameters,
+                                              @NotNull final ProgressIndicator canceled) {
     long elementByNameStarted = System.currentTimeMillis();
     final List<NavigationItem> items = Collections.synchronizedList(new ArrayList<>());
 
@@ -242,9 +240,8 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
    *  which {@link #acceptItem(NavigationItem) returns true.
    *
    */
-  @NotNull
   @Override
-  public Object[] getElementsByName(@NotNull final String name, final boolean checkBoxState, @NotNull final String pattern) {
+  public Object @NotNull [] getElementsByName(@NotNull final String name, final boolean checkBoxState, @NotNull final String pattern) {
     return getElementsByName(name, FindSymbolParameters.wrap(pattern, myProject, checkBoxState), new ProgressIndicatorBase());
   }
 

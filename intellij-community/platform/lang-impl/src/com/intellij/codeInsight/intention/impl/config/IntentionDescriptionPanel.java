@@ -133,7 +133,7 @@ public class IntentionDescriptionPanel {
 
   private static void showUsages(final JPanel panel,
                                  final List<IntentionUsagePanel> usagePanels,
-                                 @Nullable final TextDescriptor[] exampleUsages) throws IOException {
+                                 final TextDescriptor @Nullable [] exampleUsages) throws IOException {
     GridBagConstraints gb = null;
     boolean reuse = exampleUsages != null && panel.getComponents().length == exampleUsages.length;
     if (!reuse) {

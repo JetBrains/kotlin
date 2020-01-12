@@ -32,9 +32,8 @@ import java.util.List;
  * @author nik
  */
 public class MarkSourceRootActionGroup extends ActionGroup {
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     //todo[nik] obtain compatible root types by module
     List<AnAction> actions = new ArrayList<>();
     for (JpsModuleSourceRootType<?> type : Arrays.asList(JavaSourceRootType.SOURCE, JavaSourceRootType.TEST_SOURCE, 

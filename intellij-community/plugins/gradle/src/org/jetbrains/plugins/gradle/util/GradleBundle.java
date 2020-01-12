@@ -27,7 +27,7 @@ public class GradleBundle extends DynamicBundle {
   @NonNls public static final String PATH_TO_BUNDLE = "messages.GradleBundle";
   private static final GradleBundle BUNDLE = new GradleBundle();
 
-  public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
+  public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
     return BUNDLE.getMessage(key, params);
   }
 

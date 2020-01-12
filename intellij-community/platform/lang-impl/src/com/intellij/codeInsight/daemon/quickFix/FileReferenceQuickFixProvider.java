@@ -204,8 +204,7 @@ public class FileReferenceQuickFixProvider {
     return true;
   }
 
-  @NotNull
-  private static String[] getPathToReferencePart(FileReference reference) {
+  private static String @NotNull [] getPathToReferencePart(FileReference reference) {
     if (reference.getIndex() == 0) {
       return ArrayUtil.EMPTY_STRING_ARRAY;
     }

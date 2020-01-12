@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface ChooseByNameItemProvider {
   @NotNull
-  List<String> filterNames(@NotNull ChooseByNameBase base, @NotNull String[] names, @NotNull String pattern);
+  List<String> filterNames(@NotNull ChooseByNameBase base, String @NotNull [] names, @NotNull String pattern);
 
   boolean filterElements(@NotNull ChooseByNameBase base,
                          @NotNull String pattern,

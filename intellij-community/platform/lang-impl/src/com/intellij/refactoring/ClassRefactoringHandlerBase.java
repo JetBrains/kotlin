@@ -51,7 +51,7 @@ public abstract class ClassRefactoringHandlerBase implements RefactoringActionHa
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     final PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     showDialog(project, elements[0], editor, file, dataContext);

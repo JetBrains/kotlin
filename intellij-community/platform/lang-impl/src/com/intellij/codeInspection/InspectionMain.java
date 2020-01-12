@@ -93,7 +93,7 @@ public class InspectionMain implements ApplicationStarter {
   }
 
   @Override
-  public void main(@NotNull String[] args) {
+  public void main(String @NotNull [] args) {
     myApplication.startup();
   }
 

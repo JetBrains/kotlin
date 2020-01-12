@@ -35,8 +35,7 @@ public class OneProjectItemCompileScope extends ExportableUserDataHolderBase imp
   }
 
   @Override
-  @NotNull
-  public VirtualFile[] getFiles(final FileType fileType, final boolean inSourceOnly) {
+  public VirtualFile @NotNull [] getFiles(final FileType fileType, final boolean inSourceOnly) {
     final List<VirtualFile> files = new ArrayList<>(1);
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     final ContentIterator iterator = new CompilerContentIterator(fileType, projectFileIndex, inSourceOnly, files);
@@ -58,8 +57,7 @@ public class OneProjectItemCompileScope extends ExportableUserDataHolderBase imp
   }
 
   @Override
-  @NotNull
-  public Module[] getAffectedModules() {
+  public Module @NotNull [] getAffectedModules() {
     final Collection<ModuleSourceSet> sets = getAffectedSourceSets();
     if (sets.isEmpty()) {
       if (LOG.isDebugEnabled()) {

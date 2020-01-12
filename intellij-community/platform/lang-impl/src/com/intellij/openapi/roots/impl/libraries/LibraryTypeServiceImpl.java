@@ -58,7 +58,7 @@ public class LibraryTypeServiceImpl extends LibraryTypeService {
   }
 
   @NotNull
-  public static String suggestLibraryName(@NotNull VirtualFile[] classesRoots) {
+  public static String suggestLibraryName(VirtualFile @NotNull [] classesRoots) {
     if (classesRoots.length >= 1) {
       return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(classesRoots[0].getPath()));
     }

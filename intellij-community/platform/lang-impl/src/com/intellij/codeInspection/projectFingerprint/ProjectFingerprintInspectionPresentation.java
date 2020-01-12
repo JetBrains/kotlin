@@ -21,7 +21,7 @@ public class ProjectFingerprintInspectionPresentation extends DefaultInspectionT
   }
 
   @Override
-  protected void exportResults(@NotNull CommonProblemDescriptor[] descriptors,
+  protected void exportResults(CommonProblemDescriptor @NotNull [] descriptors,
                                @NotNull RefEntity refEntity,
                                @NotNull Consumer<? super Element> problemSink,
                                @NotNull Predicate<? super CommonProblemDescriptor> isDescriptorExcluded) {

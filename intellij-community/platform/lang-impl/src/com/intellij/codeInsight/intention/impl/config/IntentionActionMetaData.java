@@ -11,13 +11,13 @@ import org.jetbrains.annotations.Nullable;
 
 public final class IntentionActionMetaData extends BeforeAfterActionMetaData {
   @NotNull private final IntentionAction myAction;
-  @NotNull public final String[] myCategory;
+  public final String @NotNull [] myCategory;
   private String myDirName;
   @NonNls private static final String INTENTION_DESCRIPTION_FOLDER = "intentionDescriptions";
 
   public IntentionActionMetaData(@NotNull IntentionAction action,
                                  @Nullable ClassLoader loader,
-                                 @NotNull String[] category,
+                                 String @NotNull [] category,
                                  @NotNull String descriptionDirectoryName) {
     super(loader, descriptionDirectoryName);
 

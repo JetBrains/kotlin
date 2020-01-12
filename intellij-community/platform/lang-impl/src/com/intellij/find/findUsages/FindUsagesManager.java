@@ -148,8 +148,8 @@ public final class FindUsagesManager {
 
 
   private void initLastSearchElement(@NotNull FindUsagesOptions findUsagesOptions,
-                                     @NotNull PsiElement[] primaryElements,
-                                     @NotNull PsiElement[] secondaryElements) {
+                                     PsiElement @NotNull [] primaryElements,
+                                     PsiElement @NotNull [] secondaryElements) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     myLastSearchInFileData = new PsiElement2UsageTargetComposite(primaryElements, secondaryElements, findUsagesOptions);
@@ -251,14 +251,14 @@ public final class FindUsagesManager {
     }
   }
 
-  public static void showSettingsAndFindUsages(@NotNull NavigationItem[] targets) {
+  public static void showSettingsAndFindUsages(NavigationItem @NotNull [] targets) {
     if (targets.length == 0) return;
     NavigationItem target = targets[0];
     if (!(target instanceof ConfigurableUsageTarget)) return;
     ((ConfigurableUsageTarget)target).showSettings();
   }
 
-  private static void checkNotNull(@NotNull PsiElement[] elements,
+  private static void checkNotNull(PsiElement @NotNull [] elements,
                                    @NotNull FindUsagesHandler handler,
                                    @NonNls @NotNull String methodName) {
     for (PsiElement element : elements) {
@@ -270,8 +270,8 @@ public final class FindUsagesManager {
 
   @NotNull
   public static ProgressIndicator startProcessUsages(@NotNull final FindUsagesHandler handler,
-                                                     @NotNull final PsiElement[] primaryElements,
-                                                     @NotNull final PsiElement[] secondaryElements,
+                                                     final PsiElement @NotNull [] primaryElements,
+                                                     final PsiElement @NotNull [] secondaryElements,
                                                      @NotNull final Processor<Usage> processor,
                                                      @NotNull final FindUsagesOptions findUsagesOptions,
                                                      @NotNull final Runnable onComplete) {
@@ -321,8 +321,8 @@ public final class FindUsagesManager {
    * @throws PsiInvalidElementAccessException when the searcher can't be created (i.e. because element was invalidated)
    */
   @NotNull
-  private static UsageSearcher createUsageSearcher(@NotNull final PsiElement2UsageTargetAdapter[] primaryTargets,
-                                                   @NotNull final PsiElement2UsageTargetAdapter[] secondaryTargets,
+  private static UsageSearcher createUsageSearcher(final PsiElement2UsageTargetAdapter @NotNull [] primaryTargets,
+                                                   final PsiElement2UsageTargetAdapter @NotNull [] secondaryTargets,
                                                    @NotNull final FindUsagesHandler handler,
                                                    @NotNull FindUsagesOptions options,
                                                    final PsiFile scopeFile) throws PsiInvalidElementAccessException {
@@ -399,24 +399,23 @@ public final class FindUsagesManager {
     };
   }
 
-  @NotNull
-  private static PsiElement2UsageTargetAdapter[] convertToUsageTargets(@NotNull Iterable<? extends PsiElement> elementsToSearch,
-                                                                       @NotNull final FindUsagesOptions findUsagesOptions) {
+  private static PsiElement2UsageTargetAdapter @NotNull [] convertToUsageTargets(@NotNull Iterable<? extends PsiElement> elementsToSearch,
+                                                                                 @NotNull final FindUsagesOptions findUsagesOptions) {
     final List<PsiElement2UsageTargetAdapter> targets = ContainerUtil.map(elementsToSearch,
                                                                           element -> convertToUsageTarget(element, findUsagesOptions));
     return targets.toArray(new PsiElement2UsageTargetAdapter[0]);
   }
 
-  public void findUsages(@NotNull final PsiElement[] primaryElements,
-                         @NotNull final PsiElement[] secondaryElements,
+  public void findUsages(final PsiElement @NotNull [] primaryElements,
+                         final PsiElement @NotNull [] secondaryElements,
                          @NotNull final FindUsagesHandler handler,
                          @NotNull final FindUsagesOptions findUsagesOptions,
                          final boolean toSkipUsagePanelWhenOneUsage) {
     doFindUsages(primaryElements, secondaryElements, handler, findUsagesOptions, toSkipUsagePanelWhenOneUsage);
   }
 
-  public UsageView doFindUsages(@NotNull final PsiElement[] primaryElements,
-                                @NotNull final PsiElement[] secondaryElements,
+  public UsageView doFindUsages(final PsiElement @NotNull [] primaryElements,
+                                final PsiElement @NotNull [] secondaryElements,
                                 @NotNull final FindUsagesHandler handler,
                                 @NotNull final FindUsagesOptions findUsagesOptions,
                                 final boolean toSkipUsagePanelWhenOneUsage) {
@@ -454,8 +453,8 @@ public final class FindUsagesManager {
     return presentation;
   }
 
-  private void findUsagesInEditor(@NotNull final PsiElement[] primaryElements,
-                                  @NotNull final PsiElement[] secondaryElements,
+  private void findUsagesInEditor(final PsiElement @NotNull [] primaryElements,
+                                  final PsiElement @NotNull [] secondaryElements,
                                   @NotNull FindUsagesHandler handler,
                                   @NotNull PsiFile scopeFile,
                                   @NotNull FileSearchScope direction,

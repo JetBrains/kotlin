@@ -15,20 +15,18 @@ import java.util.stream.Stream;
 public class UncompressedZipPath implements Path {
   @NotNull
   private final UncompressedZipFileSystem myFileSystem;
-  @NotNull
-  private final String[] myNameElements;
+  private final String @NotNull [] myNameElements;
   private final boolean myAbsolute;
 
   public UncompressedZipPath(@NotNull UncompressedZipFileSystem system,
-                             @NotNull String[] elements,
+                             String @NotNull [] elements,
                              boolean absolute) {
     myFileSystem = system;
     myNameElements = elements;
     myAbsolute = absolute;
   }
 
-  @NotNull
-  String[] getNameElements() {
+  String @NotNull [] getNameElements() {
     return myNameElements;
   }
 
@@ -155,7 +153,7 @@ public class UncompressedZipPath implements Path {
 
   @NotNull
   @Override
-  public Path toRealPath(@NotNull LinkOption... options) {
+  public Path toRealPath(LinkOption @NotNull ... options) {
     if (!myAbsolute) {
       UncompressedZipPath absolutePath = (UncompressedZipPath)toAbsolutePath();
       return absolutePath.toRealPath(options);

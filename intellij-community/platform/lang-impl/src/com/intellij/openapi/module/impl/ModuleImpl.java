@@ -69,7 +69,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
         VfsUtilCore.pathToUrl(filePath), this,
         new VirtualFilePointerListener() {
           @Override
-          public void validityChanged(@NotNull VirtualFilePointer[] pointers) {
+          public void validityChanged(VirtualFilePointer @NotNull [] pointers) {
             VirtualFile file = myImlFilePointer.getFile();
             if (file != null) {
               ((ModuleStore)ServiceKt.getStateStore(ModuleImpl.this)).setPath(file.getPath(), false);

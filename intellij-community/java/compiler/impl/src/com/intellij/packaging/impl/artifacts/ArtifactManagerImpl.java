@@ -61,8 +61,7 @@ public final class ArtifactManagerImpl extends ArtifactManager implements Persis
   }
 
   @Override
-  @NotNull
-  public Artifact[] getArtifacts() {
+  public Artifact @NotNull [] getArtifacts() {
     return myModel.getArtifacts();
   }
 

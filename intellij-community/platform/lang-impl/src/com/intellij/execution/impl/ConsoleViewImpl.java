@@ -1401,8 +1401,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
   }
 
   @Override
-  @NotNull
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     //Initializing prev and next occurrences actions
     final CommonActionsManager actionsManager = CommonActionsManager.getInstance();
     final AnAction prevAction = actionsManager.createPrevOccurenceAction(this);

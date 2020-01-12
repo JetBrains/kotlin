@@ -183,8 +183,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
   }
 
   @Override
-  @NotNull
-  public final ExternalSystemNode<?>[] getChildren() {
+  public final ExternalSystemNode<?> @NotNull [] getChildren() {
     if (myChildren == null) {
       myChildren = buildChildren();
       onChildrenBuilt();
@@ -195,8 +194,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
   protected void onChildrenBuilt() {
   }
 
-  @NotNull
-  private ExternalSystemNode<?>[] buildChildren() {
+  private ExternalSystemNode<?> @NotNull [] buildChildren() {
     List<? extends ExternalSystemNode<?>> newChildrenCandidates = doBuildChildren();
     if (newChildrenCandidates.isEmpty()) return NO_CHILDREN;
 
@@ -215,8 +213,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
     myTotalErrorLevel = null;
   }
 
-  @Nullable
-  protected ExternalSystemNode<?>[] getCached() {
+  protected ExternalSystemNode<?> @Nullable [] getCached() {
     return myChildren;
   }
 
@@ -389,7 +386,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
     return null;
   }
 
-  protected String message(@NotNull String key, @NotNull Object... params) {
+  protected String message(@NotNull String key, Object @NotNull ... params) {
     return ExternalSystemBundle.message(key, params);
   }
 

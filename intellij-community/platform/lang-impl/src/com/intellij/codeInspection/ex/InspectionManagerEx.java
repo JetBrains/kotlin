@@ -109,7 +109,7 @@ public class InspectionManagerEx extends InspectionManagerBase {
                                                    @NotNull final ProblemHighlightType highlightType,
                                                    @Nullable final HintAction hintAction,
                                                    boolean onTheFly,
-                                                   @Nullable LocalQuickFix... fixes) {
+                                                   LocalQuickFix @Nullable ... fixes) {
     return new ProblemDescriptorImpl(psiElement, psiElement, descriptionTemplate, fixes, highlightType, false, null, hintAction, onTheFly);
   }
 

@@ -76,7 +76,7 @@ public abstract class RunManagerEx extends RunManager {
   }
 
   @SafeVarargs
-  public static void disableTasks(Project project, RunConfiguration settings, @NotNull Key<? extends BeforeRunTask>... keys) {
+  public static void disableTasks(Project project, RunConfiguration settings, Key<? extends BeforeRunTask> @NotNull ... keys) {
     for (Key<? extends BeforeRunTask> key : keys) {
       List<? extends BeforeRunTask> tasks = getInstanceEx(project).getBeforeRunTasks(settings, key);
       for (BeforeRunTask task : tasks) {
@@ -86,7 +86,7 @@ public abstract class RunManagerEx extends RunManager {
   }
 
   @SafeVarargs
-  public static int getTasksCount(Project project, RunConfiguration settings, @NotNull Key<? extends BeforeRunTask>... keys) {
+  public static int getTasksCount(Project project, RunConfiguration settings, Key<? extends BeforeRunTask> @NotNull ... keys) {
     return Arrays.stream(keys).mapToInt(key -> getInstanceEx(project).getBeforeRunTasks(settings, key).size()).sum();
   }
 }

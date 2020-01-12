@@ -461,7 +461,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
 
     @Override public boolean canBePerformed(@NotNull DataContext context) { return true; }
     @Override public boolean isPopup() { return true; }
-    @NotNull @Override public AnAction[] getChildren(@Nullable AnActionEvent e) { return EMPTY_ARRAY; }
+    @Override public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) { return EMPTY_ARRAY; }
 
     @NotNull @Override
     public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {

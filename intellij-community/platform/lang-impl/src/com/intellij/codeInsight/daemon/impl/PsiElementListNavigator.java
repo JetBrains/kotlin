@@ -105,7 +105,7 @@ public class PsiElementListNavigator {
    * listUpdaterTask should be started after alarm is initialized so one-item popup won't blink
    */
   @Nullable
-  public static JBPopup navigateOrCreatePopup(@NotNull final NavigatablePsiElement[] targets,
+  public static JBPopup navigateOrCreatePopup(final NavigatablePsiElement @NotNull [] targets,
                                               final String title,
                                               final String findUsagesTitle,
                                               final ListCellRenderer listRenderer,
@@ -122,8 +122,7 @@ public class PsiElementListNavigator {
   // Helper makes it easier to customize shown popup.
   public static class NavigateOrPopupHelper {
 
-    @NotNull
-    private final NavigatablePsiElement[] myTargets;
+    private final NavigatablePsiElement @NotNull [] myTargets;
 
     private final String myTitle;
 
@@ -142,7 +141,7 @@ public class PsiElementListNavigator {
     @Nullable
     private Project myProject;
 
-    public NavigateOrPopupHelper(@NotNull NavigatablePsiElement[] targets, String title) {
+    public NavigateOrPopupHelper(NavigatablePsiElement @NotNull [] targets, String title) {
       myTargets = targets;
       myTitle = title;
       myTargetsConsumer = selectedElements -> {

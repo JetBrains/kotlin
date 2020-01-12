@@ -55,8 +55,7 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
   }
 
   @Override
-  @NotNull
-  protected PsiElement[] invokeDialog(final Project project, PsiDirectory directory) {
+  protected PsiElement @NotNull [] invokeDialog(final Project project, PsiDirectory directory) {
     return PsiElement.EMPTY_ARRAY;
   }
 
@@ -105,8 +104,7 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
   }
 
   @Override
-  @NotNull
-  protected PsiElement[] create(@NotNull String newName, PsiDirectory directory) throws Exception {
+  protected PsiElement @NotNull [] create(@NotNull String newName, PsiDirectory directory) throws Exception {
     MkDirs mkdirs = new MkDirs(newName, directory);
     return new PsiElement[]{WriteAction.compute(() -> mkdirs.directory.createFile(getFileName(mkdirs.newName)))};
   }

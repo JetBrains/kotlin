@@ -96,9 +96,8 @@ class ManageProjectTemplatesDialog extends DialogWrapper {
     return (ProjectTemplate)myTemplatesList.getSelectedValue();
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{ new DialogWrapperAction(CommonBundle.getCloseButtonText()) {
       @Override
       protected void doAction(ActionEvent e) {

@@ -194,9 +194,8 @@ public class RunInspectionAction extends GotoActionBase implements DataProvider 
         return myUpdatedSettingsToolWrapper == null ? toolWrapper : myUpdatedSettingsToolWrapper;
       }
 
-      @NotNull
       @Override
-      protected Action[] createActions() {
+      protected Action @NotNull [] createActions() {
         final List<Action> actions = new ArrayList<>();
         final boolean hasFixAll = toolWrapper.getTool() instanceof CleanupLocalInspectionTool;
         actions.add(new AbstractAction(hasFixAll ? AnalysisScopeBundle.message("action.analyze.verb")

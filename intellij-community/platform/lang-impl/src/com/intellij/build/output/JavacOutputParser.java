@@ -34,7 +34,7 @@ public class JavacOutputParser implements BuildOutputParser {
     this("java");
   }
 
-  public JavacOutputParser(@NotNull String... fileExtensions) {
+  public JavacOutputParser(String @NotNull ... fileExtensions) {
     myFileExtensions = fileExtensions;
   }
 

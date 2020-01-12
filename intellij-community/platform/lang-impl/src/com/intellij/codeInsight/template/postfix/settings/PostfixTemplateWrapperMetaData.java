@@ -20,9 +20,8 @@ public class PostfixTemplateWrapperMetaData implements BeforeAfterMetaData {
     myDelegateMetaData = PostfixTemplateMetaData.createMetaData(wrapper.getDelegate());
   }
 
-  @NotNull
   @Override
-  public TextDescriptor[] getExampleUsagesBefore() {
+  public TextDescriptor @NotNull [] getExampleUsagesBefore() {
     if (myDelegateMetaData instanceof PostfixTemplateMetaData) {
       return decorateTextDescriptorWithKey(((PostfixTemplateMetaData)myDelegateMetaData).getRawExampleUsagesBefore(), myKey);
     }
@@ -30,9 +29,8 @@ public class PostfixTemplateWrapperMetaData implements BeforeAfterMetaData {
     return myDelegateMetaData.getExampleUsagesBefore();
   }
 
-  @NotNull
   @Override
-  public TextDescriptor[] getExampleUsagesAfter() {
+  public TextDescriptor @NotNull [] getExampleUsagesAfter() {
     if (myDelegateMetaData instanceof PostfixTemplateMetaData) {
       return decorateTextDescriptorWithKey(((PostfixTemplateMetaData)myDelegateMetaData).getRawExampleUsagesAfter(), myKey);
     }

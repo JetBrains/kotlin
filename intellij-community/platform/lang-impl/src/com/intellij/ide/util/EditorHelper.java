@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EditorHelper {
-  public static <T extends PsiElement> void openFilesInEditor(@NotNull T[] elements) {
+  public static <T extends PsiElement> void openFilesInEditor(T @NotNull [] elements) {
     final int limit = EditorWindow.getTabLimit();
     final int max = Math.min(limit, elements.length);
     for (int i = 0; i < max; i++) {

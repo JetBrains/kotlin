@@ -374,8 +374,7 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
     myFiltersModel.fireTableDataChanged();
   }
 
-  @NotNull
-  protected TodoPattern[] getTodoPatternsToDisplay(TodoConfiguration todoConfiguration) {
+  protected TodoPattern @NotNull [] getTodoPatternsToDisplay(TodoConfiguration todoConfiguration) {
     return todoConfiguration.getTodoPatterns();
   }
 

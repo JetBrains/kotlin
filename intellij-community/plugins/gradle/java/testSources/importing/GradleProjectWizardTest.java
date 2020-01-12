@@ -149,7 +149,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
                  StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript)));
   }
 
-  private static void assertModules(@NotNull Project project, @NotNull String... expectedNames) {
+  private static void assertModules(@NotNull Project project, String @NotNull ... expectedNames) {
     Module[] actual = ModuleManager.getInstance(project).getModules();
     Collection<String> actualNames = ContainerUtil.map(actual, it -> it.getName());
     assertEquals(ContainerUtil.newHashSet(expectedNames), new HashSet<>(actualNames));

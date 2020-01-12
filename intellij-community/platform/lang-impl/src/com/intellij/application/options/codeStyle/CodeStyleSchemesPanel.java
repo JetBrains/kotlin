@@ -189,7 +189,7 @@ public class CodeStyleSchemesPanel extends SimpleSchemesPanel<CodeStyleScheme> {
     myBottomPanel.setVisible(false);
   }
 
-  private static String getMessage(@NotNull CodeStyleSettingsModifier[] modifiers) {
+  private static String getMessage(CodeStyleSettingsModifier @NotNull [] modifiers) {
     final StringBuilder messageBuilder = new StringBuilder();
     messageBuilder.append("Settings may be overridden by ");
     boolean isList = false;

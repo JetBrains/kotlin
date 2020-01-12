@@ -744,14 +744,14 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     return null;
   }
 
-  protected void assertContentEntryExists(@NotNull String moduleName, @NotNull String... contentPaths) {
+  protected void assertContentEntryExists(@NotNull String moduleName, String @NotNull ... contentPaths) {
     for (String contentPath : contentPaths) {
       ContentEntry contentEntry = findContentEntry(moduleName, contentPath);
       assertNotNull("Content entry " + contentPath + " not found in module " + moduleName, contentEntry);
     }
   }
 
-  protected void assertSourceExists(@NotNull String moduleName, @NotNull String... sourcePaths) {
+  protected void assertSourceExists(@NotNull String moduleName, String @NotNull ... sourcePaths) {
     for (String sourcePath : sourcePaths) {
       SourceFolder sourceFolder = findSource(moduleName, sourcePath);
       assertNotNull("Source folder " + sourcePath + " not found in module " + moduleName, sourceFolder);

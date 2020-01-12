@@ -125,9 +125,8 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
         return true;
       }
 
-      @NotNull
       @Override
-      public Object[] getChildElements(@NotNull final Object element) {
+      public Object @NotNull [] getChildElements(@NotNull final Object element) {
         return filterFiles(super.getChildElements(element));
       }
 
@@ -337,8 +336,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
   private final class MyGotoFileModel implements ChooseByNameModel, DumbAware {
     private final int myMaxSize = WindowManagerEx.getInstanceEx().getFrame(myProject).getSize().width;
     @Override
-    @NotNull
-    public Object[] getElementsByName(@NotNull final String name, final boolean checkBoxState, @NotNull final String pattern) {
+    public Object @NotNull [] getElementsByName(@NotNull final String name, final boolean checkBoxState, @NotNull final String pattern) {
       GlobalSearchScope scope = myShowLibraryContents ? GlobalSearchScope.allScope(myProject) : GlobalSearchScope.projectScope(myProject);
       final PsiFile[] psiFiles = FilenameIndex.getFilesByName(myProject, name, scope);
       return filterFiles(psiFiles);
@@ -383,8 +381,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
     }
 
     @Override
-    @NotNull
-    public String[] getNames(final boolean checkBoxState) {
+    public String @NotNull [] getNames(final boolean checkBoxState) {
       final String[] fileNames;
       if (myFileType != null && myProject != null) {
         GlobalSearchScope scope = myShowLibraryContents ? GlobalSearchScope.allScope(myProject) : GlobalSearchScope.projectScope(myProject);
@@ -430,8 +427,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
     }
 
     @Override
-    @NotNull
-    public String[] getSeparators() {
+    public String @NotNull [] getSeparators() {
       return new String[] {"/", "\\"};
     }
 

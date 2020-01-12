@@ -26,7 +26,7 @@ public class DownloadableFileServiceImpl extends DownloadableFileService {
   @NotNull
   @Override
   public DownloadableFileSetVersions<DownloadableFileSetDescription> createFileSetVersions(@Nullable String groupId,
-                                                                                           @NotNull URL... localUrls) {
+                                                                                           URL @NotNull ... localUrls) {
     return new FileSetVersionsFetcherBase<DownloadableFileSetDescription, DownloadableFileDescription>(groupId, localUrls) {
       @Override
       protected DownloadableFileSetDescription createVersion(Artifact version, List<DownloadableFileDescription> files) {

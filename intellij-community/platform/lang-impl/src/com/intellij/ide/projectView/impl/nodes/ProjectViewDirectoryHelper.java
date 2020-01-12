@@ -304,8 +304,7 @@ public class ProjectViewDirectoryHelper {
     return file != null && index.getInfoForFile(file).getContentRoot() != null;
   }
 
-  @NotNull
-  private PsiElement[] directoryChildrenInProject(PsiDirectory psiDirectory, final ViewSettings settings) {
+  private PsiElement @NotNull [] directoryChildrenInProject(PsiDirectory psiDirectory, final ViewSettings settings) {
     final VirtualFile dir = psiDirectory.getVirtualFile();
     if (shouldBeShown(dir, settings)) {
       final List<PsiElement> children = new ArrayList<>();

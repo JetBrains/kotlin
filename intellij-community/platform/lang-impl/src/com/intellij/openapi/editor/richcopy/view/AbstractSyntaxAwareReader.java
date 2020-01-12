@@ -49,7 +49,7 @@ public abstract class AbstractSyntaxAwareReader extends Reader {
   }
 
   @Override
-  public int read(@NotNull char[] cbuf, int off, int len) throws IOException {
+  public int read(char @NotNull [] cbuf, int off, int len) throws IOException {
     return getDelegate().read(cbuf, off, len);
   }
 

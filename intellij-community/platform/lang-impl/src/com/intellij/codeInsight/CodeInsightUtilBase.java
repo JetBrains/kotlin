@@ -51,7 +51,7 @@ public class CodeInsightUtilBase extends CodeInsightUtilCore {
   }
 
   @Override
-  public boolean preparePsiElementsForWrite(@NotNull PsiElement... elements) {
+  public boolean preparePsiElementsForWrite(PsiElement @NotNull ... elements) {
     return preparePsiElementsForWrite(Arrays.asList(elements));
   }
 

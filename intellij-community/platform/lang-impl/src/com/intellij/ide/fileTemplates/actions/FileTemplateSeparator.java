@@ -10,9 +10,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class FileTemplateSeparator extends ActionGroup {
 
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     return new AnAction[]{Separator.create(shouldShowNamedSeparator(e) ? "File templates" : null)};
   }
 

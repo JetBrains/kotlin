@@ -115,9 +115,8 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
       final CodeStyleStatusBarUIContributor uiContributor = ((MyWidgetState)state).getContributor();
       AnAction[] actions = getActions(uiContributor, psiFile);
       ActionGroup actionGroup = new ActionGroup() {
-        @NotNull
         @Override
-        public AnAction[] getChildren(@Nullable AnActionEvent e) {
+        public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
           return actions;
         }
       };
@@ -128,8 +127,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
     return null;
   }
 
-  @NotNull
-  private static AnAction[] getActions(@Nullable final CodeStyleStatusBarUIContributor uiContributor, @NotNull PsiFile psiFile) {
+  private static AnAction @NotNull [] getActions(@Nullable final CodeStyleStatusBarUIContributor uiContributor, @NotNull PsiFile psiFile) {
     List<AnAction> allActions = new ArrayList<>();
     if (uiContributor != null) {
       AnAction[] actions = uiContributor.getActions(psiFile);

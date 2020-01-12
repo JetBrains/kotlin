@@ -32,18 +32,18 @@ public abstract class LookupManager {
   }
 
   @Nullable
-  public LookupEx showLookup(@NotNull Editor editor, @NotNull LookupElement... items) {
+  public LookupEx showLookup(@NotNull Editor editor, LookupElement @NotNull ... items) {
     return showLookup(editor, items, "", new LookupArranger.DefaultArranger());
   }
 
   @Nullable
-  public LookupEx showLookup(@NotNull Editor editor, @NotNull LookupElement[] items, @NotNull String prefix) {
+  public LookupEx showLookup(@NotNull Editor editor, LookupElement @NotNull [] items, @NotNull String prefix) {
     return showLookup(editor, items, prefix, new LookupArranger.DefaultArranger());
   }
 
   @Nullable
   public abstract LookupEx showLookup(@NotNull Editor editor,
-                                      @NotNull LookupElement[] items,
+                                      LookupElement @NotNull [] items,
                                       @NotNull String prefix,
                                       @NotNull LookupArranger arranger);
 
@@ -66,6 +66,6 @@ public abstract class LookupManager {
   public abstract void removePropertyChangeListener(@NotNull PropertyChangeListener listener);
 
   @NotNull
-  public abstract Lookup createLookup(@NotNull Editor editor, @NotNull LookupElement[] items, @NotNull final String prefix, @NotNull LookupArranger arranger);
+  public abstract Lookup createLookup(@NotNull Editor editor, LookupElement @NotNull [] items, @NotNull final String prefix, @NotNull LookupArranger arranger);
 
 }

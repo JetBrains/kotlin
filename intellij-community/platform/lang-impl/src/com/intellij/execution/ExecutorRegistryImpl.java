@@ -330,9 +330,8 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry {
       myChildConverter = childConverter;
     }
 
-    @NotNull
     @Override
-    public AnAction[] getChildren(@Nullable AnActionEvent e) {
+    public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
       List<Executor> childExecutors = myExecutorGroup.childExecutors();
       AnAction[] result = new AnAction[childExecutors.size()];
       for (int i = 0; i < childExecutors.size(); i++) {

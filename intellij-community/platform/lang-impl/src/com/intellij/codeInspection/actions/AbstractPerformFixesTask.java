@@ -15,7 +15,7 @@ public abstract class AbstractPerformFixesTask extends PerformFixesModalTask {
   protected final Class<?> myQuickfixClass;
 
   public AbstractPerformFixesTask(@NotNull Project project,
-                                  @NotNull CommonProblemDescriptor[] descriptors,
+                                  CommonProblemDescriptor @NotNull [] descriptors,
                                   @Nullable Class<?> quickfixClass) {
     super(project, descriptors);
     myQuickfixClass = quickfixClass;

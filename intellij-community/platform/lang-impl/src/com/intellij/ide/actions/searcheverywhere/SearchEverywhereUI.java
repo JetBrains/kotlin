@@ -367,9 +367,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   protected JPanel createSettingsPanel() {
     DefaultActionGroup actionGroup = new DefaultActionGroup();
     actionGroup.addAction(new ActionGroup() {
-      @NotNull
       @Override
-      public AnAction[] getChildren(@Nullable AnActionEvent e) {
+      public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
         if (e == null || mySelectedTab == null) return EMPTY_ARRAY;
         return mySelectedTab.actions.toArray(EMPTY_ARRAY);
       }

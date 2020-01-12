@@ -43,9 +43,8 @@ public class SelectExternalProjectDialog extends SelectExternalSystemNodeDialog 
     init();
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     Action selectNoneAction = new AbstractAction("&None") {
       @Override
       public void actionPerformed(ActionEvent e) {

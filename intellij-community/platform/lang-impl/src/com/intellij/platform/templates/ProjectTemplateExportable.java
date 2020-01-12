@@ -22,9 +22,8 @@ import java.io.File;
 
 public class ProjectTemplateExportable implements ExportableComponent {
 
-  @NotNull
   @Override
-  public File[] getExportFiles() {
+  public File @NotNull [] getExportFiles() {
     return new File[]{new File(ArchivedTemplatesFactory.getCustomTemplatesPath())};
   }
 

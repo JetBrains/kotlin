@@ -52,8 +52,7 @@ public abstract class InspectionTreeNode implements TreeNode {
     return null;
   }
 
-  @NotNull
-  LevelAndCount[] getProblemLevels() {
+  LevelAndCount @NotNull [] getProblemLevels() {
     if (!isProblemCountCacheValid()) {
       dropProblemCountCaches();
     }
@@ -199,8 +198,7 @@ public abstract class InspectionTreeNode implements TreeNode {
   class ProblemLevels {
     private volatile LevelAndCount[] myLevels;
 
-    @NotNull
-    private LevelAndCount[] compute() {
+    private LevelAndCount @NotNull [] compute() {
       TObjectIntHashMap<HighlightDisplayLevel> counter = new TObjectIntHashMap<>();
       visitProblemSeverities(counter);
       LevelAndCount[] arr = new LevelAndCount[counter.size()];
@@ -214,8 +212,7 @@ public abstract class InspectionTreeNode implements TreeNode {
       return doesNeedInternProblemLevels() ? LEVEL_AND_COUNT_INTERNER.intern(arr) : arr;
     }
 
-    @NotNull
-    public LevelAndCount[] getValue() {
+    public LevelAndCount @NotNull [] getValue() {
       LevelAndCount[] result = myLevels;
       if (result == null) {
         myLevels = result = compute();

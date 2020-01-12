@@ -35,13 +35,13 @@ public abstract class RunLineMarkerContributor {
 
     public final Function<PsiElement, String> tooltipProvider;
 
-    public Info(Icon icon, @NotNull AnAction[] actions, @Nullable Function<PsiElement, String> tooltipProvider) {
+    public Info(Icon icon, AnAction @NotNull [] actions, @Nullable Function<PsiElement, String> tooltipProvider) {
       this.icon = icon;
       this.actions = actions;
       this.tooltipProvider = tooltipProvider;
     }
 
-    public Info(Icon icon, @Nullable com.intellij.util.Function<PsiElement, String> tooltipProvider, @NotNull AnAction... actions) {
+    public Info(Icon icon, @Nullable com.intellij.util.Function<PsiElement, String> tooltipProvider, AnAction @NotNull ... actions) {
       this.icon = icon;
       this.actions = actions;
       this.tooltipProvider = tooltipProvider == null ? null : it -> tooltipProvider.fun(it);

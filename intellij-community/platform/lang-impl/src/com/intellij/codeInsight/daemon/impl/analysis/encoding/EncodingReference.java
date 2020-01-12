@@ -89,8 +89,7 @@ public class EncodingReference implements PsiReference, EmptyResolveMessageProvi
   }
 
   @Override
-  @NotNull
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     Charset[] charsets = CharsetToolkit.getAvailableCharsets();
     List<LookupElement> suggestions = new ArrayList<>(charsets.length);
     for (Charset charset : charsets) {

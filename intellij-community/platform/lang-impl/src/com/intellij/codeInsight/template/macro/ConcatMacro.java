@@ -30,7 +30,7 @@ public class ConcatMacro extends MacroBase {
 
   @Nullable
   @Override
-  protected Result calculateResult(@NotNull Expression[] params, ExpressionContext context, boolean quick) {
+  protected Result calculateResult(Expression @NotNull [] params, ExpressionContext context, boolean quick) {
     StringBuilder result = new StringBuilder();
     for (Expression param : params) {
       Result paramResult = param.calculateResult(context);

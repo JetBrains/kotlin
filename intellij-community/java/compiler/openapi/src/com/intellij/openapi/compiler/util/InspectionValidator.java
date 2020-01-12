@@ -43,8 +43,7 @@ public abstract class InspectionValidator {
   private final String myDescription;
   private final String myProgressIndicatorText;
 
-  @Nullable
-  private final Class<? extends LocalInspectionTool>[] myInspectionToolClasses;
+  private final Class<? extends LocalInspectionTool> @Nullable [] myInspectionToolClasses;
 
   @Nullable
   private final InspectionToolProvider myInspectionToolProvider;
@@ -97,8 +96,7 @@ public abstract class InspectionValidator {
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
-  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(final CompileContext context) {
+  public Class<? extends LocalInspectionTool> @NotNull [] getInspectionToolClasses(final CompileContext context) {
     if (myInspectionToolClasses != null) {
       return myInspectionToolClasses;
     }

@@ -64,7 +64,7 @@ public class FormatChangedTextUtil {
     return false;
   }
 
-  public static boolean hasChanges(@NotNull VirtualFile[] files, @NotNull Project project) {
+  public static boolean hasChanges(VirtualFile @NotNull [] files, @NotNull Project project) {
     for (VirtualFile file : files) {
       if (hasChanges(file, project))
         return true;
@@ -145,7 +145,7 @@ public class FormatChangedTextUtil {
 
   @NotNull
   public <T extends PsiElement> List<T> getChangedElements(@NotNull Project project,
-                                                           @NotNull Change[] changes,
+                                                           Change @NotNull [] changes,
                                                            @NotNull java.util.function.Function<? super VirtualFile, ? extends List<T>> elementsConvertor) {
     return Arrays.stream(changes).map(Change::getVirtualFile).filter(Objects::nonNull)
                  .flatMap(file -> elementsConvertor.apply(file).stream()).filter(Objects::nonNull)

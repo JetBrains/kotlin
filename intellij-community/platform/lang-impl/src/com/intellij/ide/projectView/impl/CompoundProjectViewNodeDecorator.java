@@ -40,7 +40,7 @@ public final class CompoundProjectViewNodeDecorator implements ProjectViewNodeDe
     return provider;
   }
 
-  public CompoundProjectViewNodeDecorator(@NotNull ProjectViewNodeDecorator... decorators) {
+  public CompoundProjectViewNodeDecorator(ProjectViewNodeDecorator @NotNull ... decorators) {
     this.decorators = decorators;
   }
 

@@ -129,8 +129,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
     return ArrayUtil.toStringArray(result);
   }
 
-  @NotNull
-  private static String[] getRelativePath(VirtualFile file, VirtualFile root) {
+  private static String @NotNull [] getRelativePath(VirtualFile file, VirtualFile root) {
     List<String> names = new ArrayList<>();
 
     VirtualFile parent = file;

@@ -2078,7 +2078,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     }
   }
 
-  public synchronized FileContentHashIndex getFileContentHashIndex(@Nullable Path[] enumeratorPaths, @NotNull IndexConfiguration state) {
+  public synchronized FileContentHashIndex getFileContentHashIndex(Path @Nullable [] enumeratorPaths, @NotNull IndexConfiguration state) {
     UpdatableIndex<Long, Void, FileContent> index = state.getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
     if (index == null) {
       LOG.assertTrue(enumeratorPaths != null);

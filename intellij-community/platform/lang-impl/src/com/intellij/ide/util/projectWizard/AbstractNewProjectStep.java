@@ -98,12 +98,11 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
                                                                                     @NotNull AbstractCallback<T> callback);
 
 
-    @NotNull
-    protected DirectoryProjectGenerator<T>[] getProjectGenerators() {
+    protected DirectoryProjectGenerator<T> @NotNull [] getProjectGenerators() {
       return DirectoryProjectGenerator.EP_NAME.getExtensions();
     }
 
-    public AnAction[] getActions(@NotNull DirectoryProjectGenerator<T>[] generators, @NotNull AbstractCallback<T> callback) {
+    public AnAction[] getActions(DirectoryProjectGenerator<T> @NotNull [] generators, @NotNull AbstractCallback<T> callback) {
       final List<AnAction> actions = new ArrayList<>();
       for (DirectoryProjectGenerator<T> projectGenerator : generators) {
         try {
@@ -115,8 +114,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       return actions.toArray(AnAction.EMPTY_ARRAY);
     }
 
-    @NotNull
-    public AnAction[] getActions(@NotNull DirectoryProjectGenerator<T> generator, @NotNull AbstractCallback<T> callback) {
+    public AnAction @NotNull [] getActions(@NotNull DirectoryProjectGenerator<T> generator, @NotNull AbstractCallback<T> callback) {
       if (shouldIgnore(generator)) {
         return AnAction.EMPTY_ARRAY;
       }

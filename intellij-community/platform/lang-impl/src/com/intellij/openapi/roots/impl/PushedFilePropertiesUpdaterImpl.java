@@ -286,7 +286,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   }
 
   @Override
-  public void pushAll(@NotNull FilePropertyPusher<?>... pushers) {
+  public void pushAll(FilePropertyPusher<?> @NotNull ... pushers) {
     queueTasks(Collections.singletonList(() -> doPushAll(Arrays.asList(pushers))));
   }
 

@@ -312,8 +312,7 @@ public final class SdkListModelBuilder {
     return builder.build();
   }
 
-  @NotNull
-  private static Sdk[] sortSdks(@NotNull final Sdk[] sdks) {
+  private static Sdk @NotNull [] sortSdks(final Sdk @NotNull [] sdks) {
     Sdk[] clone = sdks.clone();
     Arrays.sort(clone, (sdk1, sdk2) -> {
       SdkType sdkType1 = (SdkType)sdk1.getSdkType();

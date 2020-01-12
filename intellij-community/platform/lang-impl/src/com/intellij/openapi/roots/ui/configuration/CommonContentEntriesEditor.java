@@ -411,7 +411,7 @@ public class CommonContentEntriesEditor extends ModuleElementsEditor {
             ProjectBundle.message("module.paths.add.content.action.description"), AllIcons.General.Add);
       myDescriptor = new FileChooserDescriptor(false, true, true, false, true, true) {
         @Override
-        public void validateSelectedFiles(@NotNull VirtualFile[] files) throws Exception {
+        public void validateSelectedFiles(VirtualFile @NotNull [] files) throws Exception {
           validateContentEntriesCandidates(files);
         }
       };

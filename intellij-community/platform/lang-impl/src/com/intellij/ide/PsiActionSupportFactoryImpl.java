@@ -32,8 +32,7 @@ public class PsiActionSupportFactoryImpl extends PsiActionSupportFactory {
                                                          final PsiElementSelector dataSelector) {
     return new CopyPasteDelegator(project, keyReceiver) {
       @Override
-      @NotNull
-      protected PsiElement[] getSelectedElements() {
+      protected PsiElement @NotNull [] getSelectedElements() {
         PsiElement[] elements = dataSelector.getSelectedElements();
         return elements == null ? PsiElement.EMPTY_ARRAY : elements;
       }

@@ -22,7 +22,7 @@ public class NewFileLocation {
   }
 
   public NewFileLocation(@NotNull List<TargetDirectory> targetDirectories,
-                         @NotNull String[] subPath,
+                         String @NotNull [] subPath,
                          @NotNull String newFileName) {
     myDirectories = targetDirectories;
     mySubPath = subPath;
@@ -40,8 +40,7 @@ public class NewFileLocation {
   /**
    * @return intermediate path to new file that may not exist but should be created when a quick fix applied
    */
-  @NotNull
-  public String[] getSubPath() {
+  public String @NotNull [] getSubPath() {
     return mySubPath;
   }
 

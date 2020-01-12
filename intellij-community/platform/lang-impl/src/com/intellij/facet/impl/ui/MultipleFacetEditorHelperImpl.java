@@ -27,7 +27,7 @@ public class MultipleFacetEditorHelperImpl implements MultipleFacetEditorHelper 
   private final List<AbstractBinding> myBindings = new ArrayList<>();
 
   @Override
-  public void bind(@NotNull ThreeStateCheckBox common, @NotNull FacetEditor[] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JCheckBox> fun) {
+  public void bind(@NotNull ThreeStateCheckBox common, FacetEditor @NotNull [] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JCheckBox> fun) {
     List<JCheckBox> checkBoxesList = new ArrayList<>();
     for (FacetEditor editor : editors) {
       checkBoxesList.add(fun.fun(editor));
@@ -38,7 +38,7 @@ public class MultipleFacetEditorHelperImpl implements MultipleFacetEditorHelper 
   }
 
   @Override
-  public void bind(@NotNull JTextField common, @NotNull FacetEditor[] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JTextField> fun) {
+  public void bind(@NotNull JTextField common, FacetEditor @NotNull [] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JTextField> fun) {
     List<JTextField> componentsList = new ArrayList<>();
     for (FacetEditor editor : editors) {
       componentsList.add(fun.fun(editor));
@@ -49,7 +49,7 @@ public class MultipleFacetEditorHelperImpl implements MultipleFacetEditorHelper 
   }
 
   @Override
-  public void bind(@NotNull JComboBox common, @NotNull FacetEditor[] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JComboBox> fun) {
+  public void bind(@NotNull JComboBox common, FacetEditor @NotNull [] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JComboBox> fun) {
     List<JComboBox> componentsList = new ArrayList<>();
     for (FacetEditor editor : editors) {
       componentsList.add(fun.fun(editor));

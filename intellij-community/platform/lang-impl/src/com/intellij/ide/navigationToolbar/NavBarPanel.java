@@ -429,9 +429,8 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
   void installPopupHandler(@NotNull JComponent component, int index) {
     ActionManager actionManager = ActionManager.getInstance();
     PopupHandler.installPopupHandler(component, new ActionGroup() {
-      @NotNull
       @Override
-      public AnAction[] getChildren(@Nullable AnActionEvent e) {
+      public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
         if (e == null) return EMPTY_ARRAY;
         String popupGroupId = null;
         for (NavBarModelExtension modelExtension : NavBarModelExtension.EP_NAME.getExtensionList()) {

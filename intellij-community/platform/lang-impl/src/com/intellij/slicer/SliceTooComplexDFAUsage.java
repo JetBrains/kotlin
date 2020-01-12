@@ -59,8 +59,7 @@ public class SliceTooComplexDFAUsage extends SliceUsage {
     final UsagePresentation presentation = super.getPresentation();
     return new UsagePresentation() {
       @Override
-      @NotNull
-      public TextChunk[] getText() {
+      public TextChunk @NotNull [] getText() {
         return new TextChunk[]{
           new TextChunk(new TextAttributes(JBColor.RED, null, null, EffectType.WAVE_UNDERSCORE, Font.PLAIN), getTooltipText())
         };

@@ -79,8 +79,7 @@ public class DummyCompileContext implements CompileContext {
   }
 
   @Override
-  @NotNull
-  public CompilerMessage[] getMessages(@NotNull CompilerMessageCategory category) {
+  public CompilerMessage @NotNull [] getMessages(@NotNull CompilerMessageCategory category) {
     return CompilerMessage.EMPTY_ARRAY;
   }
 

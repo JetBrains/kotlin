@@ -64,9 +64,8 @@ public class InspectionRVContentProviderImpl extends InspectionRVContentProvider
     return presentation.hasReportedProblems();
   }
 
-  @NotNull
   @Override
-  public QuickFixAction[] getCommonQuickFixes(@NotNull final InspectionToolWrapper toolWrapper, @NotNull final InspectionTree tree) {
+  public QuickFixAction @NotNull [] getCommonQuickFixes(@NotNull final InspectionToolWrapper toolWrapper, @NotNull final InspectionTree tree) {
     InspectionToolPresentation presentation = tree.getContext().getPresentation(toolWrapper);
     QuickFixAction[] fixes = getCommonFixes(presentation, tree.getSelectedDescriptors());
     return ArrayUtil.mergeArrays(fixes, presentation.getQuickFixes(tree.getSelectedElements()), QuickFixAction[]::new);

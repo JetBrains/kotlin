@@ -65,8 +65,7 @@ public class ProjectCompileScope extends FileIndexCompileScope {
   }
 
   @Override
-  @NotNull
-  public Module[] getAffectedModules() {
+  public Module @NotNull [] getAffectedModules() {
     return ModuleManager.getInstance(myProject).getModules();
   }
 }

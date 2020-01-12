@@ -32,18 +32,16 @@ import com.intellij.util.Query;
 import org.jetbrains.annotations.Nullable;
 
 public class ImplementationSearcher {
-  @Nullable
-  PsiElement[] searchImplementations(Editor editor, PsiElement element, int offset) {
+  PsiElement @Nullable [] searchImplementations(Editor editor, PsiElement element, int offset) {
     TargetElementUtil targetElementUtil = TargetElementUtil.getInstance();
     boolean onRef = ReadAction.compute(() -> targetElementUtil.findTargetElement(editor, getFlags() & ~(TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.LOOKUP_ITEM_ACCEPTED), offset) == null);
     return searchImplementations(element, editor, onRef && ReadAction.compute(() -> element == null || targetElementUtil.includeSelfInGotoImplementation(element)), onRef);
   }
 
-  @Nullable
-  public PsiElement[] searchImplementations(PsiElement element,
-                                            Editor editor,
-                                            boolean includeSelfAlways,
-                                            boolean includeSelfIfNoOthers) {
+  public PsiElement @Nullable [] searchImplementations(PsiElement element,
+                                                       Editor editor,
+                                                       boolean includeSelfAlways,
+                                                       boolean includeSelfIfNoOthers) {
     if (element == null) return PsiElement.EMPTY_ARRAY;
     PsiElement[] elements = searchDefinitions(element, editor);
     if (elements == null) return null; //the search has been cancelled
@@ -56,8 +54,7 @@ public class ImplementationSearcher {
     return ReadAction.compute(() -> TargetElementUtil.getInstance().getSearchScope(editor, element));
   }
 
-  @Nullable("For the case the search has been cancelled")
-  protected PsiElement[] searchDefinitions(PsiElement element, Editor editor) {
+  protected PsiElement @Nullable("For the case the search has been cancelled") [] searchDefinitions(PsiElement element, Editor editor) {
     Ref<PsiElement[]> result = Ref.create();
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> result.set(search(element, editor).toArray(PsiElement.EMPTY_ARRAY)),

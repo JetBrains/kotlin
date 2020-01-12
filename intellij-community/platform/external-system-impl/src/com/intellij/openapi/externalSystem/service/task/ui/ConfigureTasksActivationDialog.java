@@ -88,9 +88,8 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
     myTaskActivator = getInstance(myProject).getTaskActivator();
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{getOKAction()};
   }
 
@@ -239,7 +238,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
   }
 
   @NotNull
-  private List<TaskActivationEntry> findTasksUnder(@NotNull SimpleNode[] nodes) {
+  private List<TaskActivationEntry> findTasksUnder(SimpleNode @NotNull [] nodes) {
     List<TaskActivationEntry> tasks = new SmartList<>();
     for (SimpleNode node : nodes) {
       if (node instanceof TaskNode) {

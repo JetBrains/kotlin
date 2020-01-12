@@ -640,25 +640,25 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     }
 
     @NotNull
-    public Builder addSearchFieldActions(@NotNull AnAction... actions) {
+    public Builder addSearchFieldActions(AnAction @NotNull ... actions) {
       mySearchFieldActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addReplaceFieldActions(@NotNull AnAction... actions) {
+    public Builder addReplaceFieldActions(AnAction @NotNull ... actions) {
       myReplaceFieldActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addPrimarySearchActions(@NotNull AnAction... actions) {
+    public Builder addPrimarySearchActions(AnAction @NotNull ... actions) {
       mySearchActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addSecondarySearchActions(@NotNull AnAction... actions) {
+    public Builder addSecondarySearchActions(AnAction @NotNull ... actions) {
       for (AnAction action : actions) {
         mySearchActions.addAction(action).setAsSecondary(true);
       }
@@ -672,19 +672,19 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     }
 
     @NotNull
-    public Builder addExtraSearchActions(@NotNull AnAction... actions) {
+    public Builder addExtraSearchActions(AnAction @NotNull ... actions) {
       myExtraSearchActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addPrimaryReplaceActions(@NotNull AnAction... actions) {
+    public Builder addPrimaryReplaceActions(AnAction @NotNull ... actions) {
       myReplaceActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addExtraReplaceAction(@NotNull AnAction... actions) {
+    public Builder addExtraReplaceAction(AnAction @NotNull ... actions) {
       myExtraReplaceActions.addAll(actions);
       return this;
     }

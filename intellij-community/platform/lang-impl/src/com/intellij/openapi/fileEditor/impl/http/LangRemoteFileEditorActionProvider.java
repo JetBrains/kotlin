@@ -21,9 +21,8 @@ import com.intellij.openapi.vfs.impl.http.HttpVirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 final class LangRemoteFileEditorActionProvider extends RemoteFileEditorActionProvider {
-  @NotNull
   @Override
-  public AnAction[] createToolbarActions(@NotNull Project project, @NotNull HttpVirtualFile file) {
+  public AnAction @NotNull [] createToolbarActions(@NotNull Project project, @NotNull HttpVirtualFile file) {
     return new AnAction[] {new JumpFromRemoteFileToLocalAction(file, project)};
   }
 }

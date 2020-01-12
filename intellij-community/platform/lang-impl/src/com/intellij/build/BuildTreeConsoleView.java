@@ -572,9 +572,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     return false;
   }
 
-  @NotNull
   @Override
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     return AnAction.EMPTY_ARRAY;
   }
 

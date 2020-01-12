@@ -257,9 +257,8 @@ public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<B
     }
   }
 
-  @NotNull
   @Override
-  public CompilerRef.CompilerClassHierarchyElementDef[] getDirectInheritors(@NotNull CompilerRef.CompilerClassHierarchyElementDef baseClass) throws ReferenceIndexUnavailableException {
+  public CompilerRef.CompilerClassHierarchyElementDef @NotNull [] getDirectInheritors(@NotNull CompilerRef.CompilerClassHierarchyElementDef baseClass) throws ReferenceIndexUnavailableException {
     try {
       if (!myReadDataLock.tryLock()) return CompilerRef.CompilerClassHierarchyElementDef.EMPTY_ARRAY;
       try {

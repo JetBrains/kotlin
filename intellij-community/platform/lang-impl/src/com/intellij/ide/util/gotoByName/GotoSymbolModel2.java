@@ -23,7 +23,7 @@ public class GotoSymbolModel2 extends FilteringGotoByModel<Language> {
   private String[] mySeparators;
   private final boolean myAllContributors;
 
-  public GotoSymbolModel2(@NotNull Project project, @NotNull ChooseByNameContributor[] contributors) {
+  public GotoSymbolModel2(@NotNull Project project, ChooseByNameContributor @NotNull [] contributors) {
     super(project, contributors);
     myAllContributors = false;
     addEpListener(project);
@@ -125,8 +125,7 @@ public class GotoSymbolModel2 extends FilteringGotoByModel<Language> {
   }
 
   @Override
-  @NotNull
-  public String[] getSeparators() {
+  public String @NotNull [] getSeparators() {
     if (mySeparators == null) {
       mySeparators = GotoClassModel2.getSeparatorsFromContributors(getContributors());
     }

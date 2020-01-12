@@ -188,9 +188,8 @@ public class NewRunConfigurationPopup {
         return treePopupFactory.getRootElement();
       }
 
-      @NotNull
       @Override
-      public NodeDescriptor<?>[] getChildElements(@NotNull Object element) {
+      public NodeDescriptor<?> @NotNull [] getChildElements(@NotNull Object element) {
         NodeDescriptor<?> nodeDescriptor = (NodeDescriptor<?>)element;
         if (!myCache.containsKey(nodeDescriptor)) {
           myCache.put(nodeDescriptor, treePopupFactory.createChildElements(project, nodeDescriptor));

@@ -22,7 +22,7 @@ public class IntroduceParameterObjectAction extends BaseRefactoringAction {
   }
 
   @Override
-  protected boolean isEnabledOnElements(@NotNull final PsiElement[] elements) {
+  protected boolean isEnabledOnElements(final PsiElement @NotNull [] elements) {
     if (elements.length == 1) {
       final IntroduceParameterObjectDelegate delegate = IntroduceParameterObjectDelegate.findDelegate(elements[0]);
       if (delegate != null && delegate.isEnabledOn(elements[0])) {

@@ -132,11 +132,11 @@ public class ExternalSystemTaskActivator {
     return result;
   }
 
-  public boolean runTasks(@NotNull String modulePath, @NotNull Phase... phases) {
+  public boolean runTasks(@NotNull String modulePath, Phase @NotNull ... phases) {
     return runTasks(Collections.singleton(modulePath), phases);
   }
 
-  public boolean runTasks(@NotNull Collection<String> modules, @NotNull Phase... phases) {
+  public boolean runTasks(@NotNull Collection<String> modules, Phase @NotNull ... phases) {
     final ExternalProjectsStateProvider stateProvider =
       ExternalProjectsManagerImpl.getInstance(myProject).getStateProvider();
 

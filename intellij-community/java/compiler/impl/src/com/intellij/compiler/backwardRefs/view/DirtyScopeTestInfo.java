@@ -37,18 +37,15 @@ public class DirtyScopeTestInfo {
     myDirtyScope = dirtyScope;
   }
 
-  @NotNull
-  Module[] getDirtyModules() {
+  Module @NotNull [] getDirtyModules() {
     return myDirtyModules;
   }
 
-  @NotNull
-  Module[] getDirtyUnsavedModules() {
+  Module @NotNull [] getDirtyUnsavedModules() {
     return myDirtyUnsavedModules;
   }
 
-  @NotNull
-  VirtualFile[] getExcludedFiles() {
+  VirtualFile @NotNull [] getExcludedFiles() {
     return myExcludedFiles;
   }
 

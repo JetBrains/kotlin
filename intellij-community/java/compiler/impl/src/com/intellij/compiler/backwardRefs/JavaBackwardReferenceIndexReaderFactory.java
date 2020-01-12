@@ -223,11 +223,10 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
     }
 
     @Override
-    @Nullable("return null if the class hierarchy contains ambiguous qualified names")
-    public CompilerRef.CompilerClassHierarchyElementDef[] getHierarchy(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement,
-                                                                       boolean checkBaseClassAmbiguity,
-                                                                       boolean includeAnonymous,
-                                                                       int interruptNumber) {
+    public CompilerRef.CompilerClassHierarchyElementDef @Nullable("return null if the class hierarchy contains ambiguous qualified names") [] getHierarchy(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement,
+                                                                                                                                                           boolean checkBaseClassAmbiguity,
+                                                                                                                                                           boolean includeAnonymous,
+                                                                                                                                                           int interruptNumber) {
       try {
         Set<CompilerRef.CompilerClassHierarchyElementDef> result = new THashSet<>();
         Queue<CompilerRef.CompilerClassHierarchyElementDef> q = new Queue<>(10);
@@ -265,8 +264,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
       }
     }
 
-    @NotNull
-    CompilerRef.CompilerClassHierarchyElementDef[] getDirectInheritors(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement)
+    CompilerRef.CompilerClassHierarchyElementDef @NotNull [] getDirectInheritors(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement)
       throws StorageException {
       Set<CompilerRef.CompilerClassHierarchyElementDef> result = new THashSet<>();
       myIndex.get(JavaCompilerIndices.BACK_HIERARCHY).getData(hierarchyElement).forEach((id, children) -> {

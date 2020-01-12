@@ -62,8 +62,8 @@ public class QuickFixPreviewPanelFactory {
       return myEmpty;
     }
 
-    private boolean fillPanel(@NotNull QuickFixAction[] fixes,
-                              @NotNull QuickFixAction[] partialFixes,
+    private boolean fillPanel(QuickFixAction @NotNull [] fixes,
+                              QuickFixAction @NotNull [] partialFixes,
                               boolean multipleDescriptors,
                               @NotNull InspectionResultsView view) {
       boolean hasFixes = fixes.length != 0;
@@ -165,8 +165,7 @@ public class QuickFixPreviewPanelFactory {
       return action;
     }
 
-    @NotNull
-    private static AnAction[] createFixActions(QuickFixAction[] fixes, boolean multipleDescriptors) {
+    private static AnAction @NotNull [] createFixActions(QuickFixAction[] fixes, boolean multipleDescriptors) {
       if (fixes.length > MAX_FIX_COUNT) {
         final ComboBoxAction fixComboBox = new ComboBoxAction() {
           {

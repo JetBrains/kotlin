@@ -126,9 +126,8 @@ public class AbstractExtractMethodDialog<T> extends DialogWrapper implements Ext
     return map;
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{getOKAction(), getCancelAction(), getHelpAction()};
   }
 
@@ -224,9 +223,8 @@ public class AbstractExtractMethodDialog<T> extends DialogWrapper implements Ext
     return myMethodNameTextField.getText().trim();
   }
 
-  @NotNull
   @Override
-  public AbstractVariableData[] getAbstractVariableData() {
+  public AbstractVariableData @NotNull [] getAbstractVariableData() {
     return myVariableData;
   }
 

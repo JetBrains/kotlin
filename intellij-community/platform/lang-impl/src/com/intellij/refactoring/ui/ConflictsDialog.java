@@ -82,8 +82,7 @@ public class ConflictsDialog extends DialogWrapper{
   }
 
   @Override
-  @NotNull
-  protected Action[] createActions(){
+  protected Action @NotNull [] createActions(){
     final Action okAction = getOKAction();
     boolean showUsagesButton = myElementConflictDescription != null && myCanShowConflictsInView;
 
@@ -231,8 +230,7 @@ public class ConflictsDialog extends DialogWrapper{
       public UsagePresentation getPresentation() {
         return new UsagePresentation() {
           @Override
-          @NotNull
-          public TextChunk[] getText() {
+          public TextChunk @NotNull [] getText() {
             return new TextChunk[] {new TextChunk(SimpleTextAttributes.REGULAR_ATTRIBUTES.toTextAttributes(), myConflictDescription)};
           }
 

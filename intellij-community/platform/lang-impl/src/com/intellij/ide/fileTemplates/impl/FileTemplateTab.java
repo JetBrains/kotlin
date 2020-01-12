@@ -68,8 +68,7 @@ abstract class FileTemplateTab {
 
   public abstract void fireDataChanged();
 
-  @NotNull 
-  public FileTemplate[] getTemplates() {
+  public FileTemplate @NotNull [] getTemplates() {
     return myTemplates.toArray(FileTemplate.EMPTY_ARRAY);
   }
 

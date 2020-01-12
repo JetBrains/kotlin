@@ -147,7 +147,7 @@ public abstract class ExtractIncludeFileBase<T extends PsiElement> implements Re
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
   }
 
   @NotNull

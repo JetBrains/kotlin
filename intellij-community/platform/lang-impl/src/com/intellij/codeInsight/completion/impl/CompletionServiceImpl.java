@@ -132,14 +132,14 @@ public final class CompletionServiceImpl extends BaseCompletionService {
   }
 
   @SafeVarargs
-  public static void assertPhase(@NotNull Class<? extends CompletionPhase>... possibilities) {
+  public static void assertPhase(Class<? extends CompletionPhase> @NotNull ... possibilities) {
     if (!isPhase(possibilities)) {
       LOG.error(ourPhase + "; set at " + ExceptionUtil.getThrowableText(ourPhaseTrace));
     }
   }
 
   @SafeVarargs
-  public static boolean isPhase(@NotNull Class<? extends CompletionPhase>... possibilities) {
+  public static boolean isPhase(Class<? extends CompletionPhase> @NotNull ... possibilities) {
     CompletionPhase phase = getCompletionPhase();
     for (Class<? extends CompletionPhase> possibility : possibilities) {
       if (possibility.isInstance(phase)) {

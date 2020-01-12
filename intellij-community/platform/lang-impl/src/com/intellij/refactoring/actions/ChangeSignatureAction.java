@@ -44,7 +44,7 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
   }
 
   @Override
-  public boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  public boolean isEnabledOnElements(PsiElement @NotNull [] elements) {
     if (elements.length == 1) {
       PsiElement member = findTargetMember(elements[0]);
       return member != null && getChangeSignatureHandler(member) != null;
@@ -122,7 +122,7 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
       }
 
       @Override
-      public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+      public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
         if (elements.length != 1) return;
         final PsiElement targetMember = findTargetMember(elements[0]);
         if (targetMember == null) return;

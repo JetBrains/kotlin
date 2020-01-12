@@ -164,7 +164,7 @@ public class TestClassGradleConfigurationProducer extends GradleTestRunConfigura
   private void chooseTestClassConfiguration(@NotNull ConfigurationFromContext fromContext,
                                                    @NotNull ConfigurationContext context,
                                                    @NotNull Runnable performRunnable,
-                                                   @NotNull PsiClass... classes) {
+                                                   PsiClass @NotNull ... classes) {
     String locationName = classes.length == 1 ? classes[0].getName() : null;
     DataContext dataContext = TestTasksChooser.contextWithLocationName(context.getDataContext(), locationName);
     getTestTasksChooser().chooseTestTasks(context.getProject(), dataContext, classes, tasks -> {

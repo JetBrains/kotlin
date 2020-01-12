@@ -194,8 +194,7 @@ public abstract class HierarchyBrowserBase extends SimpleToolWindowPanel impleme
     return list.toArray(new HierarchyNodeDescriptor[0]);
   }
 
-  @NotNull
-  protected PsiElement[] getSelectedElements() {
+  protected PsiElement @NotNull [] getSelectedElements() {
     HierarchyNodeDescriptor[] descriptors = getSelectedDescriptors();
     ArrayList<PsiElement> elements = new ArrayList<>();
     for (HierarchyNodeDescriptor descriptor : descriptors) {

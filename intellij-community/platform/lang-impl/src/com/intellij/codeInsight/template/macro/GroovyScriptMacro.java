@@ -48,7 +48,7 @@ public class GroovyScriptMacro extends Macro {
   }
 
   @Override
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, ExpressionContext context) {
     if (params.length == 0) return null;
     Object o = runIt(params, context);
     if (o instanceof Collection && !((Collection)o).isEmpty()) {
@@ -97,12 +97,12 @@ public class GroovyScriptMacro extends Macro {
   }
 
   @Override
-  public Result calculateQuickResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateQuickResult(Expression @NotNull [] params, ExpressionContext context) {
     return calculateResult(params, context);
   }
 
   @Override
-  public LookupElement[] calculateLookupItems(@NotNull Expression[] params, ExpressionContext context) {
+  public LookupElement[] calculateLookupItems(Expression @NotNull [] params, ExpressionContext context) {
     Object o = runIt(params, context);
     Collection collection = o instanceof Collection ? (Collection)o :
                             o instanceof Object[] ? Arrays.asList((Object[])o) :

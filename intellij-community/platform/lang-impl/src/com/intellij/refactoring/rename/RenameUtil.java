@@ -48,23 +48,21 @@ public class RenameUtil {
   private RenameUtil() {
   }
 
-  @NotNull
-  public static UsageInfo[] findUsages(@NotNull PsiElement element,
-                                       String newName,
-                                       boolean searchInStringsAndComments,
-                                       boolean searchForTextOccurrences,
-                                       Map<? extends PsiElement, String> allRenames) {
+  public static UsageInfo @NotNull [] findUsages(@NotNull PsiElement element,
+                                                 String newName,
+                                                 boolean searchInStringsAndComments,
+                                                 boolean searchForTextOccurrences,
+                                                 Map<? extends PsiElement, String> allRenames) {
     return findUsages(element, newName, GlobalSearchScope.projectScope(element.getProject()),
                       searchInStringsAndComments, searchForTextOccurrences, allRenames);
   }
 
-  @NotNull
-  public static UsageInfo[] findUsages(@NotNull PsiElement element,
-                                       String newName,
-                                       @NotNull SearchScope searchScope,
-                                       boolean searchInStringsAndComments,
-                                       boolean searchForTextOccurrences,
-                                       Map<? extends PsiElement, String> allRenames) {
+  public static UsageInfo @NotNull [] findUsages(@NotNull PsiElement element,
+                                                 String newName,
+                                                 @NotNull SearchScope searchScope,
+                                                 boolean searchInStringsAndComments,
+                                                 boolean searchForTextOccurrences,
+                                                 Map<? extends PsiElement, String> allRenames) {
     List<UsageInfo> result = Collections.synchronizedList(new ArrayList<>());
 
     RenamePsiElementProcessor processor = RenamePsiElementProcessor.forElement(element);
@@ -240,7 +238,7 @@ public class RenameUtil {
     }
   }
 
-  public static void renameNonCodeUsages(@NotNull Project project, @NotNull NonCodeUsageInfo[] usages) {
+  public static void renameNonCodeUsages(@NotNull Project project, NonCodeUsageInfo @NotNull [] usages) {
     PsiDocumentManager.getInstance(project).commitAllDocuments();
     Map<Document, Map<Integer, UsageOffset>> docsToOffsetsMap = new HashMap<>();
     final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);

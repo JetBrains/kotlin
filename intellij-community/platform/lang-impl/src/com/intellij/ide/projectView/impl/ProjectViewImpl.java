@@ -1307,8 +1307,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }
     }
 
-    @NotNull
-    private PsiElement[] getElementsToDelete() {
+    private PsiElement @NotNull [] getElementsToDelete() {
       final AbstractProjectViewPane viewPane = getCurrentProjectViewPane();
       PsiElement[] elements = viewPane.getSelectedPSIElements();
       for (int idx = 0; idx < elements.length; idx++) {
@@ -1560,8 +1559,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }, title, null);
     }
 
-    @Nullable
-    private Module[] getSelectedModules() {
+    private Module @Nullable [] getSelectedModules() {
       final AbstractProjectViewPane viewPane = getCurrentProjectViewPane();
       if (viewPane == null) return null;
       final Object[] elements = viewPane.getSelectedElements();
@@ -1899,10 +1897,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   private static class SelectionInfo {
-    @NotNull
-    private final Object[] myElements;
+    private final Object @NotNull [] myElements;
 
-    private SelectionInfo(@NotNull Object[] elements) {
+    private SelectionInfo(Object @NotNull [] elements) {
       myElements = elements;
     }
 

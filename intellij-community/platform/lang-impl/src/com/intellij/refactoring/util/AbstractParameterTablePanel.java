@@ -199,7 +199,7 @@ public abstract class AbstractParameterTablePanel<P extends AbstractVariableData
   }
 
   private class MyTableModel extends ListTableModel<AbstractVariableData> implements EditableModel {
-    MyTableModel(@NotNull ColumnInfo... columnInfos) {
+    MyTableModel(ColumnInfo @NotNull ... columnInfos) {
       super(columnInfos);
     }
 

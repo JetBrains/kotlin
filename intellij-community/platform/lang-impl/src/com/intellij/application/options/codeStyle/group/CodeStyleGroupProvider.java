@@ -74,9 +74,8 @@ public class CodeStyleGroupProvider extends CodeStyleSettingsProvider {
       }
     }
 
-    @NotNull
     @Override
-    public Configurable[] buildConfigurables() {
+    public Configurable @NotNull [] buildConfigurables() {
       List<Configurable> childConfigurables = new ArrayList<>();
       for (CodeStyleSettingsProvider childProvider : myChildProviders) {
         CodeStyleConfigurableWrapper wrapper =

@@ -28,18 +28,17 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
   private static final Logger LOG = Logger.getInstance(FileContentHashIndexExtension.class);
   public static final ID<Long, Void> HASH_INDEX_ID = ID.create("file.content.hash.index");
 
-  @NotNull
-  private final ContentHashEnumerator[] myEnumerators;
+  private final ContentHashEnumerator @NotNull [] myEnumerators;
 
   @NotNull
-  public static FileContentHashIndexExtension create(@NotNull Path[] enumeratorDirs, @NotNull Disposable parent) throws IOException {
+  public static FileContentHashIndexExtension create(Path @NotNull [] enumeratorDirs, @NotNull Disposable parent) throws IOException {
     FileContentHashIndexExtension extension = new FileContentHashIndexExtension(enumeratorDirs);
     RebuildStatus.registerIndex(extension.getName());
     Disposer.register(parent, extension);
     return extension;
   }
 
-  private FileContentHashIndexExtension(@NotNull Path[] enumeratorDirs) throws IOException {
+  private FileContentHashIndexExtension(Path @NotNull [] enumeratorDirs) throws IOException {
     IOException[] exception = {null};
     myEnumerators = ContainerUtil.map2Array(enumeratorDirs, ContentHashEnumerator.class, d -> {
       try {

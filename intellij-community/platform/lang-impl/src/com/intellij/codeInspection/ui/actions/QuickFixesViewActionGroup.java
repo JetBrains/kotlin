@@ -18,9 +18,8 @@ import static com.intellij.codeInspection.ui.actions.InspectionViewActionBase.ge
  * @author Dmitry Batkovich
  */
 public class QuickFixesViewActionGroup extends ActionGroup {
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     InspectionResultsView view = getView(e);
     if (view == null || InvokeQuickFixAction.cantApplyFixes(view)) return AnAction.EMPTY_ARRAY;
     InspectionToolWrapper toolWrapper = view.getTree().getSelectedToolWrapper(true);

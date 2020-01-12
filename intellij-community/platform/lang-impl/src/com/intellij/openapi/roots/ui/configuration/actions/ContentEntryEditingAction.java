@@ -60,8 +60,7 @@ public abstract class ContentEntryEditingAction extends ToggleAction implements 
     }
   }
 
-  @NotNull
-  protected final VirtualFile[] getSelectedFiles() {
+  protected final VirtualFile @NotNull [] getSelectedFiles() {
     final TreePath[] selectionPaths = myTree.getSelectionPaths();
     if (selectionPaths == null) {
       return VirtualFile.EMPTY_ARRAY;

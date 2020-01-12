@@ -45,8 +45,7 @@ public class InspectionViewSuppressActionHolder {
     FactoryMap.create(__ -> new THashMap<>());
   private final Interner<Set<SuppressIntentionAction>> myActionSetInterner = new HashSetInterner<>();
 
-  @NotNull
-  public synchronized SuppressIntentionAction[] getSuppressActions(@NotNull InspectionToolWrapper wrapper, @NotNull PsiElement context) {
+  public synchronized SuppressIntentionAction @NotNull [] getSuppressActions(@NotNull InspectionToolWrapper wrapper, @NotNull PsiElement context) {
     ContextDescriptor descriptor = ContextDescriptor.from(context);
     if (descriptor == null) return SuppressIntentionAction.EMPTY_ARRAY;
     return mySuppressActions.get(wrapper.getShortName()).computeIfAbsent(descriptor, __ -> {

@@ -39,7 +39,7 @@ public class FileSetCompileScope extends ExportableUserDataHolderBase implements
   private Set<String> myUrls; // urls caching
   private final Module[] myAffectedModules;
 
-  public FileSetCompileScope(@NotNull Collection<VirtualFile> files, @NotNull Module[] modules) {
+  public FileSetCompileScope(@NotNull Collection<VirtualFile> files, Module @NotNull [] modules) {
     myAffectedModules = modules;
     ApplicationManager.getApplication().runReadAction(
       () -> {
@@ -52,8 +52,7 @@ public class FileSetCompileScope extends ExportableUserDataHolderBase implements
   }
 
   @Override
-  @NotNull
-  public Module[] getAffectedModules() {
+  public Module @NotNull [] getAffectedModules() {
     return myAffectedModules;
   }
 
@@ -63,8 +62,7 @@ public class FileSetCompileScope extends ExportableUserDataHolderBase implements
   }
 
   @Override
-  @NotNull
-  public VirtualFile[] getFiles(final FileType fileType, boolean inSourceOnly) {
+  public VirtualFile @NotNull [] getFiles(final FileType fileType, boolean inSourceOnly) {
     final List<VirtualFile> files = new ArrayList<>();
     for (Iterator<VirtualFile> it = myRootFiles.iterator(); it.hasNext();) {
       VirtualFile file = it.next();

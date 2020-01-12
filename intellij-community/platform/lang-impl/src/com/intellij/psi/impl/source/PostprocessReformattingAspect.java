@@ -651,7 +651,7 @@ public class PostprocessReformattingAspect implements PomModelAspect {
 
   private static void adjustIndentationInRange(@NotNull PsiFile file,
                                                @NotNull Document document,
-                                               @NotNull TextRange[] indents,
+                                               TextRange @NotNull [] indents,
                                                final int indentAdjustment) {
     final CharSequence charsSequence = document.getCharsSequence();
     for (final TextRange indent : indents) {

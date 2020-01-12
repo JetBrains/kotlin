@@ -63,12 +63,12 @@ public final class NavigationUtil {
   }
 
   @NotNull
-  public static JBPopup getPsiElementPopup(@NotNull PsiElement[] elements, String title) {
+  public static JBPopup getPsiElementPopup(PsiElement @NotNull [] elements, String title) {
     return getPsiElementPopup(elements, new DefaultPsiElementCellRenderer(), title);
   }
 
   @NotNull
-  public static JBPopup getPsiElementPopup(@NotNull PsiElement[] elements,
+  public static JBPopup getPsiElementPopup(PsiElement @NotNull [] elements,
                                            @NotNull final PsiElementListCellRenderer<? super PsiElement> renderer,
                                            final String title) {
     return getPsiElementPopup(elements, renderer, title, new PsiElementProcessor<PsiElement>() {
@@ -84,7 +84,7 @@ public final class NavigationUtil {
   }
 
   @NotNull
-  public static <T extends PsiElement> JBPopup getPsiElementPopup(@NotNull T[] elements,
+  public static <T extends PsiElement> JBPopup getPsiElementPopup(T @NotNull [] elements,
                                                                   @NotNull final PsiElementListCellRenderer<T> renderer,
                                                                   final String title,
                                                                   @NotNull final PsiElementProcessor<? super T> processor) {
@@ -92,7 +92,7 @@ public final class NavigationUtil {
   }
 
   @NotNull
-  public static <T extends PsiElement> JBPopup getPsiElementPopup(@NotNull T[] elements,
+  public static <T extends PsiElement> JBPopup getPsiElementPopup(T @NotNull [] elements,
                                                                   @NotNull final PsiElementListCellRenderer<T> renderer,
                                                                   @Nullable final String title,
                                                                   @NotNull final PsiElementProcessor<? super T> processor,

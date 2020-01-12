@@ -99,9 +99,8 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
     return myResolvedElements.keys();
   }
 
-  @NotNull
   @Override
-  public CommonProblemDescriptor[] getResolvedProblems(@NotNull RefEntity entity) {
+  public CommonProblemDescriptor @NotNull [] getResolvedProblems(@NotNull RefEntity entity) {
     return myResolvedElements.getOrDefault(entity, CommonProblemDescriptor.EMPTY_ARRAY);
   }
 
@@ -128,9 +127,8 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
     return mySuppressedElements.containsValue(descriptor);
   }
 
-  @NotNull
   @Override
-  public CommonProblemDescriptor[] getSuppressedProblems(@NotNull RefEntity entity) {
+  public CommonProblemDescriptor @NotNull [] getSuppressedProblems(@NotNull RefEntity entity) {
     return mySuppressedElements.getOrDefault(entity, CommonProblemDescriptor.EMPTY_ARRAY);
   }
 
@@ -229,12 +227,12 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
   }
 
   @Override
-  public void addProblemElement(@Nullable RefEntity refElement, @NotNull CommonProblemDescriptor... descriptions){
+  public void addProblemElement(@Nullable RefEntity refElement, CommonProblemDescriptor @NotNull ... descriptions){
     addProblemElement(refElement, true, descriptions);
   }
 
   @Override
-  public void addProblemElement(@Nullable RefEntity refElement, boolean filterSuppressed, @NotNull final CommonProblemDescriptor... descriptors) {
+  public void addProblemElement(@Nullable RefEntity refElement, boolean filterSuppressed, final CommonProblemDescriptor @NotNull ... descriptors) {
     if (refElement == null || descriptors.length == 0) {
       return;
     }
@@ -275,7 +273,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
     return isDisposed;
   }
 
-  private synchronized void writeOutput(@NotNull CommonProblemDescriptor[] descriptions, @NotNull RefEntity refElement) throws IOException {
+  private synchronized void writeOutput(CommonProblemDescriptor @NotNull [] descriptions, @NotNull RefEntity refElement) throws IOException {
     Path file = ExportHTMLAction.getInspectionResultFile(myContext.getOutputPath(), myToolWrapper.getShortName());
     boolean exists = Files.exists(file);
     Files.createDirectories(file.getParent());
@@ -323,8 +321,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
   }
 
   @Override
-  @Nullable
-  public CommonProblemDescriptor[] getDescriptions(@NotNull RefEntity refEntity) {
+  public CommonProblemDescriptor @Nullable [] getDescriptions(@NotNull RefEntity refEntity) {
     final CommonProblemDescriptor[] problems = getProblemElements().getOrDefault(refEntity, null);
     if (problems == null) return null;
 
@@ -355,10 +352,10 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
     }
   }
 
-  protected void exportResults(@NotNull final CommonProblemDescriptor[] descriptors,
-                             @NotNull RefEntity refEntity,
-                             @NotNull Consumer<? super Element> problemSink,
-                             @NotNull Predicate<? super CommonProblemDescriptor> isDescriptorExcluded) {
+  protected void exportResults(final CommonProblemDescriptor @NotNull [] descriptors,
+                               @NotNull RefEntity refEntity,
+                               @NotNull Consumer<? super Element> problemSink,
+                               @NotNull Predicate<? super CommonProblemDescriptor> isDescriptorExcluded) {
     for (CommonProblemDescriptor descriptor : descriptors) {
       if (isDescriptorExcluded.test(descriptor)) continue;
       int line = descriptor instanceof ProblemDescriptor ? ((ProblemDescriptor)descriptor).getLineNumber() : -1;
@@ -477,8 +474,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
   }
 
   @Override
-  @NotNull
-  public QuickFixAction[] getQuickFixes(@NotNull RefEntity... refElements) {
+  public QuickFixAction @NotNull [] getQuickFixes(RefEntity @NotNull ... refElements) {
     return QuickFixAction.EMPTY;
   }
 

@@ -38,8 +38,7 @@ public class ModuleGroup {
     return myGroupPath.hashCode();
   }
 
-  @NotNull
-  public String[] getGroupPath() {
+  public String @NotNull [] getGroupPath() {
     return ArrayUtilRt.toStringArray(myGroupPath);
   }
 

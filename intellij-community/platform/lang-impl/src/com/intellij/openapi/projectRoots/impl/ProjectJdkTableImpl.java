@@ -111,8 +111,7 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
   }
 
   @Override
-  @NotNull
-  public File[] getExportFiles() {
+  public File @NotNull [] getExportFiles() {
     return new File[]{PathManager.getOptionsFile("jdk.table")};
   }
 
@@ -161,9 +160,8 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
     return null;
   }
 
-  @NotNull
   @Override
-  public Sdk[] getAllJdks() {
+  public Sdk @NotNull [] getAllJdks() {
     return mySdks.toArray(new Sdk[0]);
   }
 

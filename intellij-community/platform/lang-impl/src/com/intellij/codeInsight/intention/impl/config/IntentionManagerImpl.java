@@ -65,7 +65,7 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
   }
 
   @Override
-  public void registerIntentionAndMetaData(@NotNull IntentionAction action, @NotNull String... category) {
+  public void registerIntentionAndMetaData(@NotNull IntentionAction action, String @NotNull ... category) {
     addAction(action);
 
     String descriptionDirectoryName = action instanceof IntentionActionWrapper
@@ -188,15 +188,13 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
   }
 
   @Override
-  @NotNull
-  public IntentionAction[] getIntentionActions() {
+  public IntentionAction @NotNull [] getIntentionActions() {
     if (myIntentionsDisabled) return IntentionAction.EMPTY_ARRAY;
     return myActions.toArray(IntentionAction.EMPTY_ARRAY);
   }
 
-  @NotNull
   @Override
-  public IntentionAction[] getAvailableIntentionActions() {
+  public IntentionAction @NotNull [] getAvailableIntentionActions() {
     if (myIntentionsDisabled) return IntentionAction.EMPTY_ARRAY;
     checkForDuplicates();
     List<IntentionAction> list = new ArrayList<>(myActions.size());

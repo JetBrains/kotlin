@@ -14,7 +14,7 @@ public class SubstringBeforeMacro extends MacroBase {
   }
 
   @Override
-  protected Result calculateResult(@NotNull Expression[] params, ExpressionContext context, boolean quick) {
+  protected Result calculateResult(Expression @NotNull [] params, ExpressionContext context, boolean quick) {
     if (params.length == 2) {
       String string = getTextResult(params[0], context);
       if (string == null) {

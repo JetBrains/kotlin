@@ -133,9 +133,8 @@ public class SliceNode extends AbstractTreeNode<SliceUsage> implements Duplicate
   @Override
   protected PresentationData createPresentation() {
     return new PresentationData(){
-      @NotNull
       @Override
-      public Object[] getEqualityObjects() {
+      public Object @NotNull [] getEqualityObjects() {
         return ArrayUtil.append(super.getEqualityObjects(), changed);
       }
     };

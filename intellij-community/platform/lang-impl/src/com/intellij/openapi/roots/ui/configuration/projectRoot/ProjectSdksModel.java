@@ -49,9 +49,8 @@ public class ProjectSdksModel implements SdkModel {
     return mySdkEventsDispatcher.getMulticaster();
   }
 
-  @NotNull
   @Override
-  public Sdk[] getSdks() {
+  public Sdk @NotNull [] getSdks() {
     return myProjectSdks.values().toArray(new Sdk[0]);
   }
 
@@ -162,7 +161,7 @@ public class ProjectSdksModel implements SdkModel {
     });
   }
 
-  private boolean canApply(@NotNull String[] errorString, @Nullable MasterDetailsComponent rootConfigurable, boolean addedOnly) throws ConfigurationException {
+  private boolean canApply(String @NotNull [] errorString, @Nullable MasterDetailsComponent rootConfigurable, boolean addedOnly) throws ConfigurationException {
     Map<Sdk, Sdk> sdks = new LinkedHashMap<>(myProjectSdks);
     if (addedOnly) {
       Sdk[] allJdks = ProjectJdkTable.getInstance().getAllJdks();

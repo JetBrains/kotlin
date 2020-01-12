@@ -115,9 +115,8 @@ public class DumpScreenConfigurationAction extends DumbAwareAction {
       return new ScreenView();
     }
 
-    @NotNull
     @Override
-    protected Action[] createActions() {
+    protected Action @NotNull [] createActions() {
       return new Action[]{getOKAction(), getCancelAction()};
     }
 

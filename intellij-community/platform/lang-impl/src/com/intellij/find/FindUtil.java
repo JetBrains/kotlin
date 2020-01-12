@@ -894,7 +894,7 @@ public class FindUtil {
   }
 
   public static <T> UsageView showInUsageView(@Nullable PsiElement sourceElement,
-                                              @NotNull T[] targets,
+                                              T @NotNull [] targets,
                                               @NotNull Function<? super T, ? extends Usage> usageConverter,
                                               @NotNull String title,
                                               @Nullable Consumer<? super UsageViewPresentation> presentationSetup,
@@ -934,7 +934,7 @@ public class FindUtil {
 
   @Nullable
   public static UsageView showInUsageView(@Nullable PsiElement sourceElement,
-                                          @NotNull PsiElement[] targets,
+                                          PsiElement @NotNull [] targets,
                                           @NotNull String title,
                                           @NotNull Project project) {
     if (targets.length == 0) return null;

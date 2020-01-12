@@ -237,8 +237,7 @@ public abstract class InplaceRefactoring {
     return null;
   }
 
-  @NotNull
-  private PsiElement[] getElements(LocalSearchScope searchScope) {
+  private PsiElement @NotNull [] getElements(LocalSearchScope searchScope) {
     final PsiElement[] elements = searchScope.getScope();
     FileViewProvider provider = myElementToRename.getContainingFile().getViewProvider();
     for (PsiElement element : elements) {

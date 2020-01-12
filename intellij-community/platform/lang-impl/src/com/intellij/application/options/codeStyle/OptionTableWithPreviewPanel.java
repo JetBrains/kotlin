@@ -328,7 +328,7 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
     addOption(fieldName, title, null);
   }
 
-  protected void addOption(@NotNull String fieldName, @NotNull String title, @NotNull String[] options, @NotNull int[] values) {
+  protected void addOption(@NotNull String fieldName, @NotNull String title, String @NotNull [] options, int @NotNull [] values) {
     addOption(fieldName, title, null, options, values);
   }
 
@@ -347,7 +347,7 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
   }
 
   protected void addOption(@NotNull String fieldName, @NotNull String title, @Nullable String groupName,
-                           @NotNull String[] options, @NotNull int[] values) {
+                           String @NotNull [] options, int @NotNull [] values) {
     myOptions.add(new SelectionOption(null, fieldName, title, groupName, null, null, options, values));
   }
 
@@ -443,8 +443,8 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
   }
 
   private class SelectionOption extends FieldOption {
-    @NotNull final String[] options;
-    @NotNull final int[] values;
+    final String @NotNull [] options;
+    final int @NotNull [] values;
 
     SelectionOption(Class<? extends CustomCodeStyleSettings> clazz,
                            @NotNull String fieldName,
@@ -452,8 +452,8 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
                            @Nullable String groupName,
                            @Nullable OptionAnchor anchor,
                            @Nullable String anchorFiledName,
-                           @NotNull String[] options,
-                           @NotNull int[] values) {
+                           String @NotNull [] options,
+                           int @NotNull [] values) {
       super(clazz, fieldName, title, groupName, anchor, anchorFiledName);
       this.options = options;
       this.values = values;

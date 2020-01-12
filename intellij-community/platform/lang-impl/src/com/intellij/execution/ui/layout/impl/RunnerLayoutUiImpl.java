@@ -245,9 +245,8 @@ public class RunnerLayoutUiImpl implements Disposable.Parent, RunnerLayoutUi, La
     return myContentUI.getLayoutActions();
   }
 
-  @NotNull
   @Override
-  public AnAction[] getLayoutActionsList() {
+  public AnAction @NotNull [] getLayoutActionsList() {
     final ActionGroup group = (ActionGroup)getLayoutActions();
     return group.getChildren(null);
   }
@@ -359,16 +358,14 @@ public class RunnerLayoutUiImpl implements Disposable.Parent, RunnerLayoutUi, La
     return myContentUI.getSettingsActions();
   }
 
-  @NotNull
   @Override
-  public AnAction[] getSettingsActionsList() {
+  public AnAction @NotNull [] getSettingsActionsList() {
     final ActionGroup group = (ActionGroup)getSettingsActions();
     return group.getChildren(null);
   }
 
-  @NotNull
   @Override
-  public Content[] getContents() {
+  public Content @NotNull [] getContents() {
     Content[] contents = new Content[getContentManager().getContentCount()];
     for (int i = 0; i < contents.length; i++) {
       contents[i] = getContentManager().getContent(i);

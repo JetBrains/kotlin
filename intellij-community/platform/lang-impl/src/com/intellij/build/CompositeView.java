@@ -96,13 +96,11 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     return viewClass.isInstance(view) ? viewClass.cast(view) : null;
   }
 
-  @NotNull
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     return AnAction.EMPTY_ARRAY;
   }
 
-  @NotNull
-  public AnAction[] getSwitchActions() {
+  public AnAction @NotNull [] getSwitchActions() {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
     actionGroup.addSeparator();
     actionGroup.add(mySwitchViewAction);

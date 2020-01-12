@@ -429,9 +429,8 @@ public class FileStructureDialog extends DialogWrapper {
       super(FileStructureDialog.this.myProject, myTreeModel);
     }
 
-    @NotNull
     @Override
-    public Object[] getChildElements(@NotNull Object element) {
+    public Object @NotNull [] getChildElements(@NotNull Object element) {
       Object[] childElements = super.getChildElements(element);
 
       if (!myShouldNarrowDown) {

@@ -108,7 +108,7 @@ public class ImagePreviewComponent extends JPanel implements PreviewHintComponen
   }
 
   @NotNull
-  public static BufferedImage readImageFromBytes(@NotNull byte[] content) throws IOException {
+  public static BufferedImage readImageFromBytes(byte @NotNull [] content) throws IOException {
     try {
       Image image = SVGLoader.load(new ByteArrayInputStream(content), JBUIScale.sysScale());
       if (image != null) return ImageUtil.toBufferedImage(image);

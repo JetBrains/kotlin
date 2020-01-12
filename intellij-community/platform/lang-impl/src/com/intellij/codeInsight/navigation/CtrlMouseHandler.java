@@ -480,8 +480,7 @@ public final class CtrlMouseHandler {
       final PsiElement element = TargetElementUtil.getInstance().findTargetElement(editor, ImplementationSearcher.getFlags(), offset);
       PsiElement[] targetElements = new ImplementationSearcher() {
         @Override
-        @NotNull
-        protected PsiElement[] searchDefinitions(final PsiElement element, Editor editor) {
+        protected PsiElement @NotNull [] searchDefinitions(final PsiElement element, Editor editor) {
           final List<PsiElement> found = new ArrayList<>(2);
           DefinitionsScopedSearch.search(element, getSearchScope(element, editor)).forEach(psiElement -> {
             found.add(psiElement);

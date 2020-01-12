@@ -186,8 +186,7 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
     }
   }
 
-  @NotNull
-  private static PsiJavaCodeReferenceElement[] getReferences(PsiReferenceList list) {
+  private static PsiJavaCodeReferenceElement @NotNull [] getReferences(PsiReferenceList list) {
     return list == null ? PsiJavaCodeReferenceElement.EMPTY_ARRAY : list.getReferenceElements();
   }
 

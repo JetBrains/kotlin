@@ -26,8 +26,7 @@ public interface ExtractMethodSettings<T> {
   @NotNull
   String getMethodName();
 
-  @NotNull
-  AbstractVariableData[] getAbstractVariableData();
+  AbstractVariableData @NotNull [] getAbstractVariableData();
 
   @Nullable
   T getVisibility();

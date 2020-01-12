@@ -282,9 +282,8 @@ public class EnvironmentVariablesTextFieldWithBrowseButton extends TextFieldWith
       return myUserList ? super.createRemoveAction() : null;
     }
 
-    @NotNull
     @Override
-    protected AnActionButton[] createExtraActions() {
+    protected AnActionButton @NotNull [] createExtraActions() {
       return myUserList
              ? super.createExtraActions()
              : ArrayUtil.append(super.createExtraActions(),

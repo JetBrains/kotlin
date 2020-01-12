@@ -83,8 +83,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     });
   }
 
-  @Nullable
-  private static UsageTarget[] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
+  private static UsageTarget @Nullable [] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
     UsageTarget[] usageTargets = UsageTargetUtil.findUsageTargets(editor, file);
 
     if (usageTargets == null) {
@@ -304,7 +303,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     return null;
   }
 
-  public static void doHighlightElements(@NotNull Editor editor, @NotNull PsiElement[] elements, @NotNull TextAttributes attributes, boolean clearHighlights) {
+  public static void doHighlightElements(@NotNull Editor editor, PsiElement @NotNull [] elements, @NotNull TextAttributes attributes, boolean clearHighlights) {
     HighlightManager highlightManager = HighlightManager.getInstance(editor.getProject());
     List<TextRange> textRanges = new ArrayList<>(elements.length);
     for (PsiElement element : elements) {

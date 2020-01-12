@@ -42,7 +42,7 @@ public abstract class AbstractProjectImportErrorHandler {
                                                                @Nullable String buildFilePath);
 
   @NotNull
-  public ExternalSystemException createUserFriendlyError(@NotNull String msg, @Nullable String location, @NotNull String... quickFixes) {
+  public ExternalSystemException createUserFriendlyError(@NotNull String msg, @Nullable String location, String @NotNull ... quickFixes) {
     return GradleExecutionErrorHandler.createUserFriendlyError(msg, location, quickFixes);
   }
 

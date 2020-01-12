@@ -19,7 +19,7 @@ public abstract class FilteringGotoByModel<T> extends ContributorsBasedGotoByMod
   /** current file types */
   private Set<T> myFilterItems;
 
-  protected FilteringGotoByModel(@NotNull Project project, @NotNull ChooseByNameContributor[] contributors) {
+  protected FilteringGotoByModel(@NotNull Project project, ChooseByNameContributor @NotNull [] contributors) {
     super(project, contributors);
   }
 

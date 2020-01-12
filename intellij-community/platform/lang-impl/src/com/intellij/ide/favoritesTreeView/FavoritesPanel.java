@@ -234,8 +234,7 @@ public final class FavoritesPanel {
     }
   }
 
-  @Nullable
-  protected PsiFileSystemItem[] getPsiFiles(@Nullable List<? extends File> fileList) {
+  protected PsiFileSystemItem @Nullable [] getPsiFiles(@Nullable List<? extends File> fileList) {
     if (fileList == null) return null;
     List<PsiFileSystemItem> sourceFiles = new ArrayList<>();
     for (File file : fileList) {

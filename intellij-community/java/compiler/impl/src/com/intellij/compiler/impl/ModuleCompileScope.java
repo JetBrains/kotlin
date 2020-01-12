@@ -75,8 +75,7 @@ public class ModuleCompileScope extends FileIndexCompileScope {
   }
 
   @Override
-  @NotNull
-  public Module[] getAffectedModules() {
+  public Module @NotNull [] getAffectedModules() {
     return myScopeModules.toArray(Module.EMPTY_ARRAY);
   }
 

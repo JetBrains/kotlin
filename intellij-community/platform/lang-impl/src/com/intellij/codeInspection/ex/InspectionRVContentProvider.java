@@ -132,11 +132,9 @@ public abstract class InspectionRVContentProvider {
     return false;
   }
 
-  @NotNull
-  public abstract QuickFixAction[] getCommonQuickFixes(@NotNull InspectionToolWrapper toolWrapper, @NotNull InspectionTree tree);
+  public abstract QuickFixAction @NotNull [] getCommonQuickFixes(@NotNull InspectionToolWrapper toolWrapper, @NotNull InspectionTree tree);
 
-  @NotNull
-  public QuickFixAction[] getPartialQuickFixes(@NotNull InspectionToolWrapper toolWrapper, @NotNull InspectionTree tree) {
+  public QuickFixAction @NotNull [] getPartialQuickFixes(@NotNull InspectionToolWrapper toolWrapper, @NotNull InspectionTree tree) {
     GlobalInspectionContextImpl context = tree.getContext();
     InspectionToolPresentation presentation = context.getPresentation(toolWrapper);
     CommonProblemDescriptor[] descriptors = tree.getSelectedDescriptors();
@@ -287,9 +285,8 @@ public abstract class InspectionRVContentProvider {
     }
   }
 
-  @NotNull
-  protected static QuickFixAction[] getCommonFixes(@NotNull InspectionToolPresentation presentation,
-                                                   @NotNull CommonProblemDescriptor[] descriptors) {
+  protected static QuickFixAction @NotNull [] getCommonFixes(@NotNull InspectionToolPresentation presentation,
+                                                             CommonProblemDescriptor @NotNull [] descriptors) {
     Map<String, LocalQuickFixWrapper> result = null;
     for (CommonProblemDescriptor d : descriptors) {
       QuickFix<?>[] fixes = d.getFixes();

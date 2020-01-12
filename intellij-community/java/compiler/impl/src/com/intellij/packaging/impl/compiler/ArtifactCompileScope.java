@@ -105,8 +105,7 @@ public class ArtifactCompileScope {
     return result;
   }
 
-  @Nullable
-  public static Artifact[] getArtifacts(CompileScope compileScope) {
+  public static Artifact @Nullable [] getArtifacts(CompileScope compileScope) {
     return compileScope.getUserData(ARTIFACTS_KEY);
   }
 

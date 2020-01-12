@@ -89,22 +89,19 @@ public interface LanguageCompilerRefAdapter {
    * @return classes that can be inheritors of given superClass. This method shouldn't directly check are
    * found elements really inheritors.
    */
-  @NotNull
-  PsiElement[] findDirectInheritorCandidatesInFile(@NotNull SearchId[] internalNames,
-                                                   @NotNull PsiFileWithStubSupport file);
+  PsiElement @NotNull [] findDirectInheritorCandidatesInFile(SearchId @NotNull [] internalNames,
+                                                             @NotNull PsiFileWithStubSupport file);
 
   /**
    * @param indices - ordinal-numbers (corresponding to compiler tree index visitor) of required functional expressions.
    * @return functional expressions for given functional type. Should return
    */
-  @NotNull
-  PsiElement[] findFunExpressionsInFile(@NotNull SearchId[] indices,
-                                        @NotNull PsiFileWithStubSupport file);
+  PsiElement @NotNull [] findFunExpressionsInFile(SearchId @NotNull [] indices,
+                                                  @NotNull PsiFileWithStubSupport file);
 
   boolean isClass(@NotNull PsiElement element);
 
-  @NotNull
-  PsiElement[] getInstantiableConstructors(@NotNull PsiElement aClass);
+  PsiElement @NotNull [] getInstantiableConstructors(@NotNull PsiElement aClass);
 
   boolean isDirectInheritor(PsiElement candidate, PsiNamedElement baseClass);
 }

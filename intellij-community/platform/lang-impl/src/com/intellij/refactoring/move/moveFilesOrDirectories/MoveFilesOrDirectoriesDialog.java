@@ -48,7 +48,7 @@ public abstract class MoveFilesOrDirectoriesDialog extends DialogWrapper {
   private JCheckBox myCbSearchForReferences;
   private JCheckBox myOpenInEditorCb;
 
-  public MoveFilesOrDirectoriesDialog(@NotNull Project project, @NotNull PsiElement[] psiElements, PsiDirectory initialTargetDirectory) {
+  public MoveFilesOrDirectoriesDialog(@NotNull Project project, PsiElement @NotNull [] psiElements, PsiDirectory initialTargetDirectory) {
     super(project, true);
     myProject = project;
     setTitle(RefactoringBundle.message("move.title"));

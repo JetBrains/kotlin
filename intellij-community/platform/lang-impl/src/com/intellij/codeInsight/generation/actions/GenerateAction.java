@@ -105,9 +105,8 @@ public class GenerateAction extends DumbAwareAction {
       return true;
     }
 
-    @NotNull
     @Override
-    public AnAction[] getChildren(@Nullable AnActionEvent e) {
+    public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
       return new AnAction[] {myEditTemplateAction};
     }
 

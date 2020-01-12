@@ -190,7 +190,7 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
 
     private static void filter(@NotNull List<HighlightInfo.IntentionActionDescriptor> descriptors,
                                @Nullable PsiFile psiFile,
-                               @NotNull IntentionActionFilter[] filters) {
+                               IntentionActionFilter @NotNull [] filters) {
       for (Iterator<HighlightInfo.IntentionActionDescriptor> it = descriptors.iterator(); it.hasNext(); ) {
         HighlightInfo.IntentionActionDescriptor actionDescriptor = it.next();
         for (IntentionActionFilter filter : filters) {

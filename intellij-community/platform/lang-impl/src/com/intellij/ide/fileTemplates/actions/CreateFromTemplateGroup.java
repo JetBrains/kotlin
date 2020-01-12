@@ -43,8 +43,7 @@ public class CreateFromTemplateGroup extends ActionGroup implements DumbAware {
   }
 
   @Override
-  @NotNull
-  public AnAction[] getChildren(@Nullable AnActionEvent e){
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e){
     if (e == null) return EMPTY_ARRAY;
     Project project = e.getProject();
     if (project == null || project.isDisposed()) return EMPTY_ARRAY;

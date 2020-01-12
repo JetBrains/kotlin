@@ -80,7 +80,7 @@ public class VariableInplaceRenameHandler implements RenameHandler {
 
   @Override
   public void invoke(@NotNull Project project,
-                     @NotNull PsiElement[] elements,
+                     PsiElement @NotNull [] elements,
                      @NotNull DataContext dataContext) {
     PsiElement element = elements.length == 1 ? elements[0] : null;
     if (element == null) element = PsiElementRenameHandler.getElement(dataContext);

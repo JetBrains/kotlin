@@ -141,9 +141,8 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
   }
 
   // Do not instantiate LocalSearchScope for getVirtualFiles, calcHashCode, equals, toString and containsRange.
-  @NotNull
   @Override
-  public VirtualFile[] getVirtualFiles() {
+  public VirtualFile @NotNull [] getVirtualFiles() {
     initVirtualFilesAndRanges();
     return myVirtualFiles;
   }
@@ -228,9 +227,8 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
     }
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getScope() {
+  public PsiElement @NotNull [] getScope() {
     createIfNeeded();
     return myLocalSearchScope.getScope();
   }

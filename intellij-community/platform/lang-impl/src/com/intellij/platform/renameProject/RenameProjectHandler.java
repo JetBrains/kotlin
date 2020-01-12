@@ -51,7 +51,7 @@ public class RenameProjectHandler implements RenameHandler, TitledHandler {
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     LOG.assertTrue(project instanceof ProjectEx);
 
     final Module module = LangDataKeys.MODULE_CONTEXT.getData(dataContext);

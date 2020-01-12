@@ -35,8 +35,7 @@ public abstract class ArtifactModelBase implements ArtifactModel {
   protected abstract List<? extends Artifact> getArtifactsList();
 
   @Override
-  @NotNull
-  public Artifact[] getArtifacts() {
+  public Artifact @NotNull [] getArtifacts() {
     if (myArtifactsArray == null) {
       final List<? extends Artifact> validArtifacts = ContainerUtil.findAll(getArtifactsList(), VALID_ARTIFACT_CONDITION);
       myArtifactsArray = validArtifacts.toArray(new Artifact[0]);

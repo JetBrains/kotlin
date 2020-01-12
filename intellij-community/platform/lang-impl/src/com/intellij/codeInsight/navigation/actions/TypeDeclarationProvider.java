@@ -35,8 +35,7 @@ public interface TypeDeclarationProvider {
    * @param symbol input PSI element
    * @return all target declarations as an array of {@code PsiElement} or {@code null} if none were found
    */
-  @Nullable
-  PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol);
+  PsiElement @Nullable [] getSymbolTypeDeclarations(@NotNull PsiElement symbol);
 
   /**
    * Provides the custom action text.

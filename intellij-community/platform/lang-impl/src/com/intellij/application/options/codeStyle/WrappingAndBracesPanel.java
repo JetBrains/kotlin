@@ -51,7 +51,7 @@ public class WrappingAndBracesPanel extends OptionTableWithPreviewPanel {
 
   @Override
   protected void addOption(@NotNull String fieldName, @NotNull String title, @Nullable String groupName,
-                           @NotNull String[] options, @NotNull int[] values) {
+                           String @NotNull [] options, int @NotNull [] values) {
     super.addOption(fieldName, title, groupName, options, values);
     if (groupName == null) {
       myGroupToFields.putValue(title, fieldName);

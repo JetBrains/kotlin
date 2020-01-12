@@ -1858,12 +1858,10 @@ public final class BuildManager implements Disposable {
   }
 
   private static final class DelegateFuture implements TaskFuture {
-    @Nullable
-    private TaskFuture<?>[] myDelegates;
+    private TaskFuture<?> @Nullable [] myDelegates;
     private Boolean myRequestedCancelState;
 
-    @NotNull
-    private synchronized TaskFuture<?>[] getDelegates() {
+    private synchronized TaskFuture<?> @NotNull [] getDelegates() {
       TaskFuture<?>[] delegates = myDelegates;
       while (delegates == null) {
         try {
@@ -1876,7 +1874,7 @@ public final class BuildManager implements Disposable {
       return delegates;
     }
 
-    private synchronized boolean setDelegates(@NotNull TaskFuture<?>... delegates) {
+    private synchronized boolean setDelegates(TaskFuture<?> @NotNull ... delegates) {
       if (myDelegates == null) {
         try {
           myDelegates = delegates;

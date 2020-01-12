@@ -42,7 +42,7 @@ public class MoveAction extends BaseRefactoringAction {
   }
 
   @Override
-  public boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  public boolean isEnabledOnElements(PsiElement @NotNull [] elements) {
     return MoveHandler.canMove(elements, null);
   }
 

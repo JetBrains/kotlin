@@ -189,8 +189,7 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
     return mainModuleNode;
   }
 
-  @NotNull
-  private static String[] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {
+  private static String @NotNull [] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {
     final String gradlePath = gradleModule.getGradleProject().getPath();
     final String rootName = gradleModule.getProject().getName();
     if (isEmpty(gradlePath) || ":".equals(gradlePath)) {

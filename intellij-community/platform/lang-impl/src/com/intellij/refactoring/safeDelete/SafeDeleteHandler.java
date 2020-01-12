@@ -43,7 +43,7 @@ public class SafeDeleteHandler implements RefactoringActionHandler {
   }
 
   @Override
-  public void invoke(@NotNull final Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull final Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     invoke(project, elements, LangDataKeys.MODULE.getData(dataContext), true, null, null);
   }
 

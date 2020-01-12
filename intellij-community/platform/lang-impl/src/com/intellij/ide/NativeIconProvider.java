@@ -133,8 +133,7 @@ public class NativeIconProvider extends IconProvider implements DumbAware {
     }
 
     @Override
-    @NotNull
-    public Object[] getEqualityObjects() {
+    public Object @NotNull [] getEqualityObjects() {
       return myText;
     }
 

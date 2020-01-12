@@ -287,7 +287,7 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
     protected final Set<String> myNames;
     public Map<Object, PsiElementListCellRenderer> renderers = new HashMap<>();
 
-    public GotoData(@NotNull PsiElement source, @NotNull PsiElement[] targets, @NotNull List<AdditionalAction> additionalActions) {
+    public GotoData(@NotNull PsiElement source, PsiElement @NotNull [] targets, @NotNull List<AdditionalAction> additionalActions) {
       this.source = source;
       this.targets = targets;
       this.additionalActions = additionalActions;

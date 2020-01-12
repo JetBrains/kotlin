@@ -12,9 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ProjectFingerprintInspection extends LocalInspectionTool {
-  @Nullable
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
     if (!ApplicationManager.getApplication().isHeadlessEnvironment()) return null;
     Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     if (document == null || file.getViewProvider().getBaseLanguage() != file.getLanguage()) return null;

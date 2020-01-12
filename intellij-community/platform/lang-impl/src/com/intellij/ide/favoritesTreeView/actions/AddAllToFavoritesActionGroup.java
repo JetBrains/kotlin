@@ -17,8 +17,7 @@ import java.util.List;
 
 public class AddAllToFavoritesActionGroup extends ActionGroup implements DumbAware {
   @Override
-  @NotNull
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     if (e == null) return AnAction.EMPTY_ARRAY;
     final Project project = e.getProject();
     if (project == null) {

@@ -61,7 +61,7 @@ public class IndexedHashesSupport {
     if (ourHashesWithFileType != null && ourHashesWithFileType.isDirty()) ourHashesWithFileType.force();
   }
 
-  static int enumerateHash(@NotNull byte[] digest) throws IOException {
+  static int enumerateHash(byte @NotNull [] digest) throws IOException {
     return ourHashesWithFileType.enumerate(digest);
   }
 
@@ -74,8 +74,7 @@ public class IndexedHashesSupport {
     content.setHashes(fileContentHash, documentHash != null ? documentHash : fileContentHash);
   }
 
-  @NotNull
-  public static byte[] getOrInitIndexedHash(@NotNull FileContentImpl content, boolean fromDocument) {
+  public static byte @NotNull [] getOrInitIndexedHash(@NotNull FileContentImpl content, boolean fromDocument) {
     byte[] hash = content.getHash(fromDocument);
     if (hash == null) {
       initIndexedHash(content);
@@ -85,8 +84,7 @@ public class IndexedHashesSupport {
     return hash;
   }
 
-  @NotNull
-  private static byte[] calculateIndexedHashForFileContent(@NotNull FileContentImpl content, boolean binary) {
+  private static byte @NotNull [] calculateIndexedHashForFileContent(@NotNull FileContentImpl content, boolean binary) {
     byte[] contentHash = null;
     if (content.isPhysicalContent()) {
       contentHash = ((PersistentFSImpl)PersistentFS.getInstance()).getContentHashIfStored(content.getFile());
@@ -104,8 +102,7 @@ public class IndexedHashesSupport {
     return DigestUtil.calculateContentHash(CONTENT_HASH_WITH_FILE_TYPE_DIGEST, content.getContent());
   }
 
-  @Nullable
-  private static byte[] calculateIndexedHashForDocument(@NotNull FileContentImpl content) {
+  private static byte @Nullable [] calculateIndexedHashForDocument(@NotNull FileContentImpl content) {
     Document document = FileDocumentManager.getInstance().getCachedDocument(content.getFile());
     if (document != null) {  // if document is not committed
       PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(content.getProject());
@@ -123,10 +120,9 @@ public class IndexedHashesSupport {
     return null;
   }
 
-  @NotNull
-  private static byte[] mergeIndexedHash(@NotNull byte[] binaryContentHash,
-                                         @Nullable Charset charsetOrNullForBinary,
-                                         @NotNull FileType fileType) {
+  private static byte @NotNull [] mergeIndexedHash(byte @NotNull [] binaryContentHash,
+                                                   @Nullable Charset charsetOrNullForBinary,
+                                                   @NotNull FileType fileType) {
     byte[] fileTypeBytes = fileType.getName().getBytes(StandardCharsets.UTF_8);
     byte[] charsetBytes = charsetOrNullForBinary != null
                           ? charsetOrNullForBinary.name().getBytes(StandardCharsets.UTF_8)

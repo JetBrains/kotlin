@@ -402,8 +402,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     private final Set<ProjectModelExternalSource> myExternalSources = new LinkedHashSet<>();
 
     @Override
-    @NotNull
-    public Facet<?>[] getAllFacets() {
+    public Facet<?> @NotNull [] getAllFacets() {
       return myAllFacets;
     }
 

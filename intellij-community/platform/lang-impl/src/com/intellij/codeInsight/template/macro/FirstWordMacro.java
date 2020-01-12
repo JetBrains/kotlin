@@ -33,7 +33,7 @@ public class FirstWordMacro extends MacroBase {
   }
 
   @Override
-  protected Result calculateResult(@NotNull Expression[] params, ExpressionContext context, boolean quick) {
+  protected Result calculateResult(Expression @NotNull [] params, ExpressionContext context, boolean quick) {
     final String text = getTextResult(params, context);
     if (text != null) {
       final int index = text.indexOf(' ');

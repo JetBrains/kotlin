@@ -200,7 +200,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
                                               int offset,
                                               @NotNull PsiElementProcessor<? super PsiElement> processor,
                                               @NotNull String titlePattern,
-                                              @Nullable PsiElement[] elements) {
+                                              PsiElement @Nullable [] elements) {
     Project project = editor.getProject();
     if (project == null) {
       return false;
@@ -214,7 +214,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
                                               int offset,
                                               @NotNull PsiElementProcessor<? super PsiElement> processor,
                                               @NotNull String titlePattern,
-                                              @Nullable PsiElement[] elements) {
+                                              PsiElement @Nullable [] elements) {
     if (TargetElementUtil.inVirtualSpace(editor, offset)) {
       return false;
     }
@@ -256,7 +256,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
   @NotNull
   private static Pair<PsiElement[], PsiReference> doChooseAmbiguousTarget(@NotNull Editor editor,
                                                                           int offset,
-                                                                          @Nullable PsiElement[] elements) {
+                                                                          PsiElement @Nullable [] elements) {
     final PsiReference reference = TargetElementUtil.findReference(editor, offset);
 
     if (elements == null || elements.length == 0) {
@@ -286,9 +286,8 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     return targets.length == 1 ? targets[0] : null;
   }
 
-  @NotNull
   @VisibleForTesting
-  public static PsiElement[] findAllTargetElements(Project project, Editor editor, int offset) {
+  public static PsiElement @NotNull [] findAllTargetElements(Project project, Editor editor, int offset) {
     if (TargetElementUtil.inVirtualSpace(editor, offset)) {
       return PsiElement.EMPTY_ARRAY;
     }
@@ -297,8 +296,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     return targets != null ? targets : PsiElement.EMPTY_ARRAY;
   }
 
-  @Nullable
-  static PsiElement[] findTargetElementsFromProviders(@NotNull Project project, @NotNull Editor editor, int offset) {
+  static PsiElement @Nullable [] findTargetElementsFromProviders(@NotNull Project project, @NotNull Editor editor, int offset) {
     Document document = editor.getDocument();
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(document);
     if (file == null) return null;
@@ -306,8 +304,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     return GotoDeclarationUtil.findTargetElementsFromProviders(editor, offset, file);
   }
 
-  @Nullable
-  public static PsiElement[] findTargetElementsNoVS(Project project, Editor editor, int offset, boolean lookupAccepted) {
+  public static PsiElement @Nullable [] findTargetElementsNoVS(Project project, Editor editor, int offset, boolean lookupAccepted) {
     PsiElement[] fromProviders = findTargetElementsFromProviders(project, editor, offset);
     if (fromProviders == null || fromProviders.length > 0) {
       return fromProviders;

@@ -37,7 +37,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
 
   protected abstract boolean isAvailableInEditorOnly();
 
-  protected abstract boolean isEnabledOnElements(@NotNull PsiElement[] elements);
+  protected abstract boolean isEnabledOnElements(PsiElement @NotNull [] elements);
 
   protected boolean isAvailableOnElementInEditorAndFile(@NotNull PsiElement element,
                                                         @NotNull Editor editor,
@@ -274,8 +274,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     return true;
   }
 
-  @NotNull
-  public static PsiElement[] getPsiElementArray(@NotNull DataContext dataContext) {
+  public static PsiElement @NotNull [] getPsiElementArray(@NotNull DataContext dataContext) {
     PsiElement[] psiElements = LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext);
     if (psiElements == null || psiElements.length == 0) {
       PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);

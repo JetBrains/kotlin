@@ -37,7 +37,7 @@ public final class UnixSeparatorsMacro extends Macro implements SecondQueueExpan
 
   @Nullable
   @Override
-  public String expand(@NotNull DataContext dataContext, @NotNull String... args) throws ExecutionCancelledException {
+  public String expand(@NotNull DataContext dataContext, String @NotNull ... args) throws ExecutionCancelledException {
     if (args.length == 1) {
       return FileUtil.toSystemIndependentName(args[0]);
     }

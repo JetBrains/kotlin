@@ -47,7 +47,7 @@ public abstract class Macro {
   public abstract String expand(@NotNull DataContext dataContext) throws ExecutionCancelledException;
 
   @Nullable
-  public String expand(@NotNull DataContext dataContext, @NotNull String... args) throws ExecutionCancelledException{
+  public String expand(@NotNull DataContext dataContext, String @NotNull ... args) throws ExecutionCancelledException{
     return expand(dataContext);
   }
 

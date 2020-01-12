@@ -54,7 +54,7 @@ public class InvalidFacetType extends FacetType<InvalidFacet, InvalidFacetConfig
   }
 
   @Override
-  public MultipleFacetSettingsEditor createMultipleConfigurationsEditor(@NotNull Project project, @NotNull FacetEditor[] editors) {
+  public MultipleFacetSettingsEditor createMultipleConfigurationsEditor(@NotNull Project project, FacetEditor @NotNull [] editors) {
     return new MultipleInvalidFacetEditor(editors);
   }
 

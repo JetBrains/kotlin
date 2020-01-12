@@ -44,9 +44,8 @@ public class ViewerTreeStructure extends AbstractTreeStructure {
     return myRootElement;
   }
 
-  @NotNull
   @Override
-  public Object[] getChildElements(@NotNull final Object element) {
+  public Object @NotNull [] getChildElements(@NotNull final Object element) {
     if (myRootElement == element) {
       if (myRootPsiElement == null) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;

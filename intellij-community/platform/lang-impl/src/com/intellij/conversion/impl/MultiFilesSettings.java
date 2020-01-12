@@ -21,7 +21,7 @@ class MultiFilesSettings {
   private SettingsXmlFile myProjectFile;
   private final List<SettingsXmlFile> mySettingsFiles;
 
-  protected MultiFilesSettings(@Nullable Path projectFile, @Nullable File[] settingsFiles, @NotNull ConversionContextImpl context)
+  protected MultiFilesSettings(@Nullable Path projectFile, File @Nullable [] settingsFiles, @NotNull ConversionContextImpl context)
     throws CannotConvertException {
     if (projectFile == null && settingsFiles == null) {
       throw new IllegalArgumentException("Either project file or settings files should be not null");

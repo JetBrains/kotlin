@@ -29,7 +29,7 @@ import java.util.List;
  */
 public abstract class AbstractExternalSystemTaskConfigurationType implements ConfigurationType {
   @NotNull private final ProjectSystemId myExternalSystemId;
-  @NotNull private final ConfigurationFactory[] myFactories = new ConfigurationFactory[1];
+  private final ConfigurationFactory @NotNull [] myFactories = new ConfigurationFactory[1];
 
   @NotNull private final NotNullLazyValue<Icon> myIcon = new NotNullLazyValue<Icon>() {
     @NotNull

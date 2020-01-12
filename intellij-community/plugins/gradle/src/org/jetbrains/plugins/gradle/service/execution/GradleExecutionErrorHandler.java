@@ -137,7 +137,7 @@ public class GradleExecutionErrorHandler {
   @NotNull
   public static ExternalSystemException createUserFriendlyError(@NotNull String msg,
                                                                 @Nullable String location,
-                                                                @NotNull String... quickFixes) {
+                                                                String @NotNull ... quickFixes) {
     String newMsg = msg;
     if (!newMsg.isEmpty() && Character.isLowerCase(newMsg.charAt(0))) {
       // Message starts with lower case letter. Sentences should start with uppercase.

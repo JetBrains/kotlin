@@ -334,9 +334,8 @@ public class ConfigureCodeStyleOnSelectedFragment implements IntentionAction, Lo
         doOKAction();
       }
 
-      @NotNull
       @Override
-      public Action[] getOptions() {
+      public Action @NotNull [] getOptions() {
         return myOptions;
       }
     }

@@ -42,7 +42,7 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
     addScope(scope2);
   }
 
-  public CompositeScope(@NotNull CompileScope[] scopes) {
+  public CompositeScope(CompileScope @NotNull [] scopes) {
     for (CompileScope scope : scopes) {
       addScope(scope);
     }
@@ -61,8 +61,7 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
   }
 
   @Override
-  @NotNull
-  public VirtualFile[] getFiles(FileType fileType, boolean inSourceOnly) {
+  public VirtualFile @NotNull [] getFiles(FileType fileType, boolean inSourceOnly) {
     Set<VirtualFile> allFiles = new THashSet<>();
     for (CompileScope scope : myScopes) {
       final VirtualFile[] files = scope.getFiles(fileType, inSourceOnly);
@@ -84,8 +83,7 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
   }
 
   @Override
-  @NotNull
-  public Module[] getAffectedModules() {
+  public Module @NotNull [] getAffectedModules() {
     Set<Module> modules = new HashSet<>();
     for (final CompileScope compileScope : myScopes) {
       ContainerUtil.addAll(modules, compileScope.getAffectedModules());

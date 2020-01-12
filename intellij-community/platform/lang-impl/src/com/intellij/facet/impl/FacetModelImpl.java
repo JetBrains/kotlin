@@ -107,8 +107,7 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
   }
 
   @Override
-  @NotNull
-  public Facet[] getAllFacets() {
+  public Facet @NotNull [] getAllFacets() {
     return myFacets.toArray(Facet.EMPTY_ARRAY);
   }
 

@@ -12,7 +12,7 @@ public class CompositeActiveComponent implements ActiveComponent {
   private final ActiveComponent[] myComponents;
   private final JPanel myComponent;
 
-  public CompositeActiveComponent(@NotNull ActiveComponent... components) {
+  public CompositeActiveComponent(ActiveComponent @NotNull ... components) {
     myComponents = components;
 
     myComponent = new JPanel(new FlowLayout(FlowLayout.CENTER, JBUIScale.scale(2), JBUIScale.scale(2)));

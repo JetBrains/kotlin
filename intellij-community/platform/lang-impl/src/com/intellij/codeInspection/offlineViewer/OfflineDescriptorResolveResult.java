@@ -131,7 +131,7 @@ public class OfflineDescriptorResolveResult {
   @NotNull
   private static CommonProblemDescriptor createProblemDescriptorFromOfflineDescriptor(@Nullable RefEntity element,
                                                                                       @NotNull OfflineProblemDescriptor offlineDescriptor,
-                                                                                      @NotNull QuickFix[] fixes,
+                                                                                      QuickFix @NotNull [] fixes,
                                                                                       @NotNull Project project) {
     final InspectionManager inspectionManager = InspectionManager.getInstance(project);
     if (element instanceof RefElement) {
@@ -200,8 +200,7 @@ public class OfflineDescriptorResolveResult {
     return null;
   }
 
-  @NotNull
-  private static PsiElement[] getElementsIntersectingRange(PsiFile file, final int startOffset, final int endOffset) {
+  private static PsiElement @NotNull [] getElementsIntersectingRange(PsiFile file, final int startOffset, final int endOffset) {
     final FileViewProvider viewProvider = file.getViewProvider();
     final Set<PsiElement> result = new LinkedHashSet<>();
     for (Language language : viewProvider.getLanguages()) {
@@ -213,10 +212,9 @@ public class OfflineDescriptorResolveResult {
     return PsiUtilCore.toPsiElementArray(result);
   }
 
-  @Nullable
-  private static QuickFix[] getFixes(@NotNull CommonProblemDescriptor descriptor,
-                                     RefEntity entity,
-                                     InspectionToolPresentation presentation, List<String> hints) {
+  private static QuickFix @Nullable [] getFixes(@NotNull CommonProblemDescriptor descriptor,
+                                                RefEntity entity,
+                                                InspectionToolPresentation presentation, List<String> hints) {
     final List<QuickFix> fixes = new ArrayList<>(hints == null ? 1 : hints.size());
     if (hints == null) {
       addFix(descriptor, entity, fixes, null, presentation);
@@ -349,9 +347,8 @@ public class OfflineDescriptorResolveResult {
       return myOfflineProblemDescriptor.getDescription();
     }
 
-    @Nullable
     @Override
-    public QuickFix[] getFixes() {
+    public QuickFix @Nullable [] getFixes() {
       return myFixes;
     }
   }

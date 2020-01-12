@@ -92,9 +92,8 @@ public class UiDebugger extends JPanel implements Disposable {
         return result;
       }
 
-      @NotNull
       @Override
-      protected Action[] createActions() {
+      protected Action @NotNull [] createActions() {
         return new Action[] {new AbstractAction("Close") {
           @Override
           public void actionPerformed(ActionEvent e) {

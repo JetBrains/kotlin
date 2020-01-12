@@ -47,9 +47,8 @@ public class PlainTextSyntaxHighlighterFactory extends SyntaxHighlighterFactory 
         return createPlainTextLexer();
       }
 
-      @NotNull
       @Override
-      public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+      public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
         return TextAttributesKey.EMPTY_ARRAY;
       }
     };

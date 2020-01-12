@@ -197,9 +197,8 @@ public class DetectableIndentOptionsProvider extends FileIndentOptionsProvider {
       super(options);
     }
 
-    @Nullable
     @Override
-    public AnAction[] getActions(@NotNull PsiFile file) {
+    public AnAction @Nullable [] getActions(@NotNull PsiFile file) {
       IndentOptions indentOptions = getIndentOptions();
       List<AnAction> actions = new ArrayList<>();
       final VirtualFile virtualFile = file.getVirtualFile();

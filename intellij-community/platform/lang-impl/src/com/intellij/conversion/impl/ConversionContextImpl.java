@@ -590,8 +590,7 @@ public final class ConversionContextImpl implements ConversionContext {
     return myArtifactsSettings;
   }
 
-  @NotNull
-  private File[] getSettingsXmlFiles(@NotNull String dirName) {
+  private File @NotNull [] getSettingsXmlFiles(@NotNull String dirName) {
     Path librariesDir = mySettingsBaseDir.resolve(dirName);
     return ObjectUtils.notNull(librariesDir.toFile().listFiles(FileFilters.filesWithExtension("xml")), ArrayUtilRt.EMPTY_FILE_ARRAY);
   }

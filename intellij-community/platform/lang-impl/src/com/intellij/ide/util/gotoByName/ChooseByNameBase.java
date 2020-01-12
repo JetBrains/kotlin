@@ -157,7 +157,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
     }
   }
 
-  private void setNamesSync(boolean checkboxState, @Nullable String[] value) {
+  private void setNamesSync(boolean checkboxState, String @Nullable [] value) {
     synchronized (myNames) {
       myNames[checkboxState ? 1 : 0] = value;
     }
@@ -409,9 +409,8 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
 
     final DefaultActionGroup group = new DefaultActionGroup();
     group.add(new ShowFindUsagesAction() {
-      @NotNull
       @Override
-      public PsiElement[] getElements() {
+      public PsiElement @NotNull [] getElements() {
         List<Object> objects = myListModel.getItems();
         List<PsiElement> elements = new ArrayList<>(objects.size());
         for (Object object : objects) {
@@ -758,8 +757,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
     return StringUtil.trimLeading(StringUtil.notNullize(myTextField.getText()));
   }
 
-  @NotNull
-  private synchronized String[] ensureNamesLoaded(boolean checkboxState) {
+  private synchronized String @NotNull [] ensureNamesLoaded(boolean checkboxState) {
     String[] cached = getNamesSync(checkboxState);
     if (cached != null) return cached;
 
@@ -781,8 +779,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
     return result;
   }
 
-  @NotNull
-  public String[] getNames(boolean checkboxState) {
+  public String @NotNull [] getNames(boolean checkboxState) {
     setNamesSync(checkboxState, null);
     return ensureNamesLoaded(checkboxState);
   }
@@ -978,7 +975,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
   }
 
   @VisibleForTesting
-  public int calcSelectedIndex(@NotNull Object[] modelElements, @NotNull String trimmedText) {
+  public int calcSelectedIndex(Object @NotNull [] modelElements, @NotNull String trimmedText) {
     if (myModel instanceof Comparator) {
       return 0;
     }
@@ -1632,8 +1629,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
       e.getPresentation().setEnabled(elements.length > 0);
     }
 
-    @NotNull
-    public abstract PsiElement[] getElements();
+    public abstract PsiElement @NotNull [] getElements();
   }
 
   private static class MyUsageInfo2UsageAdapter extends UsageInfo2UsageAdapter {

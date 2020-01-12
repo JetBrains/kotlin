@@ -270,21 +270,18 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
     FindRecents.getInstance().addStringToReplace(s);
   }
 
-  @NotNull
   @Override
-  public String[] getRecentFindStrings(){
+  public String @NotNull [] getRecentFindStrings(){
     return FindRecents.getInstance().getRecentFindStrings();
   }
 
-  @NotNull
   @Override
-  public String[] getRecentReplaceStrings(){
+  public String @NotNull [] getRecentReplaceStrings(){
     return FindRecents.getInstance().getRecentReplaceStrings();
   }
 
-  @NotNull
   @Override
-  public String[] getRecentFileMasks() {
+  public String @NotNull [] getRecentFileMasks() {
     return ArrayUtilRt.toStringArray(recentFileMasks);
   }
 

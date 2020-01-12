@@ -43,8 +43,7 @@ public interface CompileScope extends ExportableUserDataHolder {
    *                     Otherwise files are searched in all directories that belong to the scope.
    * @return a list of files of given type that belong to this scope.
    */
-  @NotNull
-  VirtualFile[] getFiles(@Nullable FileType fileType, boolean inSourceOnly);
+  VirtualFile @NotNull [] getFiles(@Nullable FileType fileType, boolean inSourceOnly);
 
   /**
    * Checks if the file with the specified URL belongs to the scope.
@@ -60,8 +59,7 @@ public interface CompileScope extends ExportableUserDataHolder {
    *
    * @return a list of modules this scope affects.
    */
-  @NotNull
-  Module[] getAffectedModules();
+  Module @NotNull [] getAffectedModules();
 
   /**
    * @return list of names of unloaded modules this scope affects.

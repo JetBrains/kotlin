@@ -239,7 +239,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
   @NotNull
   private static String getPresentableContentRootPath(@NotNull PsiDirectory directory,
-                                                      @NotNull String[] pathToCreate) {
+                                                      String @NotNull [] pathToCreate) {
     VirtualFile f = directory.getVirtualFile();
     Project project = directory.getProject();
 

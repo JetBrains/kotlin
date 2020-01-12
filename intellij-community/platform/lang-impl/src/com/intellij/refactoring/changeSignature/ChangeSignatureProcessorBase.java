@@ -59,8 +59,7 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
   }
 
   @Override
-  @NotNull
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     return findUsages(myChangeInfo);
   }
 
@@ -78,8 +77,7 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
     }
   }
 
-  @NotNull
-  public static UsageInfo[] findUsages(ChangeInfo changeInfo) {
+  public static UsageInfo @NotNull [] findUsages(ChangeInfo changeInfo) {
     List<UsageInfo> infos = new ArrayList<>();
     final ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
     for (ChangeSignatureUsageProcessor processor : processors) {
@@ -118,7 +116,7 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
 
 
   @Override
-  protected boolean isPreviewUsages(@NotNull UsageInfo[] usages) {
+  protected boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
     for (ChangeSignatureUsageProcessor processor : ChangeSignatureUsageProcessor.EP_NAME.getExtensions()) {
       if (processor.shouldPreviewUsages(myChangeInfo, usages)) return true;
     }
@@ -141,14 +139,14 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
 
   @Nullable
   @Override
-  protected RefactoringEventData getAfterData(@NotNull UsageInfo[] usages) {
+  protected RefactoringEventData getAfterData(UsageInfo @NotNull [] usages) {
     RefactoringEventData data = new RefactoringEventData();
     data.addElement(getChangeInfo().getMethod());
     return data;
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usages) {
+  protected void performRefactoring(UsageInfo @NotNull [] usages) {
     RefactoringTransaction transaction = getTransaction();
     final ChangeInfo changeInfo = myChangeInfo;
     final RefactoringElementListener elementListener = transaction == null ? null : transaction.getElementListener(changeInfo.getMethod());
@@ -181,7 +179,7 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
     }
   }
 
-  public static void doChangeSignature(ChangeInfo changeInfo, @NotNull UsageInfo[] usages) {
+  public static void doChangeSignature(ChangeInfo changeInfo, UsageInfo @NotNull [] usages) {
     final ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
 
     final ResolveSnapshotProvider resolveSnapshotProvider = changeInfo.isParameterNamesChanged() ?

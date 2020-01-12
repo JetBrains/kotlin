@@ -51,7 +51,7 @@ public abstract class BaseCompleteMacro extends Macro {
   }
 
   @Override
-  public final Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+  public final Result calculateResult(Expression @NotNull [] params, final ExpressionContext context) {
     return new InvokeActionResult(
       () -> invokeCompletion(context)
     );

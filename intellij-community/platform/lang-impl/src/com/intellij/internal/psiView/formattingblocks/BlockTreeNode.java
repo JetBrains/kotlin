@@ -39,9 +39,8 @@ public class BlockTreeNode extends SimpleNode {
     return myBlock;
   }
 
-  @NotNull
   @Override
-  public BlockTreeNode[] getChildren() {
+  public BlockTreeNode @NotNull [] getChildren() {
     return ContainerUtil.map2Array(myBlock.getSubBlocks(), BlockTreeNode.class, block -> new BlockTreeNode(block, this));
   }
 
@@ -70,9 +69,8 @@ public class BlockTreeNode extends SimpleNode {
     }
   }
 
-  @NotNull
   @Override
-  public Object[] getEqualityObjects() {
+  public Object @NotNull [] getEqualityObjects() {
     return new Object[]{myBlock};
   }
 

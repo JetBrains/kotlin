@@ -51,7 +51,7 @@ public abstract class RenamePsiElementProcessor {
 
   public void renameElement(@NotNull PsiElement element,
                             @NotNull String newName,
-                            @NotNull UsageInfo[] usages,
+                            UsageInfo @NotNull [] usages,
                             @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     RenameUtil.doRenameGenericNamedElement(element, newName, usages, listener);
   }

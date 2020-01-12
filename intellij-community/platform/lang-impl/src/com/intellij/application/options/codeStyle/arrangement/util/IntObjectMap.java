@@ -26,7 +26,7 @@ import java.util.Arrays;
 @SuppressWarnings("unchecked")
 public class IntObjectMap<V> {
   
-  @NotNull private Object[] myData;
+  private Object @NotNull [] myData;
   private int myMaxUsed = -1;
   private int mySize;
 

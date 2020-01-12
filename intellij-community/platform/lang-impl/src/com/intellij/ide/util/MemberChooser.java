@@ -107,7 +107,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
                           @NotNull Project project,
                           boolean isInsertOverrideVisible,
                           @Nullable JComponent headerPanel,
-                          @Nullable JComponent[] optionControls) {
+                          JComponent @Nullable [] optionControls) {
     super(project, true);
     myAllowEmptySelection = allowEmptySelection;
     myAllowMultiSelection = allowMultiSelection;
@@ -249,8 +249,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
 
   @Override
-  @NotNull
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     final List<Action> actions = new ArrayList<>();
     actions.add(getOKAction());
     if (myAllowEmptySelection) {
@@ -462,8 +461,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
     return list == null ? null : new ArrayList<>(list);
   }
 
-  @Nullable
-  public T[] getSelectedElements(T[] a) {
+  public T @Nullable [] getSelectedElements(T[] a) {
     LinkedHashSet<T> list = getSelectedElementsList();
     if (list == null) return null;
     return list.toArray(a);

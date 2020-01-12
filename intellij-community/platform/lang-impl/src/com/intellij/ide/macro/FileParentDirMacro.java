@@ -36,7 +36,7 @@ public class FileParentDirMacro extends Macro {
   }
 
   @Override
-  public String expand(@NotNull DataContext dataContext, @NotNull String... args) throws ExecutionCancelledException {
+  public String expand(@NotNull DataContext dataContext, String @NotNull ... args) throws ExecutionCancelledException {
     if(args.length == 0 || StringUtil.isEmpty(args[0])) {
       return expand(dataContext);
     }

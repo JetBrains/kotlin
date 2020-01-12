@@ -489,8 +489,7 @@ public class CommanderPanel extends JPanel {
     return elements.toArray(new Navigatable[0]);
   }
 
-  @Nullable
-  private static PsiElement[] filterInvalidElements(final PsiElement[] elements) {
+  private static PsiElement @Nullable [] filterInvalidElements(final PsiElement[] elements) {
     if (elements == null || elements.length == 0) {
       return null;
     }
@@ -582,9 +581,8 @@ public class CommanderPanel extends JPanel {
       }
     }
 
-    @NotNull
     @Override
-    public PsiDirectory[] getDirectories() {
+    public PsiDirectory @NotNull [] getDirectories() {
       PsiDirectory directory = getDirectory();
       return directory == null ? PsiDirectory.EMPTY_ARRAY : new PsiDirectory[]{directory};
     }

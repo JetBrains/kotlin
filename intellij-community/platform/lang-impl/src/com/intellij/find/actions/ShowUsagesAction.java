@@ -569,7 +569,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   private ActiveComponent createPinButton(@NotNull final FindUsagesHandler handler,
                                           @NotNull final UsageViewImpl usageView,
                                           @NotNull final FindUsagesOptions options,
-                                          @NotNull final JBPopup[] popup,
+                                          final JBPopup @NotNull [] popup,
                                           @NotNull DefaultActionGroup pinGroup) {
     Icon icon = ToolWindowManagerEx.getInstanceEx(handler.getProject()).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
     final AnAction pinAction =

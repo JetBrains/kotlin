@@ -34,7 +34,7 @@ public class IntentionDump implements ApplicationStarter {
   }
 
   @Override
-  public void main(@NotNull String[] args) {
+  public void main(String @NotNull [] args) {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     try {
       DocumentBuilder builder = factory.newDocumentBuilder();

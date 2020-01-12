@@ -365,7 +365,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
 
   private class IndentsCalculator {
     @NotNull final Map<Language, TokenSet> myComments = new HashMap<>();
-    @NotNull final int[] lineIndents; // negative value means the line is empty (or contains a comment) and indent
+    final int @NotNull [] lineIndents; // negative value means the line is empty (or contains a comment) and indent
     // (denoted by absolute value) was deduced from enclosing non-empty lines
     @NotNull final CharSequence myChars;
 

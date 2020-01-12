@@ -1232,7 +1232,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   }
 
   private static class MyGearActionGroup extends DefaultActionGroup implements HintManagerImpl.ActionToIgnore {
-    MyGearActionGroup(@NotNull AnAction... actions) {
+    MyGearActionGroup(AnAction @NotNull ... actions) {
       super(actions);
       setPopup(true);
     }
@@ -1295,9 +1295,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       }
     }
 
-    @Nullable
     @Override
-    protected Navigatable[] getNavigatables(DataContext dataContext) {
+    protected Navigatable @Nullable [] getNavigatables(DataContext dataContext) {
       SmartPsiElementPointer<PsiElement> element = myElement;
       if (element != null) {
         PsiElement psiElement = element.getElement();

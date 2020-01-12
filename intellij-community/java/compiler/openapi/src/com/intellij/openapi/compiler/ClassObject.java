@@ -22,6 +22,5 @@ public interface ClassObject {
 
   String getClassName();
 
-  @Nullable
-  byte[] getContent();
+  byte @Nullable [] getContent();
 }

@@ -126,9 +126,8 @@ public class TextEditorPsiDataProvider implements EditorDataProvider {
             }
           }
 
-          @NotNull
           @Override
-          public PsiDirectory[] getDirectories() {
+          public PsiDirectory @NotNull [] getDirectories() {
             return new PsiDirectory[]{psiDirectory};
           }
 

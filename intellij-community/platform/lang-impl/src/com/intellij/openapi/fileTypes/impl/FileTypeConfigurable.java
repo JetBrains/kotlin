@@ -398,9 +398,8 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
         return myComponent.getSelectedIndex();
       }
 
-      @NotNull
       @Override
-      protected Object[] getAllElements() {
+      protected Object @NotNull [] getAllElements() {
         return ListSpeedSearch.getAllListElements(myComponent);
       }
 

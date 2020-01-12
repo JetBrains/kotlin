@@ -42,17 +42,15 @@ public class FacetTypeRegistryImpl extends FacetTypeRegistry {
     myTypeIds.remove(stringId);
   }
 
-  @NotNull
   @Override
-  public synchronized FacetTypeId[] getFacetTypeIds() {
+  public synchronized FacetTypeId @NotNull [] getFacetTypeIds() {
     loadExtensions();
     final Set<FacetTypeId> ids = myFacetTypes.keySet();
     return ids.toArray(new FacetTypeId[0]);
   }
 
-  @NotNull
   @Override
-  public synchronized FacetType[] getFacetTypes() {
+  public synchronized FacetType @NotNull [] getFacetTypes() {
     loadExtensions();
     final Collection<FacetType> types = myFacetTypes.values();
     final FacetType[] facetTypes = types.toArray(new FacetType[0]);
@@ -60,9 +58,8 @@ public class FacetTypeRegistryImpl extends FacetTypeRegistry {
     return facetTypes;
   }
 
-  @NotNull
   @Override
-  public FacetType[] getSortedFacetTypes() {
+  public FacetType @NotNull [] getSortedFacetTypes() {
     final FacetType[] types = getFacetTypes();
     Arrays.sort(types, FACET_TYPE_COMPARATOR);
     return types;

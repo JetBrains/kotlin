@@ -58,9 +58,8 @@ public class UnknownModuleType extends ModuleType {
     return myModuleType.getIcon();
   }
 
-  @NotNull
   @Override
-  public ModuleWizardStep[] createWizardSteps(@NotNull final WizardContext wizardContext, @NotNull final ModuleBuilder moduleBuilder, @NotNull final ModulesProvider modulesProvider) {
+  public ModuleWizardStep @NotNull [] createWizardSteps(@NotNull final WizardContext wizardContext, @NotNull final ModuleBuilder moduleBuilder, @NotNull final ModulesProvider modulesProvider) {
     return myModuleType.createWizardSteps(wizardContext, moduleBuilder, modulesProvider);
   }
 

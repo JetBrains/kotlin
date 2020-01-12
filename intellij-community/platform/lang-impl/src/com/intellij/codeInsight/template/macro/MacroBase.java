@@ -32,15 +32,15 @@ public abstract class MacroBase extends Macro {
   }
 
   @Nullable
-  protected abstract Result calculateResult(@NotNull Expression[] params, ExpressionContext context, boolean quick);
+  protected abstract Result calculateResult(Expression @NotNull [] params, ExpressionContext context, boolean quick);
 
   @Override
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, ExpressionContext context) {
     return calculateResult(params, context, false);
   }
 
   @Override
-  public Result calculateQuickResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateQuickResult(Expression @NotNull [] params, ExpressionContext context) {
     return calculateResult(params, context, true);
   }
 
@@ -61,12 +61,12 @@ public abstract class MacroBase extends Macro {
   }
 
   @Nullable
-  public static String getTextResult(@NotNull Expression[] params, final ExpressionContext context) {
+  public static String getTextResult(Expression @NotNull [] params, final ExpressionContext context) {
     return getTextResult(params, context, false);
   }
 
   @Nullable
-  public static String getTextResult(@NotNull Expression[] params, final ExpressionContext context, boolean useSelection) {
+  public static String getTextResult(Expression @NotNull [] params, final ExpressionContext context, boolean useSelection) {
     if (params.length == 1) {
       Result result = params[0].calculateResult(context);
       if (result == null && useSelection) {

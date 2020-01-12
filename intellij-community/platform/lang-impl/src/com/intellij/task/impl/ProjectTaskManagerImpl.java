@@ -62,17 +62,17 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   }
 
   @Override
-  public Promise<Result> build(@NotNull Module[] modules) {
+  public Promise<Result> build(Module @NotNull [] modules) {
     return run(createModulesBuildTask(modules, true, true, false));
   }
 
   @Override
-  public Promise<Result> rebuild(@NotNull Module[] modules) {
+  public Promise<Result> rebuild(Module @NotNull [] modules) {
     return run(createModulesBuildTask(modules, false, false, false));
   }
 
   @Override
-  public Promise<Result> compile(@NotNull VirtualFile[] files) {
+  public Promise<Result> compile(VirtualFile @NotNull [] files) {
     List<ModuleFilesBuildTask> buildTasks = map(
       stream(files)
         .collect(groupingBy(file -> ProjectFileIndex.SERVICE.getInstance(myProject).getModuleForFile(file, false)))
@@ -83,12 +83,12 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   }
 
   @Override
-  public Promise<Result> build(@NotNull ProjectModelBuildableElement[] buildableElements) {
+  public Promise<Result> build(ProjectModelBuildableElement @NotNull [] buildableElements) {
     return doBuild(buildableElements, true);
   }
 
   @Override
-  public Promise<Result> rebuild(@NotNull ProjectModelBuildableElement[] buildableElements) {
+  public Promise<Result> rebuild(ProjectModelBuildableElement @NotNull [] buildableElements) {
     return doBuild(buildableElements, false);
   }
 
@@ -293,7 +293,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     consumer.accept(tasks);
   }
 
-  private Promise<Result> doBuild(@NotNull ProjectModelBuildableElement[] buildableElements, boolean isIncrementalBuild) {
+  private Promise<Result> doBuild(ProjectModelBuildableElement @NotNull [] buildableElements, boolean isIncrementalBuild) {
     return run(createBuildTask(isIncrementalBuild, buildableElements));
   }
 
@@ -301,7 +301,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     @Override
     public Promise<Result> run(@NotNull Project project,
                                @NotNull ProjectTaskContext context,
-                               @NotNull ProjectTask... tasks) {
+                               ProjectTask @NotNull ... tasks) {
       return Promises.resolvedPromise(TaskRunnerResults.SUCCESS);
     }
 
@@ -528,7 +528,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Override
   @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Deprecated
-  public void build(@NotNull Module[] modules, @Nullable ProjectTaskNotification callback) {
+  public void build(Module @NotNull [] modules, @Nullable ProjectTaskNotification callback) {
     assertUnsupportedOperation(callback);
     notifyIfNeeded(build(modules), callback);
   }
@@ -539,7 +539,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Override
   @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Deprecated
-  public void rebuild(@NotNull Module[] modules, @Nullable ProjectTaskNotification callback) {
+  public void rebuild(Module @NotNull [] modules, @Nullable ProjectTaskNotification callback) {
     assertUnsupportedOperation(callback);
     notifyIfNeeded(rebuild(modules), callback);
   }
@@ -550,7 +550,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Override
   @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Deprecated
-  public void compile(@NotNull VirtualFile[] files, @Nullable ProjectTaskNotification callback) {
+  public void compile(VirtualFile @NotNull [] files, @Nullable ProjectTaskNotification callback) {
     assertUnsupportedOperation(callback);
     notifyIfNeeded(compile(files), callback);
   }
@@ -561,7 +561,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Override
   @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Deprecated
-  public void build(@NotNull ProjectModelBuildableElement[] buildableElements, @Nullable ProjectTaskNotification callback) {
+  public void build(ProjectModelBuildableElement @NotNull [] buildableElements, @Nullable ProjectTaskNotification callback) {
     assertUnsupportedOperation(callback);
     notifyIfNeeded(build(buildableElements), callback);
   }
@@ -572,7 +572,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Override
   @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Deprecated
-  public void rebuild(@NotNull ProjectModelBuildableElement[] buildableElements, @Nullable ProjectTaskNotification callback) {
+  public void rebuild(ProjectModelBuildableElement @NotNull [] buildableElements, @Nullable ProjectTaskNotification callback) {
     assertUnsupportedOperation(callback);
     notifyIfNeeded(rebuild(buildableElements), callback);
   }

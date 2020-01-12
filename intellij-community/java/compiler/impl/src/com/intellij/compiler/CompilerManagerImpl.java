@@ -159,8 +159,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  @NotNull
-  public <T  extends Compiler> T[] getCompilers(@NotNull Class<T> compilerClass) {
+  public <T  extends Compiler> T @NotNull [] getCompilers(@NotNull Class<T> compilerClass) {
     final List<T> compilers = new ArrayList<>(myCompilers.size());
     for (final Compiler item : ContainerUtil.concat(myCompilers, Compiler.EP_NAME.getExtensions(myProject))) {
       T concreteCompiler = ObjectUtils.tryCast(item, compilerClass);
@@ -231,7 +230,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  public void compile(@NotNull VirtualFile[] files, CompileStatusNotification callback) {
+  public void compile(VirtualFile @NotNull [] files, CompileStatusNotification callback) {
     compile(createFilesCompileScope(files), callback);
   }
 
@@ -256,7 +255,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  public void make(@NotNull Project project, @NotNull Module[] modules, CompileStatusNotification callback) {
+  public void make(@NotNull Project project, Module @NotNull [] modules, CompileStatusNotification callback) {
     new CompileDriver(myProject).make(createModuleGroupCompileScope(project, modules, true), new ListenerNotificator(callback));
   }
 
@@ -316,7 +315,7 @@ public class CompilerManagerImpl extends CompilerManager {
 
   @Override
   @NotNull
-  public CompileScope createFilesCompileScope(@NotNull final VirtualFile[] files) {
+  public CompileScope createFilesCompileScope(final VirtualFile @NotNull [] files) {
     CompileScope[] scopes = new CompileScope[files.length];
     for(int i = 0; i < files.length; i++){
       scopes[i] = new OneProjectItemCompileScope(myProject, files[i]);
@@ -332,19 +331,19 @@ public class CompilerManagerImpl extends CompilerManager {
 
   @Override
   @NotNull
-  public CompileScope createModulesCompileScope(@NotNull final Module[] modules, final boolean includeDependentModules) {
+  public CompileScope createModulesCompileScope(final Module @NotNull [] modules, final boolean includeDependentModules) {
     return createModulesCompileScope(modules, includeDependentModules, false);
   }
 
   @Override
   @NotNull
-  public CompileScope createModulesCompileScope(@NotNull Module[] modules, boolean includeDependentModules, boolean includeRuntimeDependencies) {
+  public CompileScope createModulesCompileScope(Module @NotNull [] modules, boolean includeDependentModules, boolean includeRuntimeDependencies) {
     return new ModuleCompileScope(myProject, modules, includeDependentModules, includeRuntimeDependencies);
   }
 
   @Override
   @NotNull
-  public CompileScope createModuleGroupCompileScope(@NotNull final Project project, @NotNull final Module[] modules, final boolean includeDependentModules) {
+  public CompileScope createModuleGroupCompileScope(@NotNull final Project project, final Module @NotNull [] modules, final boolean includeDependentModules) {
     return new ModuleCompileScope(project, modules, includeDependentModules);
   }
 
@@ -518,9 +517,8 @@ public class CompilerManagerImpl extends CompilerManager {
       return myClassName;
     }
 
-    @Nullable
     @Override
-    public byte[] getContent() {
+    public byte @Nullable [] getContent() {
       return myBytes;
     }
 

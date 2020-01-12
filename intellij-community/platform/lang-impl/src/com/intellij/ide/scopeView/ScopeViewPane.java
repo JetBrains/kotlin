@@ -319,9 +319,8 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
     myTreeModel.setFilter(getFilter(getSubId()));
   }
 
-  @NotNull
   @Override
-  public String[] getSubIds() {
+  public String @NotNull [] getSubIds() {
     LinkedHashMap<String, NamedScopeFilter> map = myFilters;
     if (map == null || map.isEmpty()) return EMPTY_STRING_ARRAY;
     return ArrayUtilRt.toStringArray(map.keySet());

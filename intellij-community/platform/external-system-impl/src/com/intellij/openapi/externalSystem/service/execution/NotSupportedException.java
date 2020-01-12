@@ -31,11 +31,11 @@ public class NotSupportedException extends ExternalSystemException {
     super(cause);
   }
 
-  public NotSupportedException(@Nullable String message, @NotNull String... quickFixes) {
+  public NotSupportedException(@Nullable String message, String @NotNull ... quickFixes) {
     super(message, quickFixes);
   }
 
-  public NotSupportedException(@Nullable String message, @Nullable Throwable cause, @NotNull String... quickFixes) {
+  public NotSupportedException(@Nullable String message, @Nullable Throwable cause, String @NotNull ... quickFixes) {
     super(message, cause, quickFixes);
   }
 }

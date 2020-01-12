@@ -603,9 +603,8 @@ class PrintDialog extends DialogWrapper {
       ObjectUtils.notNull((Integer)myFooterFontSizeCombo.getSelectedItem(), printSettings.FOOTER_HEADER_FONT_SIZE);
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{getOKAction(), getCancelAction(), new ApplyAction(), getHelpAction()};
   }
 

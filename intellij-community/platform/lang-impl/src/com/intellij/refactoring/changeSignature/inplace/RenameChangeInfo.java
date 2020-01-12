@@ -37,9 +37,8 @@ public abstract class RenameChangeInfo implements ChangeInfo {
     myOffset = namedElement.getTextOffset();
   }
 
-  @NotNull
   @Override
-  public ParameterInfo[] getNewParameters() {
+  public ParameterInfo @NotNull [] getNewParameters() {
     return new ParameterInfo[0];
   }
 

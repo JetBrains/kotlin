@@ -56,13 +56,11 @@ public abstract class FindUsagesHandler {
     return myPsiElement.getProject();
   }
 
-  @NotNull
-  public PsiElement[] getPrimaryElements() {
+  public PsiElement @NotNull [] getPrimaryElements() {
     return new PsiElement[]{myPsiElement};
   }
 
-  @NotNull
-  public PsiElement[] getSecondaryElements() {
+  public PsiElement @NotNull [] getSecondaryElements() {
     return PsiElement.EMPTY_ARRAY;
   }
 
@@ -195,15 +193,13 @@ public abstract class FindUsagesHandler {
       throw new IncorrectOperationException();
     }
 
-    @NotNull
     @Override
-    public PsiElement[] getPrimaryElements() {
+    public PsiElement @NotNull [] getPrimaryElements() {
       throw new IncorrectOperationException();
     }
 
-    @NotNull
     @Override
-    public PsiElement[] getSecondaryElements() {
+    public PsiElement @NotNull [] getSecondaryElements() {
       throw new IncorrectOperationException();
     }
 

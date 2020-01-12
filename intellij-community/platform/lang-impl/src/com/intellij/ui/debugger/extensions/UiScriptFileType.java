@@ -71,7 +71,7 @@ public class UiScriptFileType implements FileType {
   }
 
   @Override
-  public String getCharset(@NotNull VirtualFile file, @NotNull byte[] content) {
+  public String getCharset(@NotNull VirtualFile file, byte @NotNull [] content) {
     return CharsetToolkit.UTF8;
   }
 }

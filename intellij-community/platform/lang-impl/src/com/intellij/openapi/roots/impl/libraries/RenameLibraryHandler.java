@@ -40,7 +40,7 @@ public class RenameLibraryHandler implements RenameHandler, TitledHandler {
   }
 
   @Override
-  public void invoke(@NotNull final Project project, @NotNull PsiElement[] elements, @NotNull DataContext dataContext) {
+  public void invoke(@NotNull final Project project, PsiElement @NotNull [] elements, @NotNull DataContext dataContext) {
     final Library library = LangDataKeys.LIBRARY.getData(dataContext);
     LOG.assertTrue(library != null);
     Messages.showInputDialog(project,

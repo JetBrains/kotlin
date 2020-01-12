@@ -172,8 +172,7 @@ public class ChainCompletionContext {
     }
   }
 
-  @NotNull
-  public PsiMethod[] resolve(MethodCall sign) {
+  public PsiMethod @NotNull [] resolve(MethodCall sign) {
     return myResolver.get(sign);
   }
 

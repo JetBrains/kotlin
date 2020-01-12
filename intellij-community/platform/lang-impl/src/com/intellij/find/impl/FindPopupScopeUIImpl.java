@@ -44,7 +44,7 @@ class FindPopupScopeUIImpl implements FindPopupScopeUI {
   @NotNull private final FindUIHelper myHelper;
   @NotNull private final Project myProject;
   @NotNull private final FindPopupPanel myFindPopupPanel;
-  @NotNull private final Pair<ScopeType, JComponent>[] myComponents;
+  private final Pair<ScopeType, JComponent> @NotNull [] myComponents;
 
   private ComboBox<String> myModuleComboBox;
   private FindPopupDirectoryChooser myDirectoryChooser;
@@ -130,9 +130,8 @@ class FindPopupScopeUIImpl implements FindPopupScopeUI {
     Disposer.register(myFindPopupPanel.getDisposable(), myScopeCombo);
   }
 
-  @NotNull
   @Override
-  public Pair<ScopeType, JComponent>[] getComponents() {
+  public Pair<ScopeType, JComponent> @NotNull [] getComponents() {
     return myComponents;
   }
 

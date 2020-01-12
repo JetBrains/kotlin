@@ -45,7 +45,7 @@ public abstract class TemplateLanguageErrorFilter extends HighlightErrorFilter {
 
   protected TemplateLanguageErrorFilter(@NotNull final TokenSet templateExpressionEdgeTokens,
                                         @NotNull final Class templateFileViewProviderClass,
-                                        @NotNull final String... knownSubLanguageNames) {
+                                        final String @NotNull ... knownSubLanguageNames) {
     myTemplateExpressionEdgeTokens = TokenSet.create(templateExpressionEdgeTokens.getTypes());
     myTemplateFileViewProviderClass = templateFileViewProviderClass;
 

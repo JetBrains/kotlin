@@ -67,8 +67,7 @@ class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
   }
 
   @Override
-  @NotNull
-  public FoldRegion[] getAllFoldRegions() {
+  public FoldRegion @NotNull [] getAllFoldRegions() {
     FoldRegion[] all = myDelegate.getAllFoldRegions();
     List<FoldRegion> result = new ArrayList<>();
     for (FoldRegion region : all) {

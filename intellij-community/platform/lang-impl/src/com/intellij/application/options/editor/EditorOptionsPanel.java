@@ -130,7 +130,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     initVcsSettingsProcessing();
   }
 
-  private static <E extends EditorCaretStopPolicyItem> void initCaretStopComboBox(@NotNull JComboBox<E> comboBox, @NotNull E[] values) {
+  private static <E extends EditorCaretStopPolicyItem> void initCaretStopComboBox(@NotNull JComboBox<E> comboBox, E @NotNull [] values) {
     final DefaultComboBoxModel<E> model = new EditorCaretStopPolicyItem.SeparatorAwareComboBoxModel<>();
 
     boolean lastWasOsDefault = false;

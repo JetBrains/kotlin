@@ -73,9 +73,8 @@ class MockVirtualFile extends VirtualFile {
     throw new UnsupportedOperationException();
   }
 
-  @NotNull
   @Override
-  public byte[] contentsToByteArray() {
+  public byte @NotNull [] contentsToByteArray() {
     return new byte[0];
   }
 

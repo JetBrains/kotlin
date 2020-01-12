@@ -178,8 +178,7 @@ public abstract class InplaceVariableIntroducer<E extends PsiElement> extends In
       return myPointer.getElement();
     }
 
-    @Nullable
-    private LookupElement[] createLookupItems(String name, Editor editor, PsiNamedElement psiVariable) {
+    private LookupElement @Nullable [] createLookupItems(String name, Editor editor, PsiNamedElement psiVariable) {
       TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
       if (psiVariable != null) {
         final TextResult insertedValue =

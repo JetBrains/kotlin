@@ -121,7 +121,7 @@ public class UncompressedZipFileSystem extends FileSystem {
 
   @NotNull
   @Override
-  public Path getPath(@NotNull String first, @NotNull String... more) {
+  public Path getPath(@NotNull String first, String @NotNull ... more) {
     // should it be absolute
     String[] nameElements = ArrayUtil.toStringArray(ContainerUtil.concat(Collections.singletonList(first), Arrays.asList(more)));
     return new UncompressedZipPath(this, nameElements, true);

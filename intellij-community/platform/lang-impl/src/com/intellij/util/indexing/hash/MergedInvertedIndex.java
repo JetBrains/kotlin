@@ -27,8 +27,7 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
 
   private static final Logger LOG = Logger.getInstance(MergedInvertedIndex.class);
 
-  @NotNull
-  private final HashBasedMapReduceIndex<Key, Value>[] myProvidedIndexes;
+  private final HashBasedMapReduceIndex<Key,Value> @NotNull [] myProvidedIndexes;
   @NotNull
   private final FileContentHashIndex myHashIndex;
   @NotNull
@@ -53,7 +52,7 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
     }
   }
 
-  public MergedInvertedIndex(@NotNull HashBasedMapReduceIndex<Key, Value>[] indexes,
+  public MergedInvertedIndex(HashBasedMapReduceIndex<Key,Value> @NotNull [] indexes,
                              @NotNull FileContentHashIndex hashIndex,
                              @NotNull UpdatableIndex<Key, Value, FileContent> baseIndex) {
     myProvidedIndexes = indexes;

@@ -49,8 +49,7 @@ public class MoveElementLeftRightActionHandler extends EditorWriteActionHandler 
     return elementList != null;
   }
 
-  @Nullable
-  private static PsiElement[] getElementList(@NotNull PsiFile file, int rangeStart, int rangeEnd) {
+  private static PsiElement @Nullable [] getElementList(@NotNull PsiFile file, int rangeStart, int rangeEnd) {
     PsiElement startElement = file.findElementAt(rangeStart);
     if (startElement == null) return null;
     if (rangeEnd > rangeStart) {
@@ -66,8 +65,7 @@ public class MoveElementLeftRightActionHandler extends EditorWriteActionHandler 
     return getElementList(startElement, rangeStart, rangeStart);
   }
 
-  @Nullable
-  private static PsiElement[] getElementList(PsiElement element, int rangeStart, int rangeEnd) {
+  private static PsiElement @Nullable [] getElementList(PsiElement element, int rangeStart, int rangeEnd) {
     while (element != null) {
       List<MoveElementLeftRightHandler> handlers = MoveElementLeftRightHandler.EXTENSION.allForLanguageOrAny(element.getLanguage());
       for (MoveElementLeftRightHandler handler : handlers) {
@@ -136,7 +134,7 @@ public class MoveElementLeftRightActionHandler extends EditorWriteActionHandler 
   }
 
   @Nullable
-  private Range<Integer> findRangeOfElementsToMove(@NotNull PsiElement[] elements, int startOffset, int endOffset) {
+  private Range<Integer> findRangeOfElementsToMove(PsiElement @NotNull [] elements, int startOffset, int endOffset) {
     int startIndex = elements.length;
     int endIndex = -1;
     if (startOffset == endOffset) {

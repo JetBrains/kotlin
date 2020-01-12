@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
 public class OperationChain {
   private static final Logger LOG = Logger.getInstance(OperationChain.class);
 
-  @NotNull
-  private final ChainOperation[] myReverseOperations;
+  private final ChainOperation @NotNull [] myReverseOperations;
   private final RefChainOperation myHeadOperation;
   private final MethodCall myHeadMethodCall;
   private final int myWeight;
@@ -62,7 +61,7 @@ public class OperationChain {
   }
 
   private OperationChain(@NotNull PsiClass qualifierClass,
-                        @NotNull ChainOperation[] reverseOperations,
+                        ChainOperation @NotNull [] reverseOperations,
                         RefChainOperation signature,
                         MethodCall headMethodSign,
                         int weight) {
@@ -95,8 +94,7 @@ public class OperationChain {
     return myQualifierClass;
   }
 
-  @NotNull
-  public PsiMethod[] getFirst() {
+  public PsiMethod @NotNull [] getFirst() {
     return ((ChainOperation.MethodCall) myReverseOperations[0]).getCandidates();
   }
 

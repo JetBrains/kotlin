@@ -65,7 +65,7 @@ public abstract class UsagesPanel extends JPanel implements Disposable, DataProv
     }
   }
 
-  protected void showUsages(@NotNull PsiElement[] primaryElements, @NotNull UsageInfo[] usageInfos) {
+  protected void showUsages(PsiElement @NotNull [] primaryElements, UsageInfo @NotNull [] usageInfos) {
     if (myCurrentUsageView != null) {
       Disposer.dispose(myCurrentUsageView);
     }

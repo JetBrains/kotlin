@@ -28,13 +28,12 @@ public final class ModuleCompilerUtil {
   private static final Logger LOG = Logger.getInstance(ModuleCompilerUtil.class);
   private ModuleCompilerUtil() { }
 
-  @NotNull
-  public static Module[] getDependencies(Module module) {
+  public static Module @NotNull [] getDependencies(Module module) {
     return ModuleRootManager.getInstance(module).getDependencies();
   }
 
   @NotNull
-  private static Graph<Module> createModuleGraph(@NotNull Module[] modules) {
+  private static Graph<Module> createModuleGraph(Module @NotNull [] modules) {
     return GraphGenerator.generate(CachingSemiGraph.cache(new InboundSemiGraph<Module>() {
       @NotNull
       @Override

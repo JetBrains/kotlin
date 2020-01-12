@@ -60,15 +60,13 @@ public class IdeModelsProviderImpl implements IdeModelsProvider {
     myProject = project;
   }
 
-  @NotNull
   @Override
-  public Module[] getModules() {
+  public Module @NotNull [] getModules() {
     return ModuleManager.getInstance(myProject).getModules();
   }
 
-  @NotNull
   @Override
-  public Module[] getModules(@NotNull final ProjectData projectData) {
+  public Module @NotNull [] getModules(@NotNull final ProjectData projectData) {
     final List<Module> modules = ContainerUtil.filter(
       getModules(),
       module -> isExternalSystemAwareModule(projectData.getOwner(), module) &&
@@ -76,9 +74,8 @@ public class IdeModelsProviderImpl implements IdeModelsProvider {
     return modules.toArray(Module.EMPTY_ARRAY);
   }
 
-  @NotNull
   @Override
-  public OrderEntry[] getOrderEntries(@NotNull Module module) {
+  public OrderEntry @NotNull [] getOrderEntries(@NotNull Module module) {
     return ModuleRootManager.getInstance(module).getOrderEntries();
   }
 
@@ -213,27 +210,23 @@ public class IdeModelsProviderImpl implements IdeModelsProvider {
     return null;
   }
 
-  @NotNull
   @Override
-  public VirtualFile[] getContentRoots(Module module) {
+  public VirtualFile @NotNull [] getContentRoots(Module module) {
     return ModuleRootManager.getInstance(module).getContentRoots();
   }
 
-  @NotNull
   @Override
-  public VirtualFile[] getSourceRoots(Module module) {
+  public VirtualFile @NotNull [] getSourceRoots(Module module) {
     return ModuleRootManager.getInstance(module).getSourceRoots();
   }
 
-  @NotNull
   @Override
-  public VirtualFile[] getSourceRoots(Module module, boolean includingTests) {
+  public VirtualFile @NotNull [] getSourceRoots(Module module, boolean includingTests) {
     return ModuleRootManager.getInstance(module).getSourceRoots(includingTests);
   }
 
-  @NotNull
   @Override
-  public Library[] getAllLibraries() {
+  public Library @NotNull [] getAllLibraries() {
     return LibraryTablesRegistrar.getInstance().getLibraryTable(myProject).getLibraries();
   }
 
@@ -243,9 +236,8 @@ public class IdeModelsProviderImpl implements IdeModelsProvider {
     return LibraryTablesRegistrar.getInstance().getLibraryTable(myProject).getLibraryByName(name);
   }
 
-  @NotNull
   @Override
-  public String[] getLibraryUrls(@NotNull Library library, @NotNull OrderRootType type) {
+  public String @NotNull [] getLibraryUrls(@NotNull Library library, @NotNull OrderRootType type) {
     return library.getUrls(type);
   }
 

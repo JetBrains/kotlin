@@ -42,7 +42,7 @@ public abstract class FileSetVersionsFetcherBase<FS extends DownloadableFileSetD
   protected final String myGroupId;
   private final URL[] myLocalUrls;
 
-  public FileSetVersionsFetcherBase(@Nullable String groupId, @NotNull URL[] localUrls) {
+  public FileSetVersionsFetcherBase(@Nullable String groupId, URL @NotNull [] localUrls) {
     myLocalUrls = localUrls;
     myGroupId = groupId;
   }

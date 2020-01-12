@@ -109,19 +109,14 @@ public abstract class PackagingElementFactory {
   @NotNull
   public abstract List<? extends PackagingElement<?>> createParentDirectories(@NotNull String relativeOutputPath, @NotNull List<? extends PackagingElement<?>> elements);
 
-  @NotNull
-  
-  public abstract CompositePackagingElementType<?>[] getCompositeElementTypes();
+  public abstract CompositePackagingElementType<?> @NotNull [] getCompositeElementTypes();
 
   @Nullable
   public abstract PackagingElementType<?> findElementType(String id);
 
-  @NotNull
-  public abstract PackagingElementType<?>[] getNonCompositeElementTypes();
+  public abstract PackagingElementType<?> @NotNull [] getNonCompositeElementTypes();
 
-  @NotNull
-  public abstract PackagingElementType[] getAllElementTypes();
+  public abstract PackagingElementType @NotNull [] getAllElementTypes();
 
-  @NotNull
-  public abstract ComplexPackagingElementType<?>[] getComplexElementTypes();
+  public abstract ComplexPackagingElementType<?> @NotNull [] getComplexElementTypes();
 }

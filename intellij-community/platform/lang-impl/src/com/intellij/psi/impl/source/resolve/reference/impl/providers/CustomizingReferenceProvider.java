@@ -49,8 +49,7 @@ public class CustomizingReferenceProvider extends PsiReferenceProvider implement
   }
   
   @Override
-  @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull final ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull final ProcessingContext context) {
     myProvider.setOptions(myOptions);
     final PsiReference[] referencesByElement = myProvider.getReferencesByElement(element, context);
     myProvider.setOptions(null);

@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class FilePathMacroBase extends Macro {
 
   @Override
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, ExpressionContext context) {
     Project project = context.getProject();
     Editor editor = context.getEditor();
     if (editor != null) {

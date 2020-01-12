@@ -22,9 +22,8 @@ public class ExcludeCompilerOutputPolicy implements DirectoryIndexExcludePolicy 
     myProject = project;
   }
 
-  @NotNull
   @Override
-  public String[] getExcludeUrlsForProject() {
+  public String @NotNull [] getExcludeUrlsForProject() {
     CompilerProjectExtension projectExtension = CompilerProjectExtension.getInstance(myProject);
     String outputPath = projectExtension == null ? null : projectExtension.getCompilerOutputUrl();
     if (outputPath != null) {
@@ -33,9 +32,8 @@ public class ExcludeCompilerOutputPolicy implements DirectoryIndexExcludePolicy 
     return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
-  @NotNull
   @Override
-  public VirtualFilePointer[] getExcludeRootsForModule(@NotNull final ModuleRootModel rootModel) {
+  public VirtualFilePointer @NotNull [] getExcludeRootsForModule(@NotNull final ModuleRootModel rootModel) {
     ArrayList<VirtualFilePointer> result = new ArrayList<>();
     final CompilerModuleExtension extension = rootModel.getModuleExtension(CompilerModuleExtension.class);
     if (extension == null) {

@@ -250,9 +250,8 @@ class ShowUsagesTable extends JBTable implements DataProvider {
       return getTable().convertRowIndexToModel(viewIndex);
     }
 
-    @NotNull
     @Override
-    protected Object[] getAllElements() {
+    protected Object @NotNull [] getAllElements() {
       return ((MyModel)getTable().getModel()).getItems().toArray();
     }
 
@@ -288,8 +287,7 @@ class ShowUsagesTable extends JBTable implements DataProvider {
       super(cols(cols), data, 0);
     }
 
-    @NotNull
-    private static ColumnInfo[] cols(int cols) {
+    private static ColumnInfo @NotNull [] cols(int cols) {
       ColumnInfo<UsageNode, UsageNode> o = new ColumnInfo<UsageNode, UsageNode>("") {
         @Nullable
         @Override

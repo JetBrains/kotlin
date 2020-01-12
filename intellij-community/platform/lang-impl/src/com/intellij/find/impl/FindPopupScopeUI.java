@@ -26,8 +26,7 @@ import javax.swing.*;
 import java.util.function.Supplier;
 
 public interface FindPopupScopeUI {
-  @NotNull
-  Pair<ScopeType, JComponent>[] getComponents();
+  Pair<ScopeType, JComponent> @NotNull [] getComponents();
 
   @NotNull
   ScopeType initByModel(@NotNull FindModel findModel);

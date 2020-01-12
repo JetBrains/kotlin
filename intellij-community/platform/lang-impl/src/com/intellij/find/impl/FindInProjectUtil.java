@@ -284,7 +284,7 @@ public class FindInProjectUtil {
   private static boolean processSomeOccurrencesInFile(@NotNull Document document,
                                                       @NotNull FindModel findModel,
                                                       @NotNull final PsiFile psiFile,
-                                                      @NotNull int[] offsetRef,
+                                                      int @NotNull [] offsetRef,
                                                       @NotNull Processor<? super UsageInfo> consumer) {
     CharSequence text = document.getCharsSequence();
     int textLength = document.getTextLength();
@@ -529,8 +529,7 @@ public class FindInProjectUtil {
     }
 
     @Override
-    @Nullable
-    public VirtualFile[] getFiles() {
+    public VirtualFile @Nullable [] getFiles() {
       return null;
     }
 

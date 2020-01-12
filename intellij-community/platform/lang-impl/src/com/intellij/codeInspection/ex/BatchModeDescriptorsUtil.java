@@ -94,8 +94,7 @@ public class BatchModeDescriptorsUtil {
     return container != null ? container : containerFromTool;
   }
 
-  @NotNull
-  public static CommonProblemDescriptor[] flattenDescriptors(@NotNull List<CommonProblemDescriptor[]> descriptors) {
+  public static CommonProblemDescriptor @NotNull [] flattenDescriptors(@NotNull List<CommonProblemDescriptor[]> descriptors) {
     return descriptors.stream().flatMap(ds -> Arrays.stream(ds)).toArray(CommonProblemDescriptor.ARRAY_FACTORY::create);
   }
 }

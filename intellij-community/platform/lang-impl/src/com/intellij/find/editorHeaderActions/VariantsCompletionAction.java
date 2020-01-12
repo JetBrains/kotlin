@@ -71,7 +71,7 @@ public class VariantsCompletionAction extends AnAction {
 
     IdTableBuilding.scanWords(new IdTableBuilding.ScanWordProcessor() {
         @Override
-        public void run(final CharSequence chars, @Nullable char[] charsArray, final int start, final int end) {
+        public void run(final CharSequence chars, char @Nullable [] charsArray, final int start, final int end) {
           final String word = chars.subSequence(start, end).toString();
           if (matcher.matches(word)) {
             words.add(word);

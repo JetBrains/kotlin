@@ -332,9 +332,8 @@ public class RegistryUi implements Disposable {
         return myTable;
       }
 
-      @NotNull
       @Override
-      protected Action[] createActions() {
+      protected Action @NotNull [] createActions() {
         return new Action[]{myRestoreDefaultsAction, myCloseAction};
       }
 

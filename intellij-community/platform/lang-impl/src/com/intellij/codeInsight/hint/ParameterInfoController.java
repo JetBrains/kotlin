@@ -547,7 +547,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     }
   }
 
-  private static int getParameterIndex(@NotNull PsiElement[] parameters, @NotNull IElementType delimiter, int offset) {
+  private static int getParameterIndex(PsiElement @NotNull [] parameters, @NotNull IElementType delimiter, int offset) {
     for (int i = 0; i < parameters.length; i++) {
       PsiElement parameter = parameters[i];
       TextRange textRange = parameter.getTextRange();

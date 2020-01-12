@@ -38,8 +38,7 @@ abstract class WeighingActionGroup extends ActionGroup {
   protected abstract ActionGroup getDelegate();
 
   @Override
-  @NotNull
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     ActionGroup delegate = getDelegate();
     AnAction[] children = delegate.getChildren(e);
     if (e == null) {

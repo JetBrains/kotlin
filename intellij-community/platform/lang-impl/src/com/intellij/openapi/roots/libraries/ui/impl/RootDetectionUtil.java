@@ -62,7 +62,7 @@ public class RootDetectionUtil {
   @NotNull
   public static List<OrderRoot> detectRoots(@NotNull final Collection<? extends VirtualFile> rootCandidates, @Nullable Component parentComponent,
                                             @Nullable Project project, @NotNull final LibraryRootsDetector detector,
-                                            @NotNull OrderRootType[] rootTypesAllowedToBeSelectedByUserIfNothingIsDetected) {
+                                            OrderRootType @NotNull [] rootTypesAllowedToBeSelectedByUserIfNothingIsDetected) {
     final List<OrderRoot> result = new ArrayList<>();
     final List<SuggestedChildRootInfo> suggestedRoots = new ArrayList<>();
     new Task.Modal(project, "Scanning for Roots", true) {

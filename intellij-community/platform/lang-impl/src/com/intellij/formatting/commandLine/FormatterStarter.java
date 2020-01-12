@@ -33,7 +33,7 @@ public class FormatterStarter implements ApplicationStarter {
   }
 
   @Override
-  public void main(@NotNull String[] args) {
+  public void main(String @NotNull [] args) {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     MessageOutput messageOutput = new MessageOutput(
       new PrintWriter(System.out),
@@ -135,7 +135,7 @@ public class FormatterStarter implements ApplicationStarter {
     System.exit(0);
   }
 
-  private static void logArgs(@NotNull String[] args) {
+  private static void logArgs(String @NotNull [] args) {
     LOG.info("Arguments: " + String.join(",", args));
   }
 }

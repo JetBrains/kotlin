@@ -68,9 +68,8 @@ public final class GradleClassFinder extends NonClasspathClassFinder {
            !ProjectFileIndex.SERVICE.getInstance(myProject).isInLibrary(file) ? aClass : null;
   }
 
-  @NotNull
   @Override
-  public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+  public PsiPackage @NotNull [] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
     return scope instanceof ExternalModuleBuildGlobalSearchScope ? super.getSubPackages(psiPackage, scope) : PsiPackage.EMPTY_ARRAY;
   }
 }
