@@ -10,9 +10,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -287,7 +285,16 @@ fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boole
 }
 
 fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
-    if (this is KDocReference) return element.getQualifiedName().size == 1
+    if (this is KDocReference) {
+        val qualifier = element.getQualifier() ?: return true
+        return if (target.isExtension) {
+            val elementHasFunctionDescriptor = element.resolveMainReferenceToDescriptors().find { it is FunctionDescriptor } != null
+            val qualifierHasClassDescriptor = qualifier.resolveMainReferenceToDescriptors().find { it is ClassDescriptor } != null
+            elementHasFunctionDescriptor && qualifierHasClassDescriptor
+        } else {
+            false
+        }
+    }
     return element.canBeResolvedViaImport(target, bindingContext)
 }
 
