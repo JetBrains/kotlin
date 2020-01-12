@@ -25,7 +25,7 @@ import com.intellij.openapi.options.BeanConfigurable;
  */
 public class BaseCodeFoldingOptionsProvider extends BeanConfigurable<CodeFoldingSettings> implements CodeFoldingOptionsProvider {
   public BaseCodeFoldingOptionsProvider() {
-    super(CodeFoldingSettings.getInstance(), "General");
+    super(CodeFoldingSettings.getInstance(), ApplicationBundle.message("title.general"));
     CodeFoldingSettings settings = getInstance();
     checkBox(ApplicationBundle.message("checkbox.collapse.file.header"), ()->settings.COLLAPSE_FILE_HEADER, v->settings.COLLAPSE_FILE_HEADER=v);
     checkBox(ApplicationBundle.message("checkbox.collapse.title.imports"), ()->settings.COLLAPSE_IMPORTS, v->settings.COLLAPSE_IMPORTS=v);
