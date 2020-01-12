@@ -81,7 +81,7 @@ const val ID = "editor.preferences.smartKeys"
  * @author yole
  */
 class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompositeConfigurable<UnnamedConfigurable>(
-  "Smart Keys",
+  ApplicationBundle.message("group.smart.keys"),
   "reference.settingsdialog.IDE.editor.smartkey"
 ), SearchableConfigurable, SearchableConfigurable.Parent {
   override fun createPanel(): DialogPanel {
