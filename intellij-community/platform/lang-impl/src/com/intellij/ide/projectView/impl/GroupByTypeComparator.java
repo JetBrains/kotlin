@@ -7,6 +7,7 @@ import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AlphaComparator;
 import com.intellij.ide.util.treeView.NodeDescriptor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -21,7 +22,7 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
   private String myPaneId;
   private boolean myForceSortByType;
 
-  public GroupByTypeComparator(final ProjectView projectView, final String paneId) {
+  public GroupByTypeComparator(@Nullable ProjectView projectView, final String paneId) {
     myProjectView = projectView;
     myPaneId = paneId;
   }

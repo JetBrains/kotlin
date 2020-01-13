@@ -1772,7 +1772,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   public void setAutoscrollToSource(boolean autoscrollMode, String paneId) {
-    if (myAutoscrollToSource.isEnabled(paneId)) myAutoscrollToSource.setSelected(autoscrollMode);
+    if (myAutoscrollToSource.isEnabled(paneId)) {
+      myAutoscrollToSource.setSelected(autoscrollMode);
+    }
   }
 
   @Override
@@ -1781,7 +1783,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   public void setAutoscrollFromSource(boolean autoscrollMode, String paneId) {
-    if (myAutoscrollFromSource.isEnabled(paneId)) myAutoscrollFromSource.setSelected(autoscrollMode);
+    if (myAutoscrollFromSource.isEnabled(paneId)) {
+      myAutoscrollFromSource.setSelected(autoscrollMode);
+    }
   }
 
   @Override
@@ -1790,7 +1794,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   public void setFlattenPackages(String paneId, boolean flattenPackages) {
-    if (myFlattenPackages.isEnabled(paneId)) myFlattenPackages.setSelected(flattenPackages);
+    if (myFlattenPackages.isEnabled(paneId)) {
+      myFlattenPackages.setSelected(flattenPackages);
+    }
   }
 
   @Override
@@ -1807,7 +1813,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   public void setFoldersAlwaysOnTop(boolean foldersAlwaysOnTop) {
-    if (myFoldersAlwaysOnTop.isEnabled()) myFoldersAlwaysOnTop.setSelected(foldersAlwaysOnTop);
+    if (myFoldersAlwaysOnTop.isEnabled()) {
+      myFoldersAlwaysOnTop.setSelected(foldersAlwaysOnTop);
+    }
   }
 
   @Override

@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Konstantin Bulenkov
  */
 class FavoriteComparator extends GroupByTypeComparator {
-  FavoriteComparator(@NotNull ProjectView view, String id) {
-    super(view, id);
+  FavoriteComparator(@NotNull ProjectView view) {
+    super(view, FavoritesViewTreeBuilder.ID);
   }
 
   @Override
