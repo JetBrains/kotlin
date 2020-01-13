@@ -3,7 +3,7 @@ import com.moowork.gradle.node.task.NodeTask
 
 plugins {
     base
-    id("com.github.node-gradle.node")
+    id("com.github.node-gradle.node") version "2.2.0"
 }
 
 // A simple CLI for creating JS IR klibs.
