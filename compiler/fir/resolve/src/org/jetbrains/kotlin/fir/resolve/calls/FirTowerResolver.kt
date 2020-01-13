@@ -201,12 +201,8 @@ class FirTowerResolver(
     private lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 
-    fun runResolver(
-        implicitReceiverValues: List<ImplicitReceiverValue<*>>, info: CallInfo,
-        collector: CandidateCollector = this.collector
-    ): CandidateCollector {
-        this.implicitReceiverValues = implicitReceiverValues
-        towerDataConsumer = when (info.callKind) {
+    private fun towerDataConsumer(info: CallInfo, collector: CandidateCollector): TowerDataConsumer {
+        return when (info.callKind) {
             CallKind.VariableAccess -> {
                 createVariableAndObjectConsumer(session, info.name, info, components, collector)
             }
@@ -230,6 +226,15 @@ class FirTowerResolver(
             }
             else -> throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
         }
+    }
+
+    fun runResolver(
+        implicitReceiverValues: List<ImplicitReceiverValue<*>>, info: CallInfo,
+        collector: CandidateCollector = this.collector
+    ): CandidateCollector {
+        this.implicitReceiverValues = implicitReceiverValues
+        towerDataConsumer = towerDataConsumer(info, collector)
+
         val shouldProcessExtensionsBeforeMembers =
             info.callKind == CallKind.Function && info.name in HIDES_MEMBERS_NAME_LIST
         val shouldProcessExplicitReceiverScopeOnly =
