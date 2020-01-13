@@ -120,6 +120,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/enumClassModality.kt");
         }
 
+        @TestMetadata("enumWithMultipleCtors.kt")
+        public void testEnumWithMultipleCtors() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/enumWithMultipleCtors.kt");
+        }
+
         @TestMetadata("enumWithSecondaryCtor.kt")
         public void testEnumWithSecondaryCtor() throws Exception {
             runTest("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
