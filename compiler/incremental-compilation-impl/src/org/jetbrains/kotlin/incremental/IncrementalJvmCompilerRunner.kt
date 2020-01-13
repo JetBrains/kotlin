@@ -253,8 +253,6 @@ class IncrementalJvmCompilerRunner(
         }
     }
 
-    override fun postCompilationHook(exitCode: ExitCode) {}
-
     override fun updateCaches(
         services: Services,
         caches: IncrementalJvmCachesManager,

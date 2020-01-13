@@ -164,7 +164,6 @@ abstract class IncrementalCompilerRunner<
     )
 
     protected open fun preBuildHook(args: Args, compilationMode: CompilationMode) {}
-    protected open fun postCompilationHook(exitCode: ExitCode) {}
     protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
         emptyList()
 
@@ -239,7 +238,6 @@ abstract class IncrementalCompilerRunner<
             val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(temporaryMessageCollector, outputItemsCollector)
 
             exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
-            postCompilationHook(exitCode)
 
             val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
             if (compilationMode is CompilationMode.Incremental) {
