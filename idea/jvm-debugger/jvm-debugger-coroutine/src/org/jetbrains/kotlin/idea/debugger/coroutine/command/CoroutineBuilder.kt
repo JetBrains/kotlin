@@ -200,10 +200,8 @@ class CreationCoroutineStackFrameItem(
     frame: StackFrameProxyImpl,
     val stackTraceElement: StackTraceElement,
     stackFrame: XStackFrame,
-    val location: Location
-) : CoroutineStackFrameItem(frame, stackFrame) {
-    override fun location() = location
-
+    location: Location
+) : CoroutineStackFrameItem(frame, stackFrame, location) {
     fun emptyDescriptor() =
         EmptyStackFrameDescriptor(stackTraceElement, frame)
 }
@@ -213,9 +211,7 @@ class SuspendCoroutineStackFrameItem(
     val stackTraceElement: StackTraceElement,
     stackFrame: XStackFrame,
     val lastObservedFrameFieldRef: ObjectReference
-) : CoroutineStackFrameItem(frame, stackFrame) {
-    override fun location() = frame.location()
-
+) : CoroutineStackFrameItem(frame, stackFrame, frame.location()) {
     fun emptyDescriptor() =
         EmptyStackFrameDescriptor(stackTraceElement, frame)
 }
@@ -224,28 +220,19 @@ class AsyncCoroutineStackFrameItem(
     frame: StackFrameProxyImpl,
     val frameItem: StackFrameItem,
     stackFrame: XStackFrame
-) : CoroutineStackFrameItem(frame, stackFrame) {
-    override fun location() : Location = frame.location()
-}
+) : CoroutineStackFrameItem(frame, stackFrame, frame.location())
 
 class RunningCoroutineStackFrameItem(
     frame: StackFrameProxyImpl,
     stackFrame: XStackFrame
-) : CoroutineStackFrameItem(frame, stackFrame) {
-    val location = frame.location() // it should be invoked in manager thread
+) : CoroutineStackFrameItem(frame, stackFrame, frame.location())
 
-    override fun location() = location
-}
-
-abstract class CoroutineStackFrameItem(val frame: StackFrameProxyImpl, val stackFrame: XStackFrame) {
+abstract class CoroutineStackFrameItem(val frame: StackFrameProxyImpl, val stackFrame: XStackFrame, val location: Location) {
     val log by logger
 
     fun sourcePosition() : XSourcePosition? = stackFrame.sourcePosition
 
-    abstract fun location(): Location
-
     fun uniqueId(): String {
-        val location = location()
         try {
             return location.safeSourceName() + ":" + location.safeMethod().toString() + ":" +
                     location.safeLineNumber() + ":" + location.safeSourceLineNumber()

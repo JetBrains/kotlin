@@ -237,7 +237,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     inner class CoroutineFrameValue(val frame: CoroutineStackFrameItem
     ) : XNamedValue(frame.uniqueId()) {
         override fun computePresentation(node: XValueNode, place: XValuePlace) =
-            applyRenderer(node, renderer.render(frame.location()))
+            applyRenderer(node, renderer.render(frame.location))
     }
 
     private fun applyRenderer(node: XValueNode, presentation: SimpleColoredTextIcon) =
