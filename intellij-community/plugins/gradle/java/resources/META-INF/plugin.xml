@@ -6,7 +6,6 @@
     Plugin provides Java Gradle projects support
   </description>
   <vendor>JetBrains</vendor>
-  <resource-bundle>messages.ActionsBundle</resource-bundle>
 
   <depends>com.intellij.java</depends>
   <depends>com.intellij.gradle</depends>
