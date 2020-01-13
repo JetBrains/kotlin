@@ -17,7 +17,7 @@ import static com.intellij.openapi.util.text.StringUtil.naturalCompare;
 /**
  * @author cdr
  */
-public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
+public class GroupByTypeComparator implements Comparator<NodeDescriptor<?>> {
   private ProjectView myProjectView;
   private String myPaneId;
   private boolean myForceSortByType;
@@ -34,14 +34,14 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
   @Override
   public int compare(NodeDescriptor descriptor1, NodeDescriptor descriptor2) {
     if (!isSortByType() && descriptor1 instanceof ProjectViewNode && ((ProjectViewNode) descriptor1).isSortByFirstChild()) {
-      final Collection<AbstractTreeNode<?>> children = ((ProjectViewNode)descriptor1).getChildren();
+      Collection<? extends AbstractTreeNode<?>> children = ((ProjectViewNode<?>)descriptor1).getChildren();
       if (!children.isEmpty()) {
         descriptor1 = children.iterator().next();
         descriptor1.update();
       }
     }
     if (!isSortByType() && descriptor2 instanceof ProjectViewNode && ((ProjectViewNode) descriptor2).isSortByFirstChild()) {
-      final Collection<AbstractTreeNode<?>> children = ((ProjectViewNode)descriptor2).getChildren();
+      Collection<? extends AbstractTreeNode<?>> children = ((ProjectViewNode<?>)descriptor2).getChildren();
       if (!children.isEmpty()) {
         descriptor2 = children.iterator().next();
         descriptor2.update();
@@ -49,12 +49,12 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
     }
 
     if (descriptor1 instanceof ProjectViewNode && descriptor2 instanceof ProjectViewNode) {
-      ProjectViewNode node1 = (ProjectViewNode)descriptor1;
-      ProjectViewNode node2 = (ProjectViewNode)descriptor2;
+      ProjectViewNode<?> node1 = (ProjectViewNode<?>)descriptor1;
+      ProjectViewNode<?> node2 = (ProjectViewNode<?>)descriptor2;
 
       if (isManualOrder()) {
-        final Comparable key1 = node1.getManualOrderKey();
-        final Comparable key2 = node2.getManualOrderKey();
+        Comparable key1 = node1.getManualOrderKey();
+        Comparable key2 = node2.getManualOrderKey();
         int result = compare(key1, key2);
         if (result != 0) return result;
       }
