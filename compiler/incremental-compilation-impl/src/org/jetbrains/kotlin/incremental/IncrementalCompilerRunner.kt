@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -233,14 +235,13 @@ abstract class IncrementalCompilerRunner<
 
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
-            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
+            val temporaryMessageCollector = TemporaryMessageCollector(messageCollector)
+            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(temporaryMessageCollector, outputItemsCollector)
 
             exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
             postCompilationHook(exitCode)
 
-            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
             val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
-
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?
                 val dirtySourcesSet = dirtySources.toHashSet()
@@ -250,6 +251,10 @@ abstract class IncrementalCompilerRunner<
                     continue
                 }
             }
+
+            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
+            temporaryMessageCollector.flush()
+
             if (exitCode != ExitCode.OK) break
 
             dirtySourcesSinceLastTimeFile.delete()
@@ -345,5 +350,26 @@ abstract class IncrementalCompilerRunner<
     private object EmptyCompilationCanceledStatus : CompilationCanceledStatus {
         override fun checkCanceled() {
         }
+    }
+}
+
+private class TemporaryMessageCollector(private val delegate: MessageCollector) : MessageCollector {
+    private class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation?)
+
+    private val messages = ArrayList<Message>()
+
+    override fun clear() {
+        messages.clear()
+    }
+
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        messages.add(Message(severity, message, location))
+    }
+
+    override fun hasErrors(): Boolean =
+        messages.any { it.severity.isError }
+
+    fun flush() {
+        messages.forEach { delegate.report(it.severity, it.message, it.location) }
     }
 }
