@@ -2,7 +2,6 @@
 package com.intellij.compiler.options;
 
 import com.intellij.ide.util.ElementsChooser;
-import com.intellij.openapi.compiler.Compiler;
 import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.Validator;
@@ -38,7 +37,7 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
 
   private JPanel myPanel;
   private JCheckBox myValidateBox;
-  private ElementsChooser<Compiler> myValidators;
+  private ElementsChooser<Validator> myValidators;
   private JPanel myExcludedEntriesPanel;
   private JPanel myValidatorsPanel;
   private final Project myProject;
@@ -100,19 +99,19 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
 
   @Override
   public boolean isModified() {
-    List<Compiler> selectedElements = myValidators.getMarkedElements();
-    List<Compiler> markedValidators = getMarkedValidators(ContainerUtil.concat(selectedElements, myValidators.getElements(false)));
+    List<Validator> selectedElements = myValidators.getMarkedElements();
+    List<Validator> markedValidators = getMarkedValidators(ContainerUtil.concat(selectedElements, myValidators.getElements(false)));
     if (markedValidators.size() != selectedElements.size()) {
       return true;
     }
-    Set<Compiler> set = new THashSet<>(selectedElements, new TObjectHashingStrategy<Compiler>() {
+    Set<Validator> set = new THashSet<>(selectedElements, new TObjectHashingStrategy<Validator>() {
       @Override
-      public int computeHashCode(Compiler object) {
+      public int computeHashCode(Validator object) {
         return object.getDescription().hashCode();
       }
 
       @Override
-      public boolean equals(Compiler o1, Compiler o2) {
+      public boolean equals(Validator o1, Validator o2) {
         return o1.getDescription().equals(o2.getDescription());
       }
     });
@@ -125,7 +124,7 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
   public void apply() throws ConfigurationException {
     myConfiguration.setValidateOnBuild(myValidateBox.isSelected());
     for (int i = 0; i < myValidators.getElementCount(); i++) {
-      final Compiler validator = myValidators.getElementAt(i);
+      final Validator validator = myValidators.getElementAt(i);
       myConfiguration.setSelected(validator,  myValidators.isElementMarked(validator));
     }
     myExcludedConfigurable.apply();
@@ -134,18 +133,18 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
   @Override
   public void reset() {
     myValidateBox.setSelected(myConfiguration.isValidateOnBuild());
-    final List<Compiler> allValidators = getValidators();
-    Collections.sort(allValidators, Comparator.comparing(Compiler::getDescription));
+    final List<Validator> allValidators = getValidators();
+    Collections.sort(allValidators, Comparator.comparing(Validator::getDescription));
     myValidators.setElements(allValidators, false);
     myValidators.markElements(getMarkedValidators(allValidators));
     myExcludedConfigurable.reset();
   }
 
-  private List<Compiler> getMarkedValidators(@NotNull List<Compiler> validators) {
-    return ContainerUtil.mapNotNull(validators, (NullableFunction<Compiler, Compiler>)validator -> myConfiguration.isSelected(validator) ? validator : null);
+  private List<Validator> getMarkedValidators(@NotNull List<Validator> validators) {
+    return ContainerUtil.mapNotNull(validators, (NullableFunction<Validator, Validator>)validator -> myConfiguration.isSelected(validator) ? validator : null);
   }
 
-  private List<Compiler> getValidators() {
+  private List<Validator> getValidators() {
     final CompilerManager compilerManager = CompilerManager.getInstance(myProject);
     return new SmartList<>(compilerManager.getCompilers(Validator.class));
   }
@@ -156,9 +155,9 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
   }
 
   private void createUIComponents() {
-    myValidators = new ElementsChooser<Compiler>(true) {
+    myValidators = new ElementsChooser<Validator>(true) {
       @Override
-      protected String getItemText(@NotNull final Compiler validator) {
+      protected String getItemText(@NotNull final Validator validator) {
         final String description = validator.getDescription();
         return description.replace(" Validator", "").replace(" validator", "");
       }
