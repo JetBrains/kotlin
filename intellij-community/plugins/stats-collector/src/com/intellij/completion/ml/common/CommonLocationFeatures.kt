@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.completion.ngram.NGram
 import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 
@@ -21,12 +22,18 @@ class CommonLocationFeatures : ContextFeatureProvider {
 
     putNGramScorer(environment)
 
-    return mapOf(
+    val result = mutableMapOf(
       "line_num" to MLFeatureValue.float(logicalPosition.line),
       "col_num" to MLFeatureValue.float(logicalPosition.column),
       "indent_level" to MLFeatureValue.float(LocationFeaturesUtil.indentLevel(linePrefix, EditorUtil.getTabSize(editor))),
       "is_in_line_beginning" to MLFeatureValue.binary(StringUtil.isEmptyOrSpaces(linePrefix))
     )
+
+    if (DumbService.isDumb(lookup.project)) {
+      result["dumb_mode"] = MLFeatureValue.binary(true)
+    }
+
+    return result
   }
 
   private fun putNGramScorer(environment: CompletionEnvironment) {
