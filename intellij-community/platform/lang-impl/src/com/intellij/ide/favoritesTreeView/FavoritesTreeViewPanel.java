@@ -400,7 +400,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     }
     FavoriteTreeNodeDescriptor[] descriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
     if (descriptors.length > 0) {
-      List<AbstractTreeNode> nodes = new ArrayList<>();
+      List<AbstractTreeNode<?>> nodes = new ArrayList<>();
       for (FavoriteTreeNodeDescriptor descriptor : descriptors) {
         nodes.add(descriptor.getElement());
       }
@@ -515,12 +515,12 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
 
   void dropPsiElements(FavoritesManager mgr, FavoritesListNode node, PsiElement[] elements) {
     if (elements != null && elements.length > 0) {
-      final ArrayList<AbstractTreeNode> nodes = new ArrayList<>();
+      final ArrayList<AbstractTreeNode<?>> nodes = new ArrayList<>();
       for (PsiElement element : elements) {
         if (element instanceof SmartPsiElementPointer) {
           element = ((SmartPsiElementPointer)element).getElement();
         }
-        final Collection<AbstractTreeNode> tmp = AddToFavoritesAction
+        final Collection<AbstractTreeNode<?>> tmp = AddToFavoritesAction
           .createNodes(myProject, null, element, true, FavoritesManager.getInstance(myProject).getViewSettings());
         nodes.addAll(tmp);
         mgr.addRoots(node.getValue(), nodes);

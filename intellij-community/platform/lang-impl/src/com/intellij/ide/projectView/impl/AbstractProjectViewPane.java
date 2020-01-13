@@ -292,10 +292,13 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   }
 
   @NotNull
-  protected <T extends NodeDescriptor> List<T> getSelectedNodes(@NotNull Class<T> nodeClass){
+  protected <T extends NodeDescriptor<?>> List<T> getSelectedNodes(@NotNull Class<T> nodeClass) {
     TreePath[] paths = getSelectionPaths();
-    if (paths == null) return Collections.emptyList();
-    final ArrayList<T> result = new ArrayList<>();
+    if (paths == null) {
+      return Collections.emptyList();
+    }
+
+    List<T> result = new ArrayList<>();
     for (TreePath path : paths) {
       T userObject = TreeUtil.getLastUserObject(nodeClass, path);
       if (userObject != null) {
@@ -311,12 +314,15 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
 
   @Override
   public Object getData(@NotNull String dataId) {
-    Object data =
-      myTreeStructure instanceof AbstractTreeStructureBase ?
-      ((AbstractTreeStructureBase)myTreeStructure).getDataFromProviders(getSelectedNodes(AbstractTreeNode.class), dataId) : null;
-    if (data != null) {
-      return data;
+    if (myTreeStructure instanceof AbstractTreeStructureBase) {
+      @SuppressWarnings("unchecked")
+      List<AbstractTreeNode<?>> nodes = (List)getSelectedNodes(AbstractTreeNode.class);
+      Object data = ((AbstractTreeStructureBase)myTreeStructure).getDataFromProviders(nodes, dataId);
+      if (data != null) {
+        return data;
+      }
     }
+
     if (CommonDataKeys.NAVIGATABLE_ARRAY.is(dataId)) {
       TreePath[] paths = getSelectionPaths();
       if (paths == null) return null;

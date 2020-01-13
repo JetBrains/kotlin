@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView.impl.nodes;
 
@@ -40,10 +40,10 @@ public abstract class ModuleGroupNode extends ProjectViewNode<ModuleGroup> imple
 
   @Override
   @NotNull
-  public Collection<AbstractTreeNode> getChildren() {
+  public Collection<AbstractTreeNode<?>> getChildren() {
     ModuleGrouper grouper = ModuleGrouper.instanceFor(getProject());
     final Collection<ModuleGroup> childGroups = getValue().childGroups(grouper);
-    final List<AbstractTreeNode> result = new ArrayList<>();
+    final List<AbstractTreeNode<?>> result = new ArrayList<>();
     for (final ModuleGroup childGroup : childGroups) {
       result.add(createModuleGroupNode(childGroup));
     }
@@ -63,7 +63,7 @@ public abstract class ModuleGroupNode extends ProjectViewNode<ModuleGroup> imple
   @NotNull
   @Override
   public Collection<VirtualFile> getRoots() {
-    Collection<AbstractTreeNode> children = getChildren();
+    Collection<AbstractTreeNode<?>> children = getChildren();
     Set<VirtualFile> result = new HashSet<>();
     for (AbstractTreeNode each : children) {
       if (each instanceof ProjectViewNode) {

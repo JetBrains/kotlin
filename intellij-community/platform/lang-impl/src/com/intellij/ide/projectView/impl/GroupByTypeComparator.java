@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView.impl;
 
@@ -33,14 +33,14 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
   @Override
   public int compare(NodeDescriptor descriptor1, NodeDescriptor descriptor2) {
     if (!isSortByType() && descriptor1 instanceof ProjectViewNode && ((ProjectViewNode) descriptor1).isSortByFirstChild()) {
-      final Collection<AbstractTreeNode> children = ((ProjectViewNode)descriptor1).getChildren();
+      final Collection<AbstractTreeNode<?>> children = ((ProjectViewNode)descriptor1).getChildren();
       if (!children.isEmpty()) {
         descriptor1 = children.iterator().next();
         descriptor1.update();
       }
     }
     if (!isSortByType() && descriptor2 instanceof ProjectViewNode && ((ProjectViewNode) descriptor2).isSortByFirstChild()) {
-      final Collection<AbstractTreeNode> children = ((ProjectViewNode)descriptor2).getChildren();
+      final Collection<AbstractTreeNode<?>> children = ((ProjectViewNode)descriptor2).getChildren();
       if (!children.isEmpty()) {
         descriptor2 = children.iterator().next();
         descriptor2.update();
@@ -50,7 +50,7 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
     if (descriptor1 instanceof ProjectViewNode && descriptor2 instanceof ProjectViewNode) {
       ProjectViewNode node1 = (ProjectViewNode)descriptor1;
       ProjectViewNode node2 = (ProjectViewNode)descriptor2;
-      
+
       if (isManualOrder()) {
         final Comparable key1 = node1.getManualOrderKey();
         final Comparable key2 = node2.getManualOrderKey();
@@ -71,7 +71,7 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
           return typeWeight1 - typeWeight2;
         }
       }
-      
+
       if (isSortByType()) {
         final Comparable typeSortKey1 = node1.getTypeSortKey();
         final Comparable typeSortKey2 = node2.getTypeSortKey();
@@ -95,7 +95,7 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
         }
       }
     }
-    if (descriptor1 == null) return -1; 
+    if (descriptor1 == null) return -1;
     if (descriptor2 == null) return 1;
     return AlphaComparator.INSTANCE.compare(descriptor1, descriptor2);
   }
@@ -106,7 +106,7 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor> {
     }
     return true;
   }
-  
+
   protected boolean isSortByType() {
     if (myProjectView != null) {
       return myProjectView.isSortByType(myPaneId);

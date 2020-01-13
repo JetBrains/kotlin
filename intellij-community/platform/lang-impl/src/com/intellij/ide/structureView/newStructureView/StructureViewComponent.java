@@ -381,7 +381,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
     }
   }
 
-  public Promise<AbstractTreeNode> expandPathToElement(Object element) {
+  public Promise<AbstractTreeNode<?>> expandPathToElement(Object element) {
     return expandSelectFocusInner(element, false, false)
       .then(p -> TreeUtil.getLastUserObject(AbstractTreeNode.class, p));
   }
@@ -780,7 +780,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
 
     @Override
     @NotNull
-    public Collection<AbstractTreeNode> getChildren() {
+    public Collection<AbstractTreeNode<?>> getChildren() {
       if (ourSettingsModificationCount.get() != modificationCountForChildren) {
         resetChildren();
         modificationCountForChildren = ourSettingsModificationCount.get();

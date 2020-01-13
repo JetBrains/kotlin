@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.projectView.*;
@@ -18,7 +18,10 @@ import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -37,14 +40,14 @@ public class NestingTreeStructureProvider implements TreeStructureProvider, Dumb
 
   @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(@NotNull final AbstractTreeNode parent,
-                                             @NotNull final Collection<AbstractTreeNode> children,
-                                             final ViewSettings settings) {
+  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                             @NotNull Collection<AbstractTreeNode<?>> children,
+                                            ViewSettings settings) {
     if (!(settings instanceof ProjectViewSettings) || !((ProjectViewSettings)settings).isUseFileNestingRules()) return children;
     if (!(parent instanceof PsiDirectoryNode)) return children;
 
     final ArrayList<PsiFileNode> childNodes = new ArrayList<>();
-    for (AbstractTreeNode node : children) {
+    for (AbstractTreeNode<?> node : children) {
       if (!(node instanceof PsiFileNode)) continue;
       childNodes.add((PsiFileNode)node);
     }
@@ -59,11 +62,11 @@ public class NestingTreeStructureProvider implements TreeStructureProvider, Dumb
     if (parentToChildren.isEmpty()) return children;
 
     // initial ArrayList size may be not exact, not a big problem
-    final Collection<AbstractTreeNode> newChildren = new ArrayList<>(children.size() - parentToChildren.size());
+    final Collection<AbstractTreeNode<?>> newChildren = new ArrayList<>(children.size() - parentToChildren.size());
 
     final Set<PsiFileNode> childrenToMoveDown = new THashSet<>(parentToChildren.values());
 
-    for (AbstractTreeNode node : children) {
+    for (AbstractTreeNode<?> node : children) {
       if (!(node instanceof PsiFileNode)) {
         newChildren.add(node);
         continue;

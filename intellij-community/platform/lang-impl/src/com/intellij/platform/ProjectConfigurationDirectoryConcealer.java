@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform;
 
 import com.intellij.ide.projectView.TreeStructureProvider;
@@ -38,7 +23,7 @@ import java.util.Collection;
  *
  * @author yole
  */
-public class ProjectConfigurationDirectoryConcealer implements TreeStructureProvider, DumbAware {
+public final class ProjectConfigurationDirectoryConcealer implements TreeStructureProvider, DumbAware {
   private final Project myProject;
 
   public ProjectConfigurationDirectoryConcealer(Project project) {
@@ -47,14 +32,14 @@ public class ProjectConfigurationDirectoryConcealer implements TreeStructureProv
 
   @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(@NotNull final AbstractTreeNode parent, @NotNull final Collection<AbstractTreeNode> children, final ViewSettings settings) {
+  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent, @NotNull Collection<AbstractTreeNode<?>> children, ViewSettings settings) {
     if (parent instanceof PsiDirectoryNode &&
         ProjectViewDirectoryHelper.getInstance(myProject).shouldHideProjectConfigurationFilesDirectory()) {
       final VirtualFile vFile = ((PsiDirectoryNode)parent).getVirtualFile();
       if (vFile != null && Comparing.equal(ProjectFileIndex.SERVICE.getInstance(myProject).getContentRootForFile(vFile), vFile)) {
-        final Collection<? extends AbstractTreeNode> moduleChildren = ((PsiDirectoryNode) parent).getChildren();
-        Collection<AbstractTreeNode> result = new ArrayList<>();
-        for (AbstractTreeNode moduleChild : moduleChildren) {
+        final Collection<? extends AbstractTreeNode<?>> moduleChildren = ((PsiDirectoryNode) parent).getChildren();
+        Collection<AbstractTreeNode<?>> result = new ArrayList<>();
+        for (AbstractTreeNode<?> moduleChild : moduleChildren) {
           if (moduleChild instanceof PsiDirectoryNode) {
             PsiDirectory directory = ((PsiDirectoryNode)moduleChild).getValue();
             if (directory != null && directory.getName().equals(Project.DIRECTORY_STORE_FOLDER) && Registry.is("projectView.hide.dot.idea")) {

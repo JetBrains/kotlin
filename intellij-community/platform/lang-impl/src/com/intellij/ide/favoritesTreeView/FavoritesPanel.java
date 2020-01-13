@@ -147,8 +147,7 @@ public final class FavoritesPanel {
             final String listFrom = FavoritesTreeViewPanel.getListNodeFromPath(path).getValue();
             if (listTo.equals(listFrom)) return;
             if (path.getPathCount() == 3) {
-              final AbstractTreeNode abstractTreeNode =
-                ((FavoriteTreeNodeDescriptor)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject()).getElement();
+              AbstractTreeNode<?> abstractTreeNode = ((FavoriteTreeNodeDescriptor)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject()).getElement();
               Object element = abstractTreeNode.getValue();
               mgr.removeRoot(listFrom, Collections.singletonList(abstractTreeNode));
               if (element instanceof SmartPsiElementPointer) {

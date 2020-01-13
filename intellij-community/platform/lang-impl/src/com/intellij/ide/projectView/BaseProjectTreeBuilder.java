@@ -111,9 +111,9 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
   }
 
   @NotNull
-  private static List<AbstractTreeNode> collectChildren(@NotNull DefaultMutableTreeNode node) {
+  private static List<AbstractTreeNode<?>> collectChildren(@NotNull DefaultMutableTreeNode node) {
     int childCount = node.getChildCount();
-    List<AbstractTreeNode> result = new ArrayList<>(childCount);
+    List<AbstractTreeNode<?>> result = new ArrayList<>(childCount);
     for (int i = 0; i < childCount; i++) {
       TreeNode childAt = node.getChildAt(i);
       DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode)childAt;
@@ -143,17 +143,17 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
     return _select(element, file, requestFocus, Conditions.alwaysTrue());
   }
 
-  public ActionCallback selectInWidth(final Object element,
-                                      final boolean requestFocus,
-                                      final Condition<AbstractTreeNode> nonStopCondition) {
+  public ActionCallback selectInWidth(Object element,
+                                      boolean requestFocus,
+                                      Condition<AbstractTreeNode<?>> nonStopCondition) {
     return Promises.toActionCallback(_select(element, null, requestFocus, nonStopCondition));
   }
 
   @NotNull
-  private Promise<Object> _select(final Object element,
-                                 final VirtualFile file,
-                                 final boolean requestFocus,
-                                 final Condition<? super AbstractTreeNode> nonStopCondition) {
+  private Promise<Object> _select(Object element,
+                                  VirtualFile file,
+                                  boolean requestFocus,
+                                  Condition<? super AbstractTreeNode<?>> nonStopCondition) {
     AbstractTreeUpdater updater = getUpdater();
     if (updater == null) {
       return Promises.rejectedPromise();
@@ -168,16 +168,16 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
     return result;
   }
 
-  private void _select(final Object element,
-                       final VirtualFile file,
-                       final boolean requestFocus,
-                       final Condition<? super AbstractTreeNode> nonStopCondition,
-                       final AsyncPromise<Object> result,
+  private void _select(Object element,
+                       VirtualFile file,
+                       boolean requestFocus,
+                       Condition<? super AbstractTreeNode<?>> nonStopCondition,
+                       AsyncPromise<Object> result,
                        @NotNull final ProgressIndicator indicator,
                        @Nullable final Ref<Object> virtualSelectTarget,
-                       final FocusRequestor focusRequestor,
-                       final boolean isSecondAttempt) {
-    final AbstractTreeNode alreadySelected = alreadySelectedNode(element);
+                       FocusRequestor focusRequestor,
+                       boolean isSecondAttempt) {
+    AbstractTreeNode<?> alreadySelected = alreadySelectedNode(element);
 
     final Runnable onDone = () -> {
       JTree tree = getTree();
@@ -188,7 +188,7 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
       result.setResult(null);
     };
 
-    final Condition<AbstractTreeNode> condition = abstractTreeNode -> result.getState() == Promise.State.PENDING && nonStopCondition.value(abstractTreeNode);
+    final Condition<AbstractTreeNode<?>> condition = abstractTreeNode -> result.getState() == Promise.State.PENDING && nonStopCondition.value(abstractTreeNode);
 
     if (alreadySelected == null) {
       expandPathTo(file, (AbstractTreeNode)getTreeStructure().getRootElement(), element, condition, indicator, virtualSelectTarget)
@@ -244,18 +244,18 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
   }
 
   @SuppressWarnings("WeakerAccess")
-  protected boolean canExpandPathTo(@NotNull final AbstractTreeNode root, final Object element) {
+  protected boolean canExpandPathTo(@NotNull AbstractTreeNode<?> root, final Object element) {
     return true;
   }
 
   @NotNull
-  private Promise<AbstractTreeNode> expandPathTo(final VirtualFile file,
+  private Promise<AbstractTreeNode<?>> expandPathTo(final VirtualFile file,
                                                  @NotNull final AbstractTreeNode root,
                                                  final Object element,
-                                                 @NotNull final Condition<AbstractTreeNode> nonStopCondition,
+                                                 @NotNull final Condition<AbstractTreeNode<?>> nonStopCondition,
                                                  @NotNull final ProgressIndicator indicator,
                                                  @Nullable final Ref<Object> target) {
-    final AsyncPromise<AbstractTreeNode> async = new AsyncPromise<>();
+    final AsyncPromise<AbstractTreeNode<?>> async = new AsyncPromise<>();
     if (root.canRepresent(element)) {
       if (target == null) {
         expand(root, () -> async.setResult(root));
@@ -283,7 +283,7 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
 
         final DefaultMutableTreeNode rootNode = getNodeForElement(root);
         if (rootNode != null) {
-          final List<AbstractTreeNode> kids = collectChildren(rootNode);
+          final List<AbstractTreeNode<?>> kids = collectChildren(rootNode);
           expandChild(kids, 0, nonStopCondition, file, element, async, indicator, target);
         }
         else {
@@ -297,7 +297,7 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
       }
       else {
         final DefaultMutableTreeNode rootNode = getNodeForElement(root);
-        final ArrayList<AbstractTreeNode> kids = new ArrayList<>();
+        final ArrayList<AbstractTreeNode<?>> kids = new ArrayList<>();
         if (rootNode != null && getTree().isExpanded(new TreePath(rootNode.getPath()))) {
           kids.addAll(collectChildren(rootNode));
         }
@@ -318,12 +318,12 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
     return async;
   }
 
-  private void expandChild(@NotNull final List<? extends AbstractTreeNode> kids,
+  private void expandChild(@NotNull final List<? extends AbstractTreeNode<?>> kids,
                            int i,
-                           @NotNull final Condition<AbstractTreeNode> nonStopCondition,
+                           @NotNull final Condition<AbstractTreeNode<?>> nonStopCondition,
                            final VirtualFile file,
                            final Object element,
-                           @NotNull final AsyncPromise<? super AbstractTreeNode> async,
+                           @NotNull final AsyncPromise<? super AbstractTreeNode<?>> async,
                            @NotNull final ProgressIndicator indicator,
                            final Ref<Object> virtualSelectTarget) {
     while (i < kids.size()) {
@@ -335,7 +335,7 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
       }
 
       if (nonStopCondition.value(eachKid)) {
-        final Promise<AbstractTreeNode> result = expandPathTo(file, eachKid, element, nonStopCondition, indicator, virtualSelectTarget);
+        final Promise<AbstractTreeNode<?>> result = expandPathTo(file, eachKid, element, nonStopCondition, indicator, virtualSelectTarget);
         result.onSuccess(abstractTreeNode -> {
           indicator.checkCanceled();
           async.setResult(abstractTreeNode);

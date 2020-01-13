@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.todo.nodes;
 
@@ -40,19 +40,19 @@ public final class TodoFileNode extends PsiFileNode {
   }
 
   @Override
-  public Collection<AbstractTreeNode> getChildrenImpl() {
+  public Collection<AbstractTreeNode<?>> getChildrenImpl() {
     try {
       if (!mySingleFileMode) {
-        return (Collection<AbstractTreeNode>)createGeneralList();
+        return (Collection<AbstractTreeNode<?>>)createGeneralList();
       }
-      return (Collection<AbstractTreeNode>)createListForSingleFile();
+      return (Collection<AbstractTreeNode<?>>)createListForSingleFile();
     }
     catch (IndexNotReadyException e) {
       return Collections.emptyList();
     }
   }
 
-  private Collection<? extends AbstractTreeNode> createListForSingleFile() {
+  private Collection<? extends AbstractTreeNode<?>> createListForSingleFile() {
     PsiFile psiFile = getValue();
     TodoItem[] items= findAllTodos(psiFile, myBuilder.getTodoTreeStructure().getSearchHelper());
     List<TodoItemNode> children= new ArrayList<>(items.length);
@@ -105,7 +105,7 @@ public final class TodoFileNode extends PsiFileNode {
     return todoItems.toArray(new TodoItem[0]);
   }
 
-  private Collection<? extends AbstractTreeNode> createGeneralList() {
+  private Collection<? extends AbstractTreeNode<?>> createGeneralList() {
     List<TodoItemNode> children = new ArrayList<>();
 
     PsiFile psiFile = getValue();

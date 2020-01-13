@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.projectView.TreeStructureProvider;
@@ -45,9 +45,9 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
 
   @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
-                                             @NotNull Collection<AbstractTreeNode> children,
-                                             ViewSettings settings) {
+  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                                @NotNull Collection<AbstractTreeNode<?>> children,
+                                                ViewSettings settings) {
     for (TreeStructureProvider provider : EP.getExtensions(myProject)) {
       try {
         children = provider.modify(parent, children, settings);
@@ -72,7 +72,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
 
   @Nullable
   @Override
-  public Object getData(@NotNull Collection<AbstractTreeNode> selection, @NotNull String dataId) {
+  public Object getData(@NotNull Collection<AbstractTreeNode<?>> selection, @NotNull String dataId) {
     if (!selection.isEmpty()) {
       for (TreeStructureProvider provider : EP.getExtensions(myProject)) {
         try {

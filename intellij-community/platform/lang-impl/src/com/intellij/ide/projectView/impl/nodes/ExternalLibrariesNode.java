@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author max
@@ -45,9 +45,9 @@ public class ExternalLibrariesNode extends ProjectViewNode<String> {
 
   @NotNull
   @Override
-  public Collection<? extends AbstractTreeNode> getChildren() {
+  public Collection<? extends AbstractTreeNode<?>> getChildren() {
     Project project = Objects.requireNonNull(getProject());
-    List<AbstractTreeNode> children = new ArrayList<>();
+    List<AbstractTreeNode<?>> children = new ArrayList<>();
     ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
     Module[] modules = ModuleManager.getInstance(project).getModules();
     Set<Library> processedLibraries = new THashSet<>();
@@ -101,7 +101,7 @@ public class ExternalLibrariesNode extends ProjectViewNode<String> {
     return children;
   }
 
-  public static void addLibraryChildren(final LibraryOrderEntry entry, final List<? super AbstractTreeNode> children, Project project, ProjectViewNode node) {
+  public static void addLibraryChildren(final LibraryOrderEntry entry, final List<? super AbstractTreeNode<?>> children, Project project, ProjectViewNode node) {
     final PsiManager psiManager = PsiManager.getInstance(project);
     final VirtualFile[] files = entry.getRootFiles(OrderRootType.CLASSES);
     for (final VirtualFile file : files) {

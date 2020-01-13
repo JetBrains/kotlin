@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public final class FavoriteTreeNodeDescriptor extends PresentableNodeDescriptor<AbstractTreeNode> {
+public final class FavoriteTreeNodeDescriptor extends PresentableNodeDescriptor<AbstractTreeNode<?>> {
   private final AbstractTreeNode<?> myElement;
   public static final FavoriteTreeNodeDescriptor[] EMPTY_ARRAY = new FavoriteTreeNodeDescriptor[0];
 

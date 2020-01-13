@@ -33,8 +33,8 @@ public class FavoritesTreeUtil {
     return result.toArray(FavoriteTreeNodeDescriptor.EMPTY_ARRAY);
   }
 
-  public static List<AbstractTreeNode> getLogicalPathToSelected(final Tree tree) {
-    final List<AbstractTreeNode> result = new ArrayList<>();
+  public static List<AbstractTreeNode<?>> getLogicalPathToSelected(final Tree tree) {
+    final List<AbstractTreeNode<?>> result = new ArrayList<>();
     final TreePath selectionPath = tree.getSelectionPath();
     return getLogicalPathTo(result, selectionPath);
   }
@@ -59,7 +59,7 @@ public class FavoritesTreeUtil {
     return Collections.emptyList();
   }
 
-  /*private static int getIndex(Collection<AbstractTreeNode> children, AbstractTreeNode node) {
+  /*private static int getIndex(Collection<AbstractTreeNode<?>> children, AbstractTreeNode node) {
     int idx = 0;
     for (AbstractTreeNode child : children) {
       if (child == node) {
@@ -71,7 +71,7 @@ public class FavoritesTreeUtil {
     return -1;
   }*/
 
-  public static List<AbstractTreeNode> getLogicalPathTo(List<AbstractTreeNode> result, TreePath selectionPath) {
+  public static List<AbstractTreeNode<?>> getLogicalPathTo(List<AbstractTreeNode<?>> result, TreePath selectionPath) {
     final Object component = selectionPath.getLastPathComponent();
     if (component instanceof DefaultMutableTreeNode) {
       final Object uo = ((DefaultMutableTreeNode)component).getUserObject();

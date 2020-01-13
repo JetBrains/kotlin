@@ -38,7 +38,7 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
   }
 
   @Override
-  protected AbstractTreeNode createRoot(@NotNull final Project project, @NotNull ViewSettings settings) {
+  protected AbstractTreeNode<?> createRoot(@NotNull final Project project, @NotNull ViewSettings settings) {
     return new FavoritesRootNode(project);
   }
 
@@ -54,7 +54,7 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
 
-    final AbstractTreeNode favTreeElement = (AbstractTreeNode)element;
+    AbstractTreeNode<?> favTreeElement = (AbstractTreeNode<?>)element;
     try {
       if (!(element instanceof FavoritesListNode)) {
         Object[] elements = super.getChildElements(favTreeElement);
@@ -64,18 +64,18 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
         return ArrayUtil.toObjectArray(myNonProjectProvider.modify(favTreeElement, new ArrayList<>(), settings));
       }
 
-      final List<AbstractTreeNode> result = new ArrayList<>();
-      final FavoritesListNode listNode = (FavoritesListNode)element;
+      List<AbstractTreeNode<?>> result = new ArrayList<>();
+      FavoritesListNode listNode = (FavoritesListNode)element;
       if (listNode.getProvider() != null) {
         return ArrayUtil.toObjectArray(listNode.getChildren());
       }
-      final Collection<AbstractTreeNode> roots = FavoritesListNode.getFavoritesRoots(myProject, listNode.getName(), listNode);
+      Collection<AbstractTreeNode<?>> roots = FavoritesListNode.getFavoritesRoots(myProject, listNode.getName(), listNode);
       for (AbstractTreeNode<?> abstractTreeNode : roots) {
         final Object value = abstractTreeNode.getValue();
 
         if (value == null) continue;
         if (value instanceof PsiElement && !((PsiElement)value).isValid()) continue;
-        if (value instanceof SmartPsiElementPointer && ((SmartPsiElementPointer)value).getElement() == null) continue;
+        if (value instanceof SmartPsiElementPointer && ((SmartPsiElementPointer<?>)value).getElement() == null) continue;
 
         boolean invalid = false;
         for (FavoriteNodeProvider nodeProvider : FavoriteNodeProvider.EP_NAME.getExtensions(myProject)) {
@@ -101,12 +101,12 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
 
   @Override
   public Object getParentElement(@NotNull Object element) {
-    AbstractTreeNode parent = null;
+    AbstractTreeNode<?> parent = null;
     if (element == getRootElement()) {
       return null;
     }
     if (element instanceof AbstractTreeNode) {
-      parent = ((AbstractTreeNode)element).getParent();
+      parent = ((AbstractTreeNode<?>)element).getParent();
     }
     if (parent == null) {
       return getRootElement();
@@ -116,8 +116,8 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
 
   @Override
   @NotNull
-  public NodeDescriptor createDescriptor(@NotNull Object element, NodeDescriptor parentDescriptor) {
-    return new FavoriteTreeNodeDescriptor(myProject, parentDescriptor, (AbstractTreeNode)element);
+  public NodeDescriptor<?> createDescriptor(@NotNull Object element, NodeDescriptor parentDescriptor) {
+    return new FavoriteTreeNodeDescriptor(myProject, parentDescriptor, (AbstractTreeNode<?>)element);
   }
 
   private static class MyProvider implements TreeStructureProvider {
@@ -129,17 +129,17 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
 
     @NotNull
     @Override
-    public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
-                                               @NotNull Collection<AbstractTreeNode> children,
+    public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                               @NotNull Collection<AbstractTreeNode<?>> children,
                                                ViewSettings settings) {
       if (parent instanceof PsiDirectoryNode && children.isEmpty()) {
         VirtualFile virtualFile = ((PsiDirectoryNode)parent).getVirtualFile();
         if (virtualFile == null) return children;
         VirtualFile[] virtualFiles = virtualFile.getChildren();
-        List<AbstractTreeNode> result = new ArrayList<>();
+        List<AbstractTreeNode<?>> result = new ArrayList<>();
         PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(myProject);
         for (VirtualFile file : virtualFiles) {
-          AbstractTreeNode child;
+          AbstractTreeNode<?> child;
           if (file.isDirectory()) {
             PsiDirectory directory = psiManager.findDirectory(file);
             if (directory == null) continue;

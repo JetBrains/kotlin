@@ -33,7 +33,7 @@ public abstract class AbstractFavoritesListProvider<T> implements FavoritesListP
     myNode = new FavoritesListNode(project, listName, description) {
       @NotNull
       @Override
-      public Collection<? extends AbstractTreeNode> getChildren() {
+      public Collection<? extends AbstractTreeNode<?>> getChildren() {
         return myChildren;
       }
 

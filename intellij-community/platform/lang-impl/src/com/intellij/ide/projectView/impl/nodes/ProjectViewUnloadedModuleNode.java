@@ -1,5 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl.nodes;
 
 import com.intellij.icons.AllIcons;
@@ -21,19 +20,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ProjectViewUnloadedModuleNode extends ProjectViewNode<UnloadedModuleDescription> {
-
+public final class ProjectViewUnloadedModuleNode extends ProjectViewNode<UnloadedModuleDescription> {
   public ProjectViewUnloadedModuleNode(Project project, @NotNull UnloadedModuleDescription value, ViewSettings viewSettings) {
     super(project, value, viewSettings);
   }
 
   @Override
   @NotNull
-  public Collection<AbstractTreeNode> getChildren() {
+  public Collection<AbstractTreeNode<?>> getChildren() {
     UnloadedModuleDescription module = getValue();
-    if (module == null) return Collections.emptyList();
+    if (module == null) {
+      return Collections.emptyList();
+    }
 
-    final List<VirtualFile> contentRoots = ProjectViewDirectoryHelper.getInstance(myProject).getTopLevelUnloadedModuleRoots(module, getSettings());
+    List<VirtualFile> contentRoots = ProjectViewDirectoryHelper.getInstance(myProject).getTopLevelUnloadedModuleRoots(module, getSettings());
     return ProjectViewDirectoryHelper.getInstance(myProject).createFileAndDirectoryNodes(contentRoots, getSettings());
   }
 

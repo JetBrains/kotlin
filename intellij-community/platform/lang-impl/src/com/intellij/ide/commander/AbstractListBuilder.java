@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.commander;
 
@@ -237,7 +223,7 @@ public abstract class AbstractListBuilder {
 
   private AbstractTreeNode findInChildren(AbstractTreeNode rootElement, VirtualFile file, Object element) {
     Object[] childElements = getChildren(rootElement);
-    List<AbstractTreeNode> nodes = getAllAcceptableNodes(childElements, file);
+    List<AbstractTreeNode<?>> nodes = getAllAcceptableNodes(childElements, file);
     if (nodes.size() == 1) return nodes.get(0);
     if (nodes.isEmpty()) return null;
     if (file.isDirectory()) {
@@ -248,13 +234,13 @@ public abstract class AbstractListBuilder {
     }
   }
 
-  private AbstractTreeNode performDeepSearch(Object[] nodes, Object element, Set<? super AbstractTreeNode> visited) {
+  private AbstractTreeNode performDeepSearch(Object[] nodes, Object element, Set<? super AbstractTreeNode<?>> visited) {
     for (Object node1 : nodes) {
-      AbstractTreeNode node = (AbstractTreeNode)node1;
+      AbstractTreeNode<?> node = (AbstractTreeNode)node1;
       if (nodeIsAcceptableForElement(node, element)) return node;
       Object[] children = getChildren(node);
       if (visited.add(node)) {
-        AbstractTreeNode nodeResult = performDeepSearch(children, element, visited);
+        AbstractTreeNode<?> nodeResult = performDeepSearch(children, element, visited);
         if (nodeResult != null) {
           return nodeResult;
         }
@@ -265,7 +251,7 @@ public abstract class AbstractListBuilder {
 
   protected abstract boolean nodeIsAcceptableForElement(AbstractTreeNode node, Object element);
 
-  protected abstract List<AbstractTreeNode> getAllAcceptableNodes(Object[] childElements, VirtualFile file);
+  protected abstract List<AbstractTreeNode<?>> getAllAcceptableNodes(Object[] childElements, VirtualFile file);
 
   public void dispose() {
     myIsDisposed = true;

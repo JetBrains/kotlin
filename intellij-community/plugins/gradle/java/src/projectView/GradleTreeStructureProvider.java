@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -39,8 +39,8 @@ import static com.intellij.ui.SimpleTextAttributes.merge;
 public class GradleTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
-                                             @NotNull Collection<AbstractTreeNode> children,
+  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                             @NotNull Collection<AbstractTreeNode<?>> children,
                                              ViewSettings settings) {
     Project project = parent.getProject();
     if (project == null) return children;
@@ -50,7 +50,7 @@ public class GradleTreeStructureProvider implements TreeStructureProvider, DumbA
     }
 
     if (parent instanceof ProjectViewModuleGroupNode) {
-      Collection<AbstractTreeNode> modifiedChildren = new SmartList<>();
+      Collection<AbstractTreeNode<?>> modifiedChildren = new SmartList<>();
       for (AbstractTreeNode child : children) {
         if (child instanceof ProjectViewModuleNode) {
           Module module = ((ProjectViewModuleNode)child).getValue();
@@ -72,7 +72,7 @@ public class GradleTreeStructureProvider implements TreeStructureProvider, DumbA
     if (parent instanceof GradleProjectViewModuleNode) {
       Module module = ((GradleProjectViewModuleNode)parent).getValue();
       String projectPath = getExternalProjectPath(module);
-      Collection<AbstractTreeNode> modifiedChildren = new SmartList<>();
+      Collection<AbstractTreeNode<?>> modifiedChildren = new SmartList<>();
       for (AbstractTreeNode child : children) {
         if (child instanceof PsiDirectoryNode) {
           PsiDirectory psiDirectory = ((PsiDirectoryNode)child).getValue();
@@ -89,7 +89,7 @@ public class GradleTreeStructureProvider implements TreeStructureProvider, DumbA
     }
 
     if (parent instanceof PsiDirectoryNode) {
-      Collection<AbstractTreeNode> modifiedChildren = new SmartList<>();
+      Collection<AbstractTreeNode<?>> modifiedChildren = new SmartList<>();
       for (AbstractTreeNode child : children) {
         if (child instanceof PsiDirectoryNode) {
           GradleModuleDirectoryNode sourceSetNode = getGradleModuleNode(project, (PsiDirectoryNode)child, settings);
@@ -116,15 +116,15 @@ public class GradleTreeStructureProvider implements TreeStructureProvider, DumbA
   }
 
   @NotNull
-  private static Collection<AbstractTreeNode> getProjectNodeChildren(@NotNull Project project,
-                                                                     @NotNull Collection<AbstractTreeNode> children) {
-    Collection<AbstractTreeNode> modifiedChildren = new SmartList<>();
+  private static Collection<AbstractTreeNode<?>> getProjectNodeChildren(@NotNull Project project,
+                                                                     @NotNull Collection<AbstractTreeNode<?>> children) {
+    Collection<AbstractTreeNode<?>> modifiedChildren = new SmartList<>();
     ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     for (AbstractTreeNode child : children) {
       Pair<VirtualFile, PsiDirectoryNode> parentNodePair = null;
       if (child instanceof ProjectViewModuleGroupNode) {
         final ProjectViewModuleGroupNode groupNode = (ProjectViewModuleGroupNode)child;
-        final Collection<AbstractTreeNode> groupNodeChildren = groupNode.getChildren();
+        final Collection<AbstractTreeNode<?>> groupNodeChildren = groupNode.getChildren();
         for (final AbstractTreeNode node : groupNodeChildren) {
           if (node instanceof PsiDirectoryNode) {
             final PsiDirectoryNode psiDirectoryNode = (PsiDirectoryNode)node;

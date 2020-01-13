@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.commander;
 
@@ -317,10 +317,10 @@ public class CommanderPanel extends JPanel {
   }
 
   @NotNull
-  private List<AbstractTreeNode> getSelectedNodes() {
+  private List<AbstractTreeNode<?>> getSelectedNodes() {
     if (myBuilder == null) return Collections.emptyList();
     final int[] indices = myList.getSelectedIndices();
-    ArrayList<AbstractTreeNode> result = new ArrayList<>();
+    ArrayList<AbstractTreeNode<?>> result = new ArrayList<>();
     for (int index : indices) {
       if (index >= myModel.getSize()) continue;
       Object elementAtIndex = myModel.getElementAt(index);
