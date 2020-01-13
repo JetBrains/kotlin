@@ -20,12 +20,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class FavoriteTreeNodeDescriptor extends PresentableNodeDescriptor<AbstractTreeNode> {
-  private final AbstractTreeNode myElement;
+public final class FavoriteTreeNodeDescriptor extends PresentableNodeDescriptor<AbstractTreeNode> {
+  private final AbstractTreeNode<?> myElement;
   public static final FavoriteTreeNodeDescriptor[] EMPTY_ARRAY = new FavoriteTreeNodeDescriptor[0];
 
-  public FavoriteTreeNodeDescriptor(final Project project, final NodeDescriptor parentDescriptor, final AbstractTreeNode element) {
+  public FavoriteTreeNodeDescriptor(@NotNull Project project, final NodeDescriptor parentDescriptor, final AbstractTreeNode element) {
     super(project, parentDescriptor);
+
     myElement = element;
   }
 
@@ -35,14 +36,16 @@ public class FavoriteTreeNodeDescriptor extends PresentableNodeDescriptor<Abstra
     presentation.copyFrom(myElement.getPresentation());
   }
 
+  @Nullable
   public String getLocation() {
     return getLocation(myElement, myProject);
   }
 
-  public static String getLocation(final AbstractTreeNode element, @NotNull final Project project) {
+  @Nullable
+  public static String getLocation(@NotNull AbstractTreeNode<?> element, @NotNull Project project) {
     Object nodeElement = element.getValue();
     if (nodeElement instanceof SmartPsiElementPointer) {
-      nodeElement = ((SmartPsiElementPointer)nodeElement).getElement();
+      nodeElement = ((SmartPsiElementPointer<?>)nodeElement).getElement();
     }
     if (nodeElement instanceof PsiElement) {
       if (nodeElement instanceof PsiDirectory) {
