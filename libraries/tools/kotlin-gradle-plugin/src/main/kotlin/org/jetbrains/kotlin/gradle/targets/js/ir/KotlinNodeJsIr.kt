@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -39,9 +38,12 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     private fun configureRun(
-        compilation: KotlinJsCompilation
+        compilation: KotlinJsIrCompilation
     ) {
-        val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME))
+        val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
+            dependsOn(compilation.developmentLinkTaskName)
+            args(compilation.developmentLinkTask.outputFile)
+        }
         target.runTask.dependsOn(runTaskHolder)
     }
 

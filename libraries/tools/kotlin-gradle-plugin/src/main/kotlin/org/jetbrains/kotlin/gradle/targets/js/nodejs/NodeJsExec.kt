@@ -77,7 +77,6 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
 
                 val compileKotlinTask = compilation.compileKotlinTask
                 it.dependsOn(nodeJs.npmInstallTask, compileKotlinTask)
-                it.args(compileKotlinTask.outputFile)
 
                 it.configuration()
             }
