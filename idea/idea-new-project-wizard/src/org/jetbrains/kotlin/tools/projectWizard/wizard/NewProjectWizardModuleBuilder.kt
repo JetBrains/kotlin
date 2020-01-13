@@ -96,6 +96,7 @@ class NewProjectWizardModuleBuilder : ModuleBuilder() {
     }
 
     private fun updateProjectNameAndPomDate(settingsStep: SettingsStep) {
+        if (wizard.artifactId != null || wizard.groupId != null) return
         val suggestedProjectName = with(wizard.valuesReadingContext) {
             ProjectTemplatesPlugin::template.settingValue.suggestedProjectName.decapitalize()
         }
