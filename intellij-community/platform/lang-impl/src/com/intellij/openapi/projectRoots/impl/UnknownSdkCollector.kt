@@ -86,13 +86,22 @@ class UnknownSdkCollector(private val myProject: Project) {
     val totallyUnknownSdks = TreeSet(String.CASE_INSENSITIVE_ORDER)
     val resolvableSdks = mutableListOf<UnknownSdk>()
     for ((sdkName, sdkTypes) in sdkToTypes.asMap()) {
-      val sdkType = sdkTypes.singleOrNull()?.let(SdkType::findByName)
-      if (sdkType == null) {
+      val singleSdkTypeName = sdkTypes.filterNotNull().distinct().singleOrNull()
+      if (singleSdkTypeName == null) {
         totallyUnknownSdks.add(sdkName)
+        continue
       }
-      else {
-        resolvableSdks.add(MissingSdkInfo(sdkName, sdkType))
+
+      val sdkType = SdkType.findByName(singleSdkTypeName)
+      if (sdkType == null) {
+        // that seems like one has removed a plugin that was used
+        // and there is no requested SDK too.
+        // it makes less sense to suggest any SDK here (we will fail)
+        // just skipping it for now
+        continue
       }
+
+      resolvableSdks.add(MissingSdkInfo(sdkName, sdkType))
     }
 
     return UnknownSdkSnapshot(totallyUnknownSdks, resolvableSdks)
