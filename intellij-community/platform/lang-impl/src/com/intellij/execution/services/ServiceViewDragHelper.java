@@ -253,14 +253,6 @@ class ServiceViewDragHelper {
     }
 
     @Override
-    public void cleanUpOnLeave() {
-    }
-
-    @Override
-    public void updateDraggedImage(Image image, Point dropPoint, Point imageOffset) {
-    }
-
-    @Override
     public void drop(DnDEvent event) {
       EventContext eventContext = getEventContext(event.getPoint());
       if (eventContext == null) return;

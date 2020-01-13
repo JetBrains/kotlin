@@ -817,10 +817,6 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
 
       return new Pair<>(image, new Point(-image.getWidth(null), -image.getHeight(null)));
     }
-
-    @Override
-    public void dropActionChanged(int gestureModifiers) {
-    }
   }
 
   private static boolean canDragElements(@NotNull Object[] elements, @NotNull DataContext dataContext, int dragAction) {
