@@ -22,7 +22,10 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
       "php" to 0.2,
       "kotlin" to 0.2,
       "java" to 0.1,
-      "ecmascript 6" to 0.2
+      "ecmascript 6" to 0.2,
+      "typescript" to 0.5,
+      "c/c++" to 0.5,
+      "c#" to 0.1
     )
   }
 
