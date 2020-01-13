@@ -27,7 +27,8 @@ object NGram {
     "python",
     "ruby",
     "scala",
-    "shell script"
+    "shell script",
+    "objectivec"
     )
 
   private fun isSupported(language: Language): Boolean = language.id.toLowerCase() in SUPPORTED_LANGUAGES
