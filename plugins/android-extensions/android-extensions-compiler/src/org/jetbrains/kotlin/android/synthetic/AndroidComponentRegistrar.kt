@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.android.parcel.ParcelableCodegenExtension
 import org.jetbrains.kotlin.android.parcel.ParcelableDeclarationChecker
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
+import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidIrExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
@@ -129,6 +131,9 @@ class AndroidComponentRegistrar : ComponentRegistrar {
 
             ExpressionCodegenExtension.registerExtension(project,
                     CliAndroidExtensionsExpressionCodegenExtension(isExperimental, globalCacheImpl))
+
+            IrGenerationExtension.registerExtension(project,
+                    CliAndroidIrExtension(isExperimental, globalCacheImpl))
 
             StorageComponentContainerContributor.registerExtension(project,
                     AndroidExtensionPropertiesComponentContainerContributor())
