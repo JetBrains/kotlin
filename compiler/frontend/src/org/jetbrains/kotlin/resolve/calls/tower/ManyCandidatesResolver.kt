@@ -26,7 +26,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     protected val callComponents: KotlinCallComponents,
     val builtIns: KotlinBuiltIns
 ) : InferenceSession {
-    private val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
+    protected val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
     private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
     private val completedCalls = hashSetOf<ResolvedAtom>()
 
@@ -170,18 +170,24 @@ data class ResolutionResultCallInfo<D : CallableDescriptor>(
     val overloadResolutionResults: OverloadResolutionResults<D>
 )
 
-class PSIPartialCallInfo(
-    override val callResolutionResult: PartialCallResolutionResult,
+abstract class CallInfo(
+    open val callResolutionResult: SingleCallResolutionResult,
     val context: BasicCallResolutionContext,
     val tracingStrategy: TracingStrategy
-) : PartialCallInfo
+)
+
+class PSIPartialCallInfo(
+    override val callResolutionResult: PartialCallResolutionResult,
+    context: BasicCallResolutionContext,
+    tracingStrategy: TracingStrategy
+) : CallInfo(callResolutionResult, context, tracingStrategy), PartialCallInfo
 
 class PSICompletedCallInfo(
     override val callResolutionResult: CompletedCallResolutionResult,
-    val context: BasicCallResolutionContext,
+    context: BasicCallResolutionContext,
     val resolvedCall: ResolvedCall<*>,
-    val tracingStrategy: TracingStrategy
-) : CompletedCallInfo
+    tracingStrategy: TracingStrategy
+) : CallInfo(callResolutionResult, context, tracingStrategy), CompletedCallInfo
 
 class PSIErrorCallInfo<D : CallableDescriptor>(
     override val callResolutionResult: CallResolutionResult,

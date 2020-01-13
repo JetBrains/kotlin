@@ -9846,6 +9846,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/kt10822.kt");
         }
 
+        @TestMetadata("kt35684.kt")
+        public void testKt35684() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt35684.kt");
+        }
+
         @TestMetadata("lastExpressionOfLambdaWithNothingConstraint.kt")
         public void testLastExpressionOfLambdaWithNothingConstraint() throws Exception {
             runTest("compiler/testData/codegen/box/inference/lastExpressionOfLambdaWithNothingConstraint.kt");
