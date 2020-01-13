@@ -55,7 +55,7 @@ public class ScalaGradleProjectResolverExtension extends AbstractProjectResolver
 
   @NotNull
   @Override
-  public Set<Class> getExtraProjectModelClasses() {
+  public Set<Class<?>> getExtraProjectModelClasses() {
     return Collections.singleton(ScalaModel.class);
   }
 

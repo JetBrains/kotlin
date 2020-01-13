@@ -42,7 +42,7 @@ public class PatternCompilerFactoryImpl extends PatternCompilerFactory {
       return result.isEmpty()? ArrayUtil.EMPTY_CLASS_ARRAY : result.toArray(ArrayUtil.EMPTY_CLASS_ARRAY);
     }
   );
-  private final Map<List<Class>, PatternCompiler> myCompilers =
+  private final Map<List<Class<?>>, PatternCompiler> myCompilers =
     ConcurrentFactoryMap.createMap(key -> new PatternCompilerImpl(key));
 
   @NotNull

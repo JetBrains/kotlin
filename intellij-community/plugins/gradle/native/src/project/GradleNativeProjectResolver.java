@@ -66,13 +66,13 @@ public class GradleNativeProjectResolver extends AbstractProjectResolverExtensio
 
   @NotNull
   @Override
-  public Set<Class> getExtraProjectModelClasses() {
+  public Set<Class<?>> getExtraProjectModelClasses() {
     return ContainerUtil.set(org.gradle.tooling.model.cpp.CppProject.class, CppProject.class);
   }
 
   @NotNull
   @Override
-  public Set<Class> getToolingExtensionsClasses() {
+  public Set<Class<?>> getToolingExtensionsClasses() {
     return ContainerUtil.set(
       // native-gradle-tooling jar
       CppModelBuilder.class
@@ -80,7 +80,7 @@ public class GradleNativeProjectResolver extends AbstractProjectResolverExtensio
   }
 
   @Override
-  public Set<Class> getTargetTypes() {
+  public Set<Class<?>> getTargetTypes() {
     return ContainerUtil.set(
       org.jetbrains.plugins.gradle.nativeplatform.tooling.model.CppExecutable.class,
       org.jetbrains.plugins.gradle.nativeplatform.tooling.model.CppSharedLibrary.class,

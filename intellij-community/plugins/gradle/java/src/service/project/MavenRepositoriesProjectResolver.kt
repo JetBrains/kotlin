@@ -30,7 +30,7 @@ class MavenRepositoriesProjectResolver: AbstractProjectResolverExtension() {
     super.populateModuleExtraModels(gradleModule, ideModule)
   }
 
-  override fun getExtraProjectModelClasses(): Set<Class<*>> {
+  override fun getExtraProjectModelClasses(): MutableSet<Class<*>> {
     return Collections.singleton(RepositoriesModel::class.java)
   }
 

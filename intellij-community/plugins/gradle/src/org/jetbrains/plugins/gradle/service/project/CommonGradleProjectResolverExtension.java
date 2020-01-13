@@ -693,7 +693,7 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
 
   @NotNull
   @Override
-  public Set<Class> getExtraProjectModelClasses() {
+  public Set<Class<?>> getExtraProjectModelClasses() {
     return newLinkedHashSet(
       BuildScriptClasspathModel.class,
       GradleExtensions.class,
@@ -710,7 +710,7 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
   }
 
   @Override
-  public Set<Class> getTargetTypes() {
+  public Set<Class<?>> getTargetTypes() {
     return newLinkedHashSet(
       ExternalProjectDependency.class,
       ExternalLibraryDependency.class,

@@ -194,8 +194,8 @@ public abstract class AbstractModelBuilderTest {
   }
 
   @NotNull
-  private Set<Class> getToolingExtensionClasses() {
-    final Set<Class> classes = set(
+  private Set<Class<?>> getToolingExtensionClasses() {
+    final Set<Class<?>> classes = set(
       // external-system-rt.jar
       ExternalSystemSourceType.class,
       // gradle-tooling-extension-api jar
@@ -217,7 +217,7 @@ public abstract class AbstractModelBuilderTest {
   }
 
   @NotNull
-  protected Set<Class> doGetToolingExtensionClasses() {
+  protected Set<Class<?>> doGetToolingExtensionClasses() {
     return Collections.emptySet();
   }
 
@@ -228,7 +228,7 @@ public abstract class AbstractModelBuilderTest {
     }
   }
 
-  protected abstract Set<Class> getModels();
+  protected abstract Set<Class<?>> getModels();
 
 
   protected <T> Map<String, T> getModulesMap(final Class<T> aClass) {

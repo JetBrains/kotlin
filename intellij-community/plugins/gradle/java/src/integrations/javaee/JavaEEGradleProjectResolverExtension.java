@@ -119,7 +119,7 @@ public class JavaEEGradleProjectResolverExtension extends AbstractProjectResolve
 
   @NotNull
   @Override
-  public Set<Class> getExtraProjectModelClasses() {
+  public Set<Class<?>> getExtraProjectModelClasses() {
     return ContainerUtil.set(WebConfiguration.class, EarConfiguration.class);
   }
 

@@ -114,7 +114,7 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
   default void resolveFinished(@NotNull DataNode<ProjectData> projectDataNode) {}
 
   @NotNull
-  Set<Class> getExtraProjectModelClasses();
+  Set<Class<?>> getExtraProjectModelClasses();
 
   /**
    * Allows to request gradle tooling models after "sync" tasks are run
@@ -152,13 +152,13 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * @return classes to be available for gradle
    */
   @NotNull
-  Set<Class> getToolingExtensionsClasses();
+  Set<Class<?>> getToolingExtensionsClasses();
 
   /**
    * add target types to be used in the polymorphic containers
    * @return
    */
-  default Set<Class> getTargetTypes() {
+  default Set<Class<?>> getTargetTypes() {
     return Collections.emptySet();
   }
 

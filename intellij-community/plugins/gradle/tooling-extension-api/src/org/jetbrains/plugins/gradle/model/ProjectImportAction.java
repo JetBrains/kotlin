@@ -55,7 +55,7 @@ import java.util.*;
 public class ProjectImportAction implements BuildAction<ProjectImportAction.AllModels>, Serializable {
   private final Set<ProjectImportModelProvider> myProjectsLoadedModelProviders = new THashSet<ProjectImportModelProvider>();
   private final Set<ProjectImportModelProvider> myBuildFinishedModelProviders = new THashSet<ProjectImportModelProvider>();
-  private final Set<Class> myTargetTypes = new THashSet<Class>();
+  private final Set<Class<?>> myTargetTypes = new THashSet<Class<?>>();
   private final boolean myIsPreviewMode;
   private final boolean myIsCompositeBuildsSupported;
   private final boolean myUseCustomSerialization;
@@ -90,7 +90,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     }
   }
 
-  public void addTargetTypes(@NotNull Set<Class> targetTypes) {
+  public void addTargetTypes(@NotNull Set<Class<?>> targetTypes) {
     myTargetTypes.addAll(targetTypes);
   }
 
