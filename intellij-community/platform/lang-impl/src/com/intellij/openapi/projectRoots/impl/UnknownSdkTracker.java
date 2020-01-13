@@ -194,6 +194,7 @@ public class UnknownSdkTracker implements Disposable {
         registerNewSdkInJdkTable(sdkName, sdk);
         updateUnknownSdks();
       })
+      .buildPopup()
       .showUnderneathToTheRightOf(underneathRightOfComponent);
   }
 

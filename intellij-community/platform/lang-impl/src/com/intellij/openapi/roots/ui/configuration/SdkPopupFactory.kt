@@ -3,7 +3,7 @@ package com.intellij.openapi.roots.ui.configuration
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -12,6 +12,7 @@ import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupListener
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.util.Condition
@@ -45,20 +46,23 @@ import javax.swing.JPanel
  *
  * To show the popup, call one of the `SdkPopupBuilder.show*` methods
  */
-object SdkPopupFactory {
-  @JvmStatic
-  fun newBuilder() = SdkPopupBuilder.newBuilder()
+interface SdkPopupFactory {
+  fun createBuilder() : SdkPopupBuilder
+  fun createPopup(builder: SdkPopupBuilder): SdkPopup
+
+  companion object {
+    @JvmStatic
+    fun newBuilder() = service<SdkPopupFactory>().createBuilder()
+  }
 }
 
 /**
  * Represents Sdk selector popup
  * @see SdkPopupFactory
  */
-interface SdkPopup {
-  fun showInFocusCenter()
+interface SdkPopup : JBPopup {
   fun showPopup(e: AnActionEvent)
   fun showUnderneathToTheRightOf(component: Component)
-  fun showInBestPositionFor(editor: Editor)
 }
 
 @Suppress("DataClassPrivateConstructor")
@@ -73,12 +77,14 @@ data class SdkPopupBuilder private constructor(
 
   val registerNewSdk : Boolean = false,
   val updateProjectSdk : Boolean = false,
-  val updateSdkForFile: VirtualFile? = null,
+
+  val updateSdkForVirtualFile: VirtualFile? = null,
+  val updateSdkForPsiFile: PsiFile? = null,
 
   val onItemSelected: Consumer<SdkListItem>? = null,
+  val onSdkSelected: Consumer<Sdk>? = null,
   val onClosed: Runnable? = null
-) : SdkPopup {
-
+) {
   companion object {
     internal fun newBuilder() = SdkPopupBuilder()
   }
@@ -101,17 +107,14 @@ data class SdkPopupBuilder private constructor(
    * sets the project SDK otherwise.
    */
   @Contract(pure = true)
-  fun updateSdkForFile(file: PsiFile): SdkPopupBuilder {
-    val virtualFile = file.virtualFile
-    return copy(updateSdkForFile = virtualFile, updateProjectSdk = virtualFile == null)
-  }
+  fun updateSdkForFile(file: PsiFile) = copy(updateSdkForPsiFile = file)
 
   /**
    * Sets a custom module SDK to the selected SDK if there is module and the module uses custom SDK,
    * sets the project SDK otherwise.
    */
   @Contract(pure = true)
-  fun updateSdkForFile(file: VirtualFile) = copy(updateSdkForFile = file)
+  fun updateSdkForFile(file: VirtualFile) = copy(updateSdkForVirtualFile = file)
 
   @Contract(pure = true)
   fun withProject(project: Project?) = copy(project = project)
@@ -148,16 +151,35 @@ data class SdkPopupBuilder private constructor(
   fun onClosed(onClosed: Runnable) = copy(onClosed = onClosed)
 
   @Contract(pure = true)
-  fun onSdkSelected(onItemSelected: Consumer<Sdk>) = onItemSelected(
-    Consumer {
-      if (it is SdkListItem.SdkItem) {
-        onItemSelected.accept(it.sdk)
-      }
-    }
-  )
+  fun onSdkSelected(onSdkSelected: Consumer<Sdk>) = copy(onSdkSelected = onSdkSelected)
 
   @Contract(pure = true)
-  private fun build(): SdkPopup {
+  fun buildPopup() = service<SdkPopupFactory>().createPopup(copy())
+}
+
+
+private interface SdkPopupListener {
+  fun onClosed()
+
+  /**
+   * Executed when a new item was created via a user action
+   * and added to the model, called after model is refreshed
+   */
+  fun onNewItemAddedAndSelected(item: SdkListItem)
+
+  /**
+   * Executed when an existing selectable item was selected
+   * in the popup, it does mean no new items were created
+   * by a user
+   */
+  fun onExistingItemSelected(item: SdkListItem)
+}
+
+
+internal class PlatformSdkPopupFactory : SdkPopupFactory {
+  override fun createBuilder(): SdkPopupBuilder = SdkPopupBuilder.newBuilder()
+
+  override fun createPopup(builder: SdkPopupBuilder): SdkPopup = builder.copy().run {
     val (sdksModel, ownsModel) = if (projectSdksModel != null) {
       projectSdksModel to false
     }
@@ -187,49 +209,67 @@ data class SdkPopupBuilder private constructor(
 
     val popupListener = object : SdkPopupListener {
       override fun onNewItemAddedAndSelected(item: SdkListItem) {
-        if ((updateSdkForFile != null || registerNewSdk || updateProjectSdk) && item is SdkListItem.SdkItem) {
+        val addToJdkTable = registerNewSdk || updateProjectSdk || updateSdkForPsiFile != null || updateSdkForVirtualFile != null
+
+        if (addToJdkTable && item is SdkListItem.SdkItem) {
           val sdk = item.sdk
           runWriteAction {
             val jdkTable = ProjectJdkTable.getInstance()
             if (jdkTable.findJdk(sdk.name) == null) {
               jdkTable.addJdk(sdk)
             }
-
-            fun setProjectSdk() {
-              requireNotNull(project) { "project must be set to use " + ::updateProjectSdkFromSelection.name }
-              ProjectRootManager.getInstance(project).projectSdk = sdk
-            }
-
-            if (updateProjectSdk) {
-              setProjectSdk()
-            }
-
-            if (updateSdkForFile != null) {
-              requireNotNull(project) { "project must be set to use " + ::updateProjectSdkFromSelection.name }
-
-              val module = ModuleUtilCore.findModuleForFile(updateSdkForFile, project)
-              if (module != null) {
-                val moduleManager = ModuleRootManager.getInstance(module)
-                if (moduleManager.isSdkInherited) {
-                  if (!updateProjectSdk) {
-                    setProjectSdk()
-                  }
-                } else {
-                  moduleManager.modifiableModel.also {
-                    it.sdk = sdk
-                    it.commit()
-                  }
-                }
-              }
-            }
           }
         }
 
-        onItemSelected?.accept(item)
+        onItemSelected(item)
       }
 
       override fun onExistingItemSelected(item: SdkListItem) {
+        onItemSelected(item)
+      }
+
+      private fun onItemSelected(item: SdkListItem) {
         onItemSelected?.accept(item)
+
+        if (item is SdkListItem.SdkItem) {
+          onSdkSelected(item.sdk)
+        }
+      }
+
+      private fun onSdkSelected(sdk: Sdk) {
+        onSdkSelected?.accept(sdk)
+
+        if (updateProjectSdk) {
+          runWriteAction {
+            requireNotNull(project) { "project must be set to use " + SdkPopupBuilder::updateProjectSdkFromSelection.name }
+            ProjectRootManager.getInstance(project).projectSdk = sdk
+          }
+        }
+
+        if (updateSdkForPsiFile != null || updateSdkForVirtualFile != null) {
+          requireNotNull(project) { "project must be set to use " + ::updateProjectSdkFromSelection.name }
+
+          runWriteAction {
+            val moduleToUpdateSdk = when {
+              updateSdkForVirtualFile != null -> ModuleUtilCore.findModuleForFile(updateSdkForVirtualFile, project)
+              updateSdkForPsiFile != null -> ModuleUtilCore.findModuleForFile(updateSdkForPsiFile)
+              else -> null
+            }
+
+            if (moduleToUpdateSdk != null) {
+              val roots = ModuleRootManager.getInstance(moduleToUpdateSdk)
+              if (!roots.isSdkInherited) {
+                roots.modifiableModel.also {
+                  it.sdk = sdk
+                  it.commit()
+                }
+                return@runWriteAction
+              }
+            }
+
+            ProjectRootManager.getInstance(project).projectSdk = sdk
+          }
+        }
       }
 
       override fun onClosed() {
@@ -240,129 +280,105 @@ data class SdkPopupBuilder private constructor(
     return createSdkPopup(project, sdksModel, ownsModel, modelBuilder, popupListener)
   }
 
-  override fun showInBestPositionFor(editor: Editor) = build().showInBestPositionFor(editor)
-  override fun showInFocusCenter() = build().showInFocusCenter()
-  override fun showPopup(e: AnActionEvent) = build().showPopup(e)
-  override fun showUnderneathToTheRightOf(component: Component) = build().showUnderneathToTheRightOf(component)
-}
+  private fun createSdkPopup(
+    project: Project?,
+    projectSdksModel: ProjectSdksModel,
+    ownsProjectSdksModel: Boolean,
+    myModelBuilder: SdkListModelBuilder,
+    listener: SdkPopupListener
+  ): SdkPopup {
+    lateinit var popup: SdkPopupImpl
+    val context = SdkListItemContext(project, projectSdksModel)
 
-
-private interface SdkPopupListener {
-  fun onClosed()
-
-  /**
-   * Executed when a new item was created via a user action
-   * and added to the model, called after model is refreshed
-   */
-  fun onNewItemAddedAndSelected(item: SdkListItem)
-
-  /**
-   * Executed when an existing selectable item was selected
-   * in the popup, it does mean no new items were created
-   * by a user
-   */
-  fun onExistingItemSelected(item: SdkListItem)
-}
-
-private fun createSdkPopup(
-  project: Project?,
-  projectSdksModel: ProjectSdksModel,
-  ownsProjectSdksModel: Boolean,
-  myModelBuilder: SdkListModelBuilder,
-  listener: SdkPopupListener
-): SdkPopup {
-  lateinit var popup: SdkPopupImpl
-  val context = SdkListItemContext(project, projectSdksModel)
-
-  val onItemSelected = Consumer<SdkListItem> { value ->
-    myModelBuilder.processSelectedElement(popup.popupOwner, value,
-                                          listener::onNewItemAddedAndSelected,
-                                          listener::onExistingItemSelected
-    )
-  }
-
-  popup = SdkPopupImpl(context, onItemSelected)
-
-  val modelListener: SdkListModelBuilder.ModelListener = object : SdkListModelBuilder.ModelListener {
-    override fun syncModel(model: SdkListModel) {
-      context.myModel = model
-      popup.syncWithModelChange()
+    val onItemSelected = Consumer<SdkListItem> { value ->
+      myModelBuilder.processSelectedElement(popup.popupOwner, value,
+                                            listener::onNewItemAddedAndSelected,
+                                            listener::onExistingItemSelected
+      )
     }
-  }
 
-  myModelBuilder.addModelListener(modelListener)
+    popup = SdkPopupImpl(context, onItemSelected)
 
-  popup.addListener(object : JBPopupListener {
-    override fun beforeShown(event: LightweightWindowEvent) {
-      if (ownsProjectSdksModel) {
-        projectSdksModel.reset(project)
+    val modelListener: SdkListModelBuilder.ModelListener = object : SdkListModelBuilder.ModelListener {
+      override fun syncModel(model: SdkListModel) {
+        context.myModel = model
+        popup.syncWithModelChange()
       }
-      myModelBuilder.reloadActions()
-      myModelBuilder.detectItems(popup.list, popup)
-      myModelBuilder.reloadSdks()
     }
 
-    override fun onClosed(event: LightweightWindowEvent) {
-      myModelBuilder.removeListener(modelListener)
-      listener.onClosed()
-    }
-  })
+    myModelBuilder.addModelListener(modelListener)
 
-  return popup
-}
-
-private class SdkPopupImpl(
-  context: SdkListItemContext,
-  onItemSelected: Consumer<SdkListItem>
-) : ComboBoxPopup<SdkListItem>(context, null, onItemSelected), SdkPopup {
-  val popupOwner: JComponent
-    get() {
-      val owner = myOwner
-      if (owner is JComponent) {
-        return owner
+    popup.addListener(object : JBPopupListener {
+      override fun beforeShown(event: LightweightWindowEvent) {
+        if (ownsProjectSdksModel) {
+          projectSdksModel.reset(project)
+        }
+        myModelBuilder.reloadActions()
+        myModelBuilder.detectItems(popup.list, popup)
+        myModelBuilder.reloadSdks()
       }
 
-      if (owner is JFrame) {
-        owner.rootPane?.let { return it }
+      override fun onClosed(event: LightweightWindowEvent) {
+        myModelBuilder.removeListener(modelListener)
+        listener.onClosed()
+      }
+    })
+
+    return popup
+  }
+
+  private class SdkPopupImpl(
+    context: SdkListItemContext,
+    onItemSelected: Consumer<SdkListItem>
+  ) : ComboBoxPopup<SdkListItem>(context, null, onItemSelected), SdkPopup {
+    val popupOwner: JComponent
+      get() {
+        val owner = myOwner
+        if (owner is JComponent) {
+          return owner
+        }
+
+        if (owner is JFrame) {
+          owner.rootPane?.let { return it }
+        }
+
+        if (owner is Window) {
+          owner.components.first { it is JComponent }?.let { return it as JComponent }
+        }
+
+        return JPanel()
       }
 
-      if (owner is Window) {
-        owner.components.first { it is JComponent }?.let { return it as JComponent }
+    override fun showPopup(e: AnActionEvent) {
+      if (e is AnActionEventWrapper) {
+        e.showPopup(this)
       }
-
-      return JPanel()
+      else {
+        showInBestPositionFor(e.dataContext)
+      }
     }
 
-  override fun showPopup(e: AnActionEvent) {
-    if (e is AnActionEventWrapper) {
-      e.showPopup(this)
-    }
-    else {
-      showInBestPositionFor(e.dataContext)
+    override fun showUnderneathToTheRightOf(component: Component) {
+      val popupWidth = list.preferredSize.width
+      show(RelativePoint(component, Point(component.width - popupWidth, component.height)))
     }
   }
 
-  override fun showUnderneathToTheRightOf(component: Component) {
-    val popupWidth = list.preferredSize.width
-    show(RelativePoint(component, Point(component.width - popupWidth, component.height)))
+  private class SdkListItemContext(
+    private val myProject: Project?,
+    mySdksModel: ProjectSdksModel
+  ) : ComboBoxPopup.Context<SdkListItem> {
+    var myModel = SdkListModel(true, emptyList())
+
+    private val myRenderer = object : SdkListPresenter(mySdksModel) {
+      override fun getModel(): SdkListModel {
+        return myModel
+      }
+    }
+
+    override fun getProject() = myProject
+    override fun getMaximumRowCount() = 30
+    override fun getModel() = myModel
+    override fun getRenderer() = myRenderer
   }
 }
-
-private class SdkListItemContext(
-  private val myProject: Project?,
-  mySdksModel: ProjectSdksModel
-) : ComboBoxPopup.Context<SdkListItem> {
-  var myModel = SdkListModel(true, emptyList())
-
-  private val myRenderer = object : SdkListPresenter(mySdksModel) {
-    override fun getModel(): SdkListModel {
-      return myModel
-    }
-  }
-
-  override fun getProject() = myProject
-  override fun getMaximumRowCount() = 30
-  override fun getModel() = myModel
-  override fun getRenderer() = myRenderer
-}
-
