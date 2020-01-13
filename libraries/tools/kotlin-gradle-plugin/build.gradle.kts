@@ -84,6 +84,7 @@ dependencies {
     testCompile(project(":kotlin-compiler-runner"))
     testCompile(project(":kotlin-test::kotlin-test-junit"))
     testCompile("junit:junit:4.12")
+    testCompile(project(":kotlin-gradle-statistics"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
