@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 internal operator fun <T> Provider<T>.getValue(thisRef: Any?, property: KProperty<*>) = get()
@@ -23,3 +24,13 @@ internal fun <T : Any> Project.newProperty(initialize: (() -> T)? = null): Prope
         if (initialize != null)
             set(provider(initialize))
     }
+
+private class OptionalProviderDelegate<T>(private val provider: Provider<T?>) : ReadOnlyProperty<Any?, T?> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T? =
+        if (provider.isPresent)
+            provider.get()
+        else null
+}
+
+internal fun <T> Project.optionalProvider(initialize: () -> T?): ReadOnlyProperty<Any?, T?> =
+    OptionalProviderDelegate(provider(initialize))

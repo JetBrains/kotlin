@@ -10,7 +10,6 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
-import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
@@ -38,8 +37,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.incremental.classpathAsList
-import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import javax.inject.Inject
@@ -174,12 +171,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     // Store this file collection before it is filtered by File::exists to ensure that Gradle Instant execution doesn't serialize the
     // filtered files, losing those that don't exist yet and will only be created during build
     private val compileClasspathImpl by project.provider {
-        classpath + additionalClasspath
+        classpath + project.files(additionalClasspath)
     }
 
     @get:Internal // classpath already participates in the checks
     internal val compileClasspath: Iterable<File>
-        get() = compileClasspathImpl.filter { it.exists() }
+        get() = compileClasspathImpl
 
     @field:Transient
     private val sourceFilesExtensionsSources: MutableList<Iterable<String>> = mutableListOf()
@@ -218,7 +215,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val coroutinesStr: String
         get() = coroutines.name
 
-    private val coroutines: Coroutines by project.provider {
+    @get:Internal
+    internal val coroutines: Coroutines by project.provider {
         kotlinExt.experimental.coroutines
             ?: coroutinesFromGradleProperties
             ?: Coroutines.DEFAULT
@@ -317,27 +315,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
      */
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
-    private val isMultiplatform: Boolean by project.provider {
+    @get:Internal
+    internal val isMultiplatform: Boolean by project.provider {
         project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
     }
 
     override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        args.coroutinesState = when (coroutines) {
-            Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
-            Coroutines.WARN -> CommonCompilerArguments.WARN
-            Coroutines.ERROR -> CommonCompilerArguments.ERROR
-            Coroutines.DEFAULT -> CommonCompilerArguments.DEFAULT
-        }
-
-        logger.kotlinDebug { "args.coroutinesState=${args.coroutinesState}" }
-
-        if (logger.isDebugEnabled) {
-            args.verbose = true
-        }
-
-        args.multiPlatform = isMultiplatform
-
-        setupPlugins(args)
+        AbstractKotlinCompileArgumentsContributor(thisTaskProvider).contributeArguments(
+            args,
+            compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
+        )
     }
 
     internal fun setupPlugins(compilerArgs: T) {
@@ -350,6 +337,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         return taskBuildDir.walk().any { it != taskBuildDir && it.isFile }
     }
 }
+
+internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
+    get() = checkNotNull(project.locateTask<T>(name))
 
 @CacheableTask
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
@@ -390,28 +380,15 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         K2JVMCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
+        compilerArgumentsContributor.contributeArguments(args, compilerArgumentsConfigurationFlags(
+            defaultsOnly,
+            ignoreClasspathResolutionErrors
+        ))
+    }
 
-        args.moduleName = moduleName
-        logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
-
-        args.friendPaths = friendPaths
-        logger.kotlinDebug { "args.friendPaths = ${args.friendPaths?.joinToString() ?: "[]"}" }
-
-        if (defaultsOnly) return
-
-        args.allowNoSourceFiles = true
-        args.classpathAsList = try {
-            compileClasspath.toList()
-        } catch (e: Exception) {
-            if (ignoreClasspathResolutionErrors) emptyList() else throw(e)
-        }
-        args.destinationAsFile = destinationDir
-        parentKotlinOptionsImpl?.updateArguments(args)
-        kotlinOptionsImpl.updateArguments(args)
-
-        logger.kotlinDebug { "$name destinationDir = $destinationDir" }
+    @get:Internal
+    internal val compilerArgumentsContributor: CompilerArgumentsContributor<K2JVMCompilerArguments> by project.provider {
+        KotlinJvmCompilerArgumentsContributor(thisTaskProvider)
     }
 
     @Internal
@@ -488,13 +465,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     }
 
     // override setSource to track source directory sets and files (for generated android folders)
-    override fun setSource(sources: Any?) {
+    override fun setSource(sources: Any) {
         sourceRootsContainer.set(sources)
         super.setSource(sources)
     }
 
     // override source to track source directory sets and files (for generated android folders)
-    override fun source(vararg sources: Any?): SourceTask? {
+    override fun source(vararg sources: Any): SourceTask {
         sourceRootsContainer.add(*sources)
         return super.source(*sources)
     }

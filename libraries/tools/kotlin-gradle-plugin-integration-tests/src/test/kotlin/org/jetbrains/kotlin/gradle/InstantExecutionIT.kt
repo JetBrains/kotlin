@@ -15,7 +15,7 @@ import kotlin.test.fail
 
 class InstantExecutionIT : BaseGradleIT() {
     private val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v4_0_ALPHA_1
+        get() = AGPVersion.v4_0_ALPHA_8
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
@@ -23,7 +23,7 @@ class InstantExecutionIT : BaseGradleIT() {
             androidGradlePluginVersion = androidGradlePluginVersion
         )
 
-    private val minimumGradleVersion = GradleVersionRequired.AtLeast("6.1-milestone-1")
+    private val minimumGradleVersion = GradleVersionRequired.AtLeast("6.1-rc-3")
 
     @Test
     fun testSimpleKotlinJvmProject() = with(Project("kotlinProject", minimumGradleVersion)) {
@@ -31,14 +31,37 @@ class InstantExecutionIT : BaseGradleIT() {
     }
 
     @Test
-    fun testSimpleKotlinAndroidProject() = with(Project("AndroidProject", minimumGradleVersion)) {
-        applyAndroidAndroid40Alpha4KotlinVersionWorkaround()
-        testInstantExecutionOf(":Lib:compileFlavor1DebugKotlin", ":Android:compileFlavor1DebugKotlin")
+    fun testSimpleKotlinAndroidProject() = with(Project("android-dagger", minimumGradleVersion, "kapt2")) {
+        applyAndroid40Alpha4KotlinVersionWorkaround()
+        projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=false")
+        testInstantExecutionOf(":app:compileDebugKotlin", ":app:kaptDebugKotlin", ":app:kaptGenerateStubsDebugKotlin")
     }
 
-    private fun Project.testInstantExecutionOf(vararg taskNames: String) {
+    @Test
+    fun testIncrementalKaptProject() = with(getIncrementalKaptProject()) {
+        testInstantExecutionOf(
+            ":compileKotlin",
+            ":kaptKotlin",
+            buildOptions = defaultBuildOptions().copy(
+                incremental = true,
+                kaptOptions = KaptOptions(
+                    verbose = true,
+                    useWorkers = true,
+                    incrementalKapt = true,
+                    includeCompileClasspath = false
+                )
+            )
+        )
+    }
+
+    private fun getIncrementalKaptProject() =
+        Project("kaptIncrementalCompilationProject", minimumGradleVersion).apply {
+            setupIncrementalAptProject("AGGREGATING")
+        }
+
+    private fun Project.testInstantExecutionOf(vararg taskNames: String, buildOptions: BuildOptions = defaultBuildOptions()) {
         // First, run a build that serializes the tasks state for instant execution in further builds
-        instantExecutionOf(*taskNames) {
+        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksExecuted(*taskNames)
             checkInstantExecutionSucceeded()
@@ -49,12 +72,12 @@ class InstantExecutionIT : BaseGradleIT() {
         }
 
         // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-        instantExecutionOf(*taskNames) {
+        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksExecuted(*taskNames)
         }
 
-        instantExecutionOf(*taskNames) {
+        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksUpToDate(*taskNames)
         }
@@ -66,8 +89,12 @@ class InstantExecutionIT : BaseGradleIT() {
         }
     }
 
-    private fun Project.instantExecutionOf(vararg tasks: String, check: CompiledProject.() -> Unit) =
-        build("-Dorg.gradle.unsafe.instant-execution=true", *tasks, check = check)
+    private fun Project.instantExecutionOf(
+        vararg tasks: String,
+        buildOptions: BuildOptions = defaultBuildOptions(),
+        check: CompiledProject.() -> Unit
+    ) =
+        build("-Dorg.gradle.unsafe.instant-execution=true", *tasks, options = buildOptions, check = check)
 
     /**
      * Copies all files from the directory containing the given [htmlReportFile] to a
@@ -98,7 +125,7 @@ class InstantExecutionIT : BaseGradleIT() {
      * test project's repositories, where there's no 'kotlin-eap' repo.
      * TODO remove this workaround once an Android Gradle plugin version is used that depends on the stable Kotlin version
      */
-    private fun Project.applyAndroidAndroid40Alpha4KotlinVersionWorkaround() {
+    private fun Project.applyAndroid40Alpha4KotlinVersionWorkaround() {
         setupWorkingDir()
 
         val resolutionStrategyHack = """
