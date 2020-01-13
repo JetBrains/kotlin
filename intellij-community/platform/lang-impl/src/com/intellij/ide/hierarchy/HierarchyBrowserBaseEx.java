@@ -206,7 +206,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   protected abstract HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement);
 
   @Nullable
-  protected abstract Comparator<NodeDescriptor> getComparator();
+  protected abstract Comparator<NodeDescriptor<?>> getComparator();
 
   @NotNull
   protected abstract String getActionPlace();
@@ -604,7 +604,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     @Override
     public final void setSelected(@NotNull final AnActionEvent event, final boolean flag) {
       HierarchyBrowserManager.getSettings(myProject).SORT_ALPHABETICALLY = flag;
-      final Comparator<NodeDescriptor> comparator = getComparator();
+      final Comparator<NodeDescriptor<?>> comparator = getComparator();
       myType2Sheet.values().stream().map(s->s.myStructureTreeModel).filter(m-> m != null).forEach(m->m.setComparator(comparator));
     }
 

@@ -1,5 +1,4 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ide.commander;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
@@ -156,7 +155,7 @@ public abstract class AbstractListBuilder {
 
       for (int i = 0; i < myModel.getSize(); i++) {
         if (myModel.getElementAt(i) instanceof AbstractTreeNode) {
-          final AbstractTreeNode desc = (AbstractTreeNode)myModel.getElementAt(i);
+          final AbstractTreeNode<?> desc = (AbstractTreeNode)myModel.getElementAt(i);
           if (desc.getValue() instanceof StructureViewTreeElement) {
             StructureViewTreeElement treeelement = (StructureViewTreeElement)desc.getValue();
             if (element.equals(treeelement.getValue())) {
@@ -221,7 +220,7 @@ public abstract class AbstractListBuilder {
     return lastPathNode;
   }
 
-  private AbstractTreeNode findInChildren(AbstractTreeNode rootElement, VirtualFile file, Object element) {
+  private AbstractTreeNode findInChildren(AbstractTreeNode<?> rootElement, VirtualFile file, Object element) {
     Object[] childElements = getChildren(rootElement);
     List<AbstractTreeNode<?>> nodes = getAllAcceptableNodes(childElements, file);
     if (nodes.size() == 1) return nodes.get(0);
@@ -311,7 +310,7 @@ public abstract class AbstractListBuilder {
       myTreeStructure.commit();
     }
 
-    AbstractTreeNode parentDescriptor = myCurrentParent;
+    AbstractTreeNode<?> parentDescriptor = myCurrentParent;
 
     while (true) {
       parentDescriptor.update();
@@ -319,14 +318,14 @@ public abstract class AbstractListBuilder {
       parentDescriptor = parentDescriptor.getParent();
     }
 
-    final Object[] children = getChildren(parentDescriptor);
-    final HashMap<Object,Integer> elementToIndexMap = new HashMap<>();
+    Object[] children = getChildren(parentDescriptor);
+    HashMap<Object, Integer> elementToIndexMap = new HashMap<>();
     for (int i = 0; i < children.length; i++) {
       elementToIndexMap.put(children[i], Integer.valueOf(i));
     }
 
-    final List<NodeDescriptor> resultDescriptors = new ArrayList<>();
-    final Object[] listChildren = myModel.toArray();
+    List<NodeDescriptor<?>> resultDescriptors = new ArrayList<>();
+    Object[] listChildren = myModel.toArray();
     for (final Object child : listChildren) {
       if (!(child instanceof NodeDescriptor)) {
         continue;
@@ -352,7 +351,7 @@ public abstract class AbstractListBuilder {
       }
     }
 
-    final SelectionInfo selection = storeSelection();
+    SelectionInfo selection = storeSelection();
     if (myComparator != null) {
       Collections.sort(resultDescriptors, myComparator);
     }

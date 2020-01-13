@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.util;
 
@@ -27,7 +27,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
@@ -201,8 +200,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
     if (myInitialFile != null) {
       name = myInitialFile.getName();
     }
-    PsiElement context = myInitialFile;
-    myGotoByNamePanel = new ChooseByNamePanel(myProject, new MyGotoFileModel(), name, true, context) {
+    myGotoByNamePanel = new ChooseByNamePanel(myProject, new MyGotoFileModel(), name, true, myInitialFile) {
       @Override
       protected void close(final boolean isOk) {
         super.close(isOk);

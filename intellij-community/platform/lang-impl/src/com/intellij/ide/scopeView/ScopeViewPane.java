@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.scopeView;
 
@@ -71,7 +71,7 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
   private final NamedScopesHolder myDependencyValidationManager;
   private final NamedScopesHolder myNamedScopeManager;
   private ScopeViewTreeModel myTreeModel;
-  private Comparator<? super NodeDescriptor> myComparator;
+  private Comparator<? super NodeDescriptor<?>> myComparator;
   private LinkedHashMap<String, NamedScopeFilter> myFilters;
   private JScrollPane myScrollPane;
 
@@ -342,7 +342,7 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
   }
 
   @Override
-  protected void installComparator(AbstractTreeBuilder builder, @NotNull Comparator<? super NodeDescriptor> comparator) {
+  protected void installComparator(AbstractTreeBuilder builder, @NotNull Comparator<? super NodeDescriptor<?>> comparator) {
     if (myTreeModel != null) {
       myTreeModel.setComparator(comparator);
     }

@@ -4,7 +4,6 @@ package com.intellij.ide.favoritesTreeView;
 import com.intellij.ProjectTopics;
 import com.intellij.ide.CopyPasteUtil;
 import com.intellij.ide.projectView.BaseProjectTreeBuilder;
-import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.ProjectViewPsiTreeChangeListener;
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase;
 import com.intellij.ide.util.treeView.AbstractTreeNode;

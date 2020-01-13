@@ -520,7 +520,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   }
 
   @NotNull
-  protected Comparator<NodeDescriptor> createComparator() {
+  protected Comparator<NodeDescriptor<?>> createComparator() {
     return new GroupByTypeComparator(ProjectView.getInstance(myProject), getId());
   }
 
@@ -533,11 +533,11 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   }
 
   @TestOnly
-  public void installComparator(@NotNull Comparator<? super NodeDescriptor> comparator) {
+  public void installComparator(@NotNull Comparator<? super NodeDescriptor<?>> comparator) {
     installComparator(getTreeBuilder(), comparator);
   }
 
-  protected void installComparator(AbstractTreeBuilder builder, @NotNull Comparator<? super NodeDescriptor> comparator) {
+  protected void installComparator(AbstractTreeBuilder builder, @NotNull Comparator<? super NodeDescriptor<?>> comparator) {
     if (builder != null) builder.setNodeDescriptorComparator(comparator);
   }
 

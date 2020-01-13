@@ -81,7 +81,7 @@ import java.util.function.BiFunction;
 
 public final class ScopeViewTreeModel extends BaseTreeModel<AbstractTreeNode<?>> implements InvokerSupplier {
   private static final Logger LOG = Logger.getInstance(ScopeViewTreeModel.class);
-  private volatile Comparator<? super NodeDescriptor> comparator;
+  private volatile Comparator<? super NodeDescriptor<?>> comparator;
   private final ProjectFileTreeModel model;
   private final ProjectNode root;
 
@@ -179,7 +179,7 @@ public final class ScopeViewTreeModel extends BaseTreeModel<AbstractTreeNode<?>>
     });
   }
 
-  public void setComparator(Comparator<? super NodeDescriptor> comparator) {
+  public void setComparator(Comparator<? super NodeDescriptor<?>> comparator) {
     model.onValidThread(() -> {
       if (this.comparator == null && comparator == null) return;
       this.comparator = comparator;
@@ -387,8 +387,10 @@ public final class ScopeViewTreeModel extends BaseTreeModel<AbstractTreeNode<?>>
             result.add(node);
           }
         });
-        Comparator<? super NodeDescriptor> comparator = this.comparator;
-        if (comparator != null) result.sort(comparator);
+        Comparator<? super NodeDescriptor<?>> comparator = this.comparator;
+        if (comparator != null) {
+          result.sort(comparator);
+        }
         return result;
       }
     }

@@ -203,7 +203,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   protected abstract HierarchyTreeStructure createHierarchyTreeStructure(@NotNull HierarchyScopeType type, @NotNull PsiElement psiElement);
 
   @Nullable
-  protected abstract Comparator<NodeDescriptor> getComparator();
+  protected abstract Comparator<NodeDescriptor<?>> getComparator();
 
   @NotNull
   protected abstract String getActionPlace();
@@ -360,7 +360,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
         if (structure == null) {
           return;
         }
-        Comparator<NodeDescriptor> comparator = getComparator();
+        Comparator<NodeDescriptor<?>> comparator = getComparator();
         StructureTreeModel myModel = comparator == null ? new StructureTreeModel<>(structure, sheet)
                                                         : new StructureTreeModel<>(structure, comparator, sheet);
         AsyncTreeModel atm = new AsyncTreeModel(myModel, sheet);
@@ -603,7 +603,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     @Override
     public final void setSelected(@NotNull final AnActionEvent event, final boolean flag) {
       HierarchyBrowserManager.getSettings(myProject).SORT_ALPHABETICALLY = flag;
-      final Comparator<NodeDescriptor> comparator = getComparator();
+      final Comparator<NodeDescriptor<?>> comparator = getComparator();
       myType2Sheet.values().stream().map(s->s.myStructureTreeModel).filter(m-> m != null).forEach(m->m.setComparator(comparator));
     }
 

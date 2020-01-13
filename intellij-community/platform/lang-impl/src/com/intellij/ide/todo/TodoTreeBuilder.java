@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.todo;
 
@@ -48,8 +48,8 @@ import java.util.*;
  */
 public abstract class TodoTreeBuilder implements Disposable {
   private static final Logger LOG = Logger.getInstance(TodoTreeBuilder.class);
-  public static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR =
-      Comparator.<NodeDescriptor>comparingInt(NodeDescriptor::getWeight).thenComparingInt(NodeDescriptor::getIndex);  
+  public static final Comparator<NodeDescriptor<?>> NODE_DESCRIPTOR_COMPARATOR =
+      Comparator.<NodeDescriptor<?>>comparingInt(NodeDescriptor::getWeight).thenComparingInt(NodeDescriptor::getIndex);
   protected final Project myProject;
 
   /**
@@ -310,7 +310,7 @@ public abstract class TodoTreeBuilder implements Disposable {
   }
 
   void rebuildCache(){
-    Set<VirtualFile> files = new HashSet<>(); 
+    Set<VirtualFile> files = new HashSet<>();
     collectFiles(virtualFile -> {
       files.add(virtualFile);
       return true;
@@ -491,7 +491,7 @@ public abstract class TodoTreeBuilder implements Disposable {
     getTodoTreeStructure().setFlattenPackages(state);
     rebuildTreeOnSettingChange();
   }
-  
+
   void setShowModules(boolean state) {
     getTodoTreeStructure().setShownModules(state);
     rebuildTreeOnSettingChange();

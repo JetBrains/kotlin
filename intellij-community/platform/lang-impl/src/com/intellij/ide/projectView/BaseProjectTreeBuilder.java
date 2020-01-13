@@ -49,7 +49,7 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
                                 @NotNull JTree tree,
                                 @NotNull DefaultTreeModel treeModel,
                                 @NotNull AbstractTreeStructure treeStructure,
-                                @Nullable Comparator<NodeDescriptor> comparator) {
+                                @Nullable Comparator<NodeDescriptor<?>> comparator) {
     init(tree, treeModel, treeStructure, comparator, DEFAULT_UPDATE_INACTIVE);
     getUi().setClearOnHideDelay(Registry.intValue("ide.tree.clearOnHideTime"));
     myProject = project;

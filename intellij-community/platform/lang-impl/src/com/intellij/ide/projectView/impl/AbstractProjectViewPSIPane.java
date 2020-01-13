@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView.impl;
 
@@ -118,8 +118,10 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
   }
 
   @Override
-  protected void installComparator(AbstractTreeBuilder builder, @NotNull Comparator<? super NodeDescriptor> comparator) {
-    if (myAsyncSupport != null) myAsyncSupport.setComparator(comparator);
+  protected void installComparator(AbstractTreeBuilder builder, @NotNull Comparator<? super NodeDescriptor<?>> comparator) {
+    if (myAsyncSupport != null) {
+      myAsyncSupport.setComparator(comparator);
+    }
     super.installComparator(builder, comparator);
   }
 
