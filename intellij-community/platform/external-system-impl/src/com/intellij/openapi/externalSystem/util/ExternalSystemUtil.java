@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.util;
 
 import com.intellij.build.*;
@@ -86,7 +86,6 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
-import com.intellij.openapi.wm.impl.ToolWindowImpl;
 import com.intellij.pom.Navigatable;
 import com.intellij.pom.NonNavigatable;
 import com.intellij.util.ArrayUtil;
@@ -107,10 +106,7 @@ import java.util.function.Supplier;
 import static com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalSettings.SyncType.*;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.doWriteAction;
 
-/**
- * @author Denis Zhdanov
- */
-public class ExternalSystemUtil {
+public final class ExternalSystemUtil {
   private static final Logger LOG = Logger.getInstance(ExternalSystemUtil.class);
 
   @NotNull private static final Map<String, String> RUNNER_IDS = new HashMap<>();
@@ -185,16 +181,7 @@ public class ExternalSystemUtil {
 
   @Nullable
   public static ToolWindow ensureToolWindowContentInitialized(@NotNull Project project, @NotNull ProjectSystemId externalSystemId) {
-    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-    if (toolWindowManager == null) return null;
-
-    final ToolWindow toolWindow = toolWindowManager.getToolWindow(externalSystemId.getReadableName());
-    if (toolWindow == null) return null;
-
-    if (toolWindow instanceof ToolWindowImpl) {
-      ((ToolWindowImpl)toolWindow).ensureContentInitialized();
-    }
-    return toolWindow;
+    return ToolWindowManager.getInstance(project).getToolWindow(externalSystemId.getReadableName());
   }
 
   /**
@@ -282,9 +269,9 @@ public class ExternalSystemUtil {
     }
   }
 
-  @Nullable
+  @NotNull
   private static String extractDetails(@NotNull Throwable e) {
-    final Throwable unwrapped = RemoteUtil.unwrap(e);
+    Throwable unwrapped = RemoteUtil.unwrap(e);
     if (unwrapped instanceof ExternalSystemException) {
       return ((ExternalSystemException)unwrapped).getOriginalReason();
     }
