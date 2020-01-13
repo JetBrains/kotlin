@@ -86,7 +86,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
   @Nls
   @Override
   public String getDisplayName() {
-    return "Startup Tasks";
+    return ExecutionBundle.message("configurable.ProjectStartupConfigurable.display.name");
   }
 
   @NotNull
