@@ -4,6 +4,7 @@ package com.intellij.completion.ml
 import com.intellij.codeInsight.completion.CompletionLocation
 import com.intellij.codeInsight.completion.CompletionWeigher
 import com.intellij.codeInsight.completion.ml.ElementFeatureProvider
+import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
@@ -18,7 +19,12 @@ class MLCompletionWeigher : CompletionWeigher() {
     val contextFeatures = storage.contextProvidersResult()
     for (provider in ElementFeatureProvider.forLanguage(storage.language)) {
       val name = provider.name
-      for ((featureName, featureValue) in provider.calculateFeatures(element, location, contextFeatures)) {
+
+      val features = storage.performanceTracker.trackElementFeaturesCalculation(name) {
+        provider.calculateFeatures(element, location, contextFeatures)
+      }
+
+      for ((featureName, featureValue) in features) {
         result["${name}_$featureName"] = featureValue
       }
     }

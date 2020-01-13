@@ -2,12 +2,14 @@
 package com.intellij.stats
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.LongAdder
 
 class PerformanceTracker {
   private var sortingCount = 0
 
   private val measures: ConcurrentHashMap<String, LongAdder> = ConcurrentHashMap()
+  private val elementProvidersMeasurer: ConcurrentHashMap<String, LongAdder> = ConcurrentHashMap()
 
   private var totalMlContribution: Long = 0L
 
@@ -38,7 +40,22 @@ class PerformanceTracker {
     addByKey("reordered.by.ml", 1)
   }
 
-  fun measurements(): Map<String, Long> = measures.mapValues { it.value.toLong() }
+  fun measurements(): Map<String, Long> {
+    flushElementProvidersContribution()
+    return measures.mapValues { it.value.toLong() }
+  }
+
+  fun <T> trackElementFeaturesCalculation(providerName: String, compute: () -> T): T {
+    val started = System.nanoTime()
+    val result = compute()
+    elementProvidersMeasurer.computeIfAbsent(providerName) { LongAdder() }.add(System.nanoTime() - started)
+    return result
+  }
+
+  private fun flushElementProvidersContribution() {
+    elementProvidersMeasurer.forEach { addByKey("element.features.${it.key}", TimeUnit.NANOSECONDS.toMillis(it.value.toLong())) }
+    elementProvidersMeasurer.clear()
+  }
 
   private fun addByKey(key: String, value: Long) {
     if (value != 0L) {
