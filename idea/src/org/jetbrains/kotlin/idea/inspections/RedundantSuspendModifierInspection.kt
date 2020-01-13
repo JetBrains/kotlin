@@ -17,8 +17,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.highlighter.hasSuspendCalls
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.namedFunctionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -36,9 +39,7 @@ class RedundantSuspendModifierInspection : AbstractKotlinInspection() {
             val descriptor = context[BindingContext.FUNCTION, function] ?: return
             if (descriptor.modality == Modality.OPEN) return
 
-            if (function.anyDescendantOfType<KtExpression> { it.hasSuspendCalls(context) }) {
-                return
-            }
+            if (function.hasSuspendCalls(context)) return
 
             holder.registerProblem(
                 suspendModifier,
@@ -50,5 +51,14 @@ class RedundantSuspendModifierInspection : AbstractKotlinInspection() {
                 )
             )
         })
+    }
+
+    private fun KtNamedFunction.hasSuspendCalls(context: BindingContext): Boolean {
+        return anyDescendantOfType<KtExpression> {
+            if (it is KtNameReferenceExpression && it.getReferencedName() == this.name && it.mainReference.resolve() == this) {
+                return@anyDescendantOfType false
+            }
+            it.hasSuspendCalls(context)
+        }
     }
 }
