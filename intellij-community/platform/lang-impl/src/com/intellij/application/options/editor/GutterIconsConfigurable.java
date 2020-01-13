@@ -2,6 +2,7 @@
 package com.intellij.application.options.editor;
 
 import com.intellij.codeInsight.daemon.*;
+import com.intellij.ide.IdeBundle;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -41,7 +42,6 @@ import java.util.*;
  * @author Dmitry Avdeev
  */
 public class GutterIconsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
-  public static final String DISPLAY_NAME = "Gutter Icons";
   public static final String ID = "editor.preferences.gutterIcons";
   private JPanel myPanel;
   private CheckBoxList<GutterIconDescriptor> myList;
@@ -52,7 +52,7 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
   @Nls
   @Override
   public String getDisplayName() {
-    return DISPLAY_NAME;
+    return IdeBundle.message("configurable.GutterIconsConfigurable.display.name");
   }
 
   @Nullable
