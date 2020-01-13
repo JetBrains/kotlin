@@ -25,5 +25,5 @@ data class BintrayRepository(val repository: String) : CustomMavenRepository {
 }
 
 object Repositories {
-    val KTOR_BINTRAY = BintrayRepository("ktor/ktor")
+    val KTOR_BINTRAY = BintrayRepository("kotlin/ktor")
 }
