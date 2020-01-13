@@ -167,7 +167,7 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
         it.copyTypeParametersFrom(this)
 
         // Copy the value parameters and insert the continuation parameter. The continuation parameter
-        // goes before the default argument mask and handler for default argument stubs.
+        // goes before the default argument mask(s) and handler for default argument stubs.
         // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
         // That would avoid the reshuffling both here and in createSuspendFunctionClassViewIfNeeded.
         var continuationValueParam: IrValueParameter? = null
@@ -203,9 +203,9 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
-        // Locate the caller continuation parameter. The continuation parameter is before default argument mask and handler params.
-        val callerHasDefaultMask = caller.valueParameters.lastOrNull()?.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION
-        val callerContinuationIndex = caller.valueParameters.size - 1 - (if (callerHasDefaultMask) 2 else 0)
+        // Locate the caller continuation parameter. The continuation parameter is before default argument mask(s) and handler params.
+        val callerNumberOfMasks = caller.valueParameters.count { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
+        val callerContinuationIndex = caller.valueParameters.size - 1 - (if (callerNumberOfMasks != 0) callerNumberOfMasks + 1 else 0)
         val continuationParameter =
             when {
                 caller.isInvokeSuspendOfLambda() || caller.isInvokeSuspendOfContinuation() ||
@@ -215,16 +215,17 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
                 else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters[callerContinuationIndex].symbol)
             }
         // If the suspend function view that we are calling has default parameters, we need to make sure to pass the
-        // continuation before the default parameter mask and handler.
-        val hasDefaultMask = view.valueParameters.last().origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION
-        val continuationIndex = valueArgumentsCount - (if (hasDefaultMask) 2 else 0)
+        // continuation before the default parameter mask(s) and handler.
+        val numberOfMasks = view.valueParameters.count { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
+        val continuationIndex = valueArgumentsCount - (if (numberOfMasks != 0) numberOfMasks + 1 else 0)
         for (i in 0 until continuationIndex) {
             it.putValueArgument(i, getValueArgument(i))
         }
         it.putValueArgument(continuationIndex, continuationParameter)
-        if (hasDefaultMask) {
-            it.putValueArgument(valueArgumentsCount - 1, getValueArgument(continuationIndex))
-            it.putValueArgument(valueArgumentsCount, getValueArgument(continuationIndex + 1))
+        if (numberOfMasks != 0) {
+            for (i in 0 until numberOfMasks + 1) {
+                it.putValueArgument(valueArgumentsCount + i - 1, getValueArgument(continuationIndex + i))
+            }
         }
     }
 }

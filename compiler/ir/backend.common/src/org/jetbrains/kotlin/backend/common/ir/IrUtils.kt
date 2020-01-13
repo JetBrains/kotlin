@@ -197,7 +197,7 @@ fun IrFunction.copyValueParametersInsertingContinuationFrom(from: IrFunction, in
     var additionalShift = 0
     from.valueParameters.forEach {
         // The continuation parameter goes before the default argument mask and handler.
-        if (it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION) {
+        if (it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION && additionalShift == 0) {
             insertContinuation()
             additionalShift = 1
         }
