@@ -1517,6 +1517,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/bridges/propertyDiamond.kt");
         }
 
+        @TestMetadata("propertyDiamondFakeOverride.kt")
+        public void testPropertyDiamondFakeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/propertyDiamondFakeOverride.kt");
+        }
+
         @TestMetadata("propertyInConstructor.kt")
         public void testPropertyInConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/propertyInConstructor.kt");
