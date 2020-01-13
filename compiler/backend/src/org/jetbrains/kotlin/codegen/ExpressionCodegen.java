@@ -2862,11 +2862,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    private static CodegenContext getContextForCompanionObjectAccessorIfRequiredOrNull(
+    private CodegenContext getContextForCompanionObjectAccessorIfRequiredOrNull(
             @NotNull ClassDescriptor companionObjectDescriptor,
             @NotNull CodegenContext contextBeforeInline
     ) {
         if (isDebuggerContext(contextBeforeInline)) {
+            return null;
+        }
+
+        if (!state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)) {
             return null;
         }
 

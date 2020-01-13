@@ -920,6 +920,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testKt14258_5() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/companion/kt14258_5.kt");
         }
+
+        @TestMetadata("privateCompanionObjectAccessors_after.kt")
+        public void testPrivateCompanionObjectAccessors_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/privateCompanionObjectAccessors_after.kt");
+        }
+
+        @TestMetadata("privateCompanionObjectAccessors_before.kt")
+        public void testPrivateCompanionObjectAccessors_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/privateCompanionObjectAccessors_before.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/conditions")
