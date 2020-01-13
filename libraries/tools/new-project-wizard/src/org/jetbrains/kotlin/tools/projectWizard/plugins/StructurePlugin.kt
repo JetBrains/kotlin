@@ -17,11 +17,10 @@ class StructurePlugin(context: Context) : Plugin(context) {
     }
     val name by stringSetting("Name", GenerationPhase.PROJECT_GENERATION)
 
-
-    val groupId by stringSetting("Artifact ID", GenerationPhase.PROJECT_GENERATION) {
+    val groupId by stringSetting("Group ID", GenerationPhase.PROJECT_GENERATION) {
         shouldNotBeBlank()
     }
-    val artifactId by stringSetting("Group ID", GenerationPhase.PROJECT_GENERATION) {
+    val artifactId by stringSetting("Artifact ID", GenerationPhase.PROJECT_GENERATION) {
         shouldNotBeBlank()
     }
     val version by stringSetting("Version", GenerationPhase.PROJECT_GENERATION) {
