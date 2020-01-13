@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -102,10 +103,11 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             val simpleName = declaration.name.asString()
 
             val internalName = when {
-                declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> {
+                declaration is IrFunction && !NameUtils.hasName(declaration.name) -> {
+                    // Replace "unnamed" function names with indices.
                     inventName(null, data).also { name ->
-                        // We save the name of the lambda to reuse it in the reference to it (produced by the closure conversion) later.
-                        localFunctionNames[(declaration as IrFunction).symbol] = name
+                        // We save the name of the function to reuse it in the reference to it (produced by the closure conversion) later.
+                        localFunctionNames[declaration.symbol] = name
                     }
                 }
                 enclosingName != null -> "$enclosingName$$simpleName"
