@@ -3,6 +3,8 @@ package com.intellij.application.options.editor;
 
 import com.intellij.codeInsight.daemon.*;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -27,10 +29,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.EmptyIcon;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -42,7 +41,8 @@ import java.util.*;
  * @author Dmitry Avdeev
  */
 public class GutterIconsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
-  public static final String ID = "editor.preferences.gutterIcons";
+  @NonNls public static final String ID = "editor.preferences.gutterIcons";
+
   private JPanel myPanel;
   private CheckBoxList<GutterIconDescriptor> myList;
   private JBCheckBox myShowGutterIconsJBCheckBox;
@@ -172,8 +172,8 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
   }
 
   private static String getPluginDisplayName(PluginDescriptor pluginDescriptor) {
-    final String name = pluginDescriptor.getName();
-    return "IDEA CORE".equals(name) ? "Common" : name;
+    if (pluginDescriptor instanceof IdeaPluginDescriptor && pluginDescriptor.getPluginId() == PluginManagerCore.CORE_ID) return IdeBundle.message("title.common");
+    return pluginDescriptor.getName();
   }
 
   private void createUIComponents() {
@@ -235,7 +235,6 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
   public List<GutterIconDescriptor> getDescriptors() { return myDescriptors; }
 
   public static class ShowSettingsAction extends DumbAwareAction {
-
     public ShowSettingsAction() {
     }
 
