@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.completion.ranker
 
-import com.completion.ranker.model.scala.MLWhiteBox
+import com.completion.ranker.model.scala.MLGlassBox
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.internal.ml.DecisionFunction
 import com.intellij.internal.ml.ModelMetadata
@@ -13,7 +13,7 @@ import com.intellij.openapi.extensions.PluginId
 class FallbackScalaMLRankingProvider : JarCompletionModelProvider("Scala", "scala_features"), WeakModelProvider {
   override fun createModel(metadata: ModelMetadata): DecisionFunction {
     return object : CompletionRankingModelBase(metadata) {
-      override fun predict(features: DoubleArray?): Double = MLWhiteBox.makePredict(features)
+      override fun predict(features: DoubleArray?): Double = MLGlassBox.makePredict(features)
     }
   }
 
