@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.ui;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,7 +14,6 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.impl.ToolWindowHeadlessManagerImpl;
-import com.intellij.openapi.wm.impl.ToolWindowImpl;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -28,11 +27,8 @@ import java.util.Set;
  * and show it when the first external project is linked to the ide project.
  * <p/>
  * This class encapsulates that functionality.
- *
- * @author Denis Zhdanov
  */
-public class ExternalToolWindowManager {
-
+public final class ExternalToolWindowManager {
   @SuppressWarnings("unchecked")
   public static void handle(@NotNull Project project) {
     for (final ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemApiUtil.getAllManagers()) {
@@ -82,14 +78,7 @@ public class ExternalToolWindowManager {
 
   @Nullable
   public static ToolWindow getToolWindow(@NotNull Project project, @NotNull ProjectSystemId externalSystemId) {
-    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-    if (toolWindowManager == null) {
-      return null;
-    }
-    ToolWindow result = toolWindowManager.getToolWindow(externalSystemId.getReadableName());
-    if (result instanceof ToolWindowImpl) {
-      ((ToolWindowImpl)result).ensureContentInitialized();
-    }
+    ToolWindow result = ToolWindowManager.getInstance(project).getToolWindow(externalSystemId.getReadableName());
     if (result == null && ApplicationManager.getApplication().isUnitTestMode()) {
       result = new ToolWindowHeadlessManagerImpl.MockToolWindow(project);
     }

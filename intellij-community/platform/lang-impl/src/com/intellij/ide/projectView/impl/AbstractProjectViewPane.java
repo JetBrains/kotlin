@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.DataManager;
@@ -767,10 +767,9 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
 
     @Override
     public DnDDragStartBean startDragging(DnDAction action, Point dragOrigin) {
-      final PsiElement[] psiElements = getSelectedPSIElements();
+      PsiElement[] psiElements = getSelectedPSIElements();
       TreePath[] paths = getSelectionPaths();
-      return new DnDDragStartBean(new TransferableWrapper(){
-
+      return new DnDDragStartBean(new TransferableWrapper() {
         @Override
         public List<File> asFileList() {
           return PsiCopyPasteManager.asFileList(psiElements);
@@ -817,10 +816,6 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
       g2.dispose();
 
       return new Pair<>(image, new Point(-image.getWidth(null), -image.getHeight(null)));
-    }
-
-    @Override
-    public void dragDropEnd() {
     }
 
     @Override

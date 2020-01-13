@@ -278,10 +278,6 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
           }
 
           @Override
-          public void dragDropEnd() {
-          }
-
-          @Override
           public void dropActionChanged(final int gestureModifiers) {
           }
         }, tree);
