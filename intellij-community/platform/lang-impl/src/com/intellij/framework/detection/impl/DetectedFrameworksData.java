@@ -32,13 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author nik
@@ -48,6 +44,7 @@ public class DetectedFrameworksData {
   private PersistentHashMap<Integer,TIntHashSet> myExistentFrameworkFiles;
   private final TIntObjectHashMap<TIntHashSet> myNewFiles;
   private final MultiMap<Integer, DetectedFrameworkDescription> myDetectedFrameworks;
+  private final Object myLock = new Object();
 
   public DetectedFrameworksData(Project project) {
     myDetectedFrameworks = new MultiMap<>();
@@ -78,68 +75,76 @@ public class DetectedFrameworksData {
   }
 
   public Collection<VirtualFile> retainNewFiles(@NotNull Integer detectorId, @NotNull Collection<? extends VirtualFile> files) {
-    TIntHashSet oldSet = myNewFiles.get(detectorId);
-    if (oldSet == null) {
-      oldSet = new TIntHashSet();
-      myNewFiles.put(detectorId, oldSet);
-    }
-
-    TIntHashSet existentFilesSet = null;
-    try {
-      existentFilesSet = myExistentFrameworkFiles.get(detectorId);
-    }
-    catch (IOException e) {
-      LOG.info(e);
-    }
-    final ArrayList<VirtualFile> newFiles = new ArrayList<>();
-    TIntHashSet newSet = new TIntHashSet();
-    for (VirtualFile file : files) {
-      final int fileId = FileBasedIndex.getFileId(file);
-      if (existentFilesSet == null || !existentFilesSet.contains(fileId)) {
-        newFiles.add(file);
-        newSet.add(fileId);
+    synchronized (myLock) {
+      TIntHashSet oldSet = myNewFiles.get(detectorId);
+      if (oldSet == null) {
+        oldSet = new TIntHashSet();
+        myNewFiles.put(detectorId, oldSet);
       }
-    }
-    if (newSet.equals(oldSet)) {
-      return Collections.emptyList();
-    }
-    myNewFiles.put(detectorId, newSet);
-    return newFiles;
-  }
 
-  public Set<Integer> getDetectorsForDetectedFrameworks() {
-    return myDetectedFrameworks.keySet();
-  }
-
-  public Collection<? extends DetectedFrameworkDescription> updateFrameworksList(Integer detectorId,
-                                                                                 Collection<? extends DetectedFrameworkDescription> frameworks) {
-    final Collection<DetectedFrameworkDescription> oldFrameworks = myDetectedFrameworks.remove(detectorId);
-    myDetectedFrameworks.putValues(detectorId, frameworks);
-    if (oldFrameworks != null) {
-      frameworks.removeAll(oldFrameworks);
-    }
-    return frameworks;
-  }
-
-  public void putExistentFrameworkFiles(Integer id, Collection<? extends VirtualFile> files) {
-    TIntHashSet set = null;
-    try {
-      set = myExistentFrameworkFiles.get(id);
-    }
-    catch (IOException e) {
-      LOG.info(e);
-    }
-    if (set == null) {
-      set = new TIntHashSet();
+      TIntHashSet existentFilesSet = null;
       try {
-        myExistentFrameworkFiles.put(id, set);
+        existentFilesSet = myExistentFrameworkFiles.get(detectorId);
       }
       catch (IOException e) {
         LOG.info(e);
       }
+      final ArrayList<VirtualFile> newFiles = new ArrayList<>();
+      TIntHashSet newSet = new TIntHashSet();
+      for (VirtualFile file : files) {
+        final int fileId = FileBasedIndex.getFileId(file);
+        if (existentFilesSet == null || !existentFilesSet.contains(fileId)) {
+          newFiles.add(file);
+          newSet.add(fileId);
+        }
+      }
+      if (newSet.equals(oldSet)) {
+        return Collections.emptyList();
+      }
+      myNewFiles.put(detectorId, newSet);
+      return newFiles;
     }
-    for (VirtualFile file : files) {
-      set.add(FileBasedIndex.getFileId(file));
+  }
+
+  public Set<Integer> getDetectorsForDetectedFrameworks() {
+    synchronized (myLock) {
+      return new HashSet<>(myDetectedFrameworks.keySet());
+    }
+  }
+
+  public Collection<? extends DetectedFrameworkDescription> updateFrameworksList(Integer detectorId,
+                                                                                 Collection<? extends DetectedFrameworkDescription> frameworks) {
+    synchronized (myLock) {
+      final Collection<DetectedFrameworkDescription> oldFrameworks = myDetectedFrameworks.remove(detectorId);
+      myDetectedFrameworks.putValues(detectorId, frameworks);
+      if (oldFrameworks != null) {
+        frameworks.removeAll(oldFrameworks);
+      }
+      return frameworks;
+    }
+  }
+
+  public void putExistentFrameworkFiles(Integer id, Collection<? extends VirtualFile> files) {
+    synchronized (myLock) {
+      TIntHashSet set = null;
+      try {
+        set = myExistentFrameworkFiles.get(id);
+      }
+      catch (IOException e) {
+        LOG.info(e);
+      }
+      if (set == null) {
+        set = new TIntHashSet();
+        try {
+          myExistentFrameworkFiles.put(id, set);
+        }
+        catch (IOException e) {
+          LOG.info(e);
+        }
+      }
+      for (VirtualFile file : files) {
+        set.add(FileBasedIndex.getFileId(file));
+      }
     }
   }
 
