@@ -288,7 +288,7 @@ internal class PlatformSdkPopupFactory : SdkPopupFactory {
     listener: SdkPopupListener
   ): SdkPopup {
     lateinit var popup: SdkPopupImpl
-    val context = SdkListItemContext(project, projectSdksModel)
+    val context = SdkListItemContext(project)
 
     val onItemSelected = Consumer<SdkListItem> { value ->
       myModelBuilder.processSelectedElement(popup.popupOwner, value,
@@ -365,16 +365,11 @@ internal class PlatformSdkPopupFactory : SdkPopupFactory {
   }
 
   private class SdkListItemContext(
-    private val myProject: Project?,
-    mySdksModel: ProjectSdksModel
+    private val myProject: Project?
   ) : ComboBoxPopup.Context<SdkListItem> {
-    var myModel = SdkListModel(true, emptyList())
+    var myModel = SdkListModel.emptyModel()
 
-    private val myRenderer = object : SdkListPresenter(mySdksModel) {
-      override fun getModel(): SdkListModel {
-        return myModel
-      }
-    }
+    private val myRenderer = SdkListPresenter { myModel }
 
     override fun getProject() = myProject
     override fun getMaximumRowCount() = 30

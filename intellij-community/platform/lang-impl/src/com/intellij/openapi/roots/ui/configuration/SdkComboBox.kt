@@ -45,10 +45,7 @@ class SdkComboBox(model: SdkComboBoxModel) : SdkComboBoxBase<SdkListItem>(model.
 
   init {
     setModel(model)
-    setRenderer(object : SdkListPresenter(this.model.sdksModel) {
-      override fun getModel(): SdkListModel = this@SdkComboBox.model.listModel
-      override fun showProgressIcon() = true
-    })
+    setRenderer(SdkListPresenter { this@SdkComboBox.model.listModel })
     addPopupMenuListener(ModelReloadProvider())
     reloadModel()
   }

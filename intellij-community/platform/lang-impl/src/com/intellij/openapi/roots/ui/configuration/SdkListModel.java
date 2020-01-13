@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.ComboBoxPopupState;
+import com.intellij.util.Producer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,14 +15,23 @@ import java.util.List;
 
 import static com.intellij.openapi.roots.ui.configuration.SdkListItem.*;
 
-public class SdkListModel extends AbstractListModel<SdkListItem> implements ComboBoxPopupState<SdkListItem> {
+public final class SdkListModel extends AbstractListModel<SdkListItem> implements ComboBoxPopupState<SdkListItem> {
   private final boolean myIsSearching;
   private final ImmutableList<SdkListItem> myItems;
+  private final Producer<? extends Sdk> myGetProjectSdk;
   private final ImmutableMap<SdkListItem, String> mySeparators;
 
-  public SdkListModel(boolean isSearching, @NotNull List<? extends SdkListItem> items) {
+  @NotNull
+  public static SdkListModel emptyModel() {
+    return new SdkListModel(false, ImmutableList.of(), () -> null);
+  }
+
+  SdkListModel(boolean isSearching,
+               @NotNull List<? extends SdkListItem> items,
+               @NotNull Producer<? extends Sdk> getProjectSdk) {
     myIsSearching = isSearching;
     myItems = ImmutableList.copyOf(items);
+    myGetProjectSdk = getProjectSdk;
 
     boolean myFirstSepSet = false;
     boolean mySuggestedSep = false;
@@ -50,6 +60,11 @@ public class SdkListModel extends AbstractListModel<SdkListItem> implements Comb
     mySeparators = sep.build();
   }
 
+  @Nullable
+  Sdk resolveProjectSdk() {
+    return myGetProjectSdk.produce();
+  }
+
   @Override
   public int getSize() {
     return myItems.size();
@@ -65,17 +80,12 @@ public class SdkListModel extends AbstractListModel<SdkListItem> implements Comb
   @Override
   public SdkListModel onChosen(SdkListItem selectedValue) {
     if (!(selectedValue instanceof GroupItem)) return null;
-    return new SdkListModel(myIsSearching, ((GroupItem)selectedValue).mySubItems);
+    return new SdkListModel(myIsSearching, ((GroupItem)selectedValue).mySubItems, myGetProjectSdk);
   }
 
   @Override
   public boolean hasSubstep(SdkListItem selectedValue) {
     return selectedValue instanceof GroupItem;
-  }
-
-  @NotNull
-  public SdkListModel buildSubModel(@NotNull GroupItem group) {
-    return new SdkListModel(myIsSearching, group.mySubItems);
   }
 
   public boolean isSearching() {

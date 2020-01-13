@@ -9,12 +9,12 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ui.SdkAppearanceService;
 import com.intellij.openapi.roots.ui.configuration.SdkListItem.GroupItem;
 import com.intellij.openapi.roots.ui.configuration.SdkListItem.SdkItem;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.Function;
 import com.intellij.util.IconUtil;
+import com.intellij.util.Producer;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,23 +26,13 @@ import java.util.Objects;
 
 import static com.intellij.openapi.roots.ui.configuration.SdkListItem.*;
 
-public abstract class SdkListPresenter extends ColoredListCellRenderer<SdkListItem> {
+public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem> {
   private static final Icon EMPTY_ICON = EmptyIcon.create(1, 16);
+  @NotNull private final Producer<SdkListModel> myGetModel;
 
-  @NotNull
-  private final ProjectSdksModel mySdkModel;
-
-  protected SdkListPresenter(@NotNull ProjectSdksModel sdkModel) {
-    mySdkModel = sdkModel;
+  public SdkListPresenter(@NotNull Producer<SdkListModel> getSdkListModel) {
+    myGetModel = getSdkListModel;
   }
-
-  @NotNull
-  protected abstract SdkListModel getModel();
-
-  protected boolean showProgressIcon() {
-    return true;
-  }
-
 
   @NotNull
   public <T> ListCellRenderer<T> forType(@NotNull Function<? super T, ? extends SdkListItem> unwrap) {
@@ -79,12 +69,12 @@ public abstract class SdkListPresenter extends ColoredListCellRenderer<SdkListIt
     };
     panel.add(component, BorderLayout.CENTER);
 
-    SdkListModel model = getModel();
+    SdkListModel model = myGetModel.produce();
     //handle the selected item to show in the ComboBox, not in the popup
     if (index == -1) {
       component.setOpaque(false);
       panel.setOpaque(false);
-      if (model.isSearching() && showProgressIcon()) {
+      if (model.isSearching()) {
         JBLabel progressIcon = new JBLabel(AnimatedIcon.Default.INSTANCE);
         panel.add(progressIcon, BorderLayout.EAST);
       }
@@ -133,7 +123,7 @@ public abstract class SdkListPresenter extends ColoredListCellRenderer<SdkListIt
       append(str, SimpleTextAttributes.ERROR_ATTRIBUTES);
     }
     else if (value instanceof ProjectSdkItem) {
-      final Sdk sdk = mySdkModel.getProjectSdk();
+      final Sdk sdk = myGetModel.produce().resolveProjectSdk();
       if (sdk != null) {
         setIcon(((SdkType)sdk.getSdkType()).getIcon());
         append(ProjectBundle.message("project.roots.project.jdk.inherited"), SimpleTextAttributes.REGULAR_ATTRIBUTES);

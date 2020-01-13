@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class SdkListModelBuilder {
+public final class SdkListModelBuilder {
   @Nullable private final Project myProject;
   @NotNull private final ProjectSdksModel mySdkModel;
   @NotNull private final Condition<? super Sdk> mySdkFilter;
@@ -135,7 +135,7 @@ public class SdkListModelBuilder {
       newModel.add(item);
     }
 
-    return new SdkListModel(myIsSdkDetectorInProgress, newModel.build());
+    return new SdkListModel(myIsSdkDetectorInProgress, newModel.build(), () -> mySdkModel.getProjectSdk());
   }
 
   private boolean isApplicableSuggestedItem(@NotNull SuggestedItem item) {
