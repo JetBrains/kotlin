@@ -4,7 +4,7 @@ description = "Simple Kotlin/JS tests runner with TeamCity reporter"
 
 plugins {
     id("base")
-    id("com.github.node-gradle.node")
+    id("com.github.node-gradle.node") version "2.2.0"
 }
 
 val default = configurations.getByName(Dependency.DEFAULT_CONFIGURATION)
