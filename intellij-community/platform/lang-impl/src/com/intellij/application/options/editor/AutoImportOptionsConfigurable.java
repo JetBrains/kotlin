@@ -68,16 +68,19 @@ public class AutoImportOptionsConfigurable
   @Override
   public JComponent createComponent() {
     myProvidersPanel.removeAll();
-    for (int i = 0; i < getConfigurables().size(); i++) {
-      AutoImportOptionsProvider provider = getConfigurables().get(i);
-      myProvidersPanel.add(provider.createComponent(), new GridBagConstraints(0, i, 1, 1, 0, 0,
-                                                                              GridBagConstraints.NORTH,
-                                                                              GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0));
+    List<AutoImportOptionsProvider> providers = getConfigurables();
+    for (int i = 0; i < providers.size(); i++) {
+      AutoImportOptionsProvider provider = providers.get(i);
+      JComponent component = provider.createComponent();
+      assert component != null: "AutoImportOptionsProvider " + provider.getClass() + " has a null component.";
+      myProvidersPanel.add(component, new GridBagConstraints(0, i, 1, 1, 0, 0,
+                                                             GridBagConstraints.NORTH,
+                                                             GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0));
     }
-    myProvidersPanel.add(Box.createVerticalGlue(), new GridBagConstraints(0, getConfigurables().size(), 1, 1, 0, 1,
+    myProvidersPanel.add(Box.createVerticalGlue(), new GridBagConstraints(0, providers.size(), 1, 1, 0, 1,
                                                                           GridBagConstraints.NORTH,
                                                                           GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
-    myProvidersPanel.add(Box.createVerticalGlue(), new GridBagConstraints(1, 0, getConfigurables().size() + 1, 1, 1, 0,
+    myProvidersPanel.add(Box.createVerticalGlue(), new GridBagConstraints(1, 0, providers.size() + 1, 1, 1, 0,
                                                                           GridBagConstraints.NORTH,
                                                                           GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
     return myPanel;
