@@ -24,18 +24,28 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -47,33 +57,32 @@ import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private const val DEBUG_LOG = false
@@ -121,7 +130,7 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
             """.trimIndent())
             println(irFile.dump())
         }
-        irFile.transformChildrenVoid(this)
+        irFile.transform(this, null)
         if (DEBUG_LOG) {
             println("""
                 =========
@@ -130,16 +139,7 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
             """.trimIndent())
             println(irFile.dump())
         }
-        val symbolRemapper = DeepCopySymbolRemapper()
-        irFile.acceptVoid(symbolRemapper)
-        irFile.transformChildren(
-            DeepCopyIrTreeWithSymbols(
-                symbolRemapper,
-                ComposerTypeRemapper(context, typeTranslator, composerTypeDescriptor)
-            ),
-            null
-        )
-        irFile.patchDeclarationParents()
+        irFile.remapComposableTypesWithComposerParam()
         if (DEBUG_LOG) {
             println("""
                 =========
@@ -152,6 +152,60 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         return super.visitFunction(declaration.withComposerParamIfNeeded())
+    }
+
+    override fun visitFile(declaration: IrFile): IrFile {
+        val originalFunctions = mutableListOf<IrFunction>()
+        val originalProperties = mutableListOf<Pair<IrProperty, IrSimpleFunction>>()
+        loop@for (child in declaration.declarations) {
+            when (child) {
+                is IrFunction -> originalFunctions.add(child)
+                is IrProperty -> {
+                    val getter = child.getter ?: continue@loop
+                    originalProperties.add(child to getter)
+                }
+            }
+        }
+        val result = super.visitFile(declaration)
+        result.patchWithSyntheticComposableDecoys(originalFunctions, originalProperties)
+        return result
+    }
+
+    override fun visitClass(declaration: IrClass): IrStatement {
+        val originalFunctions = declaration.functions.toList()
+        val originalProperties = declaration
+            .properties
+            .mapNotNull { p -> p.getter?.let { p to it } }
+            .toList()
+        val result = super.visitClass(declaration)
+        if (result !is IrClass) error("expected IrClass")
+        result.patchWithSyntheticComposableDecoys(originalFunctions, originalProperties)
+        return result
+    }
+
+    fun IrDeclarationContainer.patchWithSyntheticComposableDecoys(
+        originalFunctions: List<IrFunction>,
+        originalProperties: List<Pair<IrProperty, IrSimpleFunction>>
+    ) {
+        for (function in originalFunctions) {
+            if (transformedFunctions.containsKey(function) && function.isComposable()) {
+                declarations.add(function.copyAsComposableDecoy())
+            }
+        }
+        for ((property, getter) in originalProperties) {
+            if (transformedFunctions.containsKey(getter) && property.isComposable()) {
+                val newGetter = property.getter
+                assert(getter !== newGetter)
+                assert(newGetter != null)
+                // NOTE(lmr): the compiler seems to turn a getter with a single parameter into a
+                // setter, even though it's in the "getter" position. As a result, we will put
+                // the original parameter-less getter in the "getter" position, and add the
+                // single-parameter getter to the class itself.
+                property.getter = getter.copyAsComposableDecoy().also { it.parent = this }
+                declarations.add(newGetter!!)
+                newGetter.parent = this
+            }
+        }
     }
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
@@ -196,6 +250,8 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         // call this with a function that has the synthetic composer parameter, we don't want to
         // transform it further).
         if (transformedFunctionSet.contains(this)) return this
+
+        if (origin == COMPOSABLE_DECOY_IMPL) return this
 
         // if not a composable fn, nothing we need to do
         if (!descriptor.isComposable()) return this
@@ -243,7 +299,37 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         }
     }
 
-    private fun IrFunction.copy(): IrFunction {
+    private fun IrFunction.copyAsComposableDecoy(): IrSimpleFunction {
+        return copy().also { fn ->
+            fn.origin = COMPOSABLE_DECOY_IMPL
+            (fn as IrFunctionImpl).metadata = metadata
+            val errorClass = getTopLevelClass(FqName("kotlin.NotImplementedError"))
+            val errorCtor = errorClass.owner.constructors.single {
+                it.valueParameters.size == 1 &&
+                        it.valueParameters.single().type.isString()
+            }
+            // the decoy cannot have default expressions in its parameters, since they might be
+            // composable and if they are, it wouldn't have a composer param to use
+            fn.valueParameters.clear()
+            valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn, defaultValue = null) }
+            fn.body = context.createIrBuilder(fn.symbol).irBlockBody {
+                +irThrow(
+                    irCall(errorCtor).apply {
+                        putValueArgument(
+                            0,
+                            irString(
+                                "Composable functions cannot be called without a " +
+                                        "composer. If you are getting this error, it " +
+                                        "is likely because of a misconfigured compiler"
+                            )
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    private fun IrFunction.copy(): IrSimpleFunction {
         // TODO(lmr): use deepCopy instead?
         val descriptor = descriptor
 
@@ -273,6 +359,7 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
             fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
             fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
             valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn) }
+            annotations.mapTo(fn.annotations) { a -> a }
             fn.body = body?.deepCopyWithSymbols(this)
         }
     }
@@ -385,45 +472,55 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         }
     }
 
-    fun IrType.isComposable(): Boolean {
-        return annotations.hasAnnotation(ComposeFqNames.Composable)
-    }
-}
-
-class ComposerTypeRemapper(
-    private val context: JvmBackendContext,
-    private val typeTranslator: TypeTranslator,
-    private val composerTypeDescriptor: ClassDescriptor
-) : TypeRemapper {
-    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
-
-    override fun leaveScope() {}
-
-    private fun IrType.isComposable(): Boolean {
+    fun IrAnnotationContainer.isComposable(): Boolean {
         return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
 
-    private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
+    fun getTopLevelClass(fqName: FqName): IrClassSymbol {
+        val descriptor = context.state.module.getPackage(fqName.parent()).memberScope
+            .getContributedClassifier(
+                fqName.shortName(), NoLookupLocation.FROM_BACKEND
+            ) as ClassDescriptor? ?: error("Class is not found: $fqName")
+        return context.ir.symbols.externalSymbolTable.referenceClass(descriptor)
+    }
 
-    override fun remapType(type: IrType): IrType {
-        // TODO(lmr):
-        // This is basically creating the KotlinType and then converting to an IrType. Consider
-        // rewriting to just create the IrType directly, which would probably be more efficient.
-        if (type !is IrSimpleType) return type
-        if (!type.isFunction()) return type
-        if (!type.isComposable()) return type
-        val oldArguments = type.toKotlinType().arguments
-        val newArguments =
-            oldArguments.subList(0, oldArguments.size - 1) +
-                    TypeProjectionImpl(composerTypeDescriptor.defaultType) +
-                    oldArguments.last()
+    fun IrFile.remapComposableTypesWithComposerParam() {
+        // NOTE(lmr): this operation is somewhat fragile, and the order things are done here is
+        // important.
+        val originalDeclarations = declarations.toList()
 
-        return context
-            .irBuiltIns
-            .builtIns
-            .getFunction(oldArguments.size) // return type is an argument, so this is n + 1
-            .defaultType
-            .replace(newArguments)
-            .toIrType()
+        // The symbolRemapper needs to traverse everything to gather symbols, so we run this first.
+        val symbolRemapper = DeepCopySymbolRemapper()
+        acceptVoid(symbolRemapper)
+
+        // Now that we have all of the symbols, we can clear the existing declarations, since
+        // we are going to be putting new versions of them into the file.
+        declarations.clear()
+
+        originalDeclarations.mapTo(declarations) { d ->
+            val typeRemapper = ComposerTypeRemapper(
+                context,
+                typeTranslator,
+                composerTypeDescriptor
+            )
+            // for each declaration, we create a deepCopy transformer It is important here that we
+            // use the "preserving metadata" variant since we are using this copy to *replace* the
+            // originals, or else the module we would produce wouldn't have any metadata in it.
+            val transformer = DeepCopyIrTreeWithSymbolsPreservingMetadata(
+                symbolRemapper,
+                typeRemapper
+            ).also { typeRemapper.deepCopy = it }
+            val result = d.transform(
+                transformer,
+                null
+            ) as IrDeclaration
+            // just go through and patch all of the parents to make sure things are properly wired
+            // up.
+            result.patchDeclarationParents(this)
+            result
+        }
     }
 }
+
+private val COMPOSABLE_DECOY_IMPL =
+    object : IrDeclarationOriginImpl("COMPOSABLE_DECOY_IMPL", isSynthetic = true) {}
