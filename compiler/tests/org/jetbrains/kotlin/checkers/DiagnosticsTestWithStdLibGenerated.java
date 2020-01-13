@@ -1897,6 +1897,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt32271.kt");
             }
 
+            @TestMetadata("kt35684.kt")
+            public void testKt35684() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt35684.kt");
+            }
+
             @TestMetadata("nestedLambdaInferenceWithListMap.kt")
             public void testNestedLambdaInferenceWithListMap() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/nestedLambdaInferenceWithListMap.kt");

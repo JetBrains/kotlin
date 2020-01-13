@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ K> materialize(): Inv<K>
+@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ U> sequence(/*0*/ @kotlin.BuilderInference block: suspend Inv<U>.() -> kotlin.Unit): U
+public fun test_1(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun test_3(): kotlin.Unit
+
+public interface Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun yield(/*0*/ element: T): kotlin.Unit
+}

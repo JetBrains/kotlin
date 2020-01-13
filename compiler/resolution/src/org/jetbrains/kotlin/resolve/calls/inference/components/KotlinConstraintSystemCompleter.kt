@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
-    private val variableFixationFinder: VariableFixationFinder,
+    val variableFixationFinder: VariableFixationFinder,
     private val statelessCallbacks: KotlinResolutionStatelessCallbacks
 ) {
     enum class ConstraintSystemCompletionMode {
@@ -55,8 +55,8 @@ class KotlinConstraintSystemCompleter(
         runCompletion(c, completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext = false, analyze = analyze)
     }
 
-    fun completeConstraintSystem(c: Context, topLevelType: UnwrappedType) {
-        runCompletion(c, ConstraintSystemCompletionMode.FULL, emptyList(), topLevelType, collectVariablesFromContext = true) {
+    fun completeConstraintSystem(c: Context, topLevelType: UnwrappedType, topLevelAtoms: List<ResolvedAtom>) {
+        runCompletion(c, ConstraintSystemCompletionMode.FULL, topLevelAtoms, topLevelType, collectVariablesFromContext = true) {
             error("Shouldn't be called in complete constraint system mode")
         }
     }
