@@ -16,10 +16,6 @@ pluginManagement {
             maven { url "https://kotlin.bintray.com/kotlin-dependencies" }
         }
     }
-
-    plugins {
-        id("com.github.node-gradle.node") version "2.2.0"
-    }
 }
 
 buildscript {
