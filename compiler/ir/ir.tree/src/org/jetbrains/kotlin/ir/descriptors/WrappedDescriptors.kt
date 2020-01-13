@@ -132,7 +132,7 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
         TODO("not implemented")
     }
 
-    override fun getValueParameters(): MutableList<ValueParameterDescriptor> {
+    override fun getValueParameters(): List<ValueParameterDescriptor> {
         TODO("not implemented")
     }
 
@@ -185,6 +185,8 @@ open class WrappedValueParameterDescriptor(
 
 
     override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getValueParameters(): List<ValueParameterDescriptor> = emptyList()
 
     override fun getOriginal() = this
 
@@ -423,10 +425,6 @@ open class WrappedSimpleFunctionDescriptor(
         if (owner.origin == IrDeclarationOrigin.FAKE_OVERRIDE) CallableMemberDescriptor.Kind.FAKE_OVERRIDE
         else CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    override fun isHiddenToOvercomeSignatureClash(): Boolean {
-        TODO("not implemented")
-    }
-
     override fun copy(
         newOwner: DeclarationDescriptor?,
         modality: Modality?,
@@ -437,11 +435,10 @@ open class WrappedSimpleFunctionDescriptor(
         TODO("not implemented")
     }
 
-    override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean {
-        TODO("not implemented")
-    }
+    override fun isHiddenToOvercomeSignatureClash(): Boolean = false
+    override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean = false
 
-    override fun getInitialSignatureDescriptor() = null
+    override fun getInitialSignatureDescriptor(): FunctionDescriptor? = null
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 
