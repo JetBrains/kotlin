@@ -66,6 +66,7 @@ class IvyResolver : ExternalDependenciesResolver {
             ivyResolvers.add(
                 IBiblioResolver().apply {
                     isM2compatible = true
+                    isUsepoms = true
                     name = "central"
                 }
             )
@@ -98,7 +99,7 @@ class IvyResolver : ExternalDependenciesResolver {
             val depArtifact = DefaultDependencyArtifactDescriptor(depsDescriptor, artifactName, type, type, null, null)
             depsDescriptor.addDependencyArtifact(conf, depArtifact)
         }
-        depsDescriptor.addDependencyConfiguration("default", "*")
+        depsDescriptor.addDependencyConfiguration("default", "master,compile")
         moduleDescriptor.addDependency(depsDescriptor)
 
         val resolveOptions = ResolveOptions().apply {
