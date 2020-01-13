@@ -11,6 +11,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -27,10 +28,16 @@ import java.io.File
  */
 sealed class NativeBinary(
     private val name: String,
-    open var baseName: String,
+    baseNameProvided: String,
     val buildType: NativeBuildType,
     var compilation: KotlinNativeCompilation
 ) : Named {
+    open var baseName: String
+        get() = baseNameProvider.get()
+        set(value) {
+            baseNameProvider = project.provider { value }
+        }
+    internal var baseNameProvider: Provider<String> = project.provider { baseNameProvided }
 
     internal val konanTarget: KonanTarget
         get() = compilation.konanTarget
@@ -247,8 +254,10 @@ class Framework(
     enum class BitcodeEmbeddingMode {
         /** Don't embed LLVM IR bitcode. */
         DISABLE,
+
         /** Embed LLVM IR bitcode as data. */
         BITCODE,
+
         /** Embed placeholder LLVM IR data as a marker. */
         MARKER,
     }
