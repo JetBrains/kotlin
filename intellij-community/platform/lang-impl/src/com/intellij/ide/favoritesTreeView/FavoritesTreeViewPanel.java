@@ -66,7 +66,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
   private FavoritesViewTreeBuilder myBuilder;
   private final CopyPasteDelegator myCopyPasteDelegator;
 
-  public static final DataKey<FavoritesTreeNodeDescriptor[]> CONTEXT_FAVORITES_ROOTS_DATA_KEY = DataKey.create("FavoritesRoot");
+  public static final DataKey<FavoriteTreeNodeDescriptor[]> CONTEXT_FAVORITES_ROOTS_DATA_KEY = DataKey.create("FavoritesRoot");
   public static final DataKey<DnDAwareTree> FAVORITES_TREE_KEY = DataKey.create("Favorites.Tree");
   public static final DataKey<FavoritesViewTreeBuilder> FAVORITES_TREE_BUILDER_KEY = DataKey.create("Favorites.Tree.Builder");
 
@@ -107,16 +107,16 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     myTree.setLargeModel(true);
     new TreeSpeedSearch(myTree);
     ToolTipManager.sharedInstance().registerComponent(myTree);
-    FavoritesComparator favoritesComparator = new FavoritesComparator(ProjectView.getInstance(project), FavoritesViewTreeBuilder.ID);
+    FavoriteComparator favoritesComparator = new FavoriteComparator(ProjectView.getInstance(project), FavoritesViewTreeBuilder.ID);
     FavoritesManager favoriteManager = FavoritesManager.getInstance(myProject);
     myBuilder.setNodeDescriptorComparator((o1, o2) -> {
-      if (o1 instanceof FavoritesTreeNodeDescriptor && o2 instanceof FavoritesTreeNodeDescriptor) {
-        final FavoritesListNode listNode1 = FavoritesTreeUtil.extractParentList((FavoritesTreeNodeDescriptor)o1);
-        final FavoritesListNode listNode2 = FavoritesTreeUtil.extractParentList((FavoritesTreeNodeDescriptor)o2);
+      if (o1 instanceof FavoriteTreeNodeDescriptor && o2 instanceof FavoriteTreeNodeDescriptor) {
+        final FavoritesListNode listNode1 = FavoritesTreeUtil.extractParentList((FavoriteTreeNodeDescriptor)o1);
+        final FavoritesListNode listNode2 = FavoritesTreeUtil.extractParentList((FavoriteTreeNodeDescriptor)o2);
         if (listNode1.equals(listNode2)) {
-          final Comparator<FavoritesTreeNodeDescriptor> comparator = favoriteManager.getCustomComparator(listNode1.getName());
+          final Comparator<FavoriteTreeNodeDescriptor> comparator = favoriteManager.getCustomComparator(listNode1.getName());
           if (comparator != null) {
-            return comparator.compare((FavoritesTreeNodeDescriptor)o1, (FavoritesTreeNodeDescriptor)o2);
+            return comparator.compare((FavoriteTreeNodeDescriptor)o1, (FavoriteTreeNodeDescriptor)o2);
           }
           else {
             return favoritesComparator.compare(o1, o2);
@@ -139,8 +139,8 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
           final DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
           //only favorites roots to explain
           final Object userObject = node.getUserObject();
-          if (userObject instanceof FavoritesTreeNodeDescriptor) {
-            final FavoritesTreeNodeDescriptor favoritesTreeNodeDescriptor = (FavoritesTreeNodeDescriptor)userObject;
+          if (userObject instanceof FavoriteTreeNodeDescriptor) {
+            final FavoriteTreeNodeDescriptor favoritesTreeNodeDescriptor = (FavoriteTreeNodeDescriptor)userObject;
             AbstractTreeNode treeNode = favoritesTreeNodeDescriptor.getElement();
             FavoritesListProvider provider = FavoritesTreeUtil.getProvider(favoriteManager, favoritesTreeNodeDescriptor);
             if (provider != null) {
@@ -256,8 +256,8 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
 
   @Nullable
   private PsiElement getPsiElement(@Nullable Object element) {
-    if (element instanceof FavoritesTreeNodeDescriptor) {
-      element = ((FavoritesTreeNodeDescriptor)element).getElement().getValue();
+    if (element instanceof FavoriteTreeNodeDescriptor) {
+      element = ((FavoriteTreeNodeDescriptor)element).getElement().getValue();
     }
     if (element instanceof Bookmark) {
       element = ((Bookmark)element).getFile();
@@ -289,7 +289,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       return myProject;
     }
     if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
-      final FavoritesTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
+      final FavoriteTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
       return selectedNodeDescriptors.length == 1 ? selectedNodeDescriptors[0].getElement() : null;
     }
     FavoritesManager favoriteManager = FavoritesManager.getInstance(myProject);
@@ -364,18 +364,18 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       return selectedElements.isEmpty() ? null : selectedElements.toArray(new NamedLibraryElement[0]);
     }
     if (CONTEXT_FAVORITES_ROOTS_DATA_KEY.is(dataId)) {
-      List<FavoritesTreeNodeDescriptor> result = new ArrayList<>();
-      FavoritesTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
-      for (FavoritesTreeNodeDescriptor selectedNodeDescriptor : selectedNodeDescriptors) {
+      List<FavoriteTreeNodeDescriptor> result = new ArrayList<>();
+      FavoriteTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
+      for (FavoriteTreeNodeDescriptor selectedNodeDescriptor : selectedNodeDescriptors) {
         if (FavoritesTreeUtil.getProvider(favoriteManager, selectedNodeDescriptor) != null) {
           continue;
         }
-        FavoritesTreeNodeDescriptor root = selectedNodeDescriptor.getFavoritesRoot();
+        FavoriteTreeNodeDescriptor root = selectedNodeDescriptor.getFavoritesRoot();
         if (root != null && root.getElement() instanceof FavoritesListNode) {
           result.add(selectedNodeDescriptor);
         }
       }
-      return result.toArray(FavoritesTreeNodeDescriptor.EMPTY_ARRAY);
+      return result.toArray(FavoriteTreeNodeDescriptor.EMPTY_ARRAY);
     }
     if (FAVORITES_TREE_KEY.is(dataId)) {
       return myTree;
@@ -384,9 +384,9 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       return myBuilder;
     }
     if (FAVORITES_LIST_NAME_DATA_KEY.is(dataId)) {
-      final FavoritesTreeNodeDescriptor[] descriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
+      final FavoriteTreeNodeDescriptor[] descriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
       Set<String> selectedNames = new HashSet<>();
-      for (FavoritesTreeNodeDescriptor descriptor : descriptors) {
+      for (FavoriteTreeNodeDescriptor descriptor : descriptors) {
         FavoritesListNode node = FavoritesTreeUtil.extractParentList(descriptor);
         if (node != null) {
           selectedNames.add(node.getValue());
@@ -398,10 +398,10 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       }
       return null;
     }
-    FavoritesTreeNodeDescriptor[] descriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
+    FavoriteTreeNodeDescriptor[] descriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
     if (descriptors.length > 0) {
       List<AbstractTreeNode> nodes = new ArrayList<>();
-      for (FavoritesTreeNodeDescriptor descriptor : descriptors) {
+      for (FavoriteTreeNodeDescriptor descriptor : descriptors) {
         nodes.add(descriptor.getElement());
       }
       return myFavoritesTreeStructure.getDataFromProviders(nodes, dataId);
@@ -438,9 +438,9 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
 
   @NotNull
   private Object[] getSelectedNodeElements() {
-    FavoritesTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
+    FavoriteTreeNodeDescriptor[] selectedNodeDescriptors = FavoritesTreeUtil.getSelectedNodeDescriptors(myTree);
     List<Object> result = new ArrayList<>();
-    for (FavoritesTreeNodeDescriptor selectedNodeDescriptor : selectedNodeDescriptors) {
+    for (FavoriteTreeNodeDescriptor selectedNodeDescriptor : selectedNodeDescriptors) {
       if (selectedNodeDescriptor != null) {
         Object value = selectedNodeDescriptor.getElement().getValue();
         if (value instanceof SmartPsiElementPointer) {
@@ -502,8 +502,8 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       final Object o = path.getPath()[1];
       if (o instanceof DefaultMutableTreeNode) {
         final Object obj = ((DefaultMutableTreeNode)o).getUserObject();
-        if (obj instanceof FavoritesTreeNodeDescriptor) {
-          final AbstractTreeNode node = ((FavoritesTreeNodeDescriptor)obj).getElement();
+        if (obj instanceof FavoriteTreeNodeDescriptor) {
+          final AbstractTreeNode node = ((FavoriteTreeNodeDescriptor)obj).getElement();
           if (node instanceof FavoritesListNode) {
             return (FavoritesListNode)node;
           }

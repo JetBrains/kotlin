@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -21,11 +20,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class FavoritesTreeNodeDescriptor extends PresentableNodeDescriptor<AbstractTreeNode> {
+public class FavoriteTreeNodeDescriptor extends PresentableNodeDescriptor<AbstractTreeNode> {
   private final AbstractTreeNode myElement;
-  public static final FavoritesTreeNodeDescriptor[] EMPTY_ARRAY = new FavoritesTreeNodeDescriptor[0];
+  public static final FavoriteTreeNodeDescriptor[] EMPTY_ARRAY = new FavoriteTreeNodeDescriptor[0];
 
-  public FavoritesTreeNodeDescriptor(final Project project, final NodeDescriptor parentDescriptor, final AbstractTreeNode element) {
+  public FavoriteTreeNodeDescriptor(final Project project, final NodeDescriptor parentDescriptor, final AbstractTreeNode element) {
     super(project, parentDescriptor);
     myElement = element;
   }
@@ -81,8 +80,8 @@ public class FavoritesTreeNodeDescriptor extends PresentableNodeDescriptor<Abstr
   }
 
   public boolean equals(Object object) {
-    if (!(object instanceof FavoritesTreeNodeDescriptor)) return false;
-    return ((FavoritesTreeNodeDescriptor)object).getElement().equals(myElement);
+    if (!(object instanceof FavoriteTreeNodeDescriptor)) return false;
+    return ((FavoriteTreeNodeDescriptor)object).getElement().equals(myElement);
   }
 
   public int hashCode() {
@@ -90,10 +89,10 @@ public class FavoritesTreeNodeDescriptor extends PresentableNodeDescriptor<Abstr
   }
 
   @Nullable
-  public FavoritesTreeNodeDescriptor getFavoritesRoot() {
-    FavoritesTreeNodeDescriptor descriptor = this;
-    while (descriptor != null && descriptor.getParentDescriptor() instanceof FavoritesTreeNodeDescriptor) {
-      FavoritesTreeNodeDescriptor parent = (FavoritesTreeNodeDescriptor)descriptor.getParentDescriptor();
+  public FavoriteTreeNodeDescriptor getFavoritesRoot() {
+    FavoriteTreeNodeDescriptor descriptor = this;
+    while (descriptor != null && descriptor.getParentDescriptor() instanceof FavoriteTreeNodeDescriptor) {
+      FavoriteTreeNodeDescriptor parent = (FavoriteTreeNodeDescriptor)descriptor.getParentDescriptor();
       if (parent != null && parent.getParentDescriptor() == null) {
         return descriptor;
       }

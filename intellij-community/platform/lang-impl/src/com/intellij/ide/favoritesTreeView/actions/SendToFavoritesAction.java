@@ -1,10 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.favoritesTreeView.actions;
 
+import com.intellij.ide.favoritesTreeView.FavoriteTreeNodeDescriptor;
 import com.intellij.ide.favoritesTreeView.FavoritesListNode;
 import com.intellij.ide.favoritesTreeView.FavoritesManager;
-import com.intellij.ide.favoritesTreeView.FavoritesTreeNodeDescriptor;
 import com.intellij.ide.favoritesTreeView.FavoritesTreeViewPanel;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -34,19 +34,19 @@ public class SendToFavoritesAction extends AnAction implements DumbAware {
     Project project = e.getProject();
     final FavoritesManager favoritesManager = FavoritesManager.getInstance(project);
 
-    FavoritesTreeNodeDescriptor[] roots = FavoritesTreeViewPanel.CONTEXT_FAVORITES_ROOTS_DATA_KEY.getData(dataContext);
+    FavoriteTreeNodeDescriptor[] roots = FavoritesTreeViewPanel.CONTEXT_FAVORITES_ROOTS_DATA_KEY.getData(dataContext);
     if (roots == null) return;
 
-    for (FavoritesTreeNodeDescriptor root : roots) {
-      FavoritesTreeNodeDescriptor listNode = root.getFavoritesRoot();
+    for (FavoriteTreeNodeDescriptor root : roots) {
+      FavoriteTreeNodeDescriptor listNode = root.getFavoritesRoot();
       if (listNode != null && listNode !=root && listNode.getElement() instanceof FavoritesListNode) {
-        doSend(favoritesManager, new FavoritesTreeNodeDescriptor[]{root}, listNode.getElement().getName());
+        doSend(favoritesManager, new FavoriteTreeNodeDescriptor[]{root}, listNode.getElement().getName());
       }
     }
   }
 
-  public void doSend(final FavoritesManager favoritesManager, final FavoritesTreeNodeDescriptor[] roots, final String listName) {
-    for (FavoritesTreeNodeDescriptor root : roots) {
+  public void doSend(final FavoritesManager favoritesManager, final FavoriteTreeNodeDescriptor[] roots, final String listName) {
+    for (FavoriteTreeNodeDescriptor root : roots) {
       final AbstractTreeNode rootElement = root.getElement();
       String name = listName;
       if (name == null) {
@@ -68,12 +68,12 @@ public class SendToFavoritesAction extends AnAction implements DumbAware {
     if (project == null) {
       return false;
     }
-    FavoritesTreeNodeDescriptor[] roots = e.getData(FavoritesTreeViewPanel.CONTEXT_FAVORITES_ROOTS_DATA_KEY);
+    FavoriteTreeNodeDescriptor[] roots = e.getData(FavoritesTreeViewPanel.CONTEXT_FAVORITES_ROOTS_DATA_KEY);
     if (roots == null || roots.length == 0) {
       return false;
     }
-    for (FavoritesTreeNodeDescriptor root : roots) {
-      FavoritesTreeNodeDescriptor listNode = root.getFavoritesRoot();
+    for (FavoriteTreeNodeDescriptor root : roots) {
+      FavoriteTreeNodeDescriptor listNode = root.getFavoritesRoot();
       if (listNode == null || listNode ==root || !(listNode.getElement() instanceof FavoritesListNode))
         return false;
     }

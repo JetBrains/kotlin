@@ -1,10 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView;
 
 import com.intellij.ide.UiActivity;
 import com.intellij.ide.UiActivityMonitor;
-import com.intellij.ide.favoritesTreeView.FavoritesTreeNodeDescriptor;
+import com.intellij.ide.favoritesTreeView.FavoriteTreeNodeDescriptor;
 import com.intellij.ide.util.treeView.*;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.StatusBarProgress;
@@ -121,8 +121,8 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
         AbstractTreeNode treeNode = (AbstractTreeNode)defaultMutableTreeNode.getUserObject();
         result.add(treeNode);
       }
-      else if (defaultMutableTreeNode.getUserObject() instanceof FavoritesTreeNodeDescriptor) {
-        AbstractTreeNode treeNode = ((FavoritesTreeNodeDescriptor)defaultMutableTreeNode.getUserObject()).getElement();
+      else if (defaultMutableTreeNode.getUserObject() instanceof FavoriteTreeNodeDescriptor) {
+        AbstractTreeNode treeNode = ((FavoriteTreeNodeDescriptor)defaultMutableTreeNode.getUserObject()).getElement();
         result.add(treeNode);
       }
     }

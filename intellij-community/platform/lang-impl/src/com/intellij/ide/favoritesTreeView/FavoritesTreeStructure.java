@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.favoritesTreeView;
 
@@ -117,7 +117,7 @@ public final class FavoritesTreeStructure extends ProjectTreeStructure {
   @Override
   @NotNull
   public NodeDescriptor createDescriptor(@NotNull Object element, NodeDescriptor parentDescriptor) {
-    return new FavoritesTreeNodeDescriptor(myProject, parentDescriptor, (AbstractTreeNode)element);
+    return new FavoriteTreeNodeDescriptor(myProject, parentDescriptor, (AbstractTreeNode)element);
   }
 
   private static class MyProvider implements TreeStructureProvider {

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -65,8 +65,8 @@ public final class FavoritesPanel {
           Object o = path.getLastPathComponent();
           if (o instanceof DefaultMutableTreeNode) {
             o = ((DefaultMutableTreeNode)o).getUserObject();
-            if (o instanceof FavoritesTreeNodeDescriptor) {
-              FavoritesTreeNodeDescriptor root = ((FavoritesTreeNodeDescriptor)o).getFavoritesRoot();
+            if (o instanceof FavoriteTreeNodeDescriptor) {
+              FavoriteTreeNodeDescriptor root = ((FavoriteTreeNodeDescriptor)o).getFavoritesRoot();
               if (root != null && root != o) {
                 o = root.getElement();
                 if (o instanceof FavoritesListNode && ((FavoritesListNode)o).getProvider() == null) {
@@ -80,8 +80,8 @@ public final class FavoritesPanel {
           Object o = path.getLastPathComponent();
           if (o instanceof DefaultMutableTreeNode) {
             o = ((DefaultMutableTreeNode)o).getUserObject();
-            if (o instanceof FavoritesTreeNodeDescriptor) {
-              FavoritesTreeNodeDescriptor root = ((FavoritesTreeNodeDescriptor)o).getFavoritesRoot();
+            if (o instanceof FavoriteTreeNodeDescriptor) {
+              FavoriteTreeNodeDescriptor root = ((FavoriteTreeNodeDescriptor)o).getFavoritesRoot();
               if (root == o) {
                 return new DnDDragStartBean(path);
               }
@@ -148,7 +148,7 @@ public final class FavoritesPanel {
             if (listTo.equals(listFrom)) return;
             if (path.getPathCount() == 3) {
               final AbstractTreeNode abstractTreeNode =
-                ((FavoritesTreeNodeDescriptor)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject()).getElement();
+                ((FavoriteTreeNodeDescriptor)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject()).getElement();
               Object element = abstractTreeNode.getValue();
               mgr.removeRoot(listFrom, Collections.singletonList(abstractTreeNode));
               if (element instanceof SmartPsiElementPointer) {
@@ -202,8 +202,8 @@ public final class FavoritesPanel {
         final Object pathObj = pathToList.getLastPathComponent();
         if (pathObj instanceof DefaultMutableTreeNode) {
           final Object userObject = ((DefaultMutableTreeNode)pathObj).getUserObject();
-          if (userObject instanceof FavoritesTreeNodeDescriptor) {
-            if (((FavoritesTreeNodeDescriptor)userObject).getElement() == node) {
+          if (userObject instanceof FavoriteTreeNodeDescriptor) {
+            if (((FavoriteTreeNodeDescriptor)userObject).getElement() == node) {
               break;
             }
           }

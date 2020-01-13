@@ -1,10 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.favoritesTreeView.actions;
 
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.favoritesTreeView.FavoriteTreeNodeDescriptor;
 import com.intellij.ide.favoritesTreeView.FavoritesManager;
-import com.intellij.ide.favoritesTreeView.FavoritesTreeNodeDescriptor;
 import com.intellij.ide.favoritesTreeView.FavoritesTreeViewPanel;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
@@ -55,7 +55,7 @@ public class SendToFavoritesGroup extends ActionGroup implements DumbAware {
     public void actionPerformed(@NotNull AnActionEvent e) {
       final DataContext dataContext = e.getDataContext();
       Project project = e.getProject();
-      FavoritesTreeNodeDescriptor[] roots = FavoritesTreeViewPanel.CONTEXT_FAVORITES_ROOTS_DATA_KEY.getData(dataContext);
+      FavoriteTreeNodeDescriptor[] roots = FavoritesTreeViewPanel.CONTEXT_FAVORITES_ROOTS_DATA_KEY.getData(dataContext);
       String listName = FavoritesTreeViewPanel.FAVORITES_LIST_NAME_DATA_KEY.getData(dataContext);
 
       String newName = AddNewFavoritesListAction.doAddNewFavoritesList(project);
