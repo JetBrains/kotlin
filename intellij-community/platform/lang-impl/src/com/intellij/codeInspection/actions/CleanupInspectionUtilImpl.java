@@ -25,7 +25,7 @@ public class CleanupInspectionUtilImpl implements CleanupInspectionUtil {
   public AbstractPerformFixesTask applyFixesNoSort(@NotNull Project project,
                                                    @NotNull String presentationText,
                                                    @NotNull List<? extends ProblemDescriptor> descriptions,
-                                                   @Nullable Class quickfixClass,
+                                                   @Nullable Class<?> quickfixClass,
                                                    boolean startInWriteAction,
                                                    boolean markGlobal) {
     final boolean isBatch = quickfixClass != null && BatchQuickFix.class.isAssignableFrom(quickfixClass);
@@ -53,7 +53,7 @@ public class CleanupInspectionUtilImpl implements CleanupInspectionUtil {
   public AbstractPerformFixesTask applyFixesNoSort(@NotNull Project project,
                                                    @NotNull String presentationText,
                                                    @NotNull List<? extends ProblemDescriptor> descriptions,
-                                                   @Nullable Class quickfixClass,
+                                                   @Nullable Class<?> quickfixClass,
                                                    boolean startInWriteAction) {
     return applyFixesNoSort(project, presentationText, descriptions, quickfixClass, startInWriteAction, true);
   }
@@ -64,7 +64,7 @@ public class CleanupInspectionUtilImpl implements CleanupInspectionUtil {
 
     PerformBatchFixesTask(@NotNull Project project,
                                  @NotNull CommonProblemDescriptor[] descriptors,
-                                 @NotNull Class quickfixClass) {
+                                 @NotNull Class<?> quickfixClass) {
       super(project, descriptors, quickfixClass);
     }
 
@@ -101,7 +101,7 @@ public class CleanupInspectionUtilImpl implements CleanupInspectionUtil {
   private static class PerformFixesTask extends AbstractPerformFixesTask {
     PerformFixesTask(@NotNull Project project,
                             @NotNull CommonProblemDescriptor[] descriptors,
-                            @Nullable Class quickFixClass) {
+                            @Nullable Class<?> quickFixClass) {
       super(project, descriptors, quickFixClass);
     }
 
