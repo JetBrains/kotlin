@@ -92,11 +92,15 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
   public Map<OrderRootType, Collection<File>> prepareLibraryFiles(@NotNull LibraryData data) {
     Map<OrderRootType, Collection<File>> result = new HashMap<>();
     for (LibraryPathType pathType: LibraryPathType.values()) {
+      OrderRootType orderRootType = ExternalLibraryPathTypeMapper.getInstance().map(pathType);
+      if (orderRootType == null) {
+        continue;
+      }
       Set<String> paths = data.getPaths(pathType);
       if (paths.isEmpty()) {
         continue;
       }
-      result.put(ExternalLibraryPathTypeMapper.getInstance().map(pathType), ContainerUtil.map(paths, PATH_TO_FILE));
+      result.put(orderRootType, ContainerUtil.map(paths, PATH_TO_FILE));
     }
     return result;
   }
@@ -225,6 +229,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     ExternalLibraryPathTypeMapper externalLibraryPathTypeMapper = ExternalLibraryPathTypeMapper.getInstance();
     for (LibraryPathType pathType: LibraryPathType.values()) {
       OrderRootType ideType = externalLibraryPathTypeMapper.map(pathType);
+      if (ideType == null) continue;
       HashSet<String> toAddPerType = new HashSet<>(externalLibrary.getPaths(pathType));
       toAdd.put(ideType, toAddPerType);
 
