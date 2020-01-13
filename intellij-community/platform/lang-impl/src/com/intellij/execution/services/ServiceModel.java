@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class ServiceModel implements Disposable, InvokerSupplier {
-  private static final ExtensionPointName<ServiceViewContributor<?>> EP_NAME =
+  static final ExtensionPointName<ServiceViewContributor<?>> CONTRIBUTOR_EP_NAME =
     ExtensionPointName.create("com.intellij.serviceViewContributor");
   private static final Logger LOG = Logger.getInstance(ServiceModel.class);
 
@@ -71,7 +71,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
   private List<? extends ServiceViewItem> doGetRoots() {
     List<ServiceViewItem> result = new ArrayList<>();
-    for (ServiceViewContributor<?> contributor : getContributors()) {
+    for (ServiceViewContributor<?> contributor : CONTRIBUTOR_EP_NAME.getExtensionList()) {
       try {
         ContributorNode root = new ContributorNode(myProject, contributor);
         root.loadChildren();
@@ -185,7 +185,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     }
 
     ContributorNode newRoot = null;
-    for (ServiceViewContributor<?> contributor : getContributors()) {
+    for (ServiceViewContributor<?> contributor : CONTRIBUTOR_EP_NAME.getExtensionList()) {
       if (contributorClass.isInstance(contributor)) {
         newRoot = new ContributorNode(myProject, contributor);
         newRoot.loadChildren();
@@ -202,10 +202,10 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
   private int getContributorNodeIndex(Class<?> contributorClass) {
     int index = -1;
-    ServiceViewContributor<?>[] contributors = getContributors();
+    List<ServiceViewContributor<?>> contributors = CONTRIBUTOR_EP_NAME.getExtensionList();
     List<ServiceViewContributor<?>> existingContributors = ContainerUtil.map(myRoots, ServiceViewItem::getContributor);
-    for (int i = contributors.length - 1; i >= 0; i--) {
-      ServiceViewContributor<?> contributor = contributors[i];
+    for (int i = contributors.size() - 1; i >= 0; i--) {
+      ServiceViewContributor<?> contributor = contributors.get(i);
       if (!contributorClass.isInstance(contributor)) {
         index = existingContributors.indexOf(contributor);
         if (index == 0) {
@@ -244,7 +244,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     }
     if (contributorNode == null) {
       int index = getContributorNodeIndex(e.contributorClass);
-      for (ServiceViewContributor<?> contributor : getContributors()) {
+      for (ServiceViewContributor<?> contributor : CONTRIBUTOR_EP_NAME.getExtensionList()) {
         if (e.contributorClass.isInstance(contributor)) {
           contributorNode = new ContributorNode(myProject, contributor);
           myRoots.add(index, contributorNode);
@@ -372,11 +372,6 @@ class ServiceModel implements Disposable, InvokerSupplier {
         addGroupOrdered(children, (ServiceGroupNode)group);
       }
     }
-  }
-
-  @NotNull
-  static ServiceViewContributor<?>[] getContributors() {
-    return EP_NAME.getExtensions();
   }
 
   private static <T> List<ServiceViewItem> getContributorChildren(Project project,
