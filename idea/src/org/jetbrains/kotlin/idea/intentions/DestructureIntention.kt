@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import com.intellij.util.Processor
-import com.intellij.util.Query
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -22,7 +19,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.isVisible
-import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -186,62 +182,67 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
 
             val mapEntryClassDescriptor = classDescriptor.builtIns.mapEntry
 
+            val usageScopeElement = declaration.getUsageScopeElement() ?: return null
+            val nameToSearch = when (declaration) {
+                is KtParameter -> declaration.nameAsName
+                is KtVariableDeclaration -> declaration.nameAsName
+                else -> Name.identifier("it")
+            } ?: return null
+
             // Note: list should contains properties in order to create destructuring declaration
             val usagesToRemove = mutableListOf<UsageData>()
             var noBadUsages = true
             var removeSelectorInLoopRange = false
-            val forLoop = declaration.parent as? KtForExpression
-            if (forLoop != null && DescriptorUtils.isSubclass(classDescriptor, mapEntryClassDescriptor)) {
-                val loopRangeDescriptor = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor
-                if (loopRangeDescriptor != null) {
-                    val loopRangeDescriptorOwner = loopRangeDescriptor.containingDeclaration
-                    val mapClassDescriptor = classDescriptor.builtIns.map
-                    if (loopRangeDescriptorOwner is ClassDescriptor &&
-                        DescriptorUtils.isSubclass(loopRangeDescriptorOwner, mapClassDescriptor)
-                    ) {
-                        removeSelectorInLoopRange = loopRangeDescriptor.name.asString().let { it == "entries" || it == "entrySet" }
+            when {
+                DescriptorUtils.isSubclass(classDescriptor, mapEntryClassDescriptor) -> {
+                    val forLoop = declaration.parent as? KtForExpression
+                    if (forLoop != null) {
+                        val loopRangeDescriptor = forLoop.loopRange.getResolvedCall(context)?.resultingDescriptor
+                        if (loopRangeDescriptor != null) {
+                            val loopRangeDescriptorOwner = loopRangeDescriptor.containingDeclaration
+                            val mapClassDescriptor = classDescriptor.builtIns.map
+                            if (loopRangeDescriptorOwner is ClassDescriptor &&
+                                DescriptorUtils.isSubclass(loopRangeDescriptorOwner, mapClassDescriptor)
+                            ) {
+                                removeSelectorInLoopRange = loopRangeDescriptor.name.asString().let { it == "entries" || it == "entrySet" }
+                            }
+                        }
                     }
-                }
 
-                listOf("key", "value").mapTo(usagesToRemove) {
-                    UsageData(
-                        descriptor = mapEntryClassDescriptor.unsubstitutedMemberScope.getContributedVariables(
-                            Name.identifier(it), NoLookupLocation.FROM_BUILTINS
-                        ).single()
+                    listOf("key", "value").mapTo(usagesToRemove) {
+                        UsageData(
+                            descriptor = mapEntryClassDescriptor.unsubstitutedMemberScope.getContributedVariables(
+                                Name.identifier(it), NoLookupLocation.FROM_BUILTINS
+                            ).single()
+                        )
+                    }
+
+                    usageScopeElement.iterateOverMapEntryPropertiesUsages(
+                        context,
+                        nameToSearch,
+                        variableDescriptor,
+                        { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
+                        { noBadUsages = false }
                     )
                 }
+                classDescriptor.isData -> {
 
-                ReferencesSearchScopeHelper.search(declaration).iterateOverMapEntryPropertiesUsages(
-                    context,
-                    { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
-                    { noBadUsages = false }
-                )
-            } else if (classDescriptor.isData) {
+                    val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
+                    valueParameters.mapTo(usagesToRemove) { UsageData(descriptor = it) }
 
-                val valueParameters = classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters ?: return null
-                valueParameters.mapTo(usagesToRemove) { UsageData(descriptor = it) }
+                    val constructorParameterNameMap = mutableMapOf<Name, ValueParameterDescriptor>()
+                    valueParameters.forEach { constructorParameterNameMap[it.name] = it }
 
-                val usageScopeElement = declaration.getUsageScopeElement() ?: return null
-
-                val nameToSearch = when (declaration) {
-                    is KtParameter -> declaration.nameAsName
-                    is KtVariableDeclaration -> declaration.nameAsName
-                    else -> Name.identifier("it")
-                } ?: return null
-
-                val constructorParameterNameMap = mutableMapOf<Name, ValueParameterDescriptor>()
-                valueParameters.forEach { constructorParameterNameMap[it.name] = it }
-
-                usageScopeElement.iterateOverDataClassPropertiesUsagesWithIndex(
-                    context,
-                    nameToSearch,
-                    variableDescriptor,
-                    constructorParameterNameMap,
-                    { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
-                    { noBadUsages = false }
-                )
-            } else {
-                return null
+                    usageScopeElement.iterateOverDataClassPropertiesUsagesWithIndex(
+                        context,
+                        nameToSearch,
+                        variableDescriptor,
+                        constructorParameterNameMap,
+                        { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
+                        { noBadUsages = false }
+                    )
+                }
+                else -> return null
             }
             if (!noBadUsages) return null
 
@@ -253,36 +254,42 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
             }
         }
 
-        private fun Query<PsiReference>.iterateOverMapEntryPropertiesUsages(
+        private fun PsiElement.iterateOverMapEntryPropertiesUsages(
             context: BindingContext,
+            parameterName: Name,
+            variableDescriptor: VariableDescriptor,
             process: (Int, SingleUsageData) -> Unit,
             cancel: () -> Unit
         ) {
-            // TODO: Remove SAM-constructor when KT-11265 will be fixed
-            forEach(Processor forEach@{
-                val applicableUsage = getDataIfUsageIsApplicable(it, context)
-                if (applicableUsage != null) {
-                    val usageDescriptor = applicableUsage.descriptor
-                    if (usageDescriptor == null) {
-                        process(0, applicableUsage)
-                        process(1, applicableUsage)
-                        return@forEach true
-                    }
-                    when (usageDescriptor.name.asString()) {
-                        "key", "getKey" -> {
-                            process(0, applicableUsage)
-                            return@forEach true
+            anyDescendantOfType<KtNameReferenceExpression> {
+                when {
+                    it.getReferencedNameAsName() != parameterName -> false
+                    it.getResolvedCall(context)?.resultingDescriptor != variableDescriptor -> false
+                    else -> {
+                        val applicableUsage = getDataIfUsageIsApplicable(it, context)
+                        if (applicableUsage != null) {
+                            val usageDescriptor = applicableUsage.descriptor
+                            if (usageDescriptor == null) {
+                                process(0, applicableUsage)
+                                process(1, applicableUsage)
+                                return@anyDescendantOfType false
+                            }
+                            when (usageDescriptor.name.asString()) {
+                                "key", "getKey" -> {
+                                    process(0, applicableUsage)
+                                    return@anyDescendantOfType false
+                                }
+                                "value", "getValue" -> {
+                                    process(1, applicableUsage)
+                                    return@anyDescendantOfType false
+                                }
+                            }
                         }
-                        "value", "getValue" -> {
-                            process(1, applicableUsage)
-                            return@forEach true
-                        }
+                        cancel()
+                        true
                     }
                 }
-
-                cancel()
-                false
-            })
+            }
         }
 
         private fun PsiElement.iterateOverDataClassPropertiesUsagesWithIndex(
@@ -320,9 +327,6 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 }
             }
         }
-
-        private fun getDataIfUsageIsApplicable(dataClassUsage: PsiReference, context: BindingContext) =
-            (dataClassUsage.element as? KtReferenceExpression)?.let { getDataIfUsageIsApplicable(it, context) }
 
         private fun getDataIfUsageIsApplicable(dataClassUsage: KtReferenceExpression, context: BindingContext): SingleUsageData? {
             val destructuringDecl = dataClassUsage.parent as? KtDestructuringDeclaration

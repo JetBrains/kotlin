@@ -8306,6 +8306,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/destructuringInLambda/list.kt");
         }
 
+        @TestMetadata("mapEntry.kt")
+        public void testMapEntry() throws Exception {
+            runTest("idea/testData/intentions/destructuringInLambda/mapEntry.kt");
+        }
+
+        @TestMetadata("mapEntry2.kt")
+        public void testMapEntry2() throws Exception {
+            runTest("idea/testData/intentions/destructuringInLambda/mapEntry2.kt");
+        }
+
         @TestMetadata("mapIndexedExceptFirst.kt")
         public void testMapIndexedExceptFirst() throws Exception {
             runTest("idea/testData/intentions/destructuringInLambda/mapIndexedExceptFirst.kt");
@@ -8410,6 +8420,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("classProperty.kt")
         public void testClassProperty() throws Exception {
             runTest("idea/testData/intentions/destructuringVariables/classProperty.kt");
+        }
+
+        @TestMetadata("mapEntry.kt")
+        public void testMapEntry() throws Exception {
+            runTest("idea/testData/intentions/destructuringVariables/mapEntry.kt");
         }
 
         @TestMetadata("noInitializer.kt")

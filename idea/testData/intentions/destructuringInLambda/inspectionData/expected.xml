@@ -87,4 +87,12 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
         <description>Use destructuring declaration</description>
     </problem>
+    <problem>
+        <file>mapEntry.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/mapEntry.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use destructuring declaration</problem_class>
+        <description>Use destructuring declaration</description>
+    </problem>
 </problems>
