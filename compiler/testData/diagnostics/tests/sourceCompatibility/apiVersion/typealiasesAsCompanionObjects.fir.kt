@@ -10,6 +10,6 @@ class C {
 typealias CA = C
 
 val test1 = CA
-val test2 = CA.<!UNRESOLVED_REFERENCE!>Companion<!>
+val test2 = CA.Companion
 val test3 = CA.<!UNRESOLVED_REFERENCE!>x<!>
-val test4 = CA.<!UNRESOLVED_REFERENCE!>Companion<!>.<!UNRESOLVED_REFERENCE!>x<!>
+val test4 = CA.Companion.x

@@ -31,8 +31,8 @@ class XN: X() {
     init {
         foo()
         A.foo()
-        X.foo()
-        XN.foo()
+        X.<!UNRESOLVED_REFERENCE!>foo<!>()
+        XN.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 
@@ -40,12 +40,12 @@ class YN: Y() {
     init {
         foo()
         A.foo()
-        Y.foo()
-        YN.foo()
+        Y.<!UNRESOLVED_REFERENCE!>foo<!>()
+        YN.<!UNRESOLVED_REFERENCE!>foo<!>()
 
         bar()
         B.bar()
-        Y.bar()
-        YN.bar()
+        Y.<!UNRESOLVED_REFERENCE!>bar<!>()
+        YN.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }

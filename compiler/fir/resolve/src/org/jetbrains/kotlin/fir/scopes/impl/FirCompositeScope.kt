@@ -18,6 +18,8 @@ class FirCompositeScope(
     val scopes: MutableList<FirScope>,
     private val reversedPriority: Boolean = false
 ) : FirScope() {
+    constructor(vararg scopes: FirScope) : this(scopes.toMutableList())
+
     override fun processClassifiersByName(
         name: Name,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction

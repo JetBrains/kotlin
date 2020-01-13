@@ -33,7 +33,7 @@ val seeAlsoDerivedFoo: String = JDerived.foo()
 
 // Referencing nested classes via type alias should be prohibited
 // (in type position and in expression position)
-val testNested1: JT.Nested = JT.Nested()
+val testNested1: JT.Nested = JT.<!UNRESOLVED_REFERENCE!>Nested<!>()
 val testNested2: KT.Nested = KT.Nested()
 val testNested3: IT.Nested = IT.Nested()
 val testInner1: JT.Inner = JT.<!UNRESOLVED_REFERENCE!>Inner<!>()

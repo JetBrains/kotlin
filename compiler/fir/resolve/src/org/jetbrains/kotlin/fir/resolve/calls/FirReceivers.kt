@@ -5,23 +5,29 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.name.ClassId
 
 interface ReceiverValue {
     val type: ConeKotlinType
@@ -37,7 +43,7 @@ private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotl
         typeRef = FirResolvedTypeRefImpl(null, type)
     }
 
-class ClassDispatchReceiverValue(val klassSymbol: FirClassSymbol<*>) : ReceiverValue {
+class ClassDispatchReceiverValue(klassSymbol: FirClassSymbol<*>) : ReceiverValue {
     override val type: ConeKotlinType = ConeClassLikeTypeImpl(
         klassSymbol.toLookupTag(),
         (klassSymbol.fir as? FirTypeParametersOwner)?.typeParameters?.map { ConeStarProjection }?.toTypedArray().orEmpty(),
@@ -56,6 +62,60 @@ class ExpressionReceiverValue(
 
     override val receiverExpression: FirExpression
         get() = explicitReceiverExpression
+
+    private fun getClassSymbolWithCallablesScope(
+        classId: ClassId,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): Pair<FirClassSymbol<*>?, FirScope?> {
+        val symbol = useSiteSession.firSymbolProvider.getClassLikeSymbolByFqName(classId) ?: return null to null
+        if (symbol is FirTypeAliasSymbol) {
+            val expansionSymbol = symbol.fir.expandedConeType?.lookupTag?.toSymbol(useSiteSession)
+            if (expansionSymbol != null) {
+                return getClassSymbolWithCallablesScope(expansionSymbol.classId, useSiteSession, scopeSession)
+            }
+        } else {
+            return (symbol as? FirClassSymbol<*>)?.let { klassSymbol ->
+                klassSymbol to when (val klass = klassSymbol.fir) {
+                    is FirClassImpl -> {
+                        when (klass.classKind) {
+                            ClassKind.ENUM_CLASS -> FirStaticScope(declaredMemberScope(klass))
+                            ClassKind.OBJECT -> klass.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)
+                            else -> null
+                        }
+                    }
+                    is FirSealedClassImpl -> null
+                    else -> /* Java */ FirStaticScope(klass.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession))
+                }
+            } ?: (null to null)
+        }
+
+        return null to null
+    }
+
+    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+        val qualifiedReceiver = explicitReceiverExpression as? FirResolvedQualifier
+            ?: return super.scope(useSiteSession, scopeSession)
+        val classId = qualifiedReceiver.classId ?: return null
+
+        val (classSymbol, callablesScope) = getClassSymbolWithCallablesScope(classId, useSiteSession, scopeSession)
+        if (classSymbol != null) {
+            val klass = classSymbol.fir
+            val classifierScope = if (klass is FirClassImpl || klass is FirSealedClassImpl) {
+                nestedClassifierScope(klass)
+            } else {
+                useSiteSession.firSymbolProvider.getNestedClassifierScope(classId)
+            }
+
+            val qualifierScope = FirQualifierScope(callablesScope, classifierScope)
+            if ((klass as? FirRegularClass)?.companionObject == null) {
+                return qualifierScope
+            }
+            val companionScope = super.scope(useSiteSession, scopeSession) ?: return qualifierScope
+            return FirCompositeScope(qualifierScope, companionScope)
+        }
+        return super.scope(useSiteSession, scopeSession)
+    }
 }
 
 abstract class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(

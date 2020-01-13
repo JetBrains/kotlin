@@ -29,6 +29,7 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     name: Name,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
+    noInnerConstructors: Boolean = false,
     processor: (FirCallableSymbol<*>) -> ProcessorAction
 ): ProcessorAction {
     val matchedClassSymbol = getFirstClassifierOrNull(name) as? FirClassLikeSymbol<*>
@@ -38,7 +39,8 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
             processor,
             session,
             bodyResolveComponents.scopeSession,
-            name
+            name,
+            noInnerConstructors
         ).stop()
     ) {
         return ProcessorAction.STOP
@@ -133,7 +135,8 @@ private fun processConstructors(
     processor: (FirFunctionSymbol<*>) -> ProcessorAction,
     session: FirSession,
     scopeSession: ScopeSession,
-    name: Name
+    name: Name,
+    noInner: Boolean
 ): ProcessorAction {
     try {
         if (matchedSymbol != null) {
@@ -157,10 +160,13 @@ private fun processConstructors(
             }
 
             //TODO: why don't we use declared member scope at this point?
-            if (scope != null && scope.processFunctionsByName(
-                    constructorName,
-                    processor
-                ) == ProcessorAction.STOP
+            if (scope != null && scope.processFunctionsByName(constructorName) {
+                    if (!noInner || (it as? FirConstructorSymbol)?.fir?.isInner != true) {
+                        processor(it)
+                    } else {
+                        ProcessorAction.NEXT
+                    }
+                } == ProcessorAction.STOP
             ) {
                 return ProcessorAction.STOP
             }
@@ -279,7 +285,7 @@ private fun <F : FirMemberFunction<F>> prepareSubstitutorForTypeAliasConstructor
 
     val substitutor = substitutorByMap(
         expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap()
-    );
+    )
 
     return TypeAliasConstructorsSubstitutor(typeAliasSymbol, substitutor, copyFactory)
 }

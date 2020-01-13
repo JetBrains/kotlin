@@ -47,8 +47,8 @@ fun test(a: KotlinClass, b: KotlinClass2) {
     JavaClass.<!INAPPLICABLE_CANDIDATE!>bar1<!>()
     JavaClass.<!INAPPLICABLE_CANDIDATE!>CONST1<!>
 
-    KotlinClass.<!INAPPLICABLE_CANDIDATE!>bar1<!>() // Currently it's unresolved, but it should be prohibited even in case it would be resolved
-    KotlinClass.<!INAPPLICABLE_CANDIDATE!>CONST1<!>
+    KotlinClass.<!UNRESOLVED_REFERENCE!>bar1<!>() // Currently it's unresolved, but it should be prohibited even in case it would be resolved
+    KotlinClass.<!UNRESOLVED_REFERENCE!>CONST1<!>
 
     JavaClassSamePackage.<!INAPPLICABLE_CANDIDATE!>bar1<!>()
     JavaClassSamePackage.bar2()

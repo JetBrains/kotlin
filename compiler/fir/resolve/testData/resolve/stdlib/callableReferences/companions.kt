@@ -32,9 +32,9 @@ fun main() {
     foo2(KotlinClass::baz)
     <!AMBIGUITY!>foo3<!>(KotlinClass::baz)
 
-    foo1(KotlinClass::bar)
+    <!INAPPLICABLE_CANDIDATE!>foo1<!>(KotlinClass::bar)
     foo2(KotlinClass::bar)
-    <!AMBIGUITY!>foo3<!>(KotlinClass::bar)
+    foo3(KotlinClass::bar)
 
     foo1(KotlinClass2::bar)
     <!INAPPLICABLE_CANDIDATE!>foo2<!>(KotlinClass2::bar)

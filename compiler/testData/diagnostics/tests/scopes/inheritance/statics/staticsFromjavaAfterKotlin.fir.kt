@@ -16,12 +16,12 @@ class D: C() {
     init {
         foo()
         A.foo()
-        B.foo()
+        B.<!UNRESOLVED_REFERENCE!>foo<!>()
         C.foo()
-        D.foo()
+        D.<!UNRESOLVED_REFERENCE!>foo<!>()
 
         bar()
         C.bar()
-        D.bar()
+        D.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }

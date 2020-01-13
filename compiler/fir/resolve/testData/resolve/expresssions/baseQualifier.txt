@@ -30,6 +30,6 @@ FILE: Test.kt
         lval aac: R|AA.C| = Q|AA.C|
         Q|JavaClass|.R|/JavaClass.bar|()
         lval errC: <ERROR TYPE REF: Unresolved name: C> = Q|BB|.<Unresolved name: C>#
-        lval errBarViaBB: R|kotlin/Unit| = Q|BB|.R|/JavaClass.bar|()
-        lval errBarViaAA: R|kotlin/Unit| = Q|AA|.R|/JavaClass.bar|()
+        lval errBarViaBB: <ERROR TYPE REF: Unresolved name: bar> = Q|BB|.<Unresolved name: bar>#()
+        lval errBarViaAA: <ERROR TYPE REF: Unresolved name: bar> = Q|AA|.<Unresolved name: bar>#()
     }

@@ -6,29 +6,24 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
-import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -159,12 +154,14 @@ class MemberScopeTowerLevel(
             return ProcessorAction.NEXT
         }
         val explicitExtensionReceiver = if (dispatchReceiver == explicitReceiver) null else explicitReceiver
+        val noInnerConstructors =
+            dispatchReceiver is ExpressionReceiverValue && dispatchReceiver.explicitReceiverExpression is FirResolvedQualifier
         return when (token) {
             TowerScopeLevel.Token.Properties -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processPropertiesByName(name, symbol.cast())
             }
             TowerScopeLevel.Token.Functions -> processMembers(processor, explicitExtensionReceiver) { symbol ->
-                this.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents, symbol.cast())
+                this.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents, noInnerConstructors, symbol.cast())
             }
             TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processClassifiersByName(name, symbol.cast())
@@ -240,72 +237,6 @@ class ScopeTowerLevel(
         }
     }
 }
-
-/**
- *  Handles only statics and top-levels, DOES NOT handle objects/companions members
- */
-class QualifiedReceiverTowerLevel(
-    session: FirSession,
-    private val bodyResolveComponents: BodyResolveComponents
-) : SessionBasedTowerLevel(session) {
-    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
-        token: TowerScopeLevel.Token<T>,
-        name: Name,
-        explicitReceiver: ExpressionReceiverValue?,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
-    ): ProcessorAction {
-        val qualifiedReceiver = explicitReceiver?.explicitReceiverExpression as FirResolvedQualifier
-        val classId = qualifiedReceiver.classId
-        val scope = when {
-            token == TowerScopeLevel.Token.Objects || classId == null -> {
-                FirExplicitSimpleImportingScope(
-                    listOf(
-                        FirResolvedImportImpl(
-                            FirImportImpl(null, FqName.topLevel(name), false, null),
-                            qualifiedReceiver.packageFqName,
-                            qualifiedReceiver.relativeClassFqName
-                        )
-                    ), session, bodyResolveComponents.scopeSession
-                )
-            }
-            else -> {
-                val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId) ?: return ProcessorAction.NEXT
-                when (symbol) {
-                    is FirClassSymbol<*> -> symbol.fir.scope(ConeSubstitutor.Empty, session, bodyResolveComponents.scopeSession)
-                    is FirTypeAliasSymbol ->
-                        symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeKotlinType>()
-                            .scope(session, bodyResolveComponents.scopeSession) ?: return ProcessorAction.NEXT
-                }
-            }
-        }
-
-        val processorForCallables: (FirCallableSymbol<*>) -> ProcessorAction = {
-            val fir = it.fir
-            if (fir is FirCallableMemberDeclaration<*> && fir.isStatic ||
-                it.callableId.classId == null ||
-                fir is FirConstructor && !fir.isInner
-            ) {
-                @Suppress("UNCHECKED_CAST")
-                processor.consumeCandidate(it as T, null, null, null)
-            } else {
-                ProcessorAction.NEXT
-            }
-        }
-
-        return when (token) {
-            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name) {
-                @Suppress("UNCHECKED_CAST")
-                processor.consumeCandidate(it as T, null, null, null)
-            }
-            TowerScopeLevel.Token.Functions -> {
-                scope.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents, processorForCallables)
-            }
-            TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name, processorForCallables)
-
-        }
-    }
-}
-
 
 class NotNullableReceiverValue(val value: ReceiverValue) : ReceiverValue {
     override val type: ConeKotlinType

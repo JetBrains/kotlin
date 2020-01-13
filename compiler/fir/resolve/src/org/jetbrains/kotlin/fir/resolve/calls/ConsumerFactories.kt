@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.name.Name
 
@@ -104,24 +103,7 @@ fun createSimpleConsumer(
     val factory = CandidateFactory(bodyResolveComponents, callInfo)
     val explicitReceiver = callInfo.explicitReceiver
     return if (explicitReceiver != null) {
-        val receiverValue = ExpressionReceiverValue(explicitReceiver)
-        if (explicitReceiver is FirResolvedQualifier) {
-            val qualified =
-                QualifiedReceiverTowerDataConsumer(session, name, token, receiverValue, factory, resultCollector)
-
-            if (explicitReceiver.classId != null) {
-                PrioritizedTowerDataConsumer(
-                    resultCollector,
-                    qualified,
-                    ExplicitReceiverTowerDataConsumer(session, name, token, receiverValue, factory, resultCollector)
-                )
-            } else {
-                qualified
-            }
-
-        } else {
-            ExplicitReceiverTowerDataConsumer(session, name, token, receiverValue, factory, resultCollector)
-        }
+        ExplicitReceiverTowerDataConsumer(session, name, token, ExpressionReceiverValue(explicitReceiver), factory, resultCollector)
     } else {
         NoExplicitReceiverTowerDataConsumer(session, name, token, factory, resultCollector)
     }

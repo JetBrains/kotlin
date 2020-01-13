@@ -7,8 +7,8 @@ typealias GenericTestObject<T> = AnObject
 
 val test11: AnObject = GenericTestObject
 val test12: GenericTestObject<*> = GenericTestObject
-val test13: String = GenericTestObject.<!UNRESOLVED_REFERENCE!>ok<!>
-val test14: String = GenericTestObject.<!UNRESOLVED_REFERENCE!>foo<!>()
+val test13: String = GenericTestObject.ok
+val test14: String = GenericTestObject.foo()
 
 class GenericClassWithCompanion<T> {
     companion object {

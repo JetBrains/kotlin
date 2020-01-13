@@ -8,4 +8,4 @@ object Since_1_1 {
 typealias Since_1_1_Alias = Since_1_1
 
 val test1 = Since_1_1_Alias
-val test2 = Since_1_1_Alias.<!UNRESOLVED_REFERENCE!>x<!>
+val test2 = Since_1_1_Alias.x

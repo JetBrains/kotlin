@@ -38,48 +38,6 @@ abstract class TowerDataConsumer {
     }
 }
 
-class QualifiedReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
-    val session: FirSession,
-    val name: Name,
-    val token: TowerScopeLevel.Token<T>,
-    val explicitReceiver: ExpressionReceiverValue,
-    val candidateFactory: CandidateFactory,
-    override val resultCollector: CandidateCollector
-) : TowerDataConsumer() {
-    override fun consume(
-        kind: TowerDataKind,
-        towerScopeLevel: TowerScopeLevel,
-        group: Int
-    ): ProcessorAction {
-        if (skipGroup(group)) return ProcessorAction.NEXT
-        if (kind != TowerDataKind.EMPTY) return ProcessorAction.NEXT
-
-        return QualifiedReceiverTowerLevel(session, candidateFactory.bodyResolveComponents).processElementsByName(
-            token,
-            name,
-            explicitReceiver,
-            processor = TowerLevelProcessorImpl(group)
-        )
-    }
-
-    private inner class TowerLevelProcessorImpl(val group: Int) : TowerScopeLevel.TowerScopeLevelProcessor<T> {
-        override fun consumeCandidate(
-            symbol: T,
-            dispatchReceiverValue: ReceiverValue?,
-            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-            builtInExtensionFunctionReceiverValue: ReceiverValue?
-        ): ProcessorAction {
-            assert(dispatchReceiverValue == null)
-            resultCollector.consumeCandidate(
-                group,
-                candidateFactory.createCandidate(symbol, explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
-            )
-            return ProcessorAction.NEXT
-        }
-    }
-
-}
-
 class PrioritizedTowerDataConsumer(
     override val resultCollector: CandidateCollector,
     private vararg val consumers: TowerDataConsumer
