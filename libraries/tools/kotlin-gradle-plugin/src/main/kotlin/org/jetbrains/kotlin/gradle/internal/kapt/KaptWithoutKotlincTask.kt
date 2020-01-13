@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.Serializable
@@ -28,8 +29,9 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     @get:InputFiles
     @get:Classpath
     @Suppress("unused")
-    val kaptJars: Collection<File>
-        get() = project.configurations.getByName(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).resolve()
+    val kaptJars: Collection<File> by project.provider {
+        project.configurations.getByName(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).resolve()
+    }
 
     @get:Input
     var isVerbose: Boolean = false
@@ -85,7 +87,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             javaSourceRoots.toList(),
 
             changedFiles,
-            getCompiledSources(),
+            compiledSources,
             incAptCache,
             classpathChanges.toList(),
 
