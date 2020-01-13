@@ -16,6 +16,7 @@ import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -267,7 +268,9 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
       }
     };
 
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
+
+    Application application = ApplicationManager.getApplication();
+    if (application.isUnitTestMode() && application.isDispatchThread()) {
       fetchRunnable.run();
     }
     else {

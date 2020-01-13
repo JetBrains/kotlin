@@ -65,6 +65,7 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -73,6 +74,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -952,6 +955,16 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     return isAllTabSelected() ? getAllTabContributors() : Collections.singleton(mySelectedTab.getContributor().get());
   }
 
+  @TestOnly
+  private CompletableFuture<List<Object>> testResultsFuture;
+
+  @TestOnly
+  public Future<List<Object>> findElementsForPattern(String pattern) {
+    testResultsFuture = new CompletableFuture<>();
+    mySearchField.setText(pattern);
+    return testResultsFuture;
+  }
+
   private class CompositeCellRenderer implements ListCellRenderer<Object> {
 
     @Override
@@ -1618,6 +1631,14 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       hasMoreContributors.forEach(myListModel::setHasMore);
 
       mySelectionTracker.resetSelectionIfNeeded();
+
+      //noinspection TestOnlyProblems
+      if (testResultsFuture != null) {
+        //noinspection TestOnlyProblems
+        testResultsFuture.complete(myListModel.getItems());
+        //noinspection TestOnlyProblems
+        testResultsFuture = null;
+      }
     }
   }
 
