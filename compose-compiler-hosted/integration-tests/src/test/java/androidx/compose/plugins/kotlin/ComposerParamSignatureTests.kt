@@ -29,6 +29,42 @@ import org.robolectric.annotation.Config
 class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
 
     @Test
+    fun testRemappedTypes(): Unit = checkApi(
+        """
+            class A {
+                fun makeA(): A { return A() }
+                fun makeB(): B { return B() }
+                class B() {
+                }
+            }
+            class C {
+                fun useAB() {
+                    val a = A()
+                    a.makeA()
+                    a.makeB()
+                    val b = A.B()
+                }
+            }
+        """,
+        """
+            public final class A {
+              public <init>()V
+              public final makeA()LA;
+              public final makeB()LA%B;
+              public final static INNERCLASS A%B A B
+            }
+            public final class A%B {
+              public <init>()V
+              public final static INNERCLASS A%B A B
+            }
+            public final class C {
+              public <init>()V
+              public final useAB()V
+            }
+        """
+    )
+
+    @Test
     fun testCorrectComposerPassed1(): Unit = checkComposerParam(
         """
             val a = makeComposer()
@@ -135,6 +171,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public final class TestKt {
               public final static Foo(ILandroidx/compose/Composer;)V
               public static synthetic Foo%default(ILandroidx/compose/Composer;ILjava/lang/Object;)V
+              public final static synthetic Foo(I)V
             }
         """
     )
@@ -157,6 +194,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public final static Foo(ILandroidx/compose/Composer;)V
               public static synthetic Foo%default(ILandroidx/compose/Composer;ILjava/lang/Object;)V
               public final static test(Landroidx/compose/Composer;)V
+              public final static synthetic identity(Ljava/lang/Object;)Ljava/lang/Object;
+              public final static synthetic Foo(I)V
+              public final static synthetic test()V
             }
         """
     )
@@ -179,6 +219,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public final class TestKt {
               public final static Foo(ILjava/lang/String;Landroidx/compose/Composer;)V
               public final static Bar(ILjava/lang/String;Landroidx/compose/Composer;)V
+              public final static synthetic Foo(ILjava/lang/String;)V
+              public final static synthetic Bar(ILjava/lang/String;)V
             }
         """
     )
@@ -196,6 +238,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public final class TestKt {
               public final static Foo(Landroidx/compose/Composer;)V
               public final static Bar(ILandroidx/compose/Composer;)V
+              public final static synthetic Foo()V
+              public final static synthetic Bar(I)V
             }
         """
     )
@@ -213,6 +257,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               private final static Lkotlin/jvm/functions/Function2; foo
               public final static getFoo()Lkotlin/jvm/functions/Function2;
               public final static Bar(Landroidx/compose/Composer;)V
+              public final static synthetic Bar()V
               public final static <clinit>()V
               final static INNERCLASS TestKt%foo%1 null null
             }
@@ -238,6 +283,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
             public final class TestKt {
               public final static Bar(Lkotlin/jvm/functions/Function1;Landroidx/compose/Composer;)V
+              public final static synthetic Bar(Lkotlin/jvm/functions/Function1;)V
               final static INNERCLASS TestKt%Bar%foo%1 null null
             }
             final class TestKt%Bar%foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
@@ -273,6 +319,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public final class TestKt {
               public final static Wrap(Lkotlin/jvm/functions/Function2;Landroidx/compose/Composer;)V
               public final static App(ILandroidx/compose/Composer;)V
+              public final static synthetic Wrap(Lkotlin/jvm/functions/Function2;)V
+              public final static synthetic App(I)V
               final static INNERCLASS TestKt%App%1 null null
             }
             final class TestKt%App%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
@@ -311,10 +359,61 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
             public abstract interface Foo {
               public abstract bar(Landroidx/compose/Composer;)V
+              public abstract synthetic bar()V
             }
             public final class FooImpl implements Foo {
               public <init>()V
               public bar(Landroidx/compose/Composer;)V
+              public synthetic bar()V
+            }
+        """
+    )
+
+    @Test
+    fun testComposableTopLevelProperty(): Unit = checkApi(
+        """
+            @Composable val foo: Int get() { return 123 }
+        """,
+        """
+            public final class TestKt {
+              public final static synthetic getFoo()I
+              public static synthetic foo%annotations()V
+              public final static getFoo(Landroidx/compose/Composer;)I
+            }
+        """
+    )
+    @Test
+    fun testComposableProperty(): Unit = checkApi(
+        """
+            class Foo {
+                @Composable val foo: Int get() { return 123 }
+            }
+        """,
+        """
+            public final class Foo {
+              public <init>()V
+              public final synthetic getFoo()I
+              public static synthetic foo%annotations()V
+              public final getFoo(Landroidx/compose/Composer;)I
+            }
+        """
+    )
+    @Test
+    fun testCallingProperties(): Unit = checkApi(
+        """
+            @Composable val bar: Int get() { return 123 }
+
+            @Composable fun Example() {
+                bar
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static synthetic getBar()I
+              public static synthetic bar%annotations()V
+              public final static Example(Landroidx/compose/Composer;)V
+              public final static synthetic Example()V
+              public final static getBar(Landroidx/compose/Composer;)I
             }
         """
     )
@@ -334,10 +433,12 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public abstract class BaseFoo {
               public <init>()V
               public abstract bar(Landroidx/compose/Composer;)V
+              public abstract synthetic bar()V
             }
             public final class FooImpl extends BaseFoo {
               public <init>()V
               public bar(Landroidx/compose/Composer;)V
+              public synthetic bar()V
             }
         """
     )
@@ -363,12 +464,15 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public final class TestKt {
               public final static Wat(Landroidx/compose/Composer;)V
               public final static Foo(ILandroidx/compose/Composer;)V
+              public final static synthetic Wat()V
+              public final static synthetic Foo(I)V
               private final static Foo%goo(Landroidx/compose/Composer;)V
               public final static INNERCLASS TestKt%Foo%Bar null Bar
             }
             public final class TestKt%Foo%Bar {
               <init>()V
               public final baz(Landroidx/compose/Composer;)V
+              public final synthetic baz()V
               public final static INNERCLASS TestKt%Foo%Bar null Bar
               OUTERCLASS TestKt Foo (ILandroidx/compose/Composer;)V
             }
@@ -452,6 +556,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
             public final class TestKt {
               public final static Example(Landroidx/compose/Composer;)V
+              public final static synthetic Example()V
             }
         """
     )

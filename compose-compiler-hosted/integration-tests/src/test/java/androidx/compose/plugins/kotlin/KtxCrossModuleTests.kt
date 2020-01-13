@@ -23,7 +23,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Component
 import androidx.compose.Compose
-import androidx.compose.composer
 import androidx.compose.runWithCurrent
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
@@ -45,6 +44,165 @@ import java.net.URLClassLoader
     maxSdk = 23
 )
 class KtxCrossModuleTests : AbstractCodegenTest() {
+
+    @Test
+    fun testRemappedTypes(): Unit = ensureSetup(composerParam = true) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                    package x
+
+                    class A {
+                        fun makeA(): A { return A() }
+                        fun makeB(): B { return B() }
+                        class B() {
+                        }
+                    }
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                    package b
+
+                    import x.A
+
+                    class C {
+                        fun useAB() {
+                            val a = A()
+                            a.makeA()
+                            a.makeB()
+                            val b = A.B()
+                        }
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testSimpleXModuleCall(): Unit = ensureSetup(composerParam = true) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "a/A.kt" to """
+                    package a
+
+                    import androidx.compose.*
+
+                    @Composable
+                    fun FromA() {}
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                    package b
+
+                    import a.FromA
+                    import androidx.compose.*
+
+                    @Composable
+                    fun FromB() {
+                        FromA()
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testInstanceXModuleCall(): Unit = ensureSetup(composerParam = true) {
+        compile(
+            "TestH", mapOf(
+                "library module" to mapOf(
+                    "a/Foo.kt" to """
+                    package a
+
+                    import androidx.compose.*
+
+                    class Foo {
+                        @Composable
+                        fun FromA() {}
+                    }
+                 """
+                ),
+                "Main" to mapOf(
+                    "B.kt" to """
+                    import a.Foo
+                    import androidx.compose.*
+
+                    @Composable
+                    fun FromB() {
+                        Foo().FromA()
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testXModuleProperty(): Unit = ensureSetup(composerParam = true) {
+        compile(
+            "TestI", mapOf(
+                "library module" to mapOf(
+                    "a/Foo.kt" to """
+                    package a
+
+                    import androidx.compose.*
+
+                    @Composable val foo: Int get() { return 123 }
+                 """
+                ),
+                "Main" to mapOf(
+                    "B.kt" to """
+                    import a.foo
+                    import androidx.compose.*
+
+                    @Composable
+                    fun FromB() {
+                        foo
+                    }
+                """
+                )
+            )
+        )
+    }
+    @Test
+    fun testXModuleInterface(): Unit = ensureSetup(composerParam = true) {
+        compile(
+            "TestJ", mapOf(
+                "library module" to mapOf(
+                    "a/Foo.kt" to """
+                    package a
+
+                    import androidx.compose.*
+
+                    interface Foo {
+                        @Composable fun foo()
+                    }
+                 """
+                ),
+                "Main" to mapOf(
+                    "B.kt" to """
+                    import a.Foo
+                    import androidx.compose.*
+
+                    class B : Foo {
+                        @Composable override fun foo() {}
+                    }
+
+                    @Composable fun Example(inst: Foo) {
+                        B().foo()
+                        inst.foo()
+                    }
+                """
+                )
+            )
+        )
+    }
 
     @Test
     fun testCrossModule_SimpleCompositionxxx(): Unit = ensureSetup {
@@ -364,11 +522,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         }
     }
 
-    fun compose(
+    fun compile(
         mainClassName: String,
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false
-    ): MultiCompositionTest {
+    ): List<OutputFile> {
         val libraryClasses = (modules.filter { it.key != "Main" }.map {
             // Setup for compile
             this.classFileFactory = null
@@ -392,9 +550,17 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             ?: error("No Main module specified"), dumpClasses).allGeneratedFiles
 
         // Load the files looking for mainClassName
-        val allClasses = (libraryClasses + appClasses).filter {
+        return (libraryClasses + appClasses).filter {
             it.relativePath.endsWith(".class")
         }
+    }
+
+    fun compose(
+        mainClassName: String,
+        modules: Map<String, Map<String, String>>,
+        dumpClasses: Boolean = false
+    ): MultiCompositionTest {
+        val allClasses = compile(mainClassName, modules, dumpClasses)
         val loader = URLClassLoader(emptyArray(), this.javaClass.classLoader)
         val instanceClass = run {
             var instanceClass: Class<*>? = null
@@ -463,9 +629,15 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     override val additionalPaths: List<File> = listOf(classesDirectory)
 
     private var isSetup = false
-    private inline fun <T> ensureSetup(block: () -> T): T {
-        if (!isSetup) setUp()
-        return block()
+    private fun <T> ensureSetup(composerParam: Boolean = false, block: () -> T): T {
+        val current = ComposeFlags.COMPOSER_PARAM
+        try {
+            ComposeFlags.COMPOSER_PARAM = composerParam
+            if (!isSetup) setUp()
+            return block()
+        } finally {
+            ComposeFlags.COMPOSER_PARAM = current
+        }
     }
 }
 
