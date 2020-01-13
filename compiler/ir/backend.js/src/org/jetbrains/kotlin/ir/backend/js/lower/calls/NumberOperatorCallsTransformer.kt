@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
 
+private val HASH_CODE_NAME = Name.identifier("hashCode")
+
 class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
     private val irBuiltIns = context.irBuiltIns
@@ -52,11 +54,13 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(it, OperatorNames.XOR) { call -> toBoolean(irCall(call, intrinsics.jsBitXor, receiversAsArguments = true)) }
 
             add(it, OperatorNames.NOT, intrinsics.jsNot)
+
+            add(it, HASH_CODE_NAME) { call -> toInt32(call.dispatchReceiver!!) }
         }
 
         for (type in primitiveNumbers) {
             add(type, Name.identifier("rangeTo"), ::transformRangeTo)
-            add(type, Name.identifier("hashCode"), ::transformHashCode)
+            add(type, HASH_CODE_NAME, ::transformHashCode)
         }
 
         for (type in primitiveNumbers) {
