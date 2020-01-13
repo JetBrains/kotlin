@@ -13,7 +13,7 @@ kotlin {
     org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests nativeTarget
     if (hostOs == "Mac OS X") nativeTarget = macosX64('myNative')
     else if (hostOs == "Linux") nativeTarget = linuxX64("myNative")
-    else if (isMingwX64) return nativeTarget = mingwX64("myNative")
+    else if (isMingwX64) nativeTarget = mingwX64("myNative")
     else throw new GradleException("Host OS is not supported in Kotlin/Native.")
 
     nativeTarget.with {

@@ -58,7 +58,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
                         +"""org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests $DEFAULT_TARGET_VARIABLE_NAME"""; nlIndented()
                         +"""if (hostOs == "Mac OS X") $DEFAULT_TARGET_VARIABLE_NAME = macosX64('$moduleName')"""; nlIndented()
                         +"""else if (hostOs == "Linux") $DEFAULT_TARGET_VARIABLE_NAME = linuxX64("$moduleName")"""; nlIndented()
-                        +"""else if (isMingwX64) return $DEFAULT_TARGET_VARIABLE_NAME = mingwX64("$moduleName")"""; nlIndented()
+                        +"""else if (isMingwX64) $DEFAULT_TARGET_VARIABLE_NAME = mingwX64("$moduleName")"""; nlIndented()
                         +"""else throw new GradleException("Host OS is not supported in Kotlin/Native.")""";
                     }
                 }
