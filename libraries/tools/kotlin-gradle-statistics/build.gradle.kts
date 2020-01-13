@@ -6,6 +6,9 @@ plugins {
 
 dependencies {
     compileOnly(kotlinStdlib())
+
+    testCompile(project(":kotlin-test::kotlin-test-junit"))
+    testCompile("junit:junit:4.12")
 }
 
 sourceSets {
