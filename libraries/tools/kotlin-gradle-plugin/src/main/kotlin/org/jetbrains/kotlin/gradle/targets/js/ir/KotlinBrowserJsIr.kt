@@ -138,6 +138,10 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 DISTRIBUTION_TASK_NAME
             )
         ) {
+            it.dependsOn(
+                target.project.tasks.getByName(compilation.processResourcesTaskName)
+            )
+
             it.from(compilation.output.resourcesDir)
             it.into(distribution.directory ?: baseDist)
         }
@@ -160,7 +164,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         compilation.productionLinkTask,
                         compilation.developmentLinkTask
                     ),
-                    target.project.tasks.getByName(compilation.processResourcesTaskName),
                     distributionTask
                 )
 
