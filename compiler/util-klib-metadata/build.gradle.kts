@@ -6,6 +6,7 @@ plugins {
 description = "Common klib metadata reader and writer"
 
 dependencies {
+    compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:deserialization"))
     compileOnly(project(":compiler:serialization"))
