@@ -47,6 +47,7 @@ public class BuildProcessCustomPluginsConfiguration implements PersistentStateCo
     return myState.myProjectLibraries;
   }
 
+  @NotNull
   public List<String> getCustomPluginsClasspath() {
     return ReadAction.compute(() -> {
       List<String> result = new ArrayList<>();
