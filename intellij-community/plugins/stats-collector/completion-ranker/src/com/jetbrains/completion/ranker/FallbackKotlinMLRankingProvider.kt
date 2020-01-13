@@ -7,6 +7,7 @@ import com.intellij.internal.ml.ModelMetadata
 import com.intellij.internal.ml.completion.CompletionRankingModelBase
 import com.intellij.internal.ml.completion.JarCompletionModelProvider
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.completion.ranker.model.kotlin.MLGlassBox
 
@@ -23,7 +24,7 @@ class FallbackKotlinMLRankingProvider : JarCompletionModelProvider("Kotlin", "ko
     return PluginManager.getInstance().findEnabledPlugin(PluginId.findId(KOTLIN_PLUGIN_ID) ?: return false)?.isEnabled ?: false
   }
 
-  override fun shouldReplace(): Boolean = false
+  override fun shouldReplace(): Boolean = ApplicationManager.getApplication().isEAP
 
   private companion object {
     private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
