@@ -7,7 +7,6 @@ import com.intellij.ide.IdeView;
 import com.intellij.ide.bookmarks.Bookmark;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.ide.favoritesTreeView.actions.*;
-import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ModuleGroup;
 import com.intellij.ide.projectView.impl.ProjectViewTree;
 import com.intellij.ide.projectView.impl.nodes.LibraryGroupElement;
@@ -107,7 +106,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     myTree.setLargeModel(true);
     new TreeSpeedSearch(myTree);
     ToolTipManager.sharedInstance().registerComponent(myTree);
-    FavoriteComparator favoritesComparator = new FavoriteComparator(ProjectView.getInstance(project));
+    FavoriteComparator favoritesComparator = new FavoriteComparator();
     FavoritesManager favoriteManager = FavoritesManager.getInstance(myProject);
     myBuilder.setNodeDescriptorComparator((o1, o2) -> {
       if (o1 instanceof FavoriteTreeNodeDescriptor && o2 instanceof FavoriteTreeNodeDescriptor) {

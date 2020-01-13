@@ -46,7 +46,7 @@ public final class FavoritesViewTreeBuilder extends BaseProjectTreeBuilder {
           tree,
           treeModel,
           treeStructure,
-          new FavoriteComparator(ProjectView.getInstance(project)));
+          new FavoriteComparator());
     final MessageBusConnection bus = myProject.getMessageBus().connect(this);
     ProjectViewPsiTreeChangeListener psiTreeChangeListener = new ProjectViewPsiTreeChangeListener(myProject) {
       @Override
