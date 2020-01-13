@@ -101,7 +101,7 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
   @Override
   public boolean isModified() {
     List<Compiler> selectedElements = myValidators.getMarkedElements();
-    List<Compiler> markedValidators = getMarkedValidators();
+    List<Compiler> markedValidators = getMarkedValidators(ContainerUtil.concat(selectedElements, myValidators.getElements(false)));
     if (markedValidators.size() != selectedElements.size()) {
       return true;
     }
@@ -134,15 +134,14 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
   @Override
   public void reset() {
     myValidateBox.setSelected(myConfiguration.isValidateOnBuild());
-    final List<Compiler> validators = getValidators();
-    Collections.sort(validators, Comparator.comparing(Compiler::getDescription));
-    myValidators.setElements(validators, false);
-    myValidators.markElements(getMarkedValidators());
+    final List<Compiler> allValidators = getValidators();
+    Collections.sort(allValidators, Comparator.comparing(Compiler::getDescription));
+    myValidators.setElements(allValidators, false);
+    myValidators.markElements(getMarkedValidators(allValidators));
     myExcludedConfigurable.reset();
   }
 
-  private List<Compiler> getMarkedValidators() {
-    final List<Compiler> validators = getValidators();
+  private List<Compiler> getMarkedValidators(@NotNull List<Compiler> validators) {
     return ContainerUtil.mapNotNull(validators, (NullableFunction<Compiler, Compiler>)validator -> myConfiguration.isSelected(validator) ? validator : null);
   }
 
