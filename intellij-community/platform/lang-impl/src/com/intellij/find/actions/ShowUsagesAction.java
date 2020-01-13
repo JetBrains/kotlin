@@ -81,6 +81,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   public static final String ID = "ShowUsages";
   private static class Holder {
     private static final UsageNode USAGES_OUTSIDE_SCOPE_NODE = new UsageNode(null, ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
+    private static final UsageNode MORE_USAGES_SEPARATOR_NODE = UsageViewImpl.NULL_NODE;
 
     private static final Comparator<UsageNode> USAGE_NODE_COMPARATOR = (c1, c2) -> {
       if (c1 instanceof StringNode || c2 instanceof StringNode) {
@@ -298,7 +299,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
           visibleNodes.add(node);
           boolean continueSearch = true;
           if (visibleNodes.size() == maxUsages) {
-            visibleNodes.add(UsageViewImpl.NULL_NODE);
+            visibleNodes.add(Holder.MORE_USAGES_SEPARATOR_NODE);
             usages.add(ShowUsagesTable.MORE_USAGES_SEPARATOR);
             continueSearch = false;
           }
@@ -356,7 +357,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
            else {
              if (popup != null) {
                String title = presentation.getTabText();
-               boolean shouldShowMoreSeparator = visibleNodes.contains(UsageViewImpl.NULL_NODE);
+               boolean shouldShowMoreSeparator = visibleNodes.contains(Holder.MORE_USAGES_SEPARATOR_NODE);
                String fullTitle = getFullTitle(usages, title, shouldShowMoreSeparator,
                                                visibleNodes.size() - (shouldShowMoreSeparator ? 1 : 0), false);
                popup.setCaption(fullTitle);
@@ -754,7 +755,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
 
     boolean shouldShowMoreSeparator = usages.contains(ShowUsagesTable.MORE_USAGES_SEPARATOR);
     if (shouldShowMoreSeparator) {
-      nodes.add(UsageViewImpl.NULL_NODE);
+      nodes.add(Holder.MORE_USAGES_SEPARATOR_NODE);
     }
     boolean hasOutsideScopeUsages = usages.contains(ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
     if (hasOutsideScopeUsages && !shouldShowMoreSeparator) {
