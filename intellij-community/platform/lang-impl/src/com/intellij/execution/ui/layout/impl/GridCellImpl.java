@@ -1,5 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui.layout.impl;
 
 import com.intellij.execution.ui.layout.*;
@@ -36,7 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GridCellImpl implements GridCell {
+public final class GridCellImpl implements GridCell {
   private final GridImpl myContainer;
 
   private final MutualMap<Content, TabInfo> myContents = new MutualMap<>(true);
@@ -448,7 +447,8 @@ public class GridCellImpl implements GridCell {
     }
 
     private GridCellTabs(ViewContextEx context, GridImpl container) {
-      super(context.getProject(), context.getActionManager(), context.getFocusManager(), container);
+      super(context.getProject(), context.getFocusManager(), container);
+
       myContext = context;
       JBRunnerTabsBase tabs = ((RunnerContentUi)myContext).myTabs;
       ((JBTabsImpl)tabs).addNestedTabs(this);
@@ -484,8 +484,9 @@ public class GridCellImpl implements GridCell {
       ((RunnerContentUi)myContext).myTabs.resetDropOver(tabInfo);
     }
 
+    @NotNull
     @Override
-    protected TabLabel createTabLabel(TabInfo info) {
+    protected TabLabel createTabLabel(@NotNull TabInfo info) {
       return new SingleHeightTabs.SingleHeightLabel(this, info) {
         @Override
         public void setAlignmentToCenter(boolean toCenter) {

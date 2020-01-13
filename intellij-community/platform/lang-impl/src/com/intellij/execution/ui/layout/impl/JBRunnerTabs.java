@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui.layout.impl;
 
 import com.intellij.openapi.Disposable;
@@ -26,8 +26,7 @@ import java.util.Map;
  */
 public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   public static JBRunnerTabsBase create(@Nullable Project project, @NotNull Disposable parentDisposable) {
-    IdeFocusManager focusManager = project != null ? IdeFocusManager.getInstance(project) : null;
-    return new JBRunnerTabs(project, ActionManager.getInstance(), focusManager, parentDisposable);
+    return new JBRunnerTabs(project, parentDisposable);
   }
 
   @Override
@@ -35,8 +34,17 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
     return new DefaultTabPainterAdapter(JBTabPainter.getDEBUGGER());
   }
 
+  public JBRunnerTabs(@Nullable Project project, @NotNull Disposable parent) {
+    super(project, parent);
+  }
+
+  /**
+   * @deprecated Use {@link #JBRunnerTabs(Project, Disposable)}
+   */
+  @SuppressWarnings("unused")
+  @Deprecated
   public JBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
-    super(project, actionManager, focusManager, parent);
+    super(project, parent);
   }
 
   @Override
@@ -92,8 +100,9 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
     }
   }
 
+  @NotNull
   @Override
-  protected TabLabel createTabLabel(TabInfo info) {
+  protected TabLabel createTabLabel(@NotNull TabInfo info) {
     return new SingleHeightLabel(this, info) {
       @Override
       public void setTabActions(ActionGroup group) {
