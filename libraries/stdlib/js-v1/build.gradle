@@ -188,8 +188,10 @@ task compileJs(type: NoDebugJavaExec) {
     inputs.files(compileCoroutinesExperimentalKotlin2Js.outputs.files)
     inputs.dir(jsSrcDir)
     inputs.dir(jsCommonSrcDir)
+
     outputs.file(jsOutputFile)
     outputs.file("${jsOutputFile}.map")
+    outputs.cacheIf { true }
 
     def inputFiles = fileTree(jsSrcJsDir) {
         include '**/*.js'
