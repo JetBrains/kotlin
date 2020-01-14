@@ -68,10 +68,11 @@ class Distribution(
 
     val klib = "$konanHome/klib"
     val stdlib = "$klib/common/stdlib"
+    val stdlibDefaultComponent = "$stdlib/default"
 
     fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
 
-    fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlib/targets/${target.visibleName}/native/runtime.bc"
+    fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlibDefaultComponent/targets/${target.visibleName}/native/runtime.bc"
 
     val launcherFiles = listOf("launcher.bc")
 
