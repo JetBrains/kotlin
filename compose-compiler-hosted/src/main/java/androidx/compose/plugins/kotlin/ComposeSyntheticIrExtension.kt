@@ -16,9 +16,12 @@
 
 package androidx.compose.plugins.kotlin
 
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_EMIT_DESCRIPTOR
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_EMIT_METADATA
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_FUNCTION_DESCRIPTOR
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_PROPERTY_DESCRIPTOR
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSER_IR_METADATA
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -84,7 +87,40 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         statementGenerator: StatementGenerator,
         element: KtCallExpression
     ): IrExpression? {
-        if (ComposeFlags.COMPOSER_PARAM) return null
+        if (ComposeFlags.COMPOSER_PARAM) {
+            // TODO(lmr): Ideally, we can get rid of this logic here by figuring out an
+            //  alternative method to getting the composer metadata for each composable
+            //  invocation from inside the IR transforms. For now, this unblocks us, but it would
+            //  be nice to get rid of this extension point.
+            val resolvedCall = statementGenerator.getResolvedCall(element) ?: return null
+
+            return when (val descriptor = resolvedCall.candidateDescriptor) {
+                is ComposableFunctionDescriptor -> statementGenerator
+                    .visitCallExpressionWithoutInterception(element)
+                    .also { call ->
+                        statementGenerator.context.irTrace.record(
+                            COMPOSER_IR_METADATA,
+                            call,
+                            descriptor.composerMetadata
+                        )
+                    }
+                is ComposableEmitDescriptor -> statementGenerator
+                    .visitCallExpressionWithoutInterception(element)
+                    .also { call ->
+                        statementGenerator.context.irTrace.record(
+                            COMPOSER_IR_METADATA,
+                            call,
+                            descriptor.composerMetadata
+                        )
+                        statementGenerator.context.irTrace.record(
+                            COMPOSABLE_EMIT_METADATA,
+                            call,
+                            descriptor
+                        )
+                    }
+                else -> null
+            }
+        }
         val resolvedCall = statementGenerator.getResolvedCall(element)
             ?: return ErrorExpressionGenerator(statementGenerator).generateErrorCall(element)
 
@@ -114,7 +150,31 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         statementGenerator: StatementGenerator,
         element: KtSimpleNameExpression
     ): IrExpression? {
-        if (ComposeFlags.COMPOSER_PARAM) return null
+        if (ComposeFlags.COMPOSER_PARAM) {
+            // TODO(lmr): Ideally, we can get rid of this logic here by figuring out an
+            //  alternative method to getting the composer metadata for each composable
+            //  invocation from inside the IR transforms. For now, this unblocks us, but it would
+            //  be nice to get rid of this extension point.
+            val resolvedCall = statementGenerator.getResolvedCall(element) ?: return null
+            val descriptor = resolvedCall.candidateDescriptor
+            return when (descriptor) {
+                is ComposablePropertyDescriptor ->
+                    CallGenerator(statementGenerator).generateValueReference(
+                        element.startOffsetSkippingComments,
+                        element.endOffset,
+                        descriptor,
+                        resolvedCall,
+                        null
+                    ).also { call ->
+                        statementGenerator.context.irTrace.record(
+                            COMPOSER_IR_METADATA,
+                            call,
+                            descriptor.composerMetadata
+                        )
+                    }
+                else -> null
+            }
+        }
         val resolvedCall = statementGenerator.getResolvedCall(element)
             ?: return super.visitSimpleNameExpression(statementGenerator, element)
 

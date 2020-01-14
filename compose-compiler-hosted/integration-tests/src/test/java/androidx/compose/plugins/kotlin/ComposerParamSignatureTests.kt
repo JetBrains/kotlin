@@ -67,8 +67,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed1(): Unit = checkComposerParam(
         """
-            val a = makeComposer()
+            var a: Composer<*>? = null
             fun run() {
+                a = makeComposer()
                 invokeComposable(a) {
                     assertComposer(a)
                 }
@@ -77,13 +78,34 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testSimpleEmits(): Unit = checkApi(
+        """
+            import android.widget.LinearLayout
+            import android.widget.TextView
+
+            @Composable fun Example() {
+                LinearLayout(id=123) {
+                    TextView(text="Hello World")
+                }
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static Example(Landroidx/compose/Composer;)V
+              public final static synthetic Example()V
+            }
+        """
+    )
+
+    @Test
     fun testCorrectComposerPassed2(): Unit = checkComposerParam(
         """
-            val a = makeComposer()
+            var a: Composer<*>? = null
             @Composable fun Foo() {
                 assertComposer(a)
             }
             fun run() {
+                a = makeComposer()
                 invokeComposable(a) {
                     Foo()
                 }
@@ -94,12 +116,14 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed3(): Unit = checkComposerParam(
         """
-            val a = makeComposer()
-            val b = makeComposer()
+            var a: Composer<*>? = null
+            var b: Composer<*>? = null
             @Composable fun Callback(fn: () -> Unit) {
                 fn()
             }
             fun run() {
+                a = makeComposer()
+                b = makeComposer()
                 invokeComposable(a) {
                     assertComposer(a)
                     Callback {
@@ -115,14 +139,16 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed4(): Unit = checkComposerParam(
         """
-            val a = makeComposer()
-            val b = makeComposer()
+            var a: Composer<*>? = null
+            var b: Composer<*>? = null
             @Composable fun makeInt(): Int {
                 assertComposer(a)
                 return 10
             }
             @Composable fun WithDefault(x: Int = makeInt()) {}
             fun run() {
+                a = makeComposer()
+                b = makeComposer()
                 invokeComposable(a) {
                     assertComposer(a)
                     WithDefault()
@@ -139,11 +165,12 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed5(): Unit = checkComposerParam(
         """
-            val a = makeComposer()
+            var a: Composer<*>? = null
             @Composable fun Wrap(children: @Composable() () -> Unit) {
                 children()
             }
             fun run() {
+                a = makeComposer()
                 invokeComposable(a) {
                     assertComposer(a)
                     Wrap {
@@ -154,6 +181,21 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
                                 assertComposer(a)
                             }
                         }
+                    }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCorrectComposerPassed6(): Unit = checkComposerParam(
+        """
+            import android.widget.TextView
+
+            fun run() {
+                invokeComposable(makeComposer()) {
+                    LinearLayout(id=123) {
+                        TextView(text="Hello World")
                     }
                 }
             }
@@ -328,17 +370,17 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public final invoke(ILandroidx/compose/Composer;)V
               private final synthetic I %x
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-              final static INNERCLASS TestKt%App%1%1 null null
+              final static INNERCLASS TestKt%App%1%invoke%1 null null
               final static INNERCLASS TestKt%App%1 null null
               OUTERCLASS TestKt App (ILandroidx/compose/Composer;)V
             }
-            final class TestKt%App%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+            final class TestKt%App%1%invoke%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
               synthetic <init>(II)V
               public final invoke(ILandroidx/compose/Composer;)V
               private final synthetic I %x
               private final synthetic I %a
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-              final static INNERCLASS TestKt%App%1%1 null null
+              final static INNERCLASS TestKt%App%1%invoke%1 null null
               final static INNERCLASS TestKt%App%1 null null
               OUTERCLASS TestKt%App%1 invoke (ILandroidx/compose/Composer;)V
             }

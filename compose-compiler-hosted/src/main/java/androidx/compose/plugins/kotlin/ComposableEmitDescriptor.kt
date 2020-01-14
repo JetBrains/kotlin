@@ -35,21 +35,32 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
+interface ComposableEmitMetadata {
+    val composerMetadata: ComposerMetadata
+    val emitCall: ResolvedCall<*>
+    val hasChildren: Boolean
+    val pivotals: List<String>
+    val ctorCall: ResolvedCall<*>
+    val ctorParams: List<String>
+    val validations: List<ValidatedAssignment>
+}
+
 class ComposableEmitDescriptor(
     val composer: ResolvedCall<*>,
-    val emitCall: ResolvedCall<*>,
-    val hasChildren: Boolean,
-    val pivotals: List<String>,
-    val ctorCall: ResolvedCall<*>,
-    val ctorParams: List<String>,
-    val validations: List<ValidatedAssignment>,
+    override val composerMetadata: ComposerMetadata,
+    override val emitCall: ResolvedCall<*>,
+    override val hasChildren: Boolean,
+    override val pivotals: List<String>,
+    override val ctorCall: ResolvedCall<*>,
+    override val ctorParams: List<String>,
+    override val validations: List<ValidatedAssignment>,
     containingDeclaration: DeclarationDescriptor,
     original: SimpleFunctionDescriptor?,
     annotations: Annotations,
     name: Name,
     kind: CallableMemberDescriptor.Kind,
     source: SourceElement
-) : SimpleFunctionDescriptorImpl(
+) : ComposableEmitMetadata, SimpleFunctionDescriptorImpl(
     containingDeclaration,
     original,
     annotations,
@@ -67,6 +78,7 @@ class ComposableEmitDescriptor(
             ctorParams: List<String>,
             validations: List<ValidatedAssignment>,
             composerCall: ResolvedCall<*>,
+            composerMetadata: ComposerMetadata,
             name: Name
         ): ComposableEmitDescriptor {
 
@@ -78,6 +90,7 @@ class ComposableEmitDescriptor(
 
             val descriptor = ComposableEmitDescriptor(
                 composerCall,
+                composerMetadata,
                 emitCall,
                 hasChildren,
                 pivotals,
