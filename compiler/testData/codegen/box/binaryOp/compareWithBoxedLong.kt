@@ -1,6 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
-// reason - multifile tests are not supported in JS tests
 //FILE: JavaClass.java
 
 class JavaClass {

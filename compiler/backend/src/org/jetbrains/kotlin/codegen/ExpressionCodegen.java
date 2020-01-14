@@ -3756,13 +3756,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Nullable
     private static KotlinType getLeftOperandType(@Nullable PrimitiveNumericComparisonInfo numericComparisonInfo) {
         if (numericComparisonInfo == null) return null;
-        return numericComparisonInfo.getLeftType();
+        return numericComparisonInfo.getLeftPrimitiveType();
     }
 
     @Nullable
     private static KotlinType getRightOperandType(@Nullable PrimitiveNumericComparisonInfo numericComparisonInfo) {
         if (numericComparisonInfo == null) return null;
-        return numericComparisonInfo.getRightType();
+        return numericComparisonInfo.getRightPrimitiveType();
     }
 
     /*tries to use IEEE 754 arithmetic*/

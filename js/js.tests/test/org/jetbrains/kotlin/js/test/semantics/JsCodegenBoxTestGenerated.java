@@ -756,6 +756,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/binaryOp/divisionByZero.kt");
         }
 
+        @TestMetadata("eqNullableDoubles.kt")
+        public void testEqNullableDoubles() throws Exception {
+            runTest("compiler/testData/codegen/box/binaryOp/eqNullableDoubles.kt");
+        }
+
+        @TestMetadata("eqNullableDoublesWithTP.kt")
+        public void testEqNullableDoublesWithTP() throws Exception {
+            runTest("compiler/testData/codegen/box/binaryOp/eqNullableDoublesWithTP.kt");
+        }
+
         @TestMetadata("intrinsic.kt")
         public void testIntrinsic() throws Exception {
             runTest("compiler/testData/codegen/box/binaryOp/intrinsic.kt");
