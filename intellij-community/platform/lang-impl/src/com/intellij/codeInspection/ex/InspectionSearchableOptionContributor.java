@@ -35,17 +35,18 @@ public class InspectionSearchableOptionContributor extends SearchableOptionContr
       String hit = toolWrapper.getDisplayName();
       processor.addOptions(toolWrapper.getDisplayName(), toolWrapper.getShortName(), hit,
                            InspectionToolsConfigurable.ID,
-                           InspectionToolsConfigurable.DISPLAY_NAME, false);
+                           InspectionToolsConfigurable.getInspectionsDisplayName(), false);
 
       for (String group : toolWrapper.getGroupPath()) {
-        processor.addOptions(group, toolWrapper.getShortName(), hit, InspectionToolsConfigurable.ID, InspectionToolsConfigurable.DISPLAY_NAME, false);
+        processor.addOptions(group, toolWrapper.getShortName(), hit, InspectionToolsConfigurable.ID,
+                             InspectionToolsConfigurable.getInspectionsDisplayName(), false);
       }
 
       final String description = toolWrapper.loadDescription();
       if (description != null) {
         @NonNls String descriptionText = HTML_PATTERN.matcher(description).replaceAll(" ");
         processor.addOptions(descriptionText, toolWrapper.getShortName(), hit, InspectionToolsConfigurable.ID,
-                             InspectionToolsConfigurable.DISPLAY_NAME, false);
+                             InspectionToolsConfigurable.getInspectionsDisplayName(), false);
       }
     }
 

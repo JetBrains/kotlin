@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.profile.codeInspection.ui.header;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.InspectionProfileModifiableModel;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
@@ -26,7 +27,6 @@ import java.util.Arrays;
 public abstract class InspectionToolsConfigurable implements ErrorsConfigurable, SearchableConfigurable, Configurable.NoScroll {
   private static final Logger LOG = Logger.getInstance(InspectionToolsConfigurable.class);
   public static final String ID = "Errors";
-  public static final String DISPLAY_NAME = "Inspections";
 
   protected final BaseInspectionProfileManager myApplicationProfileManager;
   protected final ProjectInspectionProfileManager myProjectProfileManager;
@@ -49,7 +49,7 @@ public abstract class InspectionToolsConfigurable implements ErrorsConfigurable,
 
   @Override
   public String getDisplayName() {
-    return DISPLAY_NAME;
+    return getInspectionsDisplayName();
   }
 
   @Override
@@ -253,5 +253,10 @@ public abstract class InspectionToolsConfigurable implements ErrorsConfigurable,
     for (Component component : myProfilePanelHolder.getComponents()) {
       component.setVisible(component == panel);
     }
+  }
+
+  @NotNull
+  public static String getInspectionsDisplayName() {
+    return CodeInsightBundle.message("configurable.InspectionToolsConfigurable.display.name");
   }
 }
