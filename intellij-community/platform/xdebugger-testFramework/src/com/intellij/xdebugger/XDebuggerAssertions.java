@@ -383,7 +383,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
 
   public static void assertSourcePosition(@NotNull XValue value, @NotNull VirtualFile file, int offset) {
     final XTestNavigatable n = new XTestNavigatable();
-    ApplicationManager.getApplication().runReadAction(() -> value.computeSourcePosition(n));
+    ApplicationManager.getApplication().invokeAndWait(() -> value.computeSourcePosition(n));
     assertNotNull(n.getPosition());
     assertEquals(file, n.getPosition().getFile());
     assertEquals(offset, n.getPosition().getOffset());
