@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -255,6 +256,16 @@ class ResolvedAtomCompleter(
         }
     }
 
+    private fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubstitution() {
+        override fun get(key: KotlinType): TypeProjection? {
+            return safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
+        }
+
+        override fun isEmpty(): Boolean {
+            return isEmpty
+        }
+    }
+
     private fun completeCallableReference(
         resolvedAtom: ResolvedCallableReferenceAtom
     ) {
@@ -264,20 +275,14 @@ class ResolvedAtomCompleter(
             return
         }
         val resultTypeParameters =
-            callableCandidate.freshSubstitutor!!.freshVariables.map { resultSubstitutor.safeSubstitute(it.defaultType).asTypeProjection() }
+            callableCandidate.freshSubstitutor!!.freshVariables.map { resultSubstitutor.safeSubstitute(it.defaultType) }
 
-        val firstSubstitutor = IndexedParametersSubstitution(callableCandidate.candidate.typeParameters, resultTypeParameters)
-        val secondSubstitution = object : TypeSubstitution() {
-            override fun get(key: KotlinType): TypeProjection? {
-                return resultSubstitutor.safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
-            }
+        val typeParametersSubstitutor = NewTypeSubstitutorByConstructorMap((callableCandidate.candidate.typeParameters.map { it.typeConstructor } zip resultTypeParameters).toMap())
 
-            override fun isEmpty(): Boolean {
-                return resultSubstitutor.isEmpty
-            }
-        }
+        val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
+        val secondSubstitution = resultSubstitutor.toOldSubstitution()
         val resultSubstitutor = TypeSubstitutor.createChainedSubstitutor(
-            firstSubstitutor,
+            firstSubstitution,
             secondSubstitution
         )
 
