@@ -66,15 +66,17 @@ internal class A {
         val s = "test string"
         s == "test"
         s.equals(
-                "tesT"
-                , ignoreCase = true)
+                "tesT",
+                ignoreCase = true
+        )
         s.compareTo("Test", ignoreCase = true)
         s.regionMatches(
                 0,
                 "TE",
                 0,
-                2
-                , ignoreCase = true)
+                2,
+                ignoreCase = true
+        )
         s.regionMatches(0, "st", 1, 2)
         s.replace("\\w+".toRegex(), "---")
                 .replaceFirst("([s-t])".toRegex(), "A$1")

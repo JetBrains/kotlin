@@ -3,5 +3,6 @@ fun callInDefault(simple: List<String> = provideSimple(), complex: List<String> 
     val result = mutableListOf("statement 1")
     result.add("statement 2")
     result
-}) {
+}
+) {
 }

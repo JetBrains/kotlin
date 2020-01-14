@@ -3,8 +3,10 @@
 import javax.swing.SwingUtilities
 
 fun bar(p: Int) {
-    SwingUtilities.invokeLater(Runnable {
-        if (p < 0) return@Runnable
-        throw UnsupportedOperationException()
-    })
+    SwingUtilities.invokeLater(
+            Runnable {
+                if (p < 0) return@Runnable
+                throw UnsupportedOperationException()
+            }
+    )
 }

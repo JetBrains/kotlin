@@ -36,5 +36,6 @@ fun createHi(any: Any) = "Hi $any"
 val unDeprecateMe = mutableListOf("Hello").apply {
     addA(d(::createHi, 1 ) { // Run the quick fix from the IDE and watch it produce broken code.
             println("Yo")
-        }, Unit)
+        }, Unit
+    )
 }

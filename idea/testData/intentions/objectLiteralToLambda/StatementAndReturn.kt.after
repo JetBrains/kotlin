@@ -5,8 +5,10 @@ import java.io.FileFilter
 fun foo(filter: FileFilter) {}
 
 fun bar() {
-    foo(FileFilter { file ->
-        val name = file.name
-        name.startsWith("a")
-    })
+    foo(
+            FileFilter { file ->
+                val name = file.name
+                name.startsWith("a")
+            }
+    )
 }

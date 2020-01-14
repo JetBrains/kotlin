@@ -7,6 +7,6 @@ val x = listOf(1, 2, 3).joinTo(
         // comment2
         prefix = "= ",
         // comment3
-        separator = " + "
+        separator = " + ",
         // comment4
 ) { "$it*$it" }

@@ -8,7 +8,8 @@ interface X {
 fun newFun(x: X, a: Int, b: Int){}
 
 fun foo(x: X) {
-    newFun(x/*receiver*/, 1, // pass 1
+    newFun(
+            x/*receiver*/, 1, // pass 1
             2 // pass 2
     )
 }

@@ -3,9 +3,11 @@
 fun foo(x: Int) {}
 
 fun bar() {
-    foo(run {
-        foo(1)
-        foo(2)
-        1
-    })
+    foo(
+            run {
+                foo(1)
+                foo(2)
+                1
+            }
+    )
 }

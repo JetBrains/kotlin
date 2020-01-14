@@ -1,8 +1,10 @@
 fun foo(f: (Int) -> String) {}
 
 fun test() {
-    foo(fun(it: Int): String {
-        val b = it == 1
-        return if (b) "1" else "2"
-    })
+    foo(
+            fun(it: Int): String {
+                val b = it == 1
+                return if (b) "1" else "2"
+            }
+    )
 }

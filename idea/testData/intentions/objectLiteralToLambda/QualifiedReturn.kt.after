@@ -3,11 +3,13 @@
 fun foo(runnable: Runnable) {}
 
 fun bar(list: List<String>) {
-    foo(Runnable {
-        list.filter(fun (element: String): Boolean {
-            if (element == "a") return false
-            if (element == "b") return@Runnable
-            return true
-        })
-    })
+    foo(
+            Runnable {
+                list.filter(fun (element: String): Boolean {
+                    if (element == "a") return false
+                    if (element == "b") return@Runnable
+                    return true
+                })
+            }
+    )
 }

@@ -7,7 +7,9 @@ data class My(val x: Int)
 fun foo(f: () -> My) {}
 
 fun test() {
-    foo(fun(): My {
-        return My(42)
-    })
+    foo(
+            fun(): My {
+                return My(42)
+            }
+    )
 }

@@ -10,8 +10,10 @@ fun boo(s: Second?, body: () -> Unit) { }
 
 fun foo(s: Second?) {
     boo(s) {
-        s?.testInvoke[{
+        s?.testInvoke[
+                {
             "Hello"
-        }]
+        }
+        ]
     }
 }

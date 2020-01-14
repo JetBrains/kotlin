@@ -6,7 +6,9 @@ import java.util.*
 fun foo(f: () -> ArrayDeque<*>) {}
 
 fun test() {
-    foo(fun(): ArrayDeque<*> {
-        return ArrayDeque<Int>()
-    })
+    foo(
+            fun(): ArrayDeque<*> {
+                return ArrayDeque<Int>()
+            }
+    )
 }

@@ -1,9 +1,11 @@
 fun foo(f: (Int) -> String) {}
 
 fun test() {
-    foo(fun(it: Int): String {
-        // comment1
-        return ""
-        // comment2
-    })
+    foo(
+            fun(it: Int): String {
+                // comment1
+                return ""
+                // comment2
+            }
+    )
 }

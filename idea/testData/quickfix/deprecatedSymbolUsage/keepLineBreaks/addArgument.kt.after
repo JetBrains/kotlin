@@ -11,5 +11,6 @@ fun foo(x: X) {
     x.newFun(
             1,
             2,
-            0)
+            0
+    )
 }

@@ -5,6 +5,7 @@ class WithComments/* Some parameter */
         /**
          * A very important property
          */
-        val veryImportant: Any) {
+        val veryImportant: Any
+) {
 
 }

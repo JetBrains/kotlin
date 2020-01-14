@@ -3,9 +3,12 @@ fun test() {
         operator fun get(a: Int, b: Int, fn: (i: Int) -> Int) : Int = 0
     }
     val test = Test()
-    test<caret>[1, 2, { i ->
-        i
-    }]
+    test<caret>[
+            1, 2,
+            { i ->
+                i
+            }
+    ]
 }
 
 fun withSuppression() {

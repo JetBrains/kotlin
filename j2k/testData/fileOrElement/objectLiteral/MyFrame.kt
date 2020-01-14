@@ -24,9 +24,11 @@ internal class Client : Frame() {
 
         addWindowListener(a)
 
-        addWindowListener(object : WindowAdapter() {
-            override fun windowClosing() {}
-        })
+        addWindowListener(
+                object : WindowAdapter() {
+                    override fun windowClosing() {}
+                }
+        )
 
         val b = object : EmptyWindowListener {
 

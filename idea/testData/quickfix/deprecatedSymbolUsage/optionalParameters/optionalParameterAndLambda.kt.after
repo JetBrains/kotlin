@@ -18,7 +18,9 @@ fun useSimple(s: Int): Int {
 fun println(s: String) {}
 
 fun useIt() {
-    val t = useSimple(simple {
-        println("abc")
-    })
+    val t = useSimple(
+            simple {
+                println("abc")
+            }
+    )
 }

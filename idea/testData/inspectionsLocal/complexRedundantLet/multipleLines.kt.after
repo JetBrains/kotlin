@@ -2,7 +2,9 @@
 // HIGHLIGHT: INFORMATION
 
 fun test() {
-    println(runCatching {
+    println(
+            runCatching {
         /* lots of code*/
-    })
+    }
+    )
 }

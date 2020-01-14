@@ -11,12 +11,15 @@ class C {
     @Throws(IOException::class)
     fun foo(): Int {
         ByteArrayInputStream(ByteArray(10)).use { stream ->
-            return bar(object : I {
-                @Throws(IOException::class)
-                override fun doIt(stream: InputStream): Int {
-                    return stream.available()
-                }
-            }, stream)
+            return bar(
+                    object : I {
+                        @Throws(IOException::class)
+                        override fun doIt(stream: InputStream): Int {
+                            return stream.available()
+                        }
+                    },
+                    stream
+            )
         }
     }
 

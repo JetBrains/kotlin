@@ -3,9 +3,11 @@
 fun foo(runnable: Runnable) {}
 
 fun bar(p: Int) {
-    foo(Runnable {
-        if (p < 0) return@Runnable
-        println("a")
-        println("b")
-    })
+    foo(
+            Runnable {
+                if (p < 0) return@Runnable
+                println("a")
+                println("b")
+            }
+    )
 }

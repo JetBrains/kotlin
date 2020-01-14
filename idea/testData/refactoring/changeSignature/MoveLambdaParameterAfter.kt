@@ -3,7 +3,11 @@ fun foo(x: Int, cl: () -> Int, y: Int): Int {
 }
 
 fun bar() {
-    foo(1, {
-        3
-    }, 2)
+    foo(
+            1,
+            {
+                3
+            },
+            2
+    )
 }

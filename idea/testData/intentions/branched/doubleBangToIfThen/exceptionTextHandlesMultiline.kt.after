@@ -1,8 +1,10 @@
 // WITH_RUNTIME
 fun main(args: Array<String>) {
-    val doSomething = doSomething("one" + 1,
+    val doSomething = doSomething(
+            "one" + 1,
             "two",
-            3 * 4)
+            3 * 4
+    )
     val t = if (doSomething != null) doSomething else throw NullPointerException("Expression 'doSomething(\"one\" + 1, ...' must not be null")
 }
 

@@ -4,7 +4,9 @@ interface C {
 
 class D(val c: C) {
     fun foo() {
-        this.c/* and this is c */.set("a", // it's "a"
-                "b" /* and this is "b" */, /* we use 10 */10)
+        this.c/* and this is c */.set(
+                "a", // it's "a"
+                "b" /* and this is "b" */, /* we use 10 */10
+        )
     }
 }

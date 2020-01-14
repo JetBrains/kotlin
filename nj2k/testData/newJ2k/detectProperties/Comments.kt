@@ -1,7 +1,9 @@
-internal class A(// comment for field2 setter
+internal class A(
+// comment for field2 setter
         // comment for field2 getter
         var field2 // comment for field2
-        : Int) {
+        : Int
+) {
     /**
      * Comment for field1 setter
      */

@@ -3,11 +3,14 @@ internal class C {
 
     fun foo2(
             p1: Int,
-            p2: Int) {
+            p2: Int
+    ) {
     }
 
-    fun foo3(p1: Int,
-             p2: Int) {
+    fun foo3(
+            p1: Int,
+            p2: Int
+    ) {
     }
 
     fun foo4(

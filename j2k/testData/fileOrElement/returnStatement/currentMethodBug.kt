@@ -5,10 +5,12 @@ internal interface I {
 internal class C {
     val `object`: Any?
         get() {
-            foo(object : I {
-                override val int: Int
-                    get() = 0
-            })
+            foo(
+                    object : I {
+                        override val int: Int
+                            get() = 0
+                    }
+            )
             return string
         }
 

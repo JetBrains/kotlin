@@ -3,6 +3,6 @@
 fun test() {
     <caret>listOfNotNull(
             true, // comment1
-            null // comment2
+            null, // comment2
     ).first()
 }

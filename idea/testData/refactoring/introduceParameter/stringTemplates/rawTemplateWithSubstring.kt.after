@@ -1,5 +1,8 @@
-fun foo(a: Int, s: String = """c$a
-    :${a + 1}d"""): String {
+fun foo(
+        a: Int,
+        s: String = """c$a
+    :${a + 1}d"""
+): String {
     val x = """_${s}_"""
     val y = "_$a:${a + 1}d_"
     val z = """_c$a:${a + 1}d_"""

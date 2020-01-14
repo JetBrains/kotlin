@@ -1,6 +1,8 @@
 fun foo(i: Int) { }
 
-fun test(i: Int = (1 + 2
-        - 3)) {
+fun test(
+        i: Int = (1 + 2
+                - 3)
+) {
     foo(i)
 }

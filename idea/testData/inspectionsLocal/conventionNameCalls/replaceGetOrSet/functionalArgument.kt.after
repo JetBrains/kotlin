@@ -3,7 +3,9 @@ fun test() {
         operator fun get(fn: (i: Int) -> Int) : Int = 0
     }
     val test = Test()
-    test<caret>[{ i ->
-        i
-    }]
+    test<caret>[
+            { i ->
+                i
+            }
+    ]
 }

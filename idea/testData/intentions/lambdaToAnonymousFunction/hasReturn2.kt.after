@@ -1,10 +1,12 @@
 fun foo(f: (Int) -> String) {}
 
 fun test() {
-    foo(fun(it: Int): String {
-        if (it == 1) {
-            return "1"
-        }
-        return "$it"
-    })
+    foo(
+            fun(it: Int): String {
+                if (it == 1) {
+                    return "1"
+                }
+                return "$it"
+            }
+    )
 }

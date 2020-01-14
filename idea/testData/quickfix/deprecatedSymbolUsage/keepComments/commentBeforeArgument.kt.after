@@ -7,7 +7,12 @@ fun newFun(p4: Int, p3: Int, p2: Int, p1: Int, p0: Int){}
 
 
 fun foo() {
-    newFun(/* 4 */ 4, 3, 2, // 2
-            /* 1 */ 1,
-            /* 0 */ 0)
+    newFun(
+/* 4 */
+            4, 3, 2, // 2
+            /* 1 */
+            1,
+            /* 0 */
+            0
+    )
 }

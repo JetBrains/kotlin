@@ -8,7 +8,9 @@ interface X {
 }
 
 fun foo(x: X) {
-    x.<caret>newFun(1,
+    x.<caret>newFun(
+            1,
             2,
-            3)
+            3
+    )
 }

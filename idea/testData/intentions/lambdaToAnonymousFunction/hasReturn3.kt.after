@@ -1,13 +1,15 @@
 fun foo(f: (Int) -> String) {}
 
 fun test() {
-    foo(fun(it: Int): String {
-        if (it == 1) {
-            return "1"
-        } else if (it == 2) {
-            return "2"
-        } else {
-            return "$it"
-        }
-    })
+    foo(
+            fun(it: Int): String {
+                if (it == 1) {
+                    return "1"
+                } else if (it == 2) {
+                    return "2"
+                } else {
+                    return "$it"
+                }
+            }
+    )
 }

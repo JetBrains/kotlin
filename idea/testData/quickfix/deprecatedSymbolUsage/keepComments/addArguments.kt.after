@@ -7,7 +7,9 @@ fun newFun(p1: Int, a: Int, p2: Int, p3: Int, b: Int){}
 
 
 fun foo() {
-    newFun(0, // 0
+    newFun(
+            0, // 0
             -1, 1, // 1
             2, // 2
-            -2)
+            -2
+    )
