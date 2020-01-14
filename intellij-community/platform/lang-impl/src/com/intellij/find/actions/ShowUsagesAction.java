@@ -247,6 +247,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     boolean isPreviewMode = Boolean.TRUE == PreviewManager.SERVICE.preview(handler.getProject(), UsagesPreviewPanelProvider.ID, Pair.create(usageView, table), false);
     Runnable itemChosenCallback = table.prepareTable(editor, popupPosition, handler, maxUsages, options, isPreviewMode, this);
 
+    // show super method warning dialogs before starting finding usages
+    PsiElement[] primaryElements = handler.getPrimaryElements();
+    PsiElement[] secondaryElements = handler.getSecondaryElements();
+
     JBPopup popup = isPreviewMode ? null : createUsagePopup(usages, visibleNodes, handler, editor, popupPosition,
                                                             maxUsages, usageView, options, table, itemChosenCallback, presentation, processIcon, minWidth);
     if (popup != null) {
@@ -312,8 +316,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       return true;
     };
 
-    final ProgressIndicator indicator = FindUsagesManager.startProcessUsages(handler, handler.getPrimaryElements(), handler.getSecondaryElements(), collect,
-       options, ()-> ApplicationManager.getApplication().invokeLater(() -> {
+    final ProgressIndicator indicator = FindUsagesManager.startProcessUsages(handler, primaryElements, secondaryElements, collect,
+                                                                             options, ()-> ApplicationManager.getApplication().invokeLater(() -> {
          Disposer.dispose(processIcon);
          Container parent = processIcon.getParent();
          if (parent != null) {
