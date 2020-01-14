@@ -34,6 +34,10 @@ class IrBlockBodyImpl(
         this.statements.addAll(statements)
     }
 
+    constructor(startOffset: Int, endOffset: Int, fn: IrBlockBodyImpl.() -> Unit) : this(startOffset, endOffset) {
+        this.fn()
+    }
+
     override val statements: MutableList<IrStatement> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
