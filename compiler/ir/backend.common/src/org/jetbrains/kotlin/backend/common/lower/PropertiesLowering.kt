@@ -5,42 +5,44 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.*
 
-class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
+class PropertiesLowering : DeclarationTransformer {
     override fun lower(irFile: IrFile) {
-        irFile.accept(this, null)
+        runPostfix(true).toFileLoweringPass().lower(irFile)
     }
 
-    override fun visitFile(declaration: IrFile): IrFile {
-        declaration.transformChildrenVoid(this)
-        declaration.transformDeclarationsFlat { lowerProperty(it) }
-        return declaration
-    }
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        when (declaration) {
+            is IrSimpleFunction -> {
+                declaration.correspondingPropertySymbol?.owner?.let { property ->
+                    if (!property.isEffectivelyExternal()) {
+                        return listOf(declaration)
+                    }
+                }
+            }
+            is IrField -> {
+                declaration.correspondingPropertySymbol?.owner?.let { property ->
+                    if (!property.isEffectivelyExternal()) {
+                        return listOf(declaration)
+                    }
+                }
+            }
+            is IrProperty -> {
+                if (!declaration.isEffectivelyExternal()) {
+                    return listOf()
+                }
+            }
+        }
 
-    override fun visitClass(declaration: IrClass): IrStatement {
-        declaration.transformChildrenVoid(this)
-        declaration.transformDeclarationsFlat { lowerProperty(it) }
-        return declaration
+        return null
     }
-
-    override fun visitScript(declaration: IrScript): IrStatement {
-        declaration.transformChildrenVoid(this)
-        declaration.transformDeclarationsFlat { lowerProperty(it) }
-        return declaration
-    }
-
-    private fun lowerProperty(declaration: IrDeclaration): List<IrDeclaration>? =
-        if (declaration is IrProperty && !declaration.isEffectivelyExternal())
-            listOfNotNull(declaration.backingField, declaration.getter, declaration.setter)
-        else null
 
     companion object {
         fun checkNoProperties(irFile: IrFile) {
