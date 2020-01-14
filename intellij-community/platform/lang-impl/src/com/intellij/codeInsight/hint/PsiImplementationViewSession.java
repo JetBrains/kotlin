@@ -323,15 +323,21 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
   }
 
   public static PsiElement getElement(@NotNull Project project, PsiFile file, Editor editor, PsiElement element) {
-    if (element == null && editor != null) {
-      element = TargetElementUtil.findTargetElement(editor, TargetElementUtil.getInstance().getAllAccepted());
-      final PsiElement adjustedElement =
-        TargetElementUtil.getInstance().adjustElement(editor, TargetElementUtil.getInstance().getAllAccepted(), element, null);
-      if (adjustedElement != null) {
-        element = adjustedElement;
-      }
-      else if (file != null) {
-        element = DocumentationManager.getInstance(project).getElementFromLookup(editor, file);
+    if (editor != null) {
+      if (element == null) {
+        element = TargetElementUtil.findTargetElement(editor, TargetElementUtil.getInstance().getAllAccepted());
+        final PsiElement adjustedElement =
+          TargetElementUtil.getInstance().adjustElement(editor, TargetElementUtil.getInstance().getAllAccepted(), element, null);
+        if (adjustedElement != null) {
+          element = adjustedElement;
+        }
+        else if (file != null) {
+          element = DocumentationManager.getInstance(project).getElementFromLookup(editor, file);
+        }
+      } else {
+        final PsiElement adjustedElement =
+          TargetElementUtil.getInstance().adjustElement(editor, TargetElementUtil.getInstance().getAllAccepted(), element, null);
+        if (adjustedElement != null) return adjustedElement;
       }
     }
     return element;
