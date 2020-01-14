@@ -270,7 +270,10 @@ object AbstractTypeChecker {
 
             else -> { // at least 2 supertypes with same constructors. Such case is rare
                 val newArguments = ArgumentList(superConstructor.parametersCount())
+                var anyNonOutParameter = false
                 for (index in 0 until superConstructor.parametersCount()) {
+                    anyNonOutParameter = anyNonOutParameter || superConstructor.getParameter(index).getVariance() != TypeVariance.OUT
+                    if (anyNonOutParameter) continue
                     val allProjections = supertypesWithSameConstructor.map {
                         it.getArgumentOrNull(index)?.takeIf { it.getVariance() == TypeVariance.INV }?.getType()
                             ?: error("Incorrect type: $it, subType: $subType, superType: $superType")
@@ -281,7 +284,7 @@ object AbstractTypeChecker {
                     newArguments.add(intersection)
                 }
 
-                if (isSubtypeForSameConstructor(newArguments, superType)) return true
+                if (!anyNonOutParameter && isSubtypeForSameConstructor(newArguments, superType)) return true
 
                 return supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.asArgumentList(), superType) }
             }

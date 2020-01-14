@@ -15,3 +15,13 @@ fun <E> main(a: A<E>) {
 
     foo(<!DEBUG_INFO_SMARTCAST!>a<!>).b()
 }
+
+class AOut<out X>
+
+fun <Y> foo(c: AOut<Y>): Y = TODO()
+
+fun <E> mainOut(a: AOut<E>) {
+    a <!UNCHECKED_CAST!>as AOut<B<*>><!>
+
+    foo(<!DEBUG_INFO_SMARTCAST!>a<!>).b()
+}
