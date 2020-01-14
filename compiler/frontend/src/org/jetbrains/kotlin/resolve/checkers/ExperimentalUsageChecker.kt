@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -60,10 +60,18 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
     }
 
-    class ExperimentalityDiagnostic(
-        val factory: DiagnosticFactory1<PsiElement, String>,
+    interface ExperimentalityDiagnostic {
+        fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?)
+    }
+
+    class ExperimentalityDiagnostic2(
+        val factory: DiagnosticFactory2<PsiElement, FqName, String>,
         val defaultMessage: (FqName) -> String
-    )
+    ) : ExperimentalityDiagnostic {
+        override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
+            trace.reportDiagnosticOnce(factory.on(element, fqName, message ?: defaultMessage(fqName)))
+        }
+    }
 
     data class ExperimentalityDiagnostics(
         val warning: ExperimentalityDiagnostic,
@@ -99,11 +107,11 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
 
         private val USAGE_DIAGNOSTICS = ExperimentalityDiagnostics(
-            warning = ExperimentalityDiagnostic(
+            warning = ExperimentalityDiagnostic2(
                 Errors.EXPERIMENTAL_API_USAGE,
                 getDefaultDiagnosticMessage("This declaration is experimental and its usage should be marked")
             ),
-            error = ExperimentalityDiagnostic(
+            error = ExperimentalityDiagnostic2(
                 Errors.EXPERIMENTAL_API_USAGE_ERROR,
                 getDefaultDiagnosticMessage("This declaration is experimental and its usage must be marked")
             )
@@ -130,7 +138,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         Experimentality.Severity.WARNING -> diagnostics.warning
                         Experimentality.Severity.ERROR -> diagnostics.error
                     }
-                    trace.reportDiagnosticOnce(diagnostic.factory.on(element, message ?: diagnostic.defaultMessage(annotationFqName)))
+                    diagnostic.report(trace, element, annotationFqName, message)
                 }
             }
         }
@@ -375,7 +383,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         ?: "This declaration overrides experimental member of supertype " +
                         "'${member.containingDeclaration.name.asString()}' and $defaultMessageVerb be annotated " +
                         "with '@${experimentality.annotationFqName.asString()}'"
-                    context.trace.report(diagnostic.on(reportOn, message))
+                    context.trace.report(diagnostic.on(reportOn, experimentality.annotationFqName, message))
                 }
             }
         }

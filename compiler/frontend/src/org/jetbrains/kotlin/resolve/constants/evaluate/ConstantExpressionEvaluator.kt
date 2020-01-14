@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.KtNodeTypes
@@ -15,8 +16,11 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -318,15 +322,21 @@ class ConstantExpressionEvaluator(
     }
 
     companion object {
+        private class ExperimentalityDiagnostic1(
+            val factory: DiagnosticFactory1<PsiElement, String>,
+            val verb: String
+        ) : ExperimentalUsageChecker.ExperimentalityDiagnostic {
+            override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
+                val defaultMessage = ExperimentalUsageChecker.getDefaultDiagnosticMessage(
+                    "Unsigned literals are experimental and their usages $verb be marked"
+                )
+                trace.reportDiagnosticOnce(factory.on(element, defaultMessage(fqName)))
+            }
+        }
+
         private val EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS = ExperimentalUsageChecker.ExperimentalityDiagnostics(
-            warning = ExperimentalUsageChecker.ExperimentalityDiagnostic(
-                Errors.EXPERIMENTAL_UNSIGNED_LITERALS,
-                ExperimentalUsageChecker.getDefaultDiagnosticMessage("Unsigned literals are experimental and their usages should be marked")
-            ),
-            error = ExperimentalUsageChecker.ExperimentalityDiagnostic(
-                Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR,
-                ExperimentalUsageChecker.getDefaultDiagnosticMessage("Unsigned literals are experimental and their usages must be marked")
-            )
+            warning = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS, "should"),
+            error = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must")
         )
 
         @JvmStatic

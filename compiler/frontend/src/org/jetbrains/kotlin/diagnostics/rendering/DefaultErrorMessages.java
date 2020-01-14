@@ -147,11 +147,11 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid @{0} annotation value (should be ''major.minor'' or ''major.minor.patch'')", TO_STRING);
         MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
 
-        MAP.put(EXPERIMENTAL_API_USAGE, "{0}", STRING);
-        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "{0}", STRING);
+        MAP.put(EXPERIMENTAL_API_USAGE, "{1}", TO_STRING, STRING);
+        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "{1}", TO_STRING, STRING);
 
-        MAP.put(EXPERIMENTAL_OVERRIDE, "{0}", STRING);
-        MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "{0}", STRING);
+        MAP.put(EXPERIMENTAL_OVERRIDE, "{1}", TO_STRING, STRING);
+        MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "{1}", TO_STRING, STRING);
 
         MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'");
         MAP.put(EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation");
