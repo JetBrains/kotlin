@@ -17,14 +17,13 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
-    override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<CoroutineAsyncStackFrameItem>? {
-        val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) } ?: emptyList()
-        return stackFrameList
-    }
+    override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<CoroutineAsyncStackFrameItem>? =
+        getAsyncStackTrace(stackFrame, suspendContext as XSuspendContext)
+
 
     fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem>? {
-        val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) } ?: emptyList()
-        return stackFrameList
+        val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) }
+        return if (stackFrameList == null || stackFrameList.isEmpty()) null else stackFrameList
     }
 
     fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem> {
