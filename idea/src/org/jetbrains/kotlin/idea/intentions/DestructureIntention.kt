@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -234,6 +235,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                 usageScopeElement.iterateOverDataClassPropertiesUsagesWithIndex(
                     context,
                     nameToSearch,
+                    variableDescriptor,
                     constructorParameterNameMap,
                     { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
                     { noBadUsages = false }
@@ -286,31 +288,35 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         private fun PsiElement.iterateOverDataClassPropertiesUsagesWithIndex(
             context: BindingContext,
             parameterName: Name,
+            variableDescriptor: VariableDescriptor,
             constructorParameterNameMap: Map<Name, ValueParameterDescriptor>,
             process: (Int, SingleUsageData) -> Unit,
             cancel: () -> Unit
         ) {
             anyDescendantOfType<KtNameReferenceExpression> {
-                if (it.getReferencedNameAsName() != parameterName) false
-                else {
-                    val applicableUsage = getDataIfUsageIsApplicable(it, context)
-                    if (applicableUsage != null) {
-                        val usageDescriptor = applicableUsage.descriptor
-                        if (usageDescriptor == null) {
-                            for (parameter in constructorParameterNameMap.values) {
-                                process(parameter.index, applicableUsage)
+                when {
+                    it.getReferencedNameAsName() != parameterName -> false
+                    it.getResolvedCall(context)?.resultingDescriptor != variableDescriptor -> false
+                    else -> {
+                        val applicableUsage = getDataIfUsageIsApplicable(it, context)
+                        if (applicableUsage != null) {
+                            val usageDescriptor = applicableUsage.descriptor
+                            if (usageDescriptor == null) {
+                                for (parameter in constructorParameterNameMap.values) {
+                                    process(parameter.index, applicableUsage)
+                                }
+                                return@anyDescendantOfType false
                             }
-                            return@anyDescendantOfType false
+                            val parameter = constructorParameterNameMap[usageDescriptor.name]
+                            if (parameter != null) {
+                                process(parameter.index, applicableUsage)
+                                return@anyDescendantOfType false
+                            }
                         }
-                        val parameter = constructorParameterNameMap[usageDescriptor.name]
-                        if (parameter != null) {
-                            process(parameter.index, applicableUsage)
-                            return@anyDescendantOfType false
-                        }
-                    }
 
-                    cancel()
-                    true
+                        cancel()
+                        true
+                    }
                 }
             }
         }

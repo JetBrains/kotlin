@@ -8341,6 +8341,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/destructuringInLambda/pair.kt");
         }
 
+        @TestMetadata("sameNameReferences.kt")
+        public void testSameNameReferences() throws Exception {
+            runTest("idea/testData/intentions/destructuringInLambda/sameNameReferences.kt");
+        }
+
+        @TestMetadata("sameNameReferences2.kt")
+        public void testSameNameReferences2() throws Exception {
+            runTest("idea/testData/intentions/destructuringInLambda/sameNameReferences2.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/intentions/destructuringInLambda/simple.kt");
@@ -8405,6 +8415,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("noInitializer.kt")
         public void testNoInitializer() throws Exception {
             runTest("idea/testData/intentions/destructuringVariables/noInitializer.kt");
+        }
+
+        @TestMetadata("sameNameReferences.kt")
+        public void testSameNameReferences() throws Exception {
+            runTest("idea/testData/intentions/destructuringVariables/sameNameReferences.kt");
         }
 
         @TestMetadata("simple.kt")
