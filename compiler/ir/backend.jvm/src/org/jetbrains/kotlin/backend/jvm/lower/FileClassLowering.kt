@@ -111,7 +111,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             isFun = false
         ).apply {
             descriptor.bind(this)
-            superTypes.add(context.irBuiltIns.anyType)
+            superTypes += context.irBuiltIns.anyType
             parent = irFile
             declarations.addAll(fileClassMembers)
             createImplicitParameterDeclarationWithWrappedDescriptor()

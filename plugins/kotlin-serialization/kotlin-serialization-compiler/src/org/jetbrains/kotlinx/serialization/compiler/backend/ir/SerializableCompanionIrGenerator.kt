@@ -76,7 +76,7 @@ class SerializableCompanionIrGenerator(
             )
         }
 
-        irSerializableClass.annotations.add(annotationCtorCall)
+        irSerializableClass.annotations += annotationCtorCall
     }
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {

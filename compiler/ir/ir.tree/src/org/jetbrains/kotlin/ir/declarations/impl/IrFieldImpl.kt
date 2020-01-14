@@ -84,7 +84,7 @@ class IrFieldImpl(
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
-    override val overriddenSymbols: MutableList<IrFieldSymbol> = mutableListOf()
+    override var overriddenSymbols: List<IrFieldSymbol> = emptyList()
 
     override var metadata: MetadataSource.Property? = null
 

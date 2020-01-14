@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeAliasSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 class IrTypeAliasImpl(
     startOffset: Int,
@@ -39,7 +37,7 @@ class IrTypeAliasImpl(
     override val descriptor: TypeAliasDescriptor
         get() = symbol.descriptor
 
-    override val typeParameters: MutableList<IrTypeParameter> = SmartList()
+    override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)
@@ -49,7 +47,7 @@ class IrTypeAliasImpl(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters.transform { it.transform(transformer, data) }
+        typeParameters = typeParameters.mapOptimized { it.transform(transformer, data) }
     }
 
     companion object {

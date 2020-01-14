@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 abstract class IrFunctionBase(
     startOffset: Int,
@@ -48,11 +47,11 @@ abstract class IrFunctionBase(
             field
         }
 
-    override val typeParameters: MutableList<IrTypeParameter> = SmartList()
+    override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override var dispatchReceiverParameter: IrValueParameter? = null
     override var extensionReceiverParameter: IrValueParameter? = null
-    override val valueParameters: MutableList<IrValueParameter> = ArrayList()
+    override var valueParameters: List<IrValueParameter> = emptyList()
 
     final override var body: IrBody? = null
 
@@ -69,11 +68,12 @@ abstract class IrFunctionBase(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters.transform { it.transform(transformer, data) }
+
+        typeParameters = typeParameters.mapOptimized { it.transform(transformer, data) }
 
         dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
         extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)
-        valueParameters.transform { it.transform(transformer, data) }
+        valueParameters = valueParameters.mapOptimized { it.transform(transformer, data) }
 
         body = body?.transform(transformer, data)
     }

@@ -138,7 +138,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             copyAttributes(info.reference)
             copyTypeParametersFrom(info.function)
             val functionNClass = context.ir.symbols.getJvmFunctionClass(info.arity + 1)
-            superTypes.add(
+            superTypes +=
                 IrSimpleTypeImpl(
                     functionNClass,
                     hasQuestionMark = false,
@@ -147,7 +147,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         .map { makeTypeProjection(it, Variance.INVARIANT) },
                     annotations = emptyList()
                 )
-            )
 
             addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType)
 
@@ -217,7 +216,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             Modality.FINAL,
             origin = JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
         ).apply {
-            invokeSuspend.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
+            valueParameters += invokeSuspend.valueParameters.map { it.copyTo(this) }
         }.also { it.copySuspendLambdaBodyFrom(irFunction, receiverField, fields) }
     }
 
@@ -268,8 +267,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         modality: Modality = Modality.FINAL
     ): IrSimpleFunction =
         addFunction(function.name.asString(), function.returnType, modality).apply {
-            overriddenSymbols.add(function.symbol)
-            function.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
+            overriddenSymbols += function.symbol
+            valueParameters += function.valueParameters.map { it.copyTo(this) }
         }
 
     // Invoke function in lambdas is responsible for
@@ -394,7 +393,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         visibility = newVisibility
     }.also { irClass ->
         irClass.createImplicitParameterDeclarationWithWrappedDescriptor()
-        irClass.superTypes.add(defaultType)
+        irClass.superTypes += defaultType
 
         irClass.parent = parent
     }
@@ -622,7 +621,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         copyTypeParameters(view.typeParameters)
                         dispatchReceiverParameter = view.dispatchReceiverParameter?.copyTo(this)
                         extensionReceiverParameter = view.extensionReceiverParameter?.copyTo(this)
-                        view.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
+                        valueParameters += view.valueParameters.map { it.copyTo(this) }
                         body = view.copyBodyTo(this)
                         copyAttributes(view)
                     }
@@ -758,15 +757,15 @@ private fun IrFunction.suspendFunctionStub(context: JvmBackendContext): IrFuncti
     }.also { function ->
         function.parent = parent
 
-        function.annotations.addAll(annotations)
+        function.annotations += annotations
         function.metadata = metadata
 
         function.copyAttributes(this)
         function.copyTypeParametersFrom(this)
 
         if (origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE) {
-            function.overriddenSymbols
-                .addAll(overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol as IrSimpleFunctionSymbol })
+            function.overriddenSymbols +=
+                overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol as IrSimpleFunctionSymbol }
         }
 
         // Copy the value parameters and insert the continuation parameter. The continuation parameter

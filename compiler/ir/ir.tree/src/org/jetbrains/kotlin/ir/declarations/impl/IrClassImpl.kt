@@ -24,11 +24,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.utils.SmartList
+import kotlin.collections.ArrayList
 
 class IrClassImpl(
     startOffset: Int,
@@ -81,9 +82,9 @@ class IrClassImpl(
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
-    override val typeParameters: MutableList<IrTypeParameter> = SmartList()
+    override var typeParameters: List<IrTypeParameter> = emptyList()
 
-    override val superTypes: MutableList<IrType> = SmartList()
+    override var superTypes: List<IrType> = emptyList()
 
     override var metadata: MetadataSource? = null
 
@@ -100,7 +101,7 @@ class IrClassImpl(
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         thisReceiver = thisReceiver?.transform(transformer, data)
-        typeParameters.transform { it.transform(transformer, data) }
+        typeParameters = typeParameters.mapOptimized { it.transform(transformer, data) }
         declarations.transform { it.transform(transformer, data) }
     }
 }

@@ -123,7 +123,7 @@ private fun generateMultifileFacades(
             }
             if (shouldGeneratePartHierarchy) {
                 val superClass = modifyMultifilePartsForHierarchy(context, partClasses)
-                superTypes.add(superClass.typeWith())
+                superTypes += superClass.typeWith()
 
                 addConstructor {
                     visibility = Visibilities.PRIVATE
@@ -165,8 +165,7 @@ private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, unsorte
         klass.modality = Modality.OPEN
         klass.visibility = JavaVisibilities.PACKAGE_VISIBILITY
 
-        klass.superTypes.clear()
-        klass.superTypes.add(superClass.typeWith())
+        klass.superTypes = listOf(superClass.typeWith())
 
         klass.addConstructor {
             isPrimary = true
@@ -211,8 +210,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     if (shouldGeneratePartHierarchy) {
         function.body = null
         function.origin = IrDeclarationOrigin.FAKE_OVERRIDE
-        function.overriddenSymbols.clear()
-        function.overriddenSymbols.add(symbol)
+        function.overriddenSymbols = listOf(symbol)
     } else {
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             +irReturn(irCall(this@createMultifileDelegateIfNeeded).also { call ->

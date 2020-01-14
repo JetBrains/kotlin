@@ -53,7 +53,7 @@ private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : Cl
             visibility = primaryConstructor.visibility
         }.apply {
             val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
-            primaryConstructor.annotations.mapTo(annotations) { it.deepCopyWithSymbols(this) }
+            annotations += primaryConstructor.annotations.map { it.deepCopyWithSymbols(this) }
             body = irBuilder.irBlockBody {
                 +irDelegatingConstructorCall(primaryConstructor).apply {
                     passTypeArgumentsFrom(irClass)

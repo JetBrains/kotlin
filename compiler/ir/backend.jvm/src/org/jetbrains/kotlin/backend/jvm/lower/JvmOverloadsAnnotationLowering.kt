@@ -165,11 +165,11 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         }
 
         res.parent = oldFunction.parent
-        res.annotations.addAll(oldFunction.annotations.map { it.deepCopyWithSymbols(res) })
+        res.annotations += oldFunction.annotations.map { it.deepCopyWithSymbols(res) }
         res.copyTypeParametersFrom(oldFunction)
         res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
         res.extensionReceiverParameter = oldFunction.extensionReceiverParameter?.copyTo(res)
-        res.valueParameters.addAll(res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect))
+        res.valueParameters += res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect)
         return res
     }
 

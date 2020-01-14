@@ -410,7 +410,7 @@ abstract class KotlinIrLinker(
 
             fun deserializeFileImplicitDataIfFirstUse() {
                 annotations?.let {
-                    file.annotations.addAll(deserializeAnnotations(it))
+                    file.annotations += deserializeAnnotations(it)
                     annotations = null
                 }
             }

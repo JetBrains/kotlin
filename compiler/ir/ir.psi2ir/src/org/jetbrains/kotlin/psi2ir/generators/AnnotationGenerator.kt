@@ -40,8 +40,10 @@ class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
                 declaration.descriptor.backingField
             else declaration.descriptor
 
-        annotatedDescriptor?.annotations?.mapNotNullTo(declaration.annotations) {
-            constantValueGenerator.generateAnnotationConstructorCall(it)
+        if (annotatedDescriptor != null) {
+            declaration.annotations += annotatedDescriptor.annotations.mapNotNull {
+                constantValueGenerator.generateAnnotationConstructorCall(it)
+            }
         }
     }
 }

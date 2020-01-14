@@ -83,7 +83,7 @@ class JvmPropertiesLowering(private val context: JvmBackendContext) : IrElementT
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             parent = declaration.parent
 
-            annotations.addAll(declaration.annotations)
+            annotations = declaration.annotations
             metadata = declaration.metadata
         }
     }

@@ -205,8 +205,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         // For lambda classes, we move override from the `invoke` function to its bridge. This will allow us to avoid boxing
         // the return type of `invoke` in codegen, in case lambda's return type is primitive.
         if (method.name == OperatorNameConventions.INVOKE && irClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
-            target.overriddenSymbols.remove(method.symbol)
-            bridge.overriddenSymbols.add(method.symbol)
+            target.overriddenSymbols = target.overriddenSymbols.filter { it != method.symbol }
+            bridge.overriddenSymbols += method.symbol
         }
 
         signaturesToSkip.add(signature)
@@ -227,7 +227,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                 parent = this@copyRenamingTo.parent
                 dispatchReceiverParameter = this@copyRenamingTo.dispatchReceiverParameter?.copyTo(this)
                 extensionReceiverParameter = this@copyRenamingTo.extensionReceiverParameter?.copyTo(this)
-                valueParameters.addAll(this@copyRenamingTo.valueParameters.map { it.copyTo(this) })
+                valueParameters = this@copyRenamingTo.valueParameters.map { it.copyTo(this) }
             }
         }
 
@@ -267,8 +267,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
             extensionReceiverParameter = signatureFunction.extensionReceiverParameter
                 ?.copyWithTypeErasure(this)
-            signatureFunction.valueParameters.mapIndexed { i, param ->
-                valueParameters.add(i, param.copyWithTypeErasure(this))
+            valueParameters = signatureFunction.valueParameters.map { param ->
+                param.copyWithTypeErasure(this)
             }
         }
     }
@@ -304,12 +304,13 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                     body = irBlockBody {
                         // Change the parameter types to be Any? so that null checks are not generated. The checks
                         // we insert here make them superfluous.
+                        val newValueParameters = ArrayList(valueParameters)
                         argumentsToCheck.forEach {
                             val parameterType = it.type
                             if (!parameterType.isNullable()) {
                                 val newParameter = it.copyTo(this@rewriteSpecialMethodBody, type = context.irBuiltIns.anyNType)
                                 variableMap.put(valueParameters[it.index], newParameter)
-                                valueParameters[it.index] = newParameter
+                                newValueParameters[it.index] = newParameter
                                 addParameterTypeCheck(
                                     newParameter,
                                     parameterType,
@@ -318,6 +319,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                                 )
                             }
                         }
+                        valueParameters = newValueParameters
                         // After the checks, insert the orignal method body.
                         if (body is IrExpressionBody) {
                             +irReturn((body as IrExpressionBody).expression)
@@ -330,11 +332,13 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         } else {
             // If the signature of this method will be changed in the output to take a boxed argument instead of a primitive,
             // rewrite the argument so that code will be generated for a boxed argument and not a primitive.
-            for ((i, p) in valueParameters.withIndex()) {
+            valueParameters = valueParameters.mapIndexed { i, p ->
                 if (AsmUtil.isPrimitive(context.typeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
                     val newParameter = p.copyTo(this, type = p.type.makeNullable())
                     variableMap[p] = newParameter
-                    valueParameters[i] = newParameter
+                    newParameter
+                } else {
+                    p
                 }
             }
         }
@@ -408,9 +412,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                     copyTypeParametersFrom(this@orphanedCopy)
                     this@orphanedCopy.dispatchReceiverParameter?.let { dispatchReceiverParameter = it.copyTo(this) }
                     this@orphanedCopy.extensionReceiverParameter?.let { extensionReceiverParameter = it.copyTo(this) }
-                    this@orphanedCopy.valueParameters.forEachIndexed { index, param ->
-                        valueParameters.add(index, param.copyTo(this))
-                    }
+                    valueParameters = this@orphanedCopy.valueParameters.map { it.copyTo(this) }
                     /* Do NOT copy overriddenSymbols */
                 }
             }

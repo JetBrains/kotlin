@@ -71,7 +71,9 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
         for (ktAnnotationEntry in ktFile.annotationEntries) {
             val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
-            irFile.annotations.addIfNotNull(constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor))
+            constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor)?.let {
+                irFile.annotations += it
+            }
         }
 
         for (ktDeclaration in ktFile.declarations) {

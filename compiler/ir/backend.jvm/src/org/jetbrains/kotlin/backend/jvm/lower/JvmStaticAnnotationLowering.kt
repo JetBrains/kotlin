@@ -120,9 +120,9 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             parent = irClass
             copyTypeParametersFrom(target)
             target.extensionReceiverParameter?.let { extensionReceiverParameter = it.copyTo(this) }
-            target.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
+            valueParameters = target.valueParameters.map { it.copyTo(this) }
 
-            target.annotations.mapTo(annotations) { it.deepCopyWithSymbols() }
+            annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
             body = createProxyBody(target, this, companion)
         }
@@ -241,7 +241,7 @@ private class MakeCallsStatic(
             newDescriptor.bind(it)
             it.parent = parent
             it.correspondingPropertySymbol = correspondingPropertySymbol
-            it.annotations.addAll(annotations)
+            it.annotations += annotations
             it.copyParameterDeclarationsFrom(this)
             it.dispatchReceiverParameter = null
         }

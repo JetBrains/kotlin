@@ -613,7 +613,7 @@ class LocalDeclarationsLowering(
             )
             newDeclaration.recordTransformedValueParameters(localFunctionContext)
 
-            newDeclaration.annotations.addAll(oldDeclaration.annotations)
+            newDeclaration.annotations = oldDeclaration.annotations
 
             transformedDeclarations[oldDeclaration] = newDeclaration
         }

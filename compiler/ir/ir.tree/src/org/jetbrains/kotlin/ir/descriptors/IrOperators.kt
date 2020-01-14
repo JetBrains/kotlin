@@ -54,7 +54,7 @@ class IrBuiltInOperator(
         return visitor.visitSimpleFunction(this, data)
     }
 
-    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
     override var attributeOwnerId: IrAttributeContainer = this
     override val mangle: String get() = "operator#$name@$suffix"
 

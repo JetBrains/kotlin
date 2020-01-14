@@ -39,7 +39,7 @@ abstract class IrDeclarationBase(
             _parent = v
         }
 
-    override val annotations: MutableList<IrConstructorCall> = ArrayList()
+    override var annotations: List<IrConstructorCall> = emptyList()
 
     override val metadata: MetadataSource?
         get() = null

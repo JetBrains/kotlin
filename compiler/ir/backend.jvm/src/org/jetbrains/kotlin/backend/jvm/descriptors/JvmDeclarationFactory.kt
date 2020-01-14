@@ -97,7 +97,7 @@ class JvmDeclarationFactory(
             isExpect = oldConstructor.isExpect
         ).apply {
             newDescriptor.bind(this)
-            annotations.addAll(oldConstructor.annotations.map { it.deepCopyWithSymbols(this) })
+            annotations = oldConstructor.annotations.map { it.deepCopyWithSymbols(this) }
             parent = oldConstructor.parent
             returnType = oldConstructor.returnType
             copyTypeParametersFrom(oldConstructor)
@@ -117,9 +117,7 @@ class JvmDeclarationFactory(
                 outerThisDescriptor.bind(it)
                 it.parent = this
             }
-            valueParameters.add(outerThisValueParameter)
-
-            oldConstructor.valueParameters.mapTo(valueParameters) { it.copyTo(this, index = it.index + 1) }
+            valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this, index = it.index + 1) }
             metadata = oldConstructor.metadata
         }
     }
@@ -267,9 +265,9 @@ class JvmDeclarationFactory(
                 ).apply {
                     descriptor.bind(this)
                     parent = irClass
-                    overriddenSymbols.addAll(fakeOverride.overriddenSymbols)
+                    overriddenSymbols = fakeOverride.overriddenSymbols
                     copyParameterDeclarationsFrom(fakeOverride)
-                    annotations.addAll(fakeOverride.annotations)
+                    annotations = fakeOverride.annotations
                     fakeOverride.correspondingPropertySymbol?.owner?.let { fakeOverrideProperty ->
                         // NB: property is only generated for the sake of the type mapper.
                         // If both setter and getter are present, original property will be duplicated.

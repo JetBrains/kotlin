@@ -908,7 +908,7 @@ abstract class IrFileDeserializer(
             proto.coordinates.startOffset, proto.coordinates.endOffset,
             deserializeIrDeclarationOrigin(proto.origin)
         )
-        result.annotations.addAll(deserializeAnnotations(proto.annotationList))
+        result.annotations += deserializeAnnotations(proto.annotationList)
         result.parent = parentsStack.peek()!!
         return result
     }
@@ -990,9 +990,9 @@ abstract class IrFileDeserializer(
 
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver)
 
-                proto.typeParameters.typeParameterList.mapTo(typeParameters) { deserializeIrTypeParameter(it) }
+                typeParameters = proto.typeParameters.typeParameterList.map { deserializeIrTypeParameter(it) }
 
-                proto.superTypeList.mapTo(superTypes) { deserializeIrType(it) }
+                superTypes = proto.superTypeList.map { deserializeIrType(it) }
 
                 (descriptor as? WrappedClassDescriptor)?.bind(this)
             }
@@ -1011,7 +1011,7 @@ abstract class IrFileDeserializer(
                     origin
                 )
             }.usingParent {
-                proto.typeParameters.typeParameterList.mapTo(typeParameters) {
+                typeParameters = proto.typeParameters.typeParameterList.map {
                     deserializeIrTypeParameter(it)
                 }
 
@@ -1024,8 +1024,8 @@ abstract class IrFileDeserializer(
         block: (IrFunctionSymbol, Int, Int, IrDeclarationOrigin) -> T
     ) = withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
         block(symbol as IrFunctionSymbol, startOffset, endOffset, origin).usingParent {
-            proto.typeParameters.typeParameterList.mapTo(typeParameters) { deserializeIrTypeParameter(it) }
-            proto.valueParameterList.mapTo(valueParameters) { deserializeIrValueParameter(it) }
+            typeParameters = proto.typeParameters.typeParameterList.map { deserializeIrTypeParameter(it) }
+            valueParameters = proto.valueParameterList.map { deserializeIrValueParameter(it) }
             if (proto.hasDispatchReceiver())
                 dispatchReceiverParameter = deserializeIrValueParameter(proto.dispatchReceiver)
             if (proto.hasExtensionReceiver())
@@ -1060,7 +1060,7 @@ abstract class IrFileDeserializer(
                     isOperator = proto.isOperator
                 )
             }.apply {
-                proto.overriddenList.mapTo(overriddenSymbols) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
+                overriddenSymbols = proto.overriddenList.map { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
 
                 (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
             }

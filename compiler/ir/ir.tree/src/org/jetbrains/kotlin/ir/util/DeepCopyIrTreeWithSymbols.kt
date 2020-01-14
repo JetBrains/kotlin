@@ -141,7 +141,7 @@ open class DeepCopyIrTreeWithSymbols(
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
-            declaration.superTypes.mapTo(superTypes) {
+            superTypes = declaration.superTypes.map {
                 it.remapType()
             }
             thisReceiver = declaration.thisReceiver?.transform()
@@ -165,7 +165,7 @@ open class DeepCopyIrTreeWithSymbols(
             isFakeOverride = declaration.isFakeOverride,
             isOperator = declaration.isOperator
         ).apply {
-            declaration.overriddenSymbols.mapTo(overriddenSymbols) {
+            overriddenSymbols = declaration.overriddenSymbols.map {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
             }
             copyAttributes(declaration)
@@ -196,13 +196,13 @@ open class DeepCopyIrTreeWithSymbols(
                 dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
                 extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
                 returnType = typeRemapper.remapType(declaration.returnType)
-                declaration.valueParameters.transformTo(valueParameters)
+                valueParameters = declaration.valueParameters.transform()
                 body = declaration.body?.transform()
             }
         }
 
     private fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
-        declaration.annotations.transformTo(annotations)
+        annotations = declaration.annotations.transform()
     }
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
@@ -243,7 +243,7 @@ open class DeepCopyIrTreeWithSymbols(
             isFakeOverride = declaration.isFakeOverride
         ).apply {
             transformAnnotations(declaration)
-            declaration.overriddenSymbols.mapTo(overriddenSymbols) {
+            overriddenSymbols = declaration.overriddenSymbols.map {
                 symbolRemapper.getReferencedField(it)
             }
             initializer = declaration.initializer?.transform()
@@ -318,7 +318,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     private fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
-        other.typeParameters.mapTo(this.typeParameters) {
+        this.typeParameters = other.typeParameters.map {
             copyTypeParameter(it)
         }
 

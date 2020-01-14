@@ -286,7 +286,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
 
         // Declare all the value parameters up first.
-        functionDescriptor.valueParameters.mapTo(irFunction.valueParameters) { valueParameterDescriptor ->
+        irFunction.valueParameters += functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
             declareParameter(valueParameterDescriptor, ktParameter, irFunction)
         }

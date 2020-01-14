@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -92,13 +93,13 @@ class IrLazyClass(
         }
     }
 
-    override val typeParameters: MutableList<IrTypeParameter> by lazy {
+    override var typeParameters: List<IrTypeParameter> by lazyVar {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {
             stubGenerator.generateOrGetTypeParameterStub(it)
         }
     }
 
-    override val superTypes: MutableList<IrType> by lazy {
+    override var superTypes: List<IrType> by lazyVar {
         typeTranslator.buildWithScope(this) {
             // TODO get rid of code duplication, see ClassGenerator#generateClass
             descriptor.typeConstructor.supertypes.mapNotNullTo(arrayListOf()) {
@@ -120,7 +121,7 @@ class IrLazyClass(
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         thisReceiver = thisReceiver?.transform(transformer, data)
-        typeParameters.transform { it.transform(transformer, data) }
+        typeParameters = typeParameters.mapOptimized { it.transform(transformer, data) }
         declarations.transform { it.transform(transformer, data) }
     }
 }

@@ -137,8 +137,8 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
             annotations += bridge.annotations
-            overriddenSymbols.addAll(delegateTo.overriddenSymbols)
-            overriddenSymbols.add(bridge.symbol)
+            overriddenSymbols += delegateTo.overriddenSymbols
+            overriddenSymbols += bridge.symbol
         }
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {

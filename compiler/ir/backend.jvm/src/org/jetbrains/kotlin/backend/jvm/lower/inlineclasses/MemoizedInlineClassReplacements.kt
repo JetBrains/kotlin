@@ -146,8 +146,9 @@ class MemoizedInlineClassReplacements {
         val parameterMap = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
         val replacement = buildReplacement(function) {
             metadata = function.metadata
-            overriddenSymbols.addAll(overrides)
+            overriddenSymbols += overrides
 
+            val newValueParameters = ArrayList<IrValueParameter>()
             for ((index, parameter) in function.explicitParameters.withIndex()) {
                 val name = if (parameter == function.extensionReceiverParameter) Name.identifier("\$receiver") else parameter.name
                 val newParameter: IrValueParameter
@@ -156,13 +157,14 @@ class MemoizedInlineClassReplacements {
                     dispatchReceiverParameter = newParameter
                 } else {
                     newParameter = parameter.copyTo(this, index = index - 1, name = name, defaultValue = null)
-                    valueParameters.add(newParameter)
+                    newValueParameters += newParameter
                 }
                 // Assuming that constructors and non-override functions are always replaced with the unboxed
                 // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                 newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 parameterMap[parameter.symbol] = newParameter
             }
+            valueParameters = newValueParameters
         }
         return IrReplacementFunction(replacement, parameterMap)
     }
@@ -176,7 +178,8 @@ class MemoizedInlineClassReplacements {
                 function.metadata = null
             }
 
-            for ((index, parameter) in function.explicitParameters.withIndex()) {
+
+            valueParameters += function.explicitParameters.mapIndexed { index, parameter ->
                 val name = when (parameter) {
                     function.dispatchReceiverParameter -> Name.identifier("arg$index")
                     function.extensionReceiverParameter -> Name.identifier("\$this\$${function.name}")
@@ -188,10 +191,12 @@ class MemoizedInlineClassReplacements {
                     else -> parameter.origin
                 }
                 val newParameter = parameter.copyTo(this, index = index, name = name, defaultValue = null, origin = parameterOrigin)
-                valueParameters.add(newParameter)
+                valueParameters += newParameter
                 // See comment next to a similar line above.
                 newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 parameterMap[parameter.symbol] = newParameter
+
+                newParameter
             }
         }
         return IrReplacementFunction(replacement, parameterMap)

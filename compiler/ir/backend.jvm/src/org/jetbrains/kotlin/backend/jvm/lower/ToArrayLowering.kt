@@ -95,7 +95,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
             irFunction.parent = irClass
 
                 typeParameter.parent = irFunction
-                irFunction.typeParameters.add(typeParameter)
+                irFunction.typeParameters += typeParameter
 
                 val dispatchReceiverParameterDescriptor = WrappedValueParameterDescriptor()
                 irFunction.dispatchReceiverParameter = IrValueParameterImpl(
@@ -112,7 +112,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                     parent = irFunction
                 }
                 val valueParameterDescriptor = WrappedValueParameterDescriptor()
-                irFunction.valueParameters.add(
+                irFunction.valueParameters +=
                     IrValueParameterImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         JvmLoweredDeclarationOrigin.TO_ARRAY,
@@ -127,7 +127,6 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                         valueParameterDescriptor.bind(this)
                         parent = irFunction
                     }
-                )
 
                 irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
                     +irReturn(

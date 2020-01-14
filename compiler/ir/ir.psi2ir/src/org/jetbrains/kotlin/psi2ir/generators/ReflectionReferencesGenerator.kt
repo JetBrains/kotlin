@@ -379,7 +379,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                     irAdapterFun.dispatchReceiverParameter = null
                     irAdapterFun.extensionReceiverParameter = null
 
-                    ktExpectedParameterTypes.mapIndexedTo(irAdapterFun.valueParameters) { index, ktExpectedParameterType ->
+                    irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
                         val adapterValueParameterDescriptor = WrappedValueParameterDescriptor()
                         context.symbolTable.declareValueParameter(
                             startOffset, endOffset,

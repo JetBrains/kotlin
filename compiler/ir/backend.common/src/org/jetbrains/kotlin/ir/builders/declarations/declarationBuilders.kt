@@ -234,7 +234,7 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
             index = valueParameters.size
         }
         build().also { valueParameter ->
-            valueParameters.add(valueParameter)
+            valueParameters += valueParameter
             valueParameter.parent = this@addValueParameter
         }
     }
@@ -293,7 +293,7 @@ inline fun IrTypeParametersContainer.addTypeParameter(builder: IrTypeParameterBu
             index = typeParameters.size
         }
         build().also { typeParameter ->
-            typeParameters.add(typeParameter)
+            typeParameters += typeParameter
             typeParameter.parent = this@addTypeParameter
         }
     }

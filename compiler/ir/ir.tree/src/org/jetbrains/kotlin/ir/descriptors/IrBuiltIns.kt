@@ -63,7 +63,7 @@ class IrBuiltIns(
             packageFragment.declarations += operator
             descriptor.bind(operator)
 
-            valueParameterTypes.mapIndexedTo(operator.valueParameters) { i, t ->
+            operator.valueParameters = valueParameterTypes.mapIndexed { i, t ->
                 val valueParameterDescriptor = WrappedValueParameterDescriptor()
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 IrBuiltInOperatorValueParameter(valueParameterSymbol, i, t).apply {

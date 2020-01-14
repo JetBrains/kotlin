@@ -300,7 +300,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 d.bind(this)
                 parent = irFunction.parent
                 createParameterDeclarations()
-                irFunction.typeParameters.mapTo(typeParameters) { typeParam ->
+                typeParameters = irFunction.typeParameters.map { typeParam ->
                     typeParam.copyToWithoutSuperTypes(this).apply { superTypes += typeParam.superTypes }
                 }
             }
@@ -403,7 +403,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
                 coroutineConstructors += this
 
-                functionParameters.mapIndexedTo(valueParameters) { index, parameter ->
+                valueParameters = functionParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
                 val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
@@ -449,7 +449,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
                 coroutineConstructors += this
 
-                boundParams.mapIndexedTo(valueParameters) { index, parameter ->
+                valueParameters = boundParams.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
 
@@ -498,15 +498,14 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 parent = coroutineClass
                 coroutineClass.declarations += this
 
-                irFunction.typeParameters.mapTo(typeParameters) { parameter ->
+                typeParameters = irFunction.typeParameters.map { parameter ->
                     parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
                         .apply { superTypes += parameter.superTypes }
                 }
 
-                (unboundArgs + create1CompletionParameter)
-                    .mapIndexedTo(valueParameters) { index, parameter ->
-                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
-                    }
+                valueParameters = (unboundArgs + create1CompletionParameter).mapIndexed { index, parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
+                }
 
                 this.createDispatchReceiverParameter()
 
@@ -566,15 +565,15 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 parent = coroutineClass
                 coroutineClass.declarations += this
 
-                irFunction.typeParameters.mapTo(typeParameters) { parameter ->
+                typeParameters = irFunction.typeParameters.map { parameter ->
                     parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
                         .apply { superTypes += parameter.superTypes }
                 }
 
-                createFunction.valueParameters
+                valueParameters = createFunction.valueParameters
                     // Skip completion - invoke() already has it implicitly as a suspend function.
                     .take(createFunction.valueParameters.size - 1)
-                    .mapIndexedTo(valueParameters) { index, parameter ->
+                    .mapIndexed { index, parameter ->
                         parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                     }
 
@@ -626,12 +625,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     parent = coroutineClass
                     coroutineClass.declarations += this
 
-                    stateMachineFunction.typeParameters.mapTo(typeParameters) { parameter ->
+                    typeParameters = stateMachineFunction.typeParameters.map { parameter ->
                         parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
                             .apply { superTypes += parameter.superTypes }
                     }
 
-                    stateMachineFunction.valueParameters.mapIndexedTo(valueParameters) { index, parameter ->
+                    valueParameters = stateMachineFunction.valueParameters.mapIndexed { index, parameter ->
                         parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                     }
 

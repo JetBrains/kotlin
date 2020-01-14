@@ -78,7 +78,7 @@ fun IrClass.addSimpleDelegatingConstructor(
         constructor.parent = this
         declarations += constructor
 
-        superConstructor.valueParameters.mapIndexedTo(constructor.valueParameters) { index, parameter ->
+        constructor.valueParameters = superConstructor.valueParameters.mapIndexed { index, parameter ->
             parameter.copyTo(constructor, index = index)
         }
 
@@ -163,7 +163,7 @@ fun IrValueParameter.copyTo(
         descriptor.bind(it)
         it.parent = irFunction
         it.defaultValue = defaultValueCopy
-        it.annotations.addAll(annotations.map { it.deepCopyWithSymbols() })
+        it.annotations = annotations.map { it.deepCopyWithSymbols() }
     }
 }
 
@@ -205,7 +205,7 @@ fun IrFunction.copyValueParametersInsertingContinuationFrom(from: IrFunction, in
             insertContinuation()
             additionalShift = 1
         }
-        valueParameters.add(it.copyTo(this, index = it.index + shift + additionalShift))
+        valueParameters += it.copyTo(this, index = it.index + shift + additionalShift)
     }
     // If there was no default argument mask and handler, the continuation goes last.
     if (additionalShift == 0) insertContinuation()
@@ -231,7 +231,7 @@ fun IrTypeParametersContainer.copyTypeParameters(
                 oldToNewParameterMap[sourceParameter] = it
             }
     }
-    typeParameters.addAll(newTypeParameters)
+    typeParameters += newTypeParameters
     srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
         dstParameter.copySuperTypesFrom(srcParameter, oldToNewParameterMap)
     }
@@ -273,35 +273,29 @@ fun IrFunction.copyValueParametersToStatic(
             target.classIfConstructor
         )
 
-        target.valueParameters.add(
-            originalDispatchReceiver.copyTo(
-                target,
-                origin = originalDispatchReceiver.origin,
-                index = shift++,
-                type = type,
-                name = Name.identifier("\$this")
-            )
+        target.valueParameters += originalDispatchReceiver.copyTo(
+            target,
+            origin = originalDispatchReceiver.origin,
+            index = shift++,
+            type = type,
+            name = Name.identifier("\$this")
         )
     }
     source.extensionReceiverParameter?.let { originalExtensionReceiver ->
-        target.valueParameters.add(
-            originalExtensionReceiver.copyTo(
-                target,
-                origin = originalExtensionReceiver.origin,
-                index = shift++,
-                name = Name.identifier("\$receiver")
-            )
+        target.valueParameters += originalExtensionReceiver.copyTo(
+            target,
+            origin = originalExtensionReceiver.origin,
+            index = shift++,
+            name = Name.identifier("\$receiver")
         )
     }
 
     for (oldValueParameter in source.valueParameters) {
         if (oldValueParameter.index >= numValueParametersToCopy) break
-        target.valueParameters.add(
-            oldValueParameter.copyTo(
-                target,
-                origin = origin,
-                index = oldValueParameter.index + shift
-            )
+        target.valueParameters += oldValueParameter.copyTo(
+            target,
+            origin = origin,
+            index = oldValueParameter.index + shift
         )
     }
 }
@@ -601,7 +595,7 @@ fun createStaticFunctionWithReceivers(
 
         typeParameters.forEach { it.superTypes.replaceAll { remap(it) } }
 
-        annotations.addAll(oldFunction.annotations)
+        annotations = oldFunction.annotations
 
         var offset = 0
         val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
@@ -618,7 +612,7 @@ fun createStaticFunctionWithReceivers(
             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
             remapTypeMap = typeParameterMap
         )
-        valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
+        valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
                                        oldFunction.valueParameters.map {
                                            it.copyTo(
                                                this,
@@ -626,7 +620,6 @@ fun createStaticFunctionWithReceivers(
                                                remapTypeMap = typeParameterMap
                                            )
                                        }
-        )
 
         if (copyMetadata) metadata = oldFunction.metadata
     }
@@ -670,9 +663,10 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
             it.parent = this
         }
 
-        typeParameters.add(newTypeParameter)
         newParameters.add(newTypeParameter)
     }
+
+    typeParameters = typeParameters + newParameters
 
     return newParameters
 }

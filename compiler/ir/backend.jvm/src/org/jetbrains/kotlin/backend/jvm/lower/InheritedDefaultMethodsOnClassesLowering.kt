@@ -70,7 +70,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
     // Here we use the same logic as the delegation itself (`getTargetForRedirection`) to determine
     // if the overriden symbol has been, or will be, replaced and patch it accordingly.
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        declaration.overriddenSymbols.replaceAll { symbol ->
+        declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
             if (symbol.owner.findInterfaceImplementation() != null)
                 context.declarationFactory.getDefaultImplsRedirection(symbol.owner).symbol
             else symbol

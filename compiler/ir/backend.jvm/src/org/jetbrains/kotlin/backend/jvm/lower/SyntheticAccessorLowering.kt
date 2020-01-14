@@ -156,8 +156,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 accessor.metadata = declaration.metadata
                 declaration.safeAs<IrConstructorImpl>()?.metadata = null
                 accessor.annotations += declaration.annotations
-                declaration.annotations.clear()
-                declaration.valueParameters.forEach { it.annotations.clear() }
+                declaration.annotations = emptyList()
+                declaration.valueParameters.forEach { it.annotations = emptyList() }
             }
         }
     }

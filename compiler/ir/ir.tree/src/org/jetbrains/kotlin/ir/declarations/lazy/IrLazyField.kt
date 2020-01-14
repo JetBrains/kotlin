@@ -63,7 +63,7 @@ class IrLazyField(
         symbol.bind(this)
     }
 
-    override val annotations: MutableList<IrConstructorCall> by lazy {
+    override var annotations: List<IrConstructorCall> by lazyVar {
         descriptor.backingField?.annotations
             ?.mapNotNullTo(mutableListOf(), typeTranslator.constantValueGenerator::generateAnnotationConstructorCall)
             ?: mutableListOf()
@@ -71,7 +71,7 @@ class IrLazyField(
 
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
-    override val overriddenSymbols: MutableList<IrFieldSymbol> by lazy {
+    override var overriddenSymbols: List<IrFieldSymbol> by lazyVar {
         symbol.descriptor.overriddenDescriptors.map {
             stubGenerator.generateFieldStub(it.original).symbol
         }.toMutableList()

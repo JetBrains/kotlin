@@ -126,7 +126,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         from: List<TypeParameterDescriptor>,
         declareTypeParameter: (Int, Int, TypeParameterDescriptor) -> IrTypeParameter
     ) {
-        from.mapTo(irTypeParametersOwner.typeParameters) { typeParameterDescriptor ->
+        irTypeParametersOwner.typeParameters += from.map { typeParameterDescriptor ->
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
