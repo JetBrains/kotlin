@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
@@ -111,8 +112,6 @@ open class ClassCodegen protected constructor(
         val signature = getSignature(irClass, type, superClassInfo, typeMapper)
 
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
-        // hasInvalidName() uses a set copied from JvmSimpleNameBacktickChecker, which in turn references JVMS 4.7.9.1:
-        // https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1.
         if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
@@ -291,11 +290,8 @@ open class ClassCodegen protected constructor(
             ClassCodegen(irClass, context).generate()
         }
 
-        // Note: This is copied from JvmSimpleNameBacktickChecker.
-        private val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
-
         private fun JvmClassSignature.hasInvalidName() =
-            name.splitToSequence('/').any { identifier -> identifier.any { it in INVALID_CHARS } }
+            name.splitToSequence('/').any { identifier -> identifier.any { it in JvmSimpleNameBacktickChecker.INVALID_CHARS } }
     }
 
     private fun generateDeclaration(declaration: IrDeclaration) {
