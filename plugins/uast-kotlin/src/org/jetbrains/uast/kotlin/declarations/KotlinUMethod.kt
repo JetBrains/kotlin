@@ -151,7 +151,7 @@ open class KotlinUAnnotationMethod(
 }
 
 private class UastFakeLightMethod(private val original: KtFunction, containingClass: PsiClass) : LightMethodBuilder(
-    original.manager, original.language, original.name,
+    original.manager, original.language, original.name ?: "<no name provided>",
     LightParameterListBuilder(original.manager, original.language),
     LightModifierList(original.manager)
 ) {
