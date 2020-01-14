@@ -2,6 +2,7 @@
 package com.intellij.ui;
 
 import com.intellij.codeHighlighting.Pass;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
 import com.intellij.codeInsight.daemon.MergeableLineMarkerInfo;
@@ -47,7 +48,7 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
 
   @Override
   public String getName() {
-    return "Color preview";
+    return CodeInsightBundle.message("gutter.color.preview");
   }
 
   @NotNull

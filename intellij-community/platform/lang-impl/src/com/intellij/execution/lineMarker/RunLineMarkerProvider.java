@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
 import com.intellij.codeInsight.daemon.LineMarkerSettings;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -151,7 +152,7 @@ public class RunLineMarkerProvider extends LineMarkerProviderDescriptor {
   @NotNull
   @Override
   public String getName() {
-    return "Run line marker";
+    return ExecutionBundle.message("run.line.marker.name");
   }
 
   @Nullable
