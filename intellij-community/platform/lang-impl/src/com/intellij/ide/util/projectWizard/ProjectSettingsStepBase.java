@@ -283,8 +283,9 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
   }
 
   public void setWarningText(@Nullable String text) {
-    myErrorLabel.setText("<html>Note: " + text + "  </html>");
+    myErrorLabel.setText("<html><strong>Note:</strong> " + text + "  </html>");
     myErrorLabel.setForeground(MessageType.WARNING.getTitleForeground());
+    myErrorLabel.setIcon(StringUtil.isEmpty(text) ? null : AllIcons.Actions.Lightning);
   }
 
   @Nullable
