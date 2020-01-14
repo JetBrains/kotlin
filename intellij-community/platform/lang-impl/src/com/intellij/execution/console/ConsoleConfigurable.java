@@ -90,13 +90,15 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       Splitter splitter = new Splitter(true);
       myMainComponent.add(splitter, BorderLayout.CENTER);
       myPositivePanel =
-        new MyAddDeleteListPanel("Fold console lines that contain:", "Enter a substring of a console line you'd like to see folded:");
-      myNegativePanel = new MyAddDeleteListPanel("Exceptions:", "Enter a substring of a console line you don't want to fold:");
+        new MyAddDeleteListPanel(ApplicationBundle.message("console.fold.console.lines"),
+                                 ApplicationBundle.message("console.enter.substring.folded"));
+      myNegativePanel = new MyAddDeleteListPanel(ApplicationBundle.message("console.fold.exceptions"),
+                                                 ApplicationBundle.message("console.enter.substring.dont.fold:"));
       splitter.setFirstComponent(myPositivePanel);
       splitter.setSecondComponent(myNegativePanel);
 
-      myPositivePanel.getEmptyText().setText("Fold nothing");
-      myNegativePanel.getEmptyText().setText("No exceptions");
+      myPositivePanel.getEmptyText().setText(ApplicationBundle.message("console.fold.nothing"));
+      myNegativePanel.getEmptyText().setText(ApplicationBundle.message("console.no.exceptions"));
     }
     return myMainComponent;
   }
