@@ -142,7 +142,7 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
   }
 
   // IntentionAction which wraps the original action and then marks it as executed to hide it from the popup to avoid invoking it twice accidentally
-  private class MyIntentionAction implements IntentionAction, IntentionActionDelegate, Comparable<MyIntentionAction>, ShortcutProvider {
+  private class MyIntentionAction implements IntentionAction, IntentionActionDelegate, Comparable<MyIntentionAction>, ShortcutProvider, PossiblyDumbAware {
     private final IntentionAction myAction;
     @NotNull
     private final BiConsumer<? super IntentionActionWithTextCaching, ? super IntentionAction> myMarkInvoked;
@@ -150,6 +150,11 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
     MyIntentionAction(@NotNull IntentionAction action, @NotNull BiConsumer<? super IntentionActionWithTextCaching, ? super IntentionAction> markInvoked) {
       myAction = action;
       myMarkInvoked = markInvoked;
+    }
+
+    @Override
+    public boolean isDumbAware() {
+      return DumbService.isDumbAware(myAction);
     }
 
     @Nls

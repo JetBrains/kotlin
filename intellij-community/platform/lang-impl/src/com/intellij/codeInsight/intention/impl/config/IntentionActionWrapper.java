@@ -7,6 +7,8 @@ import com.intellij.codeInsight.intention.IntentionActionDelegate;
 import com.intellij.openapi.actionSystem.ShortcutProvider;
 import com.intellij.openapi.actionSystem.ShortcutSet;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -16,7 +18,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class IntentionActionWrapper implements IntentionAction, ShortcutProvider, IntentionActionDelegate {
+public final class IntentionActionWrapper implements IntentionAction, ShortcutProvider, IntentionActionDelegate, PossiblyDumbAware {
   private final IntentionActionBean myExtension;
   private String myFullFamilyName;
 
@@ -75,6 +77,11 @@ public final class IntentionActionWrapper implements IntentionAction, ShortcutPr
       myFullFamilyName = result = myCategories != null ? StringUtil.join(myCategories, "/") + "/" + getFamilyName() : getFamilyName();
     }
     return result;
+  }
+
+  @Override
+  public boolean isDumbAware() {
+    return DumbService.isDumbAware(getDelegate());
   }
 
   @NotNull
