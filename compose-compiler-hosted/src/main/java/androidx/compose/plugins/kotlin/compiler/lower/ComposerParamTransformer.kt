@@ -19,6 +19,9 @@ package androidx.compose.plugins.kotlin.compiler.lower
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.irTrace
+import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
@@ -47,6 +51,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -80,6 +85,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
@@ -227,6 +233,12 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
             type,
             ownerFn.symbol
         ).also {
+            it.copyAttributes(this)
+            context.state.irTrace.record(
+                ComposeWritableSlices.IS_COMPOSABLE_CALL,
+                it,
+                true
+            )
             it.copyTypeArgumentsFrom(this)
             it.dispatchReceiver = dispatchReceiver
             it.extensionReceiver = extensionReceiver
@@ -426,13 +438,6 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
                     }
                 }
 
-                override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-                    if (declaration.parent == oldFn) {
-                        declaration.parent = fn
-                    }
-                    return super.visitDeclaration(declaration)
-                }
-
                 override fun visitCall(expression: IrCall): IrExpression {
                     val expr = if (!isNestedScope)
                         expression.withComposerParamIfNeeded(composerParam)
@@ -458,6 +463,9 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
                     )
                 )
                     return true
+                if (it.isEmitInline(context.state.bindingContext)) {
+                    return true
+                }
             }
         }
         return false
@@ -521,6 +529,13 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         }
     }
 }
+
+fun IrValueParameter.isComposerParam(): Boolean =
+    (descriptor as? ValueParameterDescriptor)?.isComposerParam() ?: false
+
+fun ValueParameterDescriptor.isComposerParam(): Boolean =
+    name == KtxNameConventions.COMPOSER_PARAMETER &&
+            type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer
 
 private val COMPOSABLE_DECOY_IMPL =
     object : IrDeclarationOriginImpl("COMPOSABLE_DECOY_IMPL", isSynthetic = true) {}

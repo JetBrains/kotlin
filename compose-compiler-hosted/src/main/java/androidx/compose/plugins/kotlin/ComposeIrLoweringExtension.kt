@@ -65,6 +65,7 @@ class ComposeIrLoweringExtension : IrLoweringExtension {
         if (ComposeFlags.COMPOSER_PARAM) {
             return ComposerParameterPhase then
                     ComposerIntrinsicPhase then
+                    ComposeCallPhase then
                     phases
         }
         return FrameClassGenPhase then

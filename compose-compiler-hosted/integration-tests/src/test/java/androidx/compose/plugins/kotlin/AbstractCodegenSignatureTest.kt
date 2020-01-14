@@ -16,7 +16,13 @@
 
 package androidx.compose.plugins.kotlin
 
+import android.app.Activity
+import android.content.Context
+import android.os.Bundle
+import android.widget.LinearLayout
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.robolectric.Robolectric
+import java.net.URLClassLoader
 
 abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
@@ -92,50 +98,88 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         assertEquals(expectedApiString, apiString)
     }
 
-    fun checkComposerParam(src: String, dumpClasses: Boolean = false) = ensureSetup {
-        testFile(
+    fun checkComposerParam(src: String, dumpClasses: Boolean = false): Unit = ensureSetup {
+        val className = "Test_REPLACEME_${uniqueNumber++}"
+        val compiledClasses = classLoader(
             """
                 import androidx.compose.*
+                import android.widget.LinearLayout
+                import android.content.Context
 
-                class FakeNode
-                object FakeNodeApplierAdapter :
-                    ApplyAdapter<FakeNode> {
-                    override fun FakeNode.start(instance: FakeNode) {}
-                    override fun FakeNode.insertAt(index: Int, instance: FakeNode) {}
-                    override fun FakeNode.removeAt(index: Int, count: Int) {}
-                    override fun FakeNode.move(from: Int, to: Int, count: Int) {}
-                    override fun FakeNode.end(instance: FakeNode, parent: FakeNode) {}
-                }
+                $src
 
-                class FakeComposer(
-                    val root: FakeNode
-                ) : Composer<FakeNode>(
-                    SlotTable(),
-                    Applier(root, FakeNodeApplierAdapter),
-                    Recomposer.current()
-                )
-
-                fun makeComposer(): Composer<*> {
-                    return FakeComposer(FakeNode())
-                }
-
-                fun invokeComposable(composer: Composer<*>, fn: @Composable() () -> Unit) {
-                    val realFn = fn as Function1<Composer<*>, Unit>
-                    realFn(composer)
-                }
-
-                @Composable fun assertComposer(expected: Composer<*>) {
+                @Composable fun assertComposer(expected: Composer<*>?) {
                     val actual = currentComposerIntrinsic
                     assert(expected === actual)
                 }
 
-                class Test {
-                  fun test() { run() }
+                private var __context: Context? = null
+
+                fun makeComposer(): Composer<*> {
+                    val container = LinearLayout(__context!!)
+                    return ViewComposer(
+                        container,
+                        __context!!,
+                        Recomposer.current()
+                    )
                 }
-                $src
+
+                fun invokeComposable(composer: Composer<*>?, fn: @Composable() () -> Unit) {
+                    if (composer == null) error("Composer was null")
+                    val realFn = fn as Function1<Composer<*>, Unit>
+                    composer.runWithComposing {
+                        composer.startRoot()
+                        realFn(composer)
+                        composer.endRoot()
+                    }
+                }
+
+                class Test {
+                  fun test(context: Context) {
+                    __context = context
+                    run()
+                    __context = null
+                  }
+                }
             """,
-            dumpClasses
+            fileName = className,
+            dumpClasses = dumpClasses
         )
+
+        val allClassFiles = compiledClasses.allGeneratedFiles.filter {
+            it.relativePath.endsWith(".class")
+        }
+
+        val loader = URLClassLoader(emptyArray(), this.javaClass.classLoader)
+
+        val instanceClass = run {
+            var instanceClass: Class<*>? = null
+            var loadedOne = false
+            for (outFile in allClassFiles) {
+                val bytes = outFile.asByteArray()
+                val loadedClass = loadClass(loader, null, bytes)
+                if (loadedClass.name == "Test") instanceClass = loadedClass
+                loadedOne = true
+            }
+            if (!loadedOne) error("No classes loaded")
+            instanceClass ?: error("Could not find class $className in loaded classes")
+        }
+
+        val instanceOfClass = instanceClass.newInstance()
+        val testMethod = instanceClass.getMethod("test", Context::class.java)
+
+
+
+        val controller = Robolectric.buildActivity(TestActivity::class.java)
+        val activity = controller.create().get()
+        testMethod.invoke(instanceOfClass, activity)
+    }
+
+    private class TestActivity : Activity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(LinearLayout(this))
+        }
     }
 
     fun codegen(text: String, dumpClasses: Boolean = false): Unit = ensureSetup {

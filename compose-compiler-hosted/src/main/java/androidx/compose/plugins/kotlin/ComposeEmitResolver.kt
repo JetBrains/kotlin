@@ -400,7 +400,8 @@ class ComposeEmitResolver(
                 ctorParams = resolvedCall.buildParamsFromAttributes(attributes),
                 composerCall = getComposerCall,
                 emitCall = emitCall,
-                name = name
+                name = name,
+                composerMetadata = composer
             )
         }
     }
