@@ -18,6 +18,10 @@ package com.intellij.usageView;
 
 import com.intellij.psi.PsiElement;
 
+/**
+ * @deprecated Use {@link com.intellij.find.findUsages.FindUsagesManager} instead
+ */
+@Deprecated
 public interface FindUsagesCommand {
   /**
    * elements to search should be used when refreshing since
