@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSourceSupport
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTest
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
@@ -21,6 +23,9 @@ import kotlin.properties.Delegates
 
 class JsCompilationExecutionSource(override val compilation: KotlinJsCompilation) :
     CompilationExecutionSource<KotlinJsCompilation>
+
+class JsIrCompilationExecutionSource(override val compilation: KotlinJsIrCompilation) :
+    CompilationExecutionSource<KotlinJsIrCompilation>
 
 open class KotlinJsPlatformTestRun(testRunName: String, subtarget: KotlinJsSubTarget) :
     KotlinTaskTestRun<JsCompilationExecutionSource, KotlinJsTest>(testRunName, subtarget.target),
@@ -43,22 +48,22 @@ open class KotlinJsPlatformTestRun(testRunName: String, subtarget: KotlinJsSubTa
 }
 
 open class KotlinJsIrPlatformTestRun(testRunName: String, subtarget: KotlinJsIrSubTarget) :
-    KotlinTaskTestRun<JsCompilationExecutionSource, KotlinJsTest>(testRunName, subtarget.target),
-    CompilationExecutionSourceSupport<KotlinJsCompilation> {
+    KotlinTaskTestRun<JsIrCompilationExecutionSource, KotlinJsIrTest>(testRunName, subtarget.target),
+    CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
 
-    private var _executionSource: JsCompilationExecutionSource by Delegates.notNull()
+    private var _executionSource: JsIrCompilationExecutionSource by Delegates.notNull()
 
-    final override var executionSource: JsCompilationExecutionSource
+    final override var executionSource: JsIrCompilationExecutionSource
         get() = _executionSource
         set(value) {
             executionTask.configure { it.compilation = value.compilation }
             _executionSource = value
         }
 
-    override fun setExecutionSourceFrom(compilation: KotlinJsCompilation) {
+    override fun setExecutionSourceFrom(compilation: KotlinJsIrCompilation) {
         requireCompilationOfTarget(compilation, target)
 
-        executionSource = JsCompilationExecutionSource(compilation)
+        executionSource = JsIrCompilationExecutionSource(compilation)
     }
 }
 
@@ -70,9 +75,9 @@ class JsAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsRepor
 }
 
 class JsIrAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsIrReportAggregatingTestRun) :
-    KotlinAggregateExecutionSource<JsCompilationExecutionSource> {
+    KotlinAggregateExecutionSource<JsIrCompilationExecutionSource> {
 
-    override val executionSources: Iterable<JsCompilationExecutionSource>
+    override val executionSources: Iterable<JsIrCompilationExecutionSource>
         get() = aggregatingTestRun.getConfiguredExecutions().map { it.executionSource }
 }
 
@@ -114,11 +119,11 @@ open class KotlinJsReportAggregatingTestRun(
 open class KotlinJsIrReportAggregatingTestRun(
     testRunName: String,
     override val target: KotlinJsIrTarget
-) : KotlinReportAggregatingTestRun<JsCompilationExecutionSource, JsIrAggregatingExecutionSource, KotlinJsIrPlatformTestRun>(testRunName),
+) : KotlinReportAggregatingTestRun<JsIrCompilationExecutionSource, JsIrAggregatingExecutionSource, KotlinJsIrPlatformTestRun>(testRunName),
     KotlinTargetTestRun<JsIrAggregatingExecutionSource>,
-    CompilationExecutionSourceSupport<KotlinJsCompilation> {
+    CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
 
-    override fun setExecutionSourceFrom(compilation: KotlinJsCompilation) = configureAllExecutions {
+    override fun setExecutionSourceFrom(compilation: KotlinJsIrCompilation) = configureAllExecutions {
         setExecutionSourceFrom(compilation)
     }
 

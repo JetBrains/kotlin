@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTest
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -69,7 +70,7 @@ interface KotlinJsSubTargetDsl {
 }
 
 interface KotlinJsIrSubTargetDsl {
-    fun testTask(body: KotlinJsTest.() -> Unit)
+    fun testTask(body: KotlinJsIrTest.() -> Unit)
     fun testTask(fn: Closure<*>) {
         testTask {
             ConfigureUtil.configure(fn, this)

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -87,7 +86,7 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    override fun testTask(body: KotlinJsTest.() -> Unit) {
+    override fun testTask(body: KotlinJsIrTest.() -> Unit) {
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
@@ -119,7 +118,7 @@ abstract class KotlinJsIrSubTarget(
             )
         )
 
-        val testJs = project.registerTask<KotlinJsTest>(testRun.subtargetTestTaskName()) { testJs ->
+        val testJs = project.registerTask<KotlinJsIrTest>(testRun.subtargetTestTaskName()) { testJs ->
             val compileTask = compilation.compileKotlinTask
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
@@ -157,7 +156,7 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
+    protected abstract fun configureDefaultTestFramework(it: KotlinJsIrTest)
 
     private fun configureMain() {
         target.compilations.all { compilation ->

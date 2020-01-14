@@ -19,7 +19,7 @@ interface KotlinJsIrTestFramework : RequiresNpmDependencies {
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec
 
-    /*
+    /* because KotlinJsTestFramework override it too
     override val nodeModulesRequired: Boolean
         get() = true
      */
