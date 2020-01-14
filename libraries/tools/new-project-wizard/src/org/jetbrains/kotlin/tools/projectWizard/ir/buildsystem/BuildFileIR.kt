@@ -27,6 +27,13 @@ data class BuildFileIR(
     fun withModulesUpdated(updater: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<BuildFileIR> =
         modules.withModulesUpdated(updater).map { newModules -> copy(modules = newModules) }
 
+    private fun distinctRepositories(): List<RepositoryIR> =
+        irsOfType<RepositoryIR>()
+            .distinctBy { it.repository }
+            .sortedBy { repositoryIR ->
+                if (repositoryIR.repository is DefaultRepository) 0 else 1
+            }
+
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
             irsOfTypeOrNull<GradleImportIR>()?.let { imports ->
@@ -44,13 +51,7 @@ data class BuildFileIR(
             sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nlIndented()
             pom.render(this); nl()
 
-            irsOfType<RepositoryIR>()
-                .distinctBy { it.repository }
-                .sortedBy { repositoryIR ->
-                    if (repositoryIR.repository is DefaultRepository) 0 else 1
-                }.let {
-                    sectionCall("repositories", it)
-                }
+            sectionCall("repositories", distinctRepositories())
             nl()
             modules.render(this)
             irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
@@ -69,6 +70,13 @@ data class BuildFileIR(
             node("properties") {
                 singleLineNode("project.build.sourceEncoding") { +"UTF-8" }
                 singleLineNode("kotlin.code.style") { +"official" }
+            }
+
+            distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
+                nl()
+                node("repositories") {
+                    repositories.listNl()
+                }
             }
 
             val plugins = irsOfType<BuildSystemPluginIR>().takeIf { it.isNotEmpty() }
