@@ -1,0 +1,18 @@
+FILE: innerQualifier.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final val x: R|kotlin/Unit| = Q|Outer.Inner|
+        public get(): R|kotlin/Unit|
+    public final val klass: R|kotlin/reflect/KClass<Outer.Inner>| = <getClass>(Q|Outer.Inner|)
+        public get(): R|kotlin/reflect/KClass<Outer.Inner>|

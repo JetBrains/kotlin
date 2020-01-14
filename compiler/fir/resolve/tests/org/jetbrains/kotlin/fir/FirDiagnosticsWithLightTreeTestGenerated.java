@@ -489,6 +489,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/importedReceiver.kt");
         }
 
+        @TestMetadata("innerQualifier.kt")
+        public void testInnerQualifier() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/innerQualifier.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");
