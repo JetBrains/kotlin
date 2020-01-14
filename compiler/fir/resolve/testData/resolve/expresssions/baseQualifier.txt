@@ -1,0 +1,35 @@
+FILE: Test.kt
+    public open class AA : R|JavaClass| {
+        public constructor(): R|AA| {
+            super<R|JavaClass|>()
+        }
+
+        public final object C : R|kotlin/Any| {
+            private constructor(): R|AA.C| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class BB : R|AA| {
+        public constructor(): R|BB| {
+            super<R|AA|>()
+        }
+
+        public final object D : R|kotlin/Any| {
+            private constructor(): R|BB.D| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval bbd: R|BB.D| = Q|BB.D|
+        lval aac: R|AA.C| = Q|AA.C|
+        Q|JavaClass|.R|/JavaClass.bar|()
+        lval errC: <ERROR TYPE REF: Unresolved name: C> = Q|BB|.<Unresolved name: C>#
+        lval errBarViaBB: R|kotlin/Unit| = Q|BB|.R|/JavaClass.bar|()
+        lval errBarViaAA: R|kotlin/Unit| = Q|AA|.R|/JavaClass.bar|()
+    }

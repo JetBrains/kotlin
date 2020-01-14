@@ -419,6 +419,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/annotations.kt");
         }
 
+        @TestMetadata("baseQualifier.kt")
+        public void testBaseQualifier() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/baseQualifier.kt");
+        }
+
         @TestMetadata("checkArguments.kt")
         public void testCheckArguments() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/checkArguments.kt");
