@@ -75,7 +75,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
 
     override fun getNameIdentifier(): PsiIdentifier {
         val kotlinOrigin = (psi as? KtLightElement<*, *>)?.kotlinOrigin
-        return UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
+        return UastLightIdentifier(psi, kotlinOrigin as? KtDeclaration)
     }
 
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)

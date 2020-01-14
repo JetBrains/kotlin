@@ -40,7 +40,7 @@ open class KotlinUMethod(
     givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UMethodTypeSpecific, UAnchorOwner, JavaUElementWithComments, PsiMethod by psi {
 
-    constructor(psi: KtLightMethod, givenParent: UElement?) : this(psi, psi.kotlinOrigin, givenParent)
+    constructor(psi: KtLightMethod, givenParent: UElement?) : this(psi, getKotlinMemberOrigin(psi), givenParent)
 
     override val comments: List<UComment>
         get() = super<KotlinAbstractUElement>.comments
@@ -51,14 +51,14 @@ open class KotlinUMethod(
 
     override fun getSourceElement() = sourcePsi ?: this
 
-    private val kotlinOrigin = (psi.originalElement as? KtLightElement<*, *>)?.kotlinOrigin ?: sourcePsi
+    private val kotlinOrigin = getKotlinMemberOrigin(psi.originalElement) ?: sourcePsi
 
     override fun getContainingFile(): PsiFile? {
         kotlinOrigin?.containingFile?.let { return it }
         return unwrapFakeFileForLightClass(psi.containingFile)
     }
 
-    override fun getNameIdentifier() = UastLightIdentifier(psi, kotlinOrigin as KtNamedDeclaration?)
+    override fun getNameIdentifier() = UastLightIdentifier(psi, kotlinOrigin as? KtDeclaration)
 
     override val annotations: List<UAnnotation> by lz {
         psi.annotations
@@ -86,6 +86,7 @@ open class KotlinUMethod(
                 when (sourcePsi) {
                     is PsiNameIdentifierOwner -> sourcePsi.nameIdentifier
                     is KtObjectDeclaration -> sourcePsi.getObjectKeyword()
+                    is KtPropertyAccessor -> sourcePsi.namePlaceholder
                     else -> sourcePsi?.navigationElement
                 }
             },
@@ -98,6 +99,7 @@ open class KotlinUMethod(
         if (kotlinOrigin?.canAnalyze() != true) return@lz null // EA-137193
         val bodyExpression = when (kotlinOrigin) {
             is KtFunction -> kotlinOrigin.bodyExpression
+            is KtPropertyAccessor -> kotlinOrigin.bodyExpression
             is KtProperty -> when {
                 psi is KtLightMethod && psi.isGetter -> kotlinOrigin.getter?.bodyExpression
                 psi is KtLightMethod && psi.isSetter -> kotlinOrigin.setter?.bodyExpression
@@ -121,6 +123,12 @@ open class KotlinUMethod(
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 
     companion object {
+        private fun getKotlinMemberOrigin(element: PsiElement?): KtDeclaration? {
+            (element as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement?.let { return it }
+            (element as? KtLightElement<*, *>)?.kotlinOrigin?.let { return it as? KtDeclaration }
+            return null
+        }
+
         fun create(psi: KtLightMethod, containingElement: UElement?): KotlinUMethod {
             val kotlinOrigin = psi.kotlinOrigin
             return if (kotlinOrigin is KtConstructor<*>) {

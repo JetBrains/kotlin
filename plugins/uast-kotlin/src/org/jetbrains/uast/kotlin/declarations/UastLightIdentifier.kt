@@ -29,7 +29,7 @@ import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.kotlin.unwrapFakeFileForLightClass
 import org.jetbrains.uast.toUElement
 
-class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtNamedDeclaration?) :
+class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtDeclaration?) :
     KtLightIdentifier(lightOwner, ktDeclaration) {
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(super.getContainingFile())
 }
