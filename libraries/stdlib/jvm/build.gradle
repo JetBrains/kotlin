@@ -194,6 +194,7 @@ compileCoroutinesExperimentalKotlin {
                 "-Xuse-experimental=kotlin.Experimental",
                 "-Xcoroutines=enable",
                 "-XXLanguage:-ReleaseCoroutines",
+                "-Xno-use-ir",
                 "-module-name", "kotlin-stdlib-coroutines"
         ]
     }
