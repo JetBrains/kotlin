@@ -5580,6 +5580,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/inlineSuspendFinally.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("interfaceMethodWithBody.kt")
+            public void testInterfaceMethodWithBody() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/interfaceMethodWithBody.kt");
+            }
+
             @TestMetadata("safeCallOnTwoReceiversLong.kt")
             public void testSafeCallOnTwoReceiversLong_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt", "kotlin.coroutines");

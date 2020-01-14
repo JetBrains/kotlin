@@ -121,8 +121,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             val parametersFields = info.function.valueParameters.map { addField(it.name, it.type) }
             val parametersWithoutArguments = parametersFields.withIndex()
                 .mapNotNull { (i, field) -> if (info.reference.getValueArgument(i) == null) field else null }
-            val parametersWithArguments = parametersFields - parametersWithoutArguments
-            val constructor = addPrimaryConstructorForLambda(info.arity, info.reference, parametersFields)
+            val parametersWithArguments = parametersFields.withIndex()
+                .filter { info.reference.getValueArgument(it.index) != null }
+            val fieldsForArguments = parametersWithArguments.map(IndexedValue<IrField>::value)
+            val constructor = addPrimaryConstructorForLambda(info.arity, info.reference, fieldsForArguments)
             val invokeToOverride = functionNClass.functions.single {
                 it.owner.valueParameters.size == info.arity + 1 && it.owner.name.asString() == "invoke"
             }
@@ -140,7 +142,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     constructor,
                     invokeSuspend,
                     invokeToOverride,
-                    parametersWithArguments,
+                    fieldsForArguments,
                     listOfNotNull(receiverField) + parametersWithoutArguments
                 )
             }
@@ -308,7 +310,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         constructor: IrFunction,
         superType: IrClass,
         info: SuspendLambdaInfo,
-        parametersWithArguments: List<IrField>,
+        parametersWithArguments: List<IndexedValue<IrField>>,
         singleParameterField: IrField?
     ): IrFunction {
         val create = superType.functions.single {
@@ -323,7 +325,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     for (typeParameter in typeParameters) {
                         it.putTypeArgument(typeParameter.index, typeParameter.defaultType)
                     }
-                    for ((i, field) in parametersWithArguments.withIndex()) {
+                    for ((i, field) in parametersWithArguments) {
                         if (info.reference.getValueArgument(i) == null) continue
                         it.putValueArgument(index++, irGetField(irGet(function.dispatchReceiverParameter!!), field))
                     }
