@@ -22,11 +22,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirec
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
@@ -35,6 +32,7 @@ class ResultTypeResolver(
     interface Context : TypeSystemInferenceExtensionContext {
         fun isProperType(type: KotlinTypeMarker): Boolean
         fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
+        fun isReified(variable: TypeVariableMarker): Boolean
     }
 
     fun findResultType(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): KotlinTypeMarker {
@@ -85,6 +83,7 @@ class ResultTypeResolver(
         }
         if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) {
             if (resultType.isNullableType() && checkSingleLowerNullabilityConstraint(filteredConstraints)) return false
+            if (isReified(variableWithConstraints.typeVariable)) return false
         }
 
         return true

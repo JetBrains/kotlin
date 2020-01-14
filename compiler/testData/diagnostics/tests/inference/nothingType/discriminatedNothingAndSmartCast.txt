@@ -1,0 +1,10 @@
+package
+
+public inline fun </*0*/ reified M> parse(): M?
+public fun test(/*0*/ s: kotlin.String?, /*1*/ silent: kotlin.Boolean): kotlin.Unit
+
+public interface ExpectedType {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

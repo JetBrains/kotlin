@@ -33,6 +33,7 @@ class VariableFixationFinder(
     interface Context : TypeSystemInferenceExtensionContext {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
         val postponedTypeVariables: List<TypeVariableMarker>
+        fun isReified(variable: TypeVariableMarker): Boolean
     }
 
     data class VariableForFixation(
@@ -56,6 +57,7 @@ class VariableFixationFinder(
         WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         READY_FOR_FIXATION,
+        READY_FOR_FIXATION_REIFIED,
     }
 
     private fun Context.getTypeVariableReadiness(
@@ -68,6 +70,7 @@ class VariableFixationFinder(
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
+        isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
         else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
     }
 
@@ -121,4 +124,6 @@ class VariableFixationFinder(
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
         !type.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) }
 
+    private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
+        notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false
 }

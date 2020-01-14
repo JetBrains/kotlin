@@ -341,6 +341,12 @@ class NewConstraintSystemImpl(
         return storage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(this)
     }
 
+    // ResultTypeResolver.Context, VariableFixationFinder.Context
+    override fun isReified(variable: TypeVariableMarker): Boolean {
+        if (variable !is TypeVariableFromCallableDescriptor) return false
+        return variable.originalTypeParameter.isReified
+    }
+
     override fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker> {
         checkState(State.BUILDING, State.COMPLETION)
         // TODO: SUB

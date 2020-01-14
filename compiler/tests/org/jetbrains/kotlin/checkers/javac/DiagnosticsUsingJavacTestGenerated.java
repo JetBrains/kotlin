@@ -10710,6 +10710,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/complexDependancyOnVariableWithTrivialConstraint.kt");
                 }
 
+                @TestMetadata("discriminateNothingForReifiedParameter.kt")
+                public void testDiscriminateNothingForReifiedParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/discriminateNothingForReifiedParameter.kt");
+                }
+
+                @TestMetadata("discriminatedNothingAndSmartCast.kt")
+                public void testDiscriminatedNothingAndSmartCast() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/discriminatedNothingAndSmartCast.kt");
+                }
+
                 @TestMetadata("generateConstraintWithInnerNothingType.kt")
                 public void testGenerateConstraintWithInnerNothingType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/generateConstraintWithInnerNothingType.kt");
