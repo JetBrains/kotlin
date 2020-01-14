@@ -6,9 +6,8 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemAvailabilityWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.MultiplatformModulesStructureIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val type by enumSetting<BuildSystemType>("Build System", GenerationPhase.FIRST_STEP) {
@@ -37,6 +37,28 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val buildSystemData by property<List<BuildSystemData>>(emptyList())
 
     val buildFiles by property<List<BuildFileIR>>(emptyList())
+
+    val takeRepositoriesFromDependencies by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+        runBefore(BuildSystemPlugin::createModules)
+        runAfter(KotlinPlugin::createModules)
+
+        withAction {
+            updateBuildFiles { buildFile ->
+                val dependenciesOfModule = buildList<LibraryDependencyIR> {
+                    buildFile.modules.modules.forEach { module ->
+                        if (module is SingleplatformModuleIR) module.sourcesets.forEach { sourceset ->
+                            +sourceset.irs.filterIsInstance<LibraryDependencyIR>()
+                        }
+                        +module.irs.filterIsInstance<LibraryDependencyIR>()
+                    }
+                }
+                val repositoriesToAdd = dependenciesOfModule.mapNotNull { dependency ->
+                    dependency.artifact.safeAs<MavenArtifact>()?.repository?.let(::RepositoryIR)
+                }
+                buildFile.withIrs(repositoriesToAdd).asSuccess()
+            }
+        }
+    }
 
     val createModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(StructurePlugin::createProjectDir)
