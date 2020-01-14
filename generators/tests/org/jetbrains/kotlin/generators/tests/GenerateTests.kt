@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
+import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
@@ -1260,6 +1261,17 @@ fun main(args: Array<String>) {
         testClass<AbstractAndroidBoxTest> {
             model("codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest")
             model("codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke")
+        }
+
+        testClass<AbstractAndroidIrBoxTest> {
+            model(
+                "codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest",
+                targetBackend = TargetBackend.JVM_IR
+            )
+            model(
+                "codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke",
+                targetBackend = TargetBackend.JVM_IR
+            )
         }
 
         testClass<AbstractAndroidBytecodeShapeTest> {
