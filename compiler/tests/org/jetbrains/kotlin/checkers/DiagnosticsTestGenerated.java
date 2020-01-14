@@ -2645,6 +2645,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/kt35887_simple.kt");
                 }
 
+                @TestMetadata("kt35920.kt")
+                public void testKt35920() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/kt35920.kt");
+                }
+
                 @TestMetadata("kt8596.kt")
                 public void testKt8596() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/kt8596.kt");
