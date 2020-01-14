@@ -41,6 +41,7 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testTestNG, E
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106
+org.jetbrains.kotlin.idea.resolve.PartialBodyResolveTestGenerated.testSmartCastInTheSameStatement, KT-35922
 org.jetbrains.kotlin.idea.run.RunConfigurationTest.testWithModuleForJdk9, Always red
 org.jetbrains.kotlin.idea.spring.tests.references.SpringReferenceNavigationTestGenerated.testPackageReferenceInComponentScan, Always red because of test data
 org.jetbrains.kotlin.idea.stubs.MultiFileHighlightingTestGenerated.testTopLevelMembersReference, Always red

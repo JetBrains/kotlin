@@ -149,13 +149,7 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
         } else {
             expression
         }
-
-        val nonDataFlowAwareType = bindingContext.getType(expressionWithType)
-        val type = getDataFlowAwareTypes(
-            expressionWithType,
-            bindingContext,
-            nonDataFlowAwareType
-        ).singleOrNull() ?: nonDataFlowAwareType
+        val type = bindingContext.getType(expressionWithType)
 
         return ResolveData(target, type, processedStatements)
     }
