@@ -6,10 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.TemplateSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.TemplateSettingReference
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinLibraryDependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.SourcesetIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -30,7 +27,7 @@ class KotlinTestTemplate : Template() {
     override fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> =
         withSettingsOf(sourceset.original) {
             framework.reference.settingValue.dependencyNames.map { dependencyName ->
-                KotlinLibraryDependencyIR(
+                KotlinArbitraryDependencyIR(
                     dependencyName,
                     version = KotlinPlugin::version.settingValue,
                     dependencyType = DependencyType.MAIN

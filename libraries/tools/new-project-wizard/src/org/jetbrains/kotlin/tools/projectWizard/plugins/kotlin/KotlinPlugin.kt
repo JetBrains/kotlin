@@ -51,30 +51,10 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         runBefore(BuildSystemPlugin::createModules)
         runAfter(StructurePlugin::createProjectDir)
         withAction {
-            computeM {
-                BuildSystemPlugin::buildFiles.update {
-                    val modules = KotlinPlugin::modules.settingValue
-                    val (buildFiles) = createBuildFiles(modules)
-                    buildFiles.map { it.withIrs(RepositoryIR(DefaultRepository.MAVEN_CENTRAL)) }.asSuccess()
-                }.ensure()
-
-                updateModules { module ->
-                    val needLibrary = when (module) {
-                        is SingleplatformModuleIR -> true
-                        is SourcesetModuleIR -> module.sourcesetType == SourcesetType.main
-                    }
-                    val libraryName = module.type.correspondingStdlibName()
-                    when {
-                        needLibrary && libraryName != null -> module.withIrs(
-                            KotlinLibraryDependencyIR(
-                                libraryName,
-                                KotlinPlugin::version.settingValue,
-                                DependencyType.MAIN
-                            )
-                        )
-                        else -> module
-                    }.asSuccess()
-                }
+            BuildSystemPlugin::buildFiles.update {
+                val modules = KotlinPlugin::modules.settingValue
+                val (buildFiles) = createBuildFiles(modules)
+                buildFiles.map { it.withIrs(RepositoryIR(DefaultRepository.MAVEN_CENTRAL)) }.asSuccess()
             }
         }
     }
