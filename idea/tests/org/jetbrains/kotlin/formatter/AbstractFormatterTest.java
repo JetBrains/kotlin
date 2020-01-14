@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -64,6 +65,13 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         LanguageLevelProjectExtension.getInstance(getProject()).setLanguageLevel(LanguageLevel.HIGHEST);
+        Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").setValue(true);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").resetToDefault();
     }
 
     public void doTextTest(@NonNls String text, File fileAfter, String extension) throws IncorrectOperationException {
