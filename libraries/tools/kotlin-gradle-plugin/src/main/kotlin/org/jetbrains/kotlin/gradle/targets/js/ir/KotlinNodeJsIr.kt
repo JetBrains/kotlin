@@ -41,8 +41,7 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         compilation: KotlinJsIrCompilation
     ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
-            dependsOn(compilation.developmentLinkTaskName)
-            args(compilation.developmentLinkTask.outputFile)
+            inputFileProperty.set(compilation.developmentLinkTask.outputFileProperty)
         }
         target.runTask.dependsOn(runTaskHolder)
     }

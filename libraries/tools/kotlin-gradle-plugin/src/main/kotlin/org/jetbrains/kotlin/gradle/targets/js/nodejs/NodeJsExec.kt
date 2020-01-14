@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
-import org.gradle.api.tasks.AbstractExecTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
     @get:Internal
@@ -31,6 +30,9 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
 
     @Input
     var sourceMapStackTraces = true
+
+    @InputFile
+    val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:Internal
     override val nodeModulesRequired: Boolean
@@ -79,6 +81,8 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
                 it.dependsOn(nodeJs.npmInstallTask, compileKotlinTask)
 
                 it.configuration()
+
+                it.args(it.inputFileProperty.asFile.get())
             }
         }
     }
