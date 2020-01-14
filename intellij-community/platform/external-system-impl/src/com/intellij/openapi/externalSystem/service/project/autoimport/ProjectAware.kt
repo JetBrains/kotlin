@@ -2,7 +2,6 @@
 package com.intellij.openapi.externalSystem.service.project.autoimport
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectAware
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectId
@@ -25,8 +24,6 @@ class ProjectAware(
   override val projectId: ExternalSystemProjectId,
   private val autoImportAware: ExternalSystemAutoImportAware
 ) : ExternalSystemProjectAware {
-
-  private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
   private val systemId = projectId.systemId
   private val projectPath = projectId.externalProjectPath

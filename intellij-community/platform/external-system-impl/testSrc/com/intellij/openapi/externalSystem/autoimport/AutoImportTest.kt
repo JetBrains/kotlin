@@ -498,4 +498,41 @@ class AutoImportTest : AutoImportTestCase() {
     assertProjectAware(projectAware, refresh = 3, event = "modification during project refresh")
     assertNotificationAware(projectId, event = "modification during project refresh")
   }
+
+  fun `test disabling of auto-import`() {
+    var state = simpleTest("settings.groovy") { settingsFile ->
+      assertState(refresh = 1, enabled = true, notified = false, event = "register project without cache")
+      disableAutoReloadExternalChanges()
+      assertState(refresh = 1, enabled = false, notified = false, event = "disable project auto-import")
+      settingsFile.replaceContentInIoFile("println 'hello'")
+      assertState(refresh = 1, enabled = false, notified = true, event = "modification with disabled auto-import")
+    }
+    state = simpleTest("settings.groovy", state = state) { settingsFile ->
+      // Open modified project with disabled auto-import for external changes
+      assertState(refresh = 0, enabled = false, notified = true, event = "register modified project")
+      refreshProject()
+      assertState(refresh = 1, enabled = false, notified = false, event = "refresh project")
+
+      // Checkout git branch, that has additional linked project
+      withLinkedProject("module/settings.groovy") { moduleSettingsFile ->
+        assertState(refresh = 0, enabled = false, notified = true, event = "register project without cache with disabled auto-import")
+        moduleSettingsFile.replaceContentInIoFile("println 'hello'")
+        assertState(refresh = 0, enabled = false, notified = true, event = "modification with disabled auto-import")
+      }
+      assertState(refresh = 1, enabled = false, notified = false, event = "remove modified linked project")
+
+      enableAutoReloadExternalChanges()
+      assertState(refresh = 1, enabled = true, notified = false, event = "enable auto-import for project without modifications")
+      disableAutoReloadExternalChanges()
+      assertState(refresh = 1, enabled = false, notified = false, event = "disable project auto-import")
+
+      settingsFile.replaceStringInIoFile("hello", "hi")
+      assertState(refresh = 1, enabled = false, notified = true, event = "modification with disabled auto-import")
+      enableAutoReloadExternalChanges()
+      assertState(refresh = 2, enabled = true, notified = false, event = "enable auto-import for modified project")
+    }
+    simpleTest("settings.groovy", state = state) {
+      assertState(refresh = 0, enabled = true, notified = false, event = "register project with correct cache")
+    }
+  }
 }

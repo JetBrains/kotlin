@@ -107,10 +107,10 @@ class ProjectSettingsTracker(
     submitSettingsFilesRefresh {
       submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
         when (hasChanges(newSettingsFilesCRC)) {
-          true -> status.markDirty(currentTime())
+          true -> status.markDirty(currentTime(), EXTERNAL)
           else -> status.markReverted(currentTime())
         }
-        projectTracker.scheduleProjectRefresh()
+        projectTracker.scheduleChangeProcessing()
       }
     }
   }
@@ -118,7 +118,7 @@ class ProjectSettingsTracker(
   fun getState() = State(status.isDirty(), settingsFilesCRC.get().toMap())
 
   fun loadState(state: State) {
-    if (state.isDirty) status.markDirty(currentTime())
+    if (state.isDirty) status.markDirty(currentTime(), EXTERNAL)
     settingsFilesCRC.set(state.settingsFiles.toMap())
   }
 

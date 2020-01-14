@@ -171,6 +171,14 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   private fun loadState(state: AutoImportProjectTracker.State) = projectTracker.loadState(state)
 
+  protected fun enableAutoReloadExternalChanges() {
+    projectTracker.isAutoReloadExternalChanges = true
+  }
+
+  protected fun disableAutoReloadExternalChanges() {
+    projectTracker.isAutoReloadExternalChanges = false
+  }
+
   protected fun initialize() = projectTracker.initializeComponent()
 
   protected fun getState() = projectTracker.state
@@ -194,11 +202,18 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     assertEquals("$message on $event", expected, actual)
   }
 
+  protected fun assertProjectTracker(isAutoReload: Boolean, event: String) {
+    val message = when (isAutoReload) {
+      true -> "Auto reload must be enabled"
+      false -> "Auto reload must be disabled"
+    }
+    assertEquals("$message on $event", isAutoReload, projectTracker.isAutoReloadExternalChanges)
+  }
 
   protected fun assertNotificationAware(vararg projects: ExternalSystemProjectId, event: String) {
     val message = when (projects.isEmpty()) {
       true -> "Notification must be expired"
-      else -> "Notification must be notified for $projects"
+      else -> "Notification must be notified"
     }
     assertEquals("$message on $event", projects.toSet(), notificationAware.getProjectsWithNotification())
   }
@@ -266,12 +281,24 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
       projectAware.refreshStatus = status
     }
 
+    fun withLinkedProject(fileRelativePath: String, test: SimpleTestBench.(VirtualFile) -> Unit) {
+      val projectId = ExternalSystemProjectId(projectAware.projectId.systemId, "$projectPath/$name")
+      val projectAware = MockProjectAware(projectId)
+      register(projectAware)
+      val file = findOrCreateVirtualFile("$name/$fileRelativePath")
+      projectAware.settingsFiles.add(file.path)
+      SimpleTestBench(projectAware).test(file)
+      remove(projectId)
+    }
+
     fun assertState(refresh: Int? = null,
                     subscribe: Int? = null,
                     unsubscribe: Int? = null,
+                    enabled: Boolean = true,
                     notified: Boolean,
                     event: String) {
       assertProjectAware(projectAware, refresh, subscribe, unsubscribe, event)
+      assertProjectTracker(enabled, event = event)
       when (notified) {
         true -> assertNotificationAware(projectAware.projectId, event = event)
         else -> assertNotificationAware(event = event)
