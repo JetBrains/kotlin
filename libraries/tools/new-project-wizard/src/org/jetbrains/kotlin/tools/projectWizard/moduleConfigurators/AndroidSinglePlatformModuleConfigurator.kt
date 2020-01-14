@@ -106,14 +106,15 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
                 dependencyType = DependencyType.MAIN
             )
 
-            +KotlinLibraryDependencyIR("stdlib-jdk7", configurationData.kotlinVersion, DependencyType.MAIN)
-
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.GOOGLE, "androidx.constraintlayout", "constraintlayout"),
                 version = Version.fromString("1.1.3"),
                 dependencyType = DependencyType.MAIN
             )
         }
+
+    override fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType?  =
+        StdlibType.StdlibJdk7
 
     override val settings: List<ModuleConfiguratorSetting<*, *>> =
         listOf(androidSdkPath)

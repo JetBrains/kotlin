@@ -7,9 +7,11 @@ import org.jetbrains.kotlin.tools.projectWizard.core.cached
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.correspondingStdlib
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -169,6 +171,9 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
 
     fun createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
         emptyList()
+
+    fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
+        moduleType.correspondingStdlib()
 
     fun createRootBuildFileIrs(configurationData: ModuleConfigurationData): List<BuildSystemIR> = emptyList()
     fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
