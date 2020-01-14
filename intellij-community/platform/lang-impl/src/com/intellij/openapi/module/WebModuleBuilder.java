@@ -23,7 +23,7 @@ import javax.swing.*;
 * @author Dmitry Avdeev
 */
 public class WebModuleBuilder<T> extends ModuleBuilder {
-  public static final String GROUP_NAME = "Static Web";
+  public static final String GROUP_NAME = "JavaScript";
   public static final Icon ICON = AllIcons.Nodes.PpWeb;
 
   private final WebProjectTemplate<T> myTemplate;
