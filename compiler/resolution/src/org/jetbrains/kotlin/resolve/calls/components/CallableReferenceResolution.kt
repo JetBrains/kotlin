@@ -85,11 +85,15 @@ fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory
             return factory.createCallableProcessor(explicitReceiver)
         }
         is LHSResult.Type -> {
-            val static = factory.createCallableProcessor(lhsResult.qualifier)
+            val static = lhsResult.qualifier?.let(factory::createCallableProcessor)
             val unbound = factory.createCallableProcessor(lhsResult.unboundDetailedReceiver)
 
             // note that if we use PrioritizedCompositeScopeTowerProcessor then static will win over unbound members
-            val staticOrUnbound = SamePriorityCompositeScopeTowerProcessor(static, unbound)
+            val staticOrUnbound =
+                if (static != null)
+                    SamePriorityCompositeScopeTowerProcessor(static, unbound)
+                else
+                    unbound
 
             val asValue = lhsResult.qualifier?.classValueReceiverWithSmartCastInfo ?: return staticOrUnbound
             return PrioritizedCompositeScopeTowerProcessor(staticOrUnbound, factory.createCallableProcessor(asValue))
