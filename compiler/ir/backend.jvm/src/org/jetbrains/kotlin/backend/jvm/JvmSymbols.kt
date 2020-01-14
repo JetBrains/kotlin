@@ -202,7 +202,7 @@ class JvmSymbols(
         }
 
     private val javaLangAssertionError: IrClassSymbol =
-        createClass(FqName("java.lang.AssertionError")) { klass ->
+        createClass(FqName("java.lang.AssertionError"), classModality = Modality.OPEN) { klass ->
             klass.addConstructor().apply {
                 addValueParameter("detailMessage", irBuiltIns.anyNType)
             }
@@ -238,29 +238,30 @@ class JvmSymbols(
     val suspendFunctionInterface: IrClassSymbol =
         createClass(FqName("kotlin.coroutines.jvm.internal.SuspendFunction"), ClassKind.INTERFACE)
 
-    val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda")) { klass ->
+    val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda"), classModality = Modality.ABSTRACT) { klass ->
         klass.addConstructor().apply {
             addValueParameter("arity", irBuiltIns.intType)
         }
     }
 
-    val suspendLambdaClass: IrClassSymbol = createClass(FqName("kotlin.coroutines.jvm.internal.SuspendLambda")) { klass ->
-        klass.superTypes += suspendFunctionInterface.defaultType
-        klass.addConstructor().apply {
-            addValueParameter("arity", irBuiltIns.intType)
-            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
+    val suspendLambdaClass: IrClassSymbol =
+        createClass(FqName("kotlin.coroutines.jvm.internal.SuspendLambda"), classModality = Modality.ABSTRACT) { klass ->
+            klass.superTypes += suspendFunctionInterface.defaultType
+            klass.addConstructor().apply {
+                addValueParameter("arity", irBuiltIns.intType)
+                addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
+            }
+            klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, Visibilities.PROTECTED).apply {
+                addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
+            }
+            klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
+                addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
+            }
+            klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
+                addValueParameter("value", irBuiltIns.anyNType)
+                addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
+            }
         }
-        klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-            addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
-        }
-        klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType)).apply {
-            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
-        }
-        klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType)).apply {
-            addValueParameter("value", irBuiltIns.anyNType)
-            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
-        }
-    }
 
     private fun generateCallableReferenceMethods(klass: IrClass) {
         klass.addFunction("getSignature", irBuiltIns.stringType, Modality.OPEN)
@@ -268,20 +269,21 @@ class JvmSymbols(
         klass.addFunction("getOwner", kDeclarationContainer.defaultType, Modality.OPEN)
     }
 
-    val functionReference: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionReference")) { klass ->
-        klass.addConstructor().apply {
-            addValueParameter("arity", irBuiltIns.intType)
+    val functionReference: IrClassSymbol =
+        createClass(FqName("kotlin.jvm.internal.FunctionReference"), classModality = Modality.OPEN) { klass ->
+            klass.addConstructor().apply {
+                addValueParameter("arity", irBuiltIns.intType)
+            }
+
+            klass.addConstructor().apply {
+                addValueParameter("arity", irBuiltIns.intType)
+                addValueParameter("receiver", irBuiltIns.anyNType)
+            }
+
+            klass.addField("receiver", irBuiltIns.anyNType, Visibilities.PROTECTED)
+
+            generateCallableReferenceMethods(klass)
         }
-
-        klass.addConstructor().apply {
-            addValueParameter("arity", irBuiltIns.intType)
-            addValueParameter("receiver", irBuiltIns.anyNType)
-        }
-
-        klass.addField("receiver", irBuiltIns.anyNType, Visibilities.PROTECTED)
-
-        generateCallableReferenceMethods(klass)
-    }
 
     val functionReferenceReceiverField: IrFieldSymbol = functionReference.fieldByName("receiver")
     val functionReferenceGetSignature: IrSimpleFunctionSymbol = functionReference.functionByName("getSignature")

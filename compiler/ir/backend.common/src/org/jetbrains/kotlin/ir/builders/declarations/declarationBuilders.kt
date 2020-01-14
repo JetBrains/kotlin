@@ -179,6 +179,7 @@ fun IrDeclarationContainer.addFunction(
     name: String,
     returnType: IrType,
     modality: Modality = Modality.FINAL,
+    visibility: Visibility = Visibilities.PUBLIC,
     isStatic: Boolean = false,
     isSuspend: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
@@ -187,6 +188,7 @@ fun IrDeclarationContainer.addFunction(
         this.name = Name.identifier(name)
         this.returnType = returnType
         this.modality = modality
+        this.visibility = visibility
         this.isSuspend = isSuspend
         this.origin = origin
     }.apply {
