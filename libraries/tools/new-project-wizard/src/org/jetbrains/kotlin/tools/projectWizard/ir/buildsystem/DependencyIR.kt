@@ -113,6 +113,8 @@ abstract class KotlinLibraryDependencyIR(
     override val version: Version,
     override val dependencyType: DependencyType
 ) : LibraryDependencyIR {
+    abstract val isInMppModule: Boolean
+
     override val artifact: LibraryArtifact
         get() = MavenArtifact(
             MAVEN_CENTRAL,
@@ -123,9 +125,13 @@ abstract class KotlinLibraryDependencyIR(
     override fun BuildFilePrinter.render() {
         when (this) {
             is GradlePrinter -> call(dependencyType.gradleName) {
-                +"kotlin("
-                +artifactName.quotified
-                +")"
+                if (GradlePrinter.GradleDsl.KOTLIN == dsl || isInMppModule) {
+                    +"kotlin("
+                    +artifactName.quotified
+                    +")"
+                } else {
+                    +"org.jetbrains.kotlin:kotlin-$artifactName".quotified
+                }
             }
             is MavenPrinter -> node("dependency") {
                 singleLineNode("groupId") { +"org.jetbrains.kotlin" }
@@ -144,6 +150,7 @@ abstract class KotlinLibraryDependencyIR(
 
 data class KotlinStdlibDependencyIR(
     val type: StdlibType,
+    override val isInMppModule: Boolean,
     override val version: Version,
     override val dependencyType: DependencyType
 ) : KotlinLibraryDependencyIR(type.artifact, version, dependencyType) {
@@ -152,6 +159,7 @@ data class KotlinStdlibDependencyIR(
 
 data class KotlinArbitraryDependencyIR(
     val name: String,
+    override val isInMppModule: Boolean,
     override val version: Version,
     override val dependencyType: DependencyType
 ) : KotlinLibraryDependencyIR(name, version, dependencyType) {

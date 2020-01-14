@@ -105,7 +105,12 @@ class ModulesToIRsConverter(
             +configurator.createModuleIRs(data, module)
             addIfNotNull(
                 configurator.createStdlibType(data, module)?.let { stdlibType ->
-                    KotlinStdlibDependencyIR(stdlibType, kotlinVersion, DependencyType.MAIN)
+                    KotlinStdlibDependencyIR(
+                        type = stdlibType,
+                        isInMppModule = false,
+                        version = kotlinVersion,
+                        dependencyType = DependencyType.MAIN
+                    )
                 }
             )
         }
@@ -179,7 +184,12 @@ class ModulesToIRsConverter(
                 if (sourceset.sourcesetType == SourcesetType.main) {
                     addIfNotNull(
                         target.configurator.createStdlibType(data, target)?.let { stdlibType ->
-                            KotlinStdlibDependencyIR(stdlibType, data.kotlinVersion, DependencyType.MAIN)
+                            KotlinStdlibDependencyIR(
+                                type = stdlibType,
+                                isInMppModule = true,
+                                version = data.kotlinVersion,
+                                dependencyType = DependencyType.MAIN
+                            )
                         }
                     )
                 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 
 class KotlinTestTemplate : Template() {
@@ -29,6 +30,8 @@ class KotlinTestTemplate : Template() {
             framework.reference.settingValue.dependencyNames.map { dependencyName ->
                 KotlinArbitraryDependencyIR(
                     dependencyName,
+                    isInMppModule = sourceset.original.parent?.kind
+                        ?.let { it == ModuleKind.multiplatform || it == ModuleKind.target } != false,
                     version = KotlinPlugin::version.settingValue,
                     dependencyType = DependencyType.MAIN
                 )
