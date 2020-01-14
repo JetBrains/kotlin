@@ -29,16 +29,14 @@ class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase(
         importProject()
         val project = myTestFixture.project
         checkFiles(
-            files,
+            files.filter { it.extension == "kt" || it.extension == "java" },
             project,
             object : GradleDaemonAnalyzerTestCase(
                 testLineMarkers = testLineMarkers,
                 checkWarnings = checkWarnings,
                 checkInfos = false
             ) {}
-        ) { file ->
-            file.extension == "kt" || file.extension == "java"
-        }
+        )
     }
 
     override fun testDataDirName(): String {

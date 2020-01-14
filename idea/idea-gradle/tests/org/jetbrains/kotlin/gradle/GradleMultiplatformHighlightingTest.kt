@@ -41,12 +41,10 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
         val project = myTestFixture.project
 
         checkFiles(
-            files,
+            files.filter { it.extension == "kt" },
             project,
             object : GradleDaemonAnalyzerTestCase(testLineMarkers = true, checkWarnings = true, checkInfos = false) {}
-        ) { file ->
-            file.extension == "kt"
-        }
+        )
     }
 
     override fun testDataDirName(): String {
@@ -72,19 +70,17 @@ abstract class GradleDaemonAnalyzerTestCase(
 internal fun checkFiles(
     files: List<VirtualFile>,
     project: Project,
-    analyzer: GradleDaemonAnalyzerTestCase,
-    fileFilter: (VirtualFile) -> Boolean
+    analyzer: GradleDaemonAnalyzerTestCase
 ) {
     var atLeastOneFile = false
-    val kotlinFiles = files.filter(fileFilter)
     val content = mutableMapOf<VirtualFile, String>()
-    kotlinFiles.forEach { file ->
+    files.forEach { file ->
         val (_, textWithTags) = configureEditorByExistingFile(file, project)
         atLeastOneFile = true
         content[file] = textWithTags
     }
     Assert.assertTrue(atLeastOneFile)
-    kotlinFiles.forEach { file ->
+    files.forEach { file ->
         val (editor, _) = configureEditorByExistingFile(file, project, content[file])
         analyzer.checkHighlighting(project, editor)
     }
