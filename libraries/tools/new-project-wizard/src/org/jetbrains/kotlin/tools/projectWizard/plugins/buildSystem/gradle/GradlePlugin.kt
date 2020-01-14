@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.allModulesPaths
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -106,12 +107,20 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         runBefore(TemplatesPlugin::addTemplatesToSourcesets)
         activityChecker = isGradle
         withAction {
+            val templateDescriptor = when (buildSystemType) {
+                BuildSystemType.GradleKotlinDsl -> FileTemplateDescriptor(
+                    "gradle/settings.gradle.kts.vm",
+                    "settings.gradle.kts".asPath()
+                )
+                BuildSystemType.GradleGroovyDsl -> FileTemplateDescriptor(
+                    "gradle/settings.gradle.vm",
+                    "settings.gradle".asPath()
+                )
+                else -> return@withAction UNIT_SUCCESS
+            }
             TemplatesPlugin::addFileTemplate.execute(
                 FileTemplate(
-                    FileTemplateDescriptor(
-                        "gradle/settings.gradle.kts.vm",
-                        "settings.gradle.kts".asPath()
-                    ),
+                    templateDescriptor,
                     StructurePlugin::projectPath.settingValue,
                     mapOf(
                         "projectName" to StructurePlugin::name.settingValue,
