@@ -15,3 +15,13 @@ fun <E> main(a: A<E>) {
 
     foo(a).b()
 }
+
+class AOut<out X>
+
+fun <Y> foo(c: AOut<Y>): Y = TODO()
+
+fun <E> mainOut(a: AOut<E>) {
+    a as AOut<B<*>>
+
+    foo(a).b()
+}

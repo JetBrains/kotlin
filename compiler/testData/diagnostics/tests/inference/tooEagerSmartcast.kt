@@ -20,7 +20,7 @@ fun <X> InvBase<X>.myLastInv(): X = TODO()
 
 fun <T> fooInv(x: InvBase<T>) {
     if (x is InvDerived<*>) {
-        val l: T = x.myLastInv() // required T, found Cap(*). Only in NI
+        val l: T = <!TYPE_MISMATCH!>x.<!TYPE_MISMATCH!>myLastInv()<!><!> // required T, found Cap(*). Only in NI
     }
 }
 
@@ -36,7 +36,7 @@ fun Number.num() {}
 fun main(b: Base<out Number>) {
     b.foo().num()
     if (b is Derived<*>) {
-        b.foo().num()
+        b.foo().<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>num<!>()
         b.baz().length
     }
 }
