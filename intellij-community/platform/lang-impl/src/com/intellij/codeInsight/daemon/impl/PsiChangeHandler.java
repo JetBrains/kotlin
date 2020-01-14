@@ -53,7 +53,10 @@ final class PsiChangeHandler extends PsiTreeChangeAdapter implements Disposable 
         final Document document = e.getDocument();
         PsiDocumentManagerImpl documentManager = (PsiDocumentManagerImpl)PsiDocumentManager.getInstance(myProject);
         if (documentManager.getSynchronizer().isInSynchronization(document)) return;
-        if (documentManager.getCachedPsiFile(document) == null) return;
+
+        PsiFile psi = documentManager.getCachedPsiFile(document);
+        if (psi == null || !psi.getViewProvider().isEventSystemEnabled()) return;
+
         if (document.getUserData(UPDATE_ON_COMMIT_ENGAGED) == null) {
           document.putUserData(UPDATE_ON_COMMIT_ENGAGED, Boolean.TRUE);
           PsiDocumentManagerBase.addRunOnCommit(document, () -> {
