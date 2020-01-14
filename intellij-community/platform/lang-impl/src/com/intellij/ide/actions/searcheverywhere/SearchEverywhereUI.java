@@ -956,13 +956,14 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   }
 
   @TestOnly
-  private CompletableFuture<List<Object>> testResultsFuture;
-
-  @TestOnly
   public Future<List<Object>> findElementsForPattern(String pattern) {
-    testResultsFuture = new CompletableFuture<>();
+    CompletableFuture<List<Object>> future = new CompletableFuture<>();
+    mySearchListener.setTestCallback(list -> {
+      future.complete(list);
+      mySearchListener.setTestCallback(null);
+    });
     mySearchField.setText(pattern);
-    return testResultsFuture;
+    return future;
   }
 
   private class CompositeCellRenderer implements ListCellRenderer<Object> {
@@ -1583,6 +1584,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   private final SearchListener mySearchListener = new SearchListener();
 
   private class SearchListener implements SESearcher.Listener {
+    private Consumer<List<Object>> testCallback;
+
     @Override
     public void elementsAdded(@NotNull List<? extends SearchEverywhereFoundElementInfo> list) {
       boolean wasEmpty = myListModel.listElements.isEmpty();
@@ -1632,13 +1635,12 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
       mySelectionTracker.resetSelectionIfNeeded();
 
-      //noinspection TestOnlyProblems
-      if (testResultsFuture != null) {
-        //noinspection TestOnlyProblems
-        testResultsFuture.complete(myListModel.getItems());
-        //noinspection TestOnlyProblems
-        testResultsFuture = null;
-      }
+      if (testCallback != null) testCallback.consume(myListModel.getItems());
+    }
+
+    @TestOnly
+    void setTestCallback(@Nullable Consumer<List<Object>> callback) {
+      testCallback = callback;
     }
   }
 
