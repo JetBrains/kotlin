@@ -6,7 +6,6 @@
 -keep class kotlin.Metadata { *; }
 
 # Keep implementations of service loaded interfaces
-# R8 will automatically handle these these in 1.6+
 -keep interface kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoader
 -keep class * implements kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoader { public protected *; }
 -keep interface kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition
