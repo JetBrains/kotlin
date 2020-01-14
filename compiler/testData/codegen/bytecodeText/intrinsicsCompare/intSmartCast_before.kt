@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProperIeee754Comparisons
 // IGNORE_BACKEND: JVM_IR
 fun equals3(a: Int?, b: Int?) = a != null && b != null && a == b
 

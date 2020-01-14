@@ -2891,9 +2891,14 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsCompare"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
-        @TestMetadata("byteSmartCast.kt")
-        public void testByteSmartCast() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/byteSmartCast.kt");
+        @TestMetadata("byteSmartCast_after.kt")
+        public void testByteSmartCast_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/byteSmartCast_after.kt");
+        }
+
+        @TestMetadata("byteSmartCast_before.kt")
+        public void testByteSmartCast_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/byteSmartCast_before.kt");
         }
 
         @TestMetadata("charSmartCast.kt")
@@ -2901,14 +2906,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/charSmartCast.kt");
         }
 
-        @TestMetadata("differentTypes.kt")
-        public void testDifferentTypes() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/differentTypes.kt");
+        @TestMetadata("differentTypes_after.kt")
+        public void testDifferentTypes_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/differentTypes_after.kt");
         }
 
-        @TestMetadata("intSmartCast.kt")
-        public void testIntSmartCast() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/intSmartCast.kt");
+        @TestMetadata("differentTypes_before.kt")
+        public void testDifferentTypes_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/differentTypes_before.kt");
+        }
+
+        @TestMetadata("intSmartCast_after.kt")
+        public void testIntSmartCast_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/intSmartCast_after.kt");
+        }
+
+        @TestMetadata("intSmartCast_before.kt")
+        public void testIntSmartCast_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/intSmartCast_before.kt");
         }
 
         @TestMetadata("longSmartCast.kt")
@@ -2916,9 +2931,14 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/longSmartCast.kt");
         }
 
-        @TestMetadata("shortSmartCast.kt")
-        public void testShortSmartCast() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/shortSmartCast.kt");
+        @TestMetadata("shortSmartCast_after.kt")
+        public void testShortSmartCast_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/shortSmartCast_after.kt");
+        }
+
+        @TestMetadata("shortSmartCast_before.kt")
+        public void testShortSmartCast_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsCompare/shortSmartCast_before.kt");
         }
     }
 

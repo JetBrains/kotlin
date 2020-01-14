@@ -1,4 +1,5 @@
 // !API_VERSION: 1.0
+// !LANGUAGE: -ProperIeee754Comparisons
 
 fun equals5(a: Any?, b: Any?) = if (a is Double && b is Double?) a == b else null!!
 

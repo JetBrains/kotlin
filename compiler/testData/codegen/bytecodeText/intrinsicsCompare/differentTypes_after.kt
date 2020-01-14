@@ -1,3 +1,4 @@
+// !LANGUAGE: +ProperIeee754Comparisons
 fun box(): String {
     val zero: Any = 0.0
     val floatZero: Any = -0.0F
@@ -12,5 +13,9 @@ fun box(): String {
     return "fail"
 }
 
-// 1 Intrinsics\.areEqual
-// 1 Double\.compare
+// 0 Intrinsics\.areEqual
+// 0 Double\.compare
+// 2 F2D
+// 2 DCMPG
+// 1 IFNE
+// 1 IFGT

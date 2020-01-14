@@ -1,4 +1,5 @@
 // !API_VERSION: 1.0
+// !LANGUAGE: -ProperIeee754Comparisons
 
 fun box(): String {
     val nullValue: Any? = null
