@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.io.IOException
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
 object JsLibraryUtils {
@@ -111,7 +112,11 @@ object JsLibraryUtils {
     }
 
     private fun traverseArchive(file: File, action: (JsLibrary) -> Unit) {
-        val zipFile = ZipFile(file.path)
+        val zipFile = try {
+            ZipFile(file.path)
+        } catch (e: ZipException) {
+            throw IOException("Failed to open zip file: $file", e)
+        }
         try {
             val zipEntries = zipFile.entries()
             val librariesWithoutSourceMaps = mutableListOf<JsLibrary>()
