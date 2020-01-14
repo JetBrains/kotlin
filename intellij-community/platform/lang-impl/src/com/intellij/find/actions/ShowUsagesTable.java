@@ -287,7 +287,8 @@ class ShowUsagesTable extends JBTable implements DataProvider {
       super(cols(cols), data, 0);
     }
 
-    private static ColumnInfo @NotNull [] cols(int cols) {
+    @NotNull
+    private static ColumnInfo<UsageNode, UsageNode>[] cols(int cols) {
       ColumnInfo<UsageNode, UsageNode> o = new ColumnInfo<UsageNode, UsageNode>("") {
         @Nullable
         @Override
