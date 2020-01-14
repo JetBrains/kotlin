@@ -15,13 +15,6 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicHTML;
 import java.awt.*;
 
-/**
- * JBLabel-based (text and icon) list cell renderer.
- *
- * @see ColoredListCellRenderer for more complex SimpleColoredComponent-based variant.
- *
- * @author gregsh
- */
 public abstract class SimpleListCellRenderer<T> extends JBLabel implements ListCellRenderer<T> {
 
   @NotNull
