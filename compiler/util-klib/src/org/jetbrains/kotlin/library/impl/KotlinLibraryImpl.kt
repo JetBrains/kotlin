@@ -28,7 +28,20 @@ open class BaseKotlinLibraryImpl(
     override val libraryFile get() = access.klib
     override val libraryName: String by lazy { access.inPlace { it.libraryName } }
 
+    override val componentList: List<String> by lazy {
+        access.inPlace {
+            it.libDir.listFiles
+                .filter { it.isDirectory }
+                .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
+                .map { it.name }
+        }
+    }
+
     override fun toString() = "$libraryName[default=$isDefault]"
+
+    override val has_pre_1_4_manifest: Boolean by lazy {
+        access.inPlace { it.pre_1_4_manifest.exists }
+    }
 
     override val manifestProperties: Properties by lazy {
         access.inPlace { it.manifestFile.loadProperties() }
@@ -221,11 +234,12 @@ open class KotlinLibraryImpl(
 
 fun createKotlinLibrary(
     libraryFile: File,
+    component: String,
     isDefault: Boolean = false
 ): KotlinLibrary {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile)
-    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile)
-    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile)
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component)
+    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component)
+    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val metadata = MetadataLibraryImpl(metadataAccess)
@@ -234,3 +248,21 @@ fun createKotlinLibrary(
 
     return KotlinLibraryImpl(base, metadata, ir)
 }
+
+fun createKotlinLibraryComponents(
+    libraryFile: File,
+    isDefault: Boolean = true
+) : List<KotlinLibrary> {
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
+    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
+    return base.componentList.map {
+        createKotlinLibrary(libraryFile, it, isDefault)
+    }
+}
+
+val File.isPre_1_4_Library: Boolean
+    get() {
+        val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(this, null)
+        val base = BaseKotlinLibraryImpl(baseAccess, false)
+        return base.has_pre_1_4_manifest
+    }
