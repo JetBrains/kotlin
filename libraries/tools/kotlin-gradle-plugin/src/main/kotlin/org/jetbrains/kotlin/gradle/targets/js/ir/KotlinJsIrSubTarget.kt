@@ -11,7 +11,6 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrSubTargetDsl
@@ -112,7 +111,7 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    private fun configureTestsRun(testRun: KotlinJsIrPlatformTestRun, compilation: KotlinJsCompilation) {
+    private fun configureTestsRun(testRun: KotlinJsIrPlatformTestRun, compilation: KotlinJsIrCompilation) {
         fun KotlinJsIrPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
             lowerCamelCaseName(
                 name.takeIf { it != KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME },

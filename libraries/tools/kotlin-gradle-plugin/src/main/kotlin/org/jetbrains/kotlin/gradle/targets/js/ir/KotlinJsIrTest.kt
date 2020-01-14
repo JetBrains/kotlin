@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js.testing
+package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import groovy.lang.Closure
 import org.gradle.api.file.FileCollection
@@ -13,7 +13,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.LoadNpmModules
@@ -23,14 +22,14 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
-open class KotlinJsTest :
+open class KotlinJsIrTest :
     KotlinTest(),
     RequiresNpmDependencies,
     LoadNpmModules {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
-    internal var testFramework: KotlinJsTestFramework? = null
+    internal var testFramework: KotlinJsIrTestFramework? = null
 
     @Suppress("unused")
     val testFrameworkSettings: String
@@ -40,7 +39,7 @@ open class KotlinJsTest :
     var debug: Boolean = false
 
     @Internal
-    override lateinit var compilation: KotlinJsCompilation
+    override lateinit var compilation: KotlinJsIrCompilation
 
     @Suppress("unused")
     val runtimeClasspath: FileCollection
@@ -95,7 +94,7 @@ open class KotlinJsTest :
         }
     }
 
-    private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit): T {
+    private inline fun <T : KotlinJsIrTestFramework> use(runner: T, body: T.() -> Unit): T {
         check(testFramework == null) {
             "testFramework already configured for task ${this.path}"
         }
@@ -114,7 +113,7 @@ open class KotlinJsTest :
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
         forkOptions.workingDir = compilation.npmProject.dir
-        forkOptions.executable = nodeJs.requireConfigured().nodeExecutable
+        forkOptions.executable = nodeJs.environment.nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()
 
