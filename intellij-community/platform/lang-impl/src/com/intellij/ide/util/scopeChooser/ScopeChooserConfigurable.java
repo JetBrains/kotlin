@@ -265,7 +265,7 @@ public class ScopeChooserConfigurable extends MasterDetailsComponent implements 
   protected
   @Nullable
   String getEmptySelectionString() {
-    return "Select a scope to view or edit its details here";
+    return IdeBundle.message("scope.chooser.select.scope.text");
   }
 
   private String createUniqueName() {
