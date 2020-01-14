@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
 import org.jetbrains.kotlin.util.*
 
 const val KOTLIN_STDLIB_NAME = "stdlib"
@@ -21,7 +22,7 @@ interface SearchPathResolverWithAttributes<L: KotlinLibrary>: SearchPathResolver
 }
 
 // This is a simple library resolver that only cares for file names.
-abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
+abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary> (
         repositories: List<String>,
         directLibs: List<String>,
         val distributionKlib: String?,
@@ -43,10 +44,10 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
 
     private val repoRoots: List<File> by lazy { repositories.map { File(it) } }
 
-    abstract fun libraryBuilder(file: File, isDefault: Boolean): L
+    abstract fun libraryComponentBuilder(file: File, isDefault: Boolean): List<L>
 
     private val directLibraries: List<KotlinLibrary> by lazy {
-        directLibs.mapNotNull { found(File(it)) }.map { libraryBuilder(it, false) }
+        directLibs.mapNotNull { found(File(it)) }.flatMap { libraryComponentBuilder(it, false) }
     }
 
     // This is the place where we specify the order of library search.
@@ -55,8 +56,7 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
     }
 
     private fun found(candidate: File): File? {
-        fun check(file: File): Boolean =
-                file.exists && (file.isFile || File(file, "manifest").exists)
+        fun check(file: File): Boolean = file.exists
 
         val noSuffix = File(candidate.path.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT))
         val withSuffix = File(candidate.path.suffixIfNot(KLIB_FILE_EXTENSION_WITH_DOT))
@@ -94,11 +94,22 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
         return sequence.filterNotNull()
     }
 
+    private fun Sequence<File>.filterOutPre_1_4_libraries(): Sequence<File>  = this.filter{
+            if (it.isPre_1_4_Library) {
+                logger.warning("Skipping \"$it\" as it is a pre 1.4 library")
+                false
+            } else {
+                true
+            }
+        }
+
     override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
         val givenPath = unresolved.path
         try {
             val fileSequence = resolutionSequence(givenPath)
-            val matching = fileSequence.map { libraryBuilder(it, isDefaultLink) }
+            val matching = fileSequence
+                .filterOutPre_1_4_libraries()
+                .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
                 .map { it.takeIf { libraryMatch(it, unresolved) } }
                 .filterNotNull()
 

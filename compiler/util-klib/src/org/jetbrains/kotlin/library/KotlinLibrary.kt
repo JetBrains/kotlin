@@ -23,10 +23,12 @@ const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations
 interface BaseKotlinLibrary {
     val libraryName: String
     val libraryFile: File
+    val componentList: List<String>
     val versions: KotlinLibraryVersioning
     // Whether this library is default (provided by distribution)?
     val isDefault: Boolean
     val manifestProperties: Properties
+    val has_pre_1_4_manifest: Boolean
 }
 
 interface MetadataLibrary {
