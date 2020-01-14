@@ -25,6 +25,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
 
     fun reset() {
         qualifierStack.clear()
+        qualifierPartsToDrop = 0
     }
 
     fun initProcessingQualifiedAccess(qualifiedAccess: FirQualifiedAccess, callee: FirSimpleNamedReference) {
@@ -44,6 +45,9 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
         }
 
     fun tryResolveAsQualifier(source: FirSourceElement?): FirResolvedQualifier? {
+        if (qualifierStack.isEmpty()) {
+            return null
+        }
         val symbolProvider = session.firSymbolProvider
         var qualifierParts = qualifierStack.asReversed().map { it.asString() }
         var resolved: PackageOrClass?

@@ -150,7 +150,9 @@ class FirCallResolver(
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
-        qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { return it }
+        qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { resolvedQualifierPart ->
+            return resolvedQualifierPart
+        }
 
         val info = CallInfo(
             CallKind.VariableAccess,
@@ -182,20 +184,23 @@ class FirCallResolver(
             result.currentApplicability
         )
 
-        if (qualifiedAccess.explicitReceiver == null &&
-            (reducedCandidates.size <= 1 && result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED)
-        ) {
-            qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { return it }
+        if (qualifiedAccess.explicitReceiver == null) {
+            if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
+            ) {
+                // We should run QualifierResolver if no successful candidates are available
+                // Otherwise expression (even ambiguous) beat qualifier
+                qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { resolvedQualifier ->
+                    return resolvedQualifier
+                }
+            } else {
+                qualifiedResolver.reset()
+            }
         }
 
         val referencedSymbol = when (nameReference) {
             is FirResolvedNamedReference -> nameReference.resolvedSymbol
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
             else -> null
-        }
-
-        if (qualifiedAccess.explicitReceiver == null) {
-            qualifiedResolver.reset()
         }
 
         when {
