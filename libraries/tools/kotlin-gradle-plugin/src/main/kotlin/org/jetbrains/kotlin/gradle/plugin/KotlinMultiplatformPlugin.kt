@@ -26,6 +26,7 @@ import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
     companion object {
@@ -38,6 +39,7 @@ abstract class KotlinPlatformPluginBase(protected val platformName: String) : Pl
 
 open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     override fun apply(project: Project) {
+        warnAboutKotlin12xMppDeprecation(project)
         project.applyPlugin<KotlinCommonPluginWrapper>()
     }
 }
@@ -55,6 +57,8 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         listOf(project.configurations.getByName("compile"))
 
     override fun apply(project: Project) {
+        warnAboutKotlin12xMppDeprecation(project)
+
         val implementConfig = project.configurations.create(IMPLEMENT_CONFIG_NAME)
         val expectedByConfig = project.configurations.create(EXPECTED_BY_CONFIG_NAME)
 
@@ -243,5 +247,19 @@ open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js")
     override fun apply(project: Project) {
         project.applyPlugin<Kotlin2JsPluginWrapper>()
         super.apply(project)
+    }
+}
+
+internal val KOTLIN_12X_MPP_DEPRECATION_WARNING = "\n" + """
+    The 'org.jetbrains.kotlin.platform.*' plugins are deprecated and will no longer be available in Kotlin 1.4.
+    Please migrate the project to the 'org.jetbrains.kotlin.multiplatform' plugin.
+    See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
+    """.trimIndent()
+
+private const val KOTLIN_12X_MPP_DEPRECATION_SUPPRESS_FLAG = "kotlin.internal.mpp12x.deprecation.suppress"
+
+private fun warnAboutKotlin12xMppDeprecation(project: Project) {
+    if (project.findProperty(KOTLIN_12X_MPP_DEPRECATION_SUPPRESS_FLAG) != "true") {
+        SingleWarningPerBuild.show(project, KOTLIN_12X_MPP_DEPRECATION_WARNING)
     }
 }
