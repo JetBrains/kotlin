@@ -1805,20 +1805,6 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
             }
 
-            build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
-                assertSuccessful()
-                val dists = output.lineSequence().filter {
-                    it.contains("Kotlin/Native distribution: ")
-                }
-
-                // Restricted distribution is available for Mac hosts only.
-                if (HostManager.hostIsMac) {
-                    assertTrue(dists.all { it.contains("-restricted-") })
-                } else {
-                    assertTrue(dists.none { it.contains("-restricted-") })
-                }
-            }
-
             // This directory actually doesn't contain a K/N distribution
             // but we still can run a project configuration and check logs.
             val currentDir = projectDir.absolutePath

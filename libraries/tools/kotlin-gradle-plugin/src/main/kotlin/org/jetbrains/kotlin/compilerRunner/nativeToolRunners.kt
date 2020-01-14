@@ -137,3 +137,14 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
 internal class KotlinNativeKlibRunner(project: Project) : KotlinNativeToolRunner("klib", project) {
     override val mustRunViaExec get() = project.disableKonanDaemon
 }
+
+/** Platform libraries generation tool. */
+internal class KotlinNativeLibraryGenerationRunner(project: Project) :
+    KotlinNativeToolRunner("generatePlatformLibraries", project)
+{
+    // Library generator starts the interop tool which cannot be executed in daemon.
+    override val mustRunViaExec: Boolean get() = true
+
+    // The library generator works for a long time so enabling C2 can improve performance.
+    override val disableC2: Boolean = false
+}

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import org.jetbrains.kotlin.konan.util.visibleName
 
 class Distribution(
     private val onlyDefaultProfiles: Boolean = false,
@@ -89,6 +90,10 @@ class Distribution(
     fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
 
     fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlibDefaultComponent/targets/${target.visibleName}/native/runtime.bc"
+
+    fun platformDefs(family: Family) = "$konanHome/konan/platformDef/${family.visibleName}"
+
+    fun platformLibs(target: KonanTarget) = "$klib/platform/${target.visibleName}"
 
     val launcherFiles = listOf("launcher.bc")
 

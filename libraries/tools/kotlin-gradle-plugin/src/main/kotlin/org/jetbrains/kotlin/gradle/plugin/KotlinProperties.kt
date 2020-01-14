@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
@@ -119,13 +121,35 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.tests.individualTaskReports")
 
     /**
-     * Forces using a "restricted" distribution of Kotlin/Native.
-     *
-     * A restricted distribution is available for MacOS only and doesn't contain platform libraries.
-     * If a host platform is not MacOS, the flag is ignored.
+     * Allow a user to choose distribution type. The following distribution types are available:
+     *  - regular - The default distribution. Includes all platform libraries in 1.3 and generates them at the user side in 1.4.
+     *  - restricted - Doesn't include Apple platform libraries. Available for MacOS only and in 1.3 only.
+     *  - prebuilt - Includes all platform libraries. Available in 1.4 only. Used to workaround possible problems with library generation at the use side.
      */
-    val nativeRestrictedDistribution: Boolean?
-        get() = booleanProperty("kotlin.native.restrictedDistribution")
+    val nativeDistributionType: NativeDistributionType?
+        get() {
+            var result = property("kotlin.native.distribution.type")?.let {
+                NativeDistributionType.byCompilerArgument(it)
+            }
+
+            val deprecatedRestricted = booleanProperty("kotlin.native.restrictedDistribution")
+            if (result == null && deprecatedRestricted != null) {
+                SingleWarningPerBuild.show(
+                    project,
+                    "Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=restricted' instead"
+                )
+                result = if (deprecatedRestricted) NativeDistributionType.RESTRICTED else NativeDistributionType.REGULAR
+            }
+
+            return result
+        }
+
+    /**
+     * Allows a user to force a particular cinterop mode for platform libraries generation. Available modes: sourcecode, metadata.
+     * A main purpose of this property is working around potential problems with the metadata mode.
+     */
+    val nativePlatformLibrariesMode: String?
+        get() = property("kotlin.native.platform.libraries.mode")
 
     /**
      * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
@@ -155,7 +179,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Dependencies caching strategy. The default is static.
      */
     val nativeCacheKind: NativeCacheKind
-        get() = property("kotlin.native.cacheKind")?.let { NativeCacheKind.byCompilerArgument(it) } ?: NativeCacheKind.STATIC
+        get() = property("kotlin.native.cacheKind")?.let { NativeCacheKind.byCompilerArgument(it) } ?: CacheBuilder.DEFAULT_CACHE_KIND
 
     /**
      * Generate kotlin/js external declarations from all .d.ts files found in npm modules

@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -231,4 +234,25 @@ enum class ExplicitApiMode(private val cliOption: String) {
     Disabled("disabled");
 
     fun toCompilerArg() = "-Xexplicit-api=$cliOption"
+}
+
+enum class NativeDistributionType(val suffix: String?) {
+    REGULAR(null) {
+        override fun isAvailableFor(host: KonanTarget, version: CompilerVersion) = true
+    },
+    RESTRICTED("restricted") {
+        override fun isAvailableFor(host: KonanTarget, version: CompilerVersion): Boolean =
+            host == KonanTarget.MACOS_X64 && version.major == 1 && version.minor == 3
+    },
+    PREBUILT("prebuilt") {
+        override fun isAvailableFor(host: KonanTarget, version: CompilerVersion): Boolean =
+            version.isAtLeast(1, 4, 0)
+    };
+
+    abstract fun isAvailableFor(host: KonanTarget, version: CompilerVersion): Boolean
+
+    companion object {
+        fun byCompilerArgument(argument: String): NativeDistributionType? =
+            values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+    }
 }

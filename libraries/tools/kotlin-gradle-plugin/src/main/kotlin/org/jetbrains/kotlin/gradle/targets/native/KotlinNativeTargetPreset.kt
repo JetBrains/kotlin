@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch")
-
 // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch")
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
@@ -13,14 +12,20 @@ import org.gradle.BuildAdapter
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType
+import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType.REGULAR
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
+import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.internal.setUpKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
     private val name: String,
@@ -50,6 +55,13 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             logger.info("Kotlin/Native distribution: $konanHome")
         } else {
             logger.info("User-provided Kotlin/Native distribution: $konanHome")
+        }
+
+        val distributionType = PropertiesProvider(project).nativeDistributionType
+        if (konanVersion.isAtLeast(1, 4, 0) &&
+            (distributionType == null || distributionType == REGULAR)
+        ) {
+            PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
         }
     }
 
@@ -134,3 +146,9 @@ internal val KonanTarget.enabledOnCurrentHost
 
 internal val AbstractKotlinNativeCompilation.isMainCompilation: Boolean
     get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
+
+// KonanVersion doesn't provide an API to compare versions,
+// so we have to transform it to KotlinVersion first.
+// Note: this check doesn't take into account the meta version (release, eap, dev).
+internal fun CompilerVersion.isAtLeast(major: Int, minor: Int, patch: Int): Boolean =
+    KotlinVersion(this.major, this.minor, this.maintenance).isAtLeast(major, minor, patch)
