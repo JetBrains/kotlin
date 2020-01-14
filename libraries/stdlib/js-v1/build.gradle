@@ -191,6 +191,7 @@ task compileJs(type: NoDebugJavaExec) {
 
     outputs.file(jsOutputFile)
     outputs.file("${jsOutputFile}.map")
+    outputs.file(jsOutputMetaFile)
     outputs.cacheIf { true }
 
     def inputFiles = fileTree(jsSrcJsDir) {
