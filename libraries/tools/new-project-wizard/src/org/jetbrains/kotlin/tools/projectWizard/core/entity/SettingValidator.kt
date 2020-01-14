@@ -32,12 +32,14 @@ object StringValidators {
     }
 
     fun shouldBeValidIdentifier(name: String) = settingValidator { value: String ->
-        if (value.any { !it.isLetterOrDigit() && it != '_' })
+        if (value.any { char -> !char.isLetterOrDigit() && char !in ALLOWED_SPECIAL_CHARS_FOR_IDENTIFIERS })
             ValidationResult.ValidationError(
-                "${name.capitalize()} should consist only of letters, digits, and underscores"
+                "${name.capitalize()} should consist only of letters, digits, '_', or '-'"
             )
         else ValidationResult.OK
     }
+
+    private val ALLOWED_SPECIAL_CHARS_FOR_IDENTIFIERS = setOf('_', '-')
 }
 
 fun List<ValidationResult>.fold() = fold(ValidationResult.OK, ValidationResult::and)
