@@ -19,7 +19,6 @@ where advanced options include:
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdisable-standard-script  Disable standard kotlin script support
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
-  -Xexpression               Evaluate the given string as a Kotlin script
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xir-check-local-names     Check that names of local classes and anonymous objects are the same in the IR backend as in the old backend

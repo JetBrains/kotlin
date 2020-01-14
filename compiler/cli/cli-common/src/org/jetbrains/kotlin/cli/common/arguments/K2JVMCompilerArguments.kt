@@ -49,7 +49,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-no-reflect", description = "Don't automatically include Kotlin reflection into the classpath")
     var noReflect: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xexpression", description = "Evaluate the given string as a Kotlin script")
+    @Argument(
+        value = "-expression",
+        shortName = "-e",
+        description = "Evaluate the given string as a Kotlin script"
+    )
     var expression: String? by FreezableVar(null)
 
     @Argument(

@@ -50,7 +50,7 @@ class ScriptingWithCliCompilerTest {
     fun testExpression() {
         runWithK2JVMCompiler(
             arrayOf(
-                "-Xexpression",
+                "-expression",
                 "val x = 7; println(x * 6); for (arg in args) println(arg)",
                 "--",
                 "hi",
@@ -64,7 +64,7 @@ class ScriptingWithCliCompilerTest {
     fun testExpressionWithComma() {
         runWithK2JVMCompiler(
             arrayOf(
-                "-Xexpression",
+                "-expression",
                 "listOf(1,2)"
             ),
             listOf("\\[1, 2\\]")

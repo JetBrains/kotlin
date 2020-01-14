@@ -151,7 +151,8 @@ class ExpressionRunner(private val code: String) : RunnerWithCompiler() {
     override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
         val compilerArgs = ArrayList<String>().apply {
             addClasspathArgIfNeeded(classpath)
-            add("-Xexpression=$code")
+            add("-expression")
+            add(code)
             addAll(arguments)
         }
         runCompiler(compilerClasspath, compilerArgs)

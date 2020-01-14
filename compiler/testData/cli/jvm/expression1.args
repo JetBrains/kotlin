@@ -1,4 +1,5 @@
--Xexpression=val x = 2; System.err.println((args + listOf(2,1).map { (it * x).toString() }).joinToString())
+-expression
+val x = 2; System.err.println((args + listOf(2,1).map { (it * x).toString() }).joinToString())
 --
 a
 b
