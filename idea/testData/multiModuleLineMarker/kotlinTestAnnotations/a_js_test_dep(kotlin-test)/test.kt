@@ -1,7 +1,7 @@
 import kotlin.test.*
 
-class SimpleTest {
-    @Test fun testFoo() {
+class <lineMarker descr="Run Test">SimpleTest</lineMarker> {
+    @Test fun <lineMarker descr="Run Test">testFoo</lineMarker>() {
         // Will run
     }
 

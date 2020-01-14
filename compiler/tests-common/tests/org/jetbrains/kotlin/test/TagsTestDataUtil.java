@@ -21,28 +21,23 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TagsTestDataUtil {
     public static String insertInfoTags(List<LineMarkerInfo> lineMarkers, boolean withDescription, String text) {
-        List<LineMarkerTagPoint> lineMarkerPoints = Lists.newArrayList();
-        for (LineMarkerInfo markerInfo : lineMarkers) {
-            lineMarkerPoints.add(new LineMarkerTagPoint(markerInfo.startOffset, true, markerInfo, withDescription));
-            lineMarkerPoints.add(new LineMarkerTagPoint(markerInfo.endOffset, false, markerInfo, withDescription));
-        }
+        List<LineMarkerTagPoint> lineMarkerPoints = toLineMarkerTagPoints(lineMarkers, withDescription);
 
         return insertTagsInText(lineMarkerPoints, text);
     }
 
     public static String insertInfoTags(List<HighlightInfo> highlights, String text) {
-        List<HighlightTagPoint> highlightPoints = Lists.newArrayList();
-        for (HighlightInfo highlight : highlights) {
-            highlightPoints.add(new HighlightTagPoint(highlight.startOffset, true, highlight));
-            highlightPoints.add(new HighlightTagPoint(highlight.endOffset, false, highlight));
-        }
+        List<HighlightTagPoint> highlightPoints = toHighlightTagPoints(highlights);
 
         return insertTagsInText(highlightPoints, text);
     }
@@ -86,6 +81,29 @@ public class TagsTestDataUtil {
         }
 
         return builder.toString();
+    }
+
+    @NotNull
+    public static List<LineMarkerTagPoint> toLineMarkerTagPoints(
+            Collection<LineMarkerInfo> lineMarkers,
+            boolean withDescription
+    ) {
+        List<LineMarkerTagPoint> lineMarkerPoints = Lists.newArrayList();
+        for (LineMarkerInfo markerInfo : lineMarkers) {
+            lineMarkerPoints.add(new LineMarkerTagPoint(markerInfo.startOffset, true, markerInfo, withDescription));
+            lineMarkerPoints.add(new LineMarkerTagPoint(markerInfo.endOffset, false, markerInfo, withDescription));
+        }
+        return lineMarkerPoints;
+    }
+
+    @NotNull
+    public static List<HighlightTagPoint> toHighlightTagPoints(Collection<HighlightInfo> highlights) {
+        List<HighlightTagPoint> highlightPoints = Lists.newArrayList();
+        for (HighlightInfo highlight : highlights) {
+            highlightPoints.add(new HighlightTagPoint(highlight.startOffset, true, highlight));
+            highlightPoints.add(new HighlightTagPoint(highlight.endOffset, false, highlight));
+        }
+        return highlightPoints;
     }
 
     public static class TagInfo<Data> implements Comparable<TagInfo<?>> {
@@ -144,7 +162,7 @@ public class TagsTestDataUtil {
         }
     }
 
-    private static class HighlightTagPoint extends TagInfo<HighlightInfo> {
+    public static class HighlightTagPoint extends TagInfo<HighlightInfo> {
         private final HighlightInfo highlightInfo;
 
         private HighlightTagPoint(int offset, boolean start, HighlightInfo info) {
@@ -165,9 +183,10 @@ public class TagsTestDataUtil {
         public String getAttributesString() {
             if (isStart) {
                 if (highlightInfo.getDescription() != null) {
-                    return String.format("textAttributesKey=\"%s\" descr=%s",
-                                         highlightInfo.forcedTextAttributesKey,
-                                         highlightInfo.getDescription());
+                    return String.format("descr=\"%s\" textAttributesKey=\"%s\"",
+                                         sanitizeLineBreaks(highlightInfo.getDescription()),
+                                         highlightInfo.forcedTextAttributesKey
+                    );
                 }
                 else {
                     return String.format("textAttributesKey=\"%s\"", highlightInfo.forcedTextAttributesKey);
@@ -179,7 +198,7 @@ public class TagsTestDataUtil {
         }
     }
 
-    private static class LineMarkerTagPoint extends TagInfo<LineMarkerInfo> {
+    public static class LineMarkerTagPoint extends TagInfo<LineMarkerInfo> {
         private final boolean withDescription;
 
         public LineMarkerTagPoint(int offset, boolean start, LineMarkerInfo info, boolean withDescription) {
@@ -196,7 +215,17 @@ public class TagsTestDataUtil {
         @NotNull
         @Override
         public String getAttributesString() {
-            return withDescription ? String.format("descr=\"%s\"", data.getLineMarkerTooltip()) : "descr=\"*\"";
+            return withDescription ? String.format("descr=\"%s\"", sanitizeLineMarkerTooltip(data.getLineMarkerTooltip())) : "descr=\"*\"";
         }
+    }
+
+    private static @NotNull String sanitizeLineMarkerTooltip(@Nullable String originalText) {
+        if (originalText == null) return "null";
+        String noHtmlTags = StringUtil.removeHtmlTags(originalText);
+        return sanitizeLineBreaks(noHtmlTags);
+    }
+
+    private static String sanitizeLineBreaks(String originalText) {
+        return StringUtil.replace(originalText, "\n", " ");
     }
 }

@@ -1,3 +1,3 @@
-expect class <lineMarker><lineMarker>My</lineMarker></lineMarker> {
-    fun <lineMarker><lineMarker>foo</lineMarker></lineMarker>()
+expect class <lineMarker descr="Has actuals in JS, JVM">My</lineMarker> {
+    fun <lineMarker descr="Has actuals in JS, JVM">foo</lineMarker>()
 }

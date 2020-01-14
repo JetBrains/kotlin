@@ -35,6 +35,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.testFramework.VfsTestUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
@@ -243,13 +244,21 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         return rootDir.walk().mapNotNull {
             when {
                 it.isDirectory -> null
+
                 !it.name.endsWith(SUFFIX) -> {
                     var text = it.readText()
                     (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { key, value ->
                         text = text.replace("{{${key}}}", value)
                     }
-                    createProjectSubFile(it.path.substringAfter(rootDir.path + File.separator), text)
+                    val virtualFile = createProjectSubFile(it.path.substringAfter(rootDir.path + File.separator), text)
+
+                    // Real file with expected testdata allows to throw nicer exceptions in
+                    // case of mismatch, as well as open interactive diff window in IDEA
+                    virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, it.absolutePath)
+
+                    virtualFile
                 }
+
                 else -> null
             }
         }.toList()

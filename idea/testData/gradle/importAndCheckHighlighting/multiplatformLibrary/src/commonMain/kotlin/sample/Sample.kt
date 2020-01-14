@@ -1,7 +1,7 @@
 package sample
 
 expect class <lineMarker descr="Has actuals in JS, JVM">Sample</lineMarker>() {
-    fun <lineMarker>checkMe</lineMarker>(): Int
+    fun <lineMarker descr="Has actuals in JS, JVM">checkMe</lineMarker>(): Int
 }
 
 expect object <lineMarker descr="Has actuals in JS, JVM">Platform</lineMarker> {
