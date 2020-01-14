@@ -131,7 +131,10 @@ val TaskRunningContext.allModulesPaths
             else -> structure.modules.map { it.path }
         }
         paths.mapNotNull { path ->
-            projectPath.relativize(path).toList().takeIf { it.isNotEmpty() }
+            projectPath.relativize(path)
+                .takeIf { it.toString().isNotBlank() }
+                ?.toList()
+                ?.takeIf { it.isNotEmpty() }
         }
     }
 
