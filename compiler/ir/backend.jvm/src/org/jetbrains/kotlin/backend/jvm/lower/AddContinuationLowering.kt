@@ -502,7 +502,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
     private fun createStaticSuspendImpl(irFunction: IrSimpleFunction): IrSimpleFunction {
         // Create static suspend impl method.
-        val backendContext = context
         val static = createStaticFunctionWithReceivers(
             irFunction.parent,
             irFunction.name.toSuspendImplementationName(),
@@ -522,15 +521,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     it.putValueArgument(i++, irGet(irFunction.dispatchReceiverParameter!!))
                 }
                 if (irFunction.extensionReceiverParameter != null) {
-                    val defaultValueForParameter = irFunction.extensionReceiverParameter!!.type.defaultValue(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext
-                    )
-                    it.putValueArgument(i++, defaultValueForParameter)
-
+                    it.putValueArgument(i++, irGet(irFunction.extensionReceiverParameter!!))
                 }
                 for (parameter in irFunction.valueParameters) {
-                    val defaultValueForParameter = parameter.type.defaultValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext)
-                    it.putValueArgument(i++, defaultValueForParameter)
+                    it.putValueArgument(i++, irGet(parameter))
                 }
             })
         }
