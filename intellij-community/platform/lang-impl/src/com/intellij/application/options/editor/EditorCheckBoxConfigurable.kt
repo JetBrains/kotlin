@@ -32,13 +32,13 @@ val virtualPageAtBottom = CheckboxDescriptor(message("checkbox.show.virtual.spac
 
 val highlightBraces = CheckboxDescriptor(message("checkbox.highlight.matched.brace"), codeInsightSettings::HIGHLIGHT_BRACES)
 val highlightScope = CheckboxDescriptor(message("checkbox.highlight.current.scope"), codeInsightSettings::HIGHLIGHT_SCOPE)
-val highlightIdentifierUnderCaret = CheckboxDescriptor("Highlight usages of element at caret",
+val highlightIdentifierUnderCaret = CheckboxDescriptor(message("checkbox.highlight.usages.of.element.at.caret"),
                                                        codeInsightSettings::HIGHLIGHT_IDENTIFIER_UNDER_CARET)
 
-val showNotificationAfterReformatCodeCheckBox = CheckboxDescriptor("Show notification after reformat code action",
+val showNotificationAfterReformatCodeCheckBox = CheckboxDescriptor(message("checkbox.show.notification.after.reformat.code.action"),
                                                                    PropertyBinding(editor::isShowNotificationAfterReformat,
                                                                                    editor::setShowNotificationAfterReformat))
-val myShowNotificationAfterOptimizeImportsCheckBox = CheckboxDescriptor("Show notification after optimize imports action",
+val myShowNotificationAfterOptimizeImportsCheckBox = CheckboxDescriptor(message("checkbox.show.notification.after.optimize.imports.action"),
                                                                         PropertyBinding(editor::isShowNotificationAfterOptimizeImports,
                                                                                         editor::setShowNotificationAfterOptimizeImports))
 val renameLocalVariablesInplace = CheckboxDescriptor(message("checkbox.rename.local.variables.inplace"),
@@ -46,7 +46,7 @@ val renameLocalVariablesInplace = CheckboxDescriptor(message("checkbox.rename.lo
                                                                      editor::setVariableInplaceRenameEnabled))
 val preselectCheckBox = CheckboxDescriptor(message("checkbox.rename.local.variables.preselect"),
                                            PropertyBinding(editor::isPreselectRename, editor::setPreselectRename))
-val showInlineDialogForCheckBox = CheckboxDescriptor("Show inline dialog on local variable references",
+val showInlineDialogForCheckBox = CheckboxDescriptor(message("checkbox.show.inline.dialog.on.local.variable.references"),
                                                      PropertyBinding(editor::isShowInlineLocalDialog, editor::setShowInlineLocalDialog))
 
 val optionDescriptors: List<OptionDescription> = listOf(
@@ -86,11 +86,11 @@ class EditorCheckBoxConfigurable : BoundConfigurable(""), SearchableConfigurable
         row { checkBox(highlightScope) }
         row { checkBox(highlightIdentifierUnderCaret) }
       }
-      titledRow("Formatting") {
+      titledRow(message("group.formatting")) {
         row { checkBox(showNotificationAfterReformatCodeCheckBox) }
         row { checkBox(myShowNotificationAfterOptimizeImportsCheckBox) }
       }
-      titledRow("Refactorings") {
+      titledRow(message("group.refactorings")) {
         row { checkBox(renameLocalVariablesInplace) }
         row { checkBox(preselectCheckBox) }
         row { checkBox(showInlineDialogForCheckBox) }
