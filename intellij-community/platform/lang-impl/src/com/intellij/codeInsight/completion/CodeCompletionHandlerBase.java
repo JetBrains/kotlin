@@ -18,8 +18,9 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.OverridingAction;
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
-import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.command.CommandProcessor;
@@ -48,6 +49,7 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.stubs.StubTextInconsistencyException;
 import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -237,18 +239,22 @@ public class CodeCompletionHandlerBase {
                                                                             initContext.getHostOffsets(),
                                                                             hasModifiers, lookup);
 
-    OffsetsInFile hostCopyOffsets = WriteAction.compute(() -> CompletionInitializationUtil.insertDummyIdentifier(initContext, indicator));
 
-    if (synchronous && isValidContext && commitDocumentsWithTimeout(initContext, startingTime)) {
-      trySynchronousCompletion(initContext, hasModifiers, startingTime, indicator, hostCopyOffsets);
-    } else {
-      scheduleContributorsAfterAsyncCommit(initContext, indicator, hostCopyOffsets, hasModifiers);
+    if (synchronous && isValidContext) {
+      OffsetsInFile hostCopyOffsets = withTimeout(calcSyncTimeOut(startingTime), () -> {
+        PsiDocumentManager.getInstance(initContext.getProject()).commitAllDocuments();
+        return CompletionInitializationUtil.insertDummyIdentifier(initContext, indicator).get();
+      });
+      if (hostCopyOffsets != null) {
+        trySynchronousCompletion(initContext, hasModifiers, startingTime, indicator, hostCopyOffsets);
+        return;
+      }
     }
+    scheduleContributorsAfterAsyncCommit(initContext, indicator, hasModifiers);
   }
 
   private void scheduleContributorsAfterAsyncCommit(CompletionInitializationContextImpl initContext,
                                                     CompletionProgressIndicator indicator,
-                                                    OffsetsInFile hostCopyOffsets,
                                                     boolean hasModifiers) {
     CompletionPhase phase;
     if (synchronous) {
@@ -259,20 +265,20 @@ public class CodeCompletionHandlerBase {
     }
     CompletionServiceImpl.setCompletionPhase(phase);
 
-    AppUIExecutor.onUiThread().withDocumentsCommitted(initContext.getProject()).expireWith(phase).execute(() -> {
-      if (phase instanceof CompletionPhase.CommittingDocuments) {
-        ((CompletionPhase.CommittingDocuments)phase).replaced = true;
-      }
-      CompletionServiceImpl.setCompletionPhase(new CompletionPhase.BgCalculation(indicator));
-      startContributorThread(initContext, indicator, hostCopyOffsets, hasModifiers);
-    });
-  }
+    ReadAction
+      .nonBlocking(() -> CompletionInitializationUtil.insertDummyIdentifier(initContext, indicator))
+      .expireWith(phase)
+      .withDocumentsCommitted(indicator.getProject())
+      .finishOnUiThread(ModalityState.defaultModalityState(), applyPsiChanges -> {
+        OffsetsInFile hostCopyOffsets = applyPsiChanges.get();
 
-  private boolean commitDocumentsWithTimeout(CompletionInitializationContextImpl initContext, long startingTime) {
-    return withTimeout(calcSyncTimeOut(startingTime), () -> {
-      PsiDocumentManager.getInstance(initContext.getProject()).commitAllDocuments();
-      return true;
-    }) != null;
+        if (phase instanceof CompletionPhase.CommittingDocuments) {
+          ((CompletionPhase.CommittingDocuments)phase).replaced = true;
+        }
+        CompletionServiceImpl.setCompletionPhase(new CompletionPhase.BgCalculation(indicator));
+        startContributorThread(initContext, indicator, hostCopyOffsets, hasModifiers);
+      })
+      .submit(AppExecutorUtil.getAppExecutorService());
   }
 
   private void trySynchronousCompletion(CompletionInitializationContextImpl initContext,
