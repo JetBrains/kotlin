@@ -80,6 +80,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xuse-ir", description = "Use the IR backend")
     var useIR: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xno-use-ir", description = "Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default")
+    var noUseIR: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xir-check-local-names",
         description = "Check that names of local classes and anonymous objects are the same in the IR backend as in the old backend"

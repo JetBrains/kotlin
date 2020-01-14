@@ -49,6 +49,7 @@ where advanced options include:
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
+  -Xno-use-ir                Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
                              This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
                              problems with parentheses in identifiers on certain platforms
