@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.*
 
+const val KLIB_DEFAULT_COMPONENT_NAME = "default"
+
 open class KotlinLibraryLayoutForWriter(
-    override val libDir: File
+    override val libDir: File,
+    override val component: String = KLIB_DEFAULT_COMPONENT_NAME
 ) : KotlinLibraryLayout, MetadataKotlinLibraryLayout, IrKotlinLibraryLayout
 
 open class BaseWriterImpl(

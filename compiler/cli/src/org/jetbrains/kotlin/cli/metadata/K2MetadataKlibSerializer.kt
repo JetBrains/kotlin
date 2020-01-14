@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
-import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
@@ -110,7 +110,9 @@ private class KlibMetadataDependencyContainer(
         val klibFiles = classpathFiles
             .filter { it.extension == "klib" || it.isDirectory }
 
-        klibFiles.map { createKotlinLibrary(org.jetbrains.kotlin.konan.file.File(it.absolutePath)) }
+        // TODO: need to move K2Metadata to SearchPathResolver.
+        // Otherewise there's no good way to choose between the components.
+        klibFiles.map { createKotlinLibraryComponents(org.jetbrains.kotlin.konan.file.File(it.absolutePath)).single() }
     }
 
     private val builtIns
