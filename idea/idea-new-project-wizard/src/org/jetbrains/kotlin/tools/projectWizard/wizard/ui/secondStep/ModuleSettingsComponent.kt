@@ -24,7 +24,7 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
     private val nameField = TextFieldComponent(
         valuesReadingContext,
         labelText = "Name",
-        onAnyValueUpdate = { value ->
+        onValueUpdate = { value ->
             module?.name = value
             eventManager.fireListeners(null)
         },
@@ -52,7 +52,7 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
         }
 
     private fun updateModule(module: Module) {
-        nameField.value = module.name
+        nameField.updateUiValue(module.name)
         nameField.component.isVisible = module.kind != ModuleKind.target
                 || module.configurator.moduleType != ModuleType.common
 

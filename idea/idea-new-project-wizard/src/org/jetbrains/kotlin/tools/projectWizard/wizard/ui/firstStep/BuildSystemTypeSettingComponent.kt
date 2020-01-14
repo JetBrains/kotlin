@@ -11,39 +11,37 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemP
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.valueForSetting
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.UIComponentDelegatingSettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
 
 
 class BuildSystemTypeSettingComponent(
     private val valuesReadingContext: ValuesReadingContext
-) : SettingComponent<BuildSystemType, DropDownSettingType<BuildSystemType>>(
+) : UIComponentDelegatingSettingComponent<BuildSystemType, DropDownSettingType<BuildSystemType>>(
     BuildSystemPlugin::type.reference,
     valuesReadingContext
 ) {
-    override val validationIndicator: ValidationIndicator? = null
-    private val listComponent = DropDownComponent(
+    override val uiComponent: DropDownComponent<BuildSystemType> = DropDownComponent(
         valuesReadingContext,
         setting.type.values,
         labelText = "Build System",
         filter = { value -> setting.type.filter(valuesReadingContext, reference, value) },
         validator = setting.validator,
         iconProvider = BuildSystemType::icon,
-        onAnyValueUpdate = { value = it }
+        onValueUpdate = { value = it }
     ).asSubComponent()
 
-    override val component = panel {
-        add(listComponent.component, BorderLayout.CENTER)
-    }
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
         if (reference == KotlinPlugin::projectKind.reference) {
-            listComponent.component.updateUI()
+            uiComponent.component.updateUI()
         }
-        listComponent.validate()
+        value?.let(uiComponent::validate)
     }
 }
 
