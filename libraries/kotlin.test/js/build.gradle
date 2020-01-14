@@ -66,6 +66,8 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
     }
 }
 
+jar.dependsOn(libraryJarWithIr)
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from (sourceSets.main.allSource)
