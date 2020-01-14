@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import groovy.lang.Closure
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.process.internal.DefaultProcessForkOptions
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 open class KotlinJsIrTest :
     KotlinTest(),
@@ -40,6 +43,9 @@ open class KotlinJsIrTest :
 
     @Internal
     override lateinit var compilation: KotlinJsIrCompilation
+
+    @InputFile
+    val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @Suppress("unused")
     val runtimeClasspath: FileCollection

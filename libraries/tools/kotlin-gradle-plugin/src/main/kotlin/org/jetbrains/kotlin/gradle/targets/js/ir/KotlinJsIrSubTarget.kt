@@ -124,7 +124,9 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.dependsOn(nodeJs.npmInstallTask, compileTask, nodeJs.nodeJsSetupTask)
+            testJs.inputFileProperty.set(compilation.developmentLinkTask.outputFileProperty)
+
+            testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)
 
             testJs.onlyIf {
                 compileTask.outputFile.exists()
