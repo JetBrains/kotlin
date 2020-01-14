@@ -1101,6 +1101,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/binaryOp/compareWithBoxedLong.kt");
         }
 
+        @TestMetadata("compareWithBoxedNotNullDouble.kt")
+        public void testCompareWithBoxedNotNullDouble() throws Exception {
+            runTest("compiler/testData/codegen/box/binaryOp/compareWithBoxedNotNullDouble.kt");
+        }
+
+        @TestMetadata("compareWithBoxedNotNullLong.kt")
+        public void testCompareWithBoxedNotNullLong() throws Exception {
+            runTest("compiler/testData/codegen/box/binaryOp/compareWithBoxedNotNullLong.kt");
+        }
+
         @TestMetadata("divisionByZero.kt")
         public void testDivisionByZero() throws Exception {
             runTest("compiler/testData/codegen/box/binaryOp/divisionByZero.kt");

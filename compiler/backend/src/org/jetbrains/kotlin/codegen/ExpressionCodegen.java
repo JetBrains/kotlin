@@ -4044,7 +4044,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean properIeee754Comparisons = shouldUseProperIeee754Comparisons();
 
         if (properIeee754Comparisons && left754Type != null && right754Type != null) {
-            type = comparisonOperandType(leftType, rightType);
+            type = comparisonOperandType(left754Type.type, right754Type.type);
+            //type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }
