@@ -17,7 +17,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @ApiStatus.Internal
-open class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubstitutor, module: Module?) : StateStorageManagerImpl("module", macroSubstitutor, module) {
+open class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubstitutor, module: Module) : StateStorageManagerImpl("module", macroSubstitutor, module) {
   override fun getOldStorageSpec(component: Any, componentName: String, operation: StateStorageOperation) = StoragePathMacros.MODULE_FILE
 
   override fun pathRenamed(oldPath: String, newPath: String, event: VFileEvent?) {
