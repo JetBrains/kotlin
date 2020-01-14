@@ -17,14 +17,15 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.idea.maven.utils.library.RepositoryLibraryProperties
-import org.jetbrains.kotlin.config.ResourceKotlinRootType
-import org.jetbrains.kotlin.config.SourceKotlinRootType
-import org.jetbrains.kotlin.config.TestResourceKotlinRootType
-import org.jetbrains.kotlin.config.TestSourceKotlinRootType
+import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.LibraryDependencyIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.isKotlinStdlib
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
@@ -68,11 +69,11 @@ private class ProjectImporter(
             val isTest = sourceset == SourcesetType.test
             contentRoot.addSourceFolder(
                 (moduleIr.path / "src" / sourceset.name / "kotlin").url,
-                if (isTest) TestSourceKotlinRootType else SourceKotlinRootType
+                if (isTest) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
             )
             contentRoot.addSourceFolder(
                 (moduleIr.path / "src" / sourceset.name / "resources").url,
-                if (isTest) TestResourceKotlinRootType else ResourceKotlinRootType
+                if (isTest) JavaResourceRootType.TEST_RESOURCE else JavaResourceRootType.RESOURCE
             )
         }
 
