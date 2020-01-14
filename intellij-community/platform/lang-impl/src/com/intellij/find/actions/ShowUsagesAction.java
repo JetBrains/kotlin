@@ -144,7 +144,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    final Project project = e.getProject();
+    Project project = e.getProject();
     if (project == null) return;
 
     Runnable searchEverywhere = mySearchEverywhereRunnable;
@@ -156,12 +156,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       return;
     }
 
-    final RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(e.getDataContext());
+    RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(e.getDataContext());
     PsiDocumentManager.getInstance(project).commitAllDocuments();
     FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.usages");
 
     UsageTarget[] usageTargets = e.getData(UsageView.USAGE_TARGETS_KEY);
-    final Editor editor = e.getData(CommonDataKeys.EDITOR);
+    Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (usageTargets == null) {
       FindUsagesAction.chooseAmbiguousTargetAndPerform(project, editor, element -> {
         startFindUsages(element, popupPosition, editor, getUsagesPageSize());
@@ -200,23 +200,23 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     }));
   }
 
-  void showElementUsages(final Editor editor,
-                         @NotNull final RelativePoint popupPosition,
-                         @NotNull final FindUsagesHandler handler,
-                         final int maxUsages,
-                         @NotNull final FindUsagesOptions options, int minWidth) {
+  void showElementUsages(Editor editor,
+                         @NotNull RelativePoint popupPosition,
+                         @NotNull FindUsagesHandler handler,
+                         int maxUsages,
+                         @NotNull FindUsagesOptions options, int minWidth) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    final UsageViewSettings usageViewSettings = UsageViewSettings.getInstance();
-    final ShowUsagesSettings showUsagesSettings = ShowUsagesSettings.getInstance();
-    final UsageViewSettings savedGlobalSettings = new UsageViewSettings();
+    UsageViewSettings usageViewSettings = UsageViewSettings.getInstance();
+    ShowUsagesSettings showUsagesSettings = ShowUsagesSettings.getInstance();
+    UsageViewSettings savedGlobalSettings = new UsageViewSettings();
 
     savedGlobalSettings.loadState(usageViewSettings);
     usageViewSettings.loadState(showUsagesSettings.getState());
 
-    final Project project = handler.getProject();
+    Project project = handler.getProject();
     UsageViewManager manager = UsageViewManager.getInstance(project);
     FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
-    final UsageViewPresentation presentation = findUsagesManager.createPresentation(handler, options);
+    UsageViewPresentation presentation = findUsagesManager.createPresentation(handler, options);
     presentation.setDetachedMode(true);
     UsageViewImpl usageView = (UsageViewImpl)manager.createUsageView(UsageTarget.EMPTY_ARRAY, Usage.EMPTY_ARRAY, presentation, null);
     if (editor != null) {
@@ -232,15 +232,15 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       usageViewSettings.loadState(savedGlobalSettings);
     });
 
-    final ShowUsagesTable table = new ShowUsagesTable();
-    final AsyncProcessIcon processIcon = new AsyncProcessIcon("xxx");
+    ShowUsagesTable table = new ShowUsagesTable();
+    AsyncProcessIcon processIcon = new AsyncProcessIcon("xxx");
 
     addUsageNodes(usageView.getRoot(), usageView, new ArrayList<>());
 
-    final List<Usage> usages = new ArrayList<>();
-    final Set<UsageNode> visibleNodes = new LinkedHashSet<>();
-    final List<UsageNode> data = collectData(usages, visibleNodes, usageView, presentation);
-    final AtomicInteger outOfScopeUsages = new AtomicInteger();
+    List<Usage> usages = new ArrayList<>();
+    Set<UsageNode> visibleNodes = new LinkedHashSet<>();
+    List<UsageNode> data = collectData(usages, visibleNodes, usageView, presentation);
+    AtomicInteger outOfScopeUsages = new AtomicInteger();
     table.setTableModel(usageView, data, outOfScopeUsages, options.searchScope);
 
 
@@ -264,7 +264,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       }, 300, TimeUnit.MILLISECONDS);
     }
 
-    final PingEDT pingEDT = new PingEDT("Rebuild popup in EDT", o -> popup != null && popup.isDisposed(), 100, () -> {
+    PingEDT pingEDT = new PingEDT("Rebuild popup in EDT", o -> popup != null && popup.isDisposed(), 100, () -> {
       if (popup != null && popup.isDisposed()) return;
 
       List<UsageNode> nodes = new ArrayList<>(usages.size());
@@ -282,10 +282,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
                    options.searchScope);
     });
 
-    final MessageBusConnection messageBusConnection = project.getMessageBus().connect(usageView);
+    MessageBusConnection messageBusConnection = project.getMessageBus().connect(usageView);
     messageBusConnection.subscribe(UsageFilteringRuleProvider.RULES_CHANGED, ()->rulesChanged(usageView, pingEDT, popup));
 
-    final UsageTarget[] myUsageTarget = {new PsiElement2UsageTargetAdapter(handler.getPsiElement())};
+    UsageTarget[] myUsageTarget = {new PsiElement2UsageTargetAdapter(handler.getPsiElement())};
     Processor<Usage> collect = usage -> {
       if (!UsageViewManagerImpl.isInScope(usage, options.searchScope)) {
         if (outOfScopeUsages.getAndIncrement() == 0) {
@@ -316,7 +316,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       return true;
     };
 
-    final ProgressIndicator indicator = FindUsagesManager.startProcessUsages(handler, primaryElements, secondaryElements, collect,
+    ProgressIndicator indicator = FindUsagesManager.startProcessUsages(handler, primaryElements, secondaryElements, collect,
                                                                              options, ()-> ApplicationManager.getApplication().invokeLater(() -> {
          Disposer.dispose(processIcon);
          Container parent = processIcon.getParent();
@@ -375,7 +375,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   @NotNull
-  static UsageNode createStringNode(@NotNull final Object string) {
+  static UsageNode createStringNode(@NotNull Object string) {
     return new StringNode(string);
   }
 
@@ -390,12 +390,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
 
   @NotNull
   private JComponent createHintComponent(@NotNull String text,
-                                         @NotNull final FindUsagesHandler handler,
-                                         @NotNull final RelativePoint popupPosition,
-                                         final Editor editor,
-                                         @NotNull final Runnable cancelAction,
-                                         final int maxUsages,
-                                         @NotNull final FindUsagesOptions options,
+                                         @NotNull FindUsagesHandler handler,
+                                         @NotNull RelativePoint popupPosition,
+                                         Editor editor,
+                                         @NotNull Runnable cancelAction,
+                                         int maxUsages,
+                                         @NotNull FindUsagesOptions options,
                                          boolean isWarning) {
     JComponent label = HintUtil.createInformationLabel(suggestSecondInvocation(options, handler, text + "&nbsp;"));
     if (isWarning) {
@@ -427,11 +427,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   @NotNull
-  private InplaceButton createSettingsButton(@NotNull final FindUsagesHandler handler,
-                                             @NotNull final RelativePoint popupPosition,
-                                             final Editor editor,
-                                             final int maxUsages,
-                                             @NotNull final Runnable cancelAction) {
+  private InplaceButton createSettingsButton(@NotNull FindUsagesHandler handler,
+                                             @NotNull RelativePoint popupPosition,
+                                             Editor editor,
+                                             int maxUsages,
+                                             @NotNull Runnable cancelAction) {
     String shortcutText = "";
     KeyboardShortcut shortcut = UsageViewImpl.getShowUsagesWithSettingsShortcut();
     if (shortcut != null) {
@@ -464,22 +464,22 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   @NotNull
-  private JBPopup createUsagePopup(@NotNull final List<Usage> usages,
+  private JBPopup createUsagePopup(@NotNull List<? extends Usage> usages,
                                    @NotNull Set<? extends UsageNode> visibleNodes,
-                                   @NotNull final FindUsagesHandler handler,
-                                   final Editor editor,
-                                   @NotNull final RelativePoint popupPosition,
-                                   final int maxUsages,
-                                   @NotNull final UsageViewImpl usageView,
-                                   @NotNull final FindUsagesOptions options,
-                                   @NotNull final JTable table,
-                                   @NotNull final Runnable itemChoseCallback,
-                                   @NotNull final UsageViewPresentation presentation,
-                                   @NotNull final AsyncProcessIcon processIcon, int minWidth) {
+                                   @NotNull FindUsagesHandler handler,
+                                   Editor editor,
+                                   @NotNull RelativePoint popupPosition,
+                                   int maxUsages,
+                                   @NotNull UsageViewImpl usageView,
+                                   @NotNull FindUsagesOptions options,
+                                   @NotNull JTable table,
+                                   @NotNull Runnable itemChoseCallback,
+                                   @NotNull UsageViewPresentation presentation,
+                                   @NotNull AsyncProcessIcon processIcon, int minWidth) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     PopupChooserBuilder<?> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
-    final String title = presentation.getTabText();
+    String title = presentation.getTabText();
     String fullTitle;
     if (title == null) {
       fullTitle = "";
@@ -492,7 +492,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
 
     builder.setMovable(true).setResizable(true);
     builder.setItemChoosenCallback(itemChoseCallback);
-    final JBPopup[] popup = new JBPopup[1];
+    JBPopup[] popup = new JBPopup[1];
 
     KeyboardShortcut shortcut = UsageViewImpl.getShowUsagesWithSettingsShortcut();
     if (shortcut != null) {
@@ -524,8 +524,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
         return processIcon;
       }
     };
-    final DefaultActionGroup pinGroup = new DefaultActionGroup();
-    final ActiveComponent pin = createPinButton(handler, usageView, options, popup, pinGroup);
+    DefaultActionGroup pinGroup = new DefaultActionGroup();
+    ActiveComponent pin = createPinButton(handler, usageView, options, popup, pinGroup);
     builder.setCommandButton(new CompositeActiveComponent(spinningProgress, settingsButton, pin));
 
     DefaultActionGroup toolbar = new DefaultActionGroup();
@@ -534,7 +534,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     toolbar.add(UsageGroupingRuleProviderImpl.createGroupByFileStructureAction(usageView)); 
     ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.USAGE_VIEW_TOOLBAR, toolbar, true);
     actionToolbar.setReservePlaceAutoPopupIcon(false);
-    final JComponent toolBar = actionToolbar.getComponent();
+    JComponent toolBar = actionToolbar.getComponent();
     toolBar.setOpaque(false);
     builder.setSettingButton(toolBar);
     builder.setCancelKeyEnabled(false);
@@ -566,13 +566,13 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   @NotNull
-  private ActiveComponent createPinButton(@NotNull final FindUsagesHandler handler,
-                                          @NotNull final UsageViewImpl usageView,
-                                          @NotNull final FindUsagesOptions options,
-                                          final JBPopup @NotNull [] popup,
+  private ActiveComponent createPinButton(@NotNull FindUsagesHandler handler,
+                                          @NotNull UsageViewImpl usageView,
+                                          @NotNull FindUsagesOptions options,
+                                          @NotNull JBPopup[] popup,
                                           @NotNull DefaultActionGroup pinGroup) {
     Icon icon = ToolWindowManagerEx.getInstanceEx(handler.getProject()).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
-    final AnAction pinAction =
+    AnAction pinAction =
       new AnAction(IdeBundle.message("show.in.find.window.button.name"), "Show all usages in a separate tool window", icon) {
         {
           AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
@@ -589,9 +589,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
         }
       };
     pinGroup.add(pinAction);
-    final ActionToolbar pinToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.USAGE_VIEW_TOOLBAR, pinGroup, true);
+    ActionToolbar pinToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.USAGE_VIEW_TOOLBAR, pinGroup, true);
     pinToolbar.setReservePlaceAutoPopupIcon(false);
-    final JComponent pinToolBar = pinToolbar.getComponent();
+    JComponent pinToolBar = pinToolbar.getComponent();
     pinToolBar.setBorder(null);
     pinToolBar.setOpaque(false);
 
@@ -611,7 +611,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   @NotNull
-  private static String getFullTitle(@NotNull List<Usage> usages,
+  private static String getFullTitle(@NotNull List<? extends Usage> usages,
                                      @NotNull String title,
                                      boolean hadMoreSeparator,
                                      int visibleNodesCount,
@@ -630,7 +630,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
 
   @NotNull
   private static String suggestSecondInvocation(@NotNull FindUsagesOptions options, @NotNull FindUsagesHandler handler, @NotNull String text) {
-    final String title = getSecondInvocationTitle(options, handler);
+    String title = getSecondInvocationTitle(options, handler);
 
     if (title != null) {
         text += "<br><small> " + title + "</small>";
@@ -745,13 +745,13 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
 
   int myWidth;
 
-  private void rebuildTable(@NotNull final UsageViewImpl usageView,
-                            @NotNull final List<Usage> usages,
+  private void rebuildTable(@NotNull UsageViewImpl usageView,
+                            @NotNull List<? extends Usage> usages,
                             @NotNull List<UsageNode> nodes,
-                            @NotNull final ShowUsagesTable table,
-                            @Nullable final JBPopup popup,
-                            @NotNull final UsageViewPresentation presentation,
-                            @NotNull final RelativePoint popupPosition,
+                            @NotNull ShowUsagesTable table,
+                            @Nullable JBPopup popup,
+                            @NotNull UsageViewPresentation presentation,
+                            @NotNull RelativePoint popupPosition,
                             boolean findUsagesInProgress,
                             @NotNull AtomicInteger outOfScopeUsages,
                             @NotNull SearchScope searchScope) {
@@ -801,7 +801,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   // returns new selection
-  private static int updateModel(@NotNull ShowUsagesTable.MyModel tableModel, @NotNull List<UsageNode> listOld, @NotNull List<UsageNode> listNew, int oldSelection) {
+  private static int updateModel(@NotNull ShowUsagesTable.MyModel tableModel,
+                                 @NotNull List<? extends UsageNode> listOld,
+                                 @NotNull List<? extends UsageNode> listNew,
+                                 int oldSelection) {
     UsageNode[] oa = listOld.toArray(new UsageNode[0]);
     UsageNode[] na = listNew.toArray(new UsageNode[0]);
     List<ModelDiff.Cmd> cmds = ModelDiff.createDiffCmds(tableModel, oa, na);
@@ -818,7 +821,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   private void setSizeAndDimensions(@NotNull JTable table,
                                     @NotNull JBPopup popup,
                                     @NotNull RelativePoint popupPosition,
-                                    @NotNull List<UsageNode> data) {
+                                    @NotNull List<? extends UsageNode> data) {
     JComponent content = popup.getContent();
     Window window = SwingUtilities.windowForComponent(content);
     Dimension d = window.getSize();
@@ -878,7 +881,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     showElementUsages(editor, popupPosition, handler, maxUsages + getUsagesPageSize(), options, myWidth);
   }
 
-  private static void addUsageNodes(@NotNull GroupNode root, @NotNull final UsageViewImpl usageView, @NotNull List<? super UsageNode> outNodes) {
+  private static void addUsageNodes(@NotNull GroupNode root, @NotNull UsageViewImpl usageView, @NotNull List<? super UsageNode> outNodes) {
     for (UsageNode node : root.getUsageNodes()) {
       Usage usage = node.getUsage();
       if (usageView.isVisible(usage)) {
@@ -893,22 +896,22 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   private void navigateAndHint(@NotNull Usage usage,
-                               @Nullable final String hint,
-                               @NotNull final FindUsagesHandler handler,
-                               @NotNull final RelativePoint popupPosition,
-                               final int maxUsages,
-                               @NotNull final FindUsagesOptions options) {
+                               @Nullable String hint,
+                               @NotNull FindUsagesHandler handler,
+                               @NotNull RelativePoint popupPosition,
+                               int maxUsages,
+                               @NotNull FindUsagesOptions options) {
     usage.navigate(true);
     if (hint == null) return;
-    final Editor newEditor = getEditorFor(usage);
+    Editor newEditor = getEditorFor(usage);
     if (newEditor == null) return;
     hint(newEditor, hint, handler, popupPosition, maxUsages, options, false);
   }
 
-  private void showHint(@Nullable final Editor editor,
+  private void showHint(@Nullable Editor editor,
                         @NotNull String hint,
                         @NotNull FindUsagesHandler handler,
-                        @NotNull final RelativePoint popupPosition,
+                        @NotNull RelativePoint popupPosition,
                         int maxUsages,
                         @NotNull FindUsagesOptions options,
                         boolean isWarning) {
@@ -926,19 +929,20 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     };
     if (editor == null) {
       runnable.run();
-    } else {
+    }
+    else {
       AsyncEditorLoader.performWhenLoaded(editor, runnable);
     }
   }
 
-  private void hint(@Nullable final Editor editor,
-                    @NotNull final String hint,
-                    @NotNull final FindUsagesHandler handler,
-                    @NotNull final RelativePoint popupPosition,
-                    final int maxUsages,
-                    @NotNull final FindUsagesOptions options,
-                    final boolean isWarning) {
-    final Project project = handler.getProject();
+  private void hint(@Nullable Editor editor,
+                    @NotNull String hint,
+                    @NotNull FindUsagesHandler handler,
+                    @NotNull RelativePoint popupPosition,
+                    int maxUsages,
+                    @NotNull FindUsagesOptions options,
+                    boolean isWarning) {
+    Project project = handler.getProject();
     //opening editor is performing in invokeLater
     IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() -> {
       Runnable runnable = () -> {
