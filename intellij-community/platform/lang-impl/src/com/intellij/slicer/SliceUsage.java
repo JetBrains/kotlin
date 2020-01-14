@@ -95,9 +95,9 @@ public abstract class SliceUsage extends UsageInfo2UsageAdapter {
     });
   }
 
-  protected abstract void processUsagesFlownFromThe(PsiElement element, Processor<SliceUsage> uniqueProcessor);
+  protected abstract void processUsagesFlownFromThe(PsiElement element, Processor<? super SliceUsage> uniqueProcessor);
 
-  protected abstract void processUsagesFlownDownTo(PsiElement element, Processor<SliceUsage> uniqueProcessor);
+  protected abstract void processUsagesFlownDownTo(PsiElement element, Processor<? super SliceUsage> uniqueProcessor);
 
   public SliceUsage getParent() {
     return myParent;

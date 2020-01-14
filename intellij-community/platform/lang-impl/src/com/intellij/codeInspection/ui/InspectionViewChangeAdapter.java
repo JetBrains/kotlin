@@ -105,7 +105,7 @@ class InspectionViewChangeAdapter extends PsiTreeChangeAdapter {
     myUpdateQueue.cancelAllRequests();
     myUpdateQueue.addRequest(() -> {
       boolean[] needUpdateUI = {false};
-      Processor<InspectionTreeNode> nodeProcessor = null;
+      Processor<? super InspectionTreeNode> nodeProcessor = null;
 
       if (myNeedReValidate.compareAndSet(true, false)) {
         nodeProcessor = (node) -> {
@@ -204,7 +204,7 @@ class InspectionViewChangeAdapter extends PsiTreeChangeAdapter {
     }
 
     @NotNull
-    public static <X> Processor<X> combine(@NotNull Processor<X> processor1, @Nullable Processor<? super X> processor2) {
+    public static <X> Processor<? super X> combine(@NotNull Processor<? super X> processor1, @Nullable Processor<? super X> processor2) {
       return processor2 == null ? processor1 : new CompositeProcessor<>(processor1, processor2);
     }
   }

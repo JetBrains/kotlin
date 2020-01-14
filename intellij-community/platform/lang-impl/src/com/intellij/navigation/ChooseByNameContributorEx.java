@@ -15,12 +15,12 @@ import java.util.List;
 
 public interface ChooseByNameContributorEx extends ChooseByNameContributor {
 
-  void processNames(@NotNull Processor<String> processor,
+  void processNames(@NotNull Processor<? super String> processor,
                     @NotNull GlobalSearchScope scope,
                     @Nullable IdFilter filter);
 
   void processElementsWithName(@NotNull String name,
-                               @NotNull Processor<NavigationItem> processor,
+                               @NotNull Processor<? super NavigationItem> processor,
                                @NotNull FindSymbolParameters parameters);
 
   /** @deprecated Use {@link #processNames(Processor, GlobalSearchScope, IdFilter)} instead */

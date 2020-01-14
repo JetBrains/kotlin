@@ -38,12 +38,12 @@ public class SliceTooComplexDFAUsage extends SliceUsage {
   }
 
   @Override
-  protected void processUsagesFlownFromThe(PsiElement element, Processor<SliceUsage> uniqueProcessor) {
+  protected void processUsagesFlownFromThe(PsiElement element, Processor<? super SliceUsage> uniqueProcessor) {
     // no children
   }
 
   @Override
-  protected void processUsagesFlownDownTo(PsiElement element, Processor<SliceUsage> uniqueProcessor) {
+  protected void processUsagesFlownDownTo(PsiElement element, Processor<? super SliceUsage> uniqueProcessor) {
     // no children
   }
 

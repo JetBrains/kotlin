@@ -244,7 +244,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
     return true;
   }
 
-  private static void processAllNames(@NotNull Project project, @NotNull Processor<String> processor) {
+  private static void processAllNames(@NotNull Project project, @NotNull Processor<? super String> processor) {
     for (ChooseByNameContributor contributor : ChooseByNameContributor.FILE_EP_NAME.getExtensionList()) {
       try {
         if (contributor instanceof ChooseByNameContributorEx) {

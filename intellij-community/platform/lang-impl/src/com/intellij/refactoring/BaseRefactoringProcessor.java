@@ -263,7 +263,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
     final PsiElement2UsageTargetAdapter[] targets = PsiElement2UsageTargetAdapter.convert(elements);
     Factory<UsageSearcher> factory = () -> new UsageInfoSearcherAdapter() {
       @Override
-      public void generate(@NotNull final Processor<Usage> processor) {
+      public void generate(@NotNull final Processor<? super Usage> processor) {
         ApplicationManager.getApplication().runReadAction(() -> {
           for (int i = 0; i < elements.length; i++) {
             elements[i] = targets[i].getElement();

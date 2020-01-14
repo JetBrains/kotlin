@@ -90,7 +90,7 @@ public abstract class FindUsagesHandler {
   }
 
   public boolean processElementUsages(@NotNull final PsiElement element,
-                                      @NotNull final Processor<UsageInfo> processor,
+                                      @NotNull final Processor<? super UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
     final ReadActionProcessor<PsiReference> refProcessor = new ReadActionProcessor<PsiReference>() {
       @Override
@@ -121,7 +121,7 @@ public abstract class FindUsagesHandler {
   }
 
   public boolean processUsagesInText(@NotNull final PsiElement element,
-                                     @NotNull Processor<UsageInfo> processor,
+                                     @NotNull Processor<? super UsageInfo> processor,
                                      @NotNull GlobalSearchScope searchScope) {
     Collection<String> stringToSearch = ReadAction.compute(() -> getStringsToSearch(element));
     if (stringToSearch == null) return true;
@@ -223,14 +223,14 @@ public abstract class FindUsagesHandler {
 
     @Override
     public boolean processElementUsages(@NotNull PsiElement element,
-                                        @NotNull Processor<UsageInfo> processor,
+                                        @NotNull Processor<? super UsageInfo> processor,
                                         @NotNull FindUsagesOptions options) {
       throw new IncorrectOperationException();
     }
 
     @Override
     public boolean processUsagesInText(@NotNull PsiElement element,
-                                       @NotNull Processor<UsageInfo> processor,
+                                       @NotNull Processor<? super UsageInfo> processor,
                                        @NotNull GlobalSearchScope searchScope) {
       throw new IncorrectOperationException();
     }
