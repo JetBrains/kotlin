@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
@@ -377,7 +380,11 @@ class ResolvedAtomCompleter(
                     is ResolvedCallArgument.SimpleArgument -> {
                         val valueArgument = makeFakeValueArgument(resolvedCallArgument.callArgument, callElement)
                         if (valueParameter.isVararg)
-                            VarargValueArgument(listOf(valueArgument))
+                            VarargValueArgument(
+                                listOf(
+                                    FakeImplicitSpreadValueArgumentForCallableReferenceImpl(callElement, valueArgument)
+                                )
+                            )
                         else
                             ExpressionValueArgument(valueArgument)
                     }

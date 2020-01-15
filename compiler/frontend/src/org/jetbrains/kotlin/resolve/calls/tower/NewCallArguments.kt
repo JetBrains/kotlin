@@ -193,6 +193,18 @@ class FakePositionalValueArgumentForCallableReferenceImpl(
     override fun isExternal(): Boolean = false
 }
 
+class FakeImplicitSpreadValueArgumentForCallableReferenceImpl(
+    private val callElement: KtElement,
+    override val expression: ValueArgument
+) : FakeImplicitSpreadValueArgumentForCallableReference {
+    override fun getArgumentExpression(): KtExpression? = null
+    override fun getArgumentName(): ValueArgumentName? = null
+    override fun isNamed(): Boolean = false
+    override fun asElement(): KtElement = callElement
+    override fun getSpreadElement(): LeafPsiElement? = null // TODO callElement?
+    override fun isExternal(): Boolean = false
+}
+
 class EmptyLabeledReturn(
     val returnExpression: KtReturnExpression,
     builtIns: KotlinBuiltIns

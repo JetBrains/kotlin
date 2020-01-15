@@ -134,8 +134,11 @@ val IrType.isBoxedArray: Boolean
 fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
     if (isBoxedArray)
         ((this as IrSimpleType).arguments.single() as IrTypeProjection).type
-    else
-        irBuiltIns.primitiveArrayElementTypes.getValue(this.classOrNull!!)
+    else {
+        val classifier = this.classOrNull!!
+        irBuiltIns.primitiveArrayElementTypes[classifier]
+            ?: throw AssertionError("Primitive array expected: $classifier")
+    }
 
 val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION

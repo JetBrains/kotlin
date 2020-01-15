@@ -266,7 +266,9 @@ class CallableReferencesCandidateFactory(
          */
         var defaults = 0
         var varargMappingState = VarargMappingState.UNMAPPED
-        val mappedArguments = arrayOfNulls<KotlinType?>(fakeArguments.size)
+        val mappedArguments = linkedMapOf<ValueParameterDescriptor, ResolvedCallArgument>()
+        val mappedVarargElements = linkedMapOf<ValueParameterDescriptor, MutableList<KotlinCallArgument>>()
+        val mappedArgumentTypes = arrayOfNulls<KotlinType?>(fakeArguments.size)
 
         for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
             for (fakeArgument in resolvedArgument.arguments) {
@@ -283,25 +285,42 @@ class CallableReferencesCandidateFactory(
                     )
                     varargMappingState = newVarargMappingState
                     mappedArgument = varargType
+
+                    when (newVarargMappingState) {
+                        VarargMappingState.MAPPED_WITH_ARRAY -> {
+                            if (valueParameter in mappedArguments.keys) {
+                                throw AssertionError("Vararg parameter already mapped: $valueParameter, fakeArgument: $fakeArgument")
+                            }
+                            mappedArguments[valueParameter] = ResolvedCallArgument.SimpleArgument(fakeArgument)
+                        }
+
+                        VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
+                            mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgument)
+                        }
+                    }
                 } else {
                     mappedArgument = substitutedParameter.type
+                    mappedArguments[valueParameter] = resolvedArgument
                 }
 
-                mappedArguments[index] = mappedArgument
+                mappedArgumentTypes[index] = mappedArgument
             }
             if (resolvedArgument == ResolvedCallArgument.DefaultArgument) defaults++
         }
-        if (mappedArguments.any { it == null }) return null
+        if (mappedArgumentTypes.any { it == null }) return null
+
+        for ((valueParameter, varargElements) in mappedVarargElements) {
+            mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
+        }
 
         // lower(Unit!) = Unit
         val returnExpectedType = inputOutputTypes.outputType
 
         val coercion = if (returnExpectedType.isUnit()) CoercionStrategy.COERCION_TO_UNIT else CoercionStrategy.NO_COERCION
 
-
         return CallableReferenceAdaptation(
-            @Suppress("UNCHECKED_CAST") (mappedArguments as Array<KotlinType>),
-            coercion, defaults, argumentMapping.parameterToCallArgumentMap
+            @Suppress("UNCHECKED_CAST") (mappedArgumentTypes as Array<KotlinType>),
+            coercion, defaults, mappedArguments
         )
     }
 

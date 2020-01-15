@@ -802,6 +802,16 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/callableReferenceTypeArguments.kt");
         }
 
+        @TestMetadata("callableReferenceWithArgumentsConversion.kt")
+        public void testCallableReferenceWithArgumentsConversion() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/callableReferenceWithArgumentsConversion.kt");
+        }
+
+        @TestMetadata("callableReferenceWithVarargViewedAsArray.kt")
+        public void testCallableReferenceWithVarargViewedAsArray() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/callableReferenceWithVarargViewedAsArray.kt");
+        }
+
         @TestMetadata("calls.kt")
         public void testCalls() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/calls.kt");

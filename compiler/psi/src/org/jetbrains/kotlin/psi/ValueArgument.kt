@@ -40,6 +40,10 @@ interface FakePositionalValueArgumentForCallableReference : ValueArgument {
     val index: Int
 }
 
+interface FakeImplicitSpreadValueArgumentForCallableReference : ValueArgument {
+    val expression: ValueArgument
+}
+
 interface LambdaArgument : ValueArgument {
     fun getLambdaExpression(): KtLambdaExpression?
 }
