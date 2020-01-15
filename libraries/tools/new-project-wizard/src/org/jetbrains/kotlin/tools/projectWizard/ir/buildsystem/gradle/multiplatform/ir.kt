@@ -64,12 +64,14 @@ data class NonDefaultTargetConfigurationIR(
         copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
-        +name
-        when (dsl) {
-            GradlePrinter.GradleDsl.KOTLIN -> +".apply"
-            GradlePrinter.GradleDsl.GROOVY -> +".with"
+        if (irs.isNotEmpty()) {
+            +name
+            when (dsl) {
+                GradlePrinter.GradleDsl.KOTLIN -> +".apply"
+                GradlePrinter.GradleDsl.GROOVY -> +".with"
+            }
+            +" "; inBrackets { irs.listNl() }
         }
-        +" "; inBrackets { irs.listNl() }
     }
 }
 
