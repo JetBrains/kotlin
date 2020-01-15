@@ -1,5 +1,7 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage"/>
+
     <trafficLightRendererContributor implementation="org.jetbrains.kotlin.idea.core.script.ScriptTrafficLightRendererContributor"/>
   </extensions>
 </idea-plugin>
