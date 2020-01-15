@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.testFramework.rules
 
 import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder
@@ -23,9 +9,8 @@ import java.net.URLEncoder
 import java.nio.file.FileSystem
 import kotlin.properties.Delegates
 
-class InMemoryFsRule : ExternalResource() {
+class InMemoryFsRule(private val windows: Boolean = false) : ExternalResource() {
   private var _fs: FileSystem? = null
-
   private var sanitizedName: String by Delegates.notNull()
 
   override fun apply(base: Statement, description: Description): Statement {
@@ -35,15 +20,11 @@ class InMemoryFsRule : ExternalResource() {
 
   val fs: FileSystem
     get() {
-      var r = _fs
-      if (r == null) {
-        r = MemoryFileSystemBuilder
-          .newLinux()
-          .setCurrentWorkingDirectory("/")
-          .build(sanitizedName)
-        _fs = r
+      if (_fs == null) {
+        _fs = (if (windows) MemoryFileSystemBuilder.newWindows().setCurrentWorkingDirectory("C:\\")
+               else MemoryFileSystemBuilder.newLinux().setCurrentWorkingDirectory("/")).build(sanitizedName)
       }
-      return r!!
+      return _fs!!
     }
 
   override fun after() {
