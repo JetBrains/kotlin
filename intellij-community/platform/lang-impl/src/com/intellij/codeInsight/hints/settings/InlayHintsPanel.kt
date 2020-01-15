@@ -12,7 +12,7 @@ import javax.swing.border.EmptyBorder
 
 class InlayHintsPanel(languages: Iterable<Language>,
                       val settings: InlayHintsSettings) : JPanel() {
-  private val hintsEnabledGlobally = JCheckBox("Show hints for:", true)
+  private val hintsEnabledGlobally = JCheckBox(CodeInsightBundle.message("inlay.hints.show.hints.for"), true)
   private val languagePanels = languages.map { LanguagePanel(it) }
 
   init {
