@@ -824,6 +824,7 @@ class ExpressionCodegen(
             val index = frameMap.enter(clause.catchParameter, descriptorType)
             clause.markLineNumber(true)
             mv.store(index, descriptorType)
+            val afterStore = markNewLabel()
 
             val catchBody = clause.result
             val catchResult = catchBody.accept(this, data)
@@ -837,11 +838,7 @@ class ExpressionCodegen(
             frameMap.leave(clause.catchParameter)
 
             val clauseEnd = markNewLabel()
-
-            mv.visitLocalVariable(
-                parameter.name.asString(), descriptorType.descriptor, null, clauseStart, clauseEnd,
-                index
-            )
+            mv.visitLocalVariable(parameter.name.asString(), descriptorType.descriptor, null, afterStore, clauseEnd, index)
 
             if (tryInfo is TryWithFinallyInfo) {
                 data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
