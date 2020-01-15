@@ -22,8 +22,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
 <!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
-
-    <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="appcode">

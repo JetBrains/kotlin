@@ -1,4 +1,4 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin>
   <extensionPoints>
     <extensionPoint qualifiedName="org.jetbrains.konan.konanConsumer" interface="org.jetbrains.konan.resolve.konan.KonanConsumer"/>
   </extensionPoints>
@@ -12,6 +12,7 @@
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinInitializerSwiftUsageSearcher"/>
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinSwiftUsageSearcher"/>
 
+    <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="swift">
