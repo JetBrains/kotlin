@@ -3,9 +3,12 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.CreateGradleValueIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleImportIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NativeTargetInternalIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NonDefaultTargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
@@ -55,7 +58,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
                         }
                     }
                     GradlePrinter.GradleDsl.GROOVY -> {
-                        +"""org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests $DEFAULT_TARGET_VARIABLE_NAME"""; nlIndented()
+                        +"""KotlinNativeTargetWithTests $DEFAULT_TARGET_VARIABLE_NAME"""; nlIndented()
                         +"""if (hostOs == "Mac OS X") $DEFAULT_TARGET_VARIABLE_NAME = macosX64('$moduleName')"""; nlIndented()
                         +"""else if (hostOs == "Linux") $DEFAULT_TARGET_VARIABLE_NAME = linuxX64("$moduleName")"""; nlIndented()
                         +"""else if (isMingwX64) $DEFAULT_TARGET_VARIABLE_NAME = mingwX64("$moduleName")"""; nlIndented()
@@ -65,12 +68,16 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
                 nl()
             }
 
-
-
             +NonDefaultTargetConfigurationIR(
                 DEFAULT_TARGET_VARIABLE_NAME,
                 createInnerTargetIrs(module)
             )
+        }
+    }
+
+    override fun createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> = buildList {
+        if (configurationData.buildSystemType == BuildSystemType.GradleGroovyDsl) {
+            +GradleImportIR("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests")
         }
     }
 
