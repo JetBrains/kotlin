@@ -34,9 +34,14 @@ data class BuildFileIR(
                 if (repositoryIR.repository is DefaultRepository) 0 else 1
             }
 
+    private fun distinctImportsOrNull(): List<GradleImportIR>? =
+        irsOfTypeOrNull<GradleImportIR>()
+            ?.distinctBy(GradleImportIR::import)
+            ?.sortedBy(GradleImportIR::import)
+
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
-            irsOfTypeOrNull<GradleImportIR>()?.let { imports ->
+            distinctImportsOrNull()?.let { imports ->
                 imports.listNl()
                 nl()
                 nl()
