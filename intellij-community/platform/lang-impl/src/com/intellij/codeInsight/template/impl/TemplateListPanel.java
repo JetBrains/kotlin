@@ -556,7 +556,9 @@ public class TemplateListPanel extends JPanel implements Disposable {
   private void showEmptyCard() {
     int[] rows = myTree.getSelectionRows();
     boolean multiSelection = rows != null && rows.length > 1;
-    myEmptyCardLabel.setText(multiSelection ? "Multiple live templates are selected" : "No live templates are selected");
+    myEmptyCardLabel.setText(multiSelection
+                             ? CodeInsightBundle.message("templates.list.multiple.live.templates.are.selected")
+                             : CodeInsightBundle.message("templates.list.no.live.templates.are.selected"));
     ((CardLayout) myDetailsPanel.getLayout()).show(myDetailsPanel, NO_SELECTION);
   }
 
