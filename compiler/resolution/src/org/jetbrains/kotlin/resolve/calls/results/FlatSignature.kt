@@ -59,6 +59,8 @@ class FlatSignature<out T> constructor(
             origin: T,
             descriptor: CallableDescriptor,
             numDefaults: Int,
+            // Reflection type for callable references with bound receiver doesn't contain receiver type
+            hasBoundExtensionReceiver: Boolean,
             reflectionType: UnwrappedType
         ): FlatSignature<T> {
             // Note that receiver is taking over descriptor, not reflection type
@@ -66,7 +68,9 @@ class FlatSignature<out T> constructor(
             // Plus, currently, receiver for reflection type is taking from *candidate*, see buildReflectionType, this candidate can
             // have transient receiver which is not the same in its signature
             val receiver = descriptor.extensionReceiverParameter?.type
-            val parameters = reflectionType.getValueParameterTypesFromCallableReflectionType(receiver == null).map { it.type }
+            val parameters = reflectionType.getValueParameterTypesFromCallableReflectionType(
+                receiver != null && !hasBoundExtensionReceiver
+            ).map { it.type }
 
             return FlatSignature(
                 origin,
