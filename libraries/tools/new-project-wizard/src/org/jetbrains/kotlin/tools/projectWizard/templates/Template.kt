@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -92,7 +93,7 @@ abstract class Template : SettingsOwner {
 
         val targetsUpdater = when (sourceset) {
             is SourcesetModuleIR -> { target: TargetConfigurationIR ->
-                if (target.name == sourceset.targetName) updateTargetIr(sourceset, target)
+                if (target.targetName == sourceset.targetName) updateTargetIr(sourceset, target)
                 else target
             }
             else -> idFunction()

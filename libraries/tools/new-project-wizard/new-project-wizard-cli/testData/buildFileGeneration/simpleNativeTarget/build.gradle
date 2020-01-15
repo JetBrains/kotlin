@@ -8,13 +8,7 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    linuxX64 {
-        binaries {
-            executable {
-                entryPoint = 'MAIN CLASS'
-            }
-        }
-    }
+    linuxX64()
     sourceSets {
         linuxX64Main {
 
