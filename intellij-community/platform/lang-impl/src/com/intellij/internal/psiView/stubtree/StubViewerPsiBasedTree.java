@@ -174,8 +174,7 @@ public class StubViewerPsiBasedTree implements ViewerPsiBasedTree {
       LightVirtualFile file = new LightVirtualFile("stub", rootElement.getLanguage(), textToParse);
       final FileContentImpl fc;
       try {
-        fc = new FileContentImpl(file, file.contentsToByteArray());
-        fc.putUserData(IndexingDataKeys.PROJECT, project);
+        fc = (FileContentImpl)FileContentImpl.createByFile(file, project);
         fc.putUserData(IndexingDataKeys.PSI_FILE, psiFile);
         stub = StubTreeBuilder.buildStubTree(fc);
       }
