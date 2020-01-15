@@ -22,10 +22,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.LibraryDependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.isKotlinStdlib
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
@@ -54,8 +51,14 @@ private class ProjectImporter(
     private val librariesPath: Path
         get() = path / "libs"
 
-    fun import() = modulesIrs.mapSequence { convertModule(it) } andThen
-            safe { modulesModel.commit() }
+    fun import() = modulesIrs.mapSequence { moduleIR ->
+        convertModule(moduleIR).map { moduleIR to it }
+    }.map { irsToIdeaModule ->
+        val irsToIdeaModuleMap = irsToIdeaModule.associate { (ir, module) -> ir.name to module }
+        irsToIdeaModule.forEach { (moduleIr, ideaModule) ->
+            addModuleDependencies(moduleIr, ideaModule, irsToIdeaModuleMap)
+        }
+    } andThen safe { modulesModel.commit() }
 
     private fun convertModule(moduleIr: ModuleIR): TaskResult<IdeaModule> {
         val module = modulesModel.newModule(
@@ -85,12 +88,32 @@ private class ProjectImporter(
 
     private fun addLibrariesToTheModule(moduleIr: ModuleIR, module: IdeaModule) {
         moduleIr.irs.forEach { ir ->
-            when {
-                ir is LibraryDependencyIR && !ir.isKotlinStdlib -> {
-                    attachLibraryToModule(ir, module)
-                }
+            if (ir is LibraryDependencyIR && !ir.isKotlinStdlib) {
+                attachLibraryToModule(ir, module)
             }
         }
+    }
+
+    private fun addModuleDependencies(
+        moduleIr: ModuleIR,
+        module: com.intellij.openapi.module.Module,
+        moduleNameToIdeaModuleMap: Map<String, IdeaModule>
+    ) {
+        moduleIr.irs.forEach { ir ->
+            if (ir is ModuleDependencyIR) {
+                attachModuleDependencyToModule(ir, module, moduleNameToIdeaModuleMap)
+            }
+        }
+    }
+
+    private fun attachModuleDependencyToModule(
+        moduleDependency: ModuleDependencyIR,
+        module: IdeaModule,
+        moduleNameToIdeaModuleMap: Map<String, IdeaModule>
+    ) {
+        val dependencyName = moduleDependency.path.parts.lastOrNull() ?: return
+        val dependencyModule = moduleNameToIdeaModuleMap[dependencyName] ?: return
+        ModuleRootModificationUtil.addDependency(module, dependencyModule)
     }
 
     private fun attachLibraryToModule(
