@@ -24,10 +24,10 @@ public interface UnknownSdkResolver {
    * it a good idea to cache any heavy operations inside that instance.
    * That method must be cheap to run.
    * <br/>
-   * Return {@code null} to ignore a given {@param project}.
+   * Return {@code null} to ignore a given request
    */
   @Nullable
-  UnknownSdkLookup createResolver(@NotNull Project project, @NotNull ProgressIndicator indicator);
+  UnknownSdkLookup createResolver(@Nullable Project project, @NotNull ProgressIndicator indicator);
 
   interface UnknownSdkLookup {
     /**
@@ -49,20 +49,59 @@ public interface UnknownSdkResolver {
     DownloadSdkFix proposeDownload(@NotNull UnknownSdk sdk, @NotNull ProgressIndicator indicator);
   }
 
+  /**
+   * Contains information and requirements for the SDK to resolve
+   */
+  @ApiStatus.NonExtendable
   interface UnknownSdk {
-    @NotNull
-    String getSdkName();
-
+    /**
+     * Type of SDK to resolve with {@link UnknownSdkLookup}
+     */
     @NotNull
     SdkType getSdkType();
+
+    /**
+     * A missing SDK name, if known. A detector implementation may rely on the naming
+     * to use it for a better decision on the SDK to suggest.
+     */
+    @Nullable
+    default String getSdkName() { return null; }
+
+    /**
+     * A minimum version (inclusive) of a resolved SDK.
+     * {@link SdkType#versionComparator()} will be used for comparison.
+     */
+    @Nullable
+    default String getSdkMinVersionRequirement() { return null; }
+
+    /**
+     * A maximum version (exclusive) of a resolved SDK.
+     * {@link SdkType#versionComparator()} will be used for comparison.
+     */
+    @Nullable
+    default String getSdkMaxVersionRequirement() { return null; }
   }
 
   /**
    * Locally detected SDK to fix immediately
    */
   interface LocalSdkFix {
+    /**
+     * @return the resolved home of the detected SDK to configure
+     */
     @NotNull String getExistingSdkHome();
+
+    /**
+     * @return the actual version string of the SDK
+     */
     @NotNull String getVersionString();
+
+    /**
+     * @return suggested name for an SDK to be created, still, the name could
+     * be altered to avoid conflicts
+     */
+    @NotNull
+    String getSuggestedSdkName();
   }
 
   /**

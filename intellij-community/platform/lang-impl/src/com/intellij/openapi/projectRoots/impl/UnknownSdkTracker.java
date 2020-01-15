@@ -25,9 +25,11 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.util.Consumer;
 import com.intellij.util.TripleFunction;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,10 +106,8 @@ public class UnknownSdkTracker implements Disposable {
                fixable.forEach(it -> missingSdks.put(it.getSdkName(), it.getSdkType()));
 
                if (!localFixes.isEmpty()) {
-                 ApplicationManager.getApplication().invokeLater(() -> {
-                   indicator.setText("Configuring SDKs...");
-                   configureLocalSdks(localFixes);
-                 });
+                 indicator.setText("Configuring SDKs...");
+                 configureLocalSdks(localFixes);
                }
 
                showStatus(missingSdks, localFixes, downloadFixes);
@@ -151,10 +151,22 @@ public class UnknownSdkTracker implements Disposable {
   }
 
   public void applyDownloadableFix(@NotNull UnknownSdk info, @NotNull DownloadSdkFix fix) {
+    downloadFix(myProject, info, fix, sdk -> {
+      if (sdk != null) {
+        updateUnknownSdks();
+      }
+    });
+  }
+
+  @ApiStatus.Internal
+  public static void downloadFix(@Nullable Project project,
+                                 @NotNull UnknownSdk info,
+                                 @NotNull DownloadSdkFix fix,
+                                 @NotNull Consumer<? super Sdk> onCompleted) {
     SdkDownloadTask task;
     String title = "Configuring SDK";
     try {
-      task = ProgressManager.getInstance().run(new Task.WithResult<SdkDownloadTask, RuntimeException>(myProject, title, true) {
+      task = ProgressManager.getInstance().run(new Task.WithResult<SdkDownloadTask, RuntimeException>(project, title, true) {
         @Override
         protected SdkDownloadTask compute(@NotNull ProgressIndicator indicator) {
           return fix.createTask(indicator);
@@ -163,23 +175,42 @@ public class UnknownSdkTracker implements Disposable {
     } catch (ProcessCanceledException e) {
       throw e;
     } catch (Exception error) {
-      LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info.getSdkName() + ". " + error.getMessage(), error);
-      Messages.showErrorDialog("Failed to download " + fix.getDownloadDescription() + ". " + error.getMessage(), title);
+      LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
+      ApplicationManager.getApplication().invokeLater(() -> {
+        Messages.showErrorDialog("Failed to download " + fix.getDownloadDescription() + ". " + error.getMessage(), title);
+      });
+      onCompleted.consume(null);
       return;
     }
 
     ApplicationManager.getApplication().invokeLater(() -> {
-      Disposable lifetime = Disposer.newDisposable();
-      Disposer.register(myProject, lifetime);
+      try {
+        Disposable lifetime = Disposer.newDisposable();
 
-      Sdk sdk = createSdkPrototype(info);
+        String actualSdkName = info.getSdkName();
+        if (actualSdkName == null) {
+          actualSdkName = task.getSuggestedSdkName();
+        }
 
-      SdkDownloadTracker downloadTracker = SdkDownloadTracker.getInstance();
-      downloadTracker.registerSdkDownload(sdk, task);
-      downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), __ -> Disposer.dispose(lifetime));
-      downloadTracker.startSdkDownloadIfNeeded(sdk);
-      registerNewSdkInJdkTable(info.getSdkName(), sdk);
-      updateUnknownSdks();
+        Sdk sdk = ProjectJdkTable.getInstance().createSdk(actualSdkName, info.getSdkType());
+
+        SdkDownloadTracker downloadTracker = SdkDownloadTracker.getInstance();
+        downloadTracker.registerSdkDownload(sdk, task);
+        downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), success -> {
+          Disposer.dispose(lifetime);
+          onCompleted.consume(success ? sdk : null);
+        });
+
+        registerNewSdkInJdkTable(actualSdkName, sdk);
+        downloadTracker.startSdkDownloadIfNeeded(sdk);
+
+      } catch (Exception error) {
+        LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
+        ApplicationManager.getApplication().invokeLater(() -> {
+          Messages.showErrorDialog("Failed to download " + fix.getDownloadDescription() + ". " + error.getMessage(), title);
+        });
+        onCompleted.consume(null);
+      }
     });
   }
 
@@ -205,23 +236,44 @@ public class UnknownSdkTracker implements Disposable {
       UnknownSdk info = e.getKey();
       LocalSdkFix fix = e.getValue();
 
-      Sdk sdk = createSdkPrototype(info);
-      SdkModificator mod = sdk.getSdkModificator();
-      mod.setHomePath(FileUtil.toSystemIndependentName(fix.getExistingSdkHome()));
-      mod.setVersionString(fix.getVersionString());
-      mod.commitChanges();
-
-      try {
-        info.getSdkType().setupSdkPaths(sdk);
-      } catch (Exception error) {
-        LOG.warn("Failed to setupPaths for " + sdk + ". " + error.getMessage(), error);
-      }
-
-      registerNewSdkInJdkTable(info.getSdkName(), sdk);
-      LOG.info("Automatically set Sdk " + info.getSdkName() + " to " + fix.getExistingSdkHome());
+      configureLocalSdk(info, fix, sdk -> {});
     }
 
     updateUnknownSdks();
+  }
+
+  @ApiStatus.Internal
+  public static void configureLocalSdk(@NotNull UnknownSdk info,
+                                       @NotNull LocalSdkFix fix,
+                                       @NotNull Consumer<? super Sdk> onCompleted) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      try {
+        String actualSdkName = info.getSdkName();
+        if (actualSdkName == null) {
+          actualSdkName = fix.getSuggestedSdkName();
+        }
+
+        Sdk sdk = ProjectJdkTable.getInstance().createSdk(actualSdkName, info.getSdkType());
+        SdkModificator mod = sdk.getSdkModificator();
+        mod.setHomePath(FileUtil.toSystemIndependentName(fix.getExistingSdkHome()));
+        mod.setVersionString(fix.getVersionString());
+        mod.commitChanges();
+
+        try {
+          info.getSdkType().setupSdkPaths(sdk);
+        }
+        catch (Exception error) {
+          LOG.warn("Failed to setupPaths for " + sdk + ". " + error.getMessage(), error);
+        }
+
+        registerNewSdkInJdkTable(actualSdkName, sdk);
+        LOG.info("Automatically set Sdk " + info + " to " + fix.getExistingSdkHome());
+        onCompleted.consume(sdk);
+      } catch (Exception error) {
+        LOG.warn("Failed to configure " + info.getSdkType().getPresentableName() + " " + " for " + info + " for path " + fix + ". " + error.getMessage(), error);
+        onCompleted.consume(null);
+      }
+    });
   }
 
   @NotNull
@@ -250,11 +302,6 @@ public class UnknownSdkTracker implements Disposable {
 
     indicator.popState();
     return result;
-  }
-
-  @NotNull
-  private static Sdk createSdkPrototype(@NotNull UnknownSdk info) {
-    return ProjectJdkTable.getInstance().createSdk(info.getSdkName(), info.getSdkType());
   }
 
   private static void registerNewSdkInJdkTable(@Nullable String sdkName, @NotNull Sdk sdk) {
