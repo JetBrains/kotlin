@@ -2249,4 +2249,20 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testNativeArgsWithSpaces() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+        val fileWithSpacesInPath = projectDir.resolve("src/commonMain/kotlin/path with spaces and special symbols like \"")
+            .apply { mkdirs() }
+            .resolve("B.kt")
+        fileWithSpacesInPath.writeText("fun foo() = 42")
+
+        build("compileKotlin${nativeHostTargetName.capitalize()}") {
+            assertSuccessful()
+            checkNativeCommandLineFor(":compileKotlin${nativeHostTargetName.capitalize()}") {
+                it.contains(fileWithSpacesInPath.absolutePath)
+            }
+        }
+    }
 }
