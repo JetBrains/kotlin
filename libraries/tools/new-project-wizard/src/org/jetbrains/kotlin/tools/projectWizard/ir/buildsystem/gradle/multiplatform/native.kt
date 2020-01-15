@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplat
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
-class NativeTargetInternalIR(
+data class NativeTargetInternalIR(
     val mainClassFqName: String?
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {

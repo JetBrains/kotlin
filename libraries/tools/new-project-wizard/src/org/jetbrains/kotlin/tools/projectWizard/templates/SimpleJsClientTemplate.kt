@@ -86,7 +86,7 @@ class SimpleJsClientTemplate : Template() {
                 val jvmTarget = buildFileIR.targets.firstOrNull { target ->
                     target.safeAs<DefaultTargetConfigurationIR>()?.targetAccess?.type == ModuleSubType.jvm
                 } as? DefaultTargetConfigurationIR ?: return@transformBuildFile null
-                val jvmTargetName = jvmTarget.name
+                val jvmTargetName = jvmTarget.targetName
                 val webPackTaskName = "${jsSourcesetName}BrowserWebpack"
                 val jvmJarTaskAccess = GradleByNameTaskAccessIR("${jvmTargetName}Jar", "Jar")
 

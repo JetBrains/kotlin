@@ -4,6 +4,8 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.NativeForCurrentSystemTarget
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.defaultTarget
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -53,7 +55,8 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             JvmConsoleApplication,
             JvmServerJsClient,
             MultiplatformLibrary,
-            AndroidApplication
+            AndroidApplication,
+            NativeConsoleApplication
         )
     }
 }
@@ -227,6 +230,30 @@ object AndroidApplication : ProjectTemplate() {
                         Sourceset(type, ModuleType.jvm, template = null, dependencies = emptyList())
                     },
                     subModules = emptyList()
+                )
+            )
+        )
+}
+
+object NativeConsoleApplication : ProjectTemplate() {
+    override val title = "Native Console Application"
+    override val htmlDescription = title
+    override val suggestedProjectName = "myNativeConsoleApp"
+    override val projectKind = ProjectKind.Multiplatform
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin::modules withValue listOf(
+                Module(
+                    "app",
+                    ModuleKind.multiplatform,
+                    MppModuleConfigurator,
+                    emptyList(),
+                    subModules = listOf(
+                        ModuleType.native.createDefaultTarget("native").apply {
+                            mainSourceset?.withTemplate(NativeConsoleApplicationTemplate())
+                        }
+                    )
                 )
             )
         )

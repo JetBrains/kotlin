@@ -27,7 +27,8 @@ object Plugins {
             KotlinTestTemplatePlugin(context),
             ConsoleJvmApplicationTemplatePlugin(context),
             KtorTemplatesPlugin(context),
-            JsTemplatesPlugin(context)
+            JsTemplatesPlugin(context),
+            NativeConsoleApplicationTemplatePlugin(context)
         )
     }
 }

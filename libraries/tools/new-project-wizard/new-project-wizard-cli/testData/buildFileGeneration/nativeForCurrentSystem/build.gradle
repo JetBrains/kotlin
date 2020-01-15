@@ -18,13 +18,7 @@ kotlin {
     else if (isMingwX64) nativeTarget = mingwX64("myNative")
     else throw new GradleException("Host OS is not supported in Kotlin/Native.")
 
-    nativeTarget.with {
-        binaries {
-            executable {
-                entryPoint = 'MAIN CLASS'
-            }
-        }
-    }
+
     sourceSets {
         myNativeMain {
 

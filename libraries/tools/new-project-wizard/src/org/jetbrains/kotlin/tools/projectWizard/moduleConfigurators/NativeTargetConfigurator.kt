@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.CreateGradleValueIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleImportIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NativeTargetInternalIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NonDefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
@@ -36,6 +35,8 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
 
     override fun createTargetIrs(module: Module): List<BuildSystemIR> {
         val moduleName = module.name
+        val variableName = "${moduleName}Target"
+
         return buildList {
             +CreateGradleValueIR("hostOs", RawGradleIR { +"System.getProperty(\"os.name\")" })
             +CreateGradleValueIR("isMingwX64", RawGradleIR { +"hostOs.startsWith(\"Windows\")" })
@@ -44,7 +45,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
             +RawGradleIR {
                 when (dsl) {
                     GradlePrinter.GradleDsl.KOTLIN -> {
-                        +"val $DEFAULT_TARGET_VARIABLE_NAME = when "
+                        +"val $variableName = when "
                         inBrackets {
                             indent()
                             +"""hostOs == "Mac OS X" -> macosX64("$moduleName")"""; nlIndented()
@@ -54,10 +55,10 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
                         }
                     }
                     GradlePrinter.GradleDsl.GROOVY -> {
-                        +"""KotlinNativeTargetWithTests $DEFAULT_TARGET_VARIABLE_NAME"""; nlIndented()
-                        +"""if (hostOs == "Mac OS X") $DEFAULT_TARGET_VARIABLE_NAME = macosX64('$moduleName')"""; nlIndented()
-                        +"""else if (hostOs == "Linux") $DEFAULT_TARGET_VARIABLE_NAME = linuxX64("$moduleName")"""; nlIndented()
-                        +"""else if (isMingwX64) $DEFAULT_TARGET_VARIABLE_NAME = mingwX64("$moduleName")"""; nlIndented()
+                        +"""KotlinNativeTargetWithTests $variableName"""; nlIndented()
+                        +"""if (hostOs == "Mac OS X") $variableName = macosX64('$moduleName')"""; nlIndented()
+                        +"""else if (hostOs == "Linux") $variableName = linuxX64("$moduleName")"""; nlIndented()
+                        +"""else if (isMingwX64) $variableName = mingwX64("$moduleName")"""; nlIndented()
                         +"""else throw new GradleException("Host OS is not supported in Kotlin/Native.")""";
                     }
                 }
@@ -65,8 +66,9 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
             }
 
             +NonDefaultTargetConfigurationIR(
-                DEFAULT_TARGET_VARIABLE_NAME,
-                createInnerTargetIrs(module)
+                variableName = variableName,
+                targetName = moduleName,
+                irs = createInnerTargetIrs(module)
             )
         }
     }
@@ -76,6 +78,4 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
             +GradleImportIR("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests")
         }
     }
-
-    private const val DEFAULT_TARGET_VARIABLE_NAME = "nativeTarget"
 }
