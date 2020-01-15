@@ -154,7 +154,7 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
     List<DetectedFrameworkDescription> newDescriptions = new ArrayList<>();
     List<DetectedFrameworkDescription> oldDescriptions = new ArrayList<>();
     for (Integer id : detectorsToProcess) {
-      final List<? extends DetectedFrameworkDescription> frameworks = ReadAction.compute(() -> runDetector(id, true));
+      final List<? extends DetectedFrameworkDescription> frameworks = DumbService.getInstance(myProject).runReadActionInSmartMode(() -> runDetector(id, true));
       oldDescriptions.addAll(frameworks);
       final Collection<? extends DetectedFrameworkDescription> updated = myDetectedFrameworksData.updateFrameworksList(id, frameworks);
       newDescriptions.addAll(updated);
