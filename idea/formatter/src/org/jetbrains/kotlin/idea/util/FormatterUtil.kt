@@ -30,13 +30,13 @@ fun ASTBlock.requireNode() = node ?: error("ASTBlock.getNode() returned null")
 val isDefaultOfficialCodeStyle by lazy { !KotlinCodeStyleSettings.defaultSettings().CONTINUATION_INDENT_FOR_CHAINED_CALLS }
 
 fun PsiElement.getLineCount(): Int {
-    val doc = containingFile?.let { file -> file.viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(file) }
+    val doc = containingFile?.let { PsiDocumentManager.getInstance(project).getDocument(it) }
     if (doc != null) {
         val spaceRange = textRange ?: TextRange.EMPTY_RANGE
 
-        if (spaceRange.endOffset <= doc.textLength) {
+        if (spaceRange.endOffset <= doc.textLength && spaceRange.startOffset < spaceRange.endOffset) {
             val startLine = doc.getLineNumber(spaceRange.startOffset)
-            val endLine = doc.getLineNumber(spaceRange.endOffset)
+            val endLine = doc.getLineNumber(spaceRange.endOffset - 1)
 
             return endLine - startLine + 1
         }
