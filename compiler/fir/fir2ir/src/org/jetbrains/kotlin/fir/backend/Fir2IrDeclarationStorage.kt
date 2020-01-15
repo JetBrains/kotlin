@@ -83,7 +83,8 @@ class Fir2IrDeclarationStorage(
         irSymbolTable.enterScope(descriptor)
         if (descriptor is WrappedSimpleFunctionDescriptor ||
             descriptor is WrappedClassConstructorDescriptor ||
-            descriptor is WrappedPropertyDescriptor
+            descriptor is WrappedPropertyDescriptor ||
+            descriptor is WrappedEnumEntryDescriptor
         ) {
             localStorage.enterCallable()
         }
