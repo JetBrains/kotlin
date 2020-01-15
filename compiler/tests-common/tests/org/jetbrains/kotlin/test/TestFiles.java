@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.CoroutineTestUtilKt;
+import org.jetbrains.kotlin.TestHelperGeneratorKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -113,7 +113,8 @@ public class TestFiles {
                     factory.createFile(
                             supportModule,
                             "CoroutineUtil.kt",
-                            CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
+                            TestHelperGeneratorKt.createTextForCoroutineHelpers(
+                                    isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
                             directives
                     ));
         }
