@@ -28,7 +28,6 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.util.ArrayDeque;
 
 /**
  * @author Konstantin Bulenkov
@@ -161,23 +160,5 @@ public class ProjectViewTree extends DnDAwareTree {
       }
     }
     return color;
-  }
-
-  @Override
-  public void collapsePath(TreePath path) {
-    int row = Registry.is("async.project.view.collapse.tree.path.recursively") ? getRowForPath(path) : -1;
-    if (row < 0) {
-      super.collapsePath(path);
-    }
-    else {
-      ArrayDeque<TreePath> deque = new ArrayDeque<>();
-      deque.addFirst(path);
-      while (++row < getRowCount()) {
-        TreePath next = getPathForRow(row);
-        if (!path.isDescendant(next)) break;
-        if (isExpanded(next)) deque.addFirst(next);
-      }
-      deque.forEach(super::collapsePath);
-    }
   }
 }
