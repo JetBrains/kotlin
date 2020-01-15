@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND_FIR: JVM_IR
 
 // No kotlin-reflect.jar in this test
 // WITH_RUNTIME

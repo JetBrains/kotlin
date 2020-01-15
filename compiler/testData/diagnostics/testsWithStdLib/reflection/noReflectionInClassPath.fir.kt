@@ -15,30 +15,30 @@ fun n09(p: KProperty2<String, String, Int>) = p.get("", "")
 fun n10() = (Foo::func).invoke(Foo(""))
 fun n11() = (Foo::func)(Foo(""))
 
-fun y01() = Foo::prop.getter
-fun y02() = Foo::class.members
+fun y01() = Foo::prop.<!UNRESOLVED_REFERENCE!>getter<!>
+fun y02() = Foo::class.<!UNRESOLVED_REFERENCE!>members<!>
 fun y03() = Foo::class.simpleName
 fun y04() = Foo::class.<!UNRESOLVED_REFERENCE!>properties<!>
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.simpleName
     k.qualifiedName
-    k.members
-    k.constructors
-    k.nestedClasses
-    k.objectInstance
-    k.typeParameters
-    k.supertypes
-    k.visibility
-    k.isFinal
-    k.isOpen
-    k.isAbstract
-    k.isSealed
-    k.isData
-    k.isInner
-    k.isCompanion
+    k.<!UNRESOLVED_REFERENCE!>members<!>
+    k.<!UNRESOLVED_REFERENCE!>constructors<!>
+    k.<!UNRESOLVED_REFERENCE!>nestedClasses<!>
+    k.<!UNRESOLVED_REFERENCE!>objectInstance<!>
+    k.<!UNRESOLVED_REFERENCE!>typeParameters<!>
+    k.<!UNRESOLVED_REFERENCE!>supertypes<!>
+    k.<!UNRESOLVED_REFERENCE!>visibility<!>
+    k.<!UNRESOLVED_REFERENCE!>isFinal<!>
+    k.<!UNRESOLVED_REFERENCE!>isOpen<!>
+    k.<!UNRESOLVED_REFERENCE!>isAbstract<!>
+    k.<!UNRESOLVED_REFERENCE!>isSealed<!>
+    k.<!UNRESOLVED_REFERENCE!>isData<!>
+    k.<!UNRESOLVED_REFERENCE!>isInner<!>
+    k.<!UNRESOLVED_REFERENCE!>isCompanion<!>
 
-    k.annotations
+    k.<!UNRESOLVED_REFERENCE!>annotations<!>
     k.isInstance(42)
 
     k == kt
@@ -50,7 +50,7 @@ fun ktype(t: KType, t2: KType) {
     t.classifier
     t.arguments
     t.isMarkedNullable
-    t.annotations
+    t.<!UNRESOLVED_REFERENCE!>annotations<!>
 
     t == t2
     t.hashCode()
