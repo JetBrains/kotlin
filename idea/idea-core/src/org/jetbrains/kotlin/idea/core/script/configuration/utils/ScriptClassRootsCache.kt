@@ -17,13 +17,20 @@ import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import java.io.File
 
 internal class ScriptClassRootsCache(
     private val project: Project,
     private val all: Map<VirtualFile, ScriptCompilationConfigurationWrapper>
 ) {
+    private val scriptsSdksCache: Map<VirtualFile, Sdk?> =
+        ConcurrentFactoryMap.createWeakMap { file ->
+            return@createWeakMap getScriptSdk(all[file]) ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
+        }
+
+    fun getScriptSdk(file: VirtualFile): Sdk? = scriptsSdksCache[file]
+
     private fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
         // workaround for mismatched gradle wrapper and plugin version
         val javaHome = try {
@@ -35,48 +42,21 @@ internal class ScriptClassRootsCache(
         return getAllProjectSdks().find { it.homeDirectory == javaHome }
     }
 
-    private val scriptsSdksCache: Map<VirtualFile, Sdk?> =
-        ConcurrentFactoryMap.createWeakMap { file ->
-            val compilationConfiguration = all[file]
-            return@createWeakMap getScriptSdk(compilationConfiguration)
-                ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
-        }
-
-    fun getScriptSdk(file: VirtualFile): Sdk? = scriptsSdksCache[file]
-
     val firstScriptSdk: Sdk? by lazy {
         val firstCachedScript = all.keys.firstOrNull() ?: return@lazy null
         return@lazy getScriptSdk(firstCachedScript)
     }
 
-    private val allSdks by lazy {
-        all.mapNotNull { scriptsSdksCache[it.key] }
-            .distinct()
-    }
-
-    private val allNonIndexedSdks by lazy {
-        all.mapNotNull { scriptsSdksCache[it.key] }
-            .filterNonModuleSdk()
-            .distinct()
-    }
-
-    private fun List<Sdk>.filterNonModuleSdk(): List<Sdk> {
-        val moduleSdks = ModuleManager.getInstance(project).modules.map { ModuleRootManager.getInstance(it).sdk }
-        return filterNot { moduleSdks.contains(it) }
+    private fun Sdk.isAlreadyIndexed(): Boolean {
+        return ModuleManager.getInstance(project).modules.any { ModuleRootManager.getInstance(it).sdk == this }
     }
 
     val allDependenciesClassFiles by lazy {
-        val sdkFiles = allNonIndexedSdks.flatMap { it.rootProvider.getFiles(OrderRootType.CLASSES).toList() }
-        val scriptDependenciesClasspath = all.flatMap { it.value.dependenciesClassPath }.distinct()
-
-        sdkFiles + ScriptConfigurationManager.toVfsRoots(scriptDependenciesClasspath)
+        ScriptClassRootsStorage.getInstance(project).loadClasspathRoots()
     }
 
     val allDependenciesSources by lazy {
-        val sdkSources = allNonIndexedSdks.flatMap { it.rootProvider.getFiles(OrderRootType.SOURCES).toList() }
-        val scriptDependenciesSources = all.flatMap { it.value.dependenciesSources }.distinct()
-
-        sdkSources + ScriptConfigurationManager.toVfsRoots(scriptDependenciesSources)
+        ScriptClassRootsStorage.getInstance(project).loadSourcesRoots()
     }
 
     val allDependenciesClassFilesScope by lazy {
@@ -116,32 +96,55 @@ internal class ScriptClassRootsCache(
     }
 
     fun hasNotCachedRoots(compilationConfiguration: ScriptCompilationConfigurationWrapper): Boolean {
-        val scriptSdk = getScriptSdk(compilationConfiguration)
-            ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
+        return !ScriptClassRootsStorage.getInstance(project).containsAll(extractRoots(compilationConfiguration))
+    }
 
-        val wasSdkChanged = scriptSdk != null && !allSdks.contains(scriptSdk)
-        if (wasSdkChanged) {
-            debug { "sdk was changed: $compilationConfiguration" }
-            return true
+    private fun extractRoots(configuration: ScriptCompilationConfigurationWrapper): ScriptClassRootsStorage.Companion.ScriptClassRoots {
+        val scriptSdk = getScriptSdk(configuration) ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
+        if (scriptSdk != null && !scriptSdk.isAlreadyIndexed()) {
+            return ScriptClassRootsStorage.Companion.ScriptClassRoots(
+                configuration.dependenciesClassPath,
+                configuration.dependenciesSources,
+                listOf(scriptSdk)
+            )
         }
 
-        val newClassRoots = ScriptConfigurationManager.toVfsRoots(compilationConfiguration.dependenciesClassPath)
-        for (newClassRoot in newClassRoots) {
-            if (!allDependenciesClassFiles.contains(newClassRoot)) {
-                debug { "class root was changed: $newClassRoot" }
-                return true
+        return ScriptClassRootsStorage.Companion.ScriptClassRoots(
+            configuration.dependenciesClassPath,
+            configuration.dependenciesSources,
+            emptyList()
+        )
+    }
+
+    init {
+        saveClassRootsToStorage()
+    }
+
+    private fun saveClassRootsToStorage() {
+        if (all.isEmpty()) return
+
+        val classpath = mutableSetOf<File>()
+        val sources = mutableSetOf<File>()
+        val sdks = mutableSetOf<Sdk>()
+
+        for ((file, configuration) in all) {
+            val scriptSdk = getScriptSdk(file)
+            if (scriptSdk != null && !scriptSdk.isAlreadyIndexed()) {
+                sdks.add(scriptSdk)
             }
+
+            classpath.addAll(configuration.dependenciesClassPath)
+            sources.addAll(configuration.dependenciesSources)
         }
 
-        val newSourceRoots = ScriptConfigurationManager.toVfsRoots(compilationConfiguration.dependenciesSources)
-        for (newSourceRoot in newSourceRoots) {
-            if (!allDependenciesSources.contains(newSourceRoot)) {
-                debug { "source root was changed: $newSourceRoot" }
-                return true
-            }
-        }
-
-        return false
+        val rootsStorage = ScriptClassRootsStorage.getInstance(project)
+        rootsStorage.save(
+            ScriptClassRootsStorage.Companion.ScriptClassRoots(
+                classpath.toList(),
+                sources.toList(),
+                sdks.toList()
+            )
+        )
     }
 
     fun contains(file: VirtualFile) = all.containsKey(file)
