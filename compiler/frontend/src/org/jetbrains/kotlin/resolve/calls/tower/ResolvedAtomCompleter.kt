@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -216,7 +219,7 @@ class ResolvedAtomCompleter(
         }
 
         val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl
-                ?: throw AssertionError("No function descriptor for resolved lambda argument")
+            ?: throw AssertionError("No function descriptor for resolved lambda argument")
         functionDescriptor.setReturnType(returnType)
 
         val existingLambdaType = trace.getType(ktArgumentExpression)
@@ -277,7 +280,10 @@ class ResolvedAtomCompleter(
         val resultTypeParameters =
             callableCandidate.freshSubstitutor!!.freshVariables.map { resultSubstitutor.safeSubstitute(it.defaultType) }
 
-        val typeParametersSubstitutor = NewTypeSubstitutorByConstructorMap((callableCandidate.candidate.typeParameters.map { it.typeConstructor } zip resultTypeParameters).toMap())
+        val typeParametersSubstitutor =
+            NewTypeSubstitutorByConstructorMap(
+                (callableCandidate.candidate.typeParameters.map { it.typeConstructor } zip resultTypeParameters).toMap()
+            )
 
         val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
         val secondSubstitution = resultSubstitutor.toOldSubstitution()
@@ -317,6 +323,8 @@ class ResolvedAtomCompleter(
         )
         resolvedCall.setResultingSubstitutor(resultSubstitutor)
 
+        recordArgumentAdaptationForCallableReference(resolvedCall, callableCandidate.callableReferenceAdaptation)
+
         tracing.bindCall(topLevelTrace, psiCall)
         tracing.bindReference(topLevelTrace, resolvedCall)
         tracing.bindResolvedCall(topLevelTrace, resolvedCall)
@@ -350,6 +358,47 @@ class ResolvedAtomCompleter(
         )
 
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
+    }
+
+    private fun recordArgumentAdaptationForCallableReference(
+        resolvedCall: ResolvedCallImpl<CallableDescriptor>,
+        callableReferenceAdaptation: CallableReferenceAdaptation?
+    ) {
+        if (callableReferenceAdaptation == null) return
+
+        val callElement = resolvedCall.call.callElement
+
+        for ((valueParameter, resolvedCallArgument) in callableReferenceAdaptation.mappedArguments) {
+            resolvedCall.recordValueArgument(
+                valueParameter,
+                when (resolvedCallArgument) {
+                    ResolvedCallArgument.DefaultArgument ->
+                        DefaultValueArgument.DEFAULT
+                    is ResolvedCallArgument.SimpleArgument -> {
+                        val valueArgument = makeFakeValueArgument(resolvedCallArgument.callArgument, callElement)
+                        if (valueParameter.isVararg)
+                            VarargValueArgument(listOf(valueArgument))
+                        else
+                            ExpressionValueArgument(valueArgument)
+                    }
+                    is ResolvedCallArgument.VarargArgument ->
+                        VarargValueArgument(
+                            resolvedCallArgument.arguments.map {
+                                makeFakeValueArgument(it, callElement)
+                            }
+                        )
+                }
+            )
+        }
+    }
+
+    private fun makeFakeValueArgument(
+        callArgument: KotlinCallArgument,
+        callElement: KtElement
+    ): ValueArgument {
+        val fakeCallArgument = callArgument as? FakeKotlinCallArgumentForCallableReference
+            ?: throw AssertionError("FakeKotlinCallArgumentForCallableReference expected: $callArgument")
+        return FakePositionalValueArgumentForCallableReferenceImpl(callElement, fakeCallArgument.index)
     }
 
     private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {

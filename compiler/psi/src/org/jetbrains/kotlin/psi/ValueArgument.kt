@@ -36,6 +36,10 @@ interface ValueArgument {
     fun isExternal(): Boolean
 }
 
+interface FakePositionalValueArgumentForCallableReference : ValueArgument {
+    val index: Int
+}
+
 interface LambdaArgument : ValueArgument {
     fun getLambdaExpression(): KtLambdaExpression?
 }
