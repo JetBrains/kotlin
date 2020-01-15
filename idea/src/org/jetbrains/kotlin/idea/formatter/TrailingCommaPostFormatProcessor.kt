@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.util.needTrailingComma
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
-import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -150,10 +147,9 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
             it.createSmartPointer()
         }?.toList().orEmpty().ifEmpty { return }
 
-        val factory = KtPsiFactory(parent)
         for (pointerToComma in invalidElements) {
             pointerToComma.element?.let {
-                correctComma(it, factory)
+                correctComma(it)
             }
         }
     }
@@ -183,21 +179,15 @@ private fun PsiElement.addCommaAfter(factory: KtPsiFactory) {
     parent.addAfter(comma, this)
 }
 
-private fun correctComma(comma: PsiElement, factory: KtPsiFactory) {
-    val prevWithComment = comma.getPrevSiblingIgnoringWhitespace(false)
-    val prevWithoutComment = comma.getPrevSiblingIgnoringWhitespaceAndComments(false)
-    when {
-        prevWithoutComment?.equals(prevWithComment) == false -> {
-            prevWithoutComment.addCommaAfter(factory)
-            comma.delete()
-        }
-        prevWithoutComment is KtParameter -> {
-            val check = { element: PsiElement -> element is PsiWhiteSpace || element is PsiComment }
-            val lastElement = prevWithoutComment.lastChild?.takeIf(check) ?: return
-            val firstElement = lastElement.siblings(forward = false, withItself = true).takeWhile(check).last()
-            comma.parent.addRangeAfter(firstElement, lastElement, comma)
-            prevWithoutComment.deleteChildRange(firstElement, lastElement)
-        }
+private fun correctComma(comma: PsiElement) {
+    val prevWithComment = comma.prevLeaf { it !is PsiWhiteSpace } ?: return
+    val prevWithoutComment = comma.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment } ?: return
+    if (prevWithComment != prevWithoutComment) {
+        val check = { element: PsiElement -> element is PsiWhiteSpace || element is PsiComment }
+        val firstElement = prevWithComment.siblings(forward = false, withItself = true).takeWhile(check).last()
+        val commentOwner = prevWithComment.parent
+        comma.parent.addRangeAfter(firstElement, prevWithComment, comma)
+        commentOwner.deleteChildRange(firstElement, prevWithComment)
     }
 }
 

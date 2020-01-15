@@ -338,3 +338,12 @@ fun foo() {
     )
 
 }
+
+fun test() {
+    baz(
+            f = fun(it: Int): String = "$it", /*dwdwd
+        */
+            name = "", /*
+        */
+    )
+}
