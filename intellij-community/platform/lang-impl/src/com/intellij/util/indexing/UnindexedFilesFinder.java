@@ -12,14 +12,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
 import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.Map;
 
 class UnindexedFilesFinder implements CollectingContentIterator {
   private static final Logger LOG = Logger.getInstance(UnindexedFilesFinder.class);
@@ -141,20 +139,14 @@ class UnindexedFilesFinder implements CollectingContentIterator {
     });
   }
 
+  private UpdatableIndex<FileType, Void, FileContent> myFileTypeIndex;
   private boolean isIndexedFileTypeUpToDate(@NotNull IndexedFile file, int inputId) {
-    long stamp = IndexingStamp.getIndexStamp(inputId, FileTypeIndex.NAME);
-    long fileTypeIndexVersion = IndexingStamp.getIndexCreationStamp(FileTypeIndex.NAME);
-    if (stamp != fileTypeIndexVersion) return false;
-
-    FileType actualFileType = file.getFileType();
-    try {
-      Map<FileType, Void> indexedFileType = myFileBasedIndex.getIndex(FileTypeIndex.NAME).getIndexedFileData(inputId);
-      return actualFileType.equals(ContainerUtil.getFirstItem(indexedFileType.keySet()));
+    if (myFileTypeIndex == null) {
+      myFileTypeIndex = myFileBasedIndex.getIndex(FileTypeIndex.NAME);
+      if (myFileTypeIndex == null) {
+        throw new IllegalStateException();
+      }
     }
-    catch (StorageException e) {
-      myFileBasedIndex.requestRebuild(FileTypeIndex.NAME, e);
-      LOG.error(e);
-      return false;
-    }
+    return myFileTypeIndex.isIndexedStateForFile(inputId, file);
   }
 }
