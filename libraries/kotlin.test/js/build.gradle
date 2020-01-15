@@ -74,7 +74,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 artifacts {
-    runtime libraryJarWithoutIr
+    runtime libraryJarWithIr
     archives libraryJarWithIr
     distLibrary libraryJarWithoutIr
     archives sourcesJar
