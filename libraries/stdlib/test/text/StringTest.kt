@@ -1029,6 +1029,29 @@ class StringTest {
         assertFailsWith<NoSuchElementException> { data("").random() }
     }
 
+    @Test fun randomOrNull() = withOneCharSequenceArg { data ->
+        data("abcdefg").let { charSeq ->
+            val tosses = List(10) { charSeq.randomOrNull() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { charSeq.randomOrNull(random1) }
+            val tosses2 = List(10) { charSeq.randomOrNull(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        data("x").let { singletonCharSeq ->
+            val tosses = List(10) { singletonCharSeq.randomOrNull() }
+            assertEquals(singletonCharSeq.toList(), tosses.distinct())
+        }
+
+        assertNull(data("").randomOrNull())
+    }
+
     @Test fun partition() {
         val data = "a1b2c3"
         val pair = data.partition { it.isAsciiDigit() }

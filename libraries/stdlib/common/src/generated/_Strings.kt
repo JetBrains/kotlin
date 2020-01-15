@@ -195,6 +195,27 @@ public fun CharSequence.random(random: Random): Char {
 }
 
 /**
+ * Returns a random character from this char sequence, or `null` if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.randomOrNull(): Char? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random character from this char sequence using the specified source of randomness, or `null` if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun CharSequence.randomOrNull(random: Random): Char? {
+    if (isEmpty())
+        return null
+    return get(random.nextInt(length))
+}
+
+/**
  * Returns the single character, or throws an exception if the char sequence is empty or has more than one character.
  */
 public fun CharSequence.single(): Char {

@@ -1430,6 +1430,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun random ([Ljava/lang/Object;Lkotlin/random/Random;)Ljava/lang/Object;
 	public static final fun random ([SLkotlin/random/Random;)S
 	public static final fun random ([ZLkotlin/random/Random;)Z
+	public static final fun randomOrNull ([BLkotlin/random/Random;)Ljava/lang/Byte;
+	public static final fun randomOrNull ([CLkotlin/random/Random;)Ljava/lang/Character;
+	public static final fun randomOrNull ([DLkotlin/random/Random;)Ljava/lang/Double;
+	public static final fun randomOrNull ([FLkotlin/random/Random;)Ljava/lang/Float;
+	public static final fun randomOrNull ([ILkotlin/random/Random;)Ljava/lang/Integer;
+	public static final fun randomOrNull ([JLkotlin/random/Random;)Ljava/lang/Long;
+	public static final fun randomOrNull ([Ljava/lang/Object;Lkotlin/random/Random;)Ljava/lang/Object;
+	public static final fun randomOrNull ([SLkotlin/random/Random;)Ljava/lang/Short;
+	public static final fun randomOrNull ([ZLkotlin/random/Random;)Ljava/lang/Boolean;
 	public static final fun reduce ([BLkotlin/jvm/functions/Function2;)B
 	public static final fun reduce ([CLkotlin/jvm/functions/Function2;)C
 	public static final fun reduce ([DLkotlin/jvm/functions/Function2;)D
@@ -2079,6 +2088,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun plus (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Ljava/util/List;
 	public static final fun plus (Ljava/util/Collection;[Ljava/lang/Object;)Ljava/util/List;
 	public static final fun random (Ljava/util/Collection;Lkotlin/random/Random;)Ljava/lang/Object;
+	public static final fun randomOrNull (Ljava/util/Collection;Lkotlin/random/Random;)Ljava/lang/Object;
 	public static final fun reduce (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun reduceOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
@@ -2479,6 +2489,10 @@ public final class kotlin/collections/unsigned/UArraysKt {
 	public static final fun random-JzugnMA ([JLkotlin/random/Random;)J
 	public static final fun random-oSF2wD8 ([BLkotlin/random/Random;)B
 	public static final fun random-s5X_as8 ([SLkotlin/random/Random;)S
+	public static final fun randomOrNull-2D5oskM ([ILkotlin/random/Random;)Lkotlin/UInt;
+	public static final fun randomOrNull-JzugnMA ([JLkotlin/random/Random;)Lkotlin/ULong;
+	public static final fun randomOrNull-oSF2wD8 ([BLkotlin/random/Random;)Lkotlin/UByte;
+	public static final fun randomOrNull-s5X_as8 ([SLkotlin/random/Random;)Lkotlin/UShort;
 	public static final fun reversed--ajY-9A ([I)Ljava/util/List;
 	public static final fun reversed-GBYM_sE ([B)Ljava/util/List;
 	public static final fun reversed-QwZRm1k ([J)Ljava/util/List;
@@ -4236,6 +4250,9 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun random (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)C
 	public static final fun random (Lkotlin/ranges/IntRange;Lkotlin/random/Random;)I
 	public static final fun random (Lkotlin/ranges/LongRange;Lkotlin/random/Random;)J
+	public static final fun randomOrNull (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)Ljava/lang/Character;
+	public static final fun randomOrNull (Lkotlin/ranges/IntRange;Lkotlin/random/Random;)Ljava/lang/Integer;
+	public static final fun randomOrNull (Lkotlin/ranges/LongRange;Lkotlin/random/Random;)Ljava/lang/Long;
 	public static final fun rangeTo (DD)Lkotlin/ranges/ClosedFloatingPointRange;
 	public static final fun rangeTo (FF)Lkotlin/ranges/ClosedFloatingPointRange;
 	public static final fun rangeTo (Ljava/lang/Comparable;Ljava/lang/Comparable;)Lkotlin/ranges/ClosedRange;
@@ -4368,6 +4385,8 @@ public final class kotlin/ranges/URangesKt {
 	public static final fun downTo-eb3DHEI (JJ)Lkotlin/ranges/ULongProgression;
 	public static final fun random (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)I
 	public static final fun random (Lkotlin/ranges/ULongRange;Lkotlin/random/Random;)J
+	public static final fun randomOrNull (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)Lkotlin/UInt;
+	public static final fun randomOrNull (Lkotlin/ranges/ULongRange;Lkotlin/random/Random;)Lkotlin/ULong;
 	public static final fun reversed (Lkotlin/ranges/UIntProgression;)Lkotlin/ranges/UIntProgression;
 	public static final fun reversed (Lkotlin/ranges/ULongProgression;)Lkotlin/ranges/ULongProgression;
 	public static final fun step (Lkotlin/ranges/UIntProgression;I)Lkotlin/ranges/UIntProgression;
@@ -5090,6 +5109,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun prependIndent (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public static synthetic fun prependIndent$default (Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
 	public static final fun random (Ljava/lang/CharSequence;Lkotlin/random/Random;)C
+	public static final fun randomOrNull (Ljava/lang/CharSequence;Lkotlin/random/Random;)Ljava/lang/Character;
 	public static final fun reduce (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)C
 	public static final fun reduceIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)C
 	public static final fun reduceOrNull (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Character;

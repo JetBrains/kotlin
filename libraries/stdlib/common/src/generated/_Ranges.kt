@@ -91,6 +91,69 @@ public fun CharRange.random(random: Random): Char {
 }
 
 /**
+ * Returns a random element from this range, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun IntRange.randomOrNull(): Int? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this range, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun LongRange.randomOrNull(): Long? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this range, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharRange.randomOrNull(): Char? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun IntRange.randomOrNull(random: Random): Int? {
+    if (isEmpty())
+        return null
+    return random.nextInt(this)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun LongRange.randomOrNull(random: Random): Long? {
+    if (isEmpty())
+        return null
+    return random.nextLong(this)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun CharRange.randomOrNull(random: Random): Char? {
+    if (isEmpty())
+        return null
+    return random.nextInt(first.toInt(), last.toInt() + 1).toChar()
+}
+
+/**
  * Returns `true` if this range contains the specified [element].
  * 
  * Always returns `false` if the [element] is `null`.
