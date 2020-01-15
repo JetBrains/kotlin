@@ -233,6 +233,13 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     createSpacing(0)
                 }
             }
+
+            inPosition(left = VALUE_PARAMETER, right = COMMA).customRule { _, left, _ ->
+                if (left.node?.lastChildNode?.elementType === EOL_COMMENT)
+                    createSpacing(0, minLineFeeds = 1)
+                else
+                    null
+            }
         }
 
         simple {
@@ -275,6 +282,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             after(DOC_COMMENT).lineBreakInCode()
 
             // =============== Spacing ================
+            between(EOL_COMMENT, COMMA).lineBreakInCode()
             before(COMMA).spacesNoLineBreak(if (kotlinCommonSettings.SPACE_BEFORE_COMMA) 1 else 0)
             after(COMMA).spaceIf(kotlinCommonSettings.SPACE_AFTER_COMMA)
 
