@@ -20,19 +20,18 @@ import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.findInvalidCommas
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.needComma
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaOrLastElement
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.util.needTrailingComma
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.ifEmpty
 
 class TrailingCommaPostFormatProcessor : PostFormatProcessor {
     override fun processElement(source: PsiElement, settings: CodeStyleSettings): PsiElement =
@@ -40,6 +39,43 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
 
     override fun processText(source: PsiFile, rangeToReformat: TextRange, settings: CodeStyleSettings): TextRange =
         TrailingCommaVisitor(settings).processText(source, rangeToReformat)
+
+    companion object {
+        fun findInvalidCommas(commaOwner: KtElement): List<PsiElement> = commaOwner.firstChild?.siblings(withItself = false)?.mapNotNull {
+            if (it.isComma && it.leafIgnoringWhitespace(false) != it.leafIgnoringWhitespaceAndComments(false))
+                it
+            else
+                null
+        }?.toList().orEmpty()
+
+        fun needComma(commaOwner: KtElement, settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean = when {
+            commaOwner is KtWhenEntry ->
+                commaOwner.needTrailingComma(settings, checkExistingTrailingComma)
+
+            commaOwner.parent is KtFunctionLiteral ->
+                commaOwner.parent.cast<KtFunctionLiteral>().needTrailingComma(settings, checkExistingTrailingComma)
+
+            commaOwner is KtDestructuringDeclaration ->
+                commaOwner.needTrailingComma(settings, checkExistingTrailingComma)
+
+            else -> (checkExistingTrailingComma &&
+                    trailingCommaOrLastElement(commaOwner)?.isComma == true ||
+                    settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA) && commaOwner.isMultiline()
+        }
+
+        fun trailingCommaOrLastElement(commaOwner: KtElement): PsiElement? {
+            val lastChild = commaOwner.lastSignificantChild ?: return null
+            val withSelf = when (lastChild.safeAs<ASTNode>()?.elementType) {
+                KtTokens.COMMA -> return lastChild
+                in RIGHT_BARRIERS -> false
+                else -> true
+            }
+
+            return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)?.takeIf {
+                it.safeAs<ASTNode>()?.elementType !in LEFT_BARRIERS
+            }
+        }
+    }
 }
 
 private fun trailingCommaAllowedInModule(source: PsiElement): Boolean =
@@ -96,10 +132,10 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
     }
 
     private fun processCommaOwner(parent: KtElement) {
-        val lastElement = parent.lastCommaOwnerOrComma ?: return
+        val lastElement = trailingCommaOrLastElement(parent) ?: return
         val elementType = lastElement.safeAs<ASTNode>()?.elementType
         when {
-            parent.needComma(false) -> {
+            needComma(parent, settings, false) -> {
                 // add a missing comma
                 if (elementType !== KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
                     lastElement.addCommaAfter(KtPsiFactory(parent))
@@ -107,8 +143,8 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
 
                 correctCommaPosition(parent)
             }
-            parent.needComma(true) -> {
-                if (elementType === KtTokens.COMMA) correctCommaPosition(parent)
+            needComma(parent, settings) -> {
+                correctCommaPosition(parent)
             }
             elementType === KtTokens.COMMA -> {
                 // remove redundant comma
@@ -121,13 +157,6 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
         }
     }
 
-    private fun KtElement.needComma(ignoreTrailingComma: Boolean): Boolean = when {
-        this is KtWhenEntry -> needTrailingComma(settings, ignoreTrailingComma)
-        parent is KtFunctionLiteral -> parent.cast<KtFunctionLiteral>().needTrailingComma(settings, ignoreTrailingComma)
-        this is KtDestructuringDeclaration -> needTrailingComma(settings, ignoreTrailingComma)
-        else -> (ignoreTrailingComma || settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA) && isMultiline()
-    }
-
     private fun updatePsi(element: KtElement) {
         val oldLength = element.textLength
         PostprocessReformattingAspect.getInstance(element.project).disablePostprocessFormattingInside {
@@ -138,13 +167,7 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
 
     private fun correctCommaPosition(parent: KtElement) {
         if (!postFormatIsEnable(parent)) return
-
-        val invalidElements = parent.firstChild?.siblings(withItself = false)?.mapNotNull {
-            if (it.safeAs<ASTNode>()?.elementType != KtTokens.COMMA) return@mapNotNull null
-            it.createSmartPointer()
-        }?.toList().orEmpty().ifEmpty { return }
-
-        for (pointerToComma in invalidElements) {
+        for (pointerToComma in findInvalidCommas(parent).map { it.createSmartPointer() }) {
             pointerToComma.element?.let {
                 correctComma(it)
             }
@@ -177,8 +200,8 @@ private fun PsiElement.addCommaAfter(factory: KtPsiFactory) {
 }
 
 private fun correctComma(comma: PsiElement) {
-    val prevWithComment = comma.prevLeaf { it !is PsiWhiteSpace } ?: return
-    val prevWithoutComment = comma.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment } ?: return
+    val prevWithComment = comma.leafIgnoringWhitespace(false) ?: return
+    val prevWithoutComment = comma.leafIgnoringWhitespaceAndComments(false) ?: return
     if (prevWithComment != prevWithoutComment) {
         val check = { element: PsiElement -> element is PsiWhiteSpace || element is PsiComment }
         val firstElement = prevWithComment.siblings(forward = false, withItself = true).takeWhile(check).last()
@@ -190,24 +213,18 @@ private fun correctComma(comma: PsiElement) {
 
 private val RIGHT_BARRIERS = TokenSet.create(KtTokens.RBRACKET, KtTokens.RPAR, KtTokens.RBRACE, KtTokens.GT, KtTokens.ARROW)
 private val LEFT_BARRIERS = TokenSet.create(KtTokens.LBRACKET, KtTokens.LPAR, KtTokens.LBRACE, KtTokens.LT)
-
-private val PsiElement.lastCommaOwnerOrComma: PsiElement?
-    get() {
-        val lastChild = lastSignificantChild ?: return null
-        val withSelf = when (lastChild.safeAs<ASTNode>()?.elementType) {
-            KtTokens.COMMA -> return lastChild
-            in RIGHT_BARRIERS -> false
-            else -> true
-        }
-
-        return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)?.takeIf {
-            it.safeAs<ASTNode>()?.elementType !in LEFT_BARRIERS
-        }
-    }
-
 private val PsiElement.lastSignificantChild: PsiElement?
     get() = when (this) {
         is KtWhenEntry -> arrow
         is KtDestructuringDeclaration -> rPar
         else -> lastChild
     }
+
+fun PsiElement.leafIgnoringWhitespace(forward: Boolean = true) = leaf(forward) { it !is PsiWhiteSpace }
+fun PsiElement.leafIgnoringWhitespaceAndComments(forward: Boolean = true) = leaf(forward) { it !is PsiWhiteSpace && it !is PsiComment }
+
+fun PsiElement.leaf(forward: Boolean = true, filter: (PsiElement) -> Boolean): PsiElement? =
+    if (forward) nextLeaf(filter)
+    else prevLeaf(filter)
+
+val PsiElement.isComma: Boolean get() = safeAs<ASTNode>()?.elementType === KtTokens.COMMA
