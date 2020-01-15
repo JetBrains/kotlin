@@ -246,10 +246,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
     SourceFolder folder = findSourceFolder(contentEntry, sourceRoot);
     if (folder != null) {
       final JpsModuleSourceRootType<?> folderRootType = folder.getRootType();
-      if (JavaSourceRootType.SOURCE.equals(folderRootType) || sourceRootType.equals(folderRootType)) {
-        return;
-      }
-      if (JavaSourceRootType.TEST_SOURCE.equals(folderRootType) && JavaResourceRootType.TEST_RESOURCE.equals(sourceRootType)) {
+      if (sourceRootType.equals(folderRootType)) {
         return;
       }
       contentEntry.removeSourceFolder(folder);

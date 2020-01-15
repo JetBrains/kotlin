@@ -19,12 +19,15 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import org.jetbrains.plugins.gradle.GradleManager;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
@@ -35,6 +38,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.doWriteAction;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getManager;
 
 /**
@@ -304,6 +308,72 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     assertResources("project", "src/main/resources", "src/main/resources2");
     assertTestSources("project", "src/test/java", "src/test/src2");
     assertTestResources("project", "src/test/resources", "src/test/resources2");
+  }
+
+  @Test
+  @TargetVersions("4.7+")
+  public void testSourceFoldersTypeAfterReimport() throws Exception {
+    createProjectSubDirs("src/main/java",
+                         "src/main/resources",
+                         "src/test/java",
+                         "src/test/src2",
+                         "src/test/resources",
+                         "src/test/resources2",
+                         "src/customSourceSet/java",
+                         "src/customSourceSet/resources");
+    importProject(
+      "apply plugin: 'java'\n" +
+      "apply plugin: 'idea'\n" +
+      "sourceSets {\n" +
+      "    customSourceSet\n" +
+      "}\n" +
+      "idea {\n" +
+      "  module {\n" +
+      "    testSourceDirs += file('src/test/src2')\n" +
+      "    testResourceDirs += file('src/test/resources2')\n" +
+      "    testSourceDirs += project.sourceSets.customSourceSet.java.srcDirs\n" +
+      "    testResourceDirs += project.sourceSets.customSourceSet.resources.srcDirs\n" +
+      "  }\n" +
+      "}"
+    );
+
+    Runnable check = () -> {
+      assertModules("project", "project.main", "project.test", "project.customSourceSet");
+      assertContentRoots("project", getProjectPath());
+      assertExcludes("project", ".gradle", "build");
+      assertContentRoots("project.main", getProjectPath() + "/src/main");
+      assertSources("project.main", "java");
+      assertResources("project.main", "resources");
+      assertContentRoots("project.test", getProjectPath() + "/src/test");
+      assertTestSources("project.test", "java", "src2");
+      assertTestResources("project.test", "resources", "resources2");
+
+      assertContentRoots("project.customSourceSet", getProjectPath() + "/src/customSourceSet");
+      assertTestSources("project.customSourceSet", "java");
+      assertTestResources("project.customSourceSet", "resources");
+    };
+
+    check.run();
+    markModuleSourceFolders("project.customSourceSet", JavaSourceRootType.SOURCE);
+    importProject();
+    check.run();
+  }
+
+  private void markModuleSourceFolders(@NotNull String moduleName, @NotNull JpsModuleSourceRootType<?> rootType) {
+    doWriteAction(() -> {
+      Module module = getModule(moduleName);
+      final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+      ContentEntry[] contentEntries = model.getContentEntries();
+      for (ContentEntry contentEntry : contentEntries) {
+        final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
+        for (SourceFolder sourceFolder : sourceFolders) {
+          VirtualFile folderFile = sourceFolder.getFile();
+          contentEntry.removeSourceFolder(sourceFolder);
+          contentEntry.addSourceFolder(folderFile, rootType);
+        }
+      }
+      model.commit();
+    });
   }
 
   @Test
