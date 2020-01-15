@@ -40,17 +40,17 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     }
 
     private fun createLong(v: Long): IrExpression =
-        lowerConst(context.intrinsics.longClassSymbol, IrConstImpl<*>::int, v.toInt(), (v shr 32).toInt())
+        lowerConst(context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
 
     override fun <T> visitConst(expression: IrConst<T>): IrExpression {
         with(context.intrinsics) {
             if (expression.type.isUnsigned()) {
                 return when (expression.type.classifierOrNull) {
-                    uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl<*>::byte, IrConstKind.Byte.valueOf(expression))
+                    uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl.Companion::byte, IrConstKind.Byte.valueOf(expression))
 
-                    uShortClassSymbol -> lowerConst(uShortClassSymbol, IrConstImpl<*>::short, IrConstKind.Short.valueOf(expression))
+                    uShortClassSymbol -> lowerConst(uShortClassSymbol, IrConstImpl.Companion::short, IrConstKind.Short.valueOf(expression))
 
-                    uIntClassSymbol -> lowerConst(uIntClassSymbol, IrConstImpl<*>::int, IrConstKind.Int.valueOf(expression))
+                    uIntClassSymbol -> lowerConst(uIntClassSymbol, IrConstImpl.Companion::int, IrConstKind.Int.valueOf(expression))
 
                     uLongClassSymbol -> lowerConst(uLongClassSymbol, { _, _, _, v -> createLong(v) }, IrConstKind.Long.valueOf(expression))
 
@@ -59,7 +59,7 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
             }
             return when {
                 expression.kind is IrConstKind.Char ->
-                    lowerConst(charClassSymbol, IrConstImpl<*>::int, IrConstKind.Char.valueOf(expression).toInt())
+                    lowerConst(charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).toInt())
 
                 expression.kind is IrConstKind.Long ->
                     createLong(IrConstKind.Long.valueOf(expression))
