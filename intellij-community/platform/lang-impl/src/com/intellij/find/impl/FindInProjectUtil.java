@@ -124,7 +124,7 @@ public class FindInProjectUtil {
         DefaultSearchScopeProviders.ChangeLists changeListsScopeProvider =
           SearchScopeProvider.EP_NAME.findExtension(DefaultSearchScopeProviders.ChangeLists.class);
         if (changeListsScopeProvider != null) {
-          SearchScope changeListScope = ContainerUtil.find(changeListsScopeProvider.getSearchScopes(project),
+          SearchScope changeListScope = ContainerUtil.find(changeListsScopeProvider.getSearchScopes(project, dataContext),
                                                            scope -> scope.getDisplayName().equals(changeListName));
           if (changeListScope != null) {
             model.setCustomScope(true);

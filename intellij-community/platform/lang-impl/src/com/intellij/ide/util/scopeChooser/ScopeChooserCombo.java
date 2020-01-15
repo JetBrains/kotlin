@@ -171,7 +171,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     };
     for (SearchScopeProvider each : SearchScopeProvider.EP_NAME.getExtensions()) {
       if (StringUtil.isEmpty(each.getDisplayName())) continue;
-      List<SearchScope> scopes = each.getSearchScopes(project);
+      List<SearchScope> scopes = each.getSearchScopes(project, dataContext);
       if (scopes.isEmpty()) continue;
       if (!processor.process(new ScopeSeparator(each.getDisplayName()))) return false;
       for (SearchScope scope : ContainerUtil.sorted(scopes, comparator)) {

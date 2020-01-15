@@ -7,6 +7,7 @@ import com.intellij.ide.scratch.ScratchesSearchScope;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -63,8 +64,9 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
       result.add(GlobalSearchScope.allScope(project));
     }
 
+    DataContext adjustedContext = dataContext != null ? dataContext : SimpleDataContext.getProjectContext(project);
     for (SearchScopeProvider each : SearchScopeProvider.EP_NAME.getExtensions()) {
-      result.addAll(each.getGeneralSearchScopes(project));
+      result.addAll(each.getGeneralSearchScopes(project, adjustedContext));
     }
 
     if (ModuleUtil.hasTestSourceRoots(project)) {
@@ -227,10 +229,10 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
   }
 
   @Nullable
-  private static SearchScope getSelectedFilesScope(final Project project,
+  private static SearchScope getSelectedFilesScope(@NotNull Project project,
                                                    @Nullable DataContext dataContext,
                                                    @Nullable PsiFile currentFile) {
-    final VirtualFile[] filesOrDirs = (dataContext == null) ? null : CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(dataContext);
+    VirtualFile[] filesOrDirs = dataContext == null ? null : CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(dataContext);
     if (filesOrDirs == null || filesOrDirs.length == 0 ||
         filesOrDirs.length == 1 && currentFile != null && filesOrDirs[0].equals(currentFile.getVirtualFile())) {
       return null;
