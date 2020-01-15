@@ -8,7 +8,6 @@ package org.jetbrains.konan.documentation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.CocoaDocumentationManagerImpl
 import com.jetbrains.cidr.CocoaDocumentationManagerImpl.DocTokenType.*
 import com.jetbrains.cidr.documentation.XcodeDocumentationCandidateInfo
@@ -321,17 +320,17 @@ class KonanXcodeDocumentationProvider : XcodeDocumentationProvider() {
     }
 
     fun addTokenTypes(vararg types: CocoaDocumentationManagerImpl.DocTokenType): InfoBuilder {
-      ContainerUtil.addAll(myDocTokenTypes, *types)
+      myDocTokenTypes.addAll(types)
       return this
     }
 
     fun addContainers(vararg containers: String?): InfoBuilder {
-      ContainerUtil.addAll(myContainers, *containers)
+      myContainers.addAll(containers)
       return this
     }
 
     fun addContainers(containers: List<String>): InfoBuilder {
-      ContainerUtil.addAll(myContainers, containers)
+      myContainers.addAll(containers)
       return this
     }
 
