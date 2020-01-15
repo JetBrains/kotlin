@@ -26,26 +26,23 @@ import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.util.needTrailingComma
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class TrailingCommaPostFormatProcessor : PostFormatProcessor {
     override fun processElement(source: PsiElement, settings: CodeStyleSettings): PsiElement =
-        if (trailingCommaIsAllowedInModule(source))
-            TrailingCommaVisitor(settings).process(source)
-        else
-            source
+        TrailingCommaVisitor(settings).process(source)
 
     override fun processText(source: PsiFile, rangeToReformat: TextRange, settings: CodeStyleSettings): TextRange =
-        if (trailingCommaIsAllowedInModule(source))
-            TrailingCommaVisitor(settings).processText(source, rangeToReformat)
-        else
-            rangeToReformat
+        TrailingCommaVisitor(settings).processText(source, rangeToReformat)
 }
 
-private fun trailingCommaIsAllowedInModule(source: PsiElement): Boolean =
+private fun trailingCommaAllowedInModule(source: PsiElement): Boolean =
     Registry.`is`("kotlin.formatter.allowTrailingCommaInAnyProject", false) ||
             source.module?.languageVersionSettings?.supportsFeature(LanguageFeature.TrailingCommas) == true
 
@@ -104,7 +101,7 @@ private class TrailingCommaVisitor(val settings: CodeStyleSettings) : KtTreeVisi
         when {
             parent.needComma(false) -> {
                 // add a missing comma
-                if (elementType !== KtTokens.COMMA) {
+                if (elementType !== KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
                     lastElement.addCommaAfter(KtPsiFactory(parent))
                 }
 
