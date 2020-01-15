@@ -6,7 +6,7 @@ fun box(): String {
     check(js("String"), "String", String::class)
     check(js("Boolean"), "Boolean", Boolean::class)
     check(js("Error"), "Throwable", Throwable::class)
-    check(js("Array"), "Array", Array<Any>::class)
+    check(js("Array"), "Array", Array::class)
     check(js("Function"), "Function0", Function0::class)
     check(js("Function"), "Function1", Function1::class)
 

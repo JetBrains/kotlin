@@ -19,7 +19,7 @@ public final class Bar {
     @Anno()
     @PropertyAnno()
     @java.lang.Deprecated()
-    public static void a$annotations() {
+    public static void getA$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -45,7 +45,7 @@ public final class Baz {
 
     @Anno()
     @java.lang.Deprecated()
-    public static void a$annotations() {
+    public static void getA$annotations() {
     }
 
     public Baz() {
@@ -78,7 +78,7 @@ public final class Foo {
 
     @PropertyAnno()
     @java.lang.Deprecated()
-    public static void a$annotations() {
+    public static void getA$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

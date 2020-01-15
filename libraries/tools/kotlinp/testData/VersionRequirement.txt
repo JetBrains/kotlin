@@ -29,7 +29,7 @@ package {
   // requires language version 1.3.0 (level=ERROR, message="property must not be used!")
   // field: property:Ljava/lang/String;
   // getter: getProperty()Ljava/lang/String;
-  // synthetic method for annotations: property$annotations()V
+  // synthetic method for annotations: getProperty$annotations()V
   public final val property: kotlin/String /* = ... */
     public final get
 

@@ -11,7 +11,7 @@ public final class foo/Kotlin$Companion : java/lang/Object {
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
-    public static void jvmStatic$annotations()
+    public static void getJvmStatic$annotations()
 
     public final void setCompanionVarProperty(java.lang.String <set-?>)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null

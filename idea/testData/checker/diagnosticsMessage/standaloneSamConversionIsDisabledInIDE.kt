@@ -6,8 +6,8 @@ fun test(r: Runnable) {
     ForceSam.compare(r, r)
     ForceSam.compare({}, {})
 
-    ForceSam.compare(r, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is () -> Unit but Runnable was expected">{}</error>)
-    ForceSam.compare(<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is () -> Unit but Runnable was expected">{}</error>, r)
+    ForceSam.compare(r, {})
+    ForceSam.compare({}, r)
 }
 
 // Check that new inference is enabled

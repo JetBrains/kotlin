@@ -1,56 +1,56 @@
 fun Int?.optint() : Unit {}
 val Int?.optval : Unit get() = Unit
 
-fun <T: Any, E> T.foo(<warning>x</warning> : E, y : A) : T   {
+fun <T: Any, E> T.foo(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used">x</warning> : E, y : A) : T   {
   y.plus(1)
   y plus 1
   y + 1.0
 
-  this<warning>?.</warning>minus<T>(this)
+  this<warning descr="[UNNECESSARY_SAFE_CALL] Unnecessary safe call on a non-null receiver of type T">?.</warning>minus<T>(this)
 
   return this
 }
 
 class A
 
-infix operator fun A.plus(<warning>a</warning> : Any) {
+infix operator fun A.plus(<warning descr="[UNUSED_PARAMETER] Parameter 'a' is never used">a</warning> : Any) {
 
   1.foo()
-  true.<error>foo</error>(<error><error>)</error></error>
+  true.<error descr="[NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER] Not enough information to infer type variable E">foo</error>(<error descr="[NO_VALUE_FOR_PARAMETER] No value passed for parameter 'x'"><error descr="[NO_VALUE_FOR_PARAMETER] No value passed for parameter 'y'">)</error></error>
 
-  <warning>1</warning>
+  <warning descr="[UNUSED_EXPRESSION] The expression is unused">1</warning>
 }
 
-infix operator fun A.plus(<warning>a</warning> : Int) {
-  <warning>1</warning>
+infix operator fun A.plus(<warning descr="[UNUSED_PARAMETER] Parameter 'a' is never used">a</warning> : Int) {
+  <warning descr="[UNUSED_EXPRESSION] The expression is unused">1</warning>
 }
 
-fun <T> T.minus(<warning>t</warning> : T) : Int = 1
+fun <T> T.minus(<warning descr="[UNUSED_PARAMETER] Parameter 't' is never used">t</warning> : T) : Int = 1
 
 fun test() {
-  val <warning>y</warning> = 1.abs
+  val <warning descr="[UNUSED_VARIABLE] Variable 'y' is never used">y</warning> = 1.abs
 }
 val Int.abs : Int
   get() = if (this > 0) this else -this;
 
-<error>val <T> T.foo : T</error>
+<error descr="[EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT] Extension property must have accessors or be abstract">val <T> T.foo : T</error>
 
 fun Int.foo() = this
 
 // FILE: b.kt
 //package null_safety
 
-        fun parse(<warning>cmd</warning>: String): Command? { return null  }
+        fun parse(<warning descr="[UNUSED_PARAMETER] Parameter 'cmd' is never used">cmd</warning>: String): Command? { return null  }
         class Command() {
         //  fun equals(other : Any?) : Boolean
           val foo : Int = 0
         }
 
-        <error>operator</error> fun Any.<warning>equals</warning>(<warning>other</warning> : Any?) : Boolean = true
-        fun Any?.equals1(<warning>other</warning> : Any?) : Boolean = true
-        fun Any.equals2(<warning>other</warning> : Any?) : Boolean = true
+        <error descr="[INAPPLICABLE_OPERATOR_MODIFIER] 'operator' modifier is inapplicable on this function: must be a member function">operator</error> fun Any.<warning descr="[EXTENSION_SHADOWED_BY_MEMBER] Extension is shadowed by a member: public open operator fun equals(other: Any?): Boolean">equals</warning>(<warning descr="[UNUSED_PARAMETER] Parameter 'other' is never used">other</warning> : Any?) : Boolean = true
+        fun Any?.equals1(<warning descr="[UNUSED_PARAMETER] Parameter 'other' is never used">other</warning> : Any?) : Boolean = true
+        fun Any.equals2(<warning descr="[UNUSED_PARAMETER] Parameter 'other' is never used">other</warning> : Any?) : Boolean = true
 
-        fun main(args: Array<String>) {
+        fun main(<warning descr="[UNUSED_PARAMETER] Parameter 'args' is never used">args</warning>: Array<String>) {
 
             System.out.print(1)
 
@@ -64,7 +64,7 @@ fun Int.foo() = this
             command?.equals1(null)
 
             val c = Command()
-            c<warning>?.</warning>equals2(null)
+            c<warning descr="[UNNECESSARY_SAFE_CALL] Unnecessary safe call on a non-null receiver of type Command">?.</warning>equals2(null)
 
-            if (command == null) <warning>1</warning>
+            if (command == null) <warning descr="[UNUSED_EXPRESSION] The expression is unused">1</warning>
         }

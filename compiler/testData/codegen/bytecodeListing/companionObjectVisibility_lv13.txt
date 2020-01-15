@@ -22,7 +22,7 @@ final class TestPrivateCompanionInClass$Companion {
 
 @kotlin.Metadata
 public final class TestPrivateCompanionInClass {
-    public deprecated final static @java.lang.Deprecated field Companion: TestPrivateCompanionInClass$Companion
+    private final static field Companion: TestPrivateCompanionInClass$Companion
     inner class TestPrivateCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
@@ -38,7 +38,7 @@ final class TestPrivateCompanionInInterface$Companion {
 
 @kotlin.Metadata
 public interface TestPrivateCompanionInInterface {
-    public deprecated final static @java.lang.Deprecated field Companion: TestPrivateCompanionInInterface$Companion
+    public synthetic final static field Companion: TestPrivateCompanionInInterface$Companion
     inner class TestPrivateCompanionInInterface$Companion
     static method <clinit>(): void
 }
@@ -52,7 +52,7 @@ public final class TestProtectedCompanionInClass$Companion {
 
 @kotlin.Metadata
 public class TestProtectedCompanionInClass {
-    public deprecated final static @java.lang.Deprecated field Companion: TestProtectedCompanionInClass$Companion
+    protected final static field Companion: TestProtectedCompanionInClass$Companion
     inner class TestProtectedCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
