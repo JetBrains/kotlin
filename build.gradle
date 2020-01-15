@@ -402,6 +402,7 @@ task distEndorsedLibraries {
 }
 
 def stdlib = 'klib/common/stdlib'
+def stdlibDefaultComponent = "$stdlib/default"
 def endorsedLibs = 'klib/common/endorsedLibraries'
 def endorsedLibsBase = 'klib/common'
 
@@ -437,7 +438,7 @@ targetList.each { target ->
 
         from(project(':runtime').file("build/$target")) {
             include("runtime.bc")
-            into("$stdlib/targets/$target/native")
+            into("$stdlibDefaultComponent/targets/$target/native")
         }
         from(project(':runtime').file("build/$target")) {
             include("*.bc")
@@ -446,10 +447,10 @@ targetList.each { target ->
         }
         from(project(':runtime').file("build/${target}Stdlib")) {
             include('**')
-            into(stdlib)
+            into(stdlibDefaultComponent)
         }
         if (target == 'wasm32') {
-            into("$stdlib/targets/wasm32/included") {
+            into("$stdlibDefaultComponent/targets/wasm32/included") {
                 from(project(':runtime').file('src/main/js'))
                 from(project(':runtime').file('src/launcher/js'))
                 from(project(':Interop:JsRuntime').file('src/main/js'))

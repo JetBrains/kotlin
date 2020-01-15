@@ -89,14 +89,15 @@ class KonanLibraryImpl(
 
 fun createKonanLibrary(
     libraryFile: File,
+    component: String,
     target: KonanTarget? = null,
     isDefault: Boolean = false
 ): KonanLibrary {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile)
-    val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, target)
-    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile)
-    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile)
-    val bitcodeAccess = BitcodeLibraryAccess<BitcodeKotlinLibraryLayout>(libraryFile, target)
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component)
+    val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, component, target)
+    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component)
+    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component)
+    val bitcodeAccess = BitcodeLibraryAccess<BitcodeKotlinLibraryLayout>(libraryFile, component, target)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val targeted = TargetedLibraryImpl(targetedAccess, base)
@@ -105,4 +106,16 @@ fun createKonanLibrary(
     val bitcode = BitcodeLibraryImpl(bitcodeAccess, targeted)
 
     return KonanLibraryImpl(targeted, metadata, ir, bitcode)
+}
+
+fun createKonanLibraryComponents(
+    libraryFile: File,
+    target: KonanTarget? = null,
+    isDefault: Boolean = true
+) : List<KonanLibrary> {
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
+    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
+    return base.componentList.map {
+        createKonanLibrary(libraryFile, it, target, isDefault)
+    }
 }
