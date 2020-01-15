@@ -33,15 +33,8 @@ class MutableVariableWithConstraints(
     // see @OnlyInputTypes annotation
     val projectedInputCallTypes: Collection<UnwrappedType>
         get() = mutableConstraints
-            .filter { it.position.isInputTypePosition }
+            .filter { it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null }
             .map { (it.type as KotlinType).unCapture().unwrap() }
-
-    private val ConstraintPosition?.isInputTypePosition: Boolean
-        get() = when (this) {
-            is OnlyInputTypeConstraintPosition -> true
-            !is IncorporationConstraintPosition -> false
-            else -> from.isInputTypePosition || inputTypePositions.any { it.isInputTypePosition }
-        }
 
     private val mutableConstraints = ArrayList(constraints)
 
