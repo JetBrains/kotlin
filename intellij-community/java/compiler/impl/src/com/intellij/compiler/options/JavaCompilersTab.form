@@ -3,7 +3,7 @@
   <grid id="3d361" binding="myPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="63" y="62" width="398" height="176"/>
+      <xy x="63" y="62" width="408" height="176"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -62,7 +62,7 @@
         </constraints>
         <properties>
           <margin top="2" left="2" bottom="2" right="2"/>
-          <text value="Use '--release' option for cross-compilation (Java 9 and later)"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.use.release.option.for.cross.compilation"/>
         </properties>
       </component>
     </children>
