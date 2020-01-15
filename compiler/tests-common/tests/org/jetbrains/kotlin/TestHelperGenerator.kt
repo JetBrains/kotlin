@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.test.TargetBackend
 
-fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolean, checkTailCallOptimization: Boolean): String {
+// Add the directive `// WITH_COROUTINES` to use these helpers in codegen tests (see TestFiles.java).
+fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolean, checkTailCallOptimization: Boolean): String {
     val coroutinesPackage =
         if (isReleaseCoroutines)
             DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()
@@ -188,3 +190,11 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
             |${if (checkTailCallOptimization) checkTailCallOptimizationString else ""}
         """.trimMargin()
 }
+
+// Add the directive `// WITH_HELPERS` to use these helpers in codegen tests (see CodegenTestCase.java).
+fun createTextForCodegenTestHelpers(backend: TargetBackend) =
+    """
+        |package helpers
+        |
+        |fun isIR() = ${backend.isIR}
+    """.trimMargin()

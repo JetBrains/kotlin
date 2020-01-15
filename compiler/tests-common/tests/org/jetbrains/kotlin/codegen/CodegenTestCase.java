@@ -16,6 +16,7 @@ import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.TestHelperGeneratorKt;
 import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.TestsCompiletimeError;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
@@ -783,7 +784,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
         }
 
-        List<TestFile> testFiles = createTestFiles(file, expectedText, coroutinesPackage);
+        List<TestFile> testFiles = createTestFiles(file, expectedText);
 
         doMultiFileTest(file, testFiles);
     }
@@ -794,14 +795,18 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    private static List<TestFile> createTestFiles(File file, String expectedText, String coroutinesPackage) {
-        return TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
+    private List<TestFile> createTestFiles(File file, String expectedText) {
+        List testFiles = TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override
             public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
                 return new TestFile(fileName, text);
             }
         }, coroutinesPackage);
+        if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "WITH_HELPERS")) {
+            testFiles.add(new TestFile("CodegenTestHelpers.kt", TestHelperGeneratorKt.createTextForCodegenTestHelpers(getBackend())));
+        }
+        return testFiles;
     }
 
     @NotNull
