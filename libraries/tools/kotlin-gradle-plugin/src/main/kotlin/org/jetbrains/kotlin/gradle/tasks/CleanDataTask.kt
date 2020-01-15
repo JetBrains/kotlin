@@ -41,7 +41,7 @@ open class CleanDataTask : DefaultTask() {
     }
 
     companion object {
-        const val NAME: String = "KotlinClean"
+        const val NAME_SUFFIX: String = "KotlinClean"
     }
 
 }

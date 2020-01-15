@@ -70,7 +70,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
 
     fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
         exec.workingDir = dir
-        exec.executable = nodeJs.environment.nodeExecutable
+        exec.executable = nodeJs.requireConfigured().nodeExecutable
         exec.args = listOf(require(tool)) + args
     }
 

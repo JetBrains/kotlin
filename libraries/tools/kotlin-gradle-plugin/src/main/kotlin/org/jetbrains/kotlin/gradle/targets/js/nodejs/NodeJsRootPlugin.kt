@@ -22,14 +22,14 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.description = "Download and install a local node/npm version"
         }
 
-        tasks.create(KotlinNpmInstallTask.NAME, KotlinNpmInstallTask::class.java) {
+        tasks.register(KotlinNpmInstallTask.NAME, KotlinNpmInstallTask::class.java) {
             it.dependsOn(setupTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
         }
 
-        tasks.create("node" + CleanDataTask.NAME, CleanDataTask::class.java) {
-            it.cleanableStore = settings.cleanableStore
+        tasks.register("node" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
+            it.cleanableStore = settings.requireConfigured().cleanableStore
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
         }

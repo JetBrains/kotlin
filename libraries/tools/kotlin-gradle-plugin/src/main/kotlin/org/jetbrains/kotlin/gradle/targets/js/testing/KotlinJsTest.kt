@@ -110,7 +110,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
         forkOptions.workingDir = compilation.npmProject.dir
-        forkOptions.executable = nodeJs.environment.nodeExecutable
+        forkOptions.executable = nodeJs.requireConfigured().nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()
 

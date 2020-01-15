@@ -17,7 +17,7 @@ import java.io.File
 @CacheableTask
 open class YarnSetupTask : DefaultTask() {
     private val settings = project.yarn
-    private val env by lazy { settings.environment }
+    private val env by lazy { settings.requireConfigured() }
 
     @Suppress("MemberVisibilityCanBePrivate")
     val downloadUrl

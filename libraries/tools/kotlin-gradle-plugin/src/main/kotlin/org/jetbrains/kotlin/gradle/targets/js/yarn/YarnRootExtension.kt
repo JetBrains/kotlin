@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 
-open class YarnRootExtension(val project: Project) {
+open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<YarnEnv>() {
     init {
         check(project == project.rootProject)
     }
@@ -19,32 +20,33 @@ open class YarnRootExtension(val project: Project) {
         project.logger.kotlinInfo("Storing cached files in $it")
     }
 
-    var installationDir = gradleHome.resolve("yarn")
+    var installationDir by Property(gradleHome.resolve("yarn"))
 
-    // TODO: Split configuration and execution phases to support changed installationDir
-    val cleanableStore = CleanableStore[installationDir.path]
-
-    var downloadBaseUrl = "https://github.com/yarnpkg/yarn/releases/download"
-    var version = "1.21.1"
+    var downloadBaseUrl by Property("https://github.com/yarnpkg/yarn/releases/download")
+    var version by Property("1.21.1")
 
     val yarnSetupTask: YarnSetupTask
         get() = project.tasks.getByName(YarnSetupTask.NAME) as YarnSetupTask
 
-    var disableWorkspaces: Boolean = false
+    var disableWorkspaces: Boolean by Property(false)
 
     val useWorkspaces: Boolean
         get() = !disableWorkspaces
 
-    // TODO: Split configuration and execution phases to support changed settings
-    internal val environment = YarnEnv(
-        downloadUrl = "$downloadBaseUrl/v$version/yarn-v$version.tar.gz",
-        home = cleanableStore["yarn-v$version"].use()
-    )
+    override fun finalizeConfiguration(): YarnEnv {
+        val cleanableStore = CleanableStore[installationDir.path]
+
+        return YarnEnv(
+            downloadUrl = "$downloadBaseUrl/v$version/yarn-v$version.tar.gz",
+            cleanableStore = cleanableStore,
+            home = cleanableStore["yarn-v$version"].use()
+        )
+    }
 
     internal fun executeSetup() {
         NodeJsRootPlugin.apply(project).executeSetup()
 
-        if (!environment.home.isDirectory) {
+        if (!finalizeConfiguration().home.isDirectory) {
             yarnSetupTask.setup()
         }
     }
