@@ -588,15 +588,11 @@ interface IrBuilderExtension {
                     typeArgs = listOf(thisIrType)
                 }
                 enumSerializerId -> {
-                    serializerClass = module.getClassFromInternalSerializationPackage("CommonEnumSerializer")
+                    serializerClass = module.getClassFromInternalSerializationPackage(SpecialBuiltins.enumSerializer)
                     args = kType.toClassDescriptor!!.let { enumDesc ->
                         listOf(
                             irString(enumDesc.serialName()),
-                            irCall(findEnumValuesMethod(enumDesc)),
-                            createArrayOfExpression(
-                                compilerContext.irBuiltIns.stringType,
-                                getEnumMembersNames(enumDesc).map { irString(it) }.toList()
-                            )
+                            irCall(findEnumValuesMethod(enumDesc))
                         )
                     }
                     typeArgs = listOf(thisIrType)

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
@@ -160,8 +161,16 @@ internal fun AbstractSerialGenerator.serializerInstance(
                 ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!)
             )
             serializerClass.classId == enumSerializerId -> listOf(
-                ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!),
-                JsStringLiteral(kType.serialName())
+                JsStringLiteral(kType.serialName()),
+                // EnumClass.values() invocation
+                JsInvocation(
+                    context.getInnerNameForDescriptor(
+                        DescriptorUtils.getFunctionByName(
+                            kType.toClassDescriptor!!.staticScope,
+                            DescriptorUtils.ENUM_VALUES
+                        )
+                    ).makeRef()
+                )
             )
             serializerClass.classId == objectSerializerId -> listOf(
                 JsStringLiteral(kType.serialName()),

@@ -406,11 +406,8 @@ open class SerializerCodegenImpl(
             )
             if (!serializableDescriptor.isInternalSerializable) {
                 //validate all required (constructor) fields
-                val nonThrowLabel = Label()
-                val throwLabel = Label()
                 for ((i, property) in properties.serializableConstructorProperties.withIndex()) {
                     if (property.optional || property.transient) {
-                        // todo: Normal reporting of error
                         if (!property.isConstructorParameterWithDefault)
                             throw CompilationException(
                                 "Property ${property.name} was declared as optional/transient but has no default value",
@@ -419,15 +416,12 @@ open class SerializerCodegenImpl(
                             )
                     } else {
                         genValidateProperty(i, bitMaskOff(i))
-                        // todo: print name of each variable?
-                        ificmpeq(throwLabel)
+                        val nonThrowLabel = Label()
+                        ificmpne(nonThrowLabel)
+                        genMissingFieldExceptionThrow(property.name)
+                        visitLabel(nonThrowLabel)
                     }
                 }
-                goTo(nonThrowLabel)
-                // throwing an exception
-                visitLabel(throwLabel)
-                genExceptionThrow(serializationExceptionName, "Not all required constructor fields were specified")
-                visitLabel(nonThrowLabel)
             }
             // create object with constructor
             anew(serializableAsmType)
@@ -564,7 +558,7 @@ open class SerializerCodegenImpl(
                 //    throw
                 // set
                 ificmpne(nextLabel)
-                genExceptionThrow(serializationExceptionMissingFieldName, property.name)
+                genMissingFieldExceptionThrow(property.name)
                 visitLabel(nextLabel)
             }
 

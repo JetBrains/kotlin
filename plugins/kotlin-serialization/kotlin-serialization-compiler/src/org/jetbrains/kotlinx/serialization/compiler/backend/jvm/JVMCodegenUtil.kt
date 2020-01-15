@@ -83,11 +83,11 @@ internal fun InstructionAdapter.genValidateProperty(index: Int, bitMaskAddress: 
     iconst(0)
 }
 
-internal fun InstructionAdapter.genExceptionThrow(exceptionClass: String, message: String) {
-    anew(Type.getObjectType(exceptionClass))
+internal fun InstructionAdapter.genMissingFieldExceptionThrow(fieldName: String) {
+    anew(Type.getObjectType(serializationExceptionMissingFieldName))
     dup()
-    aconst(message)
-    invokespecial(exceptionClass, "<init>", "(Ljava/lang/String;)V", false)
+    aconst(fieldName)
+    invokespecial(serializationExceptionMissingFieldName, "<init>", "(Ljava/lang/String;)V", false)
     checkcast(Type.getObjectType("java/lang/Throwable"))
     athrow()
 }
@@ -287,7 +287,16 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
 
         val serialName = kType.serialName()
         when (serializer.classId) {
-            enumSerializerId, contextSerializerId, polymorphicSerializerId -> {
+            enumSerializerId -> {
+                aconst(serialName)
+                signature.append("Ljava/lang/String;")
+                val enumJavaType = codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT)
+                val javaEnumArray = Type.getType("[Ljava/lang/Enum;")
+                invokestatic(enumJavaType.internalName, "values","()[${enumJavaType.descriptor}", false)
+                checkcast(javaEnumArray)
+                signature.append(javaEnumArray.descriptor)
+            }
+            contextSerializerId, polymorphicSerializerId -> {
                 // a special way to instantiate enum -- need a enum KClass reference
                 // GENERIC_ARGUMENT forces boxing in order to obtain KClass
                 aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
