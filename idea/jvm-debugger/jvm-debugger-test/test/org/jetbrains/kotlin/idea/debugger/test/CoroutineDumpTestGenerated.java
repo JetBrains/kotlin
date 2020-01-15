@@ -28,6 +28,11 @@ public class CoroutineDumpTestGenerated extends AbstractCoroutineDumpTest {
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("kt35392.kt")
+    public void testKt35392() throws Exception {
+        runTest("idea/jvm-debugger/jvm-debugger-test/testData/coroutines/kt35392.kt");
+    }
+
     @TestMetadata("noCoroutines.kt")
     public void testNoCoroutines() throws Exception {
         runTest("idea/jvm-debugger/jvm-debugger-test/testData/coroutines/noCoroutines.kt");
