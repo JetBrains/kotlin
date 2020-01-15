@@ -70,7 +70,7 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
             CacheValue(computeLibraryMetadataVersion(manifestFile))
         }.value ?: return false
 
-        return metadataVersion.isCompatible()
+        return metadataVersion.isCompatible() || ApplicationManager.getApplication().isInternal
     }
 
     private fun computePackageFragment(packageFragmentFile: VirtualFile): ProtoBuf.PackageFragment? {
