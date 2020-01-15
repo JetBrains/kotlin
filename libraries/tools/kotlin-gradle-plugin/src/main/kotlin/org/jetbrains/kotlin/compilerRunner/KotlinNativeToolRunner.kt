@@ -216,7 +216,7 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
 internal class KonanCompilerRunner(
     project: Project,
     additionalJvmArgs: List<String> = emptyList(),
-    val useArgFile: Boolean = true
+    val useArgFile: Boolean = project.disableKonanDaemon
 ) : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs) {
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) {
