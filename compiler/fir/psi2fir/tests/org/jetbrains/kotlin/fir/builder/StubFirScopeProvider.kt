@@ -21,4 +21,12 @@ object StubFirScopeProvider : FirScopeProvider() {
     ): FirScope {
         error("Stub")
     }
+
+    override fun getStaticMemberScopeForCallables(
+        klass: FirClass<*>,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope? {
+        return null
+    }
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
@@ -88,17 +87,8 @@ class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : A
             }
         } else {
             return (symbol as? FirClassSymbol<*>)?.let { klassSymbol ->
-                klassSymbol to when (val klass = klassSymbol.fir) {
-                    is FirClassImpl -> {
-                        when (klass.classKind) {
-                            ClassKind.ENUM_CLASS -> FirStaticScope(declaredMemberScope(klass))
-                            ClassKind.OBJECT -> klass.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)
-                            else -> null
-                        }
-                    }
-                    is FirSealedClassImpl -> null
-                    else -> /* Java */ FirStaticScope(klass.scope(ConeSubstitutor.Empty, useSiteSession, scopeSession))
-                }
+                val klass = klassSymbol.fir
+                klassSymbol to klass.scopeProvider.getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession)
             } ?: (null to null)
         }
 

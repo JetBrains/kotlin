@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 
 abstract class FirScopeProvider {
     abstract fun getUseSiteMemberScope(
@@ -18,4 +17,10 @@ abstract class FirScopeProvider {
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope
+
+    abstract fun getStaticMemberScopeForCallables(
+        klass: FirClass<*>,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope?
 }

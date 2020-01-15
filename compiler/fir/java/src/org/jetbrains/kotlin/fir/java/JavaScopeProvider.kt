@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.ConeSubstitutionScopeKey
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScopeWithLazyNestedScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
@@ -103,7 +100,13 @@ class JavaScopeProvider(
         }
     }
 
-
+    override fun getStaticMemberScopeForCallables(
+        klass: FirClass<*>,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope? {
+        return FirStaticScope(getUseSiteMemberScope(klass, ConeSubstitutor.Empty, useSiteSession, scopeSession))
+    }
 }
 
 

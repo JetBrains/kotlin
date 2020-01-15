@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 
 class KotlinScopeProvider(
     val declaredMemberScopeDecorator: (
@@ -75,10 +73,23 @@ class KotlinScopeProvider(
             FirClassSubstitutionScope(useSiteSession, buildRawUseSiteScope(klass, useSiteSession, scopeSession), scopeSession, substitutor)
         }
     }
+
+    override fun getStaticMemberScopeForCallables(
+        klass: FirClass<*>,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope? {
+        return when (klass.classKind) {
+            ClassKind.ENUM_CLASS -> FirStaticScope(declaredMemberScope(klass))
+            // TODO: should be wrapped with FirStaticScope, non-static callables should be processed separately
+            ClassKind.OBJECT -> getUseSiteMemberScope(klass, ConeSubstitutor.Empty, useSiteSession, scopeSession)
+            else -> null
+        }
+    }
 }
 
 
-data class ConeSubstitutionScopeKey(val substitutor: ConeSubstitutor) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>() {}
+data class ConeSubstitutionScopeKey(val substitutor: ConeSubstitutor) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>()
 
 fun FirClass<*>.scope(substitutor: ConeSubstitutor, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
     return scopeProvider.getUseSiteMemberScope(
