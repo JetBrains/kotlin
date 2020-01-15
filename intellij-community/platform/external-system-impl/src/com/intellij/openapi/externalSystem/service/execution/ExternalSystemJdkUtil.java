@@ -7,7 +7,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.DependentSdkType;
-import com.intellij.openapi.projectRoots.impl.MockSdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -47,8 +46,10 @@ public class ExternalSystemJdkUtil {
       case USE_INTERNAL_JAVA:
         return getInternalJdk();
       case USE_PROJECT_JDK:
-        if (projectSdk != null) return projectSdk;
-        throw new ProjectJdkNotFoundException();
+        if (projectSdk == null) {
+          throw new ProjectJdkNotFoundException();
+        }
+        return resolveDependentJDK(projectSdk);
       case USE_JAVA_HOME:
         return getJavaHomeJdk();
       default:
@@ -139,8 +140,9 @@ public class ExternalSystemJdkUtil {
       .findFirst().orElse(null);
   }
 
-  private static Sdk findReferencedJDK(Project project) {
-    Sdk projectSdk = ProjectRootManager.getInstance(project).getProjectSdk();
+  @Nullable
+  @Contract("null -> null")
+  private static Sdk findReferencedJDK(Sdk projectSdk) {
     if (projectSdk != null
         && projectSdk.getSdkType() instanceof DependentSdkType
         && projectSdk.getSdkType() instanceof JavaSdkType) {
@@ -155,6 +157,19 @@ public class ExternalSystemJdkUtil {
     } else {
       return null;
     }
+  }
+
+  @Nullable
+  private static Sdk findReferencedJDK(Project project) {
+    Sdk projectSdk = ProjectRootManager.getInstance(project).getProjectSdk();
+    return findReferencedJDK(projectSdk);
+  }
+
+  @NotNull
+  public static Sdk resolveDependentJDK(@NotNull Sdk sdk) {
+    Sdk parentSdk = findReferencedJDK(sdk);
+    if (parentSdk == null) return sdk;
+    return parentSdk;
   }
 
   @NotNull

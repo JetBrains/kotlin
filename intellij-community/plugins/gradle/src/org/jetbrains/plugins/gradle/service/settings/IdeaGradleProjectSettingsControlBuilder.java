@@ -17,9 +17,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.SdkTypeId;
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
@@ -67,17 +64,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.getSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.setSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSETS;
 import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createJdkComboBoxModel;
-import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createSdkComboBoxModel;
 
 /**
  * @author Vladislav.Soroka
@@ -713,15 +706,30 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     @NotNull ProjectSdksModel sdksModel
   ) {
     if (myGradleJdkComboBox == null) return;
-    Sdk projectSdk = wizardContext != null ? wizardContext.getProjectJdk() : null;
     project = project == null || project.isDisposed() ? ProjectManager.getInstance().getDefaultProject() : project;
-    sdksModel.reset(project);
-    if (projectSdk != null) {
-      // see ProjectSdksModel#getProjectSdk for details
-      sdksModel.setProjectSdk(sdksModel.findSdk(projectSdk.getName()));
-    }
+    Sdk projectSdk = wizardContext != null ? wizardContext.getProjectJdk() : null;
+    setupProjectSdksModel(sdksModel, project, projectSdk);
     recreateGradleJdkComboBox(project, sdksModel);
     setSelectedJdkReference(myGradleJdkComboBox, settings.getGradleJvm());
+  }
+
+  private static void setupProjectSdksModel(@NotNull ProjectSdksModel sdksModel, @NotNull Project project, @Nullable Sdk projectSdk) {
+    sdksModel.reset(project);
+    if (projectSdk == null) {
+      projectSdk = sdksModel.getProjectSdk();
+      // Find real sdk
+      // see ProjectSdksModel#getProjectSdk for details
+      projectSdk = sdksModel.findSdk(projectSdk);
+    }
+    if (projectSdk != null) {
+      // resolves executable JDK
+      // e.g: for Android projects
+      projectSdk = ExternalSystemJdkUtil.resolveDependentJDK(projectSdk);
+      // Find editable sdk
+      // see ProjectSdksModel#getProjectSdk for details
+      projectSdk = sdksModel.findSdk(projectSdk.getName());
+    }
+    sdksModel.setProjectSdk(projectSdk);
   }
 
   private void recreateGradleJdkComboBox(@NotNull Project project, @NotNull ProjectSdksModel sdksModel) {

@@ -11,13 +11,15 @@ class SdkComboBoxTest : SdkComboBoxTestCase() {
     val sdk2 = createAndRegisterSdk(isProjectSdk = true)
     val sdk3 = createAndRegisterSdk()
     val sdk4 = TestSdkGenerator.createNextSdk()
-    val comboBox = createComboBox()
+    val sdk5 = createAndRegisterDependentSdk()
+    val comboBox = createJdkComboBox()
 
     assertComboBoxContent(comboBox)
       .item<SdkListItem.ProjectSdkItem> { assertEquals(sdk2, comboBox.getProjectSdk()) }
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk1, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk2, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk3, it) }
+      .item<SdkListItem.SdkItem> { assertSdkItem(sdk5.parent, it) }
       .nothing()
 
     assertComboBoxSelection<SdkListItem.NoneSdkItem>(comboBox, null)
@@ -39,6 +41,19 @@ class SdkComboBoxTest : SdkComboBoxTestCase() {
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk1, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk2, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk3, it) }
+      .item<SdkListItem.SdkItem> { assertSdkItem(sdk5.parent, it) }
+      .nothing()
+
+    comboBox.setSelectedSdk(sdk5)
+    assertComboBoxSelection<SdkListItem.InvalidSdkItem>(comboBox, null)
+    assertComboBoxContent(comboBox)
+      .item<SdkListItem.NoneSdkItem>()
+      .item<SdkListItem.ProjectSdkItem> { assertEquals(sdk2, comboBox.getProjectSdk()) }
+      .item<SdkListItem.InvalidSdkItem>(isSelected = true) { assertEquals(sdk5.name, it.sdkName) }
+      .item<SdkListItem.SdkItem> { assertSdkItem(sdk1, it) }
+      .item<SdkListItem.SdkItem> { assertSdkItem(sdk2, it) }
+      .item<SdkListItem.SdkItem> { assertSdkItem(sdk3, it) }
+      .item<SdkListItem.SdkItem> { assertSdkItem(sdk5.parent, it) }
       .nothing()
 
     comboBox.setSelectedItem(SdkListItem.ProjectSdkItem())
@@ -55,16 +70,17 @@ class SdkComboBoxTest : SdkComboBoxTestCase() {
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk1, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk2, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(sdk3, it) }
+      .item<SdkListItem.SdkItem> { assertSdkItem(sdk5.parent, it) }
       .nothing()
   }
 
   fun `test combobox actions`() {
-    val comboBox = createComboBox()
+    val comboBox = createJdkComboBox()
       .withOpenDropdownPopup()
 
     assertComboBoxContent(comboBox)
-      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.DOWNLOAD, it) }
-      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.ADD, it) }
+      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.DOWNLOAD, TestSdkType, it) }
+      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.ADD, TestSdkType, it) }
       .nothing()
 
     val download1 = comboBox.touchDownloadAction()
@@ -77,8 +93,8 @@ class SdkComboBoxTest : SdkComboBoxTestCase() {
       .item<SdkListItem.SdkItem> { assertSdkItem(download2, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(download3, it) }
       .item<SdkListItem.SdkItem>(isSelected = true) { assertSdkItem(download4, it) }
-      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.DOWNLOAD, it) }
-      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.ADD, it) }
+      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.DOWNLOAD, TestSdkType, it) }
+      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.ADD, TestSdkType, it) }
       .nothing()
 
     val add1 = comboBox.touchAddAction()
@@ -95,8 +111,8 @@ class SdkComboBoxTest : SdkComboBoxTestCase() {
       .item<SdkListItem.SdkItem> { assertSdkItem(add2, it) }
       .item<SdkListItem.SdkItem> { assertSdkItem(add3, it) }
       .item<SdkListItem.SdkItem>(isSelected = true) { assertSdkItem(add4, it) }
-      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.DOWNLOAD, it) }
-      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.ADD, it) }
+      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.DOWNLOAD, TestSdkType, it) }
+      .item<SdkListItem.ActionItem> { assertActionItem(SdkListItem.ActionRole.ADD, TestSdkType, it) }
       .nothing()
 
     assertCollectionContent(comboBox.model.sdksModel.projectSdks.values.sortedBy { it.name })

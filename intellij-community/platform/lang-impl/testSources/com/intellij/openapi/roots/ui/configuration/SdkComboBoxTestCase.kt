@@ -8,19 +8,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
-import com.intellij.openapi.projectRoots.SdkTypeId
-import com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.Companion.createSdkComboBoxModel
+import com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.Companion.createJdkComboBoxModel
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.Disposer
 import java.util.function.Predicate
 
 abstract class SdkComboBoxTestCase : SdkTestCase() {
 
-  fun createComboBox(filter: (SdkTypeId) -> Boolean = { true }): SdkComboBox {
+  fun createJdkComboBox(): SdkComboBox {
     val sdksModel = TestProjectSdksModel()
     sdksModel.reset(project)
     Disposer.register(project, sdksModel)
-    val model = createSdkComboBoxModel(project, sdksModel, Predicate { TestSdkType == it || filter(it) })
+    val model = createJdkComboBoxModel(project, sdksModel, Predicate { it is TestSdkType })
     return SdkComboBox(model)
   }
 
@@ -80,7 +79,7 @@ abstract class SdkComboBoxTestCase : SdkTestCase() {
    *  [SdkConfigurationUtil.selectSdkHome(SdkType, Component, Consumer<in String>)],
    *  [SdkComboBoxTestCase.TestProjectSdksModel]
    */
-  object CanarySdk : TestSdk("canary", "canary-home", "canary-version") {
+  object CanarySdk : TestSdk("canary", "canary-home", "canary-version", TestSdkType) {
     fun <R> replaceByTestSdk(action: () -> R): R {
       return invokeAndWaitIfNeeded {
         runWriteAction {
@@ -135,9 +134,9 @@ abstract class SdkComboBoxTestCase : SdkTestCase() {
       assertSdk(expected, item.sdk)
     }
 
-    fun assertActionItem(role: SdkListItem.ActionRole, item: SdkListItem.ActionItem) {
+    fun assertActionItem(role: SdkListItem.ActionRole, typeId: SdkType, item: SdkListItem.ActionItem) {
       assertEquals(role, item.role)
-      assertEquals(TestSdkType, item.action.sdkType)
+      assertEquals(typeId, item.action.sdkType)
     }
 
     inline fun <reified I : SdkListItem> assertComboBoxSelection(comboBox: SdkComboBox, expectedSdk: Sdk?) {

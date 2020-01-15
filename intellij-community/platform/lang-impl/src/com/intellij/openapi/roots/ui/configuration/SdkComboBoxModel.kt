@@ -3,6 +3,7 @@ package com.intellij.openapi.roots.ui.configuration
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.*
+import com.intellij.openapi.projectRoots.impl.DependentSdkType
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.ComboBoxPopupState
 import com.intellij.openapi.util.Condition
@@ -34,6 +35,7 @@ class SdkComboBoxModel private constructor(
 
   companion object {
     @JvmStatic
+    @JvmOverloads
     fun createSdkComboBoxModel(
       project: Project,
       sdksModel: ProjectSdksModel,
@@ -52,11 +54,30 @@ class SdkComboBoxModel private constructor(
     }
 
     @JvmStatic
-    fun createJdkComboBoxModel(project: Project, sdksModel: ProjectSdksModel): SdkComboBoxModel {
-      val sdkTypeFilter = Predicate<SdkTypeId> { it is JavaSdkType }
-      val noJavaSdkTypes = { SdkType.getAllTypes().filterNot { it is SimpleJavaSdkType }.isEmpty() }
-      val sdkTypeCreationFilter = Predicate<SdkTypeId> { it !is SimpleJavaSdkType || noJavaSdkTypes() }
-      return createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, null)
+    @JvmOverloads
+    @Suppress("NAME_SHADOWING")
+    fun createJdkComboBoxModel(
+      project: Project,
+      sdksModel: ProjectSdksModel,
+      sdkTypeFilter: Predicate<SdkTypeId>? = null,
+      sdkTypeCreationFilter: Predicate<SdkTypeId>? = null,
+      sdkFilter: Predicate<Sdk>? = null
+    ): SdkComboBoxModel {
+      val sdkTypeFilter = Predicate<SdkTypeId> {
+        it is JavaSdkType && it !is DependentSdkType &&
+        (sdkTypeFilter == null || sdkTypeFilter.test(it))
+      }
+      val noJavaSdkTypes = {
+        SdkType.getAllTypes()
+          .filter { sdkTypeFilter.test(it) }
+          .filterNot { it is SimpleJavaSdkType }
+          .isEmpty()
+      }
+      val sdkTypeCreationFilter = Predicate<SdkTypeId> {
+        (it !is SimpleJavaSdkType || noJavaSdkTypes()) &&
+        (sdkTypeCreationFilter == null || sdkTypeCreationFilter.test(it))
+      }
+      return createSdkComboBoxModel(project, sdksModel, sdkTypeFilter, sdkTypeCreationFilter, sdkFilter)
     }
   }
 }

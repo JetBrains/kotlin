@@ -3,7 +3,6 @@ package com.intellij.openapi.externalSystem.service.ui
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
 import com.intellij.openapi.roots.ui.configuration.SdkComboBox
@@ -20,8 +19,6 @@ abstract class ExternalSystemJdkComboBoxUtilTestCase : SdkComboBoxTestCase() {
     }
     super.tearDown()
   }
-
-  fun createJdkComboBox() = createComboBox { it is JavaSdkType }
 
   fun ComboBoxChecker.reference(sdk: Sdk, isSelected: Boolean = false) =
     reference(sdk.name, isSelected)
