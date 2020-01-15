@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendForInlineOfLambda
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfLambda
-import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
-import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor.Factory.BIG_ARITY
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
@@ -808,33 +808,57 @@ private fun IrCall.createSuspendFunctionCallViewIfNeeded(context: JvmBackendCont
     val view = (symbol.owner as IrSimpleFunction).suspendFunctionViewOrStub(context)
     if (view == symbol.owner) return this
 
-    return IrCallImpl(startOffset, endOffset, view.returnType, view.symbol, superQualifierSymbol = superQualifierSymbol).also {
+    val isBigAritySuspendFunctionN =
+        symbol.owner.parentAsClass?.defaultType?.let { it.isSuspendFunction() || it.isKSuspendFunction() } && valueArgumentsCount + 1 >= BIG_ARITY
+    val calleeSymbol =
+        if (isBigAritySuspendFunctionN) context.ir.symbols.functionN.functions.single { it.owner.name.toString() == "invoke" } else view.symbol
+    return IrCallImpl(startOffset, endOffset, view.returnType, calleeSymbol, superQualifierSymbol = superQualifierSymbol).also {
         it.copyTypeArgumentsFrom(this)
-        it.copyAttributes(this)
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
-        val callerNumberOfMasks = caller.valueParameters.count { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
-        val callerContinuationIndex = caller.valueParameters.size - 1 - (if (callerNumberOfMasks != 0) callerNumberOfMasks + 1 else 0)
-        val continuationParameter =
-            when {
-                caller.isInvokeSuspendOfLambda() || caller.isInvokeSuspendForInlineOfLambda() ->
-                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!.symbol)
-                // At this point the only LOCAL_FUNCTION_FOR_LAMBDAs are inline and crossinline lambdas
-                caller.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> context.fakeContinuation
-                else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters[callerContinuationIndex].symbol)
-            }
-        // If the suspend function view that we are calling has default parameters, we need to make sure to pass the
-        // continuation before the default parameter mask(s) and handler.
-        val numberOfMasks = view.valueParameters.count { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
-        val continuationIndex = valueArgumentsCount - (if (numberOfMasks != 0) numberOfMasks + 1 else 0)
-        for (i in 0 until continuationIndex) {
-            it.putValueArgument(i, getValueArgument(i))
-        }
-        it.putValueArgument(continuationIndex, continuationParameter)
-        if (numberOfMasks != 0) {
-            for (i in 0 until numberOfMasks + 1) {
-                it.putValueArgument(valueArgumentsCount + i - 1, getValueArgument(continuationIndex + i))
-            }
+        val valueArguments = computeSuspendFunctionCallViewValueArguments(caller, context, view)
+        if (isBigAritySuspendFunctionN) {
+            // If we are calling FunctionN.invoke, wrap arguments in an array.
+            it.putValueArgument(0, context.createJvmIrBuilder(caller.symbol).run {
+                irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
+                    valueArguments.forEach { argument -> +argument }
+                }
+            })
+        } else {
+            valueArguments.forEachIndexed { index, argument -> it.putValueArgument(index, argument) }
         }
     }
+}
+
+private fun IrCall.computeSuspendFunctionCallViewValueArguments(
+    caller: IrFunction,
+    context: JvmBackendContext,
+    view: IrFunction
+): List<IrExpression> {
+    // Locate the caller continuation parameter. The continuation parameter is before default argument mask(s) and handler params.
+    val callerNumberOfMasks = caller.valueParameters.count { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
+    val callerContinuationIndex = caller.valueParameters.size - 1 - (if (callerNumberOfMasks != 0) callerNumberOfMasks + 1 else 0)
+    val continuationParameter =
+        when {
+            caller.isInvokeSuspendOfLambda() || caller.isInvokeSuspendForInlineOfLambda() ->
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!.symbol)
+            // At this point the only LOCAL_FUNCTION_FOR_LAMBDAs are inline and crossinline lambdas
+            caller.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> context.fakeContinuation
+            else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters[callerContinuationIndex].symbol)
+        }
+    // If the suspend function view that we are calling has default parameters, we need to make sure to pass the
+    // continuation before the default parameter mask(s) and handler.
+    val numberOfMasks = view.valueParameters.count { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
+    val continuationIndex = valueArgumentsCount - (if (numberOfMasks != 0) numberOfMasks + 1 else 0)
+    val valueArguments = mutableListOf<IrExpression>()
+    for (i in 0 until continuationIndex) {
+        valueArguments.add(getValueArgument(i)!!)
+    }
+    valueArguments.add(continuationParameter)
+    if (numberOfMasks != 0) {
+        for (i in 0 until numberOfMasks + 1) {
+            valueArguments.add(getValueArgument(continuationIndex + i)!!)
+        }
+    }
+    return valueArguments
 }
