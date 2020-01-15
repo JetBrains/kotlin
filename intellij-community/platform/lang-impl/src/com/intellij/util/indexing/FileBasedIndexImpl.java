@@ -1452,7 +1452,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       for (ID<?, ?> indexId : getContentLessIndexes(fileIsDirectory)) {
         if (getInputFilter(indexId).acceptInput(file)) {
           if (fileContent == null) {
-            fileContent = new FileContentImpl(file);
+            fileContent = new IndexedFileWrapper(new IndexedFileImpl(file, null));
           }
           updateSingleIndex(indexId, file, fileId, fileContent);
         }
