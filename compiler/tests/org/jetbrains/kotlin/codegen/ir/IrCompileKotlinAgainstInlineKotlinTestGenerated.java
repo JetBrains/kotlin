@@ -3238,6 +3238,11 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             runTest("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.kt");
         }
 
+        @TestMetadata("crossroutines.kt")
+        public void testCrossroutines() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/crossroutines.kt");
+        }
+
         @TestMetadata("defaultFunction.kt")
         public void testDefaultFunction() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/defaultFunction.kt");
