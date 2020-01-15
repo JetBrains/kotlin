@@ -103,7 +103,7 @@ fun createSimpleConsumer(
     val factory = CandidateFactory(bodyResolveComponents, callInfo)
     val explicitReceiver = callInfo.explicitReceiver
     return if (explicitReceiver != null) {
-        ExplicitReceiverTowerDataConsumer(session, name, token, ExpressionReceiverValue(explicitReceiver), factory, resultCollector)
+        ExplicitReceiverTowerDataConsumer(session, name, token, qualifierOrExpressionReceiver(explicitReceiver), factory, resultCollector)
     } else {
         NoExplicitReceiverTowerDataConsumer(session, name, token, factory, resultCollector)
     }

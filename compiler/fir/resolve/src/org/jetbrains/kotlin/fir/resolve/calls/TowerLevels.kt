@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -40,7 +39,7 @@ interface TowerScopeLevel {
     fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: Token<T>,
         name: Name,
-        explicitReceiver: ExpressionReceiverValue?,
+        explicitReceiver: AbstractExplicitReceiver<*>?,
         processor: TowerScopeLevelProcessor<T>
     ): ProcessorAction
 
@@ -57,7 +56,7 @@ interface TowerScopeLevel {
         override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
             token: Token<T>,
             name: Name,
-            explicitReceiver: ExpressionReceiverValue?,
+            explicitReceiver: AbstractExplicitReceiver<*>?,
             processor: TowerScopeLevelProcessor<T>
         ): ProcessorAction = ProcessorAction.NEXT
     }
@@ -102,7 +101,7 @@ class MemberScopeTowerLevel(
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
-        explicitExtensionReceiver: ExpressionReceiverValue?,
+        explicitExtensionReceiver: AbstractExplicitReceiver<*>?,
         processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
     ): ProcessorAction {
         if (implicitExtensionReceiver != null && explicitExtensionReceiver != null) return ProcessorAction.NEXT
@@ -146,7 +145,7 @@ class MemberScopeTowerLevel(
     override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
-        explicitReceiver: ExpressionReceiverValue?,
+        explicitReceiver: AbstractExplicitReceiver<*>?,
         processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
     ): ProcessorAction {
         val isInvoke = name == OperatorNameConventions.INVOKE && token == TowerScopeLevel.Token.Functions
@@ -154,8 +153,7 @@ class MemberScopeTowerLevel(
             return ProcessorAction.NEXT
         }
         val explicitExtensionReceiver = if (dispatchReceiver == explicitReceiver) null else explicitReceiver
-        val noInnerConstructors =
-            dispatchReceiver is ExpressionReceiverValue && dispatchReceiver.explicitReceiverExpression is FirResolvedQualifier
+        val noInnerConstructors = dispatchReceiver is QualifierReceiver
         return when (token) {
             TowerScopeLevel.Token.Properties -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processPropertiesByName(name, symbol.cast())
@@ -195,7 +193,7 @@ class ScopeTowerLevel(
     override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
-        explicitReceiver: ExpressionReceiverValue?,
+        explicitReceiver: AbstractExplicitReceiver<*>?,
         processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
     ): ProcessorAction {
         if (explicitReceiver != null && implicitExtensionReceiver != null) {

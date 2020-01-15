@@ -111,7 +111,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
-    val explicitReceiver: ExpressionReceiverValue,
+    val explicitReceiver: AbstractExplicitReceiver<*>,
     val candidateFactory: CandidateFactory,
     override val resultCollector: CandidateCollector
 ) : TowerDataConsumer() {
