@@ -12,8 +12,7 @@
 -keep class * implements kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition { public protected *; }
 
 # Keep generic signatures and annotations at runtime.
-# R8 requires InnerClasses and EnclosingMethod if you keepattributes Signature.
--keepattributes InnerClasses,Signature,RuntimeVisible*Annotations,EnclosingMethod
+-keepattributes Signature,RuntimeVisible*Annotations
 
 # Don't note on API calls from different JVM versions as they're gated properly at runtime.
 -dontnote kotlin.internal.PlatformImplementationsKt
