@@ -47,24 +47,25 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiline() = getLineCount() > 1
 
-fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings, checkTrailingComma: Boolean = true): Boolean = needTrailingComma(
-    settings = settings,
-    trailingComma = { if (checkTrailingComma) valueParameterList?.trailingComma else null },
-    globalStartOffset = { valueParameterList?.startOffset },
-    globalEndOffset = { arrow?.endOffset }
-)
+fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean =
+    needTrailingComma(
+        settings = settings,
+        trailingComma = { if (checkExistingTrailingComma) valueParameterList?.trailingComma else null },
+        globalStartOffset = { valueParameterList?.startOffset },
+        globalEndOffset = { arrow?.endOffset }
+    )
 
-fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings, checkTrailingComma: Boolean = true): Boolean = needTrailingComma(
+fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean = needTrailingComma(
     settings = settings,
-    trailingComma = { if (checkTrailingComma) trailingComma else null },
+    trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
     additionalCheck = { !isElse },
     globalEndOffset = { arrow?.endOffset }
 )
 
-fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings, checkTrailingComma: Boolean = true): Boolean =
+fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean =
     needTrailingComma(
         settings = settings,
-        trailingComma = { if (checkTrailingComma) trailingComma else null },
+        trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
         globalStartOffset = { lPar?.startOffset },
         globalEndOffset = { rPar?.endOffset }
     )
