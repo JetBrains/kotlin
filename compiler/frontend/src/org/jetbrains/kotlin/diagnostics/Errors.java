@@ -784,6 +784,8 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> NULLABLE_TYPE_IN_CLASS_LITERAL_LHS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtExpression, KotlinType> EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY = DiagnosticFactory0.create(WARNING);
+
     // Destructuring-declarations
 
     DiagnosticFactory0<KtDestructuringDeclaration> INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);

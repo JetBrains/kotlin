@@ -22647,6 +22647,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/OverrideGetterOnly.kt");
             }
 
+            @TestMetadata("PartiallySupportedSyntheticJavaPropertyReference.kt")
+            public void testPartiallySupportedSyntheticJavaPropertyReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/PartiallySupportedSyntheticJavaPropertyReference.kt");
+            }
+
             @TestMetadata("SetterHasHigherAccess.kt")
             public void testSetterHasHigherAccess() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SetterHasHigherAccess.kt");
