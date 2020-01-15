@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
@@ -172,8 +173,7 @@ class ConstraintIncorporator(
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
-        val inputTypePosition = if (baseConstraint.position.from is OnlyInputTypeConstraintPosition)
-            baseConstraint.position else null
+        val inputTypePosition = baseConstraint.position.from.safeAs<OnlyInputTypeConstraintPosition>()
 
         val isNullabilityConstraint = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
         val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)

@@ -86,8 +86,6 @@ class IncorporationConstraintPosition(
     val from: ConstraintPosition,
     val initialConstraint: InitialConstraint
 ) : ConstraintPosition() {
-    lateinit var inputTypePositions: Set<ConstraintPosition>
-
     override fun toString() =
         "Incorporate $initialConstraint from position $from"
 }
