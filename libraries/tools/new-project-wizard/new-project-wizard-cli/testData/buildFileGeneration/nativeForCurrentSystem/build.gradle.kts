@@ -17,13 +17,7 @@ kotlin {
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
 
-    nativeTarget.apply {
-        binaries {
-            executable {
-                entryPoint = "MAIN CLASS"
-            }
-        }
-    }
+
     sourceSets {
         val myNativeMain by getting
         val myNativeTest by getting

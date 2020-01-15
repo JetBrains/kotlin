@@ -14,11 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
-interface NativeTargetConfigurator : TargetConfigurator {
-    override fun createInnerTargetIrs(module: Module): List<BuildSystemIR> = buildList {
-        +NativeTargetInternalIR("MAIN CLASS")
-    }
-}
+interface NativeTargetConfigurator : TargetConfigurator
 
 class RealNativeTargetConfigurator private constructor(
     override val moduleSubType: ModuleSubType
