@@ -188,7 +188,6 @@ fun main(args: Array<String>) {
             )
             model("stepping/stepOut", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOutTest")
             model("stepping/stepOver", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverTest")
-            model("stepping/stepOverForce", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverForceTest")
             model("stepping/filters", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest")
             model("stepping/custom", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doCustomTest")
         }

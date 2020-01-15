@@ -637,26 +637,6 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soSuspendableCallInEndOfFun.kt");
         }
 
-        @TestMetadata("soSuspendableCallInEndOfLambda.kt")
-        public void testSoSuspendableCallInEndOfLambda() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soSuspendableCallInEndOfLambda.kt");
-        }
-
-        @TestMetadata("soSuspendableCallInFun.kt")
-        public void testSoSuspendableCallInFun() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soSuspendableCallInFun.kt");
-        }
-
-        @TestMetadata("soSuspendableCallInFunFromOtherStepping.kt")
-        public void testSoSuspendableCallInFunFromOtherStepping() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soSuspendableCallInFunFromOtherStepping.kt");
-        }
-
-        @TestMetadata("soSuspendableCallInLambda.kt")
-        public void testSoSuspendableCallInLambda() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/soSuspendableCallInLambda.kt");
-        }
-
         @TestMetadata("stepOverCatchClause.kt")
         public void testStepOverCatchClause() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/stepOverCatchClause.kt");
@@ -910,24 +890,6 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("whenWithoutExpression.kt")
         public void testWhenWithoutExpression() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/whenWithoutExpression.kt");
-        }
-    }
-
-    @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOverForce")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class StepOverForce extends AbstractKotlinSteppingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doStepOverForceTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInStepOverForce() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOverForce"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("sofSuspendableCallInFun.kt")
-        public void testSofSuspendableCallInFun() throws Exception {
-            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOverForce/sofSuspendableCallInFun.kt");
         }
     }
 
