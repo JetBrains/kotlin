@@ -1,7 +1,7 @@
 package
 
 public fun </*0*/ K> materialize(): Inv<K>
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ U> sequence(/*0*/ @kotlin.BuilderInference block: suspend Inv<U>.() -> kotlin.Unit): U
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ U> sequence(/*0*/ @kotlin.BuilderInference block: suspend Inv<U>.() -> kotlin.Unit): U
 public fun test_1(): kotlin.Unit
 public fun test_2(): kotlin.Unit
 public fun test_3(): kotlin.Unit

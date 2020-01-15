@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684
 
@@ -25,7 +25,7 @@ fun test_3() {
     }
 }
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <U> sequence(@BuilderInference block: suspend Inv<U>.() -> Unit): U = null!!
 
 interface Inv<T> {
