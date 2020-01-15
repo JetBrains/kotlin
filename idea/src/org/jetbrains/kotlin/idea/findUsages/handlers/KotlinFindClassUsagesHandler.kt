@@ -198,7 +198,7 @@ class KotlinFindClassUsagesHandler(
         return JavaFindUsagesHelper.getElementNames(psiClass)
     }
 
-    override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {
+    override fun isSearchForTextOccurrencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {
         return !isSingleFile
     }
 
