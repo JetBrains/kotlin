@@ -462,6 +462,9 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             other is FunctionHandleForIrFunction &&
                     irFunction.parent.safeAs<IrClass>()?.fqNameWhenAvailable == other.irFunction.parent.safeAs<IrClass>()?.fqNameWhenAvailable &&
                     irFunction.getJvmSignature() == other.irFunction.getJvmSignature()
+
+        override fun toString(): String =
+            irFunction.render()
     }
 
     fun IrSimpleFunction.findConcreteSuperDeclaration(): IrSimpleFunction? {
