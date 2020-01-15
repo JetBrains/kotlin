@@ -663,6 +663,31 @@ class CollectionTest {
         assertFailsWith<NoSuchElementException> { emptyList<Any>().random() }
     }
 
+    @Test fun randomOrNull() {
+        val list = List(100) { it }
+        val set = list.toSet()
+        listOf(list, set).forEach { collection: Collection<Int> ->
+            val tosses = List(10) { collection.randomOrNull() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { collection.randomOrNull(random1) }
+            val tosses2 = List(10) { collection.randomOrNull(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        listOf("x").let { singletonList ->
+            val tosses = List(10) { singletonList.randomOrNull() }
+            assertEquals(singletonList, tosses.distinct())
+        }
+
+        assertNull(emptyList<Any>().randomOrNull())
+    }
+
     @Test fun subscript() {
         val list = arrayListOf("foo", "bar")
         assertEquals("foo", list[0])

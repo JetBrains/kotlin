@@ -906,6 +906,23 @@ object Elements : TemplateGroupBase() {
         }
     }
 
+    val f_randomOrNull = fn("randomOrNull()") {
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+    } builder {
+        since("1.3")
+        annotation("@ExperimentalStdlibApi")
+        inlineOnly()
+        returns("T?")
+        doc {
+            """
+            Returns a random ${f.element} from this ${f.collection}, or `null` if this ${f.collection} is empty.
+            """
+        }
+        body {
+            """return randomOrNull(Random)"""
+        }
+    }
+
     val f_random_random = fn("random(random: Random)") {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
@@ -947,6 +964,49 @@ object Elements : TemplateGroupBase() {
                 } catch(e: IllegalArgumentException) {
                     throw NoSuchElementException(e.message)
                 }
+                """
+            }
+        }
+    }
+
+    val f_randomOrNull_random = fn("randomOrNull(random: Random)") {
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+    } builder {
+        since("1.3")
+        annotation("@ExperimentalStdlibApi")
+        returns("T?")
+        doc {
+            """
+            Returns a random ${f.element} from this ${f.collection} using the specified source of randomness, or `null` if this ${f.collection} is empty.
+            """
+        }
+        body {
+            """
+            if (isEmpty())
+                return null
+            return elementAt(random.nextInt(size))
+            """
+        }
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
+            body {
+                val size = if (family == CharSequences) "length" else "size"
+                """
+                if (isEmpty())
+                    return null
+                return get(random.nextInt($size))
+                """
+            }
+        }
+        specialFor(RangesOfPrimitives) {
+            body {
+                val expr = when (primitive) {
+                    PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
+                    else -> "next$primitive(this)"
+                }
+                """
+                if (isEmpty())
+                    return null
+                return random.$expr
                 """
             }
         }

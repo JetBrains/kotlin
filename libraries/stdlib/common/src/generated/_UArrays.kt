@@ -1195,6 +1195,98 @@ public fun UShortArray.random(random: Random): UShort {
 }
 
 /**
+ * Returns a random element from this array, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.randomOrNull(): UInt? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this array, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.randomOrNull(): ULong? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this array, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.randomOrNull(): UByte? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this array, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.randomOrNull(): UShort? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun UIntArray.randomOrNull(random: Random): UInt? {
+    if (isEmpty())
+        return null
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun ULongArray.randomOrNull(random: Random): ULong? {
+    if (isEmpty())
+        return null
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun UByteArray.randomOrNull(random: Random): UByte? {
+    if (isEmpty())
+        return null
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun UShortArray.randomOrNull(random: Random): UShort? {
+    if (isEmpty())
+        return null
+    return get(random.nextInt(size))
+}
+
+/**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 @SinceKotlin("1.3")

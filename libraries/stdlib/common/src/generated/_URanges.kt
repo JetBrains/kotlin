@@ -70,6 +70,52 @@ public fun ULongRange.random(random: Random): ULong {
 }
 
 /**
+ * Returns a random element from this range, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntRange.randomOrNull(): UInt? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this range, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongRange.randomOrNull(): ULong? {
+    return randomOrNull(Random)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun UIntRange.randomOrNull(random: Random): UInt? {
+    if (isEmpty())
+        return null
+    return random.nextUInt(this)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun ULongRange.randomOrNull(random: Random): ULong? {
+    if (isEmpty())
+        return null
+    return random.nextULong(this)
+}
+
+/**
  * Returns `true` if this range contains the specified [element].
  * 
  * Always returns `false` if the [element] is `null`.

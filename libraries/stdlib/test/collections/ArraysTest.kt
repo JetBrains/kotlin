@@ -665,6 +665,29 @@ class ArraysTest {
         assertFailsWith<NoSuchElementException> { emptyArray<Any>().random() }
     }
 
+    @Test fun randomOrNull() {
+        Array(100) { it }.let { array ->
+            val tosses = List(10) { array.randomOrNull() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { array.randomOrNull(random1) }
+            val tosses2 = List(10) { array.randomOrNull(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        arrayOf("x").let { singletonArray ->
+            val tosses = List(10) { singletonArray.randomOrNull() }
+            assertEquals(singletonArray.toList(), tosses.distinct())
+        }
+
+        assertNull(emptyArray<Any>().randomOrNull())
+    }
+
 
     @Test fun contains() {
         assertTrue(arrayOf("1", "2", "3", "4").contains("2"))
