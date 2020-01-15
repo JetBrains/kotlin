@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.statistics
 
+import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.beans.UsageDescriptor
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
@@ -14,18 +15,17 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent
 
 class IDESettingsFUSCollector : ProjectUsagesCollector() {
-
-    override fun getUsages(project: Project): Set<UsageDescriptor> {
-        val usages = mutableSetOf<UsageDescriptor>()
+    override fun getMetrics(project: Project): Set<MetricEvent> {
+        val metrics = mutableSetOf<MetricEvent>()
 
         @Suppress("DEPRECATION")
         val inferenceState = NewInferenceForIDEAnalysisComponent.isEnabledForV1(project)
-        usages.add(UsageDescriptor("newInference", flagUsage(inferenceState)))
+        metrics.add(MetricEvent("newInference", flagUsage(inferenceState)))
 
         val scriptingAutoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
-        usages.add(UsageDescriptor("scriptingAutoReloadEnabled", flagUsage(scriptingAutoReloadEnabled)))
+        metrics.add(MetricEvent("scriptingAutoReloadEnabled", flagUsage(scriptingAutoReloadEnabled)))
 
-        return usages
+        return metrics
     }
 
     private fun flagUsage(enabled: Boolean): FeatureUsageData {
