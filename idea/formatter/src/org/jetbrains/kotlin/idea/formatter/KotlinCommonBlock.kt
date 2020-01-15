@@ -588,7 +588,7 @@ abstract class KotlinCommonBlock(
         when {
             elementType === VALUE_ARGUMENT_LIST -> {
                 val wrapSetting = commonSettings.CALL_PARAMETERS_WRAP
-                if (!node.withTrailingComma && (wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
+                if (!node.trailingCommaIsAllowed && (wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
                     !needWrapArgumentList(nodePsi)
                 ) {
                     return ::noWrapping
@@ -596,7 +596,7 @@ abstract class KotlinCommonBlock(
                 return getWrappingStrategyForItemList(
                     wrapSetting,
                     VALUE_ARGUMENT,
-                    node.withTrailingComma,
+                    node.trailingCommaIsAllowed,
                     additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR)
                 )
             }
@@ -606,7 +606,7 @@ abstract class KotlinCommonBlock(
                     FUN, PRIMARY_CONSTRUCTOR, SECONDARY_CONSTRUCTOR -> return getWrappingStrategyForItemList(
                         commonSettings.METHOD_PARAMETERS_WRAP,
                         VALUE_PARAMETER,
-                        node.withTrailingComma,
+                        node.trailingCommaIsAllowed,
                         additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR)
                     )
                     FUNCTION_TYPE -> return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
@@ -623,21 +623,15 @@ abstract class KotlinCommonBlock(
 
             elementType === FUNCTION_LITERAL -> {
                 if (nodePsi.cast<KtFunctionLiteral>().needTrailingComma(settings))
-                    return { childElement ->
-                        createWrapAlwaysIf(childElement.elementType === ARROW || getSiblingWithoutWhitespaceAndComments(childElement)?.elementType === LBRACE)
-                    }
+                    return trailingCommaWrappingStrategy(leftAnchor = LBRACE, rightAnchor = ARROW)
             }
 
             elementType === WHEN_ENTRY -> {
                 // with argument
                 if (nodePsi.cast<KtWhenEntry>().needTrailingComma(settings)) {
                     val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
-                    return { childElement ->
-                        createWrapAlwaysIf(
-                            childElement.elementType === ARROW ||
-                                    getSiblingWithoutWhitespaceAndComments(childElement, true) != null &&
-                                    check(childElement)
-                        )
+                    return trailingCommaWrappingStrategy(rightAnchor = ARROW) {
+                        getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)
                     }
                 }
             }
@@ -647,14 +641,8 @@ abstract class KotlinCommonBlock(
                 if (nodePsi.valOrVarKeyword == null) return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
                 else if (nodePsi.needTrailingComma(settings)) {
                     val check = thisOrPrevIsMultiLineElement(COMMA, LPAR, RPAR)
-                    return block@{ childElement ->
-                        val childElementType = childElement.elementType
-                        if (childElementType === EQ) return@block null
-                        createWrapAlwaysIf(
-                            childElementType === RPAR ||
-                                    getSiblingWithoutWhitespaceAndComments(childElement)?.elementType === LPAR ||
-                                    getSiblingWithoutWhitespaceAndComments(childElement, true) != null && check(childElement)
-                        )
+                    return trailingCommaWrappingStrategy(leftAnchor = LPAR, rightAnchor = RPAR, filter = { it.elementType !== EQ }) {
+                        getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)
                     }
                 }
             }
@@ -763,7 +751,7 @@ abstract class KotlinCommonBlock(
     private fun defaultTrailingCommaWrappingStrategy(leftAnchor: IElementType, rightAnchor: IElementType): WrappingStrategy =
         fun(childElement: ASTNode): Wrap? = trailingCommaWrappingStrategyWithMultiLineCheck(leftAnchor, rightAnchor)(childElement)
 
-    private val ASTNode.withTrailingComma: Boolean
+    private val ASTNode.trailingCommaIsAllowed: Boolean
         get() = if (settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA ||
             lastChildNode?.let { getSiblingWithoutWhitespaceAndComments(it) }?.elementType === COMMA
         )
@@ -774,10 +762,10 @@ abstract class KotlinCommonBlock(
     private fun ASTNode.notDelimiterSiblingNodeInSequence(
         forward: Boolean,
         delimiterType: IElementType,
-        barrier: IElementType
+        typeOfLastElement: IElementType
     ): ASTNode? {
         var sibling: ASTNode? = null
-        for (element in siblings(forward).filter { it.elementType != WHITE_SPACE }.takeWhile { it.elementType != barrier }) {
+        for (element in siblings(forward).filter { it.elementType != WHITE_SPACE }.takeWhile { it.elementType != typeOfLastElement }) {
             val elementType = element.elementType
             if (!forward) {
                 sibling = element
@@ -793,12 +781,12 @@ abstract class KotlinCommonBlock(
 
     private fun thisOrPrevIsMultiLineElement(
         delimiterType: IElementType,
-        leftBarrier: IElementType,
-        rightBarrier: IElementType
+        typeOfFirstElement: IElementType,
+        typeOfLastElement: IElementType
     ) = fun(childElement: ASTNode): Boolean {
         when (childElement.elementType) {
-            leftBarrier,
-            rightBarrier,
+            typeOfFirstElement,
+            typeOfLastElement,
             delimiterType,
             in WHITE_SPACE_OR_COMMENT_BIT_SET
             -> return false
@@ -807,26 +795,37 @@ abstract class KotlinCommonBlock(
         val psi = childElement.psi ?: return false
         if (psi.isMultiline()) return true
 
-        val startOffset = childElement.notDelimiterSiblingNodeInSequence(false, delimiterType, leftBarrier)?.startOffset ?: psi.startOffset
-        val endOffset = childElement.notDelimiterSiblingNodeInSequence(true, delimiterType, rightBarrier)?.psi?.endOffset ?: psi.endOffset
+        val startOffset = childElement.notDelimiterSiblingNodeInSequence(false, delimiterType, typeOfFirstElement)?.startOffset
+            ?: psi.startOffset
+        val endOffset = childElement.notDelimiterSiblingNodeInSequence(true, delimiterType, typeOfLastElement)?.psi?.endOffset
+            ?: psi.endOffset
         return psi.parent.containsLineBreakInThis(startOffset, endOffset)
     }
 
     private fun trailingCommaWrappingStrategyWithMultiLineCheck(
         leftAnchor: IElementType,
         rightAnchor: IElementType
-    ) = trailingCommaWrappingStrategy(leftAnchor, rightAnchor, thisOrPrevIsMultiLineElement(COMMA, leftAnchor, rightAnchor))
+    ) = trailingCommaWrappingStrategy(
+        leftAnchor = leftAnchor,
+        rightAnchor = rightAnchor,
+        checkTrailingComma = true,
+        additionalCheck = thisOrPrevIsMultiLineElement(COMMA, leftAnchor, rightAnchor)
+    )
 
     private fun trailingCommaWrappingStrategy(
-        leftAnchor: IElementType,
-        rightAnchor: IElementType,
-        additionalCheck: (ASTNode) -> Boolean
-    ): WrappingStrategy = { childElement ->
+        leftAnchor: IElementType? = null,
+        rightAnchor: IElementType? = null,
+        checkTrailingComma: Boolean = false,
+        filter: (ASTNode) -> Boolean = { true },
+        additionalCheck: (ASTNode) -> Boolean = { false }
+    ): WrappingStrategy = fun(childElement: ASTNode): Wrap? {
+        if (!filter(childElement)) return null
         val childElementType = childElement.elementType
-        createWrapAlwaysIf(
-            childElement.treeParent.withTrailingComma && (childElementType === rightAnchor ||
-                    getSiblingWithoutWhitespaceAndComments(childElement)?.elementType === leftAnchor ||
-                    additionalCheck(childElement)
+        return createWrapAlwaysIf(
+            (!checkTrailingComma || childElement.treeParent.trailingCommaIsAllowed) && (
+                    rightAnchor != null && rightAnchor === childElementType ||
+                            leftAnchor != null && leftAnchor === getSiblingWithoutWhitespaceAndComments(childElement)?.elementType ||
+                            additionalCheck(childElement)
                     )
         )
     }
