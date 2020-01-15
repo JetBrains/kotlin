@@ -88,13 +88,16 @@ class ClosureAnnotator(irFile: IrFile) {
         }
 
         fun declareVariable(valueDeclaration: IrValueDeclaration?) {
-            if (valueDeclaration != null)
+            if (valueDeclaration != null) {
                 declaredValues.add(valueDeclaration)
+                seeType(valueDeclaration.type)
+            }
         }
 
         fun seeVariable(value: IrValueSymbol) {
-            if (isExternal(value.owner))
+            if (isExternal(value.owner)) {
                 capturedValues.add(value)
+            }
         }
 
         fun isExternal(valueDeclaration: IrValueDeclaration): Boolean {
@@ -144,6 +147,8 @@ class ClosureAnnotator(irFile: IrFile) {
             val closureBuilder = ClosureBuilder(declaration)
             closureBuilders[declaration] = closureBuilder
 
+            collectPotentiallyCapturedTypeParameters(closureBuilder)
+
             closureBuilder.declareVariable(declaration.thisReceiver)
             if (declaration.isInner) {
                 closureBuilder.declareVariable((declaration.parent as IrClass).thisReceiver)
@@ -155,8 +160,6 @@ class ClosureAnnotator(irFile: IrFile) {
                 constructor.valueParameters.forEach { v -> closureBuilder.declareVariable(v) }
             }
 
-            collectPotentiallyCapturedTypeParameters(closureBuilder)
-
             closuresStack.push(closureBuilder)
             declaration.acceptChildrenVoid(this)
             closuresStack.pop()
@@ -165,6 +168,8 @@ class ClosureAnnotator(irFile: IrFile) {
         override fun visitFunction(declaration: IrFunction) {
             val closureBuilder = ClosureBuilder(declaration)
             closureBuilders[declaration] = closureBuilder
+
+            collectPotentiallyCapturedTypeParameters(closureBuilder)
 
             declaration.valueParameters.forEach { closureBuilder.declareVariable(it) }
             closureBuilder.declareVariable(declaration.dispatchReceiverParameter)
@@ -181,8 +186,6 @@ class ClosureAnnotator(irFile: IrFile) {
                     closureBuilder.include(classBuilder)
                 }
             }
-
-            collectPotentiallyCapturedTypeParameters(closureBuilder)
 
             closuresStack.push(closureBuilder)
             declaration.acceptChildrenVoid(this)

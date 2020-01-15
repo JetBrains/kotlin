@@ -318,6 +318,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/TypeParamInInner.kt");
             }
 
+            @TestMetadata("TypeParamInInner2.kt")
+            public void testTypeParamInInner2() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/method/TypeParamInInner2.kt");
+            }
+
             @TestMetadata("Vararg.kt")
             public void testVararg() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/Vararg.kt");
@@ -964,6 +969,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("TypeParamInInner.kt")
             public void testTypeParamInInner() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/TypeParamInInner.kt");
+            }
+
+            @TestMetadata("TypeParamInInner2.kt")
+            public void testTypeParamInInner2() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/method/TypeParamInInner2.kt");
             }
 
             @TestMetadata("Vararg.kt")
