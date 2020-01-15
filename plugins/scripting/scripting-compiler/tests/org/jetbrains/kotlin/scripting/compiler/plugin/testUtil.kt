@@ -24,7 +24,8 @@ fun runWithKotlinc(
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
-    classpath: List<File> = emptyList()
+    classpath: List<File> = emptyList(),
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     val executableName = "kotlinc"
     // TODO:
@@ -44,6 +45,9 @@ fun runWithKotlinc(
     val processBuilder = ProcessBuilder(args)
     if (workDirectory != null) {
         processBuilder.directory(workDirectory)
+    }
+    if (additionalEnvVars != null) {
+        processBuilder.environment().putAll(additionalEnvVars)
     }
     val process = processBuilder.start()
 
