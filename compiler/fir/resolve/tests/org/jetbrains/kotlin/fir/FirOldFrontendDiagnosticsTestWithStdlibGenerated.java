@@ -1886,6 +1886,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt3458.kt");
         }
 
+        @TestMetadata("kt35847.kt")
+        public void testKt35847() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt35847.kt");
+        }
+
         @TestMetadata("kt4975.kt")
         public void testKt4975() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt4975.kt");

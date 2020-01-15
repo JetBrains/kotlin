@@ -2545,6 +2545,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/ambiguityWhenNoApplicableCallableReferenceCandidate.kt");
                 }
 
+                @TestMetadata("ambiguityWithBoundExtensionReceiver.kt")
+                public void testAmbiguityWithBoundExtensionReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/ambiguityWithBoundExtensionReceiver.kt");
+                }
+
                 @TestMetadata("ambiguousWithVararg.kt")
                 public void testAmbiguousWithVararg() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/ambiguousWithVararg.kt");

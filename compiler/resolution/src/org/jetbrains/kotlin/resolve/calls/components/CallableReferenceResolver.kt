@@ -55,7 +55,10 @@ class CallableReferenceOverloadConflictResolver(
 ) {
     companion object {
         private fun createFlatSignature(candidate: CallableReferenceCandidate) =
-            FlatSignature.createFromReflectionType(candidate, candidate.candidate, candidate.numDefaults, candidate.reflectionCandidateType)
+            FlatSignature.createFromReflectionType(
+                candidate, candidate.candidate, candidate.numDefaults, hasBoundExtensionReceiver = candidate.extensionReceiver != null,
+                candidate.reflectionCandidateType
+            )
     }
 }
 
