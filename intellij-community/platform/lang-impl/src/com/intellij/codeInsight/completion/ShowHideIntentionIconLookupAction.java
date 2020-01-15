@@ -15,6 +15,7 @@
  */
 package com.intellij.codeInsight.completion;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.LookupElementAction;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.registry.Registry;
@@ -26,7 +27,8 @@ public class ShowHideIntentionIconLookupAction extends LookupElementAction {
   static final String KEY = "completion.show.intention.icon";
 
   public ShowHideIntentionIconLookupAction() {
-    super(AllIcons.Actions.IntentionBulb, (shouldShowLookupHint() ? "Never show" : "Show") + " intention icon");
+    super(AllIcons.Actions.IntentionBulb, (shouldShowLookupHint() ? CodeInsightBundle.message("lookup.action.never.show.intention.icon")
+                                                                  : CodeInsightBundle.message("lookup.action.show.intention.icon")));
   }
 
   public static boolean shouldShowLookupHint() {

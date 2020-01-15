@@ -2,6 +2,7 @@
 
 package com.intellij.codeInsight.completion;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.completion.impl.CompletionServiceImpl;
@@ -56,10 +57,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
@@ -229,13 +227,13 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
 
   private void addDefaultAdvertisements(CompletionParameters parameters) {
     if (DumbService.isDumb(getProject())) {
-      addAdvertisement("Results might be incomplete while indexing is in progress", AllIcons.General.Warning);
+      addAdvertisement(CodeInsightBundle.message("completion.incomplete.during.indexing"), AllIcons.General.Warning);
       return;
     }
 
     String enterShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM);
     String tabShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
-    addAdvertisement("Press " + enterShortcut + " to insert, " + tabShortcut + " to replace", null);
+    addAdvertisement(CodeInsightBundle.message("completion.ad.press.0.to.insert.1.to.replace", enterShortcut, tabShortcut), null);
 
     advertiseTabReplacement(parameters);
     if (isAutopopupCompletion()) {
@@ -251,7 +249,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       myOffsetMap.getOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET) != myOffsetMap.getOffset(CompletionInitializationContext.SELECTION_END_OFFSET)) {
       String shortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
       if (StringUtil.isNotEmpty(shortcut)) {
-        addAdvertisement("Use " + shortcut + " to overwrite the current identifier with the chosen variant", null);
+        addAdvertisement(CodeInsightBundle.message("completion.ad.use.0.to.overwrite", shortcut), null);
       }
     }
   }
@@ -261,7 +259,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       .getInstance().isToBeAdvertisedInLookup(CodeCompletionFeatures.EDITING_COMPLETION_FINISH_BY_CONTROL_DOT, getProject())) {
       String dotShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_DOT);
       if (StringUtil.isNotEmpty(dotShortcut)) {
-        addAdvertisement("Press " + dotShortcut + " to choose the selected (or first) suggestion and insert a dot afterwards", null);
+        addAdvertisement(CodeInsightBundle.message("completion.ad.press.0.to.choose.with.dot", dotShortcut), null);
       }
     }
   }
@@ -273,7 +271,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       String downShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_LOOKUP_DOWN);
       String upShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_LOOKUP_UP);
       if (StringUtil.isNotEmpty(downShortcut) && StringUtil.isNotEmpty(upShortcut)) {
-        addAdvertisement(downShortcut + " and " + upShortcut + " will move caret down and up in the editor", null);
+        addAdvertisement(CodeInsightBundle.message("completion.ad.moving.caret.down.and.up.in.the.editor", downShortcut, upShortcut), null);
       }
     }
   }
@@ -323,6 +321,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     CommandProcessor.getInstance().setCurrentCommandGroupId(getCompletionCommandName());
   }
 
+  @NonNls
   private String getCompletionCommandName() {
     return "Completion" + hashCode();
   }
@@ -777,7 +776,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
                                        .filter(StringUtil::isNotEmpty)
                                        .findFirst()
                                        .orElse(LangBundle.message("completion.no.suggestions"));
-    return DumbService.isDumb(getProject()) ? text + "; results might be incomplete while indexing is in progress" : text;
+    return DumbService.isDumb(getProject()) ? text + CodeInsightBundle.message("completion.incomplete.during.indexing.suffix") : text;
   }
 
   private static LightweightHint showErrorHint(Project project, Editor editor, String text) {
