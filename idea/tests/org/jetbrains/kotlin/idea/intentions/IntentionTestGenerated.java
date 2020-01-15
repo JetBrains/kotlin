@@ -6595,6 +6595,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertToBlockBody/addSpace.kt");
         }
 
+        @TestMetadata("adjustLineIndent.kt")
+        public void testAdjustLineIndent() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/adjustLineIndent.kt");
+        }
+
         public void testAllFilesPresentInConvertToBlockBody() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/convertToBlockBody"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }

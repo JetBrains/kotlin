@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.formatter.adjustLineIndent
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -93,7 +96,8 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
             }
 
             declaration.equalsToken!!.delete()
-            body.replace(newBody)
+            val replaced = body.replace(newBody)
+            declaration.containingKtFile.adjustLineIndent(replaced.startOffset, replaced.endOffset)
             return declaration
         }
 
