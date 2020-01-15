@@ -208,7 +208,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     if (mySubIndexerRetriever == null) return true;
     if (!(file instanceof FileContent)) {
       if (((CompositeDataIndexer)myIndexer).requiresContentForSubIndexerEvaluation(file)) {
-        return false;
+        return isIndexConfigurationUpToDate(fileId, file);
       }
     }
     try {
@@ -218,6 +218,10 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
       LOG.error(e);
       return false;
     }
+  }
+
+  protected boolean isIndexConfigurationUpToDate(int fileId, @NotNull IndexedFile file) {
+    return false;
   }
 
   @Override

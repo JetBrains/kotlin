@@ -16,7 +16,6 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
-import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.BitUtil;
@@ -40,7 +39,7 @@ import java.util.Map;
 public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
   implements CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
   static final Logger LOG = Logger.getInstance(StubUpdatingIndex.class);
-  private static final int VERSION = 43 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0) + (InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED ? 1 : 0);
+  private static final int VERSION = 43 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0) + (InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED ? 2 : 0);
 
   // todo remove once we don't need this for stub-ast mismatch debug info
   private static final FileAttribute INDEXED_STAMP = new FileAttribute("stubIndexStamp", 3, true);
@@ -280,7 +279,11 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   private static class MyIndex extends VfsAwareMapReduceIndex<Integer, SerializedStubTree, FileContent> {
     private StubIndexImpl myStubIndex;
     @Nullable
-    private final StubVersionMap myStubVersionMap = InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED ? null : new StubVersionMap();
+    private final StubVersionMap myStubVersionMap =
+      InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED ? null : new StubVersionMap();
+    @Nullable
+    private final CompositeBinaryBuilderMap myCompositeBinaryBuilderMap =
+      InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED ? new CompositeBinaryBuilderMap() : null;
 
     MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension, @NotNull IndexStorage<Integer, SerializedStubTree> storage)
       throws StorageException, IOException {
@@ -393,11 +396,20 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     public void setIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
       super.setIndexedStateForFile(fileId, file);
 
-      if (myStubVersionMap == null) return;
-      try {
-        myStubVersionMap.persistIndexedState(fileId, file.getFile());
-      } catch (IOException e) {
-        LOG.error(e);
+      if (myStubVersionMap != null) {
+        try {
+          myStubVersionMap.persistIndexedState(fileId, file.getFile());
+        } catch (IOException e) {
+          LOG.error(e);
+        }
+      }
+
+      if (myCompositeBinaryBuilderMap != null) {
+        try {
+          myCompositeBinaryBuilderMap.persistState(fileId, file.getFile());
+        } catch (IOException e) {
+          LOG.error(e);
+        }
       }
 
     }
@@ -415,6 +427,19 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
         LOG.error(e);
         return false;
       }
+    }
+
+    @Override
+    protected boolean isIndexConfigurationUpToDate(int fileId, @NotNull IndexedFile file) {
+      if (myCompositeBinaryBuilderMap != null) {
+        try {
+          return myCompositeBinaryBuilderMap.isUpToDateState(fileId, file.getFile());
+        } catch (IOException e) {
+          LOG.error(e);
+          return false;
+        }
+      }
+      return false;
     }
   }
 }
