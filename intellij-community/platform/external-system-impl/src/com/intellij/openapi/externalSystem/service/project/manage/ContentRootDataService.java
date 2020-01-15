@@ -225,8 +225,9 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
   }
 
   private static void removeSourceFoldersIfAbsent(@NotNull ContentEntry contentEntry, @NotNull ContentRootData contentRoot) {
-    Set<String> sourceRoots = getSourceRoots(contentRoot);
     SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
+    if (sourceFolders.length == 0) return;
+    Set<String> sourceRoots = getSourceRoots(contentRoot);
     for (SourceFolder sourceFolder : sourceFolders) {
       String url = sourceFolder.getUrl();
       String path = VfsUtilCore.urlToPath(url);
