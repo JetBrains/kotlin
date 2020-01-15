@@ -172,7 +172,10 @@ class ModulesToIRsConverter(
                 emptyList()
             ),
             pomIr,
-            createBuildFileIRs(module, state)
+            buildList {
+                +createBuildFileIRs(module, state)
+                module.subModules.forEach { +createBuildFileIRs(it, state) }
+            }
         ).asSingletonList().asSuccess()
     }
 
