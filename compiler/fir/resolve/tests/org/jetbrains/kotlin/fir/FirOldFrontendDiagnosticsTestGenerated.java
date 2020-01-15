@@ -10808,6 +10808,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/nestedLambdaInferenceWithIncorporationOfVariables.kt");
             }
 
+            @TestMetadata("notEnoughInformationFromNullabilityConstraint.kt")
+            public void testNotEnoughInformationFromNullabilityConstraint() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nothingType/notEnoughInformationFromNullabilityConstraint.kt");
+            }
+
             @TestMetadata("nothingWithCallableReference.kt")
             public void testNothingWithCallableReference() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/nothingWithCallableReference.kt");

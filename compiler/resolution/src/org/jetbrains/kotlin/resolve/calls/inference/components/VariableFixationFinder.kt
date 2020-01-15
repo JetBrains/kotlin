@@ -131,7 +131,9 @@ class VariableFixationFinder(
         notFixedTypeVariables[variable]?.constraints?.any { isProperArgumentConstraint(it) } ?: false
 
     private fun Context.isProperArgumentConstraint(c: Constraint) =
-        isProperType(c.type) && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition
+        isProperType(c.type)
+                && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition
+                && !c.isNullabilityConstraint
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
         !type.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) }
