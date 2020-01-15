@@ -2,6 +2,7 @@
 package com.intellij.ide.ui.search;
 
 import com.intellij.application.options.OptionsContainingConfigurable;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.impl.AllFileTemplatesConfigurable;
@@ -123,8 +124,9 @@ public class TraverseUIStarter implements ApplicationStarter {
           processOptionsContainingConfigurable((OptionsContainingConfigurable)configurable, configurableElement);
         }
         else if (configurable instanceof PluginManagerConfigurable) {
-          for (OptionDescription description : wordsToOptionDescriptors(Collections.singleton(PluginManagerConfigurable.MANAGE_PLUGIN_REPOSITORIES))) {
-            append(null, PluginManagerConfigurable.MANAGE_PLUGIN_REPOSITORIES, description.getOption(), configurableElement);
+          for (OptionDescription description : wordsToOptionDescriptors(Collections.singleton(
+            IdeBundle.message("plugin.manager.repositories")))) {
+            append(null, IdeBundle.message("plugin.manager.repositories"), description.getOption(), configurableElement);
           }
         }
         else if (configurable instanceof AllFileTemplatesConfigurable) {
