@@ -49,7 +49,11 @@ class MutableVariableWithConstraints(
 
     // return new actual constraint, if this constraint is new
     fun addConstraint(constraint: Constraint): Constraint? {
-        val previousConstraintWithSameType = constraints.filter { it.typeHashCode == constraint.typeHashCode && it.type == constraint.type }
+        val previousConstraintWithSameType = constraints.filter { oldConstraint ->
+            oldConstraint.typeHashCode == constraint.typeHashCode
+                    && oldConstraint.type == constraint.type
+                    && oldConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
+        }
 
         if (previousConstraintWithSameType.any { previous -> newConstraintIsUseless(previous, constraint) })
             return null
