@@ -1,0 +1,100 @@
+FILE: qualifierPriority.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object B : R|kotlin/Any| {
+            private constructor(): R|A.B| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final object C : R|kotlin/Any| {
+                private constructor(): R|A.B.C| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val B: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+        }
+
+    }
+    public final val ab: R|kotlin/String| = Q|A|.R|/A.Companion.B|
+        public get(): R|kotlin/String|
+    public final val abc: <ERROR TYPE REF: Unresolved name: C> = Q|A|.R|/A.Companion.B|.<Unresolved name: C>#
+        public get(): <ERROR TYPE REF: Unresolved name: C>
+    public final object D : R|kotlin/Any| {
+        private constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class E : R|kotlin/Any| {
+            public constructor(): R|D.E| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final object F : R|kotlin/Any| {
+                private constructor(): R|D.E.F| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final val R|D|.E: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final val def: R|D.E.F| = Q|D.E.F|
+        public get(): R|D.E.F|
+    public final val de: R|kotlin/Unit| = Q|D.E|
+        public get(): R|kotlin/Unit|
+    public final enum class G : R|kotlin/Enum<G>| {
+        private constructor(): R|G| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static enum entry H: R|G| = object : R|G| {
+            private constructor(): R|anonymous| {
+                super<R|G|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|G.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val H: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+            public final fun values(): R|kotlin/Int| {
+                ^values Int(42)
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<G>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|G| {
+        }
+
+    }
+    public final val gh: <ERROR TYPE REF: Ambiguity: H, [/G.H, /G.Companion.H]> = Q|G|.<Ambiguity: H, [/G.H, /G.Companion.H]>#
+        public get(): <ERROR TYPE REF: Ambiguity: H, [/G.H, /G.Companion.H]>
+    public final val gv: <ERROR TYPE REF: Ambiguity: values, [/G.values, /G.Companion.values]> = Q|G|.<Ambiguity: values, [/G.values, /G.Companion.values]>#()
+        public get(): <ERROR TYPE REF: Ambiguity: values, [/G.values, /G.Companion.values]>

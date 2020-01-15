@@ -604,6 +604,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/qualifiedExpressions.kt");
         }
 
+        @TestMetadata("qualifierPriority.kt")
+        public void testQualifierPriority() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/qualifierPriority.kt");
+        }
+
         @TestMetadata("receiverConsistency.kt")
         public void testReceiverConsistency() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/receiverConsistency.kt");
