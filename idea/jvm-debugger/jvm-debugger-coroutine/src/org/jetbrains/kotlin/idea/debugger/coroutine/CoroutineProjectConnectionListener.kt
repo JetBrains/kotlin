@@ -6,33 +6,19 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine
 
 import com.intellij.debugger.DebuggerInvocationUtil
-import com.intellij.debugger.actions.ThreadDumpAction
 import com.intellij.debugger.engine.JavaDebugProcess
-import com.intellij.debugger.impl.DebuggerSession
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.configurations.RunnerSettings
 import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.execution.ui.layout.PlaceInGrid
-import com.intellij.execution.ui.layout.impl.RunnerContentUi
-import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl
-import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.ui.OnePixelSplitter
-import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.content.Content
-import com.intellij.ui.content.ContentManagerAdapter
-import com.intellij.ui.content.ContentManagerEvent
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.xdebugger.*
 import com.intellij.xdebugger.impl.XDebugSessionImpl
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.view.CoroutinesPanel
 import org.jetbrains.kotlin.idea.debugger.coroutine.view.XCoroutineView
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.properties.ReadOnlyProperty
@@ -79,8 +65,9 @@ class CoroutineProjectConnectionListener(val project: Project) : XDebuggerManage
 
     override fun processStarted(debugProcess: XDebugProcess) =
         DebuggerInvocationUtil.swingInvokeLater(project) {
-            if (debugProcess is JavaDebugProcess)
-                registerCoroutinesPanel(debugProcess.session, debugProcess.debuggerSession)
+            if (debugProcess is JavaDebugProcess) {
+                registerXCoroutinesPanel(debugProcess.session)
+            }
         }
 
     override fun processStopped(debugProcess: XDebugProcess) {
@@ -91,7 +78,7 @@ class CoroutineProjectConnectionListener(val project: Project) : XDebuggerManage
             processCounter.decrementAndGet()
     }
 
-    private fun createThreadsContent(session: XDebugSession) {
+    private fun registerXCoroutinesPanel(session: XDebugSession) {
         val ui = session.ui ?: return
         val xCoroutineThreadView = XCoroutineView(project, session as XDebugSessionImpl)
         val framesContent: Content = createContent(ui, xCoroutineThreadView)
@@ -104,48 +91,6 @@ class CoroutineProjectConnectionListener(val project: Project) : XDebuggerManage
     private fun createContent(ui: RunnerLayoutUi, createContentParamProvider: CreateContentParamsProvider): Content {
         val param = createContentParamProvider.createContentParams()
         return ui.createContent(param.id, param.component, param.displayName, param.icon, param.parentComponent)
-    }
-
-    /**
-     * Adds panel to XDebugSessionTab
-     */
-    private fun registerCoroutinesPanel(session: XDebugSession, debuggerSession: DebuggerSession): Boolean {
-        val ui = session.ui ?: return false
-        val panel = CoroutinesPanel(project, debuggerSession.contextManager)
-        // evaluation of `debuggerSession.contextManager.toString()` leads to
-        // java.lang.Throwable: Assertion failed: Should be invoked in manager thread, use DebuggerManagerThreadImpl.getInstance(..).invoke
-        // as toString() is not allowed here
-        createThreadsContent(session)
-
-        val content = ui.createContent(
-            CoroutineDebuggerContentInfo.COROUTINE_THREADS_CONTENT,
-            panel,
-            KotlinBundle.message("debugger.session.tab.coroutine.title"),
-            AllIcons.Debugger.ThreadGroup,
-            panel)
-        content.isCloseable = false
-        ui.addContent(content, 0, PlaceInGrid.left, true)
-        ui.addListener(object : ContentManagerAdapter() {
-            override fun selectionChanged(event: ContentManagerEvent) {
-                if (event.content === content) {
-                    if (content.isSelected) {
-                        panel.setUpdateEnabled(true)
-                        if (panel.isRefreshNeeded) {
-                            panel.rebuildIfVisible(DebuggerSession.Event.CONTEXT)
-                        }
-                    } else {
-                        panel.setUpdateEnabled(false)
-                    }
-                }
-            }
-        }, content)
-        // add coroutine dump button: due to api problem left toolbar is copied, modified and reset to tab
-        val runnerContent = (ui.options as RunnerLayoutUiImpl).getData(RunnerContentUi.KEY.name) as RunnerContentUi
-        val modifiedActions = runnerContent.getActions(true)
-        val pos = modifiedActions.indexOfLast { it is ThreadDumpAction }
-        modifiedActions.add(pos + 1, ActionManager.getInstance().getAction("Kotlin.XDebugger.CoroutinesDump"))
-        ui.options.setLeftToolbar(DefaultActionGroup(modifiedActions), ActionPlaces.DEBUGGER_TOOLBAR)
-        return true
     }
 }
 

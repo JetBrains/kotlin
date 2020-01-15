@@ -119,7 +119,6 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         DebuggerUIUtil.invokeLater {
             if (! (panel.tree.root is EmptyNode)) {
                 treeState = XDebuggerTreeState.saveState(panel.tree)
-                log.info("Tree state saved")
             }
         }
     }
@@ -135,7 +134,6 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         if(treeState != null) {
             restorer?.dispose()
             restorer = treeState?.restoreState(panel.tree)
-            log.info("Tree state restored")
         }
     }
 
