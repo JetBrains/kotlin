@@ -20,12 +20,12 @@ import com.intellij.execution.filters.OpenFileHyperlinkInfo
 import com.intellij.execution.impl.ConsoleViewImpl
 import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.execution.ui.ConsoleViewContentType
-import com.intellij.ide.scratch.ScratchFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
@@ -113,8 +113,8 @@ private class ToolWindowScratchOutputHandler(private val parentDisposable: Dispo
                     OpenFileHyperlinkInfo(
                         project,
                         psiFile.virtualFile,
-                        expression.lineStart
-                    )
+                        expression.lineStart,
+                    ),
                 )
                 print(" ", ConsoleViewContentType.NORMAL_OUTPUT)
             }
@@ -149,7 +149,7 @@ private class ToolWindowScratchOutputHandler(private val parentDisposable: Dispo
                 toolWindow.show(null)
             }
 
-            toolWindow.icon = ExecutionUtil.getLiveIndicator(ScratchFileType.INSTANCE.icon)
+            toolWindow.icon = ExecutionUtil.getLiveIndicator(scratchIcon())
         }
     }
 
@@ -168,7 +168,7 @@ private class ToolWindowScratchOutputHandler(private val parentDisposable: Dispo
                 toolWindow.hide(null)
             }
 
-            toolWindow.icon = ScratchFileType.INSTANCE.icon
+            toolWindow.icon = scratchIcon()
         }
     }
 
@@ -190,13 +190,18 @@ private class ToolWindowScratchOutputHandler(private val parentDisposable: Dispo
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
 
-        Disposer.register(parentDisposable, Disposable {
-            toolWindowManager.unregisterToolWindow(ScratchToolWindowFactory.ID)
-        })
+        Disposer.register(
+            parentDisposable,
+            Disposable {
+                toolWindowManager.unregisterToolWindow(ScratchToolWindowFactory.ID)
+            },
+        )
 
         return window
     }
 }
+
+private fun scratchIcon() = PlainTextFileType.INSTANCE.icon
 
 private fun getLineInfo(psiFile: PsiFile, expression: ScratchExpression) =
     "${psiFile.name}:${expression.lineStart + 1}"
@@ -209,7 +214,7 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val consoleView = ConsoleViewImpl(project, true)
         toolWindow.isToHideOnEmptyContent = true
-        toolWindow.icon = ScratchFileType.INSTANCE.icon
+        toolWindow.icon = scratchIcon()
         toolWindow.hide(null)
 
         val contentManager = toolWindow.contentManager
@@ -237,27 +242,33 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
     }
 
     override fun onFinish(file: ScratchFile) {
-        TransactionGuard.submitTransaction(file.project, Runnable {
-            val psiFile = file.getPsiFile()
-                ?: error(
-                    "PsiFile cannot be found for scratch to render inlays in tests:\n" +
-                            "project.isDisposed = ${file.project.isDisposed}\n" +
-                            "inlays = ${inlays.joinToString { it.second }}\n" +
-                            "errors = ${errors.joinToString()}"
-                )
+        TransactionGuard.submitTransaction(
+            file.project,
+            Runnable {
+                val psiFile = file.getPsiFile()
+                    ?: error(
+                        "PsiFile cannot be found for scratch to render inlays in tests:\n" +
+                                "project.isDisposed = ${file.project.isDisposed}\n" +
+                                "inlays = ${inlays.joinToString { it.second }}\n" +
+                                "errors = ${errors.joinToString()}",
+                    )
 
-            if (inlays.isNotEmpty()) {
-                testPrint(psiFile, inlays.map { (expression, text) ->
-                    "/** ${getLineInfo(psiFile, expression)} $text */"
-                })
-                inlays.clear()
-            }
+                if (inlays.isNotEmpty()) {
+                    testPrint(
+                        psiFile,
+                        inlays.map { (expression, text) ->
+                            "/** ${getLineInfo(psiFile, expression)} $text */"
+                        },
+                    )
+                    inlays.clear()
+                }
 
-            if (errors.isNotEmpty()) {
-                testPrint(psiFile, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
-                errors.clear()
-            }
-        })
+                if (errors.isNotEmpty()) {
+                    testPrint(psiFile, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
+                    errors.clear()
+                }
+            },
+        )
     }
 
     private fun testPrint(file: PsiFile, comments: List<String>) {
@@ -265,7 +276,7 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
             for (comment in comments) {
                 file.addAfter(
                     KtPsiFactory(file.project).createComment(comment),
-                    file.lastChild
+                    file.lastChild,
                 )
             }
         }

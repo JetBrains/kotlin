@@ -20,7 +20,7 @@ private val isJUnitEnabled by lazy { isPluginEnabled("JUnit") }
 private val isTestNgEnabled by lazy { isPluginEnabled("TestNG-J") }
 
 private fun isPluginEnabled(id: String): Boolean {
-    return PluginManager.isPluginInstalled(getId(id)) && id !in PluginManager.getDisabledPlugins()
+    return PluginManager.isPluginInstalled(getId(id)) && !PluginManager.isDisabled(id)
 }
 
 internal fun ConfigurationFromContext.isJpsJunitConfiguration(): Boolean {

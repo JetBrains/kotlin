@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Editor
@@ -30,18 +30,18 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
         openLogsDirIfPresent(project)
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = ShowFilePathAction.isSupported()
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = RevealFileAction.isSupported()
 
     override fun update(e: AnActionEvent) {
         val presentation = e.presentation
-        presentation.isEnabledAndVisible = e.project != null && ShowFilePathAction.isSupported()
+        presentation.isEnabledAndVisible = e.project != null && RevealFileAction.isSupported()
         presentation.text = NAME
     }
 
     private fun openLogsDirIfPresent(project: Project) {
         val logsDir = findLogsDir()
         if (logsDir != null) {
-            ShowFilePathAction.openDirectory(logsDir)
+            RevealFileAction.openDirectory(logsDir)
         } else {
             val parent = WindowManager.getInstance().getStatusBar(project)?.component
                 ?: WindowManager.getInstance().findVisibleFrame().rootPane
@@ -79,6 +79,6 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
     companion object {
         private const val gradleTroubleshootingLink = "https://docs.gradle.org/current/userguide/kotlin_dsl.html#troubleshooting"
 
-        val NAME = "Show Kotlin Gradle DSL Logs in ${ShowFilePathAction.getFileManagerName()}"
+        val NAME = "Show Kotlin Gradle DSL Logs in ${RevealFileAction.getFileManagerName()}"
     }
 }

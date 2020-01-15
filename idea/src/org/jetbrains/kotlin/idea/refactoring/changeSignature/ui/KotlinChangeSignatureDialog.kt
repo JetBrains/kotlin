@@ -236,7 +236,6 @@ class KotlinChangeSignatureDialog(
                     components.add(component)
                     panel.add(component)
                     add(panel)
-                    IJSwingUtilities.adjustComponentsOnMac(label, component)
                     column++
                 }
             }

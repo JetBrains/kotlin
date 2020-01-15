@@ -28,7 +28,7 @@ object ReplIcons {
     val EDITOR_INDICATOR: IconWithTooltip = IconWithTooltip(KotlinIcons.LAUNCH, "Write your commands here")
     val EDITOR_READLINE_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Balloon, "Waiting for input...")
     val COMMAND_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.RunConfigurations.TestState.Run, "Executed command")
-    val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Diff.ArrowRight, "Input line")
+    val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Debugger.PromptInput, "Input line")
 
     // command result icons
     val SYSTEM_HELP: IconWithTooltip = IconWithTooltip(AllIcons.Actions.Help, "System help")

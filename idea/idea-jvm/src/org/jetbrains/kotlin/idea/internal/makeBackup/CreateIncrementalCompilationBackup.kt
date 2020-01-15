@@ -20,7 +20,7 @@ import com.intellij.compiler.server.BuildManager
 import com.intellij.history.core.RevisionsCollector
 import com.intellij.history.integration.LocalHistoryImpl
 import com.intellij.history.integration.patches.PatchCreator
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.PathManager
@@ -49,6 +49,7 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
         const val PROJECT_SYSTEM_FRACTION = .05
         const val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION - PROJECT_SYSTEM_FRACTION
     }
+
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project!!
@@ -183,7 +184,7 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
 
         WaitForProgressToShow.runOrInvokeLaterAboveProgress(
             {
-                ShowFilePathAction.showDialog(
+                RevealFileAction.showDialog(
                     project,
                     "Successfully created backup " + backupFile.absolutePath,
                     "Created backup",

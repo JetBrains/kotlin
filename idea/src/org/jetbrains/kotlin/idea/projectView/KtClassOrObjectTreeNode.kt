@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.idea.projectView
 
 import com.intellij.ide.projectView.PresentationData
-import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.KotlinIconProvider
 import org.jetbrains.kotlin.idea.structureView.getStructureDeclarations
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -35,28 +33,9 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
         }
     }
 
-    private fun update(node: AbstractTreeNode<*>) {
-        val project = project
-        if (project != null) {
-            ProjectView.getInstance(project).currentProjectViewPane?.treeBuilder?.addSubtreeToUpdateByElement(node)
-        }
-    }
-
     override fun updateImpl(data: PresentationData) {
-        val classOrObject = value
-        if (classOrObject != null) {
-            data.presentableText = classOrObject.name
-
-            val parent = parent
-            if (KotlinIconProvider.getMainClass(classOrObject.containingKtFile) != null) {
-                if (parent is KtFileTreeNode) {
-                    update(parent.getParent())
-                }
-            } else {
-                if (parent !is KtClassOrObjectTreeNode && parent !is KtFileTreeNode) {
-                    update(parent)
-                }
-            }
+        value?.let {
+            data.presentableText = it.name
         }
     }
 

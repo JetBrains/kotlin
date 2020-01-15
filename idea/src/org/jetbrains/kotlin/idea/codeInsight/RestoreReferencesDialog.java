@@ -63,9 +63,7 @@ public class RestoreReferencesDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
-    Object[] values = myList.getSelectedValues();
-    mySelectedElements = new Object[values.length];
-    System.arraycopy(values, 0, mySelectedElements, 0, values.length);
+    mySelectedElements = myList.getSelectedValuesList().toArray(new Object[0]);
     super.doOKAction();
   }
 

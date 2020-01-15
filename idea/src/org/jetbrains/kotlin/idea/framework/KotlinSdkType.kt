@@ -77,4 +77,8 @@ class KotlinSdkType : SdkType("KotlinSDK") {
     override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {
 
     }
+
+    override fun allowCreationByUser(): Boolean {
+        return false
+    }
 }

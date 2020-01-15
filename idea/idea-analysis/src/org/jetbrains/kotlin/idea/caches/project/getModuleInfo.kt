@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
@@ -80,12 +81,11 @@ fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): Modu
         return moduleRelatedModuleInfo
     }
 
-    if (ScratchFileService.isInScratchRoot(virtualFile)) {
+    return if (ScratchFileService.findRootType(virtualFile) != ScratchRootType.getInstance()) null
+    else {
         val scratchModule = virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
-        return scratchModule?.testSourceInfo() ?: scratchModule?.productionSourceInfo()
+        scratchModule?.testSourceInfo() ?: scratchModule?.productionSourceInfo()
     }
-
-    return null
 }
 
 private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean) -> T
