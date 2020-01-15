@@ -4,14 +4,13 @@ package com.intellij.psi.impl.source.tree.injected;
 
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.editor.event.SelectionListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.util.ProperTextRange;
-import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,19 +26,14 @@ class SelectionModelWindow implements SelectionModel {
   }
 
   @Override
-  public int getSelectionStart() {
-    return myDocument.hostToInjected(myHostModel.getSelectionStart());
+  public @NotNull Editor getEditor() {
+    return myInjectedEditor;
   }
 
   @Nullable
   @Override
   public VisualPosition getSelectionStartPosition() {
     return myInjectedEditor.offsetToVisualPosition(getSelectionStart());
-  }
-
-  @Override
-  public int getSelectionEnd() {
-    return myDocument.hostToInjected(myHostModel.getSelectionEnd());
   }
 
   @Nullable
@@ -71,36 +65,8 @@ class SelectionModelWindow implements SelectionModel {
   }
 
   @Override
-  public boolean hasSelection() {
-    return myHostModel.hasSelection();
-  }
-
-  @Override
   public boolean hasSelection(boolean anyCaret) {
     return myHostModel.hasSelection(anyCaret);
-  }
-
-  @Override
-  public void setSelection(final int startOffset, final int endOffset) {
-    TextRange hostRange = myDocument.injectedToHost(new ProperTextRange(startOffset, endOffset));
-    myHostModel.setSelection(hostRange.getStartOffset(), hostRange.getEndOffset());
-  }
-
-  @Override
-  public void setSelection(int startOffset, @Nullable VisualPosition endPosition, int endOffset) {
-    TextRange hostRange = myDocument.injectedToHost(new ProperTextRange(startOffset, endOffset));
-    myHostModel.setSelection(hostRange.getStartOffset(), endPosition, hostRange.getEndOffset());
-  }
-
-  @Override
-  public void setSelection(@Nullable VisualPosition startPosition, int startOffset, @Nullable VisualPosition endPosition, int endOffset) {
-    TextRange hostRange = myDocument.injectedToHost(new ProperTextRange(startOffset, endOffset));
-    myHostModel.setSelection(startPosition, hostRange.getStartOffset(), endPosition, hostRange.getEndOffset());
-  }
-
-  @Override
-  public void removeSelection() {
-    myHostModel.removeSelection();
   }
 
   @Override
@@ -116,16 +82,6 @@ class SelectionModelWindow implements SelectionModel {
   @Override
   public void removeSelectionListener(@NotNull final SelectionListener listener) {
     myHostModel.removeSelectionListener(listener);
-  }
-
-  @Override
-  public void selectLineAtCaret() {
-    myHostModel.selectLineAtCaret();
-  }
-
-  @Override
-  public void selectWordAtCaret(final boolean honorCamelWordsSettings) {
-    myHostModel.selectWordAtCaret(honorCamelWordsSettings);
   }
 
   @Override
