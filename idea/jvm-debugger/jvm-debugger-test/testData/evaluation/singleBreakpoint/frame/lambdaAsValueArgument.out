@@ -1,0 +1,28 @@
+LineBreakpoint created at lambdaAsValueArgument.kt:19
+Run Java
+Connected to the target VM
+lambdaAsValueArgument.kt:19
+ frame    = invoke:19, LambdaAsValueArgumentKt$contactMapper$1$1 {lambdaAsValueArgument}
+   local    = this: lambdaAsValueArgument.User = {lambdaAsValueArgument.User@uniqueID}User(firstName=a, lastName=b, age=10) (sp = null)
+     field    = firstName: java.lang.String = a (sp = lambdaAsValueArgument.kt, 9)
+       field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
+         element  = 0 = 'a' 97
+       field    = hash: int = 0 (sp = String.!EXT!)
+     field    = lastName: java.lang.String = b (sp = lambdaAsValueArgument.kt, 9)
+       field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
+         element  = 0 = 'b' 98
+       field    = hash: int = 0 (sp = String.!EXT!)
+     field    = age: int = 10 (sp = lambdaAsValueArgument.kt, 9)
+   local    = i: lambdaAsValueArgument.User = {lambdaAsValueArgument.User@uniqueID}User(firstName=a, lastName=b, age=10) (sp = lambdaAsValueArgument.kt, 17)
+     field    = firstName: java.lang.String = a (sp = lambdaAsValueArgument.kt, 9)
+       field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
+         element  = 0 = 'a' 97
+       field    = hash: int = 0 (sp = String.!EXT!)
+     field    = lastName: java.lang.String = b (sp = lambdaAsValueArgument.kt, 9)
+       field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
+         element  = 0 = 'b' 98
+       field    = hash: int = 0 (sp = String.!EXT!)
+     field    = age: int = 10 (sp = lambdaAsValueArgument.kt, 9)
+Disconnected from the target VM
+
+Process finished with exit code 0

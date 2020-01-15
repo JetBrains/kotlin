@@ -904,6 +904,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/inlineFunThisKotlinVariables.kt");
             }
 
+            @TestMetadata("lambdaAsValueArgument.kt")
+            public void testLambdaAsValueArgument() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/lambdaAsValueArgument.kt");
+            }
+
             @TestMetadata("lambdaFun1.kt")
             public void testLambdaFun1() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/lambdaFun1.kt");

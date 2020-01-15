@@ -461,10 +461,18 @@ fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext
         lambdaExpressionParent.name?.let { return it }
     }
 
-    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return null
-    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return null
-    val call = callExpression.getResolvedCall(bindingContext) ?: return null
+    val callExpression = when (val argument = lambdaExpression.parent) {
+        is KtLambdaArgument -> {
+            argument.parent as? KtCallExpression ?: return null
+        }
+        is KtValueArgument -> {
+            val valueArgumentList = argument.parent as? KtValueArgumentList ?: return null
+            valueArgumentList.parent as? KtCallExpression ?: return null
+        }
+        else -> return null
+    }
 
+    val call = callExpression.getResolvedCall(bindingContext) ?: return null
     return call.resultingDescriptor.name.asString()
 }
 
