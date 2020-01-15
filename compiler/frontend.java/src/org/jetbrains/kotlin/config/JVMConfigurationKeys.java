@@ -116,4 +116,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
             CompilerConfigurationKey.create("Paths to .klib libraries");
+
+    public static final CompilerConfigurationKey<Boolean> IS_IR_WITH_STABLE_ABI =
+            CompilerConfigurationKey.create("Is IR with stable ABI");
 }

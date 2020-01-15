@@ -146,29 +146,31 @@ class AnalyzerWithCompilerReport(
             return diagnostic.severity == Severity.ERROR
         }
 
-        data class ReportDiagnosticsResult(val hasErrors: Boolean, val hasIncompatibleClassErrors: Boolean)
-
-        fun reportDiagnostics(unsortedDiagnostics: Diagnostics, reporter: DiagnosticMessageReporter): ReportDiagnosticsResult {
+        fun reportDiagnostics(unsortedDiagnostics: Diagnostics, reporter: DiagnosticMessageReporter): Boolean {
             var hasErrors = false
-            var hasIncompatibleClassErrors = false
             val diagnostics = sortedDiagnostics(unsortedDiagnostics.all())
             for (diagnostic in diagnostics) {
                 hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter)
-                hasIncompatibleClassErrors = hasIncompatibleClassErrors or
-                        (diagnostic.factory == Errors.INCOMPATIBLE_CLASS || diagnostic.factory == Errors.PRE_RELEASE_CLASS)
             }
-
-            return ReportDiagnosticsResult(hasErrors, hasIncompatibleClassErrors)
+            return hasErrors
         }
 
         fun reportDiagnostics(diagnostics: Diagnostics, messageCollector: MessageCollector): Boolean {
-            val (hasErrors, hasIncompatibleClassErrors) = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
+            val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
 
-            if (hasIncompatibleClassErrors) {
+            if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS || it.factory == Errors.PRE_RELEASE_CLASS }) {
                 messageCollector.report(
                     ERROR,
                     "Incompatible classes were found in dependencies. " +
                             "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors"
+                )
+            }
+
+            if (diagnostics.any { it.factory == Errors.IR_COMPILED_CLASS }) {
+                messageCollector.report(
+                    ERROR,
+                    "Classes compiled by a new Kotlin compiler backend were found in dependencies. " +
+                            "Remove them from the classpath or use '-Xallow-jvm-ir-dependencies' to suppress errors"
                 )
             }
 

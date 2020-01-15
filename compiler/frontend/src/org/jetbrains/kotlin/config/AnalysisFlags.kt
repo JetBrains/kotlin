@@ -41,4 +41,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val ideMode by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val reportErrorsOnIrDependencies by AnalysisFlag.Delegates.Boolean
 }

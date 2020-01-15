@@ -58,6 +58,9 @@ object MissingDependencyClassChecker : CallChecker {
             if (source.isPreReleaseInvisible) {
                 return PRE_RELEASE_CLASS.on(reportOn, source.presentableString)
             }
+            if (source.isInvisibleIrDependency) {
+                return IR_COMPILED_CLASS.on(reportOn, source.presentableString)
+            }
         }
 
         return null

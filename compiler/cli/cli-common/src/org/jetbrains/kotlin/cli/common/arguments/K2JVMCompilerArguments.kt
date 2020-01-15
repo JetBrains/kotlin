@@ -93,6 +93,20 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var irCheckLocalNames: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xallow-jvm-ir-dependencies",
+        description = "When not using the IR backend, do not report errors on those classes in dependencies, " +
+                "which were compiled by the IR backend"
+    )
+    var allowJvmIrDependencies: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xir-binary-with-stable-abi",
+        description = "When using the IR backend, produce binaries which can be read by non-IR backend.\n" +
+                "The author is responsible for verifying that the resulting binaries do indeed have the correct ABI"
+    )
+    var isIrWithStableAbi: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)
 
@@ -327,6 +341,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.irCheckLocalNames] = irCheckLocalNames
+        result[AnalysisFlags.reportErrorsOnIrDependencies] = !useIR && !useFir && !allowJvmIrDependencies
         return result
     }
 

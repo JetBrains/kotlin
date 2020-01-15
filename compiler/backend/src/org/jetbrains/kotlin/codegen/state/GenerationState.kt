@@ -264,6 +264,7 @@ class GenerationState private constructor(
     val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
 
     val metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION) ?: JvmMetadataVersion.INSTANCE
+    val isIrWithStableAbi = configuration.getBoolean(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI)
 
     val globalSerializationBindings = JvmSerializationBindings()
     lateinit var irBasedMapAsmMethod: (FunctionDescriptor) -> Method

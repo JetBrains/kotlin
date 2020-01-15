@@ -42,7 +42,7 @@ public annotation class Metadata(
     @get:JvmName("d1")
     val data1: Array<String> = [],
     /**
-     * An addition to [d1]: array of strings which occur in metadata, written in plain text so that strings already present
+     * An addition to [data1]: array of strings which occur in metadata, written in plain text so that strings already present
      * in the constant pool are reused. These strings may be then indexed in the metadata by an integer index in this array.
      */
     @get:JvmName("d2")
@@ -67,7 +67,10 @@ public annotation class Metadata(
      * * 1 - this class file is compiled by a pre-release version of Kotlin and is not visible to release versions.
      * * 2 - this class file is a compiled Kotlin script source file (.kts).
      * * 3 - the metadata of this class file is not supposed to be read by the compiler, whose major.minor version is less than
-     *   the major.minor version of this metadata ([mv]).
+     *   the major.minor version of this metadata ([metadataVersion]).
+     * * 4 - this class file is compiled with the new Kotlin compiler backend introduced in Kotlin 1.4.
+     * * 5 - if the class file is compiled with the new Kotlin compiler backend, the metadata has been verified by the author and
+     *   no metadata incompatibility diagnostic should be reported at the call site.
      */
     @SinceKotlin("1.1")
     @get:JvmName("xi")
