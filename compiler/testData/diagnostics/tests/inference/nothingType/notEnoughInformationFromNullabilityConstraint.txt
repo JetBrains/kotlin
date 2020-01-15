@@ -1,7 +1,6 @@
 package
 
-public val v: [ERROR : Type for id(
-    make()
-)]
 public fun </*0*/ I> id(/*0*/ arg: I): I
 public fun </*0*/ M> make(): M?
+public fun </*0*/ S> select(/*0*/ vararg args: S /*kotlin.Array<out S>*/): S
+public fun test(): kotlin.Unit
