@@ -227,8 +227,11 @@ internal class KonanCompilerRunner(
             deleteOnExit()
         }
         argFile.printWriter().use { writer ->
-            args.forEach {
-                writer.println(it)
+            args.forEach { arg ->
+                val escapedArg = arg
+                    .replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                writer.println("\"$escapedArg\"")
             }
         }
 
