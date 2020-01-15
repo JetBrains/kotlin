@@ -15,10 +15,9 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.LocalSdkFix;
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdkLookup;
-import com.intellij.openapi.roots.ui.configuration.SdkPopupFactory;
+import com.intellij.openapi.roots.ui.configuration.*;
+import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
+import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker;
 import com.intellij.openapi.ui.Messages;
@@ -37,7 +36,6 @@ import javax.swing.*;
 import java.util.*;
 
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
-import static com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
 
 public class UnknownSdkTracker implements Disposable {
   private static final Logger LOG = Logger.getInstance(UnknownSdkTracker.class);
@@ -99,10 +97,10 @@ public class UnknownSdkTracker implements Disposable {
                List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
 
                indicator.setText("Looking for local SDKs...");
-               Map<UnknownSdk, LocalSdkFix> localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
+               Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
 
                indicator.setText("Looking for downloadable SDKs...");
-               Map<UnknownSdk, DownloadSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
+               Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
                fixable.forEach(it -> missingSdks.put(it.getSdkName(), it.getSdkType()));
 
                if (!localFixes.isEmpty()) {
@@ -117,8 +115,8 @@ public class UnknownSdkTracker implements Disposable {
   }
 
   private void showStatus(@NotNull Map<String, SdkType> missingSdks,
-                          @NotNull Map<UnknownSdk, LocalSdkFix> localFixes,
-                          @NotNull Map<UnknownSdk, DownloadSdkFix> downloadFixes) {
+                          @NotNull Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes,
+                          @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes) {
     UnknownSdkBalloonNotification
       .getInstance(myProject)
       .notifyFixedSdks(localFixes);
@@ -150,7 +148,7 @@ public class UnknownSdkTracker implements Disposable {
     return lookups;
   }
 
-  public void applyDownloadableFix(@NotNull UnknownSdk info, @NotNull DownloadSdkFix fix) {
+  public void applyDownloadableFix(@NotNull UnknownSdk info, @NotNull UnknownSdkDownloadableSdkFix fix) {
     downloadFix(myProject, info, fix, sdk -> {
       if (sdk != null) {
         updateUnknownSdks();
@@ -161,7 +159,7 @@ public class UnknownSdkTracker implements Disposable {
   @ApiStatus.Internal
   public static void downloadFix(@Nullable Project project,
                                  @NotNull UnknownSdk info,
-                                 @NotNull DownloadSdkFix fix,
+                                 @NotNull UnknownSdkDownloadableSdkFix fix,
                                  @NotNull Consumer<? super Sdk> onCompleted) {
     SdkDownloadTask task;
     String title = "Configuring SDK";
@@ -229,12 +227,12 @@ public class UnknownSdkTracker implements Disposable {
       .showUnderneathToTheRightOf(underneathRightOfComponent);
   }
 
-  private void configureLocalSdks(@NotNull Map<UnknownSdk, LocalSdkFix> localFixes) {
+  private void configureLocalSdks(@NotNull Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes) {
     if (localFixes.isEmpty()) return;
 
-    for (Map.Entry<UnknownSdk, LocalSdkFix> e : localFixes.entrySet()) {
+    for (Map.Entry<UnknownSdk, UnknownSdkLocalSdkFix> e : localFixes.entrySet()) {
       UnknownSdk info = e.getKey();
-      LocalSdkFix fix = e.getValue();
+      UnknownSdkLocalSdkFix fix = e.getValue();
 
       configureLocalSdk(info, fix, sdk -> {});
     }
@@ -244,7 +242,7 @@ public class UnknownSdkTracker implements Disposable {
 
   @ApiStatus.Internal
   public static void configureLocalSdk(@NotNull UnknownSdk info,
-                                       @NotNull LocalSdkFix fix,
+                                       @NotNull UnknownSdkLocalSdkFix fix,
                                        @NotNull Consumer<? super Sdk> onCompleted) {
     ApplicationManager.getApplication().invokeLater(() -> {
       try {

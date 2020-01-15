@@ -11,8 +11,8 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.DownloadSdkFix;
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk;
+import com.intellij.openapi.roots.ui.configuration.UnknownSdk;
+import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
@@ -83,7 +83,7 @@ public class UnknownSdkEditorNotification implements Disposable {
 
   public void showNotifications(boolean allowProjectSdkValidation,
                                 @NotNull Map<String, SdkType> unifiableSdkNames,
-                                @NotNull Map<UnknownSdk, DownloadSdkFix> files) {
+                                @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> files) {
     ImmutableSet.Builder<SdkFixInfo> notifications = ImmutableSet.builder();
     for (Map.Entry<String, SdkType> e : unifiableSdkNames.entrySet()) {
       String name = e.getKey();
@@ -91,7 +91,7 @@ public class UnknownSdkEditorNotification implements Disposable {
       notifications.add(new SimpleSdkFixInfo(name, type));
     }
 
-    for (Map.Entry<UnknownSdk, DownloadSdkFix> e : files.entrySet()) {
+    for (Map.Entry<UnknownSdk, UnknownSdkDownloadableSdkFix> e : files.entrySet()) {
       notifications.add(new SimpleSdkFixInfo(e.getKey(), e.getValue()));
     }
 
@@ -144,7 +144,7 @@ public class UnknownSdkEditorNotification implements Disposable {
     private final String mySdkName;
     @Nullable private final SdkType mySdkType;
     @Nullable private final UnknownSdk mySdk;
-    @Nullable private final DownloadSdkFix myFix;
+    @Nullable private final UnknownSdkDownloadableSdkFix myFix;
 
     SimpleSdkFixInfo(String sdkName, @Nullable SdkType sdkType) {
       mySdkName = sdkName;
@@ -153,7 +153,7 @@ public class UnknownSdkEditorNotification implements Disposable {
       myFix = null;
     }
 
-    SimpleSdkFixInfo(@NotNull UnknownSdk sdk, @NotNull DownloadSdkFix fix) {
+    SimpleSdkFixInfo(@NotNull UnknownSdk sdk, @NotNull UnknownSdkDownloadableSdkFix fix) {
       mySdkName = sdk.getSdkName();
       mySdkType = sdk.getSdkType();
       mySdk = sdk;

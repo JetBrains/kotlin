@@ -12,13 +12,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.*
 import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.Consumer
 import org.jetbrains.annotations.Contract
 import org.jetbrains.annotations.Nls
+import java.util.function.Predicate
 
 
 /**
@@ -52,8 +51,8 @@ data class SdkLookupBuilder private constructor(
   val sdkMinVersionInclusive: String? = null,
   val sdkMaxVersionExclusive: String? = null,
 
-  val onLocalSdkSuggested: ((LocalSdkFix) -> Boolean)? = null,
-  val onDownloadableSdkSuggested: ((DownloadSdkFix) -> Boolean)? = null,
+  val onLocalSdkSuggested: ((UnknownSdkLocalSdkFix) -> Boolean)? = null,
+  val onDownloadableSdkSuggested: ((UnknownSdkDownloadableSdkFix) -> Boolean)? = null,
 
   /**
    * The [Sdk#sdkType] may not match the proposed [sdkType] if the
@@ -78,8 +77,8 @@ data class SdkLookupBuilder private constructor(
   @Contract(pure = true) fun withMinSdkVersionInclusive(version: String) = copy(sdkMinVersionInclusive = version)
   @Contract(pure = true) fun withMaxSdkVersionExclusive(version: String) = copy(sdkMaxVersionExclusive = version)
 
-  @Contract(pure = true) fun onLocalSdkSuggested(handler: (LocalSdkFix) -> Boolean) = copy(onLocalSdkSuggested = handler)
-  @Contract(pure = true) fun onDownloadableSdkSuggested(handler: (DownloadSdkFix) -> Boolean) = copy(onDownloadableSdkSuggested = handler)
+  @Contract(pure = true) fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> Boolean) = copy(onLocalSdkSuggested = handler)
+  @Contract(pure = true) fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> Boolean) = copy(onDownloadableSdkSuggested = handler)
   @Contract(pure = true) fun onSdkResolved(handler: (Sdk?) -> Unit) = copy(onSdkResolved = handler)
 
   fun lookup() = service<SdkLookup>().lookup(copy())
@@ -119,10 +118,21 @@ internal class SdkLookupImpl : SdkLookup {
       return
     }
 
+    val versionPredicate = if (sdkMinVersionInclusive != null || sdkMaxVersionExclusive != null) {
+      val vCmp = sdkType.versionStringComparator()
+      Predicate<String> { version ->
+        ((sdkMinVersionInclusive == null || vCmp.compare(sdkMinVersionInclusive, version) <= 0))
+        &&
+        ((sdkMaxVersionExclusive == null || vCmp.compare(version, sdkMaxVersionExclusive) > 0))
+      }
+    } else {
+      Predicate { true }
+    }
+
     val unknownSdk = object: UnknownSdk {
-      override fun getSdkMinVersionRequirement() = this@run.sdkMinVersionInclusive
-      override fun getSdkMaxVersionRequirement() = this@run.sdkMaxVersionExclusive
       override fun getSdkType() : SdkType = this@run.sdkType
+      override fun getSdkVersionStringPredicate() = versionPredicate
+      override fun toString() = "SdkLookup{${sdkType.presentableName}, version in [$sdkMinVersionInclusive, $sdkMaxVersionExclusive) }"
     }
 
     runWithProgress(onCancelled = { onSdkResolved?.invoke(null) }) { indicator ->

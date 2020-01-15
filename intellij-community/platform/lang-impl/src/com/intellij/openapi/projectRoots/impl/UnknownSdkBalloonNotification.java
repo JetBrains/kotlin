@@ -7,6 +7,8 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.roots.ui.configuration.SdkListPresenter;
+import com.intellij.openapi.roots.ui.configuration.UnknownSdk;
+import com.intellij.openapi.roots.ui.configuration.UnknownSdkLocalSdkFix;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +17,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static com.intellij.notification.NotificationAction.createSimple;
-import static com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.*;
 
 public class UnknownSdkBalloonNotification {
   private static final NotificationGroup SDK_CONFIGURED_GROUP
@@ -32,7 +33,7 @@ public class UnknownSdkBalloonNotification {
     myProject = project;
   }
 
-  public void notifyFixedSdks(@NotNull Map<? extends UnknownSdk, LocalSdkFix> localFixes) {
+  public void notifyFixedSdks(@NotNull Map<? extends UnknownSdk, UnknownSdkLocalSdkFix> localFixes) {
     if (localFixes.isEmpty()) return;
 
     final String title;
@@ -40,8 +41,8 @@ public class UnknownSdkBalloonNotification {
     final StringBuilder message = new StringBuilder();
 
     Set<String> usages = new TreeSet<>();
-    for (Map.Entry<? extends UnknownSdk, LocalSdkFix> entry : localFixes.entrySet()) {
-      LocalSdkFix fix = entry.getValue();
+    for (Map.Entry<? extends UnknownSdk, UnknownSdkLocalSdkFix> entry : localFixes.entrySet()) {
+      UnknownSdkLocalSdkFix fix = entry.getValue();
       String usage = "\"" + entry.getKey().getSdkName() + "\"" +
                      " is set to " +
                      fix.getVersionString() +
@@ -52,7 +53,7 @@ public class UnknownSdkBalloonNotification {
     message.append(StringUtil.join(usages, "<br/><br/>"));
 
     if (localFixes.size() == 1) {
-      Map.Entry<? extends UnknownSdk, LocalSdkFix> entry = localFixes.entrySet().iterator().next();
+      Map.Entry<? extends UnknownSdk, UnknownSdkLocalSdkFix> entry = localFixes.entrySet().iterator().next();
       UnknownSdk info = entry.getKey();
       String sdkTypeName = info.getSdkType().getPresentableName();
       title = sdkTypeName + " is configured";

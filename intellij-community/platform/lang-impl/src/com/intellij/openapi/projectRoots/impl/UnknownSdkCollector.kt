@@ -8,7 +8,7 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressManager.checkCanceled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.SdkType
-import com.intellij.openapi.projectRoots.impl.UnknownSdkResolver.UnknownSdk
+import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.openapi.roots.ModuleJdkOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
