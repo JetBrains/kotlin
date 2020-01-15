@@ -27,6 +27,7 @@ import com.intellij.openapi.fileEditor.impl.text.AsyncEditorLoader;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.preview.PreviewManager;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -253,8 +254,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
 
     JBPopup popup = isPreviewMode ? null : createUsagePopup(usages, visibleNodes, handler, editor, popupPosition,
                                                             maxUsages, usageView, options, table, itemChosenCallback, presentation, processIcon, minWidth);
+    ProgressIndicator indicator = new ProgressIndicatorBase();
     if (popup != null) {
       Disposer.register(popup, usageView);
+      Disposer.register(popup, indicator::cancel);
 
       // show popup only if find usages takes more than 300ms, otherwise it would flicker needlessly
       EdtScheduledExecutorService.getInstance().schedule(() -> {
@@ -316,62 +319,59 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
       return true;
     };
 
-    ProgressIndicator indicator = FindUsagesManager.startProcessUsages(handler, primaryElements, secondaryElements, collect,
-                                                                             options, ()-> ApplicationManager.getApplication().invokeLater(() -> {
-         Disposer.dispose(processIcon);
-         Container parent = processIcon.getParent();
-         if (parent != null) {
-           parent.remove(processIcon);
-           parent.repaint();
-         }
-         pingEDT.ping(); // repaint title
-         synchronized (usages) {
-           if (visibleNodes.isEmpty()) {
-             if (usages.isEmpty()) {
-               String text = UsageViewBundle.message("no.usages.found.in", searchScopePresentableName(options));
-               hint(editor, text, handler, popupPosition, maxUsages, options, false);
-               cancel(popup);
-             }
-             // else all usages filtered out
-           }
-           else if (visibleNodes.size() == 1) {
-             if (usages.size() == 1) {
-               //the only usage
-               Usage usage = visibleNodes.iterator().next().getUsage();
-               if (usage == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR) {
-                 hint(editor, UsageViewManagerImpl.outOfScopeMessage(outOfScopeUsages.get(), options.searchScope), handler, popupPosition, maxUsages, options, true);
-               }
-               else {
-                 String message = UsageViewBundle.message("show.usages.only.usage", searchScopePresentableName(options));
-                 navigateAndHint(usage, message, handler, popupPosition, maxUsages, options);
-               }
-               cancel(popup);
-             }
-             else {
-               assert usages.size() > 1 : usages;
-               // usage view can filter usages down to one
-               Usage visibleUsage = visibleNodes.iterator().next().getUsage();
-               if (areAllUsagesInOneLine(visibleUsage, usages)) {
-                 String hint = UsageViewBundle.message("all.usages.are.in.this.line", usages.size(), searchScopePresentableName(options));
-                 navigateAndHint(visibleUsage, hint, handler, popupPosition, maxUsages, options);
-                 cancel(popup);
-               }
-             }
-           }
-           else {
-             if (popup != null) {
-               String title = presentation.getTabText();
-               boolean shouldShowMoreSeparator = visibleNodes.contains(Holder.MORE_USAGES_SEPARATOR_NODE);
-               String fullTitle = getFullTitle(usages, title, shouldShowMoreSeparator,
-                                               visibleNodes.size() - (shouldShowMoreSeparator ? 1 : 0), false);
-               popup.setCaption(fullTitle);
-             }
-           }
-         }
-       }, project.getDisposed()));
-    if (popup != null) {
-      Disposer.register(popup, indicator::cancel);
-    }
+    FindUsagesManager.startProcessUsages(indicator, handler, primaryElements, secondaryElements, collect,
+                                         options, ()-> ApplicationManager.getApplication().invokeLater(() -> {
+        Disposer.dispose(processIcon);
+        Container parent = processIcon.getParent();
+        if (parent != null) {
+          parent.remove(processIcon);
+          parent.repaint();
+        }
+        pingEDT.ping(); // repaint title
+        synchronized (usages) {
+          if (visibleNodes.isEmpty()) {
+            if (usages.isEmpty()) {
+              String text = UsageViewBundle.message("no.usages.found.in", searchScopePresentableName(options));
+              hint(editor, text, handler, popupPosition, maxUsages, options, false);
+              cancel(popup);
+            }
+            // else all usages filtered out
+          }
+          else if (visibleNodes.size() == 1) {
+            if (usages.size() == 1) {
+              //the only usage
+              Usage usage = visibleNodes.iterator().next().getUsage();
+              if (usage == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR) {
+                hint(editor, UsageViewManagerImpl.outOfScopeMessage(outOfScopeUsages.get(), options.searchScope), handler, popupPosition, maxUsages, options, true);
+              }
+              else {
+                String message = UsageViewBundle.message("show.usages.only.usage", searchScopePresentableName(options));
+                navigateAndHint(usage, message, handler, popupPosition, maxUsages, options);
+              }
+              cancel(popup);
+            }
+            else {
+              assert usages.size() > 1 : usages;
+              // usage view can filter usages down to one
+              Usage visibleUsage = visibleNodes.iterator().next().getUsage();
+              if (areAllUsagesInOneLine(visibleUsage, usages)) {
+                String hint = UsageViewBundle.message("all.usages.are.in.this.line", usages.size(), searchScopePresentableName(options));
+                navigateAndHint(visibleUsage, hint, handler, popupPosition, maxUsages, options);
+                cancel(popup);
+              }
+            }
+          }
+          else {
+            if (popup != null) {
+              String title = presentation.getTabText();
+              boolean shouldShowMoreSeparator = visibleNodes.contains(Holder.MORE_USAGES_SEPARATOR_NODE);
+              String fullTitle = getFullTitle(usages, title, shouldShowMoreSeparator,
+                                              visibleNodes.size() - (shouldShowMoreSeparator ? 1 : 0), false);
+              popup.setCaption(fullTitle);
+            }
+          }
+        }
+      }, project.getDisposed()));
   }
 
   @NotNull
@@ -437,7 +437,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     if (shortcut != null) {
       shortcutText = "(" + KeymapUtil.getShortcutText(shortcut) + ")";
     }
-    return new InplaceButton("Settings..." + shortcutText, AllIcons.General.Settings, e -> {
+    return new InplaceButton("Settings..." + shortcutText, AllIcons.General.Settings, __ -> {
       int minWidth = myWidth;
       ApplicationManager.getApplication().invokeLater(() -> showDialogAndFindUsages(handler, popupPosition, editor, maxUsages, minWidth),
                                                       handler.getProject().getDisposed());
@@ -569,7 +569,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   private ActiveComponent createPinButton(@NotNull FindUsagesHandler handler,
                                           @NotNull UsageViewImpl usageView,
                                           @NotNull FindUsagesOptions options,
-                                          @NotNull JBPopup[] popup,
+                                          JBPopup @NotNull [] popup,
                                           @NotNull DefaultActionGroup pinGroup) {
     Icon icon = ToolWindowManagerEx.getInstanceEx(handler.getProject()).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
     AnAction pinAction =
