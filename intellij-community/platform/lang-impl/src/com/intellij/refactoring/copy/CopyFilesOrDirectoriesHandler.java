@@ -304,7 +304,7 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
   private static void copyToDirectory(@NotNull PsiFileSystemItem elementToCopy,
                                       @Nullable String newName,
                                       @NotNull PsiDirectory targetDirectory,
-                                      @Nullable int[] choice,
+                                      int @Nullable [] choice,
                                       @Nullable String title,
                                       @NotNull List<PsiFile> added) throws IncorrectOperationException, IOException {
     if (elementToCopy instanceof PsiFile) {
