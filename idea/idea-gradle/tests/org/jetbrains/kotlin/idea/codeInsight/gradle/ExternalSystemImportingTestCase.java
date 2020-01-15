@@ -150,6 +150,14 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
                                                         field.getName());
                             }
                         }
+                        else if (fieldValue instanceof Map) {
+                            for (Map.Entry e : ((Map<Object, Object>) fieldValue).entrySet()) {
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, e.getKey(),
+                                                        field.getName());
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, e.getValue(),
+                                                        "value" + field.getName());
+                            }
+                        }
                         else {
                             saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, fieldValue,
                                                     field.getName());
