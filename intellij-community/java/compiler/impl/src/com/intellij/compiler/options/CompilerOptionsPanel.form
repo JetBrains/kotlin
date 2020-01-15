@@ -68,7 +68,7 @@
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Build project automatically"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.build.project.automatically"/>
         </properties>
       </component>
       <component id="17126" class="javax.swing.JLabel" binding="myHeapSizeLabel">
@@ -76,7 +76,7 @@
           <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Build process heap size (Mbytes):"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.build.process.heap.size"/>
         </properties>
       </component>
       <component id="a28b8" class="javax.swing.JTextField" binding="myHeapSizeField" custom-create="true">
@@ -90,7 +90,7 @@
           <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="User-local build process VM options (overrides Shared options):"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.user.local.build.process.vm.options"/>
         </properties>
       </component>
       <component id="ba694" class="javax.swing.JCheckBox" binding="myCbParallelCompilation">
@@ -98,7 +98,7 @@
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Compile independent modules in parallel"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.compile.independent.modules.in.parallel"/>
         </properties>
       </component>
       <component id="91979" class="javax.swing.JLabel" binding="myParallelCompilationLegendLabel">
@@ -106,7 +106,7 @@
           <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="(may require larger heap size)"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.parallel.module.compile.may.require.larger.heap.size"/>
         </properties>
       </component>
       <component id="732b1" class="javax.swing.JLabel" binding="myEnableAutomakeLegendLabel">
@@ -114,7 +114,7 @@
           <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="(only works while not running / debugging)"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.auto.build.only.works.while.not.running"/>
         </properties>
       </component>
       <component id="4b44" class="javax.swing.JCheckBox" binding="myCbRebuildOnDependencyChange" default-binding="true">
@@ -122,7 +122,7 @@
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Rebuild module on dependency change"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.rebuild.module.on.dependency.change"/>
         </properties>
       </component>
       <component id="31cc6" class="javax.swing.JCheckBox" binding="myCbDisplayNotificationPopup">
@@ -154,7 +154,7 @@
           <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Shared build process VM options:"/>
+          <text resource-bundle="messages/CompilerBundle" key="settings.shared.build.process.vm.options"/>
         </properties>
       </component>
       <grid id="6ee49" binding="myAssertNotNullPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -178,7 +178,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="&amp;Configure annotations..."/>
+              <text resource-bundle="messages/CompilerBundle" key="settings.configure.annotations"/>
             </properties>
           </component>
           <hspacer id="4b9fc">

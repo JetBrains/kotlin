@@ -80,10 +80,9 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
                                    "<b>/</b> &mdash; path separator; <b>/**/</b> &mdash; any number of directories; " +
                                    "<i>&lt;dir_name&gt;</i>:<i>&lt;pattern&gt;</i> &mdash; restrict to source roots with the specified name"
     ));
-    myWarningLabel.setText("<html>WARNING!<br>" +
-                                              /*"All source files located in the generated sources output directory WILL BE EXCLUDED from annotation processing. " +*/
-                                              "If option 'Clear output directory on rebuild' is enabled, " +
-                                              "the entire contents of directories where generated sources are stored WILL BE CLEARED on rebuild.</html>");
+
+    /*"All source files located in the generated sources output directory WILL BE EXCLUDED from annotation processing. " +*/
+    myWarningLabel.setText(CompilerBundle.message("settings.warning"));
     myWarningLabel.setFont(myWarningLabel.getFont().deriveFont(Font.BOLD));
 
     myPatternLegendLabel.setForeground(new JBColor(Gray._50, Gray._130));
