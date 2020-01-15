@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.conversion.ConversionService
@@ -200,7 +200,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
    * So, save on app or project closing uses this method to process scheduled for EDT activities - instead of using regular EDT queue special one is used.
    */
   @CalledInAwt
-  override fun saveSettingsUnderModalProgress(componentManager: ComponentManager, isSaveAppAlso: Boolean): Boolean {
+  override fun saveSettingsUnderModalProgress(componentManager: ComponentManager): Boolean {
     if (!ApplicationManager.getApplication().isDispatchThread) {
       throw IllegalStateException(
         "saveSettingsUnderModalProgress is intended to be called only in EDT because otherwise wrapping into modal progress task is not required" +
@@ -225,9 +225,6 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
 
           runBlocking {
             isSavedSuccessfully = saveSettings(componentManager, forceSavingAllSettings = true)
-            if (isSaveAppAlso && componentManager !is Application) {
-              saveSettings(ApplicationManager.getApplication(), forceSavingAllSettings = true)
-            }
           }
 
           if (project != null && !ApplicationManager.getApplication().isUnitTestMode) {
