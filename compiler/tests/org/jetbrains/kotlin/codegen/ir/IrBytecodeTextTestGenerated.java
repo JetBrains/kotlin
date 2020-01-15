@@ -930,6 +930,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testPrivateCompanionObjectAccessors_before() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/companion/privateCompanionObjectAccessors_before.kt");
         }
+
+        @TestMetadata("protectedCompanionObjectAccessors_after.kt")
+        public void testProtectedCompanionObjectAccessors_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/protectedCompanionObjectAccessors_after.kt");
+        }
+
+        @TestMetadata("protectedCompanionObjectAccessors_before.kt")
+        public void testProtectedCompanionObjectAccessors_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/protectedCompanionObjectAccessors_before.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/conditions")
