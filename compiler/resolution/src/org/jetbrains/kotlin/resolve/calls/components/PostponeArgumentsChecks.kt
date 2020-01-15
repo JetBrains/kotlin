@@ -130,27 +130,32 @@ private fun extractLambdaInfoFromFunctionalType(
 
     // Extracting parameters and receiver type, taking into account the actual lambda definition and expected lambda type
     val (parameters, receiver) = when {
-        argumentAsFunctionExpression != null ->
+        argumentAsFunctionExpression != null -> {
             // lambda has explicit functional type - use types from it if available
             (parametersTypes?.mapIndexed { index, type ->
                 type.orExpected(index)
             } ?: emptyList()) to argumentAsFunctionExpression.receiverType
-        (parametersTypes?.size ?: 0) == expectedParameters.size && receiverFromExpected ->
+        }
+
+        (parametersTypes?.size ?: 0) == expectedParameters.size && receiverFromExpected -> {
             // expected type has receiver, but arguments sizes are the same in actual and expected, so assuming missing (maybe unused) receiver in lambda
             // TODO: in case of implicit parameters in lambda ("this" and "it") this case assumes "this", probably we should generate two possible overloads and choose among them later
             (parametersTypes?.mapIndexed { index, type ->
                 type.orExpected(index)
             } ?: expectedParameters.map { it.type.unwrap() }) to expectedReceiver
+        }
+
         (parametersTypes?.size ?: 0) - expectedParameters.size == 1 && receiverFromExpected -> {
             // one "missing" parameter in the expected parameters - first lambda parameter should be mapped to expected receiver
             // TODO: same "this" or "it" case from above could be applicable here as well
+
             (parametersTypes?.mapIndexed { index, type ->
                 type ?: run {
-                    if (index == 0) expectedReceiver?.unwrap()
-                    else expectedParameters.getOrNull(index - 1)?.type?.unwrap()
+                    expectedParameters.getOrNull(index)?.type?.unwrap()
                 } ?: expectedType.builtIns.nullableAnyType
-            } ?: expectedParameters.map { it.type.unwrap() }) to null
+            } ?: expectedParameters.map { it.type.unwrap() }) to expectedReceiver?.unwrap()
         }
+
         else ->
             (parametersTypes?.mapIndexed { index, type ->
                 type.orExpected(index)

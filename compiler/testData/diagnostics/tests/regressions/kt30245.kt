@@ -42,11 +42,11 @@ fun test1() { // to extension lambda 0
     val f10 = W1(fun Int.(): Int = this) // oi+ ni+
     val g10: E0 = id(fun Int.(): Int = this) // oi+ ni+
 
-    val w11 = W1 { i: Int -> i } // oi- ni+
+    val w11 = W1 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>i: Int<!> -> i }<!> // oi- ni-
     val i11: E0 = id { i: Int -> i } // o1+ ni+
-    val w12 = W1 { i -> i } // oi- ni+
-    val i12: E0 = id { i -> i } // oi- ni+
-    val j12 = id<E0> { i -> i } // oi- ni+
+    val w12 = W1 <!TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>i<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!> }<!> // oi- ni-
+    val i12: E0 = id <!TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>i<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!> }<!> // oi- ni-
+    val j12 = id<E0> <!TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>i<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!> }<!> // oi- ni-
 
     // yet unsupported cases - considering lambdas as extension ones unconditionally
 //    val w13 = W1 { it } // this or it: oi- ni-
@@ -78,9 +78,9 @@ fun test2() { // to extension lambda 1
 //    val w27 = W2 { i, s: String -> i + s.length } // overload oi- ni-
 //    val i27: E1 = id { i, s: String -> i + s.length } // overload oi- ni-
 
-    val w28 = W2 { i: Int, s -> i + s.length } // oi- ni+
-    val i28: E1 = id { i: Int, s -> i + s.length } // oi- ni+
-    val w29 = W2 { i: Int, s: String -> i + s.length } // oi- ni+
+    val w28 = W2 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, <!CANNOT_INFER_PARAMETER_TYPE!>s<!><!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>s<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>length<!> }<!> // oi- ni-
+    val i28: E1 = <!TYPE_MISMATCH!>id <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, <!CANNOT_INFER_PARAMETER_TYPE!>s<!><!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>s<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>length<!> }<!><!> // oi- ni-
+    val w29 = W2 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, s: String<!> -> i + s.length }<!> // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 
     // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
