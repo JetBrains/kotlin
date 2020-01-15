@@ -57,7 +57,8 @@ class SerializerForEnumsCodegen(
             // regular .serialName() produces fqName here, which is kinda inconvenient for enum entry
             val serialName = entry.annotations.serialNameValue ?: entry.name.toString()
             aconst(serialName)
-            invokevirtual(descImplType.internalName, CallingConventions.addElement, "(Ljava/lang/String;)V", false)
+            iconst(0)
+            invokevirtual(descImplType.internalName, CallingConventions.addElement, "(Ljava/lang/String;Z)V", false)
             // pushing annotations
             addSyntheticAnnotationsToDescriptor(descriptorVar, entry, CallingConventions.addAnnotation)
         }

@@ -191,7 +191,7 @@ class SerializableCodegenImpl(
                 genValidateProperty(i, bitMaskOff(i))
                 val nonThrowLabel = Label()
                 ificmpne(nonThrowLabel)
-                genExceptionThrow(serializationExceptionMissingFieldName, prop.name)
+                genMissingFieldExceptionThrow(prop.name)
                 visitLabel(nonThrowLabel)
                 // setting field
                 load(0, thisAsmType)
