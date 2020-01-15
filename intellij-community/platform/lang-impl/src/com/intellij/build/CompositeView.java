@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
 import com.intellij.icons.AllIcons;
@@ -147,10 +147,9 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     return mySelectionStateKey == null ? null : PropertiesComponent.getInstance().getValue(mySelectionStateKey);
   }
 
-  private class SwitchViewAction extends ToggleAction implements DumbAware {
+  private final class SwitchViewAction extends ToggleAction implements DumbAware {
     SwitchViewAction() {
-      super("Toggle view", null,
-            AllIcons.Actions.ChangeView);
+      super("Toggle view", null, AllIcons.Actions.ChangeView);
     }
 
     @Override
