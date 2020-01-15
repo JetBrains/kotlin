@@ -20445,6 +20445,21 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/smartCasts/kt3224.kt");
         }
 
+        @TestMetadata("kt32358_1.kt")
+        public void testKt32358_1() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/smartCasts/kt32358_1.kt");
+        }
+
+        @TestMetadata("kt32358_2.kt")
+        public void testKt32358_2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/smartCasts/kt32358_2.kt");
+        }
+
+        @TestMetadata("kt32358_3.kt")
+        public void testKt32358_3() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/smartCasts/kt32358_3.kt");
+        }
+
         @TestMetadata("kt3244.kt")
         public void testKt3244() throws Exception {
             runTest("compiler/testData/diagnostics/tests/smartCasts/kt3244.kt");

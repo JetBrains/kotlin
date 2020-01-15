@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ R> callIt(/*0*/ fn: () -> R): R
+public fun smartIt(/*0*/ p1: kotlin.String?, /*1*/ p2: kotlin.String?): kotlin.Unit
