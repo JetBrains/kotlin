@@ -6,6 +6,8 @@
 @file:kotlin.jvm.JvmName("TimingKt")
 package kotlin.system
 
+import kotlin.contracts.*
+
 /**
  * Executes the given [block] and returns elapsed time in milliseconds.
  */
