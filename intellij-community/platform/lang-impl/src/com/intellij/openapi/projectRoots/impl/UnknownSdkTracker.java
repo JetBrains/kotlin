@@ -37,7 +37,7 @@ import java.util.*;
 
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 
-public class UnknownSdkTracker implements Disposable {
+public class UnknownSdkTracker {
   private static final Logger LOG = Logger.getInstance(UnknownSdkTracker.class);
 
   @NotNull
@@ -50,14 +50,14 @@ public class UnknownSdkTracker implements Disposable {
 
   public UnknownSdkTracker(@NotNull Project project) {
     myProject = project;
-    myUpdateQueue = new MergingUpdateQueue(getClass().getSimpleName(), 200, true, null, myProject, null, false)
+    myUpdateQueue = new MergingUpdateQueue(getClass().getSimpleName(),
+                                           200,
+                                           true,
+                                           null,
+                                           myProject,
+                                           null,
+                                           false)
       .usePassThroughInUnitTestMode();
-
-    Disposer.register(this, myUpdateQueue);
-  }
-
-  @Override
-  public void dispose() {
   }
 
   public void updateUnknownSdks() {

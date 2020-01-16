@@ -31,13 +31,9 @@ private data class MissingSdkInfo(
 
 class UnknownSdkCollector(private val myProject: Project) {
   fun collectSdksPromise(onCompleted: Consumer<UnknownSdkSnapshot>) {
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-      return onCompleted.accept(collectSdksUnderReadAction())
-    }
-
     ReadAction.nonBlocking<UnknownSdkSnapshot> { collectSdksUnderReadAction() }
       .expireWith(myProject)
-      .coalesceBy(this)
+      .coalesceBy(myProject, UnknownSdkCollector::class)
       .finishOnUiThread(ApplicationManager.getApplication().noneModalityState, onCompleted)
       .submit(AppExecutorUtil.getAppExecutorService())
   }
