@@ -13,9 +13,11 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.UsefulTestCase.assertThrows
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.util.EnvironmentUtil
@@ -23,11 +25,10 @@ import com.intellij.util.SystemProperties
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.lang.JavaVersion
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.jdom.Element
 import org.junit.Test
-
-import org.mockito.Mockito.*
+import org.mockito.Mockito.mock
 import java.io.File
 
 class ExternalSystemJdkUtilTest : UsefulTestCase() {
@@ -40,6 +41,8 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
     testFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(name, true).fixture
     testFixture.setUp()
     project = testFixture.project
+
+    allowJavaHomeAccess()
   }
 
   override fun tearDown() {
@@ -47,6 +50,11 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
       ThrowableRunnable { testFixture.tearDown() },
       ThrowableRunnable { super.tearDown() }
     ).run()
+  }
+
+  private fun allowJavaHomeAccess() {
+    val javaHome = EnvironmentUtil.getValue("JAVA_HOME") ?: return
+    VfsRootAccess.allowRootAccess(project, javaHome)
   }
 
   @Test
