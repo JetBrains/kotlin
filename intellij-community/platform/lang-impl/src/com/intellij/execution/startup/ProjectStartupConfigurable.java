@@ -100,7 +100,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
   public JComponent createComponent() {
     myModel = new ProjectStartupTasksTableModel();
     myTable = new JBTable(myModel);
-    myTable.getEmptyText().setText("Add run configurations with the + button");
+    myTable.getEmptyText().setText(ExecutionBundle.message("settings.project.startup.add.run.configurations.with.the.button"));
     new TableSpeedSearch(myTable);
     DefaultCellEditor defaultEditor = (DefaultCellEditor)myTable.getDefaultEditor(Object.class);
     defaultEditor.setClickCountToStart(1);
@@ -140,11 +140,11 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
       .disableUpAction().disableDownAction();
 
     final JPanel tasksPanel = myDecorator.createPanel();
-    final JLabel label = new JLabel("Run tasks and tools via run configurations");
+    final JLabel label = new JLabel(ExecutionBundle.message("settings.project.startup.run.tasks.and.tools.via.run.configurations"));
     label.setForeground(UIUtil.getInactiveTextColor());
     label.setHorizontalAlignment(SwingConstants.RIGHT);
     final JPanel wrapper = new JPanel(new BorderLayout());
-    wrapper.add(new JLabel("To be started on project opening:"), BorderLayout.WEST);
+    wrapper.add(new JLabel(ExecutionBundle.message("settings.project.startup.to.be.started.on.project.opening")), BorderLayout.WEST);
     wrapper.add(label, BorderLayout.EAST);
     wrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, UIUtil.DEFAULT_VGAP, 0));
 
@@ -240,8 +240,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
 
   private void addConfiguration(RunnerAndConfigurationSettings configuration) {
     if (!ProjectStartupRunner.canBeRun(configuration)) {
-      final String message = "Can not add Run Configuration '" + configuration.getName() + "' to Startup Tasks," +
-                             " since it can not be started with 'Run' action.";
+      final String message = ExecutionBundle.message("settings.project.startup.warning", configuration.getName());
       final Balloon balloon = JBPopupFactory.getInstance()
         .createHtmlTextBalloonBuilder(message, MessageType.ERROR, null)
         .setHideOnClickOutside(true)
