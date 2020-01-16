@@ -11,6 +11,7 @@ import kotlin.js.RegExp
  * Converts the characters in the specified array to a string.
  */
 @SinceKotlin("1.2")
+@Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
 public actual fun String(chars: CharArray): String {
     var result = ""
     for (char in chars) {
@@ -26,6 +27,7 @@ public actual fun String(chars: CharArray): String {
  * or `offset + length` is out of [chars] array bounds.
  */
 @SinceKotlin("1.2")
+@Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || chars.size - offset < length)
         throw IndexOutOfBoundsException("size: ${chars.size}; offset: $offset; length: $length")
