@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.searcheverywhere;
 
-import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -64,7 +63,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     List<SearchEverywhereContributor<?>> serviceContributors = Arrays.asList(
       new TopHitSEContributor(project, contextComponent, s ->
         mySearchEverywhereUI.getSearchField().setText(s)),
-      new RecentFilesSEContributor(project, GotoActionBase.getPsiContext(initEvent)),
+      new RecentFilesSEContributor(initEvent),
       new RunConfigurationsSEContributor(project, contextComponent, () -> mySearchEverywhereUI.getSearchField().getText())
     );
     List<SearchEverywhereContributor<?>> contributors = new ArrayList<>(serviceContributors);

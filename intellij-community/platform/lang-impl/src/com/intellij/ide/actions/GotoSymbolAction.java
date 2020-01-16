@@ -24,7 +24,7 @@ public class GotoSymbolAction extends GotoActionBase implements DumbAware {
 
     boolean dumb = DumbService.isDumb(project);
     if (Registry.is("new.search.everywhere")) {
-      if (!dumb || new SymbolSearchEverywhereContributor(project, null).isDumbAware()) {
+      if (!dumb || new SymbolSearchEverywhereContributor(e).isDumbAware()) {
         showInSearchEverywherePopup(SymbolSearchEverywhereContributor.class.getSimpleName(), e, true, true);
       }
       else {

@@ -60,7 +60,7 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
 
     boolean dumb = DumbService.isDumb(project);
     if (Registry.is("new.search.everywhere")) {
-      if (!dumb || new ClassSearchEverywhereContributor(project, null).isDumbAware()) {
+      if (!dumb || new ClassSearchEverywhereContributor(e).isDumbAware()) {
         showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
       }
       else {
