@@ -207,6 +207,7 @@ class LocalDeclarationsLowering(
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<IrConstructor, LocalClassConstructorContext> = LinkedHashMap()
+        val usedLocalFunctionNames: MutableSet<Name> = mutableSetOf()
 
         val transformedDeclarations = mutableMapOf<IrSymbolOwner, IrDeclaration>()
 
@@ -530,8 +531,9 @@ class LocalDeclarationsLowering(
 
         private fun suggestLocalName(declaration: IrDeclarationWithName): String {
             localFunctions[declaration]?.let {
+                val baseName = if (declaration.name.isSpecial) "lambda" else declaration.name
                 if (it.index >= 0)
-                    return "lambda-${it.index}"
+                    return "$baseName-${it.index}"
             }
 
             return localNameProvider.localName(declaration)
@@ -827,9 +829,12 @@ class LocalDeclarationsLowering(
                         localFunctions[declaration] =
                             LocalFunctionContext(
                                 declaration,
-                                if (declaration.name.isSpecial) (scopeWithIr as ScopeWithCounter).counter++ else -1,
+                                if (declaration.name.isSpecial || declaration.name in usedLocalFunctionNames)
+                                    (scopeWithIr as ScopeWithCounter).counter++
+                                else -1,
                                 scopeWithIr.irElement as IrDeclarationContainer
                             )
+                        usedLocalFunctionNames.add(declaration.name)
                     }
                 }
 
