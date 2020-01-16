@@ -21,10 +21,9 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.compose.Component
 import androidx.compose.FrameManager
 import androidx.compose.Compose
-import androidx.compose.composer
+import androidx.compose.ViewComposer
 import androidx.compose.runWithCurrent
 import org.junit.Before
 import org.junit.Ignore
@@ -283,7 +282,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
         advance: String,
         composition: String,
         dumpClasses: Boolean = false
-    ): ModelCompositionTest {
+    ): RobolectricComposeTester {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 
@@ -342,59 +341,10 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
         val advanceMethod = instanceClass.getMethod("advance", *parameterTypes)
         val composeMethod = instanceClass.getMethod("compose")
 
-        return composeModel({ composeMethod.invoke(instanceOfClass) }) {
+        return composeMulti({ composeMethod.invoke(instanceOfClass) }) {
             val values = valuesFactory()
             val arguments = values.map { it.value }.toTypedArray()
             advanceMethod.invoke(instanceOfClass, *arguments)
         }
     }
 }
-
-private class ModelTestActivity : Activity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(LinearLayout(this).apply { id = ROOT_ID })
-    }
-}
-
-private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
-
-private class ModelRoot : Component() {
-    override fun compose() {}
-}
-
-class ModelCompositionTest(val composable: () -> Unit, val advance: () -> Unit) {
-
-    inner class ActiveTest(val activity: Activity) {
-
-        fun then(block: (activity: Activity) -> Unit): ActiveTest {
-            advance()
-            val scheduler = RuntimeEnvironment.getMasterScheduler()
-            scheduler.advanceToLastPostedRunnable()
-            block(activity)
-            return this
-        }
-    }
-
-    fun then(block: (activity: Activity) -> Unit): ActiveTest {
-        val controller = Robolectric.buildActivity(ModelTestActivity::class.java)
-
-        // Compose the root scope
-        val activity = controller.create().get()
-        val root = activity.root
-        val component = ModelRoot()
-        val cc = Compose.createCompositionContext(root.context, root, component, null)
-        cc.composer.runWithCurrent {
-            val composer = cc.composer
-            composer.startRoot()
-            composable()
-            composer.endRoot()
-            composer.applyChanges()
-        }
-        block(activity)
-        return ActiveTest(activity).then(block)
-    }
-}
-
-private fun composeModel(composable: () -> Unit, advance: () -> Unit) =
-    ModelCompositionTest(composable, advance)

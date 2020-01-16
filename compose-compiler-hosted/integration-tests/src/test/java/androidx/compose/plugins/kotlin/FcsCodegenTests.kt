@@ -1865,71 +1865,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
     }
 
-    // b/118610495
-    // @Test
-    fun testCGChildCompose(): Unit = ensureSetup {
-        val tvId = 153
-
-        var text = "Test 1"
-
-        compose(
-            """
-            var called = 0
-
-            class TestContainer(var children: @Composable() ()->Unit): Component() {
-              override fun compose() {
-                LinearLayout {
-                  children()
-                }
-              }
-            }
-
-            class TestClass(var text: String): Component() {
-              override fun compose() {
-                TestContainer {
-                  TextView(text=text, id=$tvId)
-                }
-              }
-            }
-        """, { mapOf("text" to text) }, """
-            TestClass(text=text)
-        """
-        ).then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals(text, tv.text)
-
-            text = "Test 2"
-        }.then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals(text, tv.text)
-        }
-    }
-
-    // @Test
-    fun testPrivatePivotalProperties(): Unit = ensureSetup {
-        val tvId = 153
-
-        compose(
-            """
-            class ClassComponent(private val callback: @Composable() () -> Unit) : Component() {
-                override fun compose() {
-                    callback()
-                }
-            }
-        """, { mapOf("text" to "") }, """
-            ClassComponent {
-                TextView(id=$tvId, text="Hello world!")
-            }
-        """
-        ).then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("Hello world!", tv.text)
-        }.then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("Hello world!", tv.text)
-        }
-    }
-
     @Test
     fun testVariableCalls1(): Unit = ensureSetup {
         compose(
@@ -1985,34 +1920,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
 
                 val holder = HolderB(component)
-
-            """,
-            { mapOf<String, String>() },
-            """
-                holder.Foo()
-            """
-        ).then { activity ->
-            val textView = activity.findViewById(42) as TextView
-            assertEquals("Hello, world!", textView.text)
-        }
-    }
-
-    // @Test
-    fun testVariableCalls4(): Unit = ensureSetup {
-        compose(
-            """
-                val component = @Composable {
-                    TextView(text="Hello, world!", id=42)
-                }
-                class HolderC(val composable: @Composable() () -> Unit) {
-                    inner class Foo(): Component() {
-                        override fun compose() {
-                            composable()
-                        }
-                    }
-                }
-
-                val holder = HolderC(component)
 
             """,
             { mapOf<String, String>() },
@@ -2712,7 +2619,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         )
     }
 
-    fun compose(text: String, dumpClasses: Boolean = false): CompositionTest = compose(
+    fun compose(text: String, dumpClasses: Boolean = false): RobolectricComposeTester = compose(
         { mapOf<String, Any>() },
         text,
         dumpClasses
@@ -2736,7 +2643,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         valuesFactory: () -> Map<String, T>,
         text: String,
         dumpClasses: Boolean = false
-    ): CompositionTest {
+    ): RobolectricComposeTester {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 

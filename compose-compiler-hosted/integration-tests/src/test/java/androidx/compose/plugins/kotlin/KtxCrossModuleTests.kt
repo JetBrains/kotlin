@@ -21,7 +21,6 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.compose.Component
 import androidx.compose.Compose
 import androidx.compose.runWithCurrent
 import com.intellij.openapi.util.io.FileUtil
@@ -202,119 +201,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 )
             )
         )
-    }
-
-    @Test
-    fun testCrossModule_SimpleCompositionxxx(): Unit = ensureSetup {
-
-        compose(
-            "TestF", mapOf(
-                "library module" to mapOf(
-                    "my/test/lib/InternalComp.kt" to """
-                    package my.test.lib
-
-                import androidx.compose.Composable
-                import androidx.compose.composer
-                import androidx.compose.Emittable
-                import androidx.ui.core.DataNode
-                import androidx.ui.core.ParentData
-                import androidx.ui.core.ParentDataKey
-
-                class Bar
-
-                class XDataNodeKey<T>(val name: String)
-
-                class XDataNode<T>(var key: XDataNodeKey<T>, var value: T) : Emittable {
-                    override fun emitInsertAt(index: Int, instance: Emittable) {
-
-                    }
-
-                    override fun emitRemoveAt(index: Int, count: Int) {
-
-                    }
-
-                    override fun emitMove(from: Int, to: Int, count: Int) {
-
-                    }
-                }
-
-                val Key1 = XDataNodeKey<String>("foo")
-                val Key2 = XDataNodeKey<Bar>("bar")
-
-        class ViewEmitWrapper(context: android.content.Context) : android.view.View(context) {
-            var emittable: Emittable? = null
-        }
-
-        class EmitViewWrapper : Emittable {
-            var view: android.view.View? = null
-            override fun emitInsertAt(index: Int, instance: Emittable) {
-
-            }
-
-            override fun emitRemoveAt(index: Int, count: Int) {
-
-            }
-
-            override fun emitMove(from: Int, to: Int, count: Int) {
-
-            }
-        }
-
-                 """
-                ),
-                "Main" to mapOf(
-                    "my/test/app/Main.kt" to """
-                   package my.test.app
-
-                   import android.widget.*
-                   import androidx.compose.*
-                   import my.test.lib.*
-
-                   var doRecompose: () -> Unit = {}
-
-                   class TestF {
-                       @Composable
-                       fun compose() {
-
-                       composer.registerAdapter { parent, child ->
-                            when (parent) {
-                                is android.view.ViewGroup -> when (child) {
-                                    is android.view.View -> child
-                                    is Emittable -> ViewEmitWrapper(composer.context).apply { 
-                                    emittable = child }
-                                    else -> null
-                                }
-                                is Emittable -> when (child) {
-                                    is android.view.View -> EmitViewWrapper().apply { view = child }
-                                    is Emittable -> child
-                                    else -> null
-                                }
-                                else -> null
-                            }
-                        }
-
-                         Recompose { recompose ->
-                           Foo()
-                         }
-                       }
-
-                       fun advance() {
-                         doRecompose()
-                       }
-                   }
-
-                   @Composable
-                   fun Foo() {
-                    val s = ""
-                    val b = Bar()
-                    XDataNode(key = Key2, value = b)
-                   }
-                """
-                )
-            )
-        ).then {
-            assert(true)
-        }
     }
 
     @Test
@@ -559,7 +445,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         mainClassName: String,
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false
-    ): MultiCompositionTest {
+    ): RobolectricComposeTester {
         val allClasses = compile(mainClassName, modules, dumpClasses)
         val loader = URLClassLoader(emptyArray(), this.javaClass.classLoader)
         val instanceClass = run {
@@ -645,55 +531,6 @@ fun OutputFile.writeToDir(directory: File) =
     FileUtil.writeToFile(File(directory, relativePath), asByteArray())
 
 fun Collection<OutputFile>.writeToDir(directory: File) = forEach { it.writeToDir(directory) }
-
-private fun composeMulti(composable: () -> Unit, advance: () -> Unit) =
-    MultiCompositionTest(composable, advance)
-
-private class MultiTestActivity : Activity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(LinearLayout(this).apply { id = ROOT_ID })
-    }
-}
-
-private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
-
-private class MultiRoot : Component() {
-    override fun compose() {}
-}
-
-class MultiCompositionTest(val composable: () -> Unit, val advance: () -> Unit) {
-
-    inner class ActiveTest(val activity: Activity) {
-
-        fun then(block: (activity: Activity) -> Unit): ActiveTest {
-            advance()
-            val scheduler = RuntimeEnvironment.getMasterScheduler()
-            scheduler.advanceToLastPostedRunnable()
-            block(activity)
-            return this
-        }
-    }
-
-    fun then(block: (activity: Activity) -> Unit): ActiveTest {
-        val controller = Robolectric.buildActivity(MultiTestActivity::class.java)
-
-        // Compose the root scope
-        val activity = controller.create().get()
-        val root = activity.root
-        val component = MultiRoot()
-        val cc = Compose.createCompositionContext(root.context, root, component, null)
-        cc.composer.runWithCurrent {
-            val composer = cc.composer
-            composer.startRoot()
-            composable()
-            composer.endRoot()
-            composer.applyChanges()
-        }
-        block(activity)
-        return ActiveTest(activity)
-    }
-}
 
 private fun tmpDir(name: String): File {
     return FileUtil.createTempDirectory(name, "", false).canonicalFile
