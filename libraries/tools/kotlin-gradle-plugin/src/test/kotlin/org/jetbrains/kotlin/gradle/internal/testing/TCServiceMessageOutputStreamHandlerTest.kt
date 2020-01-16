@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.internal.testing
 
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
+import org.jetbrains.kotlin.test.RunnerWithIgnoreInDatabase
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.slf4j.event.EventRecodingLogger
 import org.slf4j.event.SubstituteLoggingEvent
 import org.slf4j.helpers.SubstituteLogger
@@ -15,6 +17,7 @@ import java.text.ParseException
 import java.util.concurrent.ArrayBlockingQueue
 import kotlin.test.assertEquals
 
+@RunWith(RunnerWithIgnoreInDatabase::class)
 class TCServiceMessageOutputStreamHandlerTest {
     private val client = Mock()
     private val logEvents = ArrayBlockingQueue<SubstituteLoggingEvent>(10)
