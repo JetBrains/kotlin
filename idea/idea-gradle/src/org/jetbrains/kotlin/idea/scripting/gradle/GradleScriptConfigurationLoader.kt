@@ -39,7 +39,7 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
             return true
         }
 
-        if (!isInAffectedGradleProjectFiles(ktFile.project, ktFile.originalFile.virtualFile)) {
+        if (!isInAffectedGradleProjectFiles(ktFile.project, ktFile.originalFile.virtualFile.path)) {
             // todo: provide an action to load configuration through scripting API: KT-34625, KT-35268
         }
 

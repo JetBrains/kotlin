@@ -34,7 +34,7 @@ class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent
                     val files = getAffectedGradleProjectFiles(project)
                     for (event in events) {
                         val file = event.file ?: return
-                        if (isInAffectedGradleProjectFiles(files, file)) {
+                        if (isInAffectedGradleProjectFiles(files, event.path)) {
                             storage.fileChanged(file, file.timeStamp)
                         }
                     }
