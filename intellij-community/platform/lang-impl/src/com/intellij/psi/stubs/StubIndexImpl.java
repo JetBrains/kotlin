@@ -28,10 +28,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.provided.StubProvidedIndexExtension;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.util.CachedValueImpl;
-import com.intellij.util.ConcurrencyUtil;
-import com.intellij.util.Processor;
-import com.intellij.util.Processors;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.indexing.*;
@@ -63,7 +60,8 @@ import java.util.stream.Collectors;
 })
 public final class StubIndexImpl extends StubIndexEx implements PersistentStateComponent<StubIndexState> {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
-  private static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
+  static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
+  static boolean DO_TRACE_STUB_INDEX_UPDATE = SystemProperties.getBooleanProperty("idea.trace.stub.index.update", false);
 
   private static class AsyncState {
     private final Map<StubIndexKey<?, ?>, UpdatableIndex<?, Void, FileContent>> myIndices = new THashMap<>();
@@ -697,6 +695,9 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                               @NotNull final Map<K, StubIdList> oldInputData,
                               @NotNull final Map<K, StubIdList> newInputData) {
     try {
+      if (DO_TRACE_STUB_INDEX_UPDATE) {
+        LOG.info("stub index update: " + fileId + " old = " + oldInputData.keySet() + " new  = " + newInputData.keySet());
+      }
       final UpdatableIndex<K, Void, FileContent> index = getIndex(key);
       if (index == null) return;
       index.updateWithMap(new AbstractUpdateData<K, Void>(fileId) {
