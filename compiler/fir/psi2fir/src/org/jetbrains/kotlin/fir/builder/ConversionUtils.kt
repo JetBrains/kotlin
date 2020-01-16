@@ -291,12 +291,12 @@ internal fun generateDestructuringBlock(
 }
 
 fun generateTemporaryVariable(
-    session: FirSession, source: FirSourceElement?, name: Name, initializer: FirExpression
+    session: FirSession, source: FirSourceElement?, name: Name, initializer: FirExpression, typeRef: FirTypeRef? = null
 ): FirVariable<*> =
     FirPropertyImpl(
         source,
         session,
-        FirImplicitTypeRefImpl(source),
+        typeRef ?: FirImplicitTypeRefImpl(source),
         null,
         name,
         initializer,

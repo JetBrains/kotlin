@@ -776,7 +776,8 @@ class ExpressionsConverter(
                         FirFunctionCallImpl(null).apply {
                             calleeReference = FirSimpleNamedReference(null, Name.identifier("next"), null)
                             explicitReceiver = generateResolvedAccessExpression(null, iteratorVal)
-                        }
+                        },
+                        parameter!!.firValueParameter.returnTypeRef
                     )
                     if (multiDeclaration != null) {
                         val destructuringBlock = generateDestructuringBlock(

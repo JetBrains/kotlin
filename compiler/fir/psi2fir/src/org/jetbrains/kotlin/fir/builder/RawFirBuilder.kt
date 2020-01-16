@@ -1189,7 +1189,8 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                             FirFunctionCallImpl(loopSource).apply {
                                 calleeReference = FirSimpleNamedReference(loopSource, Name.identifier("next"), null)
                                 explicitReceiver = generateResolvedAccessExpression(loopSource, iteratorVal)
-                            }
+                            },
+                            parameter.typeReference.toFirOrImplicitType()
                         )
                         if (multiDeclaration != null) {
                             val destructuringBlock = generateDestructuringBlock(

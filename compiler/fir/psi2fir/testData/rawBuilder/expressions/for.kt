@@ -18,3 +18,9 @@ fun baz(set: Set<Some>) {
         println("x = $x y = $y")
     }
 }
+
+fun withParameter(list: List<Some>) {
+    for (s: Some in list) {
+        println(s)
+    }
+}

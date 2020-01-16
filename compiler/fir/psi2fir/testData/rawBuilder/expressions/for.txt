@@ -58,3 +58,12 @@ FILE: for.kt
         }
 
     }
+    public? final? fun withParameter(list: List<Some>): R|kotlin/Unit| {
+        lval <range>: <implicit> = list#
+        lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
+        while(R|<local>/<iterator>|.hasNext#()) {
+            lval s: Some = R|<local>/<iterator>|.next#()
+            println#(s#)
+        }
+
+    }
