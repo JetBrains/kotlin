@@ -16,6 +16,7 @@
 
 package com.intellij.ui.tabs;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.ColorIcon;
@@ -180,7 +181,9 @@ public abstract class FileColorSettingsTable extends JBTable {
 
     @Override
     public String getColumnName(int column) {
-      return column == NAME_COLUMN ? "Scope" : "Color";
+      return column == NAME_COLUMN
+             ? IdeBundle.message("settings.file.color.column.scope")
+             : IdeBundle.message("settings.file.color.column.color");
     }
 
     @Override
