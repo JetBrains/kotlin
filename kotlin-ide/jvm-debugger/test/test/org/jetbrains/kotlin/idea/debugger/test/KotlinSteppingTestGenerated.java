@@ -909,6 +909,34 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         public void testWhenWithoutExpression() throws Exception {
             runTest("testData/stepping/stepOver/whenWithoutExpression.kt");
         }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines")
+        public static class Coroutines extends AbstractKotlinSteppingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doStepOverTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("sequenceNested.kt")
+            public void testSequenceNested() throws Exception {
+                runTest("jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceNested.kt");
+            }
+
+            @TestMetadata("sequenceNested2.kt")
+            public void testSequenceNested2() throws Exception {
+                runTest("jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceNested2.kt");
+            }
+
+            @TestMetadata("sequenceSimple.kt")
+            public void testSequenceSimple() throws Exception {
+                runTest("jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceSimple.kt");
+            }
+
+            @TestMetadata("sequenceTake2.kt")
+            public void testSequenceTake2() throws Exception {
+                runTest("jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceTake2.kt");
+            }
+        }
     }
 
     @RunWith(JUnit3RunnerWithInners.class)

@@ -11,9 +11,7 @@ import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.settings.DebuggerSettings
 import com.sun.jdi.Location
 import com.sun.jdi.request.StepRequest
-import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager
-import org.jetbrains.kotlin.idea.debugger.isOnSuspendReturnOrReenter
-import org.jetbrains.kotlin.idea.debugger.isOneLineMethod
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 class KotlinExtraSteppingFilter : ExtraSteppingFilter {
@@ -43,7 +41,7 @@ class KotlinExtraSteppingFilter : ExtraSteppingFilter {
             return false
         } ?: return false
 
-        if (isOnSuspendReturnOrReenter(location) && !isOneLineMethod(location)) {
+        if (isInSuspendMethod(location) && isOnSuspendReturnOrReenter(location) && !isOneLineMethod(location)) {
             return true
         }
 

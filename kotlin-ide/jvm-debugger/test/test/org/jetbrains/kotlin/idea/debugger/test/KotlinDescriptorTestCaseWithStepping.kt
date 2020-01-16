@@ -90,8 +90,10 @@ abstract class KotlinDescriptorTestCaseWithStepping : KotlinDescriptorTestCase()
     }
 
     private fun SuspendContextImpl.doStepOver(ignoreBreakpoints: Boolean = false) {
-        val stepOverCommand = runReadAction { commandProvider.getStepOverCommand(this, ignoreBreakpoints, debuggerContext) }
-            ?: dp.createStepOverCommand(this, ignoreBreakpoints)
+        val stepOverCommand = runReadAction {
+            val sourcePosition = debuggerContext.sourcePosition
+            commandProvider.getStepOverCommand(this, ignoreBreakpoints, sourcePosition)
+        } ?: dp.createStepOverCommand(this, ignoreBreakpoints)
 
         dp.managerThread.schedule(stepOverCommand)
     }

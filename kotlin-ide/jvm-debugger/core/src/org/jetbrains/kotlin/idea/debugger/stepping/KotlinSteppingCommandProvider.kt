@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.*
-import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinSuspendCallStepOverFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.LocationToken
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.StepOverCallerInfo
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -46,7 +45,6 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
         stepSize: Int
     ): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null || suspendContext.isResumed) return null
-
         val sourcePosition = suspendContext.debugProcess.debuggerContext.sourcePosition ?: return null
         return getStepOverCommand(suspendContext, ignoreBreakpoints, sourcePosition)
     }
@@ -55,24 +53,8 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
     fun getStepOverCommand(
         suspendContext: SuspendContextImpl,
         ignoreBreakpoints: Boolean,
-        debuggerContext: DebuggerContextImpl
-    ): DebugProcessImpl.ResumeCommand? {
-        return getStepOverCommand(suspendContext, ignoreBreakpoints, debuggerContext.sourcePosition)
-    }
-
-    private fun getStepOverCommand(
-        suspendContext: SuspendContextImpl,
-        ignoreBreakpoints: Boolean,
         sourcePosition: SourcePosition
     ): DebugProcessImpl.ResumeCommand? {
-        val file = sourcePosition.elementAt.containingFile
-        val location = suspendContext.debugProcess.invokeInManagerThread { suspendContext.frameProxy?.safeLocation() } ?: return null
-        if (isInSuspendMethod(location) && !isOnSuspendReturnOrReenter(location) && !isLastLineLocationInMethod(location)) {
-            return DebuggerSteppingHelper.createStepOverCommandWithCustomFilter(
-                suspendContext, ignoreBreakpoints, KotlinSuspendCallStepOverFilter(sourcePosition.line, file, ignoreBreakpoints)
-            )
-        }
-
         return DebuggerSteppingHelper.createStepOverCommand(suspendContext, ignoreBreakpoints, sourcePosition)
     }
 
@@ -166,9 +148,9 @@ fun getStepOverAction(
     location: Location, sourcePosition: SourcePosition,
     suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl
 ): KotlinStepAction {
-    val stackFrame = frameProxy.safeStackFrame() ?: return KotlinStepAction.StepOver
-    val method = location.safeMethod() ?: return KotlinStepAction.StepOver
-    val token = LocationToken.from(stackFrame).takeIf { it.lineNumber > 0 } ?: return KotlinStepAction.StepOver
+    val stackFrame = frameProxy.safeStackFrame() ?: return KotlinStepAction.JvmStepOver
+    val method = location.safeMethod() ?: return KotlinStepAction.JvmStepOver
+    val token = LocationToken.from(stackFrame).takeIf { it.lineNumber > 0 } ?: return KotlinStepAction.JvmStepOver
 
     val inlinedFunctionArgumentRanges = sourcePosition.collectInlineFunctionArgumentRanges()
     val positionManager = suspendContext.debugProcess.positionManager
@@ -191,7 +173,7 @@ fun getStepOverAction(
         }
     }
 
-    return KotlinStepAction.StepOverInlined(tokensToSkip, StepOverCallerInfo.from(location))
+    return KotlinStepAction.KotlinStepOver(tokensToSkip, StepOverCallerInfo.from(location))
 }
 
 private fun isInlineFunctionFromLibrary(positionManager: PositionManager, location: Location, token: LocationToken): Boolean {
@@ -282,5 +264,5 @@ fun getStepOutAction(location: Location, frameProxy: StackFrameProxyImpl): Kotli
         }
     }
 
-    return KotlinStepAction.StepOverInlined(tokensToSkip, StepOverCallerInfo.from(location))
+    return KotlinStepAction.KotlinStepOver(tokensToSkip, StepOverCallerInfo.from(location))
 }

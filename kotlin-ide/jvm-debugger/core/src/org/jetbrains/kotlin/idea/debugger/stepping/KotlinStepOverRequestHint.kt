@@ -24,38 +24,54 @@ import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.openapi.diagnostic.Logger
 import com.sun.jdi.VMDisconnectedException
 import com.sun.jdi.request.StepRequest
+import org.jetbrains.kotlin.idea.debugger.isOnSuspensionPoint
 import org.jetbrains.kotlin.idea.debugger.safeLineNumber
 import org.jetbrains.kotlin.idea.debugger.safeLocation
+import org.jetbrains.kotlin.idea.debugger.safeMethod
 
 // Originally copied from RequestHint
-class KotlinStepOverInlinedLinesHint(
+class KotlinStepOverRequestHint(
     stepThread: ThreadReferenceProxyImpl,
     suspendContext: SuspendContextImpl,
     private val filter: KotlinMethodFilter
 ) : RequestHint(stepThread, suspendContext, StepRequest.STEP_LINE, StepRequest.STEP_OVER, filter) {
     private companion object {
-        private val LOG = Logger.getInstance(KotlinStepOverInlinedLinesHint::class.java)
+        private val LOG = Logger.getInstance(KotlinStepOverRequestHint::class.java)
     }
 
     override fun getNextStepDepth(context: SuspendContextImpl): Int {
         try {
-            val frameProxy = context.frameProxy
-            if (frameProxy != null) {
-                if (isTheSameFrame(context)) {
-                    val isAcceptable = (filter.locationMatches(context, frameProxy.location()))
-                    return if (isAcceptable) STOP else StepRequest.STEP_OVER
-                } else if (isSteppedOut) {
-                    val lineNumber = frameProxy.safeLocation()?.safeLineNumber(JAVA_STRATUM) ?: -1
-                    return if (lineNumber >= 0) STOP else StepRequest.STEP_OVER
+            val frameProxy = context.frameProxy ?: return STOP
+            if (isTheSameFrame(context)) {
+                if (frameProxy.isOnSuspensionPoint()) {
+                    // Coroutine will sleep now so we can't continue stepping.
+                    // Let's put a run-to-cursor breakpoint and resume the debugger.
+                    return if (!installCoroutineResumedBreakpoint(context)) STOP else RESUME
                 }
 
-                return StepRequest.STEP_OUT
+                val location = frameProxy.safeLocation()
+                val isAcceptable = location != null && filter.locationMatches(context, location)
+                return if (isAcceptable) STOP else StepRequest.STEP_OVER
+            } else if (isSteppedOut) {
+                val lineNumber = frameProxy.safeLocation()?.safeLineNumber(JAVA_STRATUM) ?: -1
+                return if (lineNumber >= 0) STOP else StepRequest.STEP_OVER
             }
+
+            return StepRequest.STEP_OUT
         } catch (ignored: VMDisconnectedException) {
         } catch (e: EvaluateException) {
             LOG.error(e)
         }
 
         return STOP
+    }
+
+    private fun installCoroutineResumedBreakpoint(context: SuspendContextImpl): Boolean {
+        val frameProxy = context.frameProxy ?: return false
+        val location = frameProxy.safeLocation() ?: return false
+        val method = location.safeMethod() ?: return false
+
+        context.debugProcess.cancelRunToCursorBreakpoint()
+        return CoroutineBreakpointFacility.installCoroutineResumedBreakpoint(context, location, method)
     }
 }
