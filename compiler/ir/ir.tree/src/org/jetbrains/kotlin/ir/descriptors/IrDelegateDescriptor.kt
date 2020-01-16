@@ -104,24 +104,18 @@ class IrPropertyDelegateDescriptorImpl(
 class IrImplementingDelegateDescriptorImpl(
     containingDeclaration: ClassDescriptor,
     delegateType: KotlinType,
-    override val correspondingSuperType: KotlinType
+    override val correspondingSuperType: KotlinType,
+    number: Int
 ) :
     IrDelegateDescriptorBase(
         containingDeclaration,
-        getDelegateName(containingDeclaration, correspondingSuperType),
+        Name.identifier("\$\$delegate_$number"),
         delegateType
     ),
     IrImplementingDelegateDescriptor
 
 internal fun getDelegateName(name: Name): Name =
     Name.identifier(name.asString() + "\$delegate")
-
-internal fun getDelegateName(classDescriptor: ClassDescriptor, superType: KotlinType): Name =
-    Name.identifier(
-        classDescriptor.name.asString() + "\$" +
-                (superType.constructor.declarationDescriptor?.name ?: "\$") +
-                "\$delegate"
-    )
 
 class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     override val correspondingLocalProperty: VariableDescriptorWithAccessors,

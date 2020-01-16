@@ -155,16 +155,18 @@ class ClassGenerator(
 
     private fun generateMembersDeclaredInSupertypeList(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         val ktSuperTypeList = ktClassOrObject.getSuperTypeList() ?: return
+        var delegateNumber = 0
         for (ktEntry in ktSuperTypeList.entries) {
             if (ktEntry is KtDelegatedSuperTypeEntry) {
-                generateDelegatedImplementationMembers(irClass, ktEntry)
+                generateDelegatedImplementationMembers(irClass, ktEntry, delegateNumber++)
             }
         }
     }
 
     private fun generateDelegatedImplementationMembers(
         irClass: IrClass,
-        ktEntry: KtDelegatedSuperTypeEntry
+        ktEntry: KtDelegatedSuperTypeEntry,
+        delegateNumber: Int
     ) {
         val ktDelegateExpression = ktEntry.delegateExpression!!
         val delegateType = getTypeInferredByFrontendOrFail(ktDelegateExpression)
@@ -174,7 +176,7 @@ class ClassGenerator(
         val superClass = superTypeConstructorDescriptor as? ClassDescriptor
             ?: throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
 
-        val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType)
+        val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType, delegateNumber)
         val irDelegateField = context.symbolTable.declareField(
             ktDelegateExpression.startOffsetSkippingComments, ktDelegateExpression.endOffset,
             IrDeclarationOrigin.DELEGATE,
