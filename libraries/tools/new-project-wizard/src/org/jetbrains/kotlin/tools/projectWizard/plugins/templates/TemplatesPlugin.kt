@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.KOTLIN_DIR
+import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.RESOURCES_DIR
+import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.SRC_DIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -46,7 +49,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }
     }
 
-    val addTemplatesToSourcesets by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+    val addTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(BuildSystemPlugin::createModules)
         runAfter(KotlinPlugin::createModules)
 
@@ -54,30 +57,10 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
             val templateEngine = VelocityTemplateEngine()
             updateBuildFiles { buildFile ->
                 buildFile.modules.modules.mapSequence { module ->
-                    when (module) {
-                        is SingleplatformModuleIR -> {
-                            module.sourcesets.mapSequence { sourceset ->
-                                applyTemplateToSourceset(
-                                    sourceset.template,
-                                    sourceset,
-                                    templateEngine
-                                ).map { result ->
-                                    result.copy(
-                                        librariesToAdd = result.librariesToAdd.map {
-                                            it.withDependencyType(sourceset.sourcesetType.toDependencyType())
-                                        }
-                                    )
-                                }
-                            }.map(List<TemplateApplicationResult>::fold)
-                        }
-                        is SourcesetModuleIR -> {
-                            applyTemplateToSourceset(
-                                module.template,
-                                module,
-                                templateEngine
-                            )
-                        }
-                    }.map { result -> module.withIrs(result.librariesToAdd) to result }
+                    applyTemplateToModule(
+                        module.template,
+                        module
+                    ).map { result -> module.withIrs(result.librariesToAdd) to result }
                 }.map {
                     val (moduleIrs, results) = it.unzip()
                     val foldedResults = results.fold()
@@ -95,25 +78,25 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }
     }
 
-    val postApplyTemplatesToSourcesets by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+    val postApplyTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(BuildSystemPlugin::createModules)
         runAfter(KotlinPlugin::createModules)
-        runAfter(TemplatesPlugin::addTemplatesToSourcesets)
+        runAfter(TemplatesPlugin::addTemplatesToModules)
 
         withAction {
             updateBuildFiles { buildFile ->
-                val sourcesets = buildFile.sourcesets
+                val modules = buildFile.modules.modules
 
-                val applicationState = sourcesets.mapNotNull { sourceset ->
-                    sourceset.template?.createInterceptors(sourceset)
+                val applicationState = modules.mapNotNull { module ->
+                    module.template?.createInterceptors(module)
                 }.flatten()
                     .applyAll(TemplateInterceptionApplicationState(buildFile, emptyMap()))
 
                 val templateEngine = VelocityTemplateEngine()
 
-                val templatesApplicationResult = sourcesets.map { sourceset ->
-                    val settings = applicationState.sourcesetToSettings[sourceset.original.identificator].orEmpty()
-                    applyFileTemplatesFromSourceset(sourceset, templateEngine, settings)
+                val templatesApplicationResult = modules.map { module ->
+                    val settings = applicationState.moduleToSettings[module.originalModule.identificator].orEmpty()
+                    applyFileTemplatesFromSourceset(module, templateEngine, settings)
                 }.sequenceIgnore()
 
                 templatesApplicationResult andThen applicationState.buildFileIR.asSuccess()
@@ -122,16 +105,39 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
     }
 
     private fun TaskRunningContext.applyFileTemplatesFromSourceset(
-        sourceset: SourcesetIR,
+        module: ModuleIR,
         templateEngine: TemplateEngine,
         interceptionPointSettings: Map<InterceptionPoint<Any>, Any>
     ): TaskResult<Unit> {
-        val template = sourceset.template ?: return UNIT_SUCCESS
-        val settings = with(template) { settingsAsMap(sourceset.original) }
+        val template = module.template ?: return UNIT_SUCCESS
+        val settings = with(template) { settingsAsMap(module.originalModule) }
         val allSettings = settings + interceptionPointSettings.mapKeys { it.key.name }
-        return with(template) { getFileTemplates(sourceset) }.map { fileTemplateDescriptor ->
-            val fileTemplate = FileTemplate(fileTemplateDescriptor, sourceset.path, allSettings)
+        return with(template) { getFileTemplates(module) }.mapNotNull { (fileTemplateDescriptor, filePath) ->
+            val path = generatePathForFileTemplate(module, filePath) ?: return@mapNotNull null
+            val fileTemplate = FileTemplate(
+                fileTemplateDescriptor,
+                module.path / path,
+                allSettings
+            )
             with(templateEngine) { writeTemplate(fileTemplate) }
         }.sequenceIgnore()
+    }
+
+    private fun generatePathForFileTemplate(module: ModuleIR, filePath: FilePath) = when (module) {
+        is SingleplatformModuleIR -> {
+            when (filePath) {
+                is SrcFilePath -> SRC_DIR / filePath.sourcesetType.toString() / KOTLIN_DIR
+                is ResourcesFilePath -> RESOURCES_DIR / filePath.sourcesetType.toString()
+            }
+        }
+
+        is SourcesetModuleIR -> {
+            if (filePath.sourcesetType == module.sourcesetType) {
+                when (filePath) {
+                    is SrcFilePath -> KOTLIN_DIR
+                    is ResourcesFilePath -> RESOURCES_DIR
+                }
+            } else null
+        }
     }
 }

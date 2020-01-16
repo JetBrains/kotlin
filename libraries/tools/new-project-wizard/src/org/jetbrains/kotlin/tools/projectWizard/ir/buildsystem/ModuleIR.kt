@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
@@ -13,14 +14,15 @@ import java.nio.file.Path
 sealed class ModuleIR : IrsOwner, BuildSystemIR {
     abstract val name: String
     abstract val path: Path
+    abstract val template: Template?
     abstract val type: ModuleType
+    abstract val originalModule: Module
 }
 
 
 interface SourcesetIR : BuildSystemIR {
     val sourcesetType: SourcesetType
     val path: Path
-    val template: Template?
     val original: Sourceset
 }
 
@@ -28,7 +30,9 @@ data class SingleplatformModuleIR(
     override val name: String,
     override val path: Path,
     override val irs: List<BuildSystemIR>,
+    override val template: Template?,
     override val type: ModuleType,
+    override val originalModule: Module,
     val sourcesets: List<SingleplatformSourcesetIR>
 ) : ModuleIR() {
     override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformModuleIR = copy(irs = irs)
@@ -51,7 +55,6 @@ data class SingleplatformSourcesetIR(
     override val sourcesetType: SourcesetType,
     override val path: Path,
     override val irs: List<BuildSystemIR>,
-    override val template: Template?,
     override val original: Sourceset
 ) : SourcesetIR, IrsOwner {
     override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformSourcesetIR = copy(irs = irs)
@@ -65,6 +68,7 @@ data class SourcesetModuleIR(
     override val type: ModuleType,
     override val sourcesetType: SourcesetType,
     override val template: Template?,
+    override val originalModule: Module,
     override val original: Sourceset
 ) : SourcesetIR, GradleIR, ModuleIR() {
     override fun withReplacedIrs(irs: List<BuildSystemIR>): SourcesetModuleIR = copy(irs = irs)

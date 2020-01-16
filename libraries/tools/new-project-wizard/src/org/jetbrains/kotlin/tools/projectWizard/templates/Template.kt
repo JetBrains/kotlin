@@ -6,13 +6,11 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
@@ -25,25 +23,25 @@ interface TemplateEnvironment {
 
 class IdBasedTemplateEnvironment(
     private val template: Template,
-    private val sourcesetId: Identificator
+    private val moduleId: Identificator
 ) : TemplateEnvironment {
     override val <V : Any, T : SettingType<V>> TemplateSetting<V, T>.reference
-        get() = IdBasedTemplateSettingReference(template, sourcesetId, this)
+        get() = IdBasedTemplateSettingReference(template, moduleId, this)
 }
 
-class SourcesetBasedTemplateEnvironment<Q : Template>(
+class ModuleBasedTemplateEnvironment<Q : Template>(
     val template: Q,
-    private val sourceset: Sourceset
+    private val module: Module
 ) : TemplateEnvironment {
     override val <V : Any, T : SettingType<V>> TemplateSetting<V, T>.reference
-        get() = SourcesetBasedTemplateSettingReference(template, sourceset, this)
+        get() = ModuleBasedTemplateSettingReference(template, module, this)
 }
 
 fun <T> withSettingsOf(
-    sourceset: Sourceset,
-    template: Template = sourceset.template!!,
+    module: Module,
+    template: Template = module.template!!,
     function: TemplateEnvironment.() -> T
-): T = function(SourcesetBasedTemplateEnvironment(template, sourceset))
+): T = function(ModuleBasedTemplateEnvironment(template, module))
 
 fun <T> withSettingsOf(
     identificator: Identificator,
@@ -62,38 +60,37 @@ abstract class Template : SettingsOwner {
     abstract val title: String
     abstract val htmlDescription: String
     abstract val moduleTypes: Set<ModuleType>
-    abstract val sourcesetTypes: Set<SourcesetType>
 
-    open fun isApplicableTo(sourceset: Sourceset): Boolean = true
+    open fun isApplicableTo(module: Module): Boolean = true
 
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
-    open fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> = emptyList()
+    open fun TaskRunningContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = emptyList()
 
     //TODO: use setting reading context
     open fun TaskRunningContext.getIrsToAddToBuildFile(
-        sourceset: SourcesetIR
+        module: ModuleIR
     ): List<BuildSystemIR> = emptyList()
 
     open fun updateTargetIr(
-        sourceset: SourcesetIR,
+        module: ModuleIR,
         targetConfigurationIR: TargetConfigurationIR
     ): TargetConfigurationIR = targetConfigurationIR
 
-    open fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = emptyList()
+    open fun TaskRunningContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
 
-    open fun createInterceptors(sourceset: SourcesetIR): List<TemplateInterceptor> = emptyList()
+    open fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = emptyList()
 
     fun TaskRunningContext.applyToSourceset(
-        sourceset: SourcesetIR
+        module: ModuleIR
     ): TaskResult<TemplateApplicationResult> {
-        val librariesToAdd = getRequiredLibraries(sourceset)
-        val irsToAddToBuildFile = getIrsToAddToBuildFile(sourceset)
+        val librariesToAdd = getRequiredLibraries(module)
+        val irsToAddToBuildFile = getIrsToAddToBuildFile(module)
 
-        val targetsUpdater = when (sourceset) {
+        val targetsUpdater = when (module) {
             is SourcesetModuleIR -> { target: TargetConfigurationIR ->
-                if (target.targetName == sourceset.targetName) updateTargetIr(sourceset, target)
+                if (target.targetName == module.name) updateTargetIr(module, target)
                 else target
             }
             else -> idFunction()
@@ -103,8 +100,8 @@ abstract class Template : SettingsOwner {
         return result.asSuccess()
     }
 
-    fun TaskRunningContext.settingsAsMap(sourceset: Sourceset): Map<String, Any> =
-        withSettingsOf(sourceset) {
+    fun TaskRunningContext.settingsAsMap(module: Module): Map<String, Any> =
+        withSettingsOf(module) {
             settings.associate { setting ->
                 setting.path to setting.reference.settingValue
             }
@@ -233,18 +230,17 @@ abstract class Template : SettingsOwner {
     }
 }
 
-fun Template.settings(sourceset: Sourceset) = withSettingsOf(sourceset) {
+fun Template.settings(module: Module) = withSettingsOf(module) {
     settings.map { it.reference }
 }
 
-fun TaskRunningContext.applyTemplateToSourceset(
+fun TaskRunningContext.applyTemplateToModule(
     template: Template?,
-    sourceset: SourcesetIR,
-    templateEngine: TemplateEngine
+    module: ModuleIR
 ): TaskResult<TemplateApplicationResult> = when (template) {
     null -> TemplateApplicationResult.EMPTY.asSuccess()
     else -> with(template) {
-        applyToSourceset(sourceset)
+        applyToSourceset(module)
     }
 }
 

@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.id
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
@@ -71,16 +70,16 @@ sealed class TemplateSettingReference<V : Any, T : SettingType<V>> : SettingRefe
         get() = setting.type::class
 
     override fun Context.getSetting(): Setting<V, T> = setting
-    abstract val sourceset: Sourceset?
+    abstract val module: Module?
 }
 
-data class SourcesetBasedTemplateSettingReference<V : Any, T : SettingType<V>>(
+data class ModuleBasedTemplateSettingReference<V : Any, T : SettingType<V>>(
     override val descriptor: Template,
-    override val sourceset: Sourceset,
+    override val module: Module,
     override val setting: TemplateSetting<V, T>
 ) : TemplateSettingReference<V, T>() {
     override val sourcesetId: Identificator
-        get() = sourceset.identificator
+        get() = module.identificator
 }
 
 data class IdBasedTemplateSettingReference<V : Any, T : SettingType<V>>(
@@ -88,7 +87,7 @@ data class IdBasedTemplateSettingReference<V : Any, T : SettingType<V>>(
     override val sourcesetId: Identificator,
     override val setting: TemplateSetting<V, T>
 ) : TemplateSettingReference<V, T>() {
-    override val sourceset: Sourceset? = null
+    override val module: Module? = null
 }
 
 inline val <V : Any, reified T : SettingType<V>> PluginSettingPropertyReference<V, T>.reference: PluginSettingReference<V, T>

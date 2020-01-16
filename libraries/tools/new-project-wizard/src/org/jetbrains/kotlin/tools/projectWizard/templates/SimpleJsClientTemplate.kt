@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
+import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserTar
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -26,13 +28,12 @@ class SimpleJsClientTemplate : Template() {
     override val title: String = "Simple JS client"
     override val htmlDescription: String = title
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.js)
-    override val sourcesetTypes: Set<SourcesetType> = setOf(SourcesetType.main)
     override val id: String = "simpleJsClient"
 
-    override fun isApplicableTo(sourceset: Sourceset): Boolean =
-        sourceset.parent?.configurator == JsBrowserTargetConfigurator
+    override fun isApplicableTo(module: Module): Boolean =
+        module.configurator == JsBrowserTargetConfigurator
 
-    override fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> =
+    override fun TaskRunningContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
         buildList {
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.JCENTER, "org.jetbrains.kotlinx", "kotlinx-html-js"),
@@ -41,11 +42,11 @@ class SimpleJsClientTemplate : Template() {
             )
         }
 
-    override fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = listOf(
-        FileTemplateDescriptor("$id/client.kt.vm", sourcesPath("client.kt"))
+    override fun TaskRunningContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
+        FileTemplateDescriptor("$id/client.kt.vm", "client.kt".asPath()) asSrcOf SourcesetType.main
     )
 
-    override fun createInterceptors(sourceset: SourcesetIR): List<TemplateInterceptor> = buildList {
+    override fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = buildList {
         +interceptTemplate(KtorServerTemplate()) {
             applicableIf { buildFileIR ->
                 val tasks = buildFileIR.irsOfTypeOrNull<GradleConfigureTaskIR>() ?: return@applicableIf false
@@ -82,7 +83,7 @@ class SimpleJsClientTemplate : Template() {
             }
 
             transformBuildFile { buildFileIR ->
-                val jsSourcesetName = sourceset.safeAs<SourcesetModuleIR>()?.targetName ?: return@transformBuildFile null
+                val jsSourcesetName = module.safeAs<SourcesetModuleIR>()?.targetName ?: return@transformBuildFile null
                 val jvmTarget = buildFileIR.targets.firstOrNull { target ->
                     target.safeAs<DefaultTargetConfigurationIR>()?.targetAccess?.type == ModuleSubType.jvm
                 } as? DefaultTargetConfigurationIR ?: return@transformBuildFile null
@@ -133,12 +134,12 @@ class SimpleJsClientTemplate : Template() {
     }
 
 
-    override fun TaskRunningContext.getIrsToAddToBuildFile(sourceset: SourcesetIR): List<BuildSystemIR> = buildList {
+    override fun TaskRunningContext.getIrsToAddToBuildFile(module: ModuleIR): List<BuildSystemIR> = buildList {
         +RepositoryIR(DefaultRepository.JCENTER)
-        if (sourceset is SourcesetModuleIR) {
+        if (module is SourcesetModuleIR) {
             +GradleImportIR("org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack")
             val taskAccessIR = GradleByNameTaskAccessIR(
-                "${sourceset.targetName}BrowserWebpack",
+                "${module.name}BrowserWebpack",
                 WEBPACK_TASK_CLASS
             )
 
