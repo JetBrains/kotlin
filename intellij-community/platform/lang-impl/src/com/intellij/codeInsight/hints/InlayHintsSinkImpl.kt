@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.InlayModel
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
-import com.intellij.util.DocumentUtil
 import gnu.trove.TIntObjectHashMap
 import java.awt.Dimension
 import java.awt.Rectangle
@@ -89,7 +88,7 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
     val inlayModel = editor.inlayModel
     val isBulkChange = existingHorizontalInlays.size + hints.size() > BulkChangeThreshold
     EditorScrollingPositionKeeper.perform(editor, true) {
-      DocumentUtil.executeInBulk(editor.document, isBulkChange) {
+      editor.inlayModel.execute(isBulkChange) {
         updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays, isEnabled)
         if (isEnabled) {
           createNewHints(inlayModel)
