@@ -388,7 +388,8 @@ object NewCommonSuperTypeCalculator {
             return if (equalToEachOtherType == null) {
                 createTypeArgument(commonSuperType(argumentTypes, depth + 1), TypeVariance.OUT)
             } else {
-                createTypeArgument(equalToEachOtherType.getType(), TypeVariance.INV)
+                val thereIsNotInv = arguments.any { it.getVariance() != TypeVariance.INV }
+                createTypeArgument(equalToEachOtherType.getType(), if (thereIsNotInv) TypeVariance.OUT else TypeVariance.INV)
             }
         } else {
             val type = intersectTypes(arguments.map { it.getType() })

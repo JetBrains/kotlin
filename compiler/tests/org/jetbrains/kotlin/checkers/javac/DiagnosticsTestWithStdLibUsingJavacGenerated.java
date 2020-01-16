@@ -1902,6 +1902,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/correctMember.kt");
             }
 
+            @TestMetadata("elvisOperatorAgainstFlexibleType.kt")
+            public void testElvisOperatorAgainstFlexibleType() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/elvisOperatorAgainstFlexibleType.kt");
+            }
+
             @TestMetadata("extensionPriority.kt")
             public void testExtensionPriority() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/extensionPriority.kt");
