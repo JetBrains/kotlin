@@ -12,6 +12,10 @@ org.jetbrains.kotlin.gradle.ImportAndCheckHighlighting.testMultiplatformLibrary[
 org.jetbrains.kotlin.gradle.ImportAndCheckHighlighting.testMultiplatformLibrary[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], KT-35631
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.simpleAndroidAppWithCommonModule, KT-35225
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithAndroid, KT-35225
+org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandlerTest.testFlush, KT-35938
+org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandlerTest.testMessage, KT-35938
+org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandlerTest.testMessageSplit, KT-35938
+org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandlerTest.testOverflow, KT-35938
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleLineMarkerTestGenerated.testKotlinTestAnnotations, No line markers for test run
 org.jetbrains.kotlin.idea.caches.resolve.MultiPlatformHighlightingTestGenerated.testMultifileFacade, KT-34689 invalid light class
 org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testAndroidIllegalIdentifiers_inspectionData_Inspections_test, Unprocessed
