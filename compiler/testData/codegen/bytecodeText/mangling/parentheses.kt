@@ -19,10 +19,5 @@ fun box(): String {
 
 // One instance of each is in kotlin.Metadata.d2
 // 1 \(X\)
-
-// JVM_TEMPLATES
 // 1 \(Y\)
-
-// JVM_IR_TEMPLATES
-// 5 \(Y\)
-// 4 \$this\$\(Y\)
+// 4 \$this

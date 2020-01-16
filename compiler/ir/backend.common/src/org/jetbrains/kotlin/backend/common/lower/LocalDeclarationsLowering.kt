@@ -776,11 +776,9 @@ class LocalDeclarationsLowering(
             if (isSpecial) asString().substring(1, asString().length - 1) else asString()
 
         private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, existing: MutableSet<Name>): Name {
-            val base = if (declaration.name.isSpecial) {
-                val oldName = declaration.name.stripSpecialMarkers()
-                val parentName = (declaration.parent as? IrDeclarationWithName)?.name?.stripSpecialMarkers()
-                if (parentName != null) "$oldName$$parentName" else oldName
-            } else
+            val base = if (declaration.name.isSpecial)
+                declaration.name.stripSpecialMarkers()
+            else
                 declaration.name.asString()
             var chosen = base.synthesizedName
             var suffix = 0
