@@ -127,7 +127,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     assumeTestJavaRuntime(javaRuntimeVersion);
     GradleVersion baseVersion = getCurrentGradleBaseVersion();
     if (javaRuntimeVersion.feature > 9 && baseVersion.compareTo(GradleVersion.version("4.8")) < 0) {
-      List<String> paths = JavaHomeFinder.suggestHomePaths();
+      List<String> paths = JavaHomeFinder.suggestHomePaths(true);
       for (String path : paths) {
         if (JdkUtil.checkForJdk(path)) {
           JdkVersionDetector.JdkVersionInfo jdkVersionInfo = JdkVersionDetector.getInstance().detectJdkVersionInfo(path);
