@@ -5,6 +5,7 @@ package com.intellij.application.options.codeStyle;
 import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.application.options.OptionsContainingConfigurable;
 import com.intellij.application.options.TabbedLanguageCodeStylePanel;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.Language;
@@ -46,7 +47,7 @@ public class CodeStyleMainPanel extends JPanel implements TabbedLanguageCodeStyl
   private final CodeStyleSettingsPanelFactory myFactory;
   private final CodeStyleSchemesPanel mySchemesPanel;
   private boolean myIsDisposed;
-  private final Action mySetFromAction = new AbstractAction("Set from...") {
+  private final Action mySetFromAction = new AbstractAction(CodeInsightBundle.message("settings.code.style.set.from")) {
     @Override
     public void actionPerformed(ActionEvent event) {
       CodeStyleAbstractPanel selectedPanel = ensureCurrentPanel().getSelectedPanel();
