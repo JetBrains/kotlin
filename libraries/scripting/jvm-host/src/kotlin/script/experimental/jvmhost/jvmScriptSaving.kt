@@ -58,7 +58,7 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
         ?.flatMap { it.classpath }
         .orEmpty()
     val dependenciesForMain = scriptCompilationClasspathFromContext(
-        KotlinPaths.Jar.ScriptingLib.baseName, KotlinPaths.Jar.ScriptingJvmLib.baseName, KotlinPaths.Jar.CoroutinesCore.baseName,
+        KotlinPaths.Jar.ScriptingLib.baseName, KotlinPaths.Jar.ScriptingJvmLib.baseName,
         classLoader = this::class.java.classLoader,
         wholeClasspath = false
     )
