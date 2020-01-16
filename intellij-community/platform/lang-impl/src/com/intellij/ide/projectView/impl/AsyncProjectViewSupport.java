@@ -51,7 +51,7 @@ class AsyncProjectViewSupport {
                           @NotNull JTree tree,
                           @NotNull AbstractTreeStructure structure,
                           @NotNull Comparator<NodeDescriptor<?>> comparator) {
-    myStructureTreeModel = new StructureTreeModel<>(structure, parent, comparator);
+    myStructureTreeModel = new StructureTreeModel<>(structure, comparator, parent);
     myAsyncTreeModel = new AsyncTreeModel(myStructureTreeModel, parent);
     myAsyncTreeModel.setRootImmediately(myStructureTreeModel.getRootImmediately());
     myNodeUpdater = new ProjectFileNodeUpdater(project, myStructureTreeModel.getInvoker()) {
