@@ -49,10 +49,10 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
     myConfiguration = ValidationConfiguration.getInstance(myProject);
     myExcludedConfigurable = createExcludedConfigurable(project);
 
-    myValidatorsPanel.setBorder(IdeBorderFactory.createTitledBorder("Validators:", false, JBUI.insetsTop(8)).setShowLine(false));
+    myValidatorsPanel.setBorder(IdeBorderFactory.createTitledBorder(CompilerBundle.message("settings.validators"), false, JBUI.insetsTop(8)).setShowLine(false));
     myValidators.getEmptyText().setText(CompilerBundle.message("no.validators"));
 
-    myExcludedEntriesPanel.setBorder(IdeBorderFactory.createTitledBorder("Exclude from validation:", false, JBUI.insetsTop(8)).setShowLine(false));
+    myExcludedEntriesPanel.setBorder(IdeBorderFactory.createTitledBorder(CompilerBundle.message("settings.exclude.from.validation"), false, JBUI.insetsTop(8)).setShowLine(false));
   }
 
   private static ExcludedEntriesConfigurable createExcludedConfigurable(@NotNull Project project) {
