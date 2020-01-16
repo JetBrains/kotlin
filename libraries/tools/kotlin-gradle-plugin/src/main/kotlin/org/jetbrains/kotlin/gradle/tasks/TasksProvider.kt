@@ -53,6 +53,12 @@ internal fun <T : Task> Project.registerTask(
 }
 
 
+internal fun Project.locateTaskByName(name: String): TaskProvider<*>? = try {
+    tasks.named(name)
+} catch (e: UnknownTaskException) {
+    null
+}
+
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.
  */

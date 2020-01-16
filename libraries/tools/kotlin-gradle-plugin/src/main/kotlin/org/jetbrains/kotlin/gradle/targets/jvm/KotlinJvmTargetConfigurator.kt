@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.locateTaskByName
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -49,7 +50,9 @@ class KotlinJvmTargetConfigurator(kotlinPluginVersion: String) :
     ): KotlinJvmTestRun = KotlinJvmTestRun(name, target).apply {
         val testTaskOrProvider = target.project.registerTask<KotlinJvmTest>(testTaskName) { testTask ->
             testTask.targetName = target.disambiguationClassifier
-            testTask.project.tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(testTask)
+            testTask.project.locateTaskByName(JavaBasePlugin.CHECK_TASK_NAME)?.configure { checkTask ->
+                checkTask.dependsOn(testTask)
+            }
         }
 
         executionTask = testTaskOrProvider

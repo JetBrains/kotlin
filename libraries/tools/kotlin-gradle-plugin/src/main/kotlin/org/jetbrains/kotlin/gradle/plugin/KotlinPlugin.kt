@@ -307,13 +307,15 @@ internal class Kotlin2JsSourceSetProcessor(
 
     private fun registerCleanSourceMapTask() {
         val taskName = kotlinCompilation.composeName("clean", "sourceMap")
-        val registerTask = project.registerTask<Delete>(taskName) {
+        project.registerTask<Delete>(taskName) {
             it.onlyIf { kotlinTask.get().kotlinOptions.sourceMap }
             it.delete(object : Closure<String>(this) {
                 override fun call(): String? = (kotlinTask.get().property("outputFile") as File).canonicalPath + ".map"
             })
         }
-        project.tasks.findByName("clean")?.dependsOn(taskName)
+        project.locateTaskByName("clean")?.configure { cleanTask ->
+            cleanTask.dependsOn(taskName)
+        }
     }
 }
 
@@ -327,10 +329,12 @@ internal class KotlinCommonSourceSetProcessor(
     kotlinCompilation = compilation
 ) {
     override fun doTargetSpecificProcessing() {
-        project.tasks.findByName(kotlinCompilation.compileAllTaskName)!!.dependsOn(kotlinTask)
-        // can be missing (e.g. in case of tests)
+        project.tasks.named(kotlinCompilation.compileAllTaskName).configure { it.dependsOn(kotlinTask) }
         if (kotlinCompilation.compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) {
-            project.tasks.findByName(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask)
+            // can be missing (e.g. in case of tests)
+            project.locateTaskByName(kotlinCompilation.target.artifactsTaskName)?.configure {
+                it.dependsOn(kotlinTask)
+            }
         }
 
         project.whenEvaluated {
@@ -433,25 +437,24 @@ internal abstract class AbstractKotlinPlugin(
         }
 
         private fun configureClassInspectionForIC(project: Project) {
-            val classesTask = project.tasks.findByName(JavaPlugin.CLASSES_TASK_NAME)
-            val jarTask = project.tasks.findByName(JavaPlugin.JAR_TASK_NAME)
+            val classesTask = project.locateTaskByName(JavaPlugin.CLASSES_TASK_NAME)
+            val jarTask = project.locateTask<Jar>(JavaPlugin.JAR_TASK_NAME)
 
-            if (classesTask == null || jarTask !is Jar) {
+            if (classesTask == null || jarTask == null) {
                 project.logger.info(
-                    "Could not configure class inspection task " +
-                            "(classes task = ${classesTask?.javaClass?.canonicalName}, " +
-                            "jar task = ${classesTask?.javaClass?.canonicalName}"
+                    "Could not configure class inspection task because at least one of the 2 following tasks " +
+                            "have not been found: ${JavaPlugin.CLASSES_TASK_NAME} & ${JavaPlugin.JAR_TASK_NAME}."
                 )
                 return
             }
             val inspectTask =
                 project.registerTask<InspectClassesForMultiModuleIC>("inspectClassesForKotlinIC") {
                     it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
-                    it.archivePath.set(project.provider { jarTask.archivePathCompatible.canonicalPath })
-                    it.archiveName.set(project.provider { jarTask.archiveNameCompatible })
+                    it.archivePath.set(project.provider { jarTask.get().archivePathCompatible.canonicalPath })
+                    it.archiveName.set(project.provider { jarTask.get().archiveNameCompatible })
                     it.dependsOn(classesTask)
                 }
-            jarTask.dependsOn(inspectTask)
+            jarTask.configure { it.dependsOn(inspectTask) }
         }
 
         internal fun setUpJavaSourceSets(
@@ -948,7 +951,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
     private val BaseVariant.javaTaskProvider: TaskProvider<out AbstractCompile>
         get() = getJavaTaskProvider()
-            // for older versions, get the task instance and wrap it into a TaskProvider
+        // for older versions, get the task instance and wrap it into a TaskProvider
             ?: getJavaTask(this).let { it.project.tasks.withType(AbstractCompile::class.java).named(it.name) }
 
     private fun postprocessVariant(

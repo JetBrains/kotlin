@@ -13,6 +13,7 @@ import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.tasks.locateTaskByName
 
 /**
  * Internal service for creating aggregated test tasks and registering all test tasks.
@@ -32,8 +33,8 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         taskHolder: TaskProvider<out AbstractTestTask>,
         aggregate: TaskProvider<KotlinTestReport> = allTestsTask
     ) {
-        project.tasks.getByName(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(taskHolder.name)
-        project.cleanAllTestTask.dependsOn(cleanTaskName(taskHolder.name))
+        project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME).configure { it.dependsOn(taskHolder.name) }
+        project.cleanAllTestTask.configure { it.dependsOn(cleanTaskName(taskHolder.name)) }
         aggregate.configure {
             it.dependsOn(taskHolder.name)
             it.registerTestTask(taskHolder.get())
@@ -95,12 +96,12 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         return "clean" + taskName.capitalize()
     }
 
-    private val Project.cleanAllTestTask: Task
+    private val Project.cleanAllTestTask: TaskProvider<*>
         get() {
             val taskName = cleanTaskName(allTestsTask.name)
-            return tasks.findByName(taskName)
-                ?: tasks.create(taskName, Task::class.java).also {
-                    tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME).dependsOn(it)
+            return locateTaskByName(taskName)
+                ?: registerTask<Task>(taskName).also { cleanAllTestTask ->
+                    tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME).configure { it.dependsOn(cleanAllTestTask) }
                 }
         }
 

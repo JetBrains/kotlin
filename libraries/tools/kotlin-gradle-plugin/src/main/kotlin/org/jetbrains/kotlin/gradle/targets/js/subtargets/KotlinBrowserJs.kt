@@ -162,8 +162,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             it.into(distribution.directory ?: baseDist)
         }
 
-        val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(distributionTask)
+        val assembleTask = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+        assembleTask.configure { it.dependsOn(distributionTask) }
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
@@ -207,7 +207,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
 
             if (kind == BuildVariantKind.PRODUCTION) {
-                assembleTask.dependsOn(webpackTask)
+                assembleTask.configure { it.dependsOn(webpackTask) }
                 project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
                     it.dependsOn(webpackTask)
                 }
