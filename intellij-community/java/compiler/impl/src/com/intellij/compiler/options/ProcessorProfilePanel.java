@@ -15,6 +15,7 @@
  */
 package com.intellij.compiler.options;
 
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -73,20 +74,21 @@ public class ProcessorProfilePanel extends JPanel {
     super(new GridBagLayout());
     myProject = project;
 
-    myCbEnableProcessing = new JCheckBox("Enable annotation processing");
+    myCbEnableProcessing = new JCheckBox(CompilerBundle.message("settings.enable.annotation.processing"));
 
     {
-      myRbClasspath = new JRadioButton("Obtain processors from project classpath");
-      myRbProcessorsPath = new JRadioButton("Processor path:");
-      myCbProcessorModulePath = new JCheckBox("Use --processor-module-path compiler option (for Java 9 and later)");
+      myRbClasspath = new JRadioButton(CompilerBundle.message("settings.obtain.processors.from.project.classpath"));
+      myRbProcessorsPath = new JRadioButton(CompilerBundle.message("settings.processor.path"));
+      myCbProcessorModulePath =
+        new JCheckBox(CompilerBundle.message("settings.use.processor.module.path.compiler.option.for.java.9.and.later"));
       ButtonGroup group = new ButtonGroup();
       group.add(myRbClasspath);
       group.add(myRbProcessorsPath);
     }
 
     {
-      myRbRelativeToContentRoot = new JRadioButton("Module content root");
-      myRbRelativeToOutputRoot = new JRadioButton("Module output directory");
+      myRbRelativeToContentRoot = new JRadioButton(CompilerBundle.message("settings.module.content.root"));
+      myRbRelativeToOutputRoot = new JRadioButton(CompilerBundle.message("settings.module.output.directory"));
       final ButtonGroup group = new ButtonGroup();
       group.add(myRbRelativeToContentRoot);
       group.add(myRbRelativeToOutputRoot);
@@ -112,17 +114,17 @@ public class ProcessorProfilePanel extends JPanel {
 
     myProcessorTablePanel = new JPanel(new BorderLayout());
     myProcessorsModel = new ProcessorTableModel();
-    myProcessorTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Annotation processors:", false, JBUI.insetsTop(8)).setShowLine(false));
+    myProcessorTablePanel.setBorder(IdeBorderFactory.createTitledBorder(CompilerBundle.message("settings.annotation.processors"), false, JBUI.insetsTop(8)).setShowLine(false));
     myProcessorTable = new JBTable(myProcessorsModel);
-    myProcessorTable.getEmptyText().setText("Compiler will run all automatically discovered processors");
+    myProcessorTable.getEmptyText().setText(CompilerBundle.message("settings.compiler.will.run.all.automatically.discovered.processors"));
     myProcessorPanel = createTablePanel(myProcessorTable);
     myProcessorTablePanel.add(myProcessorPanel, BorderLayout.CENTER);
 
     myOptionsTablePanel = new JPanel(new BorderLayout());
     myOptionsModel = new OptionsTableModel();
-    myOptionsTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Annotation processor options:", false, JBUI.insetsTop(13)).setShowLine(false));
+    myOptionsTablePanel.setBorder(IdeBorderFactory.createTitledBorder(CompilerBundle.message("settings.annotation.processor.options"), false, JBUI.insetsTop(13)).setShowLine(false));
     myOptionsTable = new JBTable(myOptionsModel);
-    myOptionsTable.getEmptyText().setText("No processor-specific options configured");
+    myOptionsTable.getEmptyText().setText(CompilerBundle.message("settings.no.processor.specific.options.configured"));
     myOptionsPanel = createTablePanel(myOptionsTable);
     myOptionsTablePanel.add(myOptionsPanel, BorderLayout.CENTER);
 
@@ -140,12 +142,11 @@ public class ProcessorProfilePanel extends JPanel {
     add(myCbProcessorModulePath,
         new GridBagConstraints(0, GridBagConstraints.RELATIVE, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(2, 5, 0, 0), 0, 0));
 
-    add(ContextHelpLabel.create(
-      "Assume specified path is a 'module path': a path of JARs or directories containing packaged java modules." +
-      "\nIn order to be discovered and run from the module path an annotation processor should be packaged as a java module and registered with the ServiceLoader in the module declaration."
-    ), new GridBagConstraints(2, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.insets(2, 2, 0, 0), 0, 0));
+    add(ContextHelpLabel.create(CompilerBundle.message("settings.module.path.warning")),
+        new GridBagConstraints(2, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+                               JBUI.insets(2, 2, 0, 0), 0, 0));
 
-    myStoreGenSourcesLabel = new JLabel("Store generated sources relative to: ");
+    myStoreGenSourcesLabel = new JLabel(CompilerBundle.message("settings.store.generated.sources.relative.to"));
     add(myStoreGenSourcesLabel,
         new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(15, 5, 0, 0), 0, 0));
     add(myRbRelativeToOutputRoot,
@@ -153,13 +154,13 @@ public class ProcessorProfilePanel extends JPanel {
     add(myRbRelativeToContentRoot,
         new GridBagConstraints(2, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(15, 5, 0, 0), 0, 0));
 
-    myProductionLabel = new JLabel("Production sources directory:");
+    myProductionLabel = new JLabel(CompilerBundle.message("settings.production.sources.directory"));
     add(myProductionLabel,
         new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 5, 0, 0), 0, 0));
     add(myGeneratedProductionDirField,
         new GridBagConstraints(1, GridBagConstraints.RELATIVE, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 5, 0, 0), 0, 0));
 
-    myTestLabel = new JLabel("Test sources directory:");
+    myTestLabel = new JLabel(CompilerBundle.message("settings.test.sources.directory"));
     add(myTestLabel,
         new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 5, 0, 0), 0, 0));
     add(myGeneratedTestsDirField,
@@ -291,8 +292,8 @@ public class ProcessorProfilePanel extends JPanel {
     @Override
     public String getColumnName(int column) {
       switch (column) {
-        case 0: return "Option Name";
-        case 1: return "Value";
+        case 0: return CompilerBundle.message("settings.column.option.name");
+        case 1: return CompilerBundle.message("settings.column.value");
       }
       return super.getColumnName(column);
     }
@@ -411,7 +412,7 @@ public class ProcessorProfilePanel extends JPanel {
     @Override
     public String getColumnName(int column) {
       if (column == 0) {
-        return "Processor FQ Name";
+        return CompilerBundle.message("settings.processor.fq.name");
       }
       return super.getColumnName(column);
     }
