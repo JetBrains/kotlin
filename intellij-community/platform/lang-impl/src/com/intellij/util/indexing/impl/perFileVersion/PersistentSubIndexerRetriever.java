@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.impl.perFileVersion;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
@@ -65,7 +66,7 @@ public class PersistentSubIndexerRetriever<SubIndexerType, SubIndexerVersion> {
 
   public void setIndexedState(int fileId, @NotNull IndexedFile file) throws IOException {
     try (DataOutputStream stream = FSRecords.writeAttribute(fileId, myFileAttribute)) {
-      DataInputOutputUtil.writeINT(stream, getFileIndexerId(file));
+      DataInputOutputUtil.writeINT(stream, ProgressManager.getInstance().computeInNonCancelableSection(() -> getFileIndexerId(file)));
     }
   }
 
