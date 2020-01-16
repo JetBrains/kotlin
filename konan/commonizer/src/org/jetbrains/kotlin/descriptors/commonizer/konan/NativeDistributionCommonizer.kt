@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
-import kotlin.time.ExperimentalTime
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 class NativeDistributionCommonizer(
@@ -40,7 +39,6 @@ class NativeDistributionCommonizer(
     private val handleError: (String) -> Nothing,
     private val log: (String) -> Unit
 ) {
-    @ExperimentalTime
     fun run() {
         checkPreconditions()
 

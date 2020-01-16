@@ -5,15 +5,46 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-import kotlin.time.MonoClock
+import java.lang.System.currentTimeMillis
 
-@ExperimentalTime
 internal class ResettableClockMark {
-    private val startMark = MonoClock.markNow()
+    internal class Period(val start: Long, val end: Long) {
+        override fun toString(): String {
+            var remainder = end - start
+
+            val millis = remainder % 1000
+            remainder /= 1000
+
+            val seconds = remainder % 60
+            remainder /= 60
+
+            val minutes = remainder % 60
+
+            val hours = remainder / 60
+
+            // human-friendly formatted duration
+            return buildString {
+                if (hours > 0) append(hours).append("h ")
+                if (minutes > 0 || isNotEmpty()) append(minutes).append("m ")
+                if (seconds > 0 || isNotEmpty()) append(seconds).append("s ")
+                if (millis > 0 || isNotEmpty()) append(millis).append("ms")
+            }
+        }
+    }
+
+    private val startMark = currentTimeMillis()
     private var lastMark = startMark
 
-    fun elapsedSinceLast(): Duration = lastMark.elapsedNow().also { lastMark = lastMark.plus(it) }
-    fun elapsedSinceStart(): Duration = startMark.elapsedNow()
+    fun elapsedSinceLast(): Period = Period(lastMark, currentTimeMillis()).also { lastMark = it.end }
+    fun elapsedSinceStart(): Period = Period(startMark, currentTimeMillis())
 }
+
+// TODO: this is how it should be when Kotlin Time will become non-experimental
+//@ExperimentalTime
+//internal class ResettableClockMark {
+//    private val startMark = MonoClock.markNow()
+//    private var lastMark = startMark
+//
+//    fun elapsedSinceLast(): Duration = lastMark.elapsedNow().also { lastMark = lastMark.plus(it) }
+//    fun elapsedSinceStart(): Duration = startMark.elapsedNow()
+//}

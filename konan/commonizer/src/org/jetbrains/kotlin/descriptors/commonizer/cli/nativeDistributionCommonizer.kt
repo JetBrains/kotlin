@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommo
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import kotlin.system.exitProcess
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 fun main(args: Array<String>) {
     if (args.isEmpty()) printUsageAndExit()
 
