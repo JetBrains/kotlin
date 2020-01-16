@@ -46,11 +46,13 @@ fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
 class StringTest {
 
+    @Suppress("DEPRECATION")
     private fun testStringFromChars(expected: String, chars: CharArray, offset: Int, length: Int) {
         assertEquals(expected, String(chars, offset, length))
         assertEquals(expected, chars.concatToString(startIndex = offset, endIndex = offset + length))
     }
 
+    @Suppress("DEPRECATION")
     private fun testStringFromChars(expected: String, chars: CharArray) {
         assertEquals(expected, String(chars))
         assertEquals(expected, chars.concatToString())
@@ -61,6 +63,7 @@ class StringTest {
         testStringFromChars("Kotlin", chars, 0, chars.size)
     }
 
+    @Suppress("DEPRECATION")
     @Test fun stringFromCharArraySlice() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n', ' ', 'r', 'u', 'l', 'e', 's')
         testStringFromChars("rule", chars, 7, 4)
@@ -74,6 +77,7 @@ class StringTest {
         assertTrue(longConcatString.all { it == 'k' })
     }
 
+    @Suppress("DEPRECATION")
     @Test fun stringFromCharArray() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
         testStringFromChars("Kotlin", chars)
@@ -94,6 +98,7 @@ class StringTest {
         testStringFromChars("Ŭᎍ🀺", chars, 3, 4)
     }
 
+    @Suppress("DEPRECATION")
     @Test fun stringFromCharArrayOutOfBounds() {
         fun test(chars: CharArray) {
             assertFailsWith<IndexOutOfBoundsException> { String(chars, -1, 1) }

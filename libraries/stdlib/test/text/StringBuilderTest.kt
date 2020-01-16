@@ -187,8 +187,6 @@ class StringBuilderTest {
                 'm', 'y', ' ', 'a', 'p', 'p', 'e', 'n', 'd', ' ', 'c', 'h', 'a', 'r', ' ', 'a', 'r', 'r', 'a', 'y', ' ', 't', 'e', 's', 't'
             )
 
-            String(charArray, 0, 1)
-
             sb.appendRange(charArray, 0, charArray.size /*25*/)
             sb.appendRange(charArray, 0, 9)
             sb.appendRange(charArray, 15, 25)
@@ -473,11 +471,11 @@ class StringBuilderTest {
             val chars = CharArray(10) { '_' }
 
             sb.toCharArray(chars, 8, 0, 2)
-            assertEquals("________my", String(chars))
+            assertEquals("________my", chars.concatToString())
             sb.toCharArray(chars, 3, 6, 11)
-            assertEquals("___harArmy", String(chars))
+            assertEquals("___harArmy", chars.concatToString())
             sb.toCharArray(chars, 0, 16, 19)
-            assertEquals("estharArmy", String(chars))
+            assertEquals("estharArmy", chars.concatToString())
 
             sb.setLength(5)
 
