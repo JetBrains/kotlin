@@ -118,8 +118,9 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                 fun makeComposer(): Composer<*> {
                     val container = LinearLayout(__context!!)
                     return ViewComposer(
-                        container,
                         __context!!,
+                        container,
+                        SlotTable(),
                         Recomposer.current()
                     )
                 }

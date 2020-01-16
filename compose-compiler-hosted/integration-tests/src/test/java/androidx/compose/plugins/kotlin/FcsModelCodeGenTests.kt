@@ -293,7 +293,7 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
         advance: String,
         composition: String,
         dumpClasses: Boolean = false
-    ): ModelCompositionTest {
+    ): RobolectricComposeTester {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 
@@ -349,7 +349,7 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
 
-        return composeModel({
+        return composeMulti({
             val composeMethod = instanceClass.getMethod("compose")
             composeMethod.invoke(instanceOfClass)
         }) {
@@ -360,8 +360,3 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
         }
     }
 }
-
-private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
-
-private fun composeModel(composable: () -> Unit, advance: () -> Unit) =
-    ModelCompositionTest(composable, advance)

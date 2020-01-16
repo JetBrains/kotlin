@@ -160,18 +160,14 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
             import androidx.compose.*
 
-            class TextSpanScope internal constructor(val composer: ViewComposition)
+            class TextSpanScope internal constructor(val composer: ViewComposer)
 
-            class Root : Component() {
-                fun update() = composer.compose()
-                lateinit var scope: TextSpanScope
-                lateinit var compositionContext: CompositionContext
-                lateinit var composable: @Composable() TextSpanScope.() -> Unit
-                @Suppress("PLUGIN_ERROR")
-                override fun compose() {
-                    with(scope) {
-                        <call>composable()
-                    }
+            @Composable fun Foo(
+                scope: TextSpanScope, 
+                composable: @Composable() TextSpanScope.() -> Unit
+            ) {
+                with(scope) {
+                    <call>composable()
                 }
             }
         """
