@@ -51,6 +51,7 @@ dependencies {
     runtime("org.xerial:sqlite-jdbc:3.21.0.1") { isTransitive = false }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
     runtime("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
+    runtime("com.jetbrains.intellij.swift:swift-doc:$clionVersion") { isTransitive = false }
     runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
     runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
 }
