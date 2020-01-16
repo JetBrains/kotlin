@@ -144,6 +144,8 @@ tasks {
 projectTest {
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(tasks.named("validateTaskProperties"))
+
+    workingDir = rootDir
 }
 
 pluginBundle {

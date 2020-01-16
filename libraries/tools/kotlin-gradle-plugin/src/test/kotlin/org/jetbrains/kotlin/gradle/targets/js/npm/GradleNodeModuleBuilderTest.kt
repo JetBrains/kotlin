@@ -16,7 +16,7 @@ class GradleNodeModuleBuilderTest {
     @Test
     fun validPackageJsonWithoutDependencies() {
         val packageJson = fromSrcPackageJson(
-            File("src/test/resources/org/jetbrains/kotlin/gradle/targets/js/npm/GradleNodeModuleBuilderTest/package.json")
+            File("libraries/tools/kotlin-gradle-plugin/src/test/resources/org/jetbrains/kotlin/gradle/targets/js/npm/GradleNodeModuleBuilderTest/package.json")
         )
         assertNotNull(packageJson, "package.json should be deserialized")
 
