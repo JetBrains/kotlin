@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.test
 
 import junit.framework.TestCase
 import org.junit.runner.Runner
+import org.junit.runner.notification.Failure
+import org.junit.runner.notification.RunListener
+import org.junit.runner.notification.RunNotifier
 import org.junit.runners.BlockJUnit4ClassRunner
 import org.junit.runners.model.FrameworkMethod
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters
@@ -30,6 +33,16 @@ private val DO_AUTO_MUTE: AutoMute? by lazy {
     } else {
         null
     }
+}
+
+private fun AutoMute.muteTest(testKey: String) {
+    val file = File(file)
+    val lines = file.readLines()
+    val firstLine = lines[0] // Drop file header
+    val muted = lines.drop(1).toMutableList()
+    muted.add("$testKey, $issue")
+    val newMuted: List<String> = mutableListOf<String>() + firstLine + muted.sorted()
+    file.writeText(newMuted.joinToString("\n"))
 }
 
 private class MutedTest(
@@ -161,14 +174,7 @@ internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> U
         try {
             f()
         } catch (e: Throwable) {
-            val file = File(doAutoMute.file)
-            val lines = file.readLines()
-            val firstLine = lines[0]
-            val muted = lines.drop(1).toMutableList()
-            muted.add("${testKey(testCase)}, ${doAutoMute.issue}")
-            val newMuted: List<String> = mutableListOf<String>() + firstLine + muted.sorted()
-            file.writeText(newMuted.joinToString("\n"))
-
+            doAutoMute.muteTest(testKey(testCase))
             throw e
         }
     }
@@ -190,8 +196,34 @@ class RunnerFactoryWithMuteInDatabase : ParametersRunnerFactory {
 }
 
 class RunnerWithIgnoreInDatabase(klass: Class<*>?) : BlockJUnit4ClassRunner(klass) {
+    companion object {
+        val DUMMY_LISTENER = RunListener()
+    }
+
     override fun isIgnored(child: FrameworkMethod): Boolean {
         return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child)
+    }
+
+    override fun runChild(method: FrameworkMethod, notifier: RunNotifier) {
+        val doAutoMute = DO_AUTO_MUTE
+
+        val muteFailureListener = if (doAutoMute == null) {
+            DUMMY_LISTENER
+        } else {
+            object : RunListener() {
+                override fun testFailure(failure: Failure) {
+                    doAutoMute.muteTest(testKey(method.declaringClass, method.name))
+                    super.testFailure(failure)
+                }
+            }
+        }
+
+        try {
+            notifier.addListener(muteFailureListener)
+            super.runChild(method, notifier)
+        } finally {
+            notifier.removeListener(muteFailureListener)
+        }
     }
 }
 
