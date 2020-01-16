@@ -245,7 +245,7 @@ public class SdkDownloadTracker implements Disposable {
             ProgressIndicatorBase middleMan = new ProgressIndicatorBase() {
               @Override
               protected void delegateProgressChange(@NotNull IndicatorAction action) {
-                action.execute(myProgressIndicator);
+                action.execute((ProgressIndicatorEx)indicator);
               }
             };
             myProgressIndicator.addStateDelegate(middleMan);
