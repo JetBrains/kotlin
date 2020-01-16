@@ -242,13 +242,19 @@ public class SdkDownloadTracker implements Disposable {
           try {
             // we need a progress indicator from the outside, to avoid race condition
             // (progress may start with a delay, but UI would need a PI)
-            myProgressIndicator.addStateDelegate((ProgressIndicatorEx)indicator);
+            ProgressIndicatorBase middleMan = new ProgressIndicatorBase() {
+              @Override
+              protected void delegateProgressChange(@NotNull IndicatorAction action) {
+                action.execute(myProgressIndicator);
+              }
+            };
+            myProgressIndicator.addStateDelegate(middleMan);
             myProgressIndicator.checkCanceled();
             try {
               myTask.doDownload(myProgressIndicator);
             }
             finally {
-              myProgressIndicator.removeStateDelegate((ProgressIndicatorEx)indicator);
+              myProgressIndicator.removeStateDelegate(middleMan);
             }
 
             onSdkDownloadCompleted(false);
