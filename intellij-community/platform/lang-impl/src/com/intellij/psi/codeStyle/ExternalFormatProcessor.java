@@ -3,6 +3,7 @@ package com.intellij.psi.codeStyle;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -46,6 +47,8 @@ public interface ExternalFormatProcessor {
    */
   @Nullable
   String indent(@NotNull PsiFile source, int lineStartOffset);
+
+  default void createConfiguration(@NotNull Project project) {}
 
   /**
    * @return the unique id for external formatter
