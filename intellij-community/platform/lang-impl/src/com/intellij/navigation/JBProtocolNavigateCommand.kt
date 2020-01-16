@@ -7,6 +7,8 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.ide.actions.searcheverywhere.SymbolSearchEverywhereContributor
 import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.JBProtocolCommand
 import com.intellij.openapi.application.JetBrainsProtocolHandler.FRAGMENT_PARAM_NAME
@@ -131,7 +133,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
       ProgressManager.getInstance().run(
         object : Task.Backgroundable(project, IdeBundle.message("navigate.command.search.reference.progress.title", fqn), true) {
           override fun run(indicator: ProgressIndicator) {
-            SymbolSearchEverywhereContributor(project, null)
+            SymbolSearchEverywhereContributor(AnActionEvent.createFromDataContext("JB Protocol", null, DataContext.EMPTY_CONTEXT)) // todo[gregsh]
               .search(fqn, ProgressManager.getInstance().progressIndicator ?: StatusBarProgress())
               .filterIsInstance<PsiElement>()
               .forEach {
