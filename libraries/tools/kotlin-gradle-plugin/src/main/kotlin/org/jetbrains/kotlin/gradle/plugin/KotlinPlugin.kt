@@ -307,7 +307,7 @@ internal class Kotlin2JsSourceSetProcessor(
 
     private fun registerCleanSourceMapTask() {
         val taskName = kotlinCompilation.composeName("clean", "sourceMap")
-        val registerTask = registerTask(project, taskName, Delete::class.java) {
+        val registerTask = project.registerTask<Delete>(taskName) {
             it.onlyIf { kotlinTask.get().kotlinOptions.sourceMap }
             it.delete(object : Closure<String>(this) {
                 override fun call(): String? = (kotlinTask.get().property("outputFile") as File).canonicalPath + ".map"
@@ -445,7 +445,7 @@ internal abstract class AbstractKotlinPlugin(
                 return
             }
             val inspectTask =
-                registerTask(project, "inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java) {
+                project.registerTask<InspectClassesForMultiModuleIC>("inspectClassesForKotlinIC") {
                     it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
                     it.archivePath.set(project.provider { jarTask.archivePathCompatible.canonicalPath })
                     it.archiveName.set(project.provider { jarTask.archiveNameCompatible })

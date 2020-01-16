@@ -27,13 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.runOnceAfterEvaluated
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 
 /**
- * Registers the task with [name] and [type] and initialization script [body]
+ * Registers the task with [name] and type [T] and initialization script [body]
  */
-@JvmName("registerTaskOld")
-@Deprecated("please use Project.registerTask<T>(name, body)", ReplaceWith("project.registerTask(name, body)"))
-internal fun <T : Task> registerTask(project: Project, name: String, type: Class<T>, body: (T) -> (Unit)): TaskProvider<T> =
-    project.registerTask(name, type, emptyList(), body)
-
 internal inline fun <reified T : Task> Project.registerTask(
     name: String,
     args: List<Any> = emptyList(),
@@ -41,6 +36,9 @@ internal inline fun <reified T : Task> Project.registerTask(
 ): TaskProvider<T> =
     this@registerTask.registerTask(name, T::class.java, args, body)
 
+/**
+ * Registers the task with [name] and [type] and initialization script [body]
+ */
 internal fun <T : Task> Project.registerTask(
     name: String,
     type: Class<T>,
@@ -70,7 +68,7 @@ internal inline fun <reified T : Task> Project.locateTask(name: String): TaskPro
  * with [name], type [T] and initialization script [body]
  */
 internal inline fun <reified T : Task> Project.locateOrRegisterTask(name: String, noinline body: (T) -> (Unit)): TaskProvider<T> {
-    return project.locateTask(name) ?: registerTask(project, name, T::class.java, body)
+    return project.locateTask(name) ?: project.registerTask<T>(name, body = body)
 }
 
 internal open class KotlinTasksProvider(val targetName: String) {
@@ -82,7 +80,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     ): TaskProvider<out KotlinCompile> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
-        val result = registerTask(project, name, taskClass) {
+        val result = project.registerTask(name, taskClass) {
             configureAction(it)
         }
         configure(result, project, properties, compilation)
