@@ -11,8 +11,10 @@ import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -181,6 +183,17 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 private const val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
 private const val INVOKE_SUSPEND_SIGNATURE = "(Ljava/lang/Object;)Ljava/lang/Object;"
 
+fun StackFrameProxyImpl.isOnSuspensionPoint(): Boolean {
+    val location = this.safeLocation() ?: return false
+
+    if (isInSuspendMethod(location)) {
+        val firstLocation = getFirstMethodLocation(location) ?: return false
+        return firstLocation.safeLineNumber() == location.safeLineNumber() && firstLocation.codeIndex() != location.codeIndex()
+    }
+
+    return false
+}
+
 fun isInSuspendMethod(location: Location): Boolean {
     val method = location.method()
     val signature = method.signature()
@@ -194,22 +207,18 @@ fun isInSuspendMethod(location: Location): Boolean {
     return false
 }
 
-fun suspendFunctionFirstLineLocation(location: Location): Int? {
-    if (!isInSuspendMethod(location)) {
+private fun getFirstMethodLocation(location: Location): Location? {
+    val firstLocation = location.safeMethod()?.location() ?: return null
+    if (firstLocation.safeLineNumber() < 0) {
         return null
     }
 
-    val lineNumber = location.method().location()?.lineNumber()
-    if (lineNumber == -1) {
-        return null
-    }
-
-    return lineNumber
+    return firstLocation
 }
 
 fun isOnSuspendReturnOrReenter(location: Location): Boolean {
-    val suspendStartLineNumber = suspendFunctionFirstLineLocation(location) ?: return false
-    return suspendStartLineNumber == location.lineNumber()
+    val firstLocation = getFirstMethodLocation(location) ?: return false
+    return firstLocation.safeLineNumber() == location.safeLineNumber()
 }
 
 fun isLastLineLocationInMethod(location: Location): Boolean {
