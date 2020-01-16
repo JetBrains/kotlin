@@ -533,7 +533,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (fqName.startsWith("kotlin.")
                 || fqName.startsWith("java.")
                 || fqName.startsWith("javax.")
-                || fqName.startsWith("org.jetbrains.") && AnnotationUtil.isJetbrainsAnnotation(StringUtil.getShortName(fqName))
+                || fqName.startsWith("org.jetbrains.annotations.")
             )
                 continue
 
