@@ -16,6 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener.Companion.LISTENER
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 
@@ -75,6 +76,8 @@ internal class ScriptChangesNotifier(
 
     private fun getListener(project: Project, file: VirtualFile): ScriptChangeListener? {
         if (project.isDisposed || areListenersDisabled()) return null
+
+        if (ScriptConfigurationManager.isManualConfigurationLoading(file)) return null
 
         return listeners.firstOrNull { it.isApplicable(file) }
     }

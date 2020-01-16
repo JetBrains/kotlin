@@ -32,14 +32,10 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
-import kotlin.script.experimental.jvm.jdkHome
-import kotlin.script.experimental.jvm.jvm
 
 /**
  * Standard implementation of scripts configuration loading and caching
@@ -184,7 +180,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
         if (syncLoader == null) {
             // run async loader
             if (forceSync) {
-                async.first { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
+                async.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
             } else {
                 backgroundExecutor.ensureScheduled(virtualFile) {
                     val cached = getCachedConfigurationState(virtualFile)
@@ -197,9 +193,24 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                         // don't start loading if nothing was changed
                         // (in case we checking for up-to-date and loading concurrently)
                         val actualIsFirstLoad = cached == null
-                        async.first { it.loadDependencies(actualIsFirstLoad, file, scriptDefinition, loadingContext) }
+                        async.firstOrNull { it.loadDependencies(actualIsFirstLoad, file, scriptDefinition, loadingContext) }
                     }
                 }
+            }
+        }
+    }
+
+    override fun forceReloadConfiguration(file: KtFile, loader: ScriptConfigurationLoader) {
+        val virtualFile = file.originalFile.virtualFile ?: return
+
+        if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
+        val scriptDefinition = file.findScriptDefinition() ?: return
+
+        if (!loader.shouldRunInBackground(scriptDefinition)) {
+            loader.loadDependencies(false, file, scriptDefinition, loadingContext)
+        } else {
+            backgroundExecutor.ensureScheduled(virtualFile) {
+                loader.loadDependencies(false, file, scriptDefinition, loadingContext)
             }
         }
     }

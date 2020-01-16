@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -31,7 +32,9 @@ import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.configuration.AbstractScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
@@ -69,6 +72,12 @@ interface ScriptConfigurationManager {
      * May return null even configuration was loaded but was not yet applied.
      */
     fun getConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper?
+
+    /**
+     * Reload the configuration for [file] even it is already loaded.
+     * [loader] is used to load configuration. Other loaders aren't taken into account.
+     */
+    fun forceReloadConfiguration(file: VirtualFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper?
 
     @Deprecated("Use getScriptClasspath(KtFile) instead")
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile>
@@ -165,5 +174,13 @@ interface ScriptConfigurationManager {
         fun clearCaches(project: Project) {
             (getInstance(project) as AbstractScriptConfigurationManager).clearCaches()
         }
+
+        fun markFileWithManualConfigurationLoading(file: VirtualFile) {
+            file.LOAD_CONFIGURATION_MANUALLY = true
+        }
+
+        fun isManualConfigurationLoading(file: VirtualFile): Boolean = file.LOAD_CONFIGURATION_MANUALLY ?: false
+
+        private var VirtualFile.LOAD_CONFIGURATION_MANUALLY: Boolean? by UserDataProperty(Key.create<Boolean>("MANUAL_CONFIGURATION_LOADING"))
     }
 }
