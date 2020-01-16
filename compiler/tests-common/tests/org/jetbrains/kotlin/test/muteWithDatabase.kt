@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import junit.framework.TestCase
 import org.junit.runner.Runner
+import org.junit.runners.BlockJUnit4ClassRunner
 import org.junit.runners.model.FrameworkMethod
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters
 import org.junit.runners.parameterized.ParametersRunnerFactory
@@ -178,7 +179,7 @@ private fun mutedMessage(key: String) = "MUTED TEST: $key"
 private fun testKey(klass: Class<*>, methodKey: String) = "${klass.canonicalName}.$methodKey"
 private fun testKey(testCase: TestCase) = testKey(testCase::class.java, testCase.name)
 
-class RunnerFactoryWithMuteInDatabase: ParametersRunnerFactory {
+class RunnerFactoryWithMuteInDatabase : ParametersRunnerFactory {
     override fun createRunnerForTestWithParameters(test: TestWithParameters?): Runner {
         return object : BlockJUnit4ClassRunnerWithParameters(test) {
             override fun isIgnored(child: FrameworkMethod): Boolean {
@@ -188,9 +189,23 @@ class RunnerFactoryWithMuteInDatabase: ParametersRunnerFactory {
     }
 }
 
-fun isIgnoredInDatabaseWithLog(child: FrameworkMethod, parametersName: String): Boolean {
+class RunnerWithIgnoreInDatabase(klass: Class<*>?) : BlockJUnit4ClassRunner(klass) {
+    override fun isIgnored(child: FrameworkMethod): Boolean {
+        return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child)
+    }
+}
+
+fun isIgnoredInDatabaseWithLog(child: FrameworkMethod): Boolean {
     if (isMutedInDatabase(child.declaringClass, child.name)) {
         System.err.println(mutedMessage(testKey(child.declaringClass, child.name)))
+        return true
+    }
+
+    return false
+}
+
+fun isIgnoredInDatabaseWithLog(child: FrameworkMethod, parametersName: String): Boolean {
+    if (isIgnoredInDatabaseWithLog(child)) {
         return true
     }
 
