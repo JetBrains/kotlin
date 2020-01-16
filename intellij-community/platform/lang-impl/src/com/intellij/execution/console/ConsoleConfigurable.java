@@ -78,7 +78,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       if (ConsoleBuffer.useCycleBuffer()) {
         northPanel.add(myCbOverrideConsoleCycleBufferSize, gridBag.nextLine().next());
         northPanel.add(myConsoleCycleBufferSizeField, gridBag.next());
-        northPanel.add(new JLabel(" KB"), gridBag.next());
+        northPanel.add(new JLabel(ExecutionBundle.message("settings.console.kb")), gridBag.next());
         northPanel.add(Box.createHorizontalStrut(JBUIScale.scale(20)), gridBag.next());
         northPanel.add(myConsoleBufferSizeWarningLabel, gridBag.next());
       }
