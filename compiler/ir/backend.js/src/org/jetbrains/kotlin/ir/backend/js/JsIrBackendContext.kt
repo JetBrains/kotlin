@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
@@ -47,7 +46,7 @@ class JsIrBackendContext(
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val scriptMode: Boolean = false
-) : CommonBackendContext {
+) : JsCommonBackendContext {
     override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
 
@@ -102,7 +101,9 @@ class JsIrBackendContext(
         }
 
     override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
-    override val declarationFactory = JsDeclarationFactory()
+
+    override val mapping = JsMapping()
+    override val declarationFactory = JsDeclarationFactory(mapping)
 
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))

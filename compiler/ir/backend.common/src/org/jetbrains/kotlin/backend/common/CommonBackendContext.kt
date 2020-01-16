@@ -33,4 +33,6 @@ interface CommonBackendContext : BackendContext, LoggingContext {
             putValueArgument(0, builder.irString(name))
         }
     }
+
+    val mapping: Mapping
 }
