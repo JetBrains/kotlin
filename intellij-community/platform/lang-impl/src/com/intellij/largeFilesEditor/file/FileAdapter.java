@@ -67,8 +67,12 @@ class FileAdapter {
     return vFile.getCharset().name();
   }
 
-  // TODO: 22.01.19 cashedFileSize is not the best solving of race condition, but it's better than "synchronized" in performance. Probably it's still need to be done in another way.
   long getPagesAmount() throws IOException {
+    return (getFileSize() + pageSize - 1) / pageSize;
+  }
+
+  // TODO: 22.01.19 cashedFileSize is not the best solving of race condition, but it's better than "synchronized" in performance. Probably it's still need to be done in another way.
+  long getFileSize() throws IOException {
     if (randomAccessFileLock.isHeldByCurrentThread()) {
       cashedFileSize = randomAccessFile.length();
     }
@@ -93,8 +97,7 @@ class FileAdapter {
         }
       }
     }
-
-    return (cashedFileSize + pageSize - 1) / pageSize;
+    return cashedFileSize;
   }
 
   int getPageSize() {
@@ -112,16 +115,15 @@ class FileAdapter {
 
   /**
    * @param pageNumber - page number
-   * @return text of the page
+   * @return text of the page if page exists or null if page doesn't
    * @throws NullPointerException - when access to physical file was not established
    */
-  @NotNull
   String getPageText(long pageNumber) throws IOException {
     randomAccessFileLock.lock();
     try {
       long pagesAmount = getPagesAmount();
       if (pageNumber < 0 || pageNumber >= pagesAmount) {
-        throw new IllegalArgumentException("pageNumber=" + pageNumber + ", pagesAmount=" + pagesAmount);
+        return null;
       }
 
       long minProbStartPos;

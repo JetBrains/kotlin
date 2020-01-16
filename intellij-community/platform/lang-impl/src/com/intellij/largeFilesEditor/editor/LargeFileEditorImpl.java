@@ -29,6 +29,7 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.StatusBar;
@@ -79,7 +80,6 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
       return;
     }
 
-
     searchManager = new LfeSearchManagerImpl(
       this, fileManager.getFileDataProviderForSearch(), new RangeSearchCreatorImpl());
 
@@ -87,6 +87,12 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
     PlatformActionsReplacer.makeAdaptingOfPlatformActionsIfNeed();
 
     editorModel.addCaretListener(new MyCaretListener());
+
+    fileManager.addFileChangeListener((Page lastPage) -> {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        editorModel.onFileChanged(lastPage);
+      });
+    });
   }
 
   private void requestClosingEditorTab() {
@@ -198,7 +204,7 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
       searchManager.dispose();
     }
     if (fileManager != null) {
-      fileManager.dispose();
+      Disposer.dispose(fileManager);
     }
     editorModel.dispose();
 
@@ -272,7 +278,7 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
         }
 
         fileManager.reset(charset);
-        editorModel.fireEncodingWasChanged();
+        editorModel.onEncodingChanged();
         return true;
       }
 

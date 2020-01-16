@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.file;
 
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,7 +44,7 @@ public class LargeFileManagerImplTest {
 
       assertEquals(expectedReadedContent, readedContent.toString());
 
-      fileManager.dispose();
+      Disposer.dispose(fileManager);
     }
     finally {
       if (tempFile != null) {

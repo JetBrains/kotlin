@@ -62,6 +62,9 @@ public class EditorModel {
   private boolean isNeedToShowCaret = false;
   private final SelectionState targetSelectionState = new SelectionState();
 
+  private boolean wasViewPortInTheEndOfFileLastTime = false;
+  private boolean isAllowedToFollowTheEndOfFile = false;
+
   private boolean isNeedToHighlightCloseSearchResults = false;
   private boolean isHighlightedSearchResultsAreStabilized = false;
 
@@ -311,6 +314,12 @@ public class EditorModel {
 
     ensureDocumentLastPageIsValid(pagesAmountInFile);
 
+    if (wasViewPortInTheEndOfFileLastTime && isAllowedToFollowTheEndOfFile) {
+      targetVisiblePosition.set(Long.MAX_VALUE, 0);
+      isNeedToShowCaret = false;
+      isAllowedToFollowTheEndOfFile = false;
+    }
+
     tryReflectTargetCaretPositionToReal();
 
     tryReflectTargetSelectionToReal();
@@ -351,6 +360,12 @@ public class EditorModel {
       if (!isRealCaretMatchesTarget()) {
         setCaretToConvenientPosition();
       }
+    }
+
+    wasViewPortInTheEndOfFileLastTime = false;
+    if (documentOfPagesModel.getLastPage().getPageNumber() == pagesAmountInFile - 1 &&
+        myLocalInvisibleScrollBar.getValue() + myLocalInvisibleScrollBar.getHeight() == myLocalInvisibleScrollBar.getMaximum()) {
+      wasViewPortInTheEndOfFileLastTime = true;
     }
 
     tryHighlightSearchResultsIfNeed();
@@ -779,10 +794,12 @@ public class EditorModel {
     int targetTopOfVisibleArea = topOfTargetVisiblePage + targetVisiblePosition.verticalScrollOffset;
 
     if (editor.getScrollingModel().getVisibleAreaOnScrollingFinished().y != targetTopOfVisibleArea) {
+      editor.getScrollingModel().disableAnimation();
       editor.getScrollingModel().scrollVertically(targetTopOfVisibleArea);
+      editor.getScrollingModel().enableAnimation();
     }
 
-    if (editor.getScrollingModel().getVisibleArea().y == targetTopOfVisibleArea) {
+    if (editor.getScrollingModel().getVisibleAreaOnScrollingFinished().y == targetTopOfVisibleArea) {
       isLocalScrollBarStabilized = true;
     }
   }
@@ -1007,11 +1024,26 @@ public class EditorModel {
   }
 
   @CalledInAwt
-  public void fireEncodingWasChanged() {
-    pagesCash.clear();
+  public void onFileChanged(Page lastPage) {
     isLocalScrollBarStabilized = false;
-    runCaretAndSelectionListeningTransparentCommand(
-      () -> documentOfPagesModel.removeAllPages(dataProvider.getProject()));
+    pagesCash.clear();
+    runCaretAndSelectionListeningTransparentCommand(() -> {
+      documentOfPagesModel.removeLastPage(dataProvider.getProject());
+    });
+    if (lastPage != null) {
+      pagesCash.add(lastPage);
+    }
+    isAllowedToFollowTheEndOfFile = true;
+    update();
+  }
+
+  @CalledInAwt
+  public void onEncodingChanged() {
+    isLocalScrollBarStabilized = false;
+    pagesCash.clear();
+    runCaretAndSelectionListeningTransparentCommand(() -> {
+      documentOfPagesModel.removeAllPages(dataProvider.getProject());
+    });
     requestUpdate();
   }
 

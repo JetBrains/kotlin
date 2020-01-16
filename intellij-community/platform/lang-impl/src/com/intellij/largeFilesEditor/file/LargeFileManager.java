@@ -3,15 +3,14 @@ package com.intellij.largeFilesEditor.file;
 
 import com.intellij.largeFilesEditor.editor.Page;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
+import com.intellij.openapi.Disposable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public interface LargeFileManager {
+public interface LargeFileManager extends Disposable{
 
   void reset(Charset charset);
-
-  void dispose();
 
   String getCharsetName();
 
@@ -28,4 +27,6 @@ public interface LargeFileManager {
   FileDataProviderForSearch getFileDataProviderForSearch();
 
   void requestReadPage(long pageNumber, ReadingPageResultHandler readingPageResultHandler);
+
+  void addFileChangeListener(FileChangeListener listener);
 }
