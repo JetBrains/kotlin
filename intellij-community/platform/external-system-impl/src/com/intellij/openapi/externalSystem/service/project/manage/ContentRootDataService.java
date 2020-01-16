@@ -154,12 +154,20 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
       logDebug("Importing content root '%s' for module '%s' forceDirectoriesCreation=[%b]",
                contentRoot.getRootPath(), module.getName(), forceDirectoriesCreation);
 
+      Set<String> updatedSourceRoots = new HashSet<>();
       for (ExternalSystemSourceType externalSrcType : ExternalSystemSourceType.values()) {
         final JpsModuleSourceRootType<?> type = getJavaSourceRootType(externalSrcType);
         if (type != null) {
           for (SourceRoot sourceRoot : contentRoot.getPaths(externalSrcType)) {
-            createSourceRootIfAbsent(sourceFolderManager, contentEntry, sourceRoot, module, type, forceDirectoriesCreation);
-            configureSourceFolder(sourceFolderManager, contentEntry, sourceRoot, externalSrcType.isGenerated());
+            String sourceRootPath = sourceRoot.getPath();
+            boolean createSourceFolder = !updatedSourceRoots.contains(sourceRootPath);
+            if (createSourceFolder) {
+              createOrReplaceSourceFolder(sourceFolderManager, contentEntry, sourceRoot, module, type, forceDirectoriesCreation);
+              if (externalSrcType == ExternalSystemSourceType.SOURCE || externalSrcType == ExternalSystemSourceType.TEST) {
+                updatedSourceRoots.add(sourceRootPath);
+              }
+            }
+            configureSourceFolder(sourceFolderManager, contentEntry, sourceRoot, createSourceFolder, externalSrcType.isGenerated());
           }
         }
       }
@@ -237,12 +245,12 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
     }
   }
 
-  private static void createSourceRootIfAbsent(@NotNull SourceFolderManager sourceFolderManager,
-                                               @NotNull ContentEntry contentEntry,
-                                               @NotNull final SourceRoot sourceRoot,
-                                               @NotNull Module module,
-                                               @NotNull JpsModuleSourceRootType<?> sourceRootType,
-                                               boolean createEmptyContentRootDirectories) {
+  private static void createOrReplaceSourceFolder(@NotNull SourceFolderManager sourceFolderManager,
+                                                  @NotNull ContentEntry contentEntry,
+                                                  @NotNull final SourceRoot sourceRoot,
+                                                  @NotNull Module module,
+                                                  @NotNull JpsModuleSourceRootType<?> sourceRootType,
+                                                  boolean createEmptyContentRootDirectories) {
 
     SourceFolder folder = findSourceFolder(contentEntry, sourceRoot);
     if (folder != null) {
@@ -272,6 +280,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
   private static void configureSourceFolder(@NotNull SourceFolderManager sourceFolderManager,
                                             @NotNull ContentEntry contentEntry,
                                             @NotNull SourceRoot sourceRoot,
+                                            boolean updatePackagePrefix,
                                             boolean generated) {
     String packagePrefix = sourceRoot.getPackagePrefix();
     String url = pathToUrl(sourceRoot.getPath());
@@ -280,14 +289,20 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
 
     SourceFolder folder = findSourceFolder(contentEntry, sourceRoot);
     if (folder == null) {
-      sourceFolderManager.setSourceFolderPackagePrefix(url, packagePrefix);
-      sourceFolderManager.setSourceFolderGenerated(url, generated);
+      if (updatePackagePrefix) {
+        sourceFolderManager.setSourceFolderPackagePrefix(url, packagePrefix);
+      }
+      if (generated) {
+        sourceFolderManager.setSourceFolderGenerated(url, true);
+      }
     }
     else {
-      if (StringUtil.isNotEmpty(packagePrefix)) {
+      if (updatePackagePrefix && StringUtil.isNotEmpty(packagePrefix)) {
         folder.setPackagePrefix(packagePrefix);
       }
-      setForGeneratedSources(folder, generated);
+      if (generated) {
+        setForGeneratedSources(folder, true);
+      }
     }
   }
 
