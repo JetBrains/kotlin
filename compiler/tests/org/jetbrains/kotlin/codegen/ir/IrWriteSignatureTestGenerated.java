@@ -170,11 +170,6 @@ public class IrWriteSignatureTestGenerated extends AbstractIrWriteSignatureTest 
         public void testKClassInt() throws Exception {
             runTest("compiler/testData/writeSignature/annotations/kClassInt.kt");
         }
-
-        @TestMetadata("kClassOfKClass.kt")
-        public void testKClassOfKClass() throws Exception {
-            runTest("compiler/testData/writeSignature/annotations/kClassOfKClass.kt");
-        }
     }
 
     @TestMetadata("compiler/testData/writeSignature/callableReference")
