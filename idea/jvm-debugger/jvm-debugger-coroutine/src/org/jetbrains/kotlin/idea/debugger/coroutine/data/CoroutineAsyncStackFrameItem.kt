@@ -13,12 +13,9 @@ import com.intellij.xdebugger.frame.XNamedValue
 import com.intellij.xdebugger.frame.XStackFrame
 import com.sun.jdi.Location
 import com.sun.jdi.ObjectReference
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.EmptyStackFrameDescriptor
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
-import org.jetbrains.kotlin.idea.debugger.safeLineNumber
-import org.jetbrains.kotlin.idea.debugger.safeMethod
-import org.jetbrains.kotlin.idea.debugger.safeSourceLineNumber
-import org.jetbrains.kotlin.idea.debugger.safeSourceName
 
 class CreationCoroutineStackFrameItem(
     val frame: StackFrameProxyImpl,
@@ -64,6 +61,6 @@ sealed class CoroutineStackFrameItem(val location: Location, val spilledVariable
 
     fun uniqueId(): String {
         return location.safeSourceName() + ":" + location.safeMethod().toString() + ":" +
-                location.safeLineNumber() + ":" + location.safeSourceLineNumber()
+                location.safeLineNumber() + ":" + location.safeKotlinPreferredLineNumber()
     }
 }
