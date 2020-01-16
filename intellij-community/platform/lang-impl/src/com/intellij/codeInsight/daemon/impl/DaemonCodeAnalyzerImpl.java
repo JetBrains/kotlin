@@ -369,6 +369,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     finally {
       DaemonProgressIndicator.setDebug(false);
       fileStatusMap.allowDirt(true);
+      progress.cancel();
       waitForTermination();
     }
   }
