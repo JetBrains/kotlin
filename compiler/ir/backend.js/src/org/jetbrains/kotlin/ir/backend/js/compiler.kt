@@ -9,16 +9,15 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
@@ -70,6 +69,43 @@ fun compile(
     dependencyModules.forEach {
         val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+    }
+
+    fun processDeclaration(declaration: IrDeclaration) {
+        if (declaration !is IrDeclarationWithName) return
+        if (declaration !is IrDeclarationWithVisibility || declaration.visibility != Visibilities.PUBLIC) return
+        if (!declaration.isEffectivelyExternal()) return
+
+        val name = declaration.name
+        val jsNameOrKotlinName = declaration.getJsNameOrKotlinName()
+
+        when (declaration) {
+            is IrProperty -> {
+                val propType = declaration.getter?.returnType
+            }
+            is IrConstructor -> {
+
+            }
+            is IrSimpleFunction -> {
+                val returnType = declaration.returnType
+                val typeParameters = declaration.typeParameters
+                val valueParameters = declaration.valueParameters
+            }
+            is IrClass -> {
+                for (member in declaration.declarations) {
+                    processDeclaration(member)
+                }
+            }
+        }
+    }
+
+    val stdlibModule = dependencyModules.single { it.descriptor.name.asString() == "<kotlin>" }
+    for (file in stdlibModule.files) {
+        val fileName = file.name
+        val packageName = file.fqName
+        for (declaration in file.declarations) {
+            processDeclaration(declaration)
+        }
     }
 
     val allModules = when (mainModule) {
