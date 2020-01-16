@@ -21,20 +21,13 @@ class StubUpdatingForwardIndexAccessor implements ForwardIndexAccessor<Integer, 
   @NotNull
   @Override
   public InputDataDiffBuilder<Integer, SerializedStubTree> getDiffBuilder(int inputId, @Nullable ByteArraySequence sequence) throws IOException {
-    Ref<Map<Integer, SerializedStubTree>> dataRef = Ref.create();
-    StorageException[] ex = {null};
-    ProgressManager.getInstance().executeNonCancelableSection(() -> {
-      try {
-        dataRef.set(myIndex.getIndexedFileData(inputId));
-      }
-      catch (StorageException e) {
-        ex[0] = e;
-      }
-    });
-    if (ex[0] != null) {
-      throw new IOException(ex[0]);
+    Map<Integer, SerializedStubTree> data;
+    try {
+      data = ProgressManager.getInstance().computeInNonCancelableSection(() -> myIndex.getIndexedFileData(inputId));
     }
-    Map<Integer, SerializedStubTree> data = dataRef.get();
+    catch (StorageException e) {
+      throw new IOException(e);
+    }
     SerializedStubTree tree = ContainerUtil.isEmpty(data) ? null : ContainerUtil.getFirstItem(data.values());
     if (tree != null) {
       tree.restoreIndexedStubs();

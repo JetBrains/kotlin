@@ -71,11 +71,8 @@ class CompositeBinaryBuilderMap {
   }
 
   private int getBuilderCumulativeVersion(@NotNull VirtualFile file) {
-    FileType[] type = {null};
-    ProgressManager.getInstance().executeNonCancelableSection(() -> {
-      type[0] = file.getFileType();
-    });
-    return myCumulativeVersionMap.get(type[0]);
+    FileType type = ProgressManager.getInstance().computeInNonCancelableSection(() -> file.getFileType());
+    return myCumulativeVersionMap.get(type);
   }
 
   @NotNull

@@ -241,11 +241,8 @@ class StubVersionMap {
   private static final FileAttribute VERSION_STAMP = new FileAttribute("stubIndex.versionStamp", 2, true);
   public void persistIndexedState(int fileId, @NotNull VirtualFile file) throws IOException {
     try (DataOutputStream stream = FSRecords.writeAttribute(fileId, VERSION_STAMP)) {
-      FileType[] type = {null};
-      ProgressManager.getInstance().executeNonCancelableSection(() -> {
-        type[0] = file.getFileType();
-      });
-      DataInputOutputUtil.writeINT(stream, getIndexingTimestampDiffForFileType(type[0]));
+      FileType type = ProgressManager.getInstance().computeInNonCancelableSection(() -> file.getFileType());
+      DataInputOutputUtil.writeINT(stream, getIndexingTimestampDiffForFileType(type));
     }
   }
 
