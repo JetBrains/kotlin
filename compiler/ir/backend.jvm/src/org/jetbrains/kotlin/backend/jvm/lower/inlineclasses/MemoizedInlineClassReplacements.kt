@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -159,7 +160,7 @@ class MemoizedInlineClassReplacements {
                 }
                 // Assuming that constructors and non-override functions are always replaced with the unboxed
                 // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
-                newParameter.defaultValue = parameter.defaultValue
+                newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 parameterMap[parameter.symbol] = newParameter
             }
         }
@@ -185,7 +186,7 @@ class MemoizedInlineClassReplacements {
                 val newParameter = parameter.copyTo(this, index = index, name = name, defaultValue = null)
                 valueParameters.add(newParameter)
                 // See comment next to a similar line above.
-                newParameter.defaultValue = parameter.defaultValue
+                newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 parameterMap[parameter.symbol] = newParameter
             }
         }
