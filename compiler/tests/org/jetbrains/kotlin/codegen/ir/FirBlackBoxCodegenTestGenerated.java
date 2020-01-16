@@ -10873,6 +10873,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/functions/localFunctions/callInlineLocalInLambda.kt");
             }
 
+            @TestMetadata("captureUpperBoundedTypeParameter.kt")
+            public void testCaptureUpperBoundedTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/localFunctions/captureUpperBoundedTypeParameter.kt");
+            }
+
             @TestMetadata("definedWithinLambda.kt")
             public void testDefinedWithinLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/definedWithinLambda.kt");
