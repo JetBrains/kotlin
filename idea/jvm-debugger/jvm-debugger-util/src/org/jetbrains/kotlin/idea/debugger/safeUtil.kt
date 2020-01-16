@@ -68,15 +68,15 @@ fun StackFrameProxy.safeStackFrame(): StackFrame? {
 }
 
 fun Location.safeSourceName(): String? {
-    return wrapAbsentInformationException { this.sourceName() }
+    return wrapIllegalArgumentException { wrapAbsentInformationException { this.sourceName() } }
 }
 
 fun Location.safeSourceName(stratum: String): String? {
-    return wrapAbsentInformationException { this.sourceName(stratum) }
+    return wrapIllegalArgumentException { wrapAbsentInformationException { this.sourceName(stratum) } }
 }
 
 fun Location.safeLineNumber(): Int {
-    return DebuggerUtilsEx.getLineNumber(this, false)
+    return wrapIllegalArgumentException { DebuggerUtilsEx.getLineNumber(this, false) } ?: -1
 }
 
 fun Location.safeLineNumber(stratum: String): Int {
@@ -114,6 +114,14 @@ private inline fun <T> wrapEvaluateException(block: () -> T): T? {
     return try {
         block()
     } catch (e: EvaluateException) {
+        null
+    }
+}
+
+private inline fun <T> wrapIllegalArgumentException(block: () -> T): T? {
+    return try {
+        block()
+    } catch (e: IllegalArgumentException) {
         null
     }
 }
