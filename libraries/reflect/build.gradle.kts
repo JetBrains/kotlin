@@ -185,26 +185,24 @@ val sourcesJar = tasks.register<Jar>("sourcesJar") {
 addArtifact("archives", sourcesJar)
 addArtifact("sources", sourcesJar)
 
+val intermediate = when {
+    kotlinBuildProperties.proguard -> proguard
+    kotlinBuildProperties.relocation -> stripMetadata
+    else -> reflectShadowJar
+}
+    
 val result by task<Jar> {
-    val task = when {
-        kotlinBuildProperties.proguard -> proguard
-        kotlinBuildProperties.relocation -> stripMetadata
-        else -> reflectShadowJar
-    }
-    
-    dependsOn(task)
-    
+    dependsOn(intermediate)
     from {
-        zipTree(task.get().outputs.files.singleFile)
+        zipTree(intermediate.get().outputs.files.singleFile)
     }
-    
     callGroovy("manifestAttributes", manifest, project, "Main")
 }
 
 val modularJar by task<Jar> {
-    dependsOn(proguard)
+    dependsOn(intermediate)
     archiveClassifier.set("modular")
-    from(zipTree(file(proguardOutput)))
+    from(zipTree(intermediate.get().outputs.files.single()))
     from(zipTree(reflectShadowJar.get().archivePath)) {
         include("META-INF/versions/**")
     }
