@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
+import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.components.panels.VerticalLayout
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
@@ -11,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
+import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 
@@ -19,7 +21,13 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
         StringValidators.shouldNotBeBlank("Module name") and
                 StringValidators.shouldBeValidIdentifier("Module Name")
 
-    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), valuesReadingContext)
+    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), valuesReadingContext).asSubComponent()
+    private val templateComponent = TemplatesComponent(valuesReadingContext).asSubComponent()
+
+    private val tabPanel = JBTabbedPane().apply {
+        add("Template", templateComponent.component)
+        add("Module Settings", moduleConfiguratorSettingsList.component)
+    }
 
     private val nameField = TextFieldComponent(
         valuesReadingContext,
@@ -32,15 +40,15 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
     ).asSubComponent()
 
 
-    override val component: JComponent = panel(VerticalLayout(5)) {
+    override val component: JComponent = panel {
         border = BorderFactory.createEmptyBorder(
             UiConstants.GAP_BORDER_SIZE,
             UiConstants.GAP_BORDER_SIZE,
             UiConstants.GAP_BORDER_SIZE,
             UiConstants.GAP_BORDER_SIZE
         )
-        add(nameField.component)
-        add(moduleConfiguratorSettingsList.component)
+        add(nameField.component, BorderLayout.NORTH)
+        add(tabPanel, BorderLayout.CENTER)
     }
 
     var module: Module? = null
@@ -57,6 +65,7 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
                 || module.configurator.moduleType != ModuleType.common
 
         moduleConfiguratorSettingsList.setSettings(module.configuratorSettings)
+        templateComponent.module = module
     }
 }
 

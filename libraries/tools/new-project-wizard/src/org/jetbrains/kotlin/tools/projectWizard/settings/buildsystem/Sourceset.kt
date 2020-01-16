@@ -36,21 +36,10 @@ data class PathBasedSourcesetDependency(val path: ModulePath) : SourcesetDepende
 class Sourceset(
     val sourcesetType: SourcesetType,
     val containingModuleType: ModuleType,
-    var template: Template?,
     var dependencies: List<SourcesetDependency>,
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(sourcesetType.name)
-) : DisplayableSettingItem, Validatable<Sourceset>, IdentificatorOwner {
-    override val validator: SettingValidator<Sourceset> = settingValidator { sourceset ->
-        val template = sourceset.template ?: return@settingValidator ValidationResult.OK
-        withSettingsOf(sourceset) {
-            template.settings.map { setting ->
-                val value = setting.reference.notRequiredSettingValue
-                    ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                setting.validator.validate(this@settingValidator, value)
-            }.fold()
-        }
-    }
+) : DisplayableSettingItem, IdentificatorOwner {
     override val text: String get() = sourcesetType.name
     override val greyText: String? get() = null
 
@@ -64,11 +53,8 @@ class Sourceset(
                 "dependencies",
                 listParser(PathBasedSourcesetDependency.parser)
             ) { emptyList() }
-            val template = map["template"]?.let {
-                Template.parser(identificator).parse(this, it, "$path.template")
-            }.nullableValue()
 
-            Sourceset(sourcesetType, moduleType, template, dependencies, identificator = identificator)
+            Sourceset(sourcesetType, moduleType, dependencies, identificator = identificator)
         }
     }
 }

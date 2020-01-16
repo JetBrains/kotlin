@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
+import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.SourcesetIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NativeTargetInternalIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
@@ -18,13 +20,12 @@ class NativeConsoleApplicationTemplate : Template() {
     override val title: String = "Native Console Application"
     override val htmlDescription: String = title
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.native)
-    override val sourcesetTypes: Set<SourcesetType> = setOf(SourcesetType.main)
     override val id: String = "nativeConsoleApp"
 
-    override fun updateTargetIr(sourceset: SourcesetIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
+    override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.withIrs(NativeTargetInternalIR("main"))
 
-    override fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = buildList {
-        +FileTemplateDescriptor("$id/main.kt.vm", sourcesPath("main.kt"))
+    override fun TaskRunningContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = buildList {
+        +(FileTemplateDescriptor("$id/main.kt.vm", "main.kt".asPath()) asSrcOf SourcesetType.main)
     }
 }

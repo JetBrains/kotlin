@@ -104,7 +104,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
     }
 
     val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
-        runBefore(TemplatesPlugin::addTemplatesToSourcesets)
+        runBefore(TemplatesPlugin::addTemplatesToModules)
         activityChecker = isGradle
         withAction {
             val templateDescriptor = when (buildSystemType) {

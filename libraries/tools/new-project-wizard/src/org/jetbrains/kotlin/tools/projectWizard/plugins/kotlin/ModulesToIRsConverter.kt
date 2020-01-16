@@ -119,13 +119,14 @@ class ModulesToIRsConverter(
             module.name,
             modulePath,
             dependenciesIRs,
+            module.template,
             module.configurator.moduleType,
+            module,
             module.sourcesets.map { sourceset ->
                 SingleplatformSourcesetIR(
                     sourceset.sourcesetType,
                     modulePath / Defaults.SRC_DIR / sourceset.sourcesetType.name,
                     sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) },
-                    sourceset.template,
                     sourceset
                 )
             }
@@ -203,7 +204,8 @@ class ModulesToIRsConverter(
                 sourcesetIrs,
                 sourceset.containingModuleType,
                 sourceset.sourcesetType,
-                sourceset.template,
+                target.template,
+                target,
                 sourceset
             )
         }

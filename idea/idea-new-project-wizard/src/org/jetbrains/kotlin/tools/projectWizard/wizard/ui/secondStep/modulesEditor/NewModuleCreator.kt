@@ -28,7 +28,6 @@ class NewModuleCreator {
             Sourceset(
                 sourcesetType,
                 configurator.moduleType,
-                template = null,
                 dependencies = emptyList()
             )
         }
@@ -57,7 +56,6 @@ class NewModuleCreator {
                     Sourceset(
                         sourcesetType,
                         ModuleType.jvm,
-                        template = null,
                         dependencies = emptyList()
                     )
                 }
@@ -66,8 +64,9 @@ class NewModuleCreator {
                 name,
                 configurator.moduleKind,
                 configurator,
-                sourcesets,
-                emptyList()
+                template = null,
+                sourcesets = sourcesets,
+                subModules = emptyList()
             )
             createModule(createdModule)
         }

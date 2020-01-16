@@ -23,26 +23,25 @@ class KotlinTestTemplate : Template() {
         | More information can be found  <a href='https://kotlinlang.org/api/latest/kotlin.test/index.html'>here</a>
     """.trimMargin()
     override val moduleTypes = setOf(ModuleType.common, ModuleType.js, ModuleType.jvm)
-    override val sourcesetTypes = setOf(SourcesetType.test)
 
-    override fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> =
-        withSettingsOf(sourceset.original) {
+    override fun TaskRunningContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
+        withSettingsOf(module.originalModule) {
             framework.reference.settingValue.dependencyNames.map { dependencyName ->
                 KotlinArbitraryDependencyIR(
                     dependencyName,
-                    isInMppModule = sourceset.original.parent?.kind
-                        ?.let { it == ModuleKind.multiplatform || it == ModuleKind.target } != false,
+                    isInMppModule = module.originalModule.kind
+                        .let { it == ModuleKind.multiplatform || it == ModuleKind.target },
                     version = KotlinPlugin::version.settingValue,
                     dependencyType = DependencyType.MAIN
                 )
             }
         }
 
-    override fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> =
-        withSettingsOf(sourceset.original) {
+    override fun TaskRunningContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> =
+        withSettingsOf(module.originalModule) {
             buildList {
                 if (generateDummyTest.reference.settingValue) {
-                    +FileTemplateDescriptor("kotlinTestFramework/dummyTest.kt.vm", sourcesPath("Test.kt"))
+                    +(FileTemplateDescriptor("kotlinTestFramework/dummyTest.kt.vm", "Test.kt".asPath()) asSrcOf SourcesetType.main)
                 }
             }
         }
@@ -54,7 +53,7 @@ class KotlinTestTemplate : Template() {
         filter = filter@{ reference, kotlinTestFramework ->
             if (reference !is TemplateSettingReference) return@filter true
 
-            val moduleType = reference.sourceset?.containingModuleType
+            val moduleType = reference.module?.configurator?.moduleType
             kotlinTestFramework.moduleType == moduleType
         }
     }

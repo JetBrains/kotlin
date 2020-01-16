@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors
 
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.sourcesets
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.transformers.Predicate
 import org.jetbrains.kotlin.tools.projectWizard.transformers.TransformerFunction
@@ -19,7 +18,7 @@ typealias SourcesetInterceptionPointValues = Map<Identificator, InterceptionPoin
 
 data class TemplateInterceptionApplicationState(
     val buildFileIR: BuildFileIR,
-    val sourcesetToSettings: SourcesetInterceptionPointValues
+    val moduleToSettings: SourcesetInterceptionPointValues
 )
 
 data class TemplateInterceptor(
@@ -31,14 +30,14 @@ data class TemplateInterceptor(
     fun applyTo(state: TemplateInterceptionApplicationState): TemplateInterceptionApplicationState {
         if (applicabilityCheckers.any { checker -> !checker(state.buildFileIR) }) return state
 
-        val sourcesetsWithTemplate = state.buildFileIR.sourcesets.filter { it.template?.id == template.id }
-        if (sourcesetsWithTemplate.isEmpty()) return state
+        val modulesWithTemplate = state.buildFileIR.modules.modules.filter { it.template?.id == template.id }
+        if (modulesWithTemplate.isEmpty()) return state
 
         val transformedBuildFile = applyBuildFileTransformers(state.buildFileIR)
 
-        val mutableValues = state.sourcesetToSettings.toMutableMap()
-        for (sourceset in sourcesetsWithTemplate) {
-            mutableValues.compute(sourceset.original.identificator) { _, values ->
+        val mutableValues = state.moduleToSettings.toMutableMap()
+        for (module in modulesWithTemplate) {
+            mutableValues.compute(module.originalModule.identificator) { _, values ->
                 applyInterceptionPointModifiers(values.orEmpty())
             }
         }
