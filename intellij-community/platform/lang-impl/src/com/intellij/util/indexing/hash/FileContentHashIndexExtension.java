@@ -9,7 +9,6 @@ import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
-import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
@@ -24,7 +23,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 
-public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long, Void> implements CustomImplementationFileBasedIndexExtension<Long, Void>, CustomInputsIndexFileBasedIndexExtension<Long>, Disposable {
+public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long, Void> implements CustomInputsIndexFileBasedIndexExtension<Long>, Disposable {
   private static final Logger LOG = Logger.getInstance(FileContentHashIndexExtension.class);
   public static final ID<Long, Void> HASH_INDEX_ID = ID.create("file.content.hash.index");
 
@@ -33,12 +32,11 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
   @NotNull
   public static FileContentHashIndexExtension create(Path @NotNull [] enumeratorDirs, @NotNull Disposable parent) throws IOException {
     FileContentHashIndexExtension extension = new FileContentHashIndexExtension(enumeratorDirs);
-    RebuildStatus.registerIndex(extension.getName());
     Disposer.register(parent, extension);
     return extension;
   }
 
-  private FileContentHashIndexExtension(Path @NotNull [] enumeratorDirs) throws IOException {
+  public FileContentHashIndexExtension(Path @NotNull [] enumeratorDirs) throws IOException {
     IOException[] exception = {null};
     myEnumerators = ContainerUtil.map2Array(enumeratorDirs, ContentHashEnumerator.class, d -> {
       try {
@@ -178,14 +176,6 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
     }
   }
 
-  @NotNull
-  @Override
-  public UpdatableIndex<Long, Void, FileContent> createIndexImplementation(@NotNull FileBasedIndexExtension<Long, Void> extension,
-                                                                           @NotNull IndexStorage<Long, Void> storage)
-    throws IOException {
-    return new FileContentHashIndex(((FileContentHashIndexExtension)extension), storage);
-  }
-
   static int getIndexId(long hashId) {
     return (int)(hashId >> 32);
   }
@@ -200,7 +190,7 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
 
   public static final long NULL_HASH_ID = getHashId(0, -1);
 
-  public static final Key<Long> HASH_ID_KEY = Key.create("file.content.hash.id");
+  private static final Key<Long> HASH_ID_KEY = Key.create("file.content.hash.id");
 
   public static long getHashId(@NotNull FileContent content) {
     Long value = HASH_ID_KEY.get(content);

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void, FileContent> {
-  FileContentHashIndex(@NotNull FileContentHashIndexExtension extension, IndexStorage<Long, Void> storage) throws IOException {
+  public FileContentHashIndex(@NotNull FileContentHashIndexExtension extension, IndexStorage<Long, Void> storage) throws IOException {
     super(extension,
           storage,
           new PersistentMapBasedForwardIndex(IndexInfrastructure.getInputIndexStorageFile(extension.getName()).toPath(), false),

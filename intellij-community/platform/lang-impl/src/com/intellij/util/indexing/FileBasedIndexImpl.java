@@ -7,7 +7,10 @@ import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.startup.ServiceNotReadyException;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.EditorHighlighterCache;
@@ -68,12 +71,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -92,6 +97,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   static final String CORRUPTION_MARKER_NAME = "corruption.marker";
 
   private volatile RegisteredIndexes myRegisteredIndexes;
+  private volatile FileContentHashIndex myFileContentHashIndex;
 
   private final PerIndexDocumentVersionMap myLastIndexedDocStamps = new PerIndexDocumentVersionMap();
 
@@ -389,8 +395,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           List<ProvidedIndexExtension<K, V>> providedExtensions = ProvidedIndexExtensionLocator.findProvidedIndexExtensionFor(extension);
           if (!providedExtensions.isEmpty()) {
             Path[] paths = ContainerUtil.map2Array(providedExtensions, Path.class, ex -> ex.getIndexPath());
-            FileContentHashIndex contentHashIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getFileContentHashIndex(paths, state);
-
+            FileContentHashIndex contentHashIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex(paths);
             index = MergedInvertedIndex.wrapWithProvidedIndex(providedExtensions, extension, index, contentHashIndex);
           }
         }
@@ -406,7 +411,11 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         break;
       }
       catch (Exception e) {
-        LOG.info(e);
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+          LOG.info(e);
+        } else {
+          LOG.info(e);
+        }
         boolean instantiatedStorage = storage != null;
         try {
           if (storage != null) storage.close();
@@ -476,6 +485,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           }
         }
 
+        disposeContentHashIndex();
         IndexedHashesSupport.flushContentHashes();
         SharedIndicesData.flushData();
         if (!keepConnection) {
@@ -487,6 +497,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       }
       LOG.info("END INDEX SHUTDOWN");
     }
+  }
+
+  private synchronized void disposeContentHashIndex() {
+    if (myFileContentHashIndex == null) return;
+    myFileContentHashIndex.dispose();
+    myFileContentHashIndex = null;
   }
 
   private void removeDataFromIndicesForFile(int fileId, VirtualFile file) {
@@ -1646,20 +1662,28 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return fileId -> !getChangedFilesCollector().containsFileId(fileId);
   }
 
-  public synchronized FileContentHashIndex getFileContentHashIndex(Path @Nullable [] enumeratorPaths, @NotNull IndexConfiguration state) {
-    UpdatableIndex<Long, Void, FileContent> index = state.getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
-    if (index == null) {
-      LOG.assertTrue(enumeratorPaths != null);
-      IndicesRegistrationResult registrationResult = new IndicesRegistrationResult();
+  private synchronized FileContentHashIndex getOrCreateFileContentHashIndex(Path @NotNull [] enumeratorPaths) {
+    if (myFileContentHashIndex == null) {
       try {
-        registerIndexer(FileContentHashIndexExtension.create(enumeratorPaths, ApplicationManager.getApplication()), state, registrationResult);
-        registrationResult.logChangedAndFullyBuiltIndices(LOG, "Version was changed for:", "Index is to be rebuilt:");
+        FileContentHashIndexExtension extension = new FileContentHashIndexExtension(enumeratorPaths);
+
+        VfsAwareMapIndexStorage<Long, Void> storage = new VfsAwareMapIndexStorage<>(
+          IndexInfrastructure.getStorageFile(extension.getName()).toPath(),
+          extension.getKeyDescriptor(),
+          extension.getValueExternalizer(),
+          extension.getCacheSize(),
+          extension.keyIsUniqueForIndexedFile(),
+          extension.traceKeyHashToVirtualFileMapping()
+        );
+
+        myFileContentHashIndex = new FileContentHashIndex(extension, storage);
+        Disposer.register(ApplicationManager.getApplication(), extension);
       }
       catch (IOException e) {
         throw new RuntimeException(e);
       }
-    } else return (FileContentHashIndex)index;
-    return (FileContentHashIndex)state.getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
+    }
+    return myFileContentHashIndex;
   }
 
   private static final boolean INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT = SystemProperties.getBooleanProperty("idea.indices.psi.dependent.default", true);

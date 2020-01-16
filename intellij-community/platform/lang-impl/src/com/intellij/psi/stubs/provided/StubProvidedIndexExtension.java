@@ -3,7 +3,6 @@ package com.intellij.psi.stubs.provided;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
@@ -45,11 +44,9 @@ public class StubProvidedIndexExtension implements ProvidedIndexExtension<Intege
   @Override
   public DataExternalizer<SerializedStubTree> createValueExternalizer() {
     Path path = getIndexPath();
-    SerializationManagerImpl manager =
-      new SerializationManagerImpl(path.resolve(StringUtil.toLowerCase(StubUpdatingIndex.INDEX_ID.getName())).resolve("rep.names"),
-                                   true);
+    SerializationManagerImpl manager = new SerializationManagerImpl(path.resolve("rep.names"), true);
     Disposer.register(ApplicationManager.getApplication(), manager);
-    return new SerializedStubTreeDataExternalizer(false, manager, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE);
+    return new SerializedStubTreeDataExternalizer(true, manager, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE);
   }
 
   @Nullable
@@ -64,7 +61,7 @@ public class StubProvidedIndexExtension implements ProvidedIndexExtension<Intege
       @NotNull
       @Override
       public Path getIndexPath() {
-        return myIndexFile;
+        return indexPath;
       }
 
       @NotNull
