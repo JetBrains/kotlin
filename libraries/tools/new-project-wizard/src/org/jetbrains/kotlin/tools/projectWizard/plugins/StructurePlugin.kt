@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.pathParser
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
@@ -19,12 +20,15 @@ class StructurePlugin(context: Context) : Plugin(context) {
 
     val groupId by stringSetting("Group ID", GenerationPhase.PROJECT_GENERATION) {
         shouldNotBeBlank()
+        validate(StringValidators.shouldBeValidIdentifier("Group ID", setOf('.', '_')))
     }
     val artifactId by stringSetting("Artifact ID", GenerationPhase.PROJECT_GENERATION) {
         shouldNotBeBlank()
+        validate(StringValidators.shouldBeValidIdentifier("Artifact ID", setOf('_')))
     }
     val version by stringSetting("Version", GenerationPhase.PROJECT_GENERATION) {
         shouldNotBeBlank()
+        validate(StringValidators.shouldBeValidIdentifier("Version", setOf('_', '-', '.')))
         defaultValue = "1.0-SNAPSHOT"
     }
 
