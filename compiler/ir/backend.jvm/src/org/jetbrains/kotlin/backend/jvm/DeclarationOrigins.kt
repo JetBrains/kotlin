@@ -36,6 +36,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object GENERATED_MAIN_FOR_PARAMETERLESS_MAIN_METHOD : IrDeclarationOriginImpl("GENERATED_MAIN_FOR_PARAMETERLESS_MAIN_METHOD", isSynthetic = true)
     object SUSPEND_FUNCTION_VIEW : IrDeclarationOriginImpl("SUSPEND_FUNCTION_VIEW")
     object SUSPEND_IMPL_STATIC_FUNCTION : IrDeclarationOriginImpl("SUSPEND_IMPL_STATIC_FUNCTION", isSynthetic = true)
+    object SUSPEND_IMPL_STATIC_FUNCTION_WITH_TAIL_CALL : IrDeclarationOriginImpl("SUSPEND_IMPL_STATIC_FUNCTION_WITH_TAIL_CALL", isSynthetic = true)
     object INTERFACE_COMPANION_PRIVATE_INSTANCE : IrDeclarationOriginImpl("INTERFACE_COMPANION_PRIVATE_INSTANCE", isSynthetic = true)
     object POLYMORPHIC_SIGNATURE_INSTANTIATION : IrDeclarationOriginImpl("POLYMORPHIC_SIGNATURE_INSTANTIATION", isSynthetic = true)
     object ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER : IrDeclarationOriginImpl("ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER", isSynthetic = true)

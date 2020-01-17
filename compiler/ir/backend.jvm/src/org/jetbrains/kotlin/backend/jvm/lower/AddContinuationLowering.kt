@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
+import org.jetbrains.kotlin.backend.jvm.codegen.isKnownToBeTailCall
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
@@ -430,7 +430,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     resultField,
                     labelField,
                     capturedThisField,
-                    irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
+                    irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION ||
+                            irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION_WITH_TAIL_CALL
                 )
                 copyAttributes(attributeContainer)
             }
@@ -525,7 +526,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             irFunction.parent,
             irFunction.name.toSuspendImplementationName(),
             irFunction,
-            origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
+            origin = if (irFunction.isKnownToBeTailCall())
+                JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION_WITH_TAIL_CALL
+            else
+                JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
             copyMetadata = false
         )
         static.body = irFunction.moveBodyTo(static)

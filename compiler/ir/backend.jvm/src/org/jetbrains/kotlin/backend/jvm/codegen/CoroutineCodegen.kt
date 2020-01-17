@@ -125,6 +125,7 @@ internal fun IrFunction.isKnownToBeTailCall(): Boolean =
         JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
         JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
         JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
+        JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION_WITH_TAIL_CALL,
         IrDeclarationOrigin.BRIDGE,
         IrDeclarationOrigin.BRIDGE_SPECIAL,
         IrDeclarationOrigin.DELEGATED_MEMBER -> true
