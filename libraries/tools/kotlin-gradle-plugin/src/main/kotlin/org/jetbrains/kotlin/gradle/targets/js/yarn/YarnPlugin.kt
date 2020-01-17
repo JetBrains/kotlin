@@ -24,7 +24,7 @@ open class YarnPlugin : Plugin<Project> {
             it.dependsOn(nodeJs.nodeJsSetupTask)
         }
 
-        tasks.create("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
+        tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
             it.cleanableStore = yarnRootExtension.requireConfigured().cleanableStore
             it.description = "Clean unused local yarn version"
         }
