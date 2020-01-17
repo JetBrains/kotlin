@@ -49,6 +49,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
+        private const val DEFAULT_GROUP_ID = "me.user"
     }
 
     override fun isAvailable(): Boolean = NewProjectWizardService.isEnabled
@@ -118,7 +119,14 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         settingsStep.safeAs<ProjectSettingsStep>()?.bindModuleSettings()
 
         wizard.artifactId = suggestedProjectName
-        wizard.groupId = SystemProperties.getUserName()?.let { "me.$it" } ?: suggestedProjectName
+        wizard.groupId = suggestGroupId()
+    }
+
+    private fun suggestGroupId(): String {
+        val username = SystemProperties.getUserName() ?: return DEFAULT_GROUP_ID
+        if (!username.matches("[\\w\\s]+".toRegex())) return DEFAULT_GROUP_ID
+        val usernameAsGroupId = username.trim().toLowerCase().split("\\s+".toRegex()).joinToString(separator = ".")
+        return "me.$usernameAsGroupId"
     }
 
     override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?) =
