@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
-import org.jetbrains.kotlin.tools.projectWizard.wizard.service.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PomWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
@@ -33,9 +33,19 @@ import java.nio.file.Paths
 import javax.swing.JComponent
 import com.intellij.openapi.module.Module as IdeaModule
 
-
-class NewProjectWizardModuleBuilder : ModuleBuilder() {
+/*
+Have to override EmptyModuleBuilder here instead of just ModuleBuilder
+As EmptyModuleBuilder has not expert panel option which are redundant
+ */
+class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     private val wizard = IdeWizard(Plugins.allPlugins, IdeaServices.PROJECT_INDEPENDENT, isUnitTestMode = false)
+
+    override fun isOpenProjectSettingsAfter(): Boolean = false
+    override fun canCreateModule(): Boolean = false
+    override fun getPresentableName(): String = moduleType.name
+    override fun getDescription(): String? = moduleType.description
+    override fun getGroupName(): String? = moduleType.name
+    override fun isTemplateBased(): Boolean = false
 
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
@@ -117,7 +127,6 @@ class NewProjectWizardModuleBuilder : ModuleBuilder() {
     override fun setName(name: String) {
         wizard.projectName = name
     }
-
 
     override fun setModuleFilePath(path: String) = Unit
 
