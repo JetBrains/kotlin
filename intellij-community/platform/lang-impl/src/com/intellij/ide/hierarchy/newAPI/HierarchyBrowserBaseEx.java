@@ -30,6 +30,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.content.Content;
 import com.intellij.ui.popup.HintUpdateSupply;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
@@ -484,6 +485,15 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   @NotNull
   public StructureTreeModel getTreeModel(@NotNull HierarchyScopeType viewType) {
     return myType2Sheet.get(viewType).myStructureTreeModel;
+  }
+
+  @Override
+  public void setContent(Content content) {
+    super.setContent(content);
+    if (content != null) {
+      // stop all background tasks when toolwindow closed
+      Disposer.register(content, this::disposeAllSheets);
+    }
   }
 
   @Override
