@@ -10868,6 +10868,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/nestedLambdaInferenceWithIncorporationOfVariables.kt");
                 }
 
+                @TestMetadata("notEnoughInformationAndNothing.kt")
+                public void testNotEnoughInformationAndNothing() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/notEnoughInformationAndNothing.kt");
+                }
+
                 @TestMetadata("notEnoughInformationFromNullabilityConstraint.kt")
                 public void testNotEnoughInformationFromNullabilityConstraint() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/notEnoughInformationFromNullabilityConstraint.kt");
@@ -11190,6 +11195,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("kt35844.kt")
                 public void testKt35844() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/regressions/kt35844.kt");
+                }
+
+                @TestMetadata("kt35943.kt")
+                public void testKt35943() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/regressions/kt35943.kt");
                 }
 
                 @TestMetadata("kt4420.kt")
