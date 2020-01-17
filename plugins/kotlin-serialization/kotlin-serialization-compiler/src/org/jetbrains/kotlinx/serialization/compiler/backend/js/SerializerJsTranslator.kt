@@ -83,7 +83,7 @@ open class SerializerJsTranslator(
         val serialDescImplConstructor = baseSerialDescImplClass.unsubstitutedPrimaryConstructor!!
         return JsNew(
             context.getInnerReference(serialDescImplConstructor),
-            listOf(JsStringLiteral(serialName), if (isGeneratedSerializer) correctThis else JsNullLiteral())
+            listOf(JsStringLiteral(serialName), if (isGeneratedSerializer) correctThis else JsNullLiteral(), JsIntLiteral(serializableProperties.size))
         )
     }
 

@@ -110,7 +110,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         val serialClassDescImplCtor = compilerContext.symbolTable.referenceConstructor(serialDescImplConstructor)
         return irInvoke(
             null, serialClassDescImplCtor,
-            irString(serialName), if (isGeneratedSerializer) correctThis else irNull()
+            irString(serialName), if (isGeneratedSerializer) correctThis else irNull(), irInt(serializableProperties.size)
         )
     }
 

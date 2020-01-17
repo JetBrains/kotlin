@@ -17,7 +17,8 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           LDC (ListOfUsers)
           GETSTATIC (INSTANCE, LListOfUsers$$serializer;)
           CHECKCAST
-          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;)V)
+          LDC (1)
+          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
           ASTORE (0)
           ALOAD (0)
           LDC (list)
@@ -317,7 +318,8 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           LDC (OptionalUser)
           GETSTATIC (INSTANCE, LOptionalUser$$serializer;)
           CHECKCAST
-          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;)V)
+          LDC (1)
+          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
           ASTORE (0)
           ALOAD (0)
           LDC (user)
@@ -659,7 +661,8 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           LDC (User)
           GETSTATIC (INSTANCE, LUser$$serializer;)
           CHECKCAST
-          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;)V)
+          LDC (2)
+          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
           ASTORE (0)
           ALOAD (0)
           LDC (firstName)
