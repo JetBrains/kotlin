@@ -2,12 +2,14 @@
 // ------------------------------------------
 package {
 
+  // requires compiler version 1.3.50 (level=ERROR)
   // signature: callsInPlaceAtMostOnce(Lkotlin/jvm/functions/Function0;)V
   public final inline fun callsInPlaceAtMostOnce(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
     contract {
       callsInPlace(p#1, InvocationKind.AT_MOST_ONCE)
     }
 
+  // requires compiler version 1.3.50 (level=ERROR)
   // signature: callsInPlaceUnknown(Lkotlin/jvm/functions/Function0;)V
   public final inline fun callsInPlaceUnknown(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
     contract {
