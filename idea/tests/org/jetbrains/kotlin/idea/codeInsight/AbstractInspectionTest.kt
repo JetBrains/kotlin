@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
@@ -14,6 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.testFramework.TestLoggerFactory
 import org.jdom.Document
 import org.jdom.input.SAXBuilder
+import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -114,7 +116,9 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 }
             }.toList()
 
+            val codeStyleSettings = CodeStyle.getSettings(project)
             try {
+                FormatSettingsUtil.createConfigurator(options, codeStyleSettings).configureSettings()
                 fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
 
                 configExtra(psiFiles, options)
@@ -141,6 +145,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 }
 
             } finally {
+                codeStyleSettings.clearCodeStyleSettings()
                 if (configured) {
                     rollbackCompilerOptions(project, module)
                 }

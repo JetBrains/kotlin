@@ -1,0 +1,3 @@
+// INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.TrailingCommaInspection
+// COMPILER_ARGUMENTS: -XXLanguage:-TrailingCommas
+// SET_FALSE: ALLOW_TRAILING_COMMA

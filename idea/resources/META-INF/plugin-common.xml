@@ -2922,6 +2922,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.TrailingCommaInspection"
+                     displayName="Trailing comma recommendations"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.FakeJvmFieldConstantInspection"
                      displayName="Kotlin non-const property used as Java constant"
                      groupPath="Kotlin"

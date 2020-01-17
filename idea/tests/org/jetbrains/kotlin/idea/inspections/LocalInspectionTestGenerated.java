@@ -12258,6 +12258,34 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/trailingComma")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TrailingComma extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("addComma.kt")
+        public void testAddComma() throws Exception {
+            runTest("idea/testData/inspectionsLocal/trailingComma/addComma.kt");
+        }
+
+        public void testAllFilesPresentInTrailingComma() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/trailingComma"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("changeCommaPosition.kt")
+        public void testChangeCommaPosition() throws Exception {
+            runTest("idea/testData/inspectionsLocal/trailingComma/changeCommaPosition.kt");
+        }
+
+        @TestMetadata("removeComma.kt")
+        public void testRemoveComma() throws Exception {
+            runTest("idea/testData/inspectionsLocal/trailingComma/removeComma.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/unlabeledReturnInsideLambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

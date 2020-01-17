@@ -373,6 +373,26 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/suspiciousEqualsCombination/inspectionData/inspections.test");
         }
 
+        @TestMetadata("trailingCommaOffWithCodeStyle/inspectionData/inspections.test")
+        public void testTrailingCommaOffWithCodeStyle_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/trailingCommaOffWithCodeStyle/inspectionData/inspections.test");
+        }
+
+        @TestMetadata("trailingCommaOffWithoutCodeStyle/inspectionData/inspections.test")
+        public void testTrailingCommaOffWithoutCodeStyle_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/trailingCommaOffWithoutCodeStyle/inspectionData/inspections.test");
+        }
+
+        @TestMetadata("trailingCommaOnWithCodeStyle/inspectionData/inspections.test")
+        public void testTrailingCommaOnWithCodeStyle_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/trailingCommaOnWithCodeStyle/inspectionData/inspections.test");
+        }
+
+        @TestMetadata("trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test")
+        public void testTrailingCommaOnWithoutCodeStyle_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test");
+        }
+
         @TestMetadata("twoSetOfTypeparameters/inspectionData/inspections.test")
         public void testTwoSetOfTypeparameters_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/twoSetOfTypeparameters/inspectionData/inspections.test");

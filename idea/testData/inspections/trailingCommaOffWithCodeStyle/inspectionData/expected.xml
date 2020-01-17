@@ -1,0 +1,875 @@
+<problems>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>26</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>30</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>32</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>34</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>46</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>68</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>90</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>116</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>131</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>159</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>162</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>172</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>177</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>179</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>181</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>182</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>184</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>186</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>221</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>223</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>CollectionLiteralInAnnotation.kt</file>
+    <line>4</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>CollectionLiteralInAnnotation.kt</file>
+    <line>22</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>CollectionLiteralInAnnotation.kt</file>
+    <line>40</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>CollectionLiteralInAnnotation.kt</file>
+    <line>70</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>CollectionLiteralInAnnotation.kt</file>
+    <line>80</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>CollectionLiteralInAnnotation.kt</file>
+    <line>84</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>1</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>1</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>5</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>22</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>28</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>32</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>36</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>46</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>54</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>DestructionDeclarationsInLambda.kt</file>
+    <line>61</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>26</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>33</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>35</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>47</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>72</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>91</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>95</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>110</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>138</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>141</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>151</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>156</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>158</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>160</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>161</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>163</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>165</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>81</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>160</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>175</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>LambdaValueParameters.kt</file>
+    <line>20</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>LambdaValueParameters.kt</file>
+    <line>33</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>LambdaValueParameters.kt</file>
+    <line>61</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>LambdaValueParameters.kt</file>
+    <line>70</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>12</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>14</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>25</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>61</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>63</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>65</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>68</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>MultiVariableDeclaration.kt</file>
+    <line>97</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>118</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>298</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>302</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>438</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>449</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>34</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>38</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>43</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>45</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>50</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>78</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>81</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>91</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>102</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>104</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>106</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>107</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>109</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>111</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>187</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>207</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>218</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>240</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>240</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>247</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>252</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>257</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>WhenEntry.kt</file>
+    <line>21</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+  </problem>
+  <problem>
+    <file>WhenEntry.kt</file>
+    <line>38</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Redundant trailing comma</description>
+  </problem>
+</problems>
