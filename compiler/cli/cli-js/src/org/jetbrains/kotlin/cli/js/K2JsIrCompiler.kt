@@ -228,13 +228,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     friendDependencies = friendDependencies,
                     mainArguments = mainCallArguments,
                     generateFullJs = !arguments.irDce,
-                    generateDceJs = arguments.irDce
+                    generateDceJs = arguments.irDce,
+                    dceDriven = arguments.irDceDriven
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
             }
 
-            val jsCode = if (arguments.irDce) compiledModule.dceJsCode!! else compiledModule.jsCode!!
+            val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
             outputFile.writeText(jsCode)
             if (arguments.generateDts) {
                 val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!

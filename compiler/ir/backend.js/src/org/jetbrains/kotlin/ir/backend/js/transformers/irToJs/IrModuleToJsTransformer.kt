@@ -50,17 +50,21 @@ class IrModuleToJsTransformer(
 
         namer.merge(module.files, additionalPackages)
 
-        val jsCode = if (fullJs) generateWrappedModuleBody(module, exportedModule) else null
+        val jsCode = if (fullJs) generateWrappedModuleBody(module, exportedModule, namer) else null
 
         val dceJsCode = if (dceJs) {
             eliminateDeadDeclarations(module, backendContext, mainFunction)
-            generateWrappedModuleBody(module, exportedModule)
+            // Use a fresh namer for DCE so that we could compare the result with DCE-driven
+            // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
+            val namer = NameTables(emptyList())
+            namer.merge(module.files, additionalPackages)
+            generateWrappedModuleBody(module, exportedModule, namer)
         } else null
 
         return CompilerResult(jsCode, dceJsCode, dts)
     }
 
-    private fun generateWrappedModuleBody(module: IrModuleFragment, exportedModule: ExportedModule): String {
+    private fun generateWrappedModuleBody(module: IrModuleFragment, exportedModule: ExportedModule, namer: NameTables): String {
         val program = JsProgram()
 
         val nameGenerator = IrNamerImpl(

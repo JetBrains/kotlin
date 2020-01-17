@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.DefaultMapping
+import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : DefaultMapping() {
@@ -27,4 +28,23 @@ class JsMapping : DefaultMapping() {
     val enumConstructorOldToNewValueParameters = newMapping<IrValueDeclaration, IrValueParameter>()
     val enumEntryToCorrespondingField = newMapping<IrEnumEntry, IrField>()
     val enumClassToInitEntryInstancesFun = newMapping<IrClass, IrSimpleFunction>()
+
+    // Triggers `StageController.lazyLower` on access
+    override fun <K : IrDeclaration, V> newMapping(): Mapping.Delegate<K, V> = object : Mapping.Delegate<K, V>() {
+        private val map: MutableMap<K, V> = mutableMapOf()
+
+        override operator fun get(key: K): V? {
+            stageController.lazyLower(key)
+            return map[key]
+        }
+
+        override operator fun set(key: K, value: V?) {
+            stageController.lazyLower(key)
+            if (value == null) {
+                map.remove(key)
+            } else {
+                map[key] = value
+            }
+        }
+    }
 }

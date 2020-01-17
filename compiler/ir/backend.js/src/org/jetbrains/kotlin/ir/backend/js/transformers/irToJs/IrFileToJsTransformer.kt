@@ -15,7 +15,7 @@ class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsBlock, JsGenera
         val fileContext = data.newDeclaration()
         val block = JsGlobalBlock()
 
-        declaration.declarations.forEach {
+        ArrayList(declaration.declarations).forEach {
             block.statements.add(it.accept(IrDeclarationToJsTransformer(), fileContext))
         }
 

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
@@ -27,16 +27,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.DFS
-
-fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collection<IrModuleFragment> {
-    val mapping = dependencies.map { it.descriptor to it }.toMap()
-
-    return DFS.topologicalOrder(dependencies) { m ->
-        val descriptor = m.descriptor
-        descriptor.allDependencyModules.filter { it != descriptor }.map { mapping[it] }
-    }.reversed()
-}
 
 class CompilerResult(
     val jsCode: String?,
@@ -55,7 +45,8 @@ fun compile(
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
-    generateDceJs: Boolean = false
+    generateDceJs: Boolean = false,
+    dceDriven: Boolean = false
 ): CompilerResult {
     stageController = object : StageController {}
 
@@ -93,17 +84,30 @@ fun compile(
 
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
 
-    val controller = MutableController()
-    stageController = controller
+    if (dceDriven) {
 
-    val phaserState = PhaserState<IrModuleFragment>()
-    phaseList.forEachIndexed { index, phase ->
-        controller.currentStage = index + 1
-        phase.invoke(phaseConfig, phaserState, context, moduleFragment)
+        // TODO we should only generate tests for the current module
+        // TODO should be done incrementally
+        generateTests(context, moduleFragment)
+
+        val controller = MutableController(context, pirLowerings)
+        stageController = controller
+
+        controller.currentStage = controller.lowerings.size + 1
+
+        eliminateDeadDeclarations(moduleFragment, context, mainFunction)
+
+        stageController = object : StageController {
+            override val currentStage: Int = controller.currentStage
+        }
+
+        val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
+        return transformer.generateModule(moduleFragment, fullJs = true, dceJs = false)
+    } else {
+        jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
+        val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
+        return transformer.generateModule(moduleFragment, generateFullJs, generateDceJs)
     }
-
-    val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-    return transformer.generateModule(moduleFragment, generateFullJs, generateDceJs)
 }
 
 fun generateJsCode(

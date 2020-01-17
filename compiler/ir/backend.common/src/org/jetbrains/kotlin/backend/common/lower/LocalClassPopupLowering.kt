@@ -44,6 +44,7 @@ open class LocalClassPopupLowering(val context: BackendContext) : BodyLoweringPa
 
         for ((local, newContainer) in extractedLocalClasses) {
             newContainer.addChild(local)
+            context.extractedLocalClasses += local
         }
     }
 

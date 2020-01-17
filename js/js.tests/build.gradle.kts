@@ -133,6 +133,12 @@ projectTest("jsTest", true) {
 }
 
 projectTest("jsIrTest", true) {
+    systemProperty("kotlin.js.ir.pir", "false")
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
+}
+
+projectTest("jsPirTest", true) {
+    systemProperty("kotlin.js.ir.skipRegularMode", "true")
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
 }
 

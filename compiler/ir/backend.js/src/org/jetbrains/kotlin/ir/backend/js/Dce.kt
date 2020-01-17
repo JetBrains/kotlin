@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -28,11 +25,13 @@ fun eliminateDeadDeclarations(
     mainFunction: IrSimpleFunction?
 ) {
 
-    val allRoots = buildRoots(module, context, mainFunction)
+    val allRoots = stageController.withInitialIr { buildRoots(module, context, mainFunction) }
 
     val usefulDeclarations = usefulDeclarations(allRoots, context)
 
-    removeUselessDeclarations(module, usefulDeclarations)
+    stageController.unrestrictDeclarationListsAccess {
+        removeUselessDeclarations(module, usefulDeclarations)
+    }
 }
 
 private fun IrField.isConstant(): Boolean {
@@ -42,13 +41,14 @@ private fun IrField.isConstant(): Boolean {
 private fun buildRoots(module: IrModuleFragment, context: JsIrBackendContext, mainFunction: IrSimpleFunction?): Iterable<IrDeclaration> {
     val rootDeclarations =
         (module.files + context.packageLevelJsModules + context.externalPackageFragment.values).flatMapTo(mutableListOf()) { file ->
-            file.declarations.filter {
-                it is IrField && it.initializer != null && it.fqNameWhenAvailable?.asString()?.startsWith("kotlin") != true
-                        || it.isExported(context)
-                        || it.isEffectivelyExternal()
-                        || it is IrField && it.correspondingPropertySymbol?.owner?.isExported(context) == true
-                        || it is IrSimpleFunction && it.correspondingPropertySymbol?.owner?.isExported(context) == true
-            }.filter { !(it is IrField && it.isConstant() && !it.isExported(context)) }
+            file.declarations.flatMap { if (it is IrProperty) listOfNotNull(it.backingField, it.getter, it.setter) else listOf(it) }
+                .filter {
+                    it is IrField && it.initializer != null && it.fqNameWhenAvailable?.asString()?.startsWith("kotlin") != true
+                            || it.isExported(context)
+                            || it.isEffectivelyExternal()
+                            || it is IrField && it.correspondingPropertySymbol?.owner?.isExported(context) == true
+                            || it is IrSimpleFunction && it.correspondingPropertySymbol?.owner?.isExported(context) == true
+                }.filter { !(it is IrField && it.isConstant() && !it.isExported(context)) }
         }
 
     if (context.hasTests) rootDeclarations += context.testContainer
@@ -121,14 +121,16 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
     val constructedClasses = hashSetOf<IrClass>()
 
     fun IrDeclaration.enqueue() {
-        if (this !in result) {
+        if ((this !is IrProperty || this.isExternal) && this !in result) {
             result.add(this)
             queue.addLast(this)
         }
     }
 
     // Add roots, including nested declarations
-    roots.withNested().forEach { it.enqueue() }
+    stageController.withInitialIr {
+        roots.withNested().forEach { it.enqueue() }
+    }
 
     val toStringMethod =
         context.irBuiltIns.anyClass.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "toString" }
@@ -140,6 +142,8 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
     while (queue.isNotEmpty()) {
         while (queue.isNotEmpty()) {
             val declaration = queue.pollFirst()
+
+            stageController.lazyLower(declaration)
 
             if (declaration is IrClass) {
                 declaration.superTypes.forEach {
@@ -183,6 +187,8 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 is IrVariable -> declaration.initializer
                 else -> null
             }
+
+            (body as? IrBody)?.let { stageController.lazyLower(it) }
 
             body?.acceptVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
@@ -258,7 +264,8 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
         }
 
         for (klass in constructedClasses) {
-            for (declaration in klass.declarations) {
+            // TODO a better way to support inverse overrides.
+            for (declaration in ArrayList(klass.declarations)) {
                 if (declaration in result) continue
 
                 if (declaration is IrOverridableDeclaration<*> && declaration.overridesUsefulFunction()) {
@@ -275,6 +282,32 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                     declaration is IrSimpleFunction && declaration.correspondingPropertySymbol?.owner?.getJsName() != null
                 ) {
                     declaration.enqueue()
+                }
+            }
+
+            for (declaration in ArrayList(klass.declarations)) {
+                // TODO this is a hack.
+                if (declaration is IrProperty) {
+                    declaration.getter?.let { if (it.overridesUsefulFunction()) it.enqueue() }
+                    declaration.setter?.let { if (it.overridesUsefulFunction()) it.enqueue() }
+                }
+            }
+
+            // Special hack for `IntrinsicsJs.kt` support
+            if (klass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }) {
+                ArrayList(klass.declarations).forEach {
+                    if (it is IrSimpleFunction && it.name.asString().startsWith("invoke")) {
+                        it.enqueue()
+                    }
+                }
+            }
+
+            // TODO find out how `doResume` gets removed
+            if (klass.symbol == context.ir.symbols.coroutineImpl) {
+                ArrayList(klass.declarations).forEach {
+                    if (it is IrSimpleFunction && it.name.asString() == "doResume") {
+                        it.enqueue()
+                    }
                 }
             }
         }

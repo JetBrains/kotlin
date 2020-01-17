@@ -37,7 +37,7 @@ open class DefaultMapping : Mapping {
     override val lateInitFieldToNullableField: Mapping.Delegate<IrField, IrField> = newMapping()
     override val inlineClassMemberToStatic: Mapping.Delegate<IrFunction, IrSimpleFunction> = newMapping()
 
-    protected fun <K : IrDeclaration, V> newMapping() = object : Mapping.Delegate<K, V>() {
+    protected open fun <K : IrDeclaration, V> newMapping() = object : Mapping.Delegate<K, V>() {
         private val map: MutableMap<K, V> = mutableMapOf()
 
         override operator fun get(key: K): V? {

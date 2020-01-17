@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 
 private val BODILESS_BUILTIN_CLASSES = listOf(
@@ -89,12 +92,16 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
 
             context.packageLevelJsModules += externalPackageFragment
 
+            declaration.collectAllExternalDeclarations()
+
             return emptyList()
         } else {
             val d = declaration as? IrDeclarationWithName ?: return null
 
             if (isBuiltInClass(d)) {
                 context.bodilessBuiltInsPackageFragment.addChild(d)
+                d.collectAllExternalDeclarations()
+
                 return emptyList()
             } else if (d.isEffectivelyExternal()) {
                 if (d.getJsModule() != null)
@@ -103,10 +110,25 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
                 externalPackageFragment.declarations += d
                 d.parent = externalPackageFragment
 
+                d.collectAllExternalDeclarations()
+
                 return emptyList()
             }
 
             return null
         }
+    }
+
+    private fun IrDeclaration.collectAllExternalDeclarations() {
+        this.accept(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitDeclaration(declaration: IrDeclaration) {
+                context.externalDeclarations.add(declaration)
+                super.visitDeclaration(declaration)
+            }
+        }, null)
     }
 }

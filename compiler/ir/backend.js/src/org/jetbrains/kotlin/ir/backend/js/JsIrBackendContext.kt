@@ -50,6 +50,8 @@ class JsIrBackendContext(
     override val lateinitNullableFields
         get() = error("Use Mapping.lateInitFieldToNullableField instead")
 
+    override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
+
     override val builtIns = module.builtIns
 
     override var inVerbosePhase: Boolean = false
@@ -57,6 +59,7 @@ class JsIrBackendContext(
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
+    val externalDeclarations = hashSetOf<IrDeclaration>()
     val bodilessBuiltInsPackageFragment: IrPackageFragment = run {
 
         class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {

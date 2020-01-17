@@ -22,6 +22,14 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.FqName
 
+fun generateTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
+    val generator = TestGenerator(context)
+
+    moduleFragment.files.forEach {
+        generator.lower(it)
+    }
+}
+
 class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {

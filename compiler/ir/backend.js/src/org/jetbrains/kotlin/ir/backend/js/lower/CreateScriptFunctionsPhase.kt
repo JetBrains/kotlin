@@ -27,12 +27,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.Name
 
-val createScriptFunctionsPhase = makeIrModulePhase(
-    ::CreateScriptFunctionsPhase,
-    name = "CreateScriptFunctionsPhase",
-    description = "Create functions for initialize and evaluate script"
-)
-
 private object SCRIPT_FUNCTION : IrDeclarationOriginImpl("SCRIPT_FUNCTION")
 
 class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweringPass {

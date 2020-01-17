@@ -57,7 +57,9 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
             p.setter?.let { if (it.name == function.name) return it }
         }
 
-        error("Accessor not found")
+        return actualCompanion.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .single { it.name == function.name }
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

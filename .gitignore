@@ -18,6 +18,7 @@ workspace.xml
 /jps-plugin/testData/kannotator
 /js/js.translator/testData/out/
 /js/js.translator/testData/out-min/
+/js/js.translator/testData/out-pir/
 .gradle/
 build/
 !**/src/**/build
