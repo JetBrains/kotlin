@@ -1333,6 +1333,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      *
      * The resulting `Byte` value is equal to `this.toInt().toByte()`.
      */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     public override fun toByte(): Byte = this.toInt().toByte()
 
     /**
@@ -1347,6 +1348,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      *
      * The resulting `Short` value is equal to `this.toInt().toShort()`.
      */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     public override fun toShort(): Short = this.toInt().toShort()
 
     /**
@@ -1592,6 +1594,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      *
      * The resulting `Byte` value is equal to `this.toInt().toByte()`.
      */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     public override fun toByte(): Byte = this.toInt().toByte()
 
     /**
@@ -1606,6 +1609,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      *
      * The resulting `Short` value is equal to `this.toInt().toShort()`.
      */
+    @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     public override fun toShort(): Short = this.toInt().toShort()
 
     /**
