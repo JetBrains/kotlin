@@ -31,7 +31,7 @@ class Module(
     override val validator: SettingValidator<Module> = settingValidator<Module> { module ->
         StringValidators.shouldNotBeBlank("Module name").validate(this, module.name)
     } and settingValidator { module ->
-        StringValidators.shouldBeValidIdentifier("Module name `$name`").validate(this, module.name)
+        StringValidators.shouldBeValidIdentifier("Module name `$name`", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES).validate(this, module.name)
     } and settingValidator { module ->
         withSettingsOf(module) {
             configurator.settings.map { setting ->
@@ -81,6 +81,8 @@ class Module(
     }
 
     companion object {
+        val ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES = setOf('-', '_')
+
         val parser: Parser<Module> = mapParser { map, path ->
             val (name) = map.parseValue<String>(path, "name")
             val identificator = GeneratedIdentificator(name)

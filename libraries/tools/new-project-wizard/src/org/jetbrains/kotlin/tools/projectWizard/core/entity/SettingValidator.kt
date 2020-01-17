@@ -31,15 +31,18 @@ object StringValidators {
         else ValidationResult.OK
     }
 
-    fun shouldBeValidIdentifier(name: String) = settingValidator { value: String ->
-        if (value.any { char -> !char.isLetterOrDigit() && char !in ALLOWED_SPECIAL_CHARS_FOR_IDENTIFIERS })
+    fun shouldBeValidIdentifier(name: String, allowedExtraSymbols: Set<Char>) = settingValidator { value: String ->
+        if (value.any { char -> !char.isLetterOrDigit() && char !in allowedExtraSymbols }) {
+            val allowedExtraSymbolsStringified = allowedExtraSymbols
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString(separator = ", ") { char -> "'$char'" }
+                ?.let { chars -> ", and symbols: $chars" }
+                .orEmpty()
             ValidationResult.ValidationError(
-                "${name.capitalize()} should consist only of letters, digits, '_', or '-'"
+                "${name.capitalize()} should consist only of letters, digits$allowedExtraSymbolsStringified"
             )
-        else ValidationResult.OK
+        } else ValidationResult.OK
     }
-
-    private val ALLOWED_SPECIAL_CHARS_FOR_IDENTIFIERS = setOf('_', '-')
 }
 
 fun List<ValidationResult>.fold() = fold(ValidationResult.OK, ValidationResult::and)
