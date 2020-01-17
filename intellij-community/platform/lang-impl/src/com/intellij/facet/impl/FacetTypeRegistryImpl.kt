@@ -1,101 +1,95 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.facet.impl;
+package com.intellij.facet.impl
 
-import com.intellij.facet.*;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionPointListener;
-import com.intellij.openapi.extensions.PluginDescriptor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.facet.*
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.ExtensionPointListener
+import com.intellij.openapi.extensions.PluginDescriptor
+import java.util.*
 
-import java.util.*;
+class FacetTypeRegistryImpl : FacetTypeRegistry() {
+  private val myTypeIds: MutableMap<String, FacetTypeId<*>> = HashMap()
+  private val myFacetTypes: MutableMap<FacetTypeId<*>, FacetType<*, *>> = HashMap()
+  private var myExtensionsLoaded = false
 
-public class FacetTypeRegistryImpl extends FacetTypeRegistry {
-  private static final Logger LOG = Logger.getInstance(FacetTypeRegistryImpl.class);
-  private static final Comparator<FacetType<?, ?>> FACET_TYPE_COMPARATOR =
-    (o1, o2) -> o1.getPresentableName().compareToIgnoreCase(o2.getPresentableName());
-  private final Map<String, FacetTypeId<?>> myTypeIds = new HashMap<>();
-  private final Map<FacetTypeId<?>, FacetType<?, ?>> myFacetTypes = new HashMap<>();
-  private boolean myExtensionsLoaded = false;
-
-  @Override
-  public synchronized void registerFacetType(FacetType<?, ?> facetType) {
-    final FacetTypeId<?> typeId = facetType.getId();
-    String id = facetType.getStringId();
-    LOG.assertTrue(!id.contains("/"), "Facet type id '" + id + "' contains illegal character '/'");
-    LOG.assertTrue(!myFacetTypes.containsKey(typeId), "Facet type '" + id + "' is already registered");
-    myFacetTypes.put(typeId, facetType);
-
-    LOG.assertTrue(!myTypeIds.containsKey(id), "Facet type id '" + id + "' is already registered");
-    myTypeIds.put(id, typeId);
+  @Synchronized
+  override fun registerFacetType(facetType: FacetType<*, *>) {
+    val typeId = facetType.id
+    val id = facetType.stringId
+    LOG.assertTrue(!id.contains("/"), "Facet type id '$id' contains illegal character '/'")
+    LOG.assertTrue(!myFacetTypes.containsKey(typeId), "Facet type '$id' is already registered")
+    myFacetTypes[typeId] = facetType
+    LOG.assertTrue(!myTypeIds.containsKey(id), "Facet type id '$id' is already registered")
+    myTypeIds[id] = typeId
   }
 
-  @Override
-  public synchronized void unregisterFacetType(FacetType<?, ?> facetType) {
-    final FacetTypeId<?> id = facetType.getId();
-    final String stringId = facetType.getStringId();
-    LOG.assertTrue(myFacetTypes.remove(id) != null, "Facet type '" + stringId + "' is not registered");
-    myFacetTypes.remove(id);
-    myTypeIds.remove(stringId);
+  @Synchronized
+  override fun unregisterFacetType(facetType: FacetType<*, *>) {
+    val id = facetType.id
+    val stringId = facetType.stringId
+    LOG.assertTrue(myFacetTypes.remove(id) != null, "Facet type '$stringId' is not registered")
+    myFacetTypes.remove(id)
+    myTypeIds.remove(stringId)
   }
 
-  @Override
-  public synchronized FacetTypeId<?> @NotNull [] getFacetTypeIds() {
-    loadExtensions();
-    final Set<FacetTypeId<?>> ids = myFacetTypes.keySet();
-    return ids.toArray(new FacetTypeId[0]);
+  @Synchronized
+  override fun getFacetTypeIds(): Array<FacetTypeId<*>> {
+    loadExtensions()
+    return myFacetTypes.keys.toTypedArray()
   }
 
-  @Override
-  public synchronized FacetType<?, ?> @NotNull [] getFacetTypes() {
-    loadExtensions();
-    final Collection<FacetType<?, ?>> types = myFacetTypes.values();
-    final FacetType<?, ?>[] facetTypes = types.toArray(new FacetType[0]);
-    Arrays.sort(facetTypes, FACET_TYPE_COMPARATOR);
-    return facetTypes;
+  @Synchronized
+  override fun getFacetTypes(): Array<FacetType<*, *>> {
+    loadExtensions()
+    val facetTypes = myFacetTypes.values.toTypedArray()
+    Arrays.sort(facetTypes, FACET_TYPE_COMPARATOR)
+    return facetTypes
   }
 
-  @Override
-  public FacetType<?, ?> @NotNull [] getSortedFacetTypes() {
-    final FacetType<?, ?>[] types = getFacetTypes();
-    Arrays.sort(types, FACET_TYPE_COMPARATOR);
-    return types;
+  override fun getSortedFacetTypes(): Array<FacetType<*, *>> {
+    val types = facetTypes
+    Arrays.sort(types, FACET_TYPE_COMPARATOR)
+    return types
   }
 
-  @Override
-  @Nullable
-  public synchronized FacetType findFacetType(String id) {
-    loadExtensions();
-    final FacetTypeId<?> typeId = myTypeIds.get(id);
-    return typeId == null ? null : myFacetTypes.get(typeId);
+  @Synchronized
+  override fun findFacetType(id: String): FacetType<*, *>? {
+    loadExtensions()
+    val typeId = myTypeIds[id] ?: return null
+    return myFacetTypes[typeId]
   }
 
-  @NotNull
-  @Override
-  public synchronized <F extends Facet<C>, C extends FacetConfiguration> FacetType<F, C> findFacetType(@NotNull FacetTypeId<F> typeId) {
-    loadExtensions();
-    @SuppressWarnings("unchecked")
-    FacetType<F, C> type = (FacetType<F, C>)myFacetTypes.get(typeId);
-    LOG.assertTrue(type != null, "Cannot find facet by id '" + typeId + "'");
-    return type;
+  @Synchronized
+  override fun <F : Facet<C>?, C : FacetConfiguration?> findFacetType(typeId: FacetTypeId<F>): FacetType<F, C> {
+    loadExtensions()
+    @Suppress("UNCHECKED_CAST")
+    val type = myFacetTypes[typeId] as FacetType<F, C>?
+    LOG.assertTrue(type != null, "Cannot find facet by id '$typeId'")
+    return type!!
   }
 
-  private void loadExtensions() {
+  private fun loadExtensions() {
     if (myExtensionsLoaded) {
-      return;
+      return
     }
+    FacetType.EP_NAME.getPoint(null).addExtensionPointListener(
+      object : ExtensionPointListener<FacetType<*, *>?> {
+        override fun extensionAdded(extension: FacetType<*, *>, pluginDescriptor: PluginDescriptor) {
+          registerFacetType(extension)
+        }
 
-    FacetType.EP_NAME.getPoint(null).addExtensionPointListener(new ExtensionPointListener<FacetType>() {
-      @Override
-      public void extensionAdded(@NotNull final FacetType extension, @NotNull final PluginDescriptor pluginDescriptor) {
-        registerFacetType(extension);
-      }
+        override fun extensionRemoved(extension: FacetType<*, *>,
+                                      pluginDescriptor: PluginDescriptor) {
+          unregisterFacetType(extension)
+        }
+      }, true, null)
+    myExtensionsLoaded = true
+  }
 
-      @Override
-      public void extensionRemoved(@NotNull final FacetType extension, @NotNull final PluginDescriptor pluginDescriptor) {
-        unregisterFacetType(extension);
-      }
-    }, true, null);
-    myExtensionsLoaded = true;
+  companion object {
+    private val LOG = Logger.getInstance(FacetTypeRegistryImpl::class.java)
+    private val FACET_TYPE_COMPARATOR = Comparator { o1: FacetType<*, *>, o2: FacetType<*, *> ->
+      o1.presentableName.compareTo(o2.presentableName, ignoreCase = true)
+    }
   }
 }
