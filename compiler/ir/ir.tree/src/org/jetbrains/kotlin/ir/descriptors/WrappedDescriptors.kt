@@ -595,7 +595,7 @@ open class WrappedClassDescriptor(
 
     override fun isInline() = owner.isInline
 
-    override fun isFun() = owner.isFun
+    override fun isFun() = TODO("not implemented")
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.descriptor as ReceiverParameterDescriptor
 
@@ -640,7 +640,7 @@ open class WrappedClassDescriptor(
     }
 
     override fun getDefaultFunctionTypeForSamInterface(): SimpleType? {
-        return owner.descriptor.defaultFunctionTypeForSamInterface
+        TODO("not implemented")
     }
 
     override fun isDefinitelyNotSamInterface(): Boolean {

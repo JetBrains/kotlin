@@ -980,8 +980,7 @@ abstract class IrFileDeserializer(
                     isData = proto.isData,
                     isExternal = proto.isExternal,
                     isInline = proto.isInline,
-                    isExpect = proto.isExpect,
-                    isFun = proto.isFun
+                    isExpect = proto.isExpect
                 )
             }.usingParent {
                 proto.declarationContainer.declarationList.mapTo(declarations) { deserializeDeclaration(it) }

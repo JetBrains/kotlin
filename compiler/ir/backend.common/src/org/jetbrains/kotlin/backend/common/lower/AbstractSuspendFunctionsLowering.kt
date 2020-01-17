@@ -294,8 +294,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 isData = false,
                 isExternal = false,
                 isInline = false,
-                isExpect = false,
-                isFun = false
+                isExpect = false
             ).apply {
                 d.bind(this)
                 parent = irFunction.parent

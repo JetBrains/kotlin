@@ -44,8 +44,7 @@ class IrClassImpl(
     override val isData: Boolean,
     override val isExternal: Boolean,
     override val isInline: Boolean,
-    override val isExpect: Boolean,
-    override val isFun: Boolean
+    override val isExpect: Boolean
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {
@@ -67,8 +66,7 @@ class IrClassImpl(
                 isData = symbol.descriptor.isData,
                 isExternal = symbol.descriptor.isEffectivelyExternal(),
                 isInline = symbol.descriptor.isInline,
-                isExpect = symbol.descriptor.isExpect,
-                isFun = symbol.descriptor.isFun
+                isExpect = symbol.descriptor.isExpect
             )
 
     init {

@@ -236,8 +236,7 @@ class JvmDeclarationFactory(
                 isData = false,
                 isExternal = false,
                 isInline = false,
-                isExpect = false,
-                isFun = false
+                isExpect = false
             ).apply {
                 descriptor.bind(this)
                 parent = interfaceClass

@@ -32,6 +32,5 @@ class IrClassBuilder : IrDeclarationBuilder() {
         isExternal = from.isExternal
         isInline = from.isInline
         isExpect = from.isExpect
-        isFun = from.isFun
     }
 }

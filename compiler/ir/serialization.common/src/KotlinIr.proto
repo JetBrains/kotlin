@@ -648,7 +648,6 @@ message IrClass {
   required IrDeclarationContainer declaration_container = 13;
   repeated int32 super_type = 14;
   required bool is_expect = 15;
-  required bool is_fun = 16;
 }
 
 message IrTypeAlias {
