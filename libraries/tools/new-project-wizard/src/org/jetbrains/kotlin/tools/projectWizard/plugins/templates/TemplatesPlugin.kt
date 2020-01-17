@@ -112,8 +112,8 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         val template = module.template ?: return UNIT_SUCCESS
         val settings = with(template) { settingsAsMap(module.originalModule) }
         val allSettings = settings + interceptionPointSettings.mapKeys { it.key.name }
-        return with(template) { getFileTemplates(module) }.mapNotNull { (fileTemplateDescriptor, filePath) ->
-            val path = generatePathForFileTemplate(module, filePath) ?: return@mapNotNull null
+        return with(template) { getFileTemplates(module) }.map { (fileTemplateDescriptor, filePath) ->
+            val path = generatePathForFileTemplate(module, filePath)
             val fileTemplate = FileTemplate(
                 fileTemplateDescriptor,
                 module.path / path,
@@ -131,13 +131,12 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        is SourcesetModuleIR -> {
-            if (filePath.sourcesetType == module.sourcesetType) {
-                when (filePath) {
-                    is SrcFilePath -> KOTLIN_DIR
-                    is ResourcesFilePath -> RESOURCES_DIR
-                }
-            } else null
+        is MultiplatformModuleIR -> {
+            val directory = when (filePath) {
+                is SrcFilePath -> KOTLIN_DIR
+                is ResourcesFilePath -> RESOURCES_DIR
+            }
+            SRC_DIR / "${module.name}${filePath.sourcesetType.name.capitalize()}" / directory
         }
     }
 }

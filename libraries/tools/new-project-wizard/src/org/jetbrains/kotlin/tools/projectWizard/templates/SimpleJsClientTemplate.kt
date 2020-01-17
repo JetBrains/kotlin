@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
@@ -83,7 +82,7 @@ class SimpleJsClientTemplate : Template() {
             }
 
             transformBuildFile { buildFileIR ->
-                val jsSourcesetName = module.safeAs<SourcesetModuleIR>()?.targetName ?: return@transformBuildFile null
+                val jsSourcesetName = module.safeAs<MultiplatformModuleIR>()?.name ?: return@transformBuildFile null
                 val jvmTarget = buildFileIR.targets.firstOrNull { target ->
                     target.safeAs<DefaultTargetConfigurationIR>()?.targetAccess?.type == ModuleSubType.jvm
                 } as? DefaultTargetConfigurationIR ?: return@transformBuildFile null
@@ -136,7 +135,7 @@ class SimpleJsClientTemplate : Template() {
 
     override fun TaskRunningContext.getIrsToAddToBuildFile(module: ModuleIR): List<BuildSystemIR> = buildList {
         +RepositoryIR(DefaultRepository.JCENTER)
-        if (module is SourcesetModuleIR) {
+        if (module is MultiplatformModuleIR) {
             +GradleImportIR("org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack")
             val taskAccessIR = GradleByNameTaskAccessIR(
                 "${module.name}BrowserWebpack",

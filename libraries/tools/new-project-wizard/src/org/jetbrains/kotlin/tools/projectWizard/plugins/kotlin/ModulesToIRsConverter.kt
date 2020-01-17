@@ -160,7 +160,7 @@ class ModulesToIRsConverter(
             (subModule.configurator as TargetConfigurator).createTargetIrs(subModule)
         }
 
-        val sourcesetsIrs = module.subModules.flatMap { target ->
+        val targetModuleIrs = module.subModules.map { target ->
             createTargetSourceset(target, modulePath)
         }
 
@@ -169,7 +169,7 @@ class ModulesToIRsConverter(
             modulePath,
             MultiplatformModulesStructureIR(
                 targetIrs,
-                sourcesetsIrs,
+                targetModuleIrs,
                 emptyList()
             ),
             pomIr,
@@ -180,8 +180,8 @@ class ModulesToIRsConverter(
         ).asSingletonList().asSuccess()
     }
 
-    private fun createTargetSourceset(target: Module, modulePath: Path): List<SourcesetModuleIR> =
-        target.sourcesets.map { sourceset ->
+    private fun createTargetSourceset(target: Module, modulePath: Path): MultiplatformModuleIR {
+        val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
             val sourcesetIrs = buildList<BuildSystemIR> {
                 +sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
@@ -198,17 +198,24 @@ class ModulesToIRsConverter(
                     )
                 }
             }
-            SourcesetModuleIR(
-                sourcesetName,
-                modulePath / Defaults.SRC_DIR / sourcesetName,
-                sourcesetIrs,
-                sourceset.containingModuleType,
+            MultiplatformSourcesetIR(
                 sourceset.sourcesetType,
-                target.template,
-                target,
+                modulePath / Defaults.SRC_DIR / sourcesetName,
+                target.name,
+                sourcesetIrs,
                 sourceset
             )
         }
+        return MultiplatformModuleIR(
+            target.name,
+            modulePath,
+            emptyList(),
+            target.configurator.moduleType,
+            target.template,
+            target,
+            sourcesetss
+        )
+    }
 
     private fun TaskRunningContext.mutateProjectStructureByModuleConfigurator(
         module: Module,

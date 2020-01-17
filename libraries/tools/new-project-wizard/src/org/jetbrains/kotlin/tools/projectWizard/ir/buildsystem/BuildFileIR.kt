@@ -5,14 +5,12 @@ import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import java.nio.file.Path
-import javax.xml.transform.Source
 
 data class BuildFileIR(
     val name: String,
@@ -110,7 +108,7 @@ val BuildFileIR.sourcesets
     get() = modules.modules.flatMap { module ->
         when (module) {
             is SingleplatformModuleIR -> module.sourcesets
-            is SourcesetModuleIR -> listOf(module as SourcesetIR)
+            is MultiplatformModuleIR -> listOf(module as SourcesetIR)
         }
     }
 
@@ -129,11 +127,11 @@ sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
 
 data class MultiplatformModulesStructureIR(
     val targets: List<BuildSystemIR>,
-    override val modules: List<SourcesetModuleIR>,
+    override val modules: List<MultiplatformModuleIR>,
     override val irs: List<BuildSystemIR>
 ) : GradleIR, ModulesStructureIR() {
     @Suppress("UNCHECKED_CAST")
-    override fun withModules(modules: List<ModuleIR>) = copy(modules = modules as List<SourcesetModuleIR>)
+    override fun withModules(modules: List<ModuleIR>) = copy(modules = modules as List<MultiplatformModuleIR>)
 
     override fun withReplacedIrs(irs: List<BuildSystemIR>): MultiplatformModulesStructureIR = copy(irs = irs)
 

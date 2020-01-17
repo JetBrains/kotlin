@@ -52,8 +52,8 @@ abstract class BuildFilePrinter {
         suffix()
     }
 
-    open fun <T : BuildSystemIR> List<T>.listNl() {
-        indent()
+    open fun <T : BuildSystemIR> List<T>.listNl(needFirstIndent: Boolean = true) {
+        if (needFirstIndent) indent()
         list(separator = { nl(); indent() }) { it.render(this) }
     }
 
