@@ -113,12 +113,36 @@ class ReplTest : TestCase() {
             )
         )
     }
+
+    @Test
+    fun testLongEval() {
+        checkEvaluateInRepl(
+            sequence {
+                var count = 0
+                while (true) {
+                    val prev = if (count == 0) "0" else "obj${count - 1}.prop${count - 1} + $count"
+                    yield("object obj$count { val prop$count = $prev }; $prev")
+                    count++
+                }
+            },
+            sequence {
+                var acc = 0
+                var count = 0
+                while (true) {
+                    yield(acc)
+                    acc += ++count
+                }
+            },
+            limit = 100
+        )
+    }
 }
 
 fun evaluateInRepl(
     snippets: Sequence<String>,
     compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration
+    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+    limit: Int = 0
 ): Sequence<ResultWithDiagnostics<EvaluationResult>> {
     val replCompilerProxy =
         KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
@@ -126,7 +150,8 @@ fun evaluateInRepl(
     val compilationHistory = BasicReplStageHistory<ScriptDescriptor>()
     val replEvaluator = BasicJvmScriptEvaluator()
     var currentEvalConfig = evaluationConfiguration ?: ScriptEvaluationConfiguration()
-    return snippets.mapIndexed { snippetNo, snippetText ->
+    val snipetsLimited = if (limit == 0) snippets else snippets.take(limit)
+    return snipetsLimited.mapIndexed { snippetNo, snippetText ->
         val snippetSource = snippetText.toScriptSource("Line_$snippetNo.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}")
         val snippetId = ReplSnippetIdImpl(snippetNo, 0, snippetSource)
         replCompilerProxy.compileReplSnippet(compilationState, snippetSource, snippetId, compilationHistory)
@@ -154,10 +179,11 @@ fun checkEvaluateInReplDiags(
     snippets: Sequence<String>,
     expected: Sequence<ResultWithDiagnostics<Any?>>,
     compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration
+    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+    limit: Int = 0
 ) {
-    val expectedIter = expected.iterator()
-    evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration).forEachIndexed { index, res ->
+    val expectedIter = (if (limit == 0) expected else expected.take(limit)).iterator()
+    evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration, limit).forEachIndexed { index, res ->
         val expectedRes = expectedIter.next()
         when {
             res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
@@ -187,16 +213,19 @@ fun checkEvaluateInReplDiags(
             }
         }
     }
+    if (expectedIter.hasNext()) {
+        Assert.fail("Expected ${expectedIter.next()} got end of results stream")
+    }
 }
 
 fun checkEvaluateInRepl(
     snippets: Sequence<String>,
     expected: Sequence<Any?>,
     compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration
+    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+    limit: Int = 0
 ) = checkEvaluateInReplDiags(
-    snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration,
-    evaluationConfiguration
+    snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit
 )
 
 class TestReceiver(val prop1: Int = 3)
