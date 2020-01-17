@@ -5,7 +5,6 @@ public const val b: kotlin.Double
 public const val c: kotlin.Double
 public const val d: kotlin.Double
 public const val e: kotlin.Double
-public const val f: kotlin.Double
 public const val g: kotlin.Double
 public const val h: kotlin.Double
 public const val i: kotlin.Int
@@ -13,6 +12,5 @@ public val nonConst1: kotlin.Double
 public val nonConst2: kotlin.Int
 public val nonConst3: kotlin.Double
 public val nonConst4: kotlin.Int
-public val nonConst5: kotlin.Int
 public val nonConst6: kotlin.Int
 public val nonConst7: kotlin.Int
