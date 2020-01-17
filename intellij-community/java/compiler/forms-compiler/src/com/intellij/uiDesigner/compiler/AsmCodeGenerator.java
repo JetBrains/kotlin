@@ -853,7 +853,6 @@ public class AsmCodeGenerator {
         }
         pushBorderProperties(container, generator, borderTitle, componentLocal);
 
-
         Type borderFactoryType = ourBorderFactoryType;
         StringDescriptor borderFactoryValue = (StringDescriptor)container.getDelegeeClientProperties().get(ourBorderFactoryClientProperty);
         if (borderFactoryValue == null && borderTitle != null && Boolean.valueOf(System.getProperty("idea.is.internal")).booleanValue()) {
@@ -872,8 +871,11 @@ public class AsmCodeGenerator {
       }
     }
 
-    private void pushBorderProperties(final LwContainer container, final GeneratorAdapter generator, final StringDescriptor borderTitle,
+    private void pushBorderProperties(final LwContainer container, 
+                                      final GeneratorAdapter generator, 
+                                      final StringDescriptor borderTitle,
                                       final int componentLocal) {
+      borderTitle.setFormClass(myClassName);
       pushPropValue(generator, "java.lang.String", borderTitle);
       generator.push(container.getBorderTitleJustification());
       generator.push(container.getBorderTitlePosition());

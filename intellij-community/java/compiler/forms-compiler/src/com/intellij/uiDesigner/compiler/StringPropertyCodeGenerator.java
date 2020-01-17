@@ -121,7 +121,8 @@ public final class StringPropertyCodeGenerator extends PropertyCodeGenerator imp
       generator.loadThis();
       generator.loadLocal(componentLocal);
 
-      generateGetBundleString(propertyValue, formClass, generator);
+      propertyValue.setFormClass(formClassName);
+      generateGetBundleString(propertyValue, generator);
 
       Method method;
       if (abstractButtonClass.isAssignableFrom(componentClass)) {
@@ -137,10 +138,13 @@ public final class StringPropertyCodeGenerator extends PropertyCodeGenerator imp
     return true;
   }
 
-  private void generateGetBundleString(StringDescriptor descriptor, Type formClass, GeneratorAdapter generator) {
+  private void generateGetBundleString(StringDescriptor descriptor, GeneratorAdapter generator) {
     generator.push(descriptor.getBundleName());
-    if (formClass != null && dynamicBundleType != null) {
-      generator.push(formClass);
+
+    String formClass = descriptor.getFormClass();
+    if (dynamicBundleType != null && formClass != null) {
+      Type type = Type.getType("L" + formClass + ";");
+      generator.push(type);
       generator.invokeStatic(dynamicBundleType, getDynamicBundleMethod);
     }
     else {
@@ -161,7 +165,7 @@ public final class StringPropertyCodeGenerator extends PropertyCodeGenerator imp
       generator.push(descriptor.getValue());
     }
     else {
-      generateGetBundleString(descriptor, null, generator);
+      generateGetBundleString(descriptor, generator);
     }
   }
 
