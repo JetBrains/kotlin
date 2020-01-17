@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
@@ -98,9 +96,20 @@ class ResultTypeResolver(
 
         if (lowerConstraintTypes.isNotEmpty()) {
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
-            val commonSuperType = with(NewCommonSuperTypeCalculator) {
-                this@findSubType.commonSuperType(types)
+            var commonSuperType = computeCommonSuperType(types)
+
+            if (commonSuperType.contains { it is StubTypeMarker }) {
+                val typesWithoutStubs = types.filter { lowerType ->
+                    !lowerType.contains { it is StubTypeMarker }
+                }
+
+                if (typesWithoutStubs.isNotEmpty()) {
+                    commonSuperType = computeCommonSuperType(typesWithoutStubs)
+                } else {
+                    return null
+                }
             }
+
             /**
              *
              * fun <T> Array<out T>.intersect(other: Iterable<T>) {
@@ -127,6 +136,9 @@ class ResultTypeResolver(
 
         return null
     }
+
+    private fun Context.computeCommonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker =
+        with(NewCommonSuperTypeCalculator) { commonSuperType(types) }
 
     private fun Context.prepareLowerConstraints(constraints: List<Constraint>): List<KotlinTypeMarker> {
         var atLeastOneProper = false
