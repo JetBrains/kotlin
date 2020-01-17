@@ -214,7 +214,7 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
 
     @Override
     public void writeActionStarted(@NotNull Object action) {
-      myFileBasedIndex.clearUpToDateIndexesForUnsavedOrTransactedDocs();;
+      myFileBasedIndex.clearUpToDateIndexesForUnsavedOrTransactedDocs();
     }
   }
 }
