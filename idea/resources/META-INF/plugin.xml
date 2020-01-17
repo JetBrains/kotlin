@@ -13,13 +13,13 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="192.7142.36" until-build="192.*"/>
+  <idea-version since-build="193.4099.13" until-build="201.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
-  <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
-  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle.java</depends>
+  <depends optional="true" config-file="gradle.xml">com.intellij.gradle</depends>
+  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="gradle-groovy.xml">org.intellij.groovy</depends>
   <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
@@ -82,10 +82,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
 
       <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
+
+      <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
     </extensions>
-
-  <extensions defaultExtensionNs="com.intellij">
-    <focusModeProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.core.KotlinFocusModeProvider" />
-  </extensions>
-
 </idea-plugin>

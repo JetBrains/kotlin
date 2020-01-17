@@ -1,0 +1,91 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" version="2" url="http://kotlinlang.org" allow-bundled-update="true">
+  <id>org.jetbrains.kotlin</id>
+
+  <name>Kotlin</name>
+  <description><![CDATA[
+The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
+<br>
+<a href="http://kotlinlang.org/docs/tutorials/getting-started.html">Getting Started in IntelliJ IDEA</a><br>
+<a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html">Getting Started in Android Studio</a><br>
+<a href="http://slack.kotlinlang.org/">Public Slack</a><br>
+<a href="https://youtrack.jetbrains.com/issues/KT">Issue tracker</a><br>
+]]></description>
+  <version>@snapshot@</version>
+  <vendor url="http://www.jetbrains.com">JetBrains</vendor>
+
+  <idea-version since-build="192.7142.36" until-build="192.*"/>
+
+  <depends>com.intellij.modules.platform</depends>
+
+  <depends optional="true" config-file="junit.xml">JUnit</depends>
+  <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle.java</depends>
+  <depends optional="true" config-file="gradle-groovy.xml">org.intellij.groovy</depends>
+  <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
+  <depends optional="true" config-file="coverage.xml">Coverage</depends>
+  <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
+  <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
+  <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
+  <depends optional="true" config-file="stream-debugger.xml">org.jetbrains.debugger.streams</depends>
+
+  <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
+
+  <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
+  <depends>com.intellij.modules.idea</depends>
+  <depends>com.intellij.modules.java</depends>
+  <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
+  <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
+  <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
+  <!-- CIDR-PLUGIN-PLACEHOLDER-END -->
+
+  <xi:include href="plugin-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <!-- CIDR-PLUGIN-EXCLUDE-START -->
+  <xi:include href="jvm.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!-- CIDR-PLUGIN-EXCLUDE-END -->
+
+  <xi:include href="native.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="kotlinx-serialization.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="scripting-support.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <extensionPoints>
+    <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.pluginUpdateVerifier"
+                    interface="org.jetbrains.kotlin.idea.update.PluginUpdateVerifier"/>
+  </extensionPoints>
+
+  <xi:include href="plugin-kotlin-extensions.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <extensions defaultExtensionNs="com.intellij.jvm">
+    <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
+  </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+      <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
+      <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
+      <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
+      <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
+      <statistics.counterUsagesCollector groupId="kotlin.ide.action.refactoring" version="1"/>
+      <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
+      <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="1"/>
+      <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
+      <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
+      <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
+      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.IDESettingsFUSCollector"/>
+      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
+
+      <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
+    </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <focusModeProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.core.KotlinFocusModeProvider" />
+  </extensions>
+
+</idea-plugin>

@@ -1,0 +1,11 @@
+<node text="packageVal  ()" base="true">
+  <node text="JA  ()"/>
+  <node text="JA.getName()(2 usages)  ()"/>
+  <node text="KClient  ()"/>
+  <node text="KClient  ()"/>
+  <node text="KClient.bar()  ()"/>
+  <node text="KClient.bar(2 usages)  ()"/>
+  <node text="KClient.bar.localFun()  ()"/>
+  <node text="KClientObj(2 usages)  ()"/>
+  <node text="packageFun(String)  ()"/>
+</node>

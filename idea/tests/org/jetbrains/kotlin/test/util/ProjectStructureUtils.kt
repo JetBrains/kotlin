@@ -15,15 +15,15 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.HeavyPlatformTestCase
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
 
-fun PlatformTestCase.projectLibrary(
-    libraryName: String = "TestLibrary",
-    classesRoot: VirtualFile? = null,
-    sourcesRoot: VirtualFile? = null,
-    kind: PersistentLibraryKind<*>? = null
+fun HeavyPlatformTestCase.projectLibrary(
+        libraryName: String = "TestLibrary",
+        classesRoot: VirtualFile? = null,
+        sourcesRoot: VirtualFile? = null,
+        kind: PersistentLibraryKind<*>? = null
 ): Library {
     return runWriteAction {
         val modifiableModel = ProjectLibraryTable.getInstance(project).modifiableModel
@@ -32,7 +32,7 @@ fun PlatformTestCase.projectLibrary(
         } finally {
             modifiableModel.commit()
         }
-        with(library.modifiableModel) {
+        with (library.modifiableModel) {
             classesRoot?.let { addRoot(it, OrderRootType.CLASSES) }
             sourcesRoot?.let { addRoot(it, OrderRootType.SOURCES) }
             commit()
@@ -48,7 +48,7 @@ val File.jarRoot: VirtualFile
     }
 
 fun Module.addDependency(
-    library: Library,
-    dependencyScope: DependencyScope = DependencyScope.COMPILE,
-    exported: Boolean = false
+        library: Library,
+        dependencyScope: DependencyScope = DependencyScope.COMPILE,
+        exported: Boolean = false
 ) = ModuleRootModificationUtil.addDependency(this, library, dependencyScope, exported)

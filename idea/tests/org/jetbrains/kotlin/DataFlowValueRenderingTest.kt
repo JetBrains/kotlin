@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractDataFlowValueRenderingTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixtureTestCase() {
 
     private fun IdentifierInfo.render(): String? = when (this) {
         is IdentifierInfo.Expression -> expression.text
@@ -34,19 +34,21 @@ abstract class AbstractDataFlowValueRenderingTest : KotlinLightCodeInsightFixtur
     }
 
     private fun DataFlowValue.render() =
-        // If it is not a stable identifier, there's no point in rendering it
-        if (!isStable) null
-        else identifierInfo.render()
+            // If it is not a stable identifier, there's no point in rendering it
+            if (!isStable) null
+            else identifierInfo.render()
 
-    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
+    override fun getTestDataPath() : String {
+        return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
+    }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return LightCodeInsightFixtureTestCase.JAVA_LATEST
     }
 
-    fun doTest(fileName: String) {
+    fun doTest(path: String) {
         val fixture = myFixture
-        fixture.configureByFile(fileName)
+        fixture.configureByFile(fileName())
 
         val jetFile = fixture.file as KtFile
         val element = jetFile.findElementAt(fixture.caretOffset)!!
@@ -56,6 +58,6 @@ abstract class AbstractDataFlowValueRenderingTest : KotlinLightCodeInsightFixtur
         val allValues = (info.completeTypeInfo.keySet() + info.completeNullabilityInfo.keySet()).toSet()
         val actual = allValues.mapNotNull { it.render() }.sorted().joinToString("\n")
 
-        KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)
+        KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(path) + ".txt"), actual)
     }
 }

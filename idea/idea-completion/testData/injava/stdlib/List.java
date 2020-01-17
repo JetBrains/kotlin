@@ -5,5 +5,5 @@ public class Testing {
 }
 
 // EXIST: EmptyList
-// EXIST: { lookupString:List,tailText:"<E> (java.util)" }
-// ABSENT:  { lookupString:List,tailText:"<E> (kotlin.collections)" }
+// EXIST: { lookupString:List,tailText:"<E> java.util" }
+// ABSENT:  { lookupString:List,tailText:"<E> kotlin.collections" }

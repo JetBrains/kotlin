@@ -10,5 +10,5 @@ import java.util.concurrent.Future
 object ProgressIndicatorUtils {
     @JvmStatic
     fun <T> awaitWithCheckCanceled(future: Future<T>) =
-        com.intellij.openapi.progress.util.BackgroundTaskUtil.awaitWithCheckCanceled(future)
+        com.intellij.openapi.progress.util.ProgressIndicatorUtils.awaitWithCheckCanceled(future)
 }
