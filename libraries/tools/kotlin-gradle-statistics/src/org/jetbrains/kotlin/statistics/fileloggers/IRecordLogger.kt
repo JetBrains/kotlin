@@ -8,7 +8,5 @@ package org.jetbrains.kotlin.statistics.fileloggers
 import java.io.Closeable
 
 interface IRecordLogger : Closeable {
-
     fun append(s: String)
-
 }

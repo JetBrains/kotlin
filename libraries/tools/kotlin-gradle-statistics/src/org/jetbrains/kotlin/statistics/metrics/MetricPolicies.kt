@@ -16,6 +16,11 @@ enum class StringOverridePolicy: IMetricContainerFactory<String> {
 
         override fun fromStringRepresentation(state: String): IMetricContainer<String>? = OverrideMetricContainer(state)
     },
+    OVERRIDE_VERSION_IF_NOT_SET {
+        override fun newMetricContainer(): IMetricContainer<String> = OverrideVersionMetricContainer()
+
+        override fun fromStringRepresentation(state: String): IMetricContainer<String>? = OverrideVersionMetricContainer(state)
+    },
     CONCAT {
         override fun newMetricContainer(): IMetricContainer<String> = ConcatMetricContainer()
 

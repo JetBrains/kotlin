@@ -67,6 +67,7 @@ val projectsToShadow by extra(listOf(
         ":js:js.translator",
         ":kotlin-native:kotlin-native-utils",
         ":kotlin-native:kotlin-native-library-reader",
+        ":kotlin-gradle-statistics",
         ":compiler:light-classes",
         ":compiler:plugin-api",
         ":kotlin-preloader",
