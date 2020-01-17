@@ -96,9 +96,7 @@ class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : A
     }
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
-        val qualifiedReceiver = explicitReceiver as? FirResolvedQualifier
-            ?: return super.scope(useSiteSession, scopeSession)
-        val classId = qualifiedReceiver.classId ?: return null
+        val classId = explicitReceiver.classId ?: return null
 
         val (classSymbol, callablesScope) = getClassSymbolWithCallablesScope(classId, useSiteSession, scopeSession)
         if (classSymbol != null) {
