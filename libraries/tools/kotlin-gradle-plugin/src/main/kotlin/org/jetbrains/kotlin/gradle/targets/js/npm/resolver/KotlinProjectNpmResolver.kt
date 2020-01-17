@@ -102,11 +102,11 @@ internal class KotlinProjectNpmResolver(
             private set
 
         init {
-            projectNpmResolver.project.tasks.forEach { task ->
+            projectNpmResolver.project.tasks.configureEach { task ->
                 if (task.enabled && task is RequiresNpmDependencies) {
                     addTaskRequirements(task)
                     task.dependsOn(projectNpmResolver[task.compilation].packageJsonTaskHolder)
-                    task.dependsOn(projectNpmResolver.resolver.nodeJs.npmInstallTask)
+                    task.dependsOn(projectNpmResolver.resolver.nodeJs.npmInstallTaskProvider)
                 }
             }
         }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -13,6 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.deprecatedBecauseNoConfigAvoidanceUseProvider
+import org.jetbrains.kotlin.gradle.utils.warnAccessToDeprecatedNoConfigAvoidanceSymbol
 import java.io.File
 
 val KotlinJsCompilation.npmProject: NpmProject
@@ -49,8 +53,14 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val packageJsonTaskName: String
         get() = compilation.disambiguateName("packageJson")
 
+    val packageJsonTaskProvider: TaskProvider<KotlinPackageJsonTask>
+        get() = project.locateTask(packageJsonTaskName)!!
+
+    @Deprecated(deprecatedBecauseNoConfigAvoidanceUseProvider, ReplaceWith("packageJsonTaskProvider"))
     val packageJsonTask: KotlinPackageJsonTask
-        get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
+        get() = packageJsonTaskProvider.get().also {
+            project.logger.warnAccessToDeprecatedNoConfigAvoidanceSymbol("packageJsonTask")
+        }
 
     val main: String
         get() = "kotlin/$name.js"

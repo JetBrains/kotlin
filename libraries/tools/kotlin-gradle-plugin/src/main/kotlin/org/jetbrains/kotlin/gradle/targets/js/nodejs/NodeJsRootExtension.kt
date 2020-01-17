@@ -1,21 +1,17 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.deprecatedBecauseNoConfigAvoidanceUseProvider
+import org.jetbrains.kotlin.gradle.utils.warnAccessToDeprecatedNoConfigAvoidanceSymbol
 import java.io.File
 
 open class NodeJsRootExtension(val rootProject: Project) {
@@ -49,11 +45,23 @@ open class NodeJsRootExtension(val rootProject: Project) {
 
     val experimental = Experimental()
 
-    val nodeJsSetupTask: NodeJsSetupTask
-        get() = rootProject.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
+    val npmInstallTaskProvider: TaskProvider<KotlinNpmInstallTask>
+        get() = rootProject.locateTask(KotlinNpmInstallTask.NAME)!!
 
+    val nodeJsSetupTaskProvider: TaskProvider<NodeJsSetupTask>
+        get() = rootProject.locateTask(NodeJsSetupTask.NAME)!!
+
+    @Deprecated(deprecatedBecauseNoConfigAvoidanceUseProvider, ReplaceWith("nodeJsSetupTaskProvider"))
+    val nodeJsSetupTask: NodeJsSetupTask
+        get() = nodeJsSetupTaskProvider.get().also {
+            rootProject.logger.warnAccessToDeprecatedNoConfigAvoidanceSymbol("nodeJsSetupTask")
+        }
+
+    @Deprecated(deprecatedBecauseNoConfigAvoidanceUseProvider, ReplaceWith("npmInstallTaskProvider"))
     val npmInstallTask: KotlinNpmInstallTask
-        get() = rootProject.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
+        get() = npmInstallTaskProvider.get().also {
+            rootProject.logger.warnAccessToDeprecatedNoConfigAvoidanceSymbol("npmInstallTask")
+        }
 
     val rootPackageDir: File
         get() = rootProject.buildDir.resolve("js")
@@ -100,7 +108,7 @@ open class NodeJsRootExtension(val rootProject: Project) {
         val nodeJsEnv = environment
         if (download) {
             if (!nodeJsEnv.nodeBinDir.isDirectory) {
-                nodeJsSetupTask.exec()
+                nodeJsSetupTaskProvider.get().exec()
             }
         }
     }

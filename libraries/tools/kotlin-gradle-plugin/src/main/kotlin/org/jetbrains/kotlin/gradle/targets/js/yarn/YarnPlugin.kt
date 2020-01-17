@@ -20,7 +20,7 @@ open class YarnPlugin : Plugin<Project> {
 
         this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
-            it.dependsOn(nodeJs.nodeJsSetupTask)
+            it.dependsOn(nodeJs.nodeJsSetupTaskProvider)
         }
     }
 

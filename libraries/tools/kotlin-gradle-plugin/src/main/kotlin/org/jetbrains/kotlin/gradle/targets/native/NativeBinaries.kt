@@ -3,7 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch")
+
+// Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
@@ -14,7 +16,10 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.deprecatedBecauseNoConfigAvoidanceUseProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.warnAccessToDeprecatedNoConfigAvoidanceSymbol
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -113,7 +118,7 @@ class Executable constructor(
         get() = super.baseName
         set(value) {
             super.baseName = value
-            runTask?.executable = outputFile.absolutePath
+            runTaskProvider?.configure { it.executable = outputFile.absolutePath }
         }
 
     var entryPoint: String? = null
@@ -137,8 +142,18 @@ class Executable constructor(
      * A task running this executable.
      * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
      */
+    val runTaskProvider: TaskProvider<AbstractExecTask<*>>?
+        get() = runTaskName?.let { project.locateTask(it) }
+
+    /**
+     * A task running this executable.
+     * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
+     */
+    @Deprecated(deprecatedBecauseNoConfigAvoidanceUseProvider, ReplaceWith("runTaskProvider"))
     val runTask: AbstractExecTask<*>?
-        get() = runTaskName?.let { project.tasks.getByName(it) as AbstractExecTask<*> }
+        get() = runTaskName?.let { project.tasks.getByName(it) as AbstractExecTask<*> }?.also {
+            project.logger.warnAccessToDeprecatedNoConfigAvoidanceSymbol("runTask")
+        }
 }
 
 class TestExecutable(

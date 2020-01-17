@@ -28,7 +28,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
 
     private fun findDependentTasks(): Collection<KotlinPackageJsonTask> =
         producer.internalDependencies.map { dependentResolver ->
-            dependentResolver.npmProject.packageJsonTask
+            dependentResolver.npmProject.packageJsonTaskProvider.get()
         }
 
     @get:Nested
@@ -51,8 +51,8 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val npmProject = compilation.npmProject
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-            val rootClean = project.rootProject.tasks.getByName(BasePlugin.CLEAN_TASK_NAME)
-            val npmInstallTask = nodeJs.npmInstallTask
+            val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
+            val npmInstallTask = nodeJs.npmInstallTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.nodeJs = nodeJs
@@ -64,7 +64,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.mustRunAfter(rootClean)
             }
 
-            npmInstallTask.mustRunAfter(rootClean, packageJsonTask)
+            npmInstallTask.configure { it.mustRunAfter(rootClean, packageJsonTask) }
 
             compilation.compileKotlinTask.dependsOn(
                 npmInstallTask,

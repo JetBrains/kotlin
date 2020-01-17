@@ -134,21 +134,21 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
 
     private fun Project.createRunTask(binary: Executable) {
         val taskName = binary.runTaskName ?: return
-        tasks.create(taskName, Exec::class.java).apply {
-            group = RUN_GROUP
-            description = "Executes Kotlin/Native executable ${binary.name} for target ${binary.target.name}"
+        registerTask<Exec>(taskName) { task ->
+            task.group = RUN_GROUP
+            task.description = "Executes Kotlin/Native executable ${binary.name} for target ${binary.target.name}"
 
-            enabled = binary.konanTarget.isCurrentHost
+            task.enabled = binary.konanTarget.isCurrentHost
 
-            executable = binary.outputFile.absolutePath
-            workingDir = project.projectDir
+            task.executable = binary.outputFile.absolutePath
+            task.workingDir = project.projectDir
 
-            onlyIf { binary.outputFile.exists() }
-            dependsOn(binary.linkTaskName)
+            task.onlyIf { binary.outputFile.exists() }
+            task.dependsOn(binary.linkTaskName)
         }
     }
 
-    private fun Project.createKlibCompilationTask(compilation: KotlinNativeCompilation) {
+    private fun Project.registerKlibCompilationTask(compilation: KotlinNativeCompilation) {
         val compileTask = registerTask<KotlinNativeCompile>(
             compilation.compileKotlinTaskName
         ) {
@@ -167,14 +167,14 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             project.files(compileTask.map { it.outputFile })
         }
 
-        project.tasks.getByName(compilation.compileAllTaskName).dependsOn(compileTask)
+        project.tasks.named(compilation.compileAllTaskName) { it.dependsOn(compileTask) }
 
         if (compilation.compilationName == MAIN_COMPILATION_NAME) {
-            project.tasks.getByName(compilation.target.artifactsTaskName).apply {
-                dependsOn(compileTask)
+            project.tasks.named(compilation.target.artifactsTaskName) {
+                it.dependsOn(compileTask)
             }
-            project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).apply {
-                dependsOn(compileTask)
+            project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME) {
+                it.dependsOn(compileTask)
             }
             createRegularKlibArtifact(compilation, compileTask)
         }
@@ -227,7 +227,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
     override fun configureArchivesAndComponent(target: T): Unit = with(target.project) {
         registerTask<DefaultTask>(target.artifactsTaskName) { }
         target.compilations.all {
-            createKlibCompilationTask(it)
+            registerKlibCompilationTask(it)
         }
 
         with(configurations.getByName(target.apiElementsConfigurationName)) {

@@ -33,7 +33,7 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
             val javaApiUsage = project.usageByName(if (isGradleVersionAtLeast(5, 3)) "java-api-jars" else JAVA_API)
 
             usageContexts += run {
-                val allMetadataJar = project.tasks.getByName(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
+                val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
                 val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { it.classifier = "all" }
 
                 DefaultKotlinUsageContext(
@@ -58,7 +58,7 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
                     )
                     extendsFrom(commonMainApiConfiguration)
 
-                    project.artifacts.add(name, project.tasks.getByName(artifactsTaskName))
+                    project.artifacts.add(name, project.tasks.named(artifactsTaskName))
                 }
 
                 DefaultKotlinUsageContext(

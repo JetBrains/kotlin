@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.deprecatedBecauseNoConfigAvoidanceUseProvider
+import org.jetbrains.kotlin.gradle.utils.warnAccessToDeprecatedNoConfigAvoidanceSymbol
 
 open class YarnRootExtension(val project: Project) {
     init {
@@ -23,8 +27,14 @@ open class YarnRootExtension(val project: Project) {
     var downloadBaseUrl = "https://github.com/yarnpkg/yarn/releases/download"
     var version = "1.15.2"
 
+    val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
+        get() = project.locateTask(YarnSetupTask.NAME)!!
+
+    @Deprecated(deprecatedBecauseNoConfigAvoidanceUseProvider, ReplaceWith("yarnSetupTaskProvider"))
     val yarnSetupTask: YarnSetupTask
-        get() = project.tasks.getByName(YarnSetupTask.NAME) as YarnSetupTask
+        get() = yarnSetupTaskProvider.get().also {
+            project.logger.warnAccessToDeprecatedNoConfigAvoidanceSymbol("yarnSetupTask")
+        }
 
     var disableWorkspaces: Boolean = false
 
@@ -36,7 +46,7 @@ open class YarnRootExtension(val project: Project) {
 
         val env = environment
         if (!env.home.isDirectory) {
-            yarnSetupTask.setup()
+            yarnSetupTaskProvider.get().setup()
         }
     }
 

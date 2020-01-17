@@ -55,8 +55,8 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
         val dceTask = project.registerTask<KotlinJsDce>(dceTaskName) {
             it.dependsOn(kotlinTask)
-            project.tasks.getByName("build").dependsOn(it)
         }
+        project.tasks.named("build").configure { it.dependsOn(dceTask) }
 
         project.afterEvaluate {
             val outputDir = project.buildDir

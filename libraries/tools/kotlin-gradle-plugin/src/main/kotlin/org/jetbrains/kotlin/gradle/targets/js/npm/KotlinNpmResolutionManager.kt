@@ -125,7 +125,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                     when (state1) {
                         is ResolutionState.Installed -> alreadyResolved(state1.resolved)
                         is ResolutionState.Configuring -> {
-                            val upToDate = nodeJsSettings.npmInstallTask.state.upToDate
+                            val upToDate = nodeJsSettings.npmInstallTaskProvider.get().state.upToDate
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }

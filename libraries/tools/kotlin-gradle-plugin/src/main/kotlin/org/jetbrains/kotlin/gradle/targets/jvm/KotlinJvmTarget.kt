@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -61,11 +61,11 @@ open class KotlinJvmTarget @Inject constructor(
 
         javaPluginConvention.sourceSets.all { javaSourceSet ->
             val compilation = compilations.getByName(javaSourceSet.name)
-            val compileJavaTask = project.tasks.getByName(javaSourceSet.compileJavaTaskName) as AbstractCompile
+            val compileJavaTask = project.locateTask<AbstractCompile>(javaSourceSet.compileJavaTaskName)!!
 
             setupJavaSourceSetSourcesAndResources(javaSourceSet, compilation)
 
-            val javaClasses = project.files(Callable { compileJavaTask.destinationDir }).builtBy(compileJavaTask)
+            val javaClasses = project.files(compileJavaTask.map { it.destinationDir }).builtBy(compileJavaTask)
 
             compilation.output.classesDirs.from(javaClasses)
 
@@ -102,24 +102,27 @@ open class KotlinJvmTarget @Inject constructor(
         compilation.defaultSourceSet.resources.srcDirs(javaSourceSet.resources.sourceDirectories)
 
         // Resources processing is done with the Kotlin resource processing task:
-        val processJavaResourcesTask = project.tasks.getByName(javaSourceSet.processResourcesTaskName)
-        processJavaResourcesTask.dependsOn(project.tasks.getByName(compilation.processResourcesTaskName))
-        processJavaResourcesTask.enabled = false
+        project.tasks.named(javaSourceSet.processResourcesTaskName) { processJavaResourcesTask ->
+            processJavaResourcesTask.dependsOn(project.tasks.named(compilation.processResourcesTaskName))
+            processJavaResourcesTask.enabled = false
+        }
     }
 
     private fun disableJavaPluginTasks(javaPluginConvention: JavaPluginConvention) {
         // A 'normal' build should not do redundant job like running the tests twice or building two JARs,
         // so disable some tasks and just make them depend on the others:
-        val targetJar = project.tasks.getByName(artifactsTaskName) as Jar
-        val javaJar = project.tasks.getByName(javaPluginConvention.sourceSets.getByName("main").jarTaskName) as Jar
-        (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.source)
-        javaJar.conventionMapping("archiveName") { targetJar.archiveFileName }
-        javaJar.dependsOn(targetJar)
-        javaJar.enabled = false
+        project.locateTask<Jar>(javaPluginConvention.sourceSets.getByName("main").jarTaskName)!!.configure { javaJar ->
+            val targetJar = project.locateTask<Jar>(artifactsTaskName)!!
+            (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.map { it.source })
+            javaJar.conventionMapping("archiveName") { targetJar.get().archiveFileName }
+            javaJar.dependsOn(targetJar)
+            javaJar.enabled = false
+        }
 
-        val javaTestTask = project.tasks.getByName(JavaPlugin.TEST_TASK_NAME) as Test
-        javaTestTask.dependsOn(project.tasks.getByName(testTaskName) as Test)
-        javaTestTask.enabled = false
+        project.locateTask<Test>(JavaPlugin.TEST_TASK_NAME)!!.configure { javaTestTask ->
+            javaTestTask.dependsOn(project.locateTask<Test>(testTaskName))
+            javaTestTask.enabled = false
+        }
     }
 
     private fun setupDependenciesCrossInclusionForJava(

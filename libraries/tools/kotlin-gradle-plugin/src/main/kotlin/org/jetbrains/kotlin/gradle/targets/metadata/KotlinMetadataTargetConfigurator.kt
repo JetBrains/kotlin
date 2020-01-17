@@ -68,7 +68,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             createMergedAllSourceSetsConfigurations(target)
 
-            val allMetadataJar = target.project.tasks.getByName(ALL_METADATA_JAR_NAME) as Jar
+            val allMetadataJar = target.project.locateTask<Jar>(ALL_METADATA_JAR_NAME)!!
             createMetadataCompilationsForCommonSourceSets(target, allMetadataJar)
 
             setupDependencyTransformationForCommonSourceSets(target)
@@ -121,7 +121,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
     private fun createMetadataCompilationsForCommonSourceSets(
         target: KotlinMetadataTarget,
-        allMetadataJar: Jar
+        allMetadataJar: TaskProvider<Jar>
     ) = target.project.whenEvaluated {
         // Do this after all targets are configured by the user build script
 
@@ -155,11 +155,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         }
 
         val generateMetadata = createGenerateProjectStructureMetadataTask()
-
-        allMetadataJar.from(project.files(Callable {
-            generateMetadata.get().resultXmlFile
-        }).builtBy(generateMetadata)) { spec ->
-            spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+        allMetadataJar.configure { task ->
+            task.from(project.files(
+                generateMetadata.map { it.resultXmlFile }
+            ).builtBy(generateMetadata)) { spec ->
+                spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+            }
         }
     }
 
@@ -178,7 +179,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     private fun configureMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
-        allMetadataJar: Jar
+        allMetadataJar: TaskProvider<Jar>
     ): KotlinCommonCompilation {
         val project = target.project
 
@@ -195,8 +196,10 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         project.addExtendsFromRelation(metadataCompilation.compileDependencyConfigurationName, ALL_COMPILE_METADATA_CONFIGURATION_NAME)
 
-        allMetadataJar.from(metadataCompilation.output.allOutputs) { spec ->
-            spec.into(metadataCompilation.defaultSourceSet.name)
+        allMetadataJar.configure { task ->
+            task.from(metadataCompilation.output.allOutputs) { spec ->
+                spec.into(metadataCompilation.defaultSourceSet.name)
+            }
         }
 
         project.registerTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(sourceSet), listOf(sourceSet)) { }

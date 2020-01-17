@@ -68,7 +68,7 @@ kotlin {
             // Just by name:
             println("Check link task: ${binaries.releaseShared.linkTask.name}")
             // Using a typed getter:
-            println("Check run task: ${binaries.getExecutable("foo", RELEASE).runTask.name}")
+            println("Check run task: ${binaries.getExecutable("foo", RELEASE).runTaskProvider.name}")
         }
         iosArm64("ios") {
             binaries {

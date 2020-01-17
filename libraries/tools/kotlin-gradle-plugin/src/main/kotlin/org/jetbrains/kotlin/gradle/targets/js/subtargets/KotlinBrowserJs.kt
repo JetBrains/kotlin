@@ -93,8 +93,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 )
             ) {
                 it.dependsOn(
-                    nodeJs.npmInstallTask,
-                    target.project.tasks.getByName(compilation.processResourcesTaskName)
+                    nodeJs.npmInstallTaskProvider,
+                    target.project.tasks.named(compilation.processResourcesTaskName)
                 )
 
                 it.configureOptimization(kind)
@@ -175,8 +175,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 )
             ) {
                 it.dependsOn(
-                    nodeJs.npmInstallTask,
-                    target.project.tasks.getByName(compilation.processResourcesTaskName),
+                    nodeJs.npmInstallTaskProvider,
+                    target.project.tasks.named(compilation.processResourcesTaskName),
                     distributionTask
                 )
 
