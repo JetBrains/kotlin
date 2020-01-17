@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
+import com.intellij.execution.CommandLineUtil;
 import com.intellij.externalSystem.JavaProjectData;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
@@ -10,6 +11,7 @@ import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerConfigurat
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.Order;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.java.LanguageLevel;
@@ -35,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Vladislav.Soroka
@@ -210,16 +211,20 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     if (!StringUtil.isEmpty(jvmParametersSetup)) {
       ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmParametersSetup);
       if (forkedDebuggerSetup == null) {
-        final String names = "[\"" + StringUtil.join(taskNames, "\", \"") + "\"]";
-        final String jvmArgs = Arrays.stream(ParametersListUtil.parseToArray(jvmParametersSetup))
-          .map(s -> '\'' + s.trim().replace("\\", "\\\\") + '\'').collect(Collectors.joining(" << "));
+        final String names = "[" + toStringListLiteral(taskNames, ", ") + "]";
+        List<String> argv = ParametersListUtil.parse(jvmParametersSetup);
+        if (SystemInfo.isWindows) {
+          argv = ContainerUtil.map(argv, s -> CommandLineUtil.escapeParameterOnWindows(s, false));
+        }
+        final String jvmArgs = toStringListLiteral(argv, " << ");
+
         final String[] lines = {
           "gradle.taskGraph.beforeTask { Task task ->",
           "    if (task instanceof JavaForkOptions && (" + names + ".contains(task.name) || " + names + ".contains(task.path))) {",
           "        def jvmArgs = task.jvmArgs.findAll{!it?.startsWith('-agentlib:jdwp') && !it?.startsWith('-Xrunjdwp')}",
           "        jvmArgs << " + jvmArgs,
           "        task.jvmArgs = jvmArgs",
-          "    }" +
+          "    }",
           "}",
         };
         final String script = StringUtil.join(lines, SystemProperties.getLineSeparator());
@@ -229,6 +234,17 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
 
     final String testEventListenerDefinition = loadTestEventListenerDefinition();
     initScriptConsumer.consume(testEventListenerDefinition);
+  }
+
+  @NotNull
+  private static String toStringListLiteral(@NotNull List<String> strings, @NotNull String separator) {
+    final List<String> quotedStrings = ContainerUtil.map(strings, s -> toStringLiteral(s));
+    return StringUtil.join(quotedStrings, separator);
+  }
+
+  @NotNull
+  private static String toStringLiteral(@NotNull String s) {
+    return StringUtil.wrapWithDoubleQuote(StringUtil.escapeStringCharacters(s));
   }
 
   @NotNull
