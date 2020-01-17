@@ -89,7 +89,7 @@ abstract class Template : SettingsOwner {
         val irsToAddToBuildFile = getIrsToAddToBuildFile(module)
 
         val targetsUpdater = when (module) {
-            is SourcesetModuleIR -> { target: TargetConfigurationIR ->
+            is MultiplatformModuleIR -> { target: TargetConfigurationIR ->
                 if (target.targetName == module.name) updateTargetIr(module, target)
                 else target
             }

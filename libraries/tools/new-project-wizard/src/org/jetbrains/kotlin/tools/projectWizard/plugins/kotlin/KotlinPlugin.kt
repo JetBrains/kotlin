@@ -68,13 +68,8 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             }
 
             forEachModule { moduleIR ->
-                when (moduleIR) {
-                    is SingleplatformModuleIR -> moduleIR.sourcesets.mapSequenceIgnore { sourcesetIR ->
-                        sourcesetIR.path.createKotlinAndResourceDirectories()
-                    }
-                    is SourcesetModuleIR -> {
-                        moduleIR.path.createKotlinAndResourceDirectories()
-                    }
+                moduleIR.sourcesets.mapSequenceIgnore { sourcesetIR ->
+                    sourcesetIR.path.createKotlinAndResourceDirectories()
                 }
             }
         }

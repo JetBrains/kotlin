@@ -17,14 +17,9 @@ sealed class ModuleIR : IrsOwner, BuildSystemIR {
     abstract val template: Template?
     abstract val type: ModuleType
     abstract val originalModule: Module
+    abstract val sourcesets: List<SourcesetIR>
 }
 
-
-interface SourcesetIR : BuildSystemIR {
-    val sourcesetType: SourcesetType
-    val path: Path
-    val original: Sourceset
-}
 
 data class SingleplatformModuleIR(
     override val name: String,
@@ -33,7 +28,7 @@ data class SingleplatformModuleIR(
     override val template: Template?,
     override val type: ModuleType,
     override val originalModule: Module,
-    val sourcesets: List<SingleplatformSourcesetIR>
+    override val sourcesets: List<SingleplatformSourcesetIR>
 ) : ModuleIR() {
     override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformModuleIR = copy(irs = irs)
 
@@ -51,42 +46,19 @@ data class SingleplatformModuleIR(
     }
 }
 
-data class SingleplatformSourcesetIR(
-    override val sourcesetType: SourcesetType,
-    override val path: Path,
-    override val irs: List<BuildSystemIR>,
-    override val original: Sourceset
-) : SourcesetIR, IrsOwner {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformSourcesetIR = copy(irs = irs)
-    override fun BuildFilePrinter.render() = Unit
-}
 
-data class SourcesetModuleIR(
+data class MultiplatformModuleIR(
     override val name: String,
     override val path: Path,
     override val irs: List<BuildSystemIR>,
     override val type: ModuleType,
-    override val sourcesetType: SourcesetType,
     override val template: Template?,
     override val originalModule: Module,
-    override val original: Sourceset
-) : SourcesetIR, GradleIR, ModuleIR() {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SourcesetModuleIR = copy(irs = irs)
+    override val sourcesets: List<MultiplatformSourcesetIR>
+) : GradleIR, ModuleIR() {
+    override fun withReplacedIrs(irs: List<BuildSystemIR>): MultiplatformModuleIR = copy(irs = irs)
 
-    override fun GradlePrinter.renderGradle() = getting(name, prefix = null) {
-        val dependencies = irsOfType<DependencyIR>()
-        val needBody = dependencies.isNotEmpty() || dsl == GradlePrinter.GradleDsl.GROOVY
-        if (needBody) {
-            +" "
-            inBrackets {
-                if (dependencies.isNotEmpty()) {
-                    indent()
-                    sectionCall("dependencies", dependencies)
-                }
-            }
-        }
+    override fun GradlePrinter.renderGradle() {
+        sourcesets.listNl(needFirstIndent = false)
     }
 }
-
-val SourcesetModuleIR.targetName
-    get() = name.removeSuffix(sourcesetType.name.capitalize())
