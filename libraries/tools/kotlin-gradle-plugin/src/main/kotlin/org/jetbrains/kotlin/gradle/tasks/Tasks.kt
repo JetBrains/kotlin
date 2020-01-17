@@ -590,7 +590,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         }
 
         val dependencies = compileClasspath
-            .filter(libraryFilter)
+            .filter { it.exists() && libraryFilter(it) }
             .map { it.canonicalPath }
 
         args.libraries = (dependencies + friendDependencies).distinct().let {
