@@ -65,315 +65,75 @@ interface SdkPopup : JBPopup {
   fun showUnderneathToTheRightOf(component: Component)
 }
 
-@Suppress("DataClassPrivateConstructor")
-data class SdkPopupBuilder private constructor(
-  val project: Project? = null,
-  val projectSdksModel: ProjectSdksModel? = null,
-  val sdkListModelBuilder: SdkListModelBuilder? = null,
-
-  val sdkTypeFilter: Condition<SdkTypeId>? = null,
-  val sdkTypeCreateFilter: Condition<SdkTypeId>? = null,
-  val sdkFilter: Condition<Sdk>? = null,
-
-  val registerNewSdk : Boolean = false,
-  val updateProjectSdk : Boolean = false,
-
-  val updateSdkForVirtualFile: VirtualFile? = null,
-  val updateSdkForPsiFile: PsiFile? = null,
-
-  val onItemSelected: Consumer<SdkListItem>? = null,
-  val onSdkSelected: Consumer<Sdk>? = null,
-  val onClosed: Runnable? = null
-) {
-  companion object {
-    internal fun newBuilder() = SdkPopupBuilder()
-  }
+interface SdkPopupBuilder {
+  /**
+   * Terminal operator of the builder to create a JBPopup instance for
+   * that SDK popup
+   */
+  @Contract(pure = true)
+  fun buildPopup(): SdkPopup
 
   /**
    * Adds the newly created SDK into the [ProjectJdkTable] automatically.
    * In some cases it is not needed, this feature is disabled by default
    */
   @Contract(pure = true)
-  fun registerNewSdk() = copy(registerNewSdk = true)
+  fun registerNewSdk(): SdkPopupBuilder
 
   /**
    * Registers the selected SDK as project SDK.
    */
   @Contract(pure = true)
-  fun updateProjectSdkFromSelection() = copy(updateProjectSdk = true)
+  fun updateProjectSdkFromSelection(): SdkPopupBuilder
 
   /**
    * Sets a custom module SDK to the selected SDK if there is module and the module uses custom SDK,
    * sets the project SDK otherwise.
    */
   @Contract(pure = true)
-  fun updateSdkForFile(file: PsiFile) = copy(updateSdkForPsiFile = file)
+  fun updateSdkForFile(file: PsiFile): SdkPopupBuilder
 
   /**
    * Sets a custom module SDK to the selected SDK if there is module and the module uses custom SDK,
    * sets the project SDK otherwise.
    */
   @Contract(pure = true)
-  fun updateSdkForFile(file: VirtualFile) = copy(updateSdkForVirtualFile = file)
+  fun updateSdkForFile(file: VirtualFile): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun withProject(project: Project?) = copy(project = project)
+  fun withProject(project: Project?): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun withProjectSdksModel(projectSdksModel: ProjectSdksModel) = copy(projectSdksModel = projectSdksModel)
+  fun withProjectSdksModel(projectSdksModel: ProjectSdksModel): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun withSdkListModelBuilder(sdkListModelBuilder: SdkListModelBuilder) = copy(sdkListModelBuilder = sdkListModelBuilder)
+  fun withSdkListModelBuilder(sdkListModelBuilder: SdkListModelBuilder): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun withSdkType(type: SdkTypeId) = withSdkTypeFilter(Condition { sdk -> sdk == type })
+  fun withSdkType(type: SdkTypeId): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun withSdkTypeFilter(filter: Condition<SdkTypeId>) = copy(sdkTypeFilter = filter)
+  fun withSdkTypeFilter(filter: Condition<SdkTypeId>): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun withSdkTypeCreateFilter(filter: Condition<SdkTypeId>) = copy(sdkTypeCreateFilter = filter)
+  fun withSdkTypeCreateFilter(filter: Condition<SdkTypeId>): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun withSdkFilter(filter: Condition<Sdk>) = copy(sdkFilter = filter)
+  fun withSdkFilter(filter: Condition<Sdk>): SdkPopupBuilder
 
   /**
    * Executed when an item is selected in the popup (and popup is closing),
    * it is not executed if a popup was cancelled
    */
   @Contract(pure = true)
-  fun onItemSelected(onItemSelected: Consumer<SdkListItem>) = copy(onItemSelected = onItemSelected)
+  fun onItemSelected(onItemSelected: Consumer<SdkListItem>): SdkPopupBuilder
 
   /**
    * Executed on popup is closed, independently from the result
    */
   @Contract(pure = true)
-  fun onClosed(onClosed: Runnable) = copy(onClosed = onClosed)
+  fun onPopupClosed(onClosed: Runnable): SdkPopupBuilder
 
   @Contract(pure = true)
-  fun onSdkSelected(onSdkSelected: Consumer<Sdk>) = copy(onSdkSelected = onSdkSelected)
-
-  @Contract(pure = true)
-  fun buildPopup() = service<SdkPopupFactory>().createPopup(copy())
-}
-
-
-private interface SdkPopupListener {
-  fun onClosed()
-
-  /**
-   * Executed when a new item was created via a user action
-   * and added to the model, called after model is refreshed
-   */
-  fun onNewItemAddedAndSelected(item: SdkListItem)
-
-  /**
-   * Executed when an existing selectable item was selected
-   * in the popup, it does mean no new items were created
-   * by a user
-   */
-  fun onExistingItemSelected(item: SdkListItem)
-}
-
-
-internal class PlatformSdkPopupFactory : SdkPopupFactory {
-  override fun createBuilder(): SdkPopupBuilder = SdkPopupBuilder.newBuilder()
-
-  override fun createPopup(builder: SdkPopupBuilder): SdkPopup = builder.copy().run {
-    val (sdksModel, ownsModel) = if (projectSdksModel != null) {
-      projectSdksModel to false
-    }
-    else {
-      ProjectSdksModel() to true
-    }
-
-    val modelBuilder = if (sdkListModelBuilder != null) {
-      require(sdkTypeFilter == null) { "sdkListModelBuilder was set explicitly via " + ::withSdkListModelBuilder.name }
-      require(sdkTypeCreateFilter == null) { "sdkListModelBuilder was set explicitly via " + ::withSdkListModelBuilder.name }
-      require(sdkFilter == null) { "sdkListModelBuilder was set explicitly via " + ::withSdkListModelBuilder.name }
-      sdkListModelBuilder
-    }
-    else {
-      SdkListModelBuilder(
-        project,
-        sdksModel,
-        sdkTypeFilter,
-        sdkTypeCreateFilter,
-        sdkFilter
-      )
-    }
-
-    if (updateProjectSdk && project == null) {
-      require(false) { "Cannot update project SDK when project was not set" }
-    }
-
-    val popupListener = object : SdkPopupListener {
-      override fun onNewItemAddedAndSelected(item: SdkListItem) {
-        val addToJdkTable = registerNewSdk || updateProjectSdk || updateSdkForPsiFile != null || updateSdkForVirtualFile != null
-
-        if (addToJdkTable && item is SdkListItem.SdkItem) {
-          val sdk = item.sdk
-          runWriteAction {
-            val jdkTable = ProjectJdkTable.getInstance()
-            if (jdkTable.findJdk(sdk.name) == null) {
-              jdkTable.addJdk(sdk)
-            }
-          }
-        }
-
-        onItemSelected(item)
-      }
-
-      override fun onExistingItemSelected(item: SdkListItem) {
-        onItemSelected(item)
-      }
-
-      private fun onItemSelected(item: SdkListItem) {
-        onItemSelected?.accept(item)
-
-        if (item is SdkListItem.SdkItem) {
-          onSdkSelected(item.sdk)
-        }
-      }
-
-      private fun onSdkSelected(sdk: Sdk) {
-        onSdkSelected?.accept(sdk)
-
-        if (updateProjectSdk) {
-          runWriteAction {
-            requireNotNull(project) { "project must be set to use " + SdkPopupBuilder::updateProjectSdkFromSelection.name }
-            ProjectRootManager.getInstance(project).projectSdk = sdk
-          }
-        }
-
-        if (updateSdkForPsiFile != null || updateSdkForVirtualFile != null) {
-          requireNotNull(project) { "project must be set to use " + ::updateProjectSdkFromSelection.name }
-
-          runWriteAction {
-            val moduleToUpdateSdk = when {
-              updateSdkForVirtualFile != null -> ModuleUtilCore.findModuleForFile(updateSdkForVirtualFile, project)
-              updateSdkForPsiFile != null -> ModuleUtilCore.findModuleForFile(updateSdkForPsiFile)
-              else -> null
-            }
-
-            if (moduleToUpdateSdk != null) {
-              val roots = ModuleRootManager.getInstance(moduleToUpdateSdk)
-              if (!roots.isSdkInherited) {
-                roots.modifiableModel.also {
-                  it.sdk = sdk
-                  it.commit()
-                }
-                return@runWriteAction
-              }
-            }
-
-            ProjectRootManager.getInstance(project).projectSdk = sdk
-          }
-        }
-      }
-
-      override fun onClosed() {
-        onClosed?.run()
-      }
-    }
-
-    return createSdkPopup(project, sdksModel, ownsModel, modelBuilder, popupListener)
-  }
-
-  private fun createSdkPopup(
-    project: Project?,
-    projectSdksModel: ProjectSdksModel,
-    ownsProjectSdksModel: Boolean,
-    myModelBuilder: SdkListModelBuilder,
-    listener: SdkPopupListener
-  ): SdkPopup {
-    lateinit var popup: SdkPopupImpl
-    val context = SdkListItemContext(project)
-
-    val onItemSelected = Consumer<SdkListItem> { value ->
-      myModelBuilder.processSelectedElement(popup.popupOwner, value,
-                                            listener::onNewItemAddedAndSelected,
-                                            listener::onExistingItemSelected
-      )
-    }
-
-    popup = SdkPopupImpl(context, onItemSelected)
-
-    val modelListener: SdkListModelBuilder.ModelListener = object : SdkListModelBuilder.ModelListener {
-      override fun syncModel(model: SdkListModel) {
-        context.myModel = model
-        popup.syncWithModelChange()
-      }
-    }
-
-    myModelBuilder.addModelListener(modelListener)
-
-    popup.addListener(object : JBPopupListener {
-      override fun beforeShown(event: LightweightWindowEvent) {
-        if (ownsProjectSdksModel) {
-          projectSdksModel.reset(project)
-        }
-        myModelBuilder.reloadActions()
-        myModelBuilder.detectItems(popup.list, popup)
-        myModelBuilder.reloadSdks()
-      }
-
-      override fun onClosed(event: LightweightWindowEvent) {
-        myModelBuilder.removeListener(modelListener)
-        listener.onClosed()
-      }
-    })
-
-    return popup
-  }
-
-  private class SdkPopupImpl(
-    context: SdkListItemContext,
-    onItemSelected: Consumer<SdkListItem>
-  ) : ComboBoxPopup<SdkListItem>(context, null, onItemSelected), SdkPopup {
-    val popupOwner: JComponent
-      get() {
-        val owner = myOwner
-        if (owner is JComponent) {
-          return owner
-        }
-
-        if (owner is JFrame) {
-          owner.rootPane?.let { return it }
-        }
-
-        if (owner is Window) {
-          owner.components.first { it is JComponent }?.let { return it as JComponent }
-        }
-
-        return JPanel()
-      }
-
-    override fun showPopup(e: AnActionEvent) {
-      if (e is AnActionEventWrapper) {
-        e.showPopup(this)
-      }
-      else {
-        showInBestPositionFor(e.dataContext)
-      }
-    }
-
-    override fun showUnderneathToTheRightOf(component: Component) {
-      val popupWidth = list.preferredSize.width
-      show(RelativePoint(component, Point(component.width - popupWidth, component.height)))
-    }
-  }
-
-  private class SdkListItemContext(
-    private val myProject: Project?
-  ) : ComboBoxPopup.Context<SdkListItem> {
-    var myModel = SdkListModel.emptyModel()
-
-    private val myRenderer = SdkListPresenter { myModel }
-
-    override fun getProject() = myProject
-    override fun getMaximumRowCount() = 30
-    override fun getModel() = myModel
-    override fun getRenderer() = myRenderer
-  }
+  fun onSdkSelected(onSdkSelected: Consumer<Sdk>): SdkPopupBuilder
 }
