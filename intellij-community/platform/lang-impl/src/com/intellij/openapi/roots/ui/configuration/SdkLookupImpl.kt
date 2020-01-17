@@ -30,6 +30,7 @@ private data class SdkLookupBuilderImpl(
   val sdkMinVersionInclusive: String? = null,
   val sdkMaxVersionExclusive: String? = null,
 
+  val onBeforeSdkSuggestionStarted: () -> Boolean = { true },
   val onLocalSdkSuggested: (UnknownSdkLocalSdkFix) -> Boolean = { true },
   val onDownloadableSdkSuggested: (UnknownSdkDownloadableSdkFix) -> Boolean = { true },
 
@@ -44,6 +45,8 @@ private data class SdkLookupBuilderImpl(
   override fun withMinSdkVersionInclusive(version: String) = copy(sdkMinVersionInclusive = version)
   override fun withMaxSdkVersionExclusive(version: String) = copy(sdkMaxVersionExclusive = version)
   override fun withSdkHomeFilter(filter: (String) -> Boolean) = copy(sdkHomeFilter = filter)
+  override fun onBeforeSdkSuggestionStarted(handler: () -> Boolean) = copy(onBeforeSdkSuggestionStarted = handler)
+
   override fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> Boolean) = copy(onLocalSdkSuggested = handler)
   override fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> Boolean) = copy(onDownloadableSdkSuggested = handler)
   override fun onSdkResolved(handler: (Sdk?) -> Unit) = copy(onSdkResolved = handler)
@@ -98,6 +101,11 @@ internal class SdkLookupImpl : SdkLookup {
       }
     } else {
       Predicate { true }
+    }
+
+    if (!onBeforeSdkSuggestionStarted()) {
+      onSdkResolved(null)
+      return
     }
 
     val unknownSdk = object: UnknownSdk {
@@ -165,7 +173,7 @@ internal class SdkLookupImpl : SdkLookup {
   }
 
   private fun SdkLookupBuilderImpl.runWithProgress(onCancelled: () -> Unit,
-                                               action: (ProgressIndicator) -> Unit) {
+                                                   action: (ProgressIndicator) -> Unit) {
     val title = progressMessageTitle ?: "Resolving" + (sdkType?.presentableName ?: "SDK") + "..."
     ProgressManager.getInstance().run(object : Task.Backgroundable(project, title, true, ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {

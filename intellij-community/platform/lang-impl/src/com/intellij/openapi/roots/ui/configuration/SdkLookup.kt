@@ -56,6 +56,15 @@ interface SdkLookupBuilder {
   @Contract(pure = true)
   fun withSdkHomeFilter(filter: (String) -> Boolean): SdkLookupBuilder
 
+  /**
+   * A notification that is invoked at the moment where we failed to find
+   * a suitable JDK from a given name, project. At that moment we star
+   * looking for a possible SDK suggestions. Return `false` from the
+   * callback to stop the search
+   */
+  @Contract(pure = true)
+  fun onBeforeSdkSuggestionStarted(handler: () -> Boolean): SdkLookupBuilder
+
   @Contract(pure = true)
   fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> Boolean): SdkLookupBuilder
 
