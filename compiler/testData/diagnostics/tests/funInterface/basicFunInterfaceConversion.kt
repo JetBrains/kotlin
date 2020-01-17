@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +FunctionInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
+// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface Foo {

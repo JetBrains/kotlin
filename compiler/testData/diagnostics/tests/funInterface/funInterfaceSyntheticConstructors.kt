@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionInterfaceConversion
+// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface KRunnable {
