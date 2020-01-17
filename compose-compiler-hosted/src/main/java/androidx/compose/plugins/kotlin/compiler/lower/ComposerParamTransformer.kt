@@ -20,6 +20,7 @@ import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
@@ -268,10 +269,18 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         // if not a composable fn, nothing we need to do
         if (!descriptor.isComposable()) return this
 
-        // TODO(lmr): it looks like inlined non-composable lambdas are getting marked as
-        // composable by the ComposableAnnotationChecker. This makes this line a requirement for
-        // two reasons instead of one. We should fix this.
-        if (isInlinedLambda()) return this
+        // emit children lambdas are marked composable, but technically they are unit lambdas... so
+        // we don't want to transform them
+        if (isEmitInlineChildrenLambda()) return this
+
+        // if this function is an inlined lambda passed as an argument to an inline function (and
+        // is NOT a composable lambda), then we don't want to transform it. Ideally, this
+        // wouldn't have gotten this far because the `isComposable()` check above should return
+        // false, but right now the composable annotation checker seems to produce a
+        // false-positive here. It is important that we *DO NOT* transform this, but we should
+        // probably fix the annotation checker instead.
+        // TODO(b/147250515)
+        if (isNonComposableInlinedLambda()) return this
 
         // cache the transformed function with composer parameter
         return transformedFunctions[this] ?: copyWithComposerParam()
@@ -312,7 +321,7 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
     }
 
     private fun IrFunction.copyAsComposableDecoy(): IrSimpleFunction {
-        return copy().also { fn ->
+        return copy(isInline = false).also { fn ->
             fn.origin = COMPOSABLE_DECOY_IMPL
             (fn as IrFunctionImpl).metadata = metadata
             val errorClass = getTopLevelClass(FqName("kotlin.NotImplementedError"))
@@ -341,7 +350,7 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         }
     }
 
-    private fun IrFunction.copy(): IrSimpleFunction {
+    private fun IrFunction.copy(isInline: Boolean = this.isInline): IrSimpleFunction {
         // TODO(lmr): use deepCopy instead?
         val descriptor = descriptor
 
@@ -453,6 +462,20 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
         return origin == IrStatementOrigin.INVOKE && dispatchReceiver?.type?.isComposable() == true
     }
 
+    fun IrFunction.isNonComposableInlinedLambda(): Boolean {
+        descriptor.findPsi()?.let { psi ->
+            (psi as? KtFunctionLiteral)?.let {
+                val arg = InlineUtil.getInlineArgumentDescriptor(
+                    it,
+                    context.state.bindingContext
+                ) ?: return false
+
+                return !arg.type.hasComposableAnnotation()
+            }
+        }
+        return false
+    }
+
     fun IrFunction.isInlinedLambda(): Boolean {
         descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
@@ -463,6 +486,17 @@ class ComposerParamTransformer(val context: JvmBackendContext) :
                     )
                 )
                     return true
+                if (it.isEmitInline(context.state.bindingContext)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    fun IrFunction.isEmitInlineChildrenLambda(): Boolean {
+        descriptor.findPsi()?.let { psi ->
+            (psi as? KtFunctionLiteral)?.let {
                 if (it.isEmitInline(context.state.bindingContext)) {
                     return true
                 }
@@ -537,5 +571,5 @@ fun ValueParameterDescriptor.isComposerParam(): Boolean =
     name == KtxNameConventions.COMPOSER_PARAMETER &&
             type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer
 
-private val COMPOSABLE_DECOY_IMPL =
+internal val COMPOSABLE_DECOY_IMPL =
     object : IrDeclarationOriginImpl("COMPOSABLE_DECOY_IMPL", isSynthetic = true) {}

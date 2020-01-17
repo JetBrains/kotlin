@@ -794,7 +794,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInline_NonComposable_Identity(): Unit = forComposerParam(/*true, */false) {
+    fun testInline_NonComposable_Identity(): Unit = forComposerParam(true, false) {
         compose("""
             @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
               children()
@@ -811,7 +811,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInline_Composable_Identity(): Unit = forComposerParam(/*true, */false) {
+    fun testInline_Composable_Identity(): Unit = forComposerParam(true, false) {
         compose("""
             @Composable
             inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
@@ -821,7 +821,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             noParameters,
             """
             InlineWrapper(200) {
-              TextView(text = "Test", id=101)
+                TextView(text = "Test", id=101)
             }
             """).then { activity ->
             assertEquals("Test", activity.findViewById<TextView>(101).text)
@@ -829,38 +829,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInline_DirectRuntime_EmitChildren(): Unit = forComposerParam(true, false) {
-        compose("""
-            inline fun InlineWrapper(base: Int, crossinline children: () -> Unit) {
-              val tmp = base + 0
-              composer.emit(
-                10,
-                { context -> LinearLayout(context) },
-                { set(tmp) { id = it } }
-              ) {
-                 children()
-              }
-            }
-
-        """, noParameters, """
-              InlineWrapper(200) {
-                composer.emit(
-                  12,
-                  { context -> TextView(context) },
-                  { set("Test") { text = it }; set(101) { id = it } }
-                )
-              }
-        """).then { activity ->
-            val tv = activity.findViewById<TextView>(101)
-            // Assert the TextView was created with the correct text
-            assertEquals("Test", tv.text)
-            // and it is the first child of the linear layout
-            assertEquals(tv, activity.findViewById<LinearLayout>(200).getChildAt(0))
-        }
-    }
-
-    @Test
-    fun testInline_Composable_EmitChildren(): Unit = forComposerParam(/*true, */false) {
+    fun testInline_Composable_EmitChildren(): Unit = forComposerParam(true, false) {
         compose("""
             @Composable
             inline fun InlineWrapper(base: Int, crossinline children: @Composable() ()->Unit) {

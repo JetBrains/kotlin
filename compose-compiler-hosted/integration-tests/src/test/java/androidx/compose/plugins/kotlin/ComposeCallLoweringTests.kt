@@ -72,7 +72,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleInlining(): Unit = forComposerParam(/*true, */false) {
+    fun testSimpleInlining(): Unit = forComposerParam(true, false) {
         compose("""
             @Composable
             inline fun foo(block: @Composable() () -> Unit) {
@@ -294,7 +294,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineNoinline(): Unit = forComposerParam(/*true, */false) {
+    fun testInlineNoinline(): Unit = forComposerParam(true, false) {
         codegen(
             """
         @Composable
@@ -317,7 +317,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlinedComposable(): Unit = forComposerParam(/*true, */false) {
+    fun testInlinedComposable(): Unit = forComposerParam(true, false) {
         codegen(
             """
         @Composable 
@@ -424,7 +424,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
-    fun testArgumentOrderIssue(): Unit = forComposerParam(/*true, */false) {
+    fun testArgumentOrderIssue(): Unit = forComposerParam(true, false) {
         codegen(
             """
                 class A
@@ -1082,7 +1082,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInline_NonComposable_Identity(): Unit = forComposerParam(/*true, */false) {
+    fun testInline_NonComposable_Identity(): Unit = forComposerParam(true, false) {
         compose("""
             @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
               children()
@@ -1109,7 +1109,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInline_Composable_EmitChildren(): Unit = forComposerParam(/*true, */false) {
+    fun testInline_Composable_EmitChildren(): Unit = forComposerParam(true, false) {
         compose("""
             @Composable
             inline fun InlineWrapper(base: Int, crossinline children: @Composable() ()->Unit) {

@@ -126,7 +126,6 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.startOffset
 import org.jetbrains.kotlin.ir.util.statements
@@ -589,12 +588,31 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
         // way to do this. Additionally, we are creating temporary vars for variables which is
         // causing larger stack space than needed in our generated code.
 
+        // for composableExpr, we only need to create temporaries if there are any pivotals
+        val hasPivotals = original
+            .descriptor
+            .valueParameters
+            .any { it.hasPivotalAnnotation() }
+
+        // if we don't have any pivotal parameters, we don't use the parameters more than once,
+        // so we can just use the original call itself. This only works with the new composer param
+        // code gen though since the old codegen produced IrBlocks around the calls that break this
+        val shouldCreateNewCall = hasPivotals || !ComposeFlags.COMPOSER_PARAM
+
         val irGetArguments = original
             .descriptor
             .valueParameters
             .map {
                 val arg = original.getValueArgument(it)
-                it to getParameterExpression(it, arg)
+                val expr = if (shouldCreateNewCall)
+                    // if the composer param flag is turned off, we end up removing all of the
+                    // temporaries created by reordering and creating new ones. if the flag is
+                    // turned on, then we end up using the temporaries that were already created,
+                    // so we don't want to unwrap them
+                    getParameterExpression(it, arg, unwrapTemp = !ComposeFlags.COMPOSER_PARAM)
+                else
+                    ({ arg })
+                it to expr
             }
 
         val startExpr = meta
@@ -637,7 +655,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
             )
         }
 
-        val newCall = irCall(
+        val newCall = if (shouldCreateNewCall) irCall(
             callee = IrSimpleFunctionSymbolImpl(original.descriptor).also {
                 it.bind(original.symbol.owner as IrSimpleFunction)
             },
@@ -651,7 +669,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
             irGetArguments.forEach { (param, getExpr) ->
                 putValueArgument(param, getExpr())
             }
-        }
+        } else original
 
         val endCall = irCall(
             callee = symbolTable.referenceFunction(endExpr),
@@ -682,11 +700,12 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
 
     private fun IrBlockBuilder.getParameterExpression(
         desc: ValueParameterDescriptor,
-        expr: IrExpression?
+        expr: IrExpression?,
+        unwrapTemp: Boolean = true
     ): () -> IrExpression? {
         if (expr == null)
             return { null }
-        if (expr.isReorderTemporaryVariable()) {
+        if (unwrapTemp && expr.isReorderTemporaryVariable()) {
             return getParameterExpression(desc, expr.unwrapReorderTemporaryVariable())
         }
         return when {

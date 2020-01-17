@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeFqNames
+import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -92,9 +93,21 @@ class ComposerTypeRemapper(
 
     lateinit var deepCopy: IrElementTransformerVoid
 
-    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
+    private val scopeStack = mutableListOf<IrTypeParametersContainer>()
 
-    override fun leaveScope() {}
+    private val shouldTransform: Boolean get() {
+        // we don't want to remap the types of composable decoys. they are there specifically for
+        // their types to be unaltered!
+        return scopeStack.isEmpty() || scopeStack.last().origin != COMPOSABLE_DECOY_IMPL
+    }
+
+    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {
+        scopeStack.add(irTypeParametersContainer)
+    }
+
+    override fun leaveScope() {
+        scopeStack.pop()
+    }
 
     private fun IrType.isComposable(): Boolean {
         return annotations.hasAnnotation(ComposeFqNames.Composable)
@@ -109,6 +122,7 @@ class ComposerTypeRemapper(
         if (type !is IrSimpleType) return type
         if (!type.isFunction()) return type
         if (!type.isComposable()) return type
+        if (!shouldTransform) return type
         val oldArguments = type.toKotlinType().arguments
         val newArguments =
             oldArguments.subList(0, oldArguments.size - 1) +
