@@ -192,10 +192,6 @@ dependencies {
         testRuntime(intellijPluginDep("google-login-as"))
     }
 
-    if (Ide.AS36()) {
-        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
-    }
-
     performanceTestCompile(sourceSets["test"].output)
     performanceTestCompile(sourceSets["main"].output)
     performanceTestCompile(project(":nj2k"))
