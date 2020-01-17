@@ -76,9 +76,8 @@ val KotlinLibrary.isBuiltIns: Boolean
 
 // TODO: The only place loadKlib() is used now is Wasm backend.
 // Need to move it to SearchPathResolver too.
-// Otherwise there's no good way to choose between the components.
 fun loadKlib(klibPath: String) =
-    createKotlinLibraryComponents(KFile(KFile(klibPath).absolutePath)).single()
+    resolveSingleFileKlib(KFile(KFile(klibPath).absolutePath))
 
 val emptyLoggingContext = object : LoggingContext {
     override var inVerbosePhase = false
