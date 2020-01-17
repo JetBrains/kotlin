@@ -115,7 +115,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                 val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
                     ?.getScriptConfiguration(snippetKtFile)?.configuration
                     ?: context.baseScriptCompilationConfiguration
-                registerPackageFragmetProvidersIfNeeded(updatedConfiguration, context.environment)
+                registerPackageFragmentProvidersIfNeeded(updatedConfiguration, context.environment)
             }
 
             val analysisResult =

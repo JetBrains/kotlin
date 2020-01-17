@@ -131,7 +131,7 @@ private fun compileImpl(
         }
 }
 
-internal fun registerPackageFragmetProvidersIfNeeded(
+internal fun registerPackageFragmentProvidersIfNeeded(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     environment: KotlinCoreEnvironment
 ) {
@@ -157,7 +157,7 @@ private fun doCompile(
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
 ): ResultWithDiagnostics<KJvmCompiledScript<Any>> {
 
-    registerPackageFragmetProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
+    registerPackageFragmentProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
 
     val analysisResult = analyze(sourceFiles, context.environment)
 
