@@ -15,6 +15,7 @@ configurations {
     distSources
     distJs
     distLibrary
+    publishedArtifacts
 }
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
@@ -340,12 +341,13 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-
+def javadocJar = javadocJar()
 
 artifacts {
     runtime libraryJarWithIr
-    archives libraryJarWithIr
-    archives sourcesJar
+    publishedArtifacts libraryJarWithIr
+    publishedArtifacts sourcesJar
+    publishedArtifacts javadocJar
     sources sourcesJar
     distSources distSourcesJar
     distLibrary libraryJarWithoutIr
@@ -355,7 +357,13 @@ artifacts {
     }
 }
 
-javadocJar()
+uploadArchives {
+    configuration = configurations.publishedArtifacts
+}
+
+install {
+    configuration = configurations.publishedArtifacts
+}
 
 node {
     download = true
