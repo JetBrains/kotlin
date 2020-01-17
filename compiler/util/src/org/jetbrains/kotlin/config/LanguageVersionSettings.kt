@@ -116,13 +116,15 @@ enum class LanguageFeature(
     ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitProtectedCallFromInline(KOTLIN_1_4, kind = BUG_FIX),
     ProperFinally(KOTLIN_1_4, kind = BUG_FIX),
-    ProhibitVarargAsArrayAfterSamArgument(KOTLIN_1_4, kind = BUG_FIX),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
 
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
+
+    // TODO: set `sinceVersion` to KOTLIN_1_5
+    ProhibitVarargAsArrayAfterSamArgument(sinceVersion = null, kind = BUG_FIX),
 
     // Experimental features
 
