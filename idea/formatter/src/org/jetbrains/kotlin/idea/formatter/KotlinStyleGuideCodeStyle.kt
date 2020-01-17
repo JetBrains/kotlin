@@ -58,6 +58,7 @@ class KotlinStyleGuideCodeStyle : KotlinPredefinedCodeStyle("Kotlin style guide"
                 CONTINUATION_INDENT_IN_ELVIS = false
                 WRAP_EXPRESSION_BODY_FUNCTIONS = CodeStyleSettings.WRAP_AS_NEEDED
                 IF_RPAREN_ON_NEW_LINE = true
+                ALLOW_TRAILING_COMMA = true
             }
         }
 
