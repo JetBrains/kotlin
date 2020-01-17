@@ -12662,11 +12662,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeArgumentName/arrayLiteralForVararg.kt");
         }
 
-        @TestMetadata("mixedNamedArgumentsInTheirOwnPosition.kt")
-        public void testMixedNamedArgumentsInTheirOwnPosition() throws Exception {
-            runTest("idea/testData/intentions/removeArgumentName/mixedNamedArgumentsInTheirOwnPosition.kt");
-        }
-
         @TestMetadata("namedArgumentBefore.kt")
         public void testNamedArgumentBefore() throws Exception {
             runTest("idea/testData/intentions/removeArgumentName/namedArgumentBefore.kt");
@@ -12715,6 +12710,39 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("superClassConstructor.kt")
         public void testSuperClassConstructor() throws Exception {
             runTest("idea/testData/intentions/removeArgumentName/superClassConstructor.kt");
+        }
+
+        @TestMetadata("idea/testData/intentions/removeArgumentName/MixedNamedArgumentsInTheirOwnPosition")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MixedNamedArgumentsInTheirOwnPosition extends AbstractIntentionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInMixedNamedArgumentsInTheirOwnPosition() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/removeArgumentName/MixedNamedArgumentsInTheirOwnPosition"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("namedArgumentBefore.kt")
+            public void testNamedArgumentBefore() throws Exception {
+                runTest("idea/testData/intentions/removeArgumentName/MixedNamedArgumentsInTheirOwnPosition/namedArgumentBefore.kt");
+            }
+
+            @TestMetadata("namedArgumentBefore2.kt")
+            public void testNamedArgumentBefore2() throws Exception {
+                runTest("idea/testData/intentions/removeArgumentName/MixedNamedArgumentsInTheirOwnPosition/namedArgumentBefore2.kt");
+            }
+
+            @TestMetadata("notInPosition.kt")
+            public void testNotInPosition() throws Exception {
+                runTest("idea/testData/intentions/removeArgumentName/MixedNamedArgumentsInTheirOwnPosition/notInPosition.kt");
+            }
+
+            @TestMetadata("notInPosition2.kt")
+            public void testNotInPosition2() throws Exception {
+                runTest("idea/testData/intentions/removeArgumentName/MixedNamedArgumentsInTheirOwnPosition/notInPosition2.kt");
+            }
         }
     }
 
