@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import java.io.File
@@ -728,7 +729,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
         cacheDirectory.mkdirs()
 
         val artifactsLibraries = artifactsToAddToCache
-            .map { createKotlinLibrary(org.jetbrains.kotlin.konan.file.File(it.file.absolutePath)) }
+            .map { resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.file.absolutePath)) }
             .associateBy { it.uniqueName }
 
         // Top sort artifacts.
@@ -797,7 +798,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
         val platformLib = platformLibs[platformLibName] ?: error("$platformLibName is not found in platform libs")
         if (File(rootCacheDirectory, platformLibName.cachedName).exists())
             return
-        for (dependency in createKotlinLibrary(org.jetbrains.kotlin.konan.file.File(platformLib.absolutePath)).unresolvedDependencies)
+        for (dependency in resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(platformLib.absolutePath)).unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
         project.logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
         val args = mutableListOf(

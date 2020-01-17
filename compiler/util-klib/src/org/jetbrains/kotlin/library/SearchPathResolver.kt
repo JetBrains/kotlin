@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
 import org.jetbrains.kotlin.util.*
 
@@ -224,4 +225,26 @@ abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
 
         return true
     }
+}
+
+class SingleKlibComponentResolver(
+    klibFile: String,
+    knownAbiVersions: List<KotlinAbiVersion>?,
+    logger: Logger
+) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
+    emptyList(), listOf(klibFile), knownAbiVersions, emptyList(),
+    null, null, true, logger, emptyList()
+) {
+    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
+}
+
+fun resolveSingleFileKlib(libraryFile: File,
+    logger: Logger = object  : Logger {
+            override fun log(message: String) {}
+            override fun error(message: String) = kotlin.error("e: $message")
+            override fun warning(message: String) {}
+            override fun fatal(message: String) = kotlin.error("e: $message")
+        }
+): KotlinLibrary {
+    return SingleKlibComponentResolver(libraryFile.absolutePath, emptyList(), logger).resolve(libraryFile.absolutePath)
 }
