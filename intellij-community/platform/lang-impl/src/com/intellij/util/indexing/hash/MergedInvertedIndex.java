@@ -150,9 +150,11 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   public Map<Key, Value> getIndexedFileData(int fileId) throws StorageException {
     Map<Key, Value> data = myBaseIndex.getIndexedFileData(fileId);
     if (!data.isEmpty()) return data;
-    Long hashId = myHashIndex.getHashId(fileId);
-    if (hashId == null || hashId == FileContentHashIndexExtension.NULL_HASH_ID) return Collections.emptyMap();
-    return myProvidedIndexes[FileContentHashIndexExtension.getIndexId(hashId)].getIndexedFileData(FileContentHashIndexExtension.getInternalHashId(hashId));
+    long hashId = myHashIndex.getHashId(fileId);
+    if (hashId == FileContentHashIndexExtension.NULL_HASH_ID) return Collections.emptyMap();
+    int indexId = FileContentHashIndexExtension.getIndexId(hashId);
+    int internalHashId = FileContentHashIndexExtension.getInternalHashId(hashId);
+    return myProvidedIndexes[indexId].getIndexedFileData(internalHashId);
   }
 
   @Override

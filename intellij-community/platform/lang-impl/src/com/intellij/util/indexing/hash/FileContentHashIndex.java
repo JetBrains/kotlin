@@ -27,7 +27,7 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void, Fil
     return new HashIndexUpdateComputable(super.createIndexUpdateComputation(updateData), updateData.newDataIsEmpty());
   }
 
-  public Long getHashId(int fileId) throws StorageException {
+  public long getHashId(int fileId) throws StorageException {
     Map<Long, Void> data = getIndexedFileData(fileId);
     if (data.isEmpty()) return FileContentHashIndexExtension.NULL_HASH_ID;
     return data.keySet().iterator().next();
