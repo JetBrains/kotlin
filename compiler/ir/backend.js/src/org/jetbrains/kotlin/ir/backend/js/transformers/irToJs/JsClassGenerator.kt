@@ -33,6 +33,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     fun generate(): JsStatement {
         assert(!irClass.descriptor.isExpect)
 
+        maybeGeneratePrimaryConstructor()
         val transformer = IrDeclarationToJsTransformer()
 
         // Properties might be lowered out of classes
@@ -140,6 +141,15 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
         return null
+    }
+
+    private fun maybeGeneratePrimaryConstructor() {
+        if (!irClass.declarations.any { it is IrConstructor }) {
+            val func = JsFunction(emptyScope, JsBlock(), "Ctor for ${irClass.name}")
+            func.name = className
+            classBlock.statements += func.makeStmt()
+            classModel.preDeclarationBlock.statements += generateInheritanceCode()
+        }
     }
 
     private fun generateInheritanceCode(): List<JsStatement> {

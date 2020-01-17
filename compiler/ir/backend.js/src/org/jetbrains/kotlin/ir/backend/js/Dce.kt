@@ -78,16 +78,9 @@ private fun removeUselessDeclarations(module: IrModuleFragment, usefulDeclaratio
                 process(declaration)
             }
 
-            override fun visitConstructor(declaration: IrConstructor) {
-                if (declaration !in usefulDeclarations) {
-                    // Keep the constructor declaration without body in order to declare the JS constructor function
-                    declaration.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
-                }
-            }
-
             private fun process(container: IrDeclarationContainer) {
                 container.declarations.transformFlat { member ->
-                    if (member !in usefulDeclarations && member !is IrConstructor) {
+                    if (member !in usefulDeclarations) {
                         emptyList()
                     } else {
                         member.acceptVoid(this)
