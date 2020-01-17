@@ -75,6 +75,11 @@ class Module(
             else -> "Module"
         }
 
+    fun initDefaultValuesForSettings(context: Context) {
+        configurator.safeAs<ModuleConfiguratorWithSettings>()?.initDefaultValuesFor(this, context)
+        template?.initDefaultValuesFor(this, context)
+    }
+
     companion object {
         val parser: Parser<Module> = mapParser { map, path ->
             val (name) = map.parseValue<String>(path, "name")

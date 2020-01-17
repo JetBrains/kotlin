@@ -66,6 +66,15 @@ abstract class Template : SettingsOwner {
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
+    fun initDefaultValuesFor(module: Module, context: Context) {
+        withSettingsOf(module) {
+            settings.forEach { setting ->
+                val defaultValue = setting.defaultValue ?: return@forEach
+                context.settingContext[setting.reference] = defaultValue
+            }
+        }
+    }
+
     open fun TaskRunningContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = emptyList()
 
     //TODO: use setting reading context

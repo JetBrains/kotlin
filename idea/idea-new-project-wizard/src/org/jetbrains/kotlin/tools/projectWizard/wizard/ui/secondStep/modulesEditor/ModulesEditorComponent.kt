@@ -31,12 +31,12 @@ class ModulesEditorComponent(
                     allowAndroid = isMppProject,
                     allowIos = isMppProject,
                     allModules = value ?: emptyList(),
-                    createModule = { model.add(it) }
+                    createModule = model::add
                 )?.showInCenterOf(component)
             }
         )
 
-    private val model = TargetsModel(tree, ::value)
+    private val model = TargetsModel(tree, ::value, valuesReadingContext.context)
 
     override fun onInit() {
         super.onInit()

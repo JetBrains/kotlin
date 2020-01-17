@@ -57,7 +57,7 @@ class ModulesToIRsConverter(
         else -> rootPath / module.name
     }
 
-    fun createBuildFiles(): TaskResult<List<BuildFileIR>> = with(data) {
+    fun ValuesReadingContext.createBuildFiles(): TaskResult<List<BuildFileIR>> = with(data) {
         val needExplicitRootBuildFile = !needFlattening
         val parentModuleHasTransitivelySpecifiedKotlinVersion = allModules.any { modules ->
             modules.configurator == AndroidSinglePlatformModuleConfigurator
@@ -82,7 +82,7 @@ class ModulesToIRsConverter(
     }
 
 
-    private fun createBuildFileForModule(
+    private fun ValuesReadingContext.createBuildFileForModule(
         module: Module,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = when (module.kind) {
@@ -91,7 +91,7 @@ class ModulesToIRsConverter(
         else -> Success(emptyList())
     }
 
-    private fun createSinglePlatformModule(
+    private fun ValuesReadingContext.createSinglePlatformModule(
         module: Module,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = with(data) {
@@ -102,7 +102,7 @@ class ModulesToIRsConverter(
             +module.sourcesets.flatMap { sourceset ->
                 sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
             }
-            +configurator.createModuleIRs(data, module)
+            with(configurator) { +createModuleIRs(data, module) }
             addIfNotNull(
                 configurator.createStdlibType(data, module)?.let { stdlibType ->
                     KotlinStdlibDependencyIR(

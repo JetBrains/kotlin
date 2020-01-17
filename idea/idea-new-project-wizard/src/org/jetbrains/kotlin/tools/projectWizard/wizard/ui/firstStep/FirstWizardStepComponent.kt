@@ -1,10 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
+import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import java.awt.BorderLayout
@@ -54,6 +57,23 @@ class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
             // TODO do not use settingContext directly
             context.settingContext[setting] = value
         }
+        allModules().forEach { module ->
+            module.initDefaultValuesForSettings(valuesReadingContext.context)
+        }
+    }
+
+    private fun allModules(): List<Module> {
+        val modules = mutableListOf<Module>()
+
+        fun addModule(module: Module) {
+            modules += module
+            module.subModules.forEach(::addModule)
+        }
+
+        valuesReadingContext.context.settingContext[KotlinPlugin::modules.reference]
+            ?.forEach(::addModule)
+
+        return modules
     }
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {

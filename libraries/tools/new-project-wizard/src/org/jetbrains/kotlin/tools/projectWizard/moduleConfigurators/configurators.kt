@@ -31,11 +31,14 @@ interface SinglePlatformModuleConfigurator : ModuleConfigurator {
 
 }
 
-object JvmSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator,
+object JvmSinglePlatformModuleConfigurator : ModuleConfiguratorWithTests(),
+    SinglePlatformModuleConfigurator,
     JvmModuleConfigurator {
-    override val moduleType = ModuleType.jvm
+    override val moduleType get() = ModuleType.jvm
     override val suggestedModuleName = "jvm"
     override val id = "JVM Module"
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
     override val canContainSubModules = true
 
@@ -49,7 +52,7 @@ object JvmSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator,
 
 object IOSSinglePlatformModuleConfigurator :
     SinglePlatformModuleConfigurator {
-    override val moduleType = ModuleType.jvm //todo
+    override val moduleType get() = ModuleType.jvm //todo
     override val id = "IOS Module"
     override val suggestedModuleName = "ios"
     override val greyText = "Requires Apple Xcode"

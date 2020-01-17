@@ -41,13 +41,10 @@ data class PluginSettingReference<V : Any, T : SettingType<V>>(
         settingContext.getPluginSetting(this@PluginSettingReference)
 }
 
-data class ModuleConfiguratorSettingReference<V : Any, T : SettingType<V>>(
-    val descriptor: ModuleConfigurator,
-    val moduleId: Identificator,
-    val setting: ModuleConfiguratorSetting<V, T>
-) : SettingReference<V, T>() {
-    constructor(descriptor: ModuleConfigurator, module: Module, setting: ModuleConfiguratorSetting<V, T>) :
-            this(descriptor, module.identificator, setting)
+sealed class ModuleConfiguratorSettingReference<V : Any, T : SettingType<V>> : SettingReference<V, T>() {
+    abstract val descriptor: ModuleConfigurator
+    abstract val moduleId: Identificator
+    abstract val setting: ModuleConfiguratorSetting<V, T>
 
     override val path: String
         get() = "${descriptor.id}/$moduleId/${setting.path}"
@@ -56,6 +53,24 @@ data class ModuleConfiguratorSettingReference<V : Any, T : SettingType<V>>(
         get() = setting.type::class
 
     override fun Context.getSetting(): Setting<V, T> = setting
+    abstract val module: Module?
+}
+
+data class ModuleBasedConfiguratorSettingReference<V : Any, T : SettingType<V>>(
+    override val descriptor: ModuleConfigurator,
+    override val module: Module,
+    override val setting: ModuleConfiguratorSetting<V, T>
+) : ModuleConfiguratorSettingReference<V, T>() {
+    override val moduleId: Identificator
+        get() = module.identificator
+}
+
+data class IdBasedConfiguratorSettingReference<V : Any, T : SettingType<V>>(
+    override val descriptor: ModuleConfigurator,
+    override val moduleId: Identificator,
+    override val setting: ModuleConfiguratorSetting<V, T>
+) : ModuleConfiguratorSettingReference<V, T>() {
+    override val module: Module? = null
 }
 
 sealed class TemplateSettingReference<V : Any, T : SettingType<V>> : SettingReference<V, T>() {

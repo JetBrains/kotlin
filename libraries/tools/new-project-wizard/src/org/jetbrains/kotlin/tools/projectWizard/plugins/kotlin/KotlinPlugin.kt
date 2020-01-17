@@ -77,17 +77,19 @@ class KotlinPlugin(context: Context) : Plugin(context) {
 
 
     private fun TaskRunningContext.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
-        ModulesToIRsConverter(
-            ModuleConfigurationData(
-                modules,
-                projectPath,
-                StructurePlugin::name.settingValue,
-                KotlinPlugin::version.settingValue,
-                buildSystemType,
-                pomIR(),
-                this
+        with(
+            ModulesToIRsConverter(
+                ModuleConfigurationData(
+                    modules,
+                    projectPath,
+                    StructurePlugin::name.settingValue,
+                    KotlinPlugin::version.settingValue,
+                    buildSystemType,
+                    pomIR(),
+                    this
+                )
             )
-        ).createBuildFiles()
+        ) { createBuildFiles() }
 
 
     companion object {

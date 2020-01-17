@@ -100,7 +100,9 @@ class DropdownSettingComponent(
         valuesReadingContext = valuesReadingContext,
         initialValues = setting.type.values,
         validator = setting.validator,
-        filter = { value -> setting.type.filter(valuesReadingContext, reference, value) },
+        filter = { value ->
+            setting.type.filter(valuesReadingContext, reference, value)
+        },
         labelText = setting.title,
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
