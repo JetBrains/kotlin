@@ -64,7 +64,8 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
 
 abstract class InitializersLoweringBase(open val context: CommonBackendContext) {
     protected fun extractInitializers(irClass: IrClass, filter: (IrDeclaration) -> Boolean) =
-        irClass.declarations.filter(filter).mapNotNull {
+        // TODO What about fields that were added by lowerings? e.g. captured outer class or locals?
+        ArrayList(irClass.declarations).mapNotNull { if (it is IrProperty) it.backingField else it }.filter(filter).mapNotNull {
             when (it) {
                 is IrField -> handleField(irClass, it)
                 is IrAnonymousInitializer -> handleAnonymousInitializer(it)

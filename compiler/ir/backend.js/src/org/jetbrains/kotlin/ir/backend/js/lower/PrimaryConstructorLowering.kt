@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -27,7 +28,7 @@ class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationT
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass) {
-            val constructors = declaration.declarations.filterIsInstance<IrConstructor>()
+            val constructors = declaration.constructors
 
             if (constructors.any { it.isPrimary }) return null
 
@@ -42,10 +43,13 @@ class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationT
     private val unitType = context.irBuiltIns.unitType
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
-        val declaration = irClass.addConstructor {
-            origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
-            isPrimary = true
-            visibility = Visibilities.PRIVATE
+        // TODO better API for declaration creation. This case doesn't fit the usual transformFlat-like API.
+        val declaration = stageController.unrestrictDeclarationListsAccess {
+            irClass.addConstructor {
+                origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
+                isPrimary = true
+                visibility = Visibilities.PRIVATE
+            }
         }
 
         declaration.body = irClass.run {

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -51,9 +52,12 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
         val actualCompanion = getActualPrimitiveCompanion(companion)
             ?: return null
 
-        return actualCompanion.declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .single { it.name == function.name }
+        for (p in actualCompanion.properties) {
+            p.getter?.let { if (it.name == function.name) return it }
+            p.setter?.let { if (it.name == function.name) return it }
+        }
+
+        error("Accessor not found")
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

@@ -34,7 +34,9 @@ class InnerClassesLowering(val context: BackendContext) : DeclarationTransformer
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
 
         if (declaration is IrClass && declaration.isInner) {
-            declaration.declarations += context.declarationFactory.getOuterThisField(declaration)
+            stageController.unrestrictDeclarationListsAccess {
+                declaration.declarations += context.declarationFactory.getOuterThisField(declaration)
+            }
         } else if (declaration is IrConstructor) {
             val irClass = declaration.parentAsClass
             if (!irClass.isInner) return null

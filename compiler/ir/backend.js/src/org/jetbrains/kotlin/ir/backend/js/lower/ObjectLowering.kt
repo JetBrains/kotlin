@@ -37,6 +37,7 @@ class ObjectDeclarationLowering(
 ) : DeclarationTransformer {
 
     private var IrClass.instanceField by context.mapping.objectToInstanceField
+    private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
@@ -55,7 +56,7 @@ class ObjectDeclarationLowering(
 
         declaration.instanceField = instanceField
 
-        val primaryConstructor = declaration.primaryConstructor!! // TODO find a way to trigger this correctly
+        val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
 
         getInstanceFun.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += context.createIrBuilder(getInstanceFun.symbol).irBlockBody(getInstanceFun) {

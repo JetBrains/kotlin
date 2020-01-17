@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.withInitialIr
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -47,8 +48,10 @@ class IrLazyTypeAlias(
     }
 
     override val expandedType: IrType by lazy {
-        typeTranslator.buildWithScope(this) {
-            descriptor.expandedType.toIrType()
+        withInitialIr {
+            typeTranslator.buildWithScope(this) {
+                descriptor.expandedType.toIrType()
+            }
         }
     }
 

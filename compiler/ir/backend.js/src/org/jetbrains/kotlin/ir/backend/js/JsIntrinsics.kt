@@ -194,12 +194,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val anyConstructorSymbol = anyClassSymbol.constructors.single()
 
     val jsObjectClassSymbol = getInternalClassWithoutPackage("kotlin.js.JsObject")
-    val jsObjectConstructorSymbol by lazy { jsObjectClassSymbol.constructors.single() }
+    val jsObjectConstructorSymbol by lazy2 { jsObjectClassSymbol.constructors.single() }
 
-    val uByteClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UByte") }
-    val uShortClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UShort") }
-    val uIntClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UInt") }
-    val uLongClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.ULong") }
+    val uByteClassSymbol by lazy2 { getInternalClassWithoutPackage("kotlin.UByte") }
+    val uShortClassSymbol by lazy2 { getInternalClassWithoutPackage("kotlin.UShort") }
+    val uIntClassSymbol by lazy2 { getInternalClassWithoutPackage("kotlin.UInt") }
+    val uLongClassSymbol by lazy2 { getInternalClassWithoutPackage("kotlin.ULong") }
 
     val unreachable = defineUnreachableIntrinsic()
 
@@ -274,16 +274,16 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
-    val charSequenceLengthPropertyGetterSymbol by lazy {
+    val charSequenceLengthPropertyGetterSymbol by lazy2 {
         with(charSequenceClassSymbol.owner.declarations) {
             filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter ?:
             filterIsInstance<IrFunction>().first { it.name.asString() == "<get-length>" }
         }.symbol
     }
-    val charSequenceGetFunctionSymbol by lazy {
+    val charSequenceGetFunctionSymbol by lazy2 {
         charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "get" }.symbol
     }
-    val charSequenceSubSequenceFunctionSymbol by lazy {
+    val charSequenceSubSequenceFunctionSymbol by lazy2 {
         charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "subSequence" }.symbol
     }
 

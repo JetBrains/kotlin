@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 //This lower takes part of old LocalDeclarationLowering job to pop up local classes from functions
 open class LocalClassPopupLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        runOnFilePostfix(irFile, withLocalDeclarations = true)
+        runOnFilePostfix(irFile, withLocalDeclarations = true, allowDeclarationModification = true)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

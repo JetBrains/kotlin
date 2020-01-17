@@ -23,9 +23,21 @@ interface StageController {
 
     val bodiesEnabled: Boolean get() = true
 
+    fun <T> withInitialIr(block: () -> T): T = block()
+
+    fun <T> withInitialStateOf(declaration: IrDeclaration, block: () -> T): T = block()
+
+    fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T = fn()
+
     fun <T> bodyLowering(fn: () -> T): T = fn()
 
     fun canModify(element: IrElement): Boolean = true
 
-    fun canAccessDeclarationsOf(declaration: IrClass): Boolean = true
+    fun <T> unrestrictDeclarationListsAccess(fn: () -> T): T = fn()
+
+    fun canAccessDeclarationsOf(irClass: IrClass): Boolean = true
+}
+
+inline fun <T> withInitialIr(noinline fn: () -> T): T {
+    return stageController.withInitialIr(fn)
 }

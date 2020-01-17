@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
+import org.jetbrains.kotlin.ir.declarations.withInitialIr
 import kotlin.reflect.KProperty
 
 internal fun <T> lazyVar(initializer: () -> T): UnsafeLazyVar<T> = UnsafeLazyVar(initializer)
@@ -17,7 +18,7 @@ internal class UnsafeLazyVar<T>(initializer: () -> T) {
     private val value: T
         get() {
             if (!isInitialized) {
-                _value = initializer!!()
+                withInitialIr { _value = initializer!!() }
                 isInitialized = true
                 initializer = null
             }

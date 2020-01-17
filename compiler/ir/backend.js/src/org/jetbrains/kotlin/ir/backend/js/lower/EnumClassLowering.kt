@@ -74,7 +74,11 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             ).also {
                 descriptor.bind(it)
                 it.parent = irClass
-                irClass.declarations += it
+
+                // TODO need a way to emerge local declarations from BodyLoweringPass
+                stageController.unrestrictDeclarationListsAccess {
+                    irClass.declarations += it
+                }
             }
         }
     }
@@ -268,7 +272,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
     ) :
         IrElementTransformerVoid() {
 
-        private val enumEntries = irClass.declarations.filterIsInstance<IrEnumEntry>()
+        private val enumEntries = irClass.enumEntries
 
         private val builder = context.createIrBuilder(irClass.symbol)
 
@@ -384,8 +388,11 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
             declaration.initEntryInstancesFun = initEntryInstancesFun
 
             // TODO Why not move to upper level?
-            declaration.declarations += entryInstancesInitializedVar
-            declaration.declarations += initEntryInstancesFun
+            // TODO Also doesn't fit the transformFlat-ish API
+            stageController.unrestrictDeclarationListsAccess {
+                declaration.declarations += entryInstancesInitializedVar
+                declaration.declarations += initEntryInstancesFun
+            }
 
             return null
         }
@@ -411,7 +418,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
                     +irIfThen(irGetField(null, entryInstancesInitializedField), irReturnUnit())
                     +irSetField(null, entryInstancesInitializedField, irBoolean(true))
 
-                    irClass.declarations.filterIsInstance<IrEnumEntry>().forEach { entry ->
+                    irClass.enumEntries.forEach { entry ->
                         entry.correspondingField?.let { instanceField ->
                             +irSetField(null, instanceField, entry.initializerExpression!!.expression)
                         }
@@ -444,9 +451,11 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): 
 
                 // TODO prettify
                 entryGetInstanceFun.parent = irClass.parent
-                (irClass.parent as IrDeclarationContainer).declarations += entryGetInstanceFun
+                stageController.unrestrictDeclarationListsAccess {
+                    (irClass.parent as IrDeclarationContainer).declarations += entryGetInstanceFun
+                }
 
-                return listOf(declaration)
+                return listOf(declaration) // TODO not null?
             }
         }
 
@@ -492,10 +501,6 @@ class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext): Declarati
 
     private val throwISESymbol = context.throwISEsymbol
 
-    // TODO cache
-    private val IrClass.enumEntries: List<IrEnumEntry>
-        get() = declarations.filterIsInstance<IrEnumEntry>()
-
     private fun createEnumValueOfBody(valueOfFun: IrFunction, irClass: IrClass): IrBlockBody {
         val nameParameter = valueOfFun.valueParameters[0]
 
@@ -535,6 +540,9 @@ class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext): Declarati
         }
     }
 }
+
+private val IrClass.enumEntries: List<IrEnumEntry>
+    get() = declarations.filterIsInstance<IrEnumEntry>()
 
 // Should be applied recursively
 class EnumClassRemoveEntriesLowering(val context: JsIrBackendContext) : DeclarationTransformer {

@@ -87,7 +87,7 @@ class JsIrBackendContext(
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
     val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
-    val implicitDeclarationFile by lazy {
+    val implicitDeclarationFile by lazy2 {
         IrFileImpl(object : SourceManager.FileEntry {
             override val name = "<implicitDeclarations>"
             override val maxOffset = UNDEFINED_OFFSET
@@ -281,27 +281,27 @@ class JsIrBackendContext(
     val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
     val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
 
-    val coroutineImplLabelPropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("state")!!.owner }
-    val coroutineImplLabelPropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("state")!!.owner }
-    val coroutineImplResultSymbolGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("result")!!.owner }
-    val coroutineImplResultSymbolSetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("result")!!.owner }
-    val coroutineImplExceptionPropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("exception")!!.owner }
-    val coroutineImplExceptionPropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("exception")!!.owner }
-    val coroutineImplExceptionStatePropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
-    val coroutineImplExceptionStatePropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+    val coroutineImplLabelPropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("state")!!.owner }
+    val coroutineImplLabelPropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("state")!!.owner }
+    val coroutineImplResultSymbolGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("result")!!.owner }
+    val coroutineImplResultSymbolSetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("result")!!.owner }
+    val coroutineImplExceptionPropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("exception")!!.owner }
+    val coroutineImplExceptionPropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("exception")!!.owner }
+    val coroutineImplExceptionStatePropertyGetter by lazy2 { ir.symbols.coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
+    val coroutineImplExceptionStatePropertySetter by lazy2 { ir.symbols.coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
-    val primitiveClassProperties by lazy {
+    val primitiveClassProperties by lazy2 {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
     }
 
-    val primitiveClassFunctionClass by lazy {
+    val primitiveClassFunctionClass by lazy2 {
         primitiveClassesObject.owner.declarations
             .filterIsInstance<IrSimpleFunction>()
             .find { it.name == Name.identifier("functionClass") }!!
     }
 
-    val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
-    val defaultThrowableCtor by lazy { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
+    val throwableConstructors by lazy2 { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
+    val defaultThrowableCtor by lazy2 { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
 
     private fun referenceOperators(): Map<Name, MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }
@@ -352,3 +352,5 @@ class JsIrBackendContext(
         print(message)
     }
 }
+
+fun <T> lazy2(fn: () -> T) = lazy { stageController.withInitialIr(fn) }

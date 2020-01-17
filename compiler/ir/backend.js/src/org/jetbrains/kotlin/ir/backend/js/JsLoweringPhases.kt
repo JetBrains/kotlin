@@ -498,77 +498,82 @@ private val objectUsageLoweringPhase = makeJsModulePhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
+val phaseList: List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOf(
+    scriptRemoveReceiverLowering,
+    validateIrBeforeLowering,
+    testGenerationPhase,
+    expectDeclarationsRemovingPhase,
+    stripTypeAliasDeclarationsPhase,
+    arrayConstructorPhase,
+    functionInliningPhase,
+    copyInlineFunctionBodyLoweringPhase,
+    createScriptFunctionsPhase,
+    provisionalFunctionExpressionPhase,
+    lateinitNullableFieldsPhase,
+    lateinitDeclarationLoweringPhase,
+    lateinitUsageLoweringPhase,
+    tailrecLoweringPhase,
+    enumClassConstructorLoweringPhase,
+    enumClassConstructorBodyLoweringPhase,
+    sharedVariablesLoweringPhase,
+    localDelegatedPropertiesLoweringPhase,
+    localDeclarationsLoweringPhase,
+    localClassExtractionPhase,
+    innerClassesLoweringPhase,
+    innerClassesMemberBodyLoweringPhase,
+    innerClassConstructorCallsLoweringPhase,
+    propertiesLoweringPhase,
+    primaryConstructorLoweringPhase,
+    delegateToPrimaryConstructorLoweringPhase,
+    annotationConstructorLowering,
+    initializersLoweringPhase,
+    initializersCleanupLoweringPhase,
+    // Common prefix ends
+    enumEntryInstancesLoweringPhase,
+    enumEntryInstancesBodyLoweringPhase,
+    enumClassCreateInitializerLoweringPhase,
+    enumEntryCreateGetInstancesFunsLoweringPhase,
+    enumSyntheticFunsLoweringPhase,
+    enumUsageLoweringPhase,
+    enumEntryRemovalLoweringPhase,
+    suspendFunctionsLoweringPhase,
+    suspendLambdasRemovalLoweringPhase,
+    returnableBlockLoweringPhase,
+    forLoopsLoweringPhase,
+    primitiveCompanionLoweringPhase,
+    propertyAccessorInlinerLoweringPhase,
+    foldConstantLoweringPhase,
+    privateMembersLoweringPhase,
+    privateMemberUsagesLoweringPhase,
+    callableReferenceLoweringPhase,
+    defaultArgumentStubGeneratorPhase,
+    defaultArgumentPatchOverridesPhase,
+    defaultParameterInjectorPhase,
+    defaultParameterCleanerPhase,
+    jsDefaultCallbackGeneratorPhase,
+    removeInlineFunctionsWithReifiedTypeParametersLoweringPhase,
+    throwableSuccessorsLoweringPhase,
+    varargLoweringPhase,
+    multipleCatchesLoweringPhase,
+    bridgesConstructionPhase,
+    typeOperatorLoweringPhase,
+    secondaryConstructorLoweringPhase,
+    secondaryFactoryInjectorLoweringPhase,
+    classReferenceLoweringPhase,
+    inlineClassDeclarationLoweringPhase,
+    inlineClassUsageLoweringPhase,
+    autoboxingTransformerPhase,
+    blockDecomposerLoweringPhase,
+    constLoweringPhase,
+    objectDeclarationLoweringPhase,
+    objectUsageLoweringPhase,
+    callsLoweringPhase,
+    validateIrAfterLowering
+)
+
 val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = scriptRemoveReceiverLowering then
-            validateIrBeforeLowering then
-            testGenerationPhase then
-            expectDeclarationsRemovingPhase then
-            stripTypeAliasDeclarationsPhase then
-            arrayConstructorPhase then
-            functionInliningPhase then
-            copyInlineFunctionBodyLoweringPhase then
-            createScriptFunctionsPhase then
-            provisionalFunctionExpressionPhase then
-            lateinitNullableFieldsPhase then
-            lateinitDeclarationLoweringPhase then
-            lateinitUsageLoweringPhase then
-            tailrecLoweringPhase then
-            enumClassConstructorLoweringPhase then
-            enumClassConstructorBodyLoweringPhase then
-            sharedVariablesLoweringPhase then
-            localDelegatedPropertiesLoweringPhase then
-            localDeclarationsLoweringPhase then
-            localClassExtractionPhase then
-            innerClassesLoweringPhase then
-            innerClassesMemberBodyLoweringPhase then
-            innerClassConstructorCallsLoweringPhase then
-            propertiesLoweringPhase then
-            primaryConstructorLoweringPhase then
-            delegateToPrimaryConstructorLoweringPhase then
-            annotationConstructorLowering then
-            initializersLoweringPhase then
-            initializersCleanupLoweringPhase then
-            // Common prefix ends
-            enumEntryInstancesLoweringPhase then
-            enumEntryInstancesBodyLoweringPhase then
-            enumClassCreateInitializerLoweringPhase then
-            enumEntryCreateGetInstancesFunsLoweringPhase then
-            enumSyntheticFunsLoweringPhase then
-            enumUsageLoweringPhase then
-            enumEntryRemovalLoweringPhase then
-            suspendFunctionsLoweringPhase then
-            suspendLambdasRemovalLoweringPhase then
-            returnableBlockLoweringPhase then
-            forLoopsLoweringPhase then
-            primitiveCompanionLoweringPhase then
-            propertyAccessorInlinerLoweringPhase then
-            foldConstantLoweringPhase then
-            privateMembersLoweringPhase then
-            privateMemberUsagesLoweringPhase then
-            callableReferenceLoweringPhase then
-            defaultArgumentStubGeneratorPhase then
-            defaultArgumentPatchOverridesPhase then
-            defaultParameterInjectorPhase then
-            defaultParameterCleanerPhase then
-            jsDefaultCallbackGeneratorPhase then
-            removeInlineFunctionsWithReifiedTypeParametersLoweringPhase then
-            throwableSuccessorsLoweringPhase then
-            varargLoweringPhase then
-            multipleCatchesLoweringPhase then
-            bridgesConstructionPhase then
-            typeOperatorLoweringPhase then
-            secondaryConstructorLoweringPhase then
-            secondaryFactoryInjectorLoweringPhase then
-            classReferenceLoweringPhase then
-            inlineClassDeclarationLoweringPhase then
-            inlineClassUsageLoweringPhase then
-            autoboxingTransformerPhase then
-            blockDecomposerLoweringPhase then
-            constLoweringPhase then
-            objectDeclarationLoweringPhase then
-            objectUsageLoweringPhase then
-            callsLoweringPhase then
-            validateIrAfterLowering
-)
+    lower = phaseList.drop(1).fold(phaseList[0]) { acc: CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>, phase ->
+        acc.then(phase)
+    })
