@@ -15,7 +15,6 @@ import com.intellij.openapi.projectRoots.SdkType
 import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.Consumer
-import org.jetbrains.annotations.Contract
 import org.jetbrains.annotations.Nls
 import java.util.function.Predicate
 
@@ -31,30 +30,29 @@ private data class SdkLookupBuilderImpl(
   val sdkMinVersionInclusive: String? = null,
   val sdkMaxVersionExclusive: String? = null,
 
-  val onLocalSdkSuggested: ((UnknownSdkLocalSdkFix) -> Boolean)? = null,
-  val onDownloadableSdkSuggested: ((UnknownSdkDownloadableSdkFix) -> Boolean)? = null,
+  val onLocalSdkSuggested: (UnknownSdkLocalSdkFix) -> Boolean = { true },
+  val onDownloadableSdkSuggested: (UnknownSdkDownloadableSdkFix) -> Boolean = { true },
 
-  /**
-   * The [Sdk#sdkType] may not match the proposed [sdkType] if the
-   * same named SDK already exists. It is up to this code client
-   * to resolve that situation.
-   *
-   * The callback is executed with [null] if the SDK search
-   * failed, cancelled or returned no elements
-   */
-  val onSdkResolved: ((Sdk?) -> Unit)? = null
+  val sdkHomeFilter: (String) -> Boolean = { true },
+  val onSdkResolved: (Sdk?) -> Unit = { }
 ) : SdkLookupBuilder {
-  @Contract(pure = true) override fun withProject(project: Project?) = copy(project = project)
-  @Contract(pure = true) override fun withProgressMessageTitle(@Nls message: String) = copy(progressMessageTitle = message)
-  @Contract(pure = true) override fun withSdkName(name: String) = copy(sdkName = name)
-  @Contract(pure = true) override fun withProjectSdk() = copy(sdkUseProjectSdk = true)
-  @Contract(pure = true) override fun withSdkType(sdkType: SdkType) = copy(sdkType = sdkType)
-  @Contract(pure = true) override fun withMinSdkVersionInclusive(version: String) = copy(sdkMinVersionInclusive = version)
-  @Contract(pure = true) override fun withMaxSdkVersionExclusive(version: String) = copy(sdkMaxVersionExclusive = version)
-  @Contract(pure = true) override fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> Boolean) = copy(onLocalSdkSuggested = handler)
-  @Contract(pure = true) override fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> Boolean) = copy(onDownloadableSdkSuggested = handler)
-  @Contract(pure = true) override fun onSdkResolved(handler: (Sdk?) -> Unit) = copy(onSdkResolved = handler)
+  override fun withProject(project: Project?) = copy(project = project)
+  override fun withProgressMessageTitle(@Nls message: String) = copy(progressMessageTitle = message)
+  override fun withSdkName(name: String) = copy(sdkName = name)
+  override fun withProjectSdk() = copy(sdkUseProjectSdk = true)
+  override fun withSdkType(sdkType: SdkType) = copy(sdkType = sdkType)
+  override fun withMinSdkVersionInclusive(version: String) = copy(sdkMinVersionInclusive = version)
+  override fun withMaxSdkVersionExclusive(version: String) = copy(sdkMaxVersionExclusive = version)
+  override fun withSdkHomeFilter(filter: (String) -> Boolean) = copy(sdkHomeFilter = filter)
+  override fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> Boolean) = copy(onLocalSdkSuggested = handler)
+  override fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> Boolean) = copy(onDownloadableSdkSuggested = handler)
+  override fun onSdkResolved(handler: (Sdk?) -> Unit) = copy(onSdkResolved = handler)
   override fun executeLookup() = service<SdkLookup>().lookup(copy())
+
+  fun sdkHomeFilter(sdk: Sdk): Boolean {
+    val sdkHome = sdk.homePath ?: return false
+    return sdkHomeFilter(sdkHome)
+  }
 }
 
 internal class SdkLookupImpl : SdkLookup {
@@ -80,14 +78,14 @@ internal class SdkLookupImpl : SdkLookup {
       }
     }
 
-    if (sdk != null) {
-      onSdkResolved?.invoke(sdk)
+    if (sdk != null && (sdkType == null || sdk.sdkType == sdkType) && sdkHomeFilter(sdk)) {
+      onSdkResolved.invoke(sdk)
       return
     }
 
     if (sdkType == null) {
       //it is not possible to suggest everything, if [sdkType] is not specified
-      onSdkResolved?.invoke(null)
+      onSdkResolved.invoke(null)
       return
     }
 
@@ -108,7 +106,7 @@ internal class SdkLookupImpl : SdkLookup {
       override fun toString() = "SdkLookup{${sdkType.presentableName}, version in [$sdkMinVersionInclusive, $sdkMaxVersionExclusive) }"
     }
 
-    runWithProgress(onCancelled = { onSdkResolved?.invoke(null) }) { indicator ->
+    runWithProgress(onCancelled = { onSdkResolved(null) }) { indicator ->
       try {
         val resolvers = UnknownSdkResolver.EP_NAME.iterable
           .mapNotNull { it.createResolver(project, indicator) }
@@ -122,8 +120,14 @@ internal class SdkLookupImpl : SdkLookup {
 
         indicator.checkCanceled()
 
-        if (localFix != null && onLocalSdkSuggested?.invoke(localFix) != false) {
-          UnknownSdkTracker.configureLocalSdk(unknownSdk, localFix, Consumer { onSdkResolved?.invoke(it) })
+        if (localFix != null && onLocalSdkSuggested.invoke(localFix) && sdkHomeFilter(localFix.existingSdkHome)) {
+          UnknownSdkTracker.configureLocalSdk(unknownSdk, localFix, Consumer {
+            if (it != null && sdkHomeFilter(it)) {
+              onSdkResolved(it)
+            } else {
+              onSdkResolved(null)
+            }
+          })
           return@runWithProgress
         }
 
@@ -136,12 +140,18 @@ internal class SdkLookupImpl : SdkLookup {
 
         indicator.checkCanceled()
 
-        if (downloadFix != null && onDownloadableSdkSuggested?.invoke(downloadFix) != false) {
-          UnknownSdkTracker.downloadFix(project, unknownSdk, downloadFix, Consumer { onSdkResolved?.invoke(it) })
+        if (downloadFix != null && onDownloadableSdkSuggested.invoke(downloadFix)) {
+          UnknownSdkTracker.downloadFix(project, unknownSdk, downloadFix, Consumer {
+            if (sdk != null && sdkHomeFilter(sdk)) {
+              onSdkResolved(it)
+            } else {
+              onSdkResolved(null)
+            }
+          })
           return@runWithProgress
         }
 
-        onSdkResolved?.invoke(null)
+        onSdkResolved(null)
       } catch (e: ProcessCanceledException) {
         throw e
       } catch (t: Throwable) {
@@ -149,7 +159,7 @@ internal class SdkLookupImpl : SdkLookup {
           .getInstance(SdkLookupImpl::class.java)
           .warn("Failed to resolve SDK for ${this@run}. ${t.message}", t)
 
-        onSdkResolved?.invoke(null)
+        onSdkResolved(null)
       }
     }
   }

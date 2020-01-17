@@ -54,11 +54,22 @@ interface SdkLookupBuilder {
   fun withMaxSdkVersionExclusive(version: String): SdkLookupBuilder
 
   @Contract(pure = true)
+  fun withSdkHomeFilter(filter: (String) -> Boolean): SdkLookupBuilder
+
+  @Contract(pure = true)
   fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> Boolean): SdkLookupBuilder
 
   @Contract(pure = true)
   fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> Boolean): SdkLookupBuilder
 
+  /**
+   * The [Sdk#sdkType] may not match the proposed [sdkType] if the
+   * same named SDK already exists. It is up to this code client
+   * to resolve that situation.
+   *
+   * The callback is executed with [null] if the SDK search
+   * failed, cancelled or returned no elements
+   */
   @Contract(pure = true)
   fun onSdkResolved(handler: (Sdk?) -> Unit): SdkLookupBuilder
 }
