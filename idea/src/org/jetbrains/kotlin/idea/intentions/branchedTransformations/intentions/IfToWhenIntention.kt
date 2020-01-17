@@ -168,7 +168,11 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                 val currentElseBranch = currentIfExpression.`else`
                 if (currentElseBranch == null) {
                     // Try to build synthetic if / else according to KT-10750
-                    val syntheticElseBranch = if (canPassThrough) break else buildNextBranch(baseIfExpressionForSyntheticBranch) ?: break
+                    val syntheticElseBranch = if (canPassThrough) null else buildNextBranch(baseIfExpressionForSyntheticBranch)
+                    if (syntheticElseBranch == null) {
+                        applyFullCommentSaver = false
+                        break
+                    }
                     toDelete.addAll(baseIfExpressionForSyntheticBranch.siblingsUpTo(syntheticElseBranch))
                     if (syntheticElseBranch is KtIfExpression) {
                         baseIfExpressionForSyntheticBranch = syntheticElseBranch

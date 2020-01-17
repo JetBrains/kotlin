@@ -2327,6 +2327,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/comment.kt");
                 }
 
+                @TestMetadata("doNotSwallowComment.kt")
+                public void testDoNotSwallowComment() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/doNotSwallowComment.kt");
+                }
+
                 @TestMetadata("ifElseSwallowComments.kt")
                 public void testIfElseSwallowComments() throws Exception {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifElseSwallowComments.kt");
