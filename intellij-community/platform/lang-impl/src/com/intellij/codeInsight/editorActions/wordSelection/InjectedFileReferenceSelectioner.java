@@ -11,9 +11,11 @@ import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiLiteralValue;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.CharSequenceSubSequence;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -36,13 +38,24 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
     PsiElement host = PsiTreeUtil.getParentOfType(e, PsiLanguageInjectionHost.class);
     if (host == null) return Collections.emptyList();
 
-    TextRange realRange = ElementManipulators.getValueTextRange(host).shiftRight(host.getTextRange().getStartOffset());
+
+    TextRange realRange = ElementManipulators.getValueTextRange(host)
+      .shiftRight(host.getTextRange().getStartOffset());
+
+    PsiElement valueElement = findValueElement(host, realRange);
+
+    List<TextRange> nonLeafChildren = StreamEx.of(valueElement.getChildren())
+      .filter(child -> !(child instanceof LeafPsiElement))
+      .map(PsiElement::getTextRange)
+      .sorted(Comparator.comparing(TextRange::getStartOffset).reversed())
+      .toList();
+
     realRange = limitToCurrentLineAndStripWhiteSpace(editorText, cursorOffset, realRange);
 
     Set<Integer> charEscapeLocations = isWithinLiteral(e, host) ? findCharEscapeLocations(editor, editorText, host.getTextRange())
                                                                 : Collections.emptySet();
 
-    List<TextRange> segments = buildSegments(editorText, cursorOffset, charEscapeLocations, realRange);
+    List<TextRange> segments = buildSegments(editorText, cursorOffset, charEscapeLocations, realRange, nonLeafChildren);
     if (!segments.isEmpty()) {
       int endOffsetAlignment = segments.get(segments.size() - 1).getEndOffset();
       for (ListIterator<TextRange> it = segments.listIterator(); it.hasNext(); ) {
@@ -56,10 +69,20 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
   }
 
   @NotNull
+  private static PsiElement findValueElement(@NotNull PsiElement host, @NotNull TextRange valueRange) {
+    PsiElement result = host.getContainingFile().findElementAt(valueRange.getStartOffset());
+    while (result != null && result != host && !result.getTextRange().contains(valueRange)) {
+      result = result.getParent();
+    }
+    return result != null ? result : host;
+  }
+
+  @NotNull
   private static List<TextRange> buildSegments(@NotNull CharSequence editorText,
                                                final int cursorOffset,
                                                @NotNull Set<Integer> charEscapeLocations,
-                                               @NotNull TextRange range) {
+                                               @NotNull TextRange range,
+                                               List<TextRange> nonLeafChildren) {
     if (range.getLength() == 0) {
       return Collections.emptyList();
     }
@@ -71,7 +94,7 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
     boolean segmentsFinished = false;
     int hardSegmentCount = 0;
 
-    for (int i = hostTextOffset; i < hostTextEndOffset; i++) {
+    for (int i = hostTextOffset; i < hostTextEndOffset; i = findNextIndexInLeafElement(i, nonLeafChildren)) {
       char ch = editorText.charAt(i);
       if (!segmentsFinished) {
         if (ch == '/'
@@ -97,6 +120,9 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
         // URLs - expand to content after '?' first, but count it as soft segment
         else if (ch == '?') {
           segments.add(new TextRange(rangeStart, i));
+          if (i + 1< hostTextEndOffset) {
+            segments.add(new TextRange(i + 1, hostTextEndOffset));
+          }
           segments.add(new TextRange(rangeStart, hostTextEndOffset));
           segmentsFinished = true;
         }
@@ -114,6 +140,17 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
       segments.add(new TextRange(rangeStart, hostTextEndOffset));
     }
     return segments;
+  }
+
+  private static int findNextIndexInLeafElement(int currentIndex, List<TextRange> nonLeafChildren) {
+    // skip any non leaf children - ranges sorted backwards to optimize element removal
+    while (!nonLeafChildren.isEmpty() && nonLeafChildren.get(nonLeafChildren.size() - 1).getStartOffset() <= currentIndex) {
+      TextRange nonLeafRange = nonLeafChildren.remove(nonLeafChildren.size() - 1);
+      if (nonLeafRange.getEndOffset() - 1 > currentIndex) {
+        return nonLeafRange.getEndOffset();
+      }
+    }
+    return currentIndex + 1;
   }
 
   @NotNull
