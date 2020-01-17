@@ -116,7 +116,6 @@ enum class LanguageFeature(
     ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitProtectedCallFromInline(KOTLIN_1_4, kind = BUG_FIX),
     ProperFinally(KOTLIN_1_4, kind = BUG_FIX),
-    ProhibitVarargAsArrayAfterSamArgument(KOTLIN_1_4, kind = BUG_FIX),
     AllowAssigningArrayElementsToVarargsInNamedFormForFunctions(KOTLIN_1_4),
     AllowNullOperatorsForResult(KOTLIN_1_4),
     AllowResultInReturnType(KOTLIN_1_4),
@@ -129,6 +128,9 @@ enum class LanguageFeature(
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
+
+    // TODO: set `sinceVersion` to KOTLIN_1_5
+    ProhibitVarargAsArrayAfterSamArgument(sinceVersion = null, kind = BUG_FIX),
 
     // Experimental features
 
