@@ -110,7 +110,8 @@ open class SerializerCodegenImpl(
         } else {
             load(0, serializerAsmType)
         }
-        invokespecial(descImplType.internalName, "<init>", "(Ljava/lang/String;${generatedSerializerType.descriptor})V", false)
+        aconst(serializableProperties.size)
+        invokespecial(descImplType.internalName, "<init>", "(Ljava/lang/String;${generatedSerializerType.descriptor}I)V", false)
     }
 
     protected open fun ExpressionCodegen.addElementsContentToDescriptor(descriptorVar: Int) = with(v) {
