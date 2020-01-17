@@ -73,7 +73,9 @@ public class DefaultNewRunConfigurationTreePopupFactory extends NewRunConfigurat
         }
       }
       list.addAll(Arrays.asList(convertToDescriptors(project, nodeDescriptor, myTypesToShow.toArray())));
-      list.add(other);
+      if (!myOtherTypes.isEmpty()) {
+        list.add(other);
+      }
       return list.toArray(NodeDescriptor.EMPTY_ARRAY);
     }
     else if (nodeDescriptor instanceof GroupDescriptor) {
