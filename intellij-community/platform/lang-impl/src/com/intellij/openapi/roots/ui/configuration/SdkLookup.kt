@@ -2,6 +2,7 @@
 package com.intellij.openapi.roots.ui.configuration
 
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
@@ -31,6 +32,9 @@ interface SdkLookupBuilder {
    * Terminal operator of the builder to execute the search
    */
   fun executeLookup()
+
+  @Contract(pure = true)
+  fun withProgressIndicator(indicator: ProgressIndicator): SdkLookupBuilder
 
   @Contract(pure = true)
   fun withProject(project: Project?): SdkLookupBuilder

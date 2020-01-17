@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -8,12 +9,16 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
 import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import com.intellij.util.Consumer
 import org.jetbrains.annotations.Nls
 import java.util.function.Predicate
@@ -22,6 +27,7 @@ private data class SdkLookupBuilderImpl(
   val project: Project? = null,
 
   val progressMessageTitle: String? = null,
+  val progressIndicator: ProgressIndicator? = null,
 
   val sdkName: String? = null,
   val sdkUseProjectSdk : Boolean = false,
@@ -51,6 +57,7 @@ private data class SdkLookupBuilderImpl(
   override fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> Boolean) = copy(onDownloadableSdkSuggested = handler)
   override fun onSdkResolved(handler: (Sdk?) -> Unit) = copy(onSdkResolved = handler)
   override fun executeLookup() = service<SdkLookup>().lookup(copy())
+  override fun withProgressIndicator(indicator: ProgressIndicator) = copy(progressIndicator = indicator)
 
   fun sdkHomeFilter(sdk: Sdk): Boolean {
     val sdkHome = sdk.homePath ?: return false
@@ -62,6 +69,12 @@ internal class SdkLookupImpl : SdkLookup {
   override fun createBuilder() : SdkLookupBuilder = SdkLookupBuilderImpl()
 
   override fun lookup(lookup: SdkLookupBuilder): Unit = (lookup as SdkLookupBuilderImpl).copy().run {
+    val rootProgressIndicator = ProgressIndicatorBase()
+
+    if (progressIndicator is ProgressIndicatorEx) {
+      rootProgressIndicator.addStateDelegate(progressIndicator)
+    }
+
     val sdk = runReadAction {
       if (sdkUseProjectSdk) {
         require(sdkName == null) { "sdkName must not be set if sdkUseProjectSdk is configured" }
@@ -81,11 +94,41 @@ internal class SdkLookupImpl : SdkLookup {
       }
     }
 
-    if (sdk != null && (sdkType == null || sdk.sdkType == sdkType) && sdkHomeFilter(sdk)) {
-      onSdkResolved.invoke(sdk)
-      return
+    if (sdk != null && (sdkType == null || sdk.sdkType == sdkType)) {
+      val disposable = Disposable {}
+
+      val onDownloadCompleted = Consumer<Boolean> { onSucceeded ->
+        Disposer.dispose(disposable)
+
+        if (onSucceeded && sdkHomeFilter(sdk)) {
+          onSdkResolved(sdk)
+        } else {
+          continueSdkLookupWithSuggestions(rootProgressIndicator)
+        }
+      }
+
+      val isDownloading = SdkDownloadTracker
+        .getInstance()
+        .tryRegisterDownloadingListener(
+          sdk,
+          disposable,
+          rootProgressIndicator,
+          onDownloadCompleted)
+
+      if (isDownloading) {
+        return@run
+      }
+
+      if (sdkHomeFilter(sdk)) {
+        onSdkResolved(sdk)
+        return@run
+      }
     }
 
+    continueSdkLookupWithSuggestions(rootProgressIndicator)
+  }
+
+  private fun SdkLookupBuilderImpl.continueSdkLookupWithSuggestions(rootProgressIndicator: ProgressIndicatorBase) {
     if (sdkType == null) {
       //it is not possible to suggest everything, if [sdkType] is not specified
       onSdkResolved.invoke(null)
@@ -109,12 +152,12 @@ internal class SdkLookupImpl : SdkLookup {
     }
 
     val unknownSdk = object: UnknownSdk {
-      override fun getSdkType() : SdkType = this@run.sdkType
+      override fun getSdkType() : SdkType = this@continueSdkLookupWithSuggestions.sdkType
       override fun getSdkVersionStringPredicate() = versionPredicate
       override fun toString() = "SdkLookup{${sdkType.presentableName}, version in [$sdkMinVersionInclusive, $sdkMaxVersionExclusive) }"
     }
 
-    runWithProgress(onCancelled = { onSdkResolved(null) }) { indicator ->
+    runWithProgress(rootProgressIndicator, onCancelled = { onSdkResolved(null) }) { indicator ->
       try {
         val resolvers = UnknownSdkResolver.EP_NAME.iterable
           .mapNotNull { it.createResolver(project, indicator) }
@@ -149,9 +192,9 @@ internal class SdkLookupImpl : SdkLookup {
         indicator.checkCanceled()
 
         if (downloadFix != null && onDownloadableSdkSuggested.invoke(downloadFix)) {
-          UnknownSdkTracker.downloadFix(project, unknownSdk, downloadFix, Consumer {
+          UnknownSdkTracker.downloadFix(project, unknownSdk, downloadFix, Consumer { sdk ->
             if (sdk != null && sdkHomeFilter(sdk)) {
-              onSdkResolved(it)
+              onSdkResolved(sdk)
             } else {
               onSdkResolved(null)
             }
@@ -165,19 +208,32 @@ internal class SdkLookupImpl : SdkLookup {
       } catch (t: Throwable) {
         Logger
           .getInstance(SdkLookupImpl::class.java)
-          .warn("Failed to resolve SDK for ${this@run}. ${t.message}", t)
+          .warn("Failed to resolve SDK for ${this@continueSdkLookupWithSuggestions}. ${t.message}", t)
 
         onSdkResolved(null)
       }
     }
   }
 
-  private fun SdkLookupBuilderImpl.runWithProgress(onCancelled: () -> Unit,
+  private fun SdkLookupBuilderImpl.runWithProgress(rootProgressIndicator: ProgressIndicatorBase,
+                                                   onCancelled: () -> Unit,
                                                    action: (ProgressIndicator) -> Unit) {
     val title = progressMessageTitle ?: "Resolving" + (sdkType?.presentableName ?: "SDK") + "..."
     ProgressManager.getInstance().run(object : Task.Backgroundable(project, title, true, ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
-        action(indicator)
+        val middleMan = object : ProgressIndicatorBase() {
+          override fun delegateProgressChange(action: IndicatorAction) {
+            action.execute(indicator as ProgressIndicatorEx)
+          }
+        }
+
+        rootProgressIndicator.addStateDelegate(middleMan)
+
+        try {
+          action(indicator)
+        } finally {
+          rootProgressIndicator.removeStateDelegate(middleMan)
+        }
       }
 
       override fun onCancel() {
