@@ -20,6 +20,8 @@ interface TargetConfigurator : ModuleConfigurator {
     fun createInnerTargetIrs(module: Module): List<BuildSystemIR> = emptyList()
 }
 
+abstract class TargetConfiguratorWithTests : ModuleConfiguratorWithTests(), TargetConfigurator
+
 interface SingleCoexistenceTargetConfigurator : TargetConfigurator {
     override fun canCoexistsWith(other: List<TargetConfigurator>): Boolean =
         other.none { it == this }
@@ -49,11 +51,13 @@ private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
     )
 
 
-interface JsTargetConfigurator : TargetConfigurator, SingleCoexistenceTargetConfigurator {
+abstract class JsTargetConfigurator : TargetConfiguratorWithTests(), SingleCoexistenceTargetConfigurator {
     override val moduleType: ModuleType get() = ModuleType.js
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 }
 
-object JsBrowserTargetConfigurator : JsTargetConfigurator {
+object JsBrowserTargetConfigurator : JsTargetConfigurator() {
     override val id = "jsBrowser"
     override val text = "Browser"
     override val suggestedModuleName = "browser"
@@ -70,10 +74,11 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator {
     }
 }
 
-object JsNodeTargetConfigurator : JsTargetConfigurator {
+object JsNodeTargetConfigurator : JsTargetConfigurator() {
     override val id = "jsNode"
     override val text = "Node.js"
     override val suggestedModuleName = "nodeJs"
+
 
     override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
@@ -87,15 +92,20 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     }
 }
 
-object CommonTargetConfigurator : SimpleTargetConfigurator, SingleCoexistenceTargetConfigurator {
+object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.common
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.COMMON
 }
 
-object JvmTargetConfigurator : TargetConfigurator,
+object JvmTargetConfigurator : TargetConfiguratorWithTests(),
+    TargetConfigurator,
     SimpleTargetConfigurator,
     JvmModuleConfigurator,
     SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.jvm
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 }
 
 object AndroidTargetConfigurator : TargetConfigurator,

@@ -24,7 +24,6 @@ object Plugins {
             ProjectTemplatesPlugin(context),
 
             // templates
-            KotlinTestTemplatePlugin(context),
             ConsoleJvmApplicationTemplatePlugin(context),
             KtorTemplatesPlugin(context),
             JsTemplatesPlugin(context),

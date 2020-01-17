@@ -157,24 +157,9 @@ object MultiplatformLibrary : ProjectTemplate() {
                 MultiplatformModule(
                     "library",
                     listOf(
-                        ModuleType.common.createDefaultTarget().apply {
-                            //                            testSourceset?.withTemplate(KotlinTestTemplate()) {
-//                                template.framework withValue KotlinTestFramework.COMMON
-//                                template.generateDummyTest withValue false
-//                            }
-                        },
-                        ModuleType.jvm.createDefaultTarget().apply {
-                            //                            testSourceset?.withTemplate(KotlinTestTemplate()) {
-//                                template.framework withValue KotlinTestFramework.JUNIT4
-//                                template.generateDummyTest withValue false
-//                            }
-                        },
-                        ModuleType.js.createDefaultTarget().apply {
-                            //                            testSourceset?.withTemplate(KotlinTestTemplate()) {
-//                                template.framework withValue KotlinTestFramework.JS
-//                                template.generateDummyTest withValue false
-//                            }
-                        },
+                        ModuleType.common.createDefaultTarget(),
+                        ModuleType.jvm.createDefaultTarget(),
+                        ModuleType.js.createDefaultTarget(),
                         ModuleType.native.createDefaultTarget()
                     )
                 )

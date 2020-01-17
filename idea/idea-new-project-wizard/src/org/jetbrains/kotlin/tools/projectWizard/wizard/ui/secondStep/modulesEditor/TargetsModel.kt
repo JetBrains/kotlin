@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -9,7 +10,8 @@ import kotlin.reflect.KMutableProperty0
 
 class TargetsModel(
     private val tree: ModulesEditorTree,
-    private val value: KMutableProperty0<List<Module>?>
+    private val value: KMutableProperty0<List<Module>?>,
+    private val context: Context
 ) {
     private val root get() = tree.model.root as DefaultMutableTreeNode
 
@@ -57,6 +59,7 @@ class TargetsModel(
     }
 
     fun add(module: Module) {
+        module.initDefaultValuesForSettings(context)
         addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
     }
 
