@@ -43,35 +43,8 @@ class SelectionModelWindow implements SelectionModel {
   }
 
   @Override
-  public String getSelectedText() {
-    return myHostModel.getSelectedText();
-  }
-
-  @Nullable
-  @Override
-  public String getSelectedText(boolean allCarets) {
-    return myHostModel.getSelectedText(allCarets);
-  }
-
-  @Override
-  public int getLeadSelectionOffset() {
-    return myDocument.hostToInjected(myHostModel.getLeadSelectionOffset());
-  }
-
-  @Nullable
-  @Override
-  public VisualPosition getLeadSelectionPosition() {
-    return myHostModel.getLeadSelectionPosition();
-  }
-
-  @Override
   public boolean hasSelection(boolean anyCaret) {
     return myHostModel.hasSelection(anyCaret);
-  }
-
-  @Override
-  public void removeSelection(boolean allCarets) {
-    myHostModel.removeSelection(allCarets);
   }
 
   @Override
