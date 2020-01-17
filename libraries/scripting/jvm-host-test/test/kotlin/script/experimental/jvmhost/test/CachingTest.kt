@@ -127,7 +127,7 @@ class CachingTest : TestCase() {
         Assert.assertEquals(1, cache.storedScripts)
         Assert.assertEquals(0, cache.retrievedScripts)
 
-        val cachedScript = cache.get(script.toScriptSource(), compiledScript!!.compilationConfiguration)
+        val cachedScript = cache.get(script.toScriptSource(), scriptCompilationConfiguration)
         Assert.assertNotNull(cachedScript)
         Assert.assertEquals(1, cache.retrievedScripts)
 
