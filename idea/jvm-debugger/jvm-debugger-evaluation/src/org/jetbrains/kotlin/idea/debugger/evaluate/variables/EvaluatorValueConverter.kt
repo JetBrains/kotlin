@@ -50,6 +50,11 @@ class EvaluatorValueConverter(val context: ExecutionContext) {
             return true
         }
 
+        if (requestedType == AsmTypes.K_CLASS_TYPE && actualType == AsmTypes.JAVA_CLASS_TYPE) {
+            // KClass can be represented as a Java class for simpler cases. See BoxingInterpreter.isJavaLangClassBoxing().
+            return true
+        }
+
         val unwrappedActualType = unwrap(actualType)
         val unwrappedRequestedType = unwrap(requestedType)
         return unwrappedActualType == unwrappedRequestedType
