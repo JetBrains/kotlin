@@ -120,3 +120,9 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 public fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> {
     return HashMap<String, V>(InternalStringMap(EqualityComparator.HashCode)).apply { putAll(pairs) }
 }
+
+/**
+ * JS does not make use of capacities or load factors and if it would the algorithm would probably differ to the one for the JVM.
+ */
+@kotlin.internal.InlineOnly
+internal actual inline fun mapCapacity(expectedSize: Int) = expectedSize

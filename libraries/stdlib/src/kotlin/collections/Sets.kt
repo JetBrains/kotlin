@@ -5,9 +5,11 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SetsKt")
+@file:UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
+import kotlin.contracts.*
 
 internal object EmptySet : Set<Nothing>, Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
@@ -25,7 +27,6 @@ internal object EmptySet : Set<Nothing>, Serializable {
 
     private fun readResolve(): Any = EmptySet
 }
-
 
 /**
  * Returns an empty read-only set.  The returned set is serializable (JVM).
@@ -96,4 +97,31 @@ internal fun <T> Set<T>.optimizeReadOnlySet() = when (size) {
     0 -> emptySet()
     1 -> setOf(iterator().next())
     else -> this
+}
+
+/**
+ * Build a new read-only [Set] with the [elements][E] from the [builderAction].
+ *
+ * @sample samples.collections.Builders.Sets.buildSetSample
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("1.4")
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
+public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return LinkedHashSet<E>().apply(builderAction)
+}
+
+/**
+ * Build a new read-only [Set] with the given [expectedSize] and [elements][E] from the [builderAction].
+ *
+ * @sample samples.collections.Builders.Sets.buildSetSample
+ * @throws IllegalArgumentException if the given [expectedSize] is negative.
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("1.4")
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
+public inline fun <E> buildSet(expectedSize: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return LinkedHashSet<E>(mapCapacity(expectedSize)).apply(builderAction)
 }

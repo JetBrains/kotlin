@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
+@file:UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
@@ -214,16 +215,6 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
     if (isEmpty()) defaultValue() else this
 
-/**
- * Remove all null elements from this collection.
- *
- * @sample samples.collections.Collections.Collections.collectionRemoveNull
- */
-@ExperimentalStdlibApi
-@SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-public inline fun <E : Any, T : MutableCollection<E?>, R : MutableCollection<E>> T.removeNull(): R =
-    @Suppress("UNCHECKED_CAST") (apply { removeAll { it == null } } as R)
 
 /**
  * Checks if all elements in the specified collection are contained in this collection.
@@ -398,10 +389,12 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
 
 @PublishedApi
 @SinceKotlin("1.3")
+@Suppress("NO_ACTUAL_FOR_EXPECT") // JS IR
 internal expect fun checkIndexOverflow(index: Int): Int
 
 @PublishedApi
 @SinceKotlin("1.3")
+@Suppress("NO_ACTUAL_FOR_EXPECT") // JS IR
 internal expect fun checkCountOverflow(count: Int): Int
 
 
@@ -412,3 +405,30 @@ internal fun throwIndexOverflow() { throw ArithmeticException("Index overflow ha
 @PublishedApi
 @SinceKotlin("1.3")
 internal fun throwCountOverflow() { throw ArithmeticException("Count overflow has happened.") }
+
+/**
+ * Build a new read-only [List] with the [elements][E] from the [builderAction].
+ *
+ * @sample samples.collections.Builders.Lists.buildListSample
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("1.4")
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
+public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return ArrayList<E>().apply(builderAction)
+}
+
+/**
+ * Build a new read-only [List] with the given [expectedSize] and [elements][E] from the [builderAction].
+ *
+ * @sample samples.collections.Builders.Lists.buildListSample
+ * @throws IllegalArgumentException if the given [expectedSize] is negative.
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("1.4")
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
+public inline fun <E> buildList(expectedSize: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return ArrayList<E>(expectedSize).apply(builderAction)
+}
