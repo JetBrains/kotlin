@@ -10,9 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Map;
 
-/**
- * @author nik
- */
 class SuggestedChildRootInfo {
   private final VirtualFile myRootCandidate;
   private final DetectedLibraryRoot myDetectedRoot;

@@ -16,9 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class InvalidFacetType extends FacetType<InvalidFacet, InvalidFacetConfiguration> {
   public static final FacetTypeId<InvalidFacet> TYPE_ID = new FacetTypeId<>("invalid");
 

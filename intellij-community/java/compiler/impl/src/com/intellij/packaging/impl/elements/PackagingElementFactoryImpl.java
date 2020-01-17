@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class PackagingElementFactoryImpl extends PackagingElementFactory {
   private static final Logger LOG = Logger.getInstance(PackagingElementFactoryImpl.class);
   public static final PackagingElementType<DirectoryPackagingElement> DIRECTORY_ELEMENT_TYPE = new DirectoryElementType();

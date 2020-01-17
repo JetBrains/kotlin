@@ -23,9 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
-/**
- * @author nik
- */
 public class SharedThreadPoolImpl extends SharedThreadPool {
   private final ExecutorService myService = Executors.newCachedThreadPool(ConcurrencyUtil.newNamedThreadFactory("JPS thread pool", true, Thread.NORM_PRIORITY));
 

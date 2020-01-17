@@ -28,8 +28,6 @@ import java.util.List;
  * Allows to customize a library editor
  *
  * @see com.intellij.openapi.roots.libraries.LibraryType#createLibraryRootsComponentDescriptor
- *
- * @author nik
  */
 public abstract class LibraryRootsComponentDescriptor {
   /**

@@ -25,9 +25,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 
-/**
- * @author nik
- */
 public class JpsElementContainerImpl extends JpsElementContainerEx implements JpsElementContainer {
   private final Object myDataLock = new Object();
   private final Map<JpsElementChildRole<?>, JpsElement> myElements = new THashMap<>(1);

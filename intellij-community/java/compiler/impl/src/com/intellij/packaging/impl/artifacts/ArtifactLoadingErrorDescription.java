@@ -22,9 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.packaging.artifacts.ArtifactManager;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 
-/**
- * @author nik
- */
 public class ArtifactLoadingErrorDescription extends ConfigurationErrorDescription {
   private static final ConfigurationErrorType INVALID_ARTIFACT = new ConfigurationErrorType("artifact", false);
   private final Project myProject;

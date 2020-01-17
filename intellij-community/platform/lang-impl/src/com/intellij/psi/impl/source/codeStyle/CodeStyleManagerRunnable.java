@@ -37,9 +37,6 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 abstract class CodeStyleManagerRunnable<T> {
   protected CodeStyleSettings mySettings;
   protected CommonCodeStyleSettings.IndentOptions myIndentOptions;

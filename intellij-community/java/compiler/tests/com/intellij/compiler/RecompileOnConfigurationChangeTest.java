@@ -11,9 +11,6 @@ import java.io.IOException;
 
 import static com.intellij.util.io.TestFileSystemBuilder.fs;
 
-/**
- * @author nik
- */
 public class RecompileOnConfigurationChangeTest extends BaseCompilerTestCase {
 
   public void testChangeOutput() throws IOException {

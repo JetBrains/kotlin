@@ -19,9 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.JpsDummyElement;
 import org.jetbrains.jps.model.ex.JpsElementBase;
 
-/**
- * @author nik
- */
 public class JpsDummyElementImpl extends JpsElementBase<JpsDummyElementImpl> implements JpsDummyElement {
   @NotNull
   @Override

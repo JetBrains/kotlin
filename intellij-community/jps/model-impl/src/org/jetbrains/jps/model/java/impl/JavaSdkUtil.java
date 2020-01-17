@@ -21,9 +21,6 @@ import java.util.Set;
 
 import static com.intellij.util.ObjectUtils.notNull;
 
-/**
- * @author nik
- */
 public class JavaSdkUtil {
   @NotNull
   public static List<File> getJdkClassesRoots(@NotNull File home, boolean isJre) {

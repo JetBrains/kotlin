@@ -25,9 +25,6 @@ import java.util.Locale;
 
 import static com.intellij.util.io.TestFileSystemItem.fs;
 
-/**
- * @author nik
- */
 public class JavaCompilerBasicTest extends BaseCompilerTestCase {
 
   public void testAddRemoveJavaClass() throws IOException {

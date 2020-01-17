@@ -19,9 +19,6 @@ import com.intellij.packaging.elements.PackagingElementResolvingContext;
 import com.intellij.packaging.ui.ArtifactProblemsHolder;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public abstract class ArtifactProblemsHolderBase implements ArtifactProblemsHolder {
   private final PackagingElementResolvingContext myContext;
 

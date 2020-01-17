@@ -25,9 +25,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author nik
- */
 public interface ModuleSettings extends ComponentManagerSettings {
 
   @NonNls String MODULE_ROOT_MANAGER_COMPONENT = "NewModuleRootManager";

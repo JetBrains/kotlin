@@ -17,9 +17,6 @@ package com.intellij.ide.projectView.actions;
 
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 
-/**
-* @author nik
-*/
 public class MarkJavaSourceRootAction extends MarkSourceRootAction {
   public MarkJavaSourceRootAction() {
     super(JavaSourceRootType.SOURCE);

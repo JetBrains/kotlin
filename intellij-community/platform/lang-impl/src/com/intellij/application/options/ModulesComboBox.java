@@ -21,8 +21,6 @@ import java.util.List;
  * If you need to show unloaded modules as well, use {@link ModuleDescriptionsComboBox} instead.
  *
  * @see ModuleDescriptionsComboBox
- *
- * @author nik
  */
 public class ModulesComboBox extends ComboBox<Module> {
   private final SortedComboBoxModel<Module> myModel;

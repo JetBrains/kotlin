@@ -30,9 +30,6 @@ import com.intellij.packaging.elements.PackagingElementResolvingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
-* @author nik
-*/
 public class DefaultPackagingElementResolvingContext implements PackagingElementResolvingContext {
   private final Project myProject;
   private final DefaultModulesProvider myModulesProvider;

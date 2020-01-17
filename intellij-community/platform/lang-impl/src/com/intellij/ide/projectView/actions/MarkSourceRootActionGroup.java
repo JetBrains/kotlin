@@ -28,9 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class MarkSourceRootActionGroup extends ActionGroup {
   @Override
   public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {

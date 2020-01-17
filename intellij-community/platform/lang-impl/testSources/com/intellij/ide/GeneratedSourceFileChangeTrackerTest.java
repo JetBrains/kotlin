@@ -13,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author nik
- */
 public class GeneratedSourceFileChangeTrackerTest extends CodeInsightFixtureTestCase {
   private final GeneratedSourcesFilter myGeneratedSourcesFilter = new GeneratedSourcesFilter() {
     @Override

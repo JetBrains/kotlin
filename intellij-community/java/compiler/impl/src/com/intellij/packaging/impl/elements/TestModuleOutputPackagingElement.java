@@ -16,9 +16,6 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author nik
- */
 public class TestModuleOutputPackagingElement extends ModuleOutputPackagingElementBase {
   public TestModuleOutputPackagingElement(Project project) {
     super(TestModuleOutputElementType.ELEMENT_TYPE, project);

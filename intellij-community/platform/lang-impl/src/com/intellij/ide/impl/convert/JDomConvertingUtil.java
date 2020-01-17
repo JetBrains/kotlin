@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-/**
- * @author nik
- */
 public final class JDomConvertingUtil extends JDomSerializationUtil {
   private JDomConvertingUtil() {
   }

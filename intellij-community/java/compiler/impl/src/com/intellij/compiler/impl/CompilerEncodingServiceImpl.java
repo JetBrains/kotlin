@@ -41,9 +41,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class CompilerEncodingServiceImpl extends CompilerEncodingService {
   @NotNull private final Project myProject;
   private final CachedValue<Map<Module, Set<Charset>>> myModuleFileEncodings;

@@ -17,9 +17,6 @@ package com.intellij.profile.codeInspection.ui;
 
 import com.intellij.openapi.options.ConfigurableProvider;
 
-/**
- * @author nik
- */
 public abstract class ErrorsConfigurableProvider extends ConfigurableProvider {
   @Override
   public abstract ErrorsConfigurable createConfigurable();

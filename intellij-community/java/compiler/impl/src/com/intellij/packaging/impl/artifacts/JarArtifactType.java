@@ -28,9 +28,6 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JarArtifactType extends ArtifactType {
   public JarArtifactType() {
     super("jar", "JAR");

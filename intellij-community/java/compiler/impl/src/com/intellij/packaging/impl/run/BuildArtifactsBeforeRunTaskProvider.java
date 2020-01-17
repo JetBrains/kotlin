@@ -34,9 +34,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class BuildArtifactsBeforeRunTaskProvider extends BuildArtifactsBeforeRunTaskProviderBase<BuildArtifactsBeforeRunTask> {
   @NonNls public static final String BUILD_ARTIFACTS_ID = "BuildArtifacts";
   public static final Key<BuildArtifactsBeforeRunTask> ID = Key.create(BUILD_ARTIFACTS_ID);

@@ -18,9 +18,6 @@ package org.jetbrains.jps.model.artifact.impl.elements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.artifact.elements.JpsDirectoryCopyPackagingElement;
 
-/**
- * @author nik
- */
 public class JpsDirectoryCopyPackagingElementImpl extends JpsFileCopyPackagingElementBase<JpsDirectoryCopyPackagingElementImpl>
   implements JpsDirectoryCopyPackagingElement {
   public JpsDirectoryCopyPackagingElementImpl(String directoryPath) {

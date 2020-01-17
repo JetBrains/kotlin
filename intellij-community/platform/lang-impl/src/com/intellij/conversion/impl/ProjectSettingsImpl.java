@@ -7,9 +7,6 @@ import com.intellij.conversion.ProjectSettings;
 
 import java.nio.file.Path;
 
-/**
- * @author nik
- */
 public class ProjectSettingsImpl extends ComponentManagerSettingsImpl implements ProjectSettings {
   public ProjectSettingsImpl(Path file, ConversionContextImpl context) throws CannotConvertException {
     super(file, context);

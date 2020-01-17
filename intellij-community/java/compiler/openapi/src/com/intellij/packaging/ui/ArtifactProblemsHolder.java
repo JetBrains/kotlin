@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public interface ArtifactProblemsHolder {
   @NotNull
   PackagingElementResolvingContext getContext();

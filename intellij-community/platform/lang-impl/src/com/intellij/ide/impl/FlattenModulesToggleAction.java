@@ -17,9 +17,6 @@ import java.util.function.Consumer;
 
 import static com.intellij.util.PlatformUtils.isIntelliJ;
 
-/**
- * @author nik
- */
 public class FlattenModulesToggleAction extends ToggleAction implements DumbAware {
   private final BooleanSupplier myIsEnabled;
   private final BooleanSupplier myIsSelected;

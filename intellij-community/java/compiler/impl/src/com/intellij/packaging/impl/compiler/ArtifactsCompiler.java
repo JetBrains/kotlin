@@ -12,9 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class ArtifactsCompiler {
   private static final Key<Set<String>> WRITTEN_PATHS_KEY = Key.create("artifacts_written_paths");
 

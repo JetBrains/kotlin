@@ -15,9 +15,6 @@
  */
 package com.intellij.packaging.ui;
 
-/**
- * @author nik
- */
 public abstract class ArtifactProblemQuickFix {
   private final String myActionName;
 

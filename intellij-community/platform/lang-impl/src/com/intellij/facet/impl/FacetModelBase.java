@@ -12,9 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public abstract class FacetModelBase implements FacetModel {
   private volatile Map<FacetTypeId<?>, Collection<Facet<?>>> myType2Facets;
   private volatile Map<Pair<Facet<?>, FacetTypeId<?>>, Collection<Facet<?>>> myChildFacets;

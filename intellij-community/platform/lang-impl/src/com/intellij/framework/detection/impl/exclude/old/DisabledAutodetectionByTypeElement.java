@@ -17,9 +17,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author nik
-*/
 @Tag("facet-type")
 public class DisabledAutodetectionByTypeElement {
   public static final Comparator<DisabledAutodetectionByTypeElement> COMPARATOR =

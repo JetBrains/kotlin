@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DownloadableLibraryDescriptionImpl implements DownloadableLibraryDescription {
   private final List<FrameworkLibraryVersion> myVersions;
 

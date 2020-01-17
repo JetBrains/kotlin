@@ -12,9 +12,6 @@ import com.intellij.packaging.ui.PackagingElementPresentation;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ExtractedDirectoryPackagingElement extends FileOrDirectoryCopyPackagingElement<ExtractedDirectoryPackagingElement> {
   private String myPathInJar;
 

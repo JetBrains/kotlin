@@ -17,9 +17,6 @@ package com.intellij.packaging.elements;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class PackagingElementOutputKind {
   @NotNull public static final PackagingElementOutputKind DIRECTORIES_WITH_CLASSES = new PackagingElementOutputKind(true, false);
   @NotNull public static final PackagingElementOutputKind JAR_FILES = new PackagingElementOutputKind(false, true);

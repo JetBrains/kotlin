@@ -19,9 +19,6 @@ import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.util.Arrays;
 
-/**
- * @author nik
- */
 public class FacetUtil {
 
   public static <F extends Facet> F addFacet(Module module, FacetType<F, ?> type) {

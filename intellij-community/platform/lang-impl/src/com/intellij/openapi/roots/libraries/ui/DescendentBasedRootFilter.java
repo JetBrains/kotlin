@@ -16,8 +16,6 @@ import java.util.function.Predicate;
 /**
  * Determines whether an archive or a directory can be used as a root of given type by analyzing its descending files; if there is at least one
  * file under it satisfying the given condition, it assumes that the original archive/directory can be used as a root of the given type.
- *
- * @author nik
  */
 public class DescendentBasedRootFilter extends RootFilter {
   private final Predicate<? super VirtualFile> myCondition;

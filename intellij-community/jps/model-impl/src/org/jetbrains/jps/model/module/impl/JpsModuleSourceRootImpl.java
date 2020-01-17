@@ -27,9 +27,6 @@ import org.jetbrains.jps.util.JpsPathUtil;
 import java.io.File;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class JpsModuleSourceRootImpl<P extends JpsElement> extends JpsCompositeElementBase<JpsModuleSourceRootImpl<P>> implements JpsTypedModuleSourceRoot<P> {
   private final JpsModuleSourceRootType<P> myRootType;
   private final String myUrl;

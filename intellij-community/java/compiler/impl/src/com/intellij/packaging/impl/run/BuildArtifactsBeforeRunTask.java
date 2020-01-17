@@ -18,9 +18,6 @@ package com.intellij.packaging.impl.run;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author nik
- */
 public class BuildArtifactsBeforeRunTask extends BuildArtifactsBeforeRunTaskBase<BuildArtifactsBeforeRunTask> {
   @NonNls public static final String ARTIFACT_ELEMENT = "artifact";
 

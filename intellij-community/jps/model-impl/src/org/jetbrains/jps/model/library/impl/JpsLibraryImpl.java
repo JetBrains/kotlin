@@ -35,9 +35,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author nik
- */
 public class JpsLibraryImpl<P extends JpsElement> extends JpsNamedCompositeElementBase<JpsLibraryImpl<P>> implements JpsTypedLibrary<P> {
   private static final ConcurrentMap<JpsOrderRootType, JpsElementCollectionRole<JpsLibraryRoot>> ourRootRoles = ContainerUtil.newConcurrentMap();
   private final JpsLibraryType<P> myLibraryType;

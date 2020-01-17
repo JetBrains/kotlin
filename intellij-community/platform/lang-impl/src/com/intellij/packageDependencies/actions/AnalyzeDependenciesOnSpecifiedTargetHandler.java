@@ -34,9 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class AnalyzeDependenciesOnSpecifiedTargetHandler extends DependenciesHandlerBase {
   private static final NotificationGroup NOTIFICATION_GROUP =
     NotificationGroup.toolWindowGroup("Dependencies", ToolWindowId.DEPENDENCIES);

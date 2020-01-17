@@ -21,9 +21,6 @@ import com.intellij.packaging.ui.ArtifactEditorContext;
 import com.intellij.packaging.ui.ArtifactPropertiesEditor;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public abstract class ArtifactProperties<S> implements PersistentStateComponent<S> {
 
   public void onBuildStarted(@NotNull Artifact artifact, @NotNull CompileContext compileContext) {

@@ -30,9 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class FacetModelImpl extends FacetModelBase implements ModifiableFacetModel {
   private static final Logger LOG = Logger.getInstance(FacetModelImpl.class);
   private final List<Facet> myFacets = new ArrayList<>();

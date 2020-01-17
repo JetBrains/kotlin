@@ -13,9 +13,6 @@ import javax.swing.*;
 import java.net.URL;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DownloadableFileServiceImpl extends DownloadableFileService {
   @NotNull
   @Override

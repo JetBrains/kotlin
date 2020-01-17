@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
 
-/**
- * @author nik
- */
 public abstract class ArtifactManager implements ArtifactModel {
   public static final Topic<ArtifactListener> TOPIC = Topic.create("artifacts changes", ArtifactListener.class);
   public static final Comparator<Artifact> ARTIFACT_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());

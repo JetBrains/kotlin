@@ -5,9 +5,6 @@ import com.intellij.openapi.roots.ui.configuration.artifacts.ArtifactEditorEx;
 import com.intellij.openapi.roots.ui.configuration.artifacts.actions.MovePackagingElementAction;
 import com.intellij.packaging.artifacts.Artifact;
 
-/**
- * @author nik
- */
 public class MoveElementActionTest extends ArtifactEditorActionTestCase {
   public void testSimple() {
     createEditor(addArtifact(root()

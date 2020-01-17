@@ -42,9 +42,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class JarFromModulesTemplate extends ArtifactTemplate {
   private static final Logger LOG = Logger.getInstance(JarFromModulesTemplate.class);
 

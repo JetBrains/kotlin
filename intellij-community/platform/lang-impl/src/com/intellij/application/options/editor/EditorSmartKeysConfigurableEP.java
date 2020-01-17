@@ -27,8 +27,6 @@ import com.intellij.openapi.options.UnnamedConfigurable;
  * &lt;/extensions&gt;
  * <p>
  * A new instance of the specified class will be created each time then the Settings dialog is opened
- *
- * @author nik
  */
 public class EditorSmartKeysConfigurableEP extends ConfigurableEP<UnnamedConfigurable> {
 }

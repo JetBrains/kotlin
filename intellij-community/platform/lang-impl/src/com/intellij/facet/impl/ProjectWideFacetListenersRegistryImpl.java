@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author nik
- */
 public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFacetListenersRegistry {
   private final Map<FacetTypeId, EventDispatcher<ProjectWideFacetListener>> myDispatchers = new HashMap<>();
   private final Map<FacetTypeId, Map<Facet, Boolean>> myFacetsByType = new HashMap<>();

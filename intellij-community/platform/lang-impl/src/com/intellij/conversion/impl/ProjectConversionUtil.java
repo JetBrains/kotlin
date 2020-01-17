@@ -11,9 +11,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public class ProjectConversionUtil {
   @NonNls public static final String PROJECT_FILES_BACKUP = "projectFilesBackup";
   @NonNls private static final String BACKUP_EXTENSION = "backup";

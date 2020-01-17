@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EventListener;
 
-/**
- * @author nik
- */
 public interface FrameworkDetectionIndexListener extends EventListener {
   void fileUpdated(@NotNull VirtualFile file, @NotNull Integer detectorId);
 }

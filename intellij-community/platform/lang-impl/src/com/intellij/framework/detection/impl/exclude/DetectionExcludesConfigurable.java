@@ -51,9 +51,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DetectionExcludesConfigurable implements Configurable {
   private final Project myProject;
   private final DetectionExcludesConfigurationImpl myConfiguration;

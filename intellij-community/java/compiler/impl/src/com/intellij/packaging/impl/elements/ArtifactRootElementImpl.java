@@ -10,9 +10,6 @@ import com.intellij.packaging.ui.PackagingElementPresentation;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ArtifactRootElementImpl extends ArtifactRootElement<Object> {
   public ArtifactRootElementImpl() {
     super(PackagingElementFactoryImpl.ARTIFACT_ROOT_ELEMENT_TYPE);

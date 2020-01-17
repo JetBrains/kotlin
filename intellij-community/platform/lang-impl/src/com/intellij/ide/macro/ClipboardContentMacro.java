@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.datatransfer.DataFlavor;
 
-/**
- * @author nik
- */
 public class ClipboardContentMacro extends Macro {
   @NotNull
   @Override

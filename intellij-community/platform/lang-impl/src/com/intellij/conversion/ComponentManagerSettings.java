@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public interface ComponentManagerSettings extends XmlBasedSettings {
 
   @Nullable

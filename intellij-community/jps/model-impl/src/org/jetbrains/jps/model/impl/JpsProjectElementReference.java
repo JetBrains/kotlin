@@ -19,9 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.*;
 import org.jetbrains.jps.model.ex.JpsElementReferenceBase;
 
-/**
- * @author nik
- */
 public class JpsProjectElementReference extends JpsElementReferenceBase<JpsProjectElementReference, JpsProject> {
   @Override
   public JpsProject resolve() {

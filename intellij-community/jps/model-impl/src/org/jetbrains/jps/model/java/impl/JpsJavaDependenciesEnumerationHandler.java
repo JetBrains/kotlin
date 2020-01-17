@@ -25,9 +25,6 @@ import org.jetbrains.jps.service.JpsServiceManager;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class JpsJavaDependenciesEnumerationHandler {
   public static List<JpsJavaDependenciesEnumerationHandler> createHandlers(Collection<JpsModule> rootModules) {
     List<JpsJavaDependenciesEnumerationHandler> handlers = null;

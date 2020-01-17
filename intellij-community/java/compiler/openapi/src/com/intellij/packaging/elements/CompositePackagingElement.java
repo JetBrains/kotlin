@@ -9,9 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class CompositePackagingElement<S> extends PackagingElement<S> implements RenameablePackagingElement {
   private final List<PackagingElement<?>> myChildren = new ArrayList<>();
   private List<PackagingElement<?>> myUnmodifiableChildren;

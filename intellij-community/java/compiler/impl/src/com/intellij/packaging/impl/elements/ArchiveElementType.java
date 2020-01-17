@@ -30,9 +30,6 @@ import org.jetbrains.jps.incremental.artifacts.impl.JpsArtifactUtil;
 
 import javax.swing.*;
 
-/**
-* @author nik
-*/
 class ArchiveElementType extends CompositePackagingElementType<ArchivePackagingElement> {
   ArchiveElementType() {
     super("archive", CompilerBundle.message("element.type.name.archive"));

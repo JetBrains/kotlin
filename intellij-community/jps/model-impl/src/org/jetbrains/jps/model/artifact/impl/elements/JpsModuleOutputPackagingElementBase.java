@@ -24,9 +24,6 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleReference;
 
-/**
- * @author nik
- */
 public abstract class JpsModuleOutputPackagingElementBase<Self extends JpsModuleOutputPackagingElementBase<Self>> extends JpsCompositeElementBase<Self> implements
                                                                                                                                                         JpsModuleOutputPackagingElement {
   private static final JpsElementChildRole<JpsModuleReference>

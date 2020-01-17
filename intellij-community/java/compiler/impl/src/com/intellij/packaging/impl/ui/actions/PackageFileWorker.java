@@ -51,9 +51,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class PackageFileWorker {
   private static final Logger LOG = Logger.getInstance(PackageFileWorker.class);
   private final File myFile;

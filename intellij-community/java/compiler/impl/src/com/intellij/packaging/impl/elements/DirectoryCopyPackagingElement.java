@@ -6,9 +6,6 @@ import com.intellij.packaging.ui.ArtifactEditorContext;
 import com.intellij.packaging.ui.PackagingElementPresentation;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class DirectoryCopyPackagingElement extends FileOrDirectoryCopyPackagingElement<DirectoryCopyPackagingElement> {
   public DirectoryCopyPackagingElement() {
     super(PackagingElementFactoryImpl.DIRECTORY_COPY_ELEMENT_TYPE);

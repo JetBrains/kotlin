@@ -20,9 +20,6 @@ import com.intellij.packaging.artifacts.ArtifactModel;
 import com.intellij.packaging.artifacts.ArtifactPointer;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ArtifactPointerImpl implements ArtifactPointer {
   private String myName;
   private Artifact myArtifact;

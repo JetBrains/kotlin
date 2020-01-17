@@ -9,9 +9,6 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public final class CompileTaskBean extends AbstractExtensionPointBean {
   public static final ProjectExtensionPointName<CompileTaskBean> EP_NAME = new ProjectExtensionPointName<>("com.intellij.compiler.task");
   public enum CompileTaskExecutionPhase { BEFORE, AFTER }

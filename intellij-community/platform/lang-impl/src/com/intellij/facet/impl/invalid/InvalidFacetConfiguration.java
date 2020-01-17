@@ -22,9 +22,6 @@ import com.intellij.facet.ui.FacetValidatorsManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.facet.FacetState;
 
-/**
- * @author nik
- */
 public class InvalidFacetConfiguration implements FacetConfiguration {
   private final FacetState myFacetState;
   private final String myErrorMessage;

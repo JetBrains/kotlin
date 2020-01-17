@@ -19,9 +19,6 @@ import com.intellij.openapi.util.Comparing;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.artifact.elements.JpsFileCopyPackagingElement;
 
-/**
- * @author nik
- */
 public class JpsFileCopyPackagingElementImpl extends JpsFileCopyPackagingElementBase<JpsFileCopyPackagingElementImpl> implements JpsFileCopyPackagingElement {
   private String myRenamedOutputFileName;
 

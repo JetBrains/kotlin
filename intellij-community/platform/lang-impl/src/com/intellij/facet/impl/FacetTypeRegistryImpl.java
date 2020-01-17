@@ -10,9 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class FacetTypeRegistryImpl extends FacetTypeRegistry {
   private static final Logger LOG = Logger.getInstance(FacetTypeRegistryImpl.class);
   private static final Comparator<FacetType> FACET_TYPE_COMPARATOR =

@@ -10,9 +10,6 @@ import java.io.IOException;
 
 import static com.intellij.util.io.TestFileSystemBuilder.fs;
 
-/**
- * @author nik
- */
 public class RecompileAfterVfsChangesTest extends BaseCompilerTestCase {
   public void testMoveFile() throws IOException {
     VirtualFile file = createFile("res/dir1/a.txt", "hello");

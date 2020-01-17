@@ -27,9 +27,6 @@ import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ArtifactChooser extends ElementsChooser<ArtifactPointer> {
   private static final Comparator<ArtifactPointer> ARTIFACT_COMPARATOR =
     (o1, o2) -> o1.getArtifactName().compareToIgnoreCase(o2.getArtifactName());

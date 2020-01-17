@@ -36,9 +36,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class DetectedFrameworksData {
   private static final Logger LOG = Logger.getInstance(DetectedFrameworksData.class);
   private PersistentHashMap<Integer,TIntHashSet> myExistentFrameworkFiles;

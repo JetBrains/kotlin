@@ -28,9 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author nik
- */
 public class LibraryDetectionManagerImpl extends LibraryDetectionManager {
   private final Map<List<? extends VirtualFile>, List<Pair<LibraryKind, LibraryProperties>>> myCache = Collections.synchronizedMap(new HashMap<>());
   

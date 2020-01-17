@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
  * &lt;/extensions&gt;
  * <p>
  * A new instance of the specified class will be created each time then the Settings dialog is opened
- *
- * @author nik
  */
 public class AutoImportOptionsProviderEP extends ConfigurableEP<AutoImportOptionsProvider> {
   public static final ProjectExtensionPointName<AutoImportOptionsProviderEP> EP_NAME = new ProjectExtensionPointName<>("com.intellij.autoImportOptionsProvider");

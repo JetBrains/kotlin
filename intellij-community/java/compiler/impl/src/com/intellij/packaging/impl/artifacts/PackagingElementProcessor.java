@@ -19,9 +19,6 @@ import com.intellij.packaging.elements.ComplexPackagingElement;
 import com.intellij.packaging.elements.PackagingElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public abstract class PackagingElementProcessor<E extends PackagingElement<?>> {
   public boolean shouldProcessSubstitution(ComplexPackagingElement<?> element) {
     return true;

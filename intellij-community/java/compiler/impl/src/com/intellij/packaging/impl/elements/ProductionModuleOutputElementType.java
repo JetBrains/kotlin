@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
-* @author nik
-*/
 public class ProductionModuleOutputElementType extends ModuleOutputElementTypeBase<ProductionModuleOutputPackagingElement> {
   public static final ProductionModuleOutputElementType ELEMENT_TYPE = new ProductionModuleOutputElementType();
 

@@ -20,9 +20,6 @@ import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 abstract class DetectedFrameworkTreeNodeBase extends CheckedTreeNode {
   protected DetectedFrameworkTreeNodeBase(Object userObject) {
     super(userObject);

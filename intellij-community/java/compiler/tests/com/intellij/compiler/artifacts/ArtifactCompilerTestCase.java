@@ -23,9 +23,6 @@ import java.io.File;
 
 import static com.intellij.compiler.artifacts.ArtifactsTestCase.commitModel;
 
-/**
- * @author nik
- */
 public abstract class ArtifactCompilerTestCase extends BaseCompilerTestCase {
 
   protected void deleteArtifact(final Artifact artifact) {

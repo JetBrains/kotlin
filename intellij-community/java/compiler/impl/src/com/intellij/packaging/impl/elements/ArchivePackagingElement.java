@@ -10,9 +10,6 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ArchivePackagingElement extends CompositeElementWithManifest<ArchivePackagingElement> {
   @NonNls public static final String NAME_ATTRIBUTE = "name";
   private String myArchiveFileName;

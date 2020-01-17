@@ -10,9 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class InvalidFacetEditor extends FacetEditorTab {
   private final String myErrorMessage;
   private JPanel myMainPanel;

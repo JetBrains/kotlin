@@ -40,9 +40,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author nik
- */
 public class FrameworkDetectorRegistryImpl extends FrameworkDetectorRegistry implements Disposable {
   private static final Logger LOG = Logger.getInstance(FrameworkDetectorRegistryImpl.class);
   private static final int REGISTRY_VERSION = 0;

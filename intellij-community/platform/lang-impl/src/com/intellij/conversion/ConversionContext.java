@@ -11,9 +11,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author nik
- */
 public interface ConversionContext {
   @NotNull
   File getProjectBaseDir();

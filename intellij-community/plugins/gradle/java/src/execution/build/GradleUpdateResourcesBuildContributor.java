@@ -9,9 +9,6 @@ import org.jetbrains.jps.gradle.model.impl.GradleResourcesTargetType;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class GradleUpdateResourcesBuildContributor implements UpdateResourcesBuildContributor {
   @Override
   @NotNull

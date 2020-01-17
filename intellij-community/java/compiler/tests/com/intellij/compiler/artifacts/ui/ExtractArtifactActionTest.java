@@ -11,9 +11,6 @@ import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.artifacts.ArtifactType;
 import com.intellij.packaging.impl.artifacts.PlainArtifactType;
 
-/**
- * @author nik
- */
 public class ExtractArtifactActionTest extends ArtifactEditorActionTestCase {
 
   public void testSimple() {

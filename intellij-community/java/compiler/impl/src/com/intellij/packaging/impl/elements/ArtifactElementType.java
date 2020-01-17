@@ -31,9 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.*;
 
-/**
-* @author nik
-*/
 public class ArtifactElementType extends ComplexPackagingElementType<ArtifactPackagingElement> {
   public static final ArtifactElementType ARTIFACT_ELEMENT_TYPE = new ArtifactElementType();
 

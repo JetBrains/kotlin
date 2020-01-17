@@ -15,9 +15,6 @@ import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import java.io.IOException;
 import java.nio.file.Path;
 
-/**
- * @author nik
- */
 class SettingsXmlFile {
   private final Path myFile;
   private final Document myDocument;

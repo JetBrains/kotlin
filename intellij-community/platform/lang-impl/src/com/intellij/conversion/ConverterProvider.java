@@ -8,9 +8,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public abstract class ConverterProvider {
   public static final ExtensionPointName<ConverterProvider> EP_NAME = ExtensionPointName.create("com.intellij.project.converterProvider");
   private final String myId;

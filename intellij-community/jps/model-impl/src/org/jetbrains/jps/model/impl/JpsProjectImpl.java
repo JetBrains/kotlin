@@ -39,9 +39,6 @@ import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsProjectImpl extends JpsRootElementBase<JpsProjectImpl> implements JpsProject {
   private static final JpsElementCollectionRole<JpsElementReference<?>> EXTERNAL_REFERENCES_COLLECTION_ROLE =
     JpsElementCollectionRole.create(JpsElementChildRoleBase.create("external reference"));

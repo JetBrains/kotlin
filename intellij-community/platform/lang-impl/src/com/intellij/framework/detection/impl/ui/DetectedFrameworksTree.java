@@ -33,9 +33,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class DetectedFrameworksTree extends CheckboxTree {
   private List<? extends DetectedFrameworkDescription> myDetectedFrameworks;
   private final FrameworkDetectionContext myContext;

@@ -19,9 +19,6 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 
-/**
- * @author nik
- */
 @Tag("file")
 public class ExcludedFileState {
   private String myUrl;

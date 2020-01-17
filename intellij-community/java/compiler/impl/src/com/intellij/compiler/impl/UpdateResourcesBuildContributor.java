@@ -7,9 +7,6 @@ import org.jetbrains.jps.builders.ModuleBasedBuildTargetType;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public interface UpdateResourcesBuildContributor {
   ExtensionPointName<UpdateResourcesBuildContributor> EP_NAME =
     ExtensionPointName.create("com.intellij.compiler.updateResourcesBuildContributor");

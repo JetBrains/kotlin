@@ -30,9 +30,6 @@ import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public class LibraryElementPresentation extends PackagingElementPresentation {
   private final String myLevel;
   private final String myModuleName;

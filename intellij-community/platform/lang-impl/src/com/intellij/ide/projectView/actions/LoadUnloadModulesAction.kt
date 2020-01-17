@@ -10,9 +10,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.roots.ui.configuration.ConfigureUnloadedModulesDialog
 
-/**
- * @author nik
- */
 class LoadUnloadModulesAction : DumbAwareAction("Load/Unload Modules...") {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = isEnabled(e)

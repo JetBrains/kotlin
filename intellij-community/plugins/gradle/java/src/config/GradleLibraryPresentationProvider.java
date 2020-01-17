@@ -21,9 +21,6 @@ import javax.swing.*;
 import java.io.File;
 import java.util.regex.Matcher;
 
-/**
- * @author nik
- */
 final class GradleLibraryPresentationProvider extends GroovyLibraryPresentationProviderBase {
   private static final LibraryKind GRADLE_KIND = LibraryKind.create(GradleConstants.EXTENSION);
 

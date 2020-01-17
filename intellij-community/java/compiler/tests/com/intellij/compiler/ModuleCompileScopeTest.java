@@ -11,9 +11,6 @@ import java.io.File;
 
 import static com.intellij.util.io.TestFileSystemBuilder.fs;
 
-/**
- * @author nik
- */
 public class ModuleCompileScopeTest extends BaseCompilerTestCase {
 
   public void testCompileFile() {

@@ -15,9 +15,6 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import java.util.Locale;
 
-/**
- * @author nik
- */
 public class MarkSourceRootAction extends MarkRootActionBase {
   private static final Logger LOG = Logger.getInstance(MarkSourceRootAction.class);
   private final JpsModuleSourceRootType<?> myRootType;

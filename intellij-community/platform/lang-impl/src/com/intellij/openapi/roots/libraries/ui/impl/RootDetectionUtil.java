@@ -41,9 +41,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class RootDetectionUtil {
   private static final Logger LOG = Logger.getInstance(RootDetectionUtil.class);
 

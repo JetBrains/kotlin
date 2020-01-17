@@ -22,9 +22,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public class DelegatedPackagingElementPresentation extends PackagingElementPresentation {
   private final TreeNodePresentation myDelegate;
 

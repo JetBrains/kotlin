@@ -31,9 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class DumpVfsInfoForExcludedFilesAction extends DumbAwareAction {
   public DumpVfsInfoForExcludedFilesAction() {

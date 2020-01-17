@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class ComplexPackagingElement<S> extends PackagingElement<S> {
   protected ComplexPackagingElement(PackagingElementType type) {
     super(type);

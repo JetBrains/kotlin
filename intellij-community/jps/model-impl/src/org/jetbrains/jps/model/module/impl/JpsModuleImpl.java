@@ -37,9 +37,6 @@ import org.jetbrains.jps.model.module.*;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsModuleImpl<P extends JpsElement> extends JpsNamedCompositeElementBase<JpsModuleImpl<P>> implements JpsTypedModule<P> {
   private static final JpsUrlListRole CONTENT_ROOTS_ROLE = new JpsUrlListRole("content roots");
   private static final JpsUrlListRole EXCLUDED_ROOTS_ROLE = new JpsUrlListRole("excluded roots");

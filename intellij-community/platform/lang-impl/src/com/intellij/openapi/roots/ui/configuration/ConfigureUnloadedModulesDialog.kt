@@ -55,9 +55,6 @@ import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.MutableTreeNode
 import javax.swing.tree.TreePath
 
-/**
- * @author nik
- */
 class ConfigureUnloadedModulesDialog(private val project: Project, selectedModuleName: String?) : DialogWrapper(project) {
   private val loadedModulesTree = ModuleDescriptionsTree(project)
   private val unloadedModulesTree = ModuleDescriptionsTree(project)

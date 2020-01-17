@@ -29,9 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Collection;
 
-/**
- * @author nik
- */
 class DetectedFrameworkNode extends DetectedFrameworkTreeNodeBase {
   private static final Logger LOG = Logger.getInstance(DetectedFrameworkNode.class);
   private final DetectedFrameworkDescription myDescription;

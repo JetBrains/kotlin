@@ -7,9 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
-* @author nik
-*/
 public final class ProjectFileVersionState {
   @XCollection(propertyElementName = "performed-conversions", elementName = "converter", valueAttributeName = "id")
   private final List<String> myPerformedConversionIds;

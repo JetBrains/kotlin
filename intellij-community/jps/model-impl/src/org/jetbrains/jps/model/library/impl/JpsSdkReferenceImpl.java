@@ -28,9 +28,6 @@ import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.library.sdk.JpsSdkReference;
 import org.jetbrains.jps.model.library.sdk.JpsSdkType;
 
-/**
- * @author nik
- */
 public class JpsSdkReferenceImpl<P extends JpsElement> extends JpsNamedElementReferenceBase<JpsLibrary, JpsTypedLibrary<JpsSdk<P>>, JpsSdkReferenceImpl<P>> implements JpsSdkReference<P> {
   private final JpsSdkType<P> mySdkType;
 

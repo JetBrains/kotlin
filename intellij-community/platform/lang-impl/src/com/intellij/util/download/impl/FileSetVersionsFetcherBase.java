@@ -33,9 +33,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class FileSetVersionsFetcherBase<FS extends DownloadableFileSetDescription, F extends DownloadableFileDescription> implements DownloadableFileSetVersions<FS> {
   private static final Comparator<DownloadableFileSetDescription> VERSIONS_COMPARATOR =
     (o1, o2) -> -StringUtil.compareVersionNumbers(o1.getVersionString(), o2.getVersionString());

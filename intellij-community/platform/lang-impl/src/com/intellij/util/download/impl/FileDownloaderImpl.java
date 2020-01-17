@@ -40,9 +40,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author nik
- */
 public class FileDownloaderImpl implements FileDownloader {
   private static final Logger LOG = Logger.getInstance(FileDownloaderImpl.class);
   private static final String LIB_SCHEMA = "lib://";

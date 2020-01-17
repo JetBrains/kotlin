@@ -28,9 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class ConvertProjectDialog extends DialogWrapper {
   private static final Logger LOG = Logger.getInstance(ConvertProjectDialog.class);
   private JPanel myMainPanel;

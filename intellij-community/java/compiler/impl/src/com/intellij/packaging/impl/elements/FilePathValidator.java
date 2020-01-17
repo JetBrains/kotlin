@@ -22,9 +22,6 @@ import com.intellij.util.PathUtil;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 class FilePathValidator implements InputValidator {
   @Override
   public boolean checkInput(String inputString) {

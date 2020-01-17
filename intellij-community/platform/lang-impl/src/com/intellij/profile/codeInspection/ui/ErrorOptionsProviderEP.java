@@ -26,8 +26,6 @@ import com.intellij.openapi.options.ConfigurableEP;
  * &lt;/extensions&gt;
  * <p>
  * A new instance of the specified class will be created each time then the Settings dialog is opened
- *
- * @author nik
  */
 public class ErrorOptionsProviderEP extends ConfigurableEP<ErrorOptionsProvider> {
   public static final ExtensionPointName<ErrorOptionsProviderEP> EP_NAME = ExtensionPointName.create("com.intellij.errorOptionsProvider");

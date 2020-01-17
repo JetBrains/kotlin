@@ -21,9 +21,6 @@ import org.jetbrains.jps.model.java.JpsJavaModuleType;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.module.JpsModule;
 
-/**
- * @author nik
- */
 public abstract class JpsJavaModelTestCase extends JpsModelTestCase  {
   protected JpsModule addModule() {
     return addModule("m");

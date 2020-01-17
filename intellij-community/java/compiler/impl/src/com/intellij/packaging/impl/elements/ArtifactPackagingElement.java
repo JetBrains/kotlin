@@ -20,9 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ArtifactPackagingElement extends ComplexPackagingElement<ArtifactPackagingElement.ArtifactPackagingElementState> {
   private static final Logger LOG = Logger.getInstance(ArtifactPackagingElement.class);
   private final Project myProject;

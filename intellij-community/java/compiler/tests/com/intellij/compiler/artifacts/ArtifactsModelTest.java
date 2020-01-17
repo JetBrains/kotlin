@@ -6,9 +6,6 @@ import com.intellij.packaging.artifacts.*;
 import com.intellij.packaging.impl.artifacts.PlainArtifactType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ArtifactsModelTest extends ArtifactsTestCase {
 
   public void testAddArtifact() {

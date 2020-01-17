@@ -28,9 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class ArtifactElementPresentation extends TreeNodePresentation {
   private final ArtifactPointer myArtifactPointer;
   private final ArtifactEditorContext myContext;

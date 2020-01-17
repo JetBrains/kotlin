@@ -27,9 +27,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public abstract class JpsDependenciesRootsEnumeratorBase<E extends JpsDependenciesEnumeratorBase<?>> implements JpsDependenciesRootsEnumerator {
   protected final JpsOrderRootType myRootType;
   protected final E myDependenciesEnumerator;

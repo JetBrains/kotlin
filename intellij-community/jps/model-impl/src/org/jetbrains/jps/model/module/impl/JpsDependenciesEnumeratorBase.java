@@ -30,9 +30,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public abstract class JpsDependenciesEnumeratorBase<Self extends JpsDependenciesEnumerator> implements JpsDependenciesEnumerator {
   private boolean myWithoutSdk;
   private boolean myWithoutLibraries;

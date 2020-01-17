@@ -26,9 +26,6 @@ import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsSdkDependency;
 
-/**
- * @author nik
- */
 public class JpsModuleRootModificationUtil {
   public static void addDependency(JpsModule module, JpsLibrary library) {
     addDependency(module, library, JpsJavaDependencyScope.COMPILE, false);

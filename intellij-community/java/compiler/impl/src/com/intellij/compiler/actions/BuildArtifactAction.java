@@ -57,9 +57,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class BuildArtifactAction extends DumbAwareAction {
   private static class Holder {
     private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Clean artifact");

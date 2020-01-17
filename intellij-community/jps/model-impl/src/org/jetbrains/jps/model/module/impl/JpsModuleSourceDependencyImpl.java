@@ -18,9 +18,6 @@ package org.jetbrains.jps.model.module.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.module.JpsModuleSourceDependency;
 
-/**
- * @author nik
- */
 public class JpsModuleSourceDependencyImpl extends JpsDependencyElementBase<JpsModuleSourceDependencyImpl>
   implements JpsModuleSourceDependency {
   public JpsModuleSourceDependencyImpl() {

@@ -31,9 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public abstract class FacetBasedDetectedFrameworkDescription<F extends Facet, C extends FacetConfiguration> extends DetectedFrameworkDescription {
   private static final Logger LOG = Logger.getInstance(FacetBasedDetectedFrameworkDescription.class);
   private final FacetBasedFrameworkDetector<F, C> myDetector;

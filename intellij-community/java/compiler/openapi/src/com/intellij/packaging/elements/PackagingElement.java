@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see com.intellij.packaging.artifacts.Artifact
  * @see PackagingElementFactory
- * @author nik
  */
 public abstract class PackagingElement<S> implements PersistentStateComponent<S> {
   private final PackagingElementType myType;

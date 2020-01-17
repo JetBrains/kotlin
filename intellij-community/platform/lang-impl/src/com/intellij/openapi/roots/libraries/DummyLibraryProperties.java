@@ -3,9 +3,6 @@ package com.intellij.openapi.roots.libraries;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
-* @author nik
-*/
 public class DummyLibraryProperties extends LibraryProperties<Object> {
   public static final DummyLibraryProperties INSTANCE = new DummyLibraryProperties();
 

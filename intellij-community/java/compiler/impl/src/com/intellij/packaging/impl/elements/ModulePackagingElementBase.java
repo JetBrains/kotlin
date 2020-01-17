@@ -14,9 +14,6 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public abstract class ModulePackagingElementBase extends PackagingElement<ModulePackagingElementState> implements ModulePackagingElement {
   protected final Project myProject;
   protected ModulePointer myModulePointer;

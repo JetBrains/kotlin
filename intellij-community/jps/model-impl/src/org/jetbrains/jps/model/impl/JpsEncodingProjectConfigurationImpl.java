@@ -37,9 +37,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author nik
- */
 public class JpsEncodingProjectConfigurationImpl extends JpsElementBase<JpsEncodingProjectConfigurationImpl>
   implements JpsEncodingProjectConfiguration {
   private static final Logger LOG = Logger.getInstance(JpsEncodingProjectConfigurationImpl.class);

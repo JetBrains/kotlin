@@ -18,9 +18,6 @@ package org.jetbrains.jps.model.artifact.impl.elements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.artifact.elements.JpsDirectoryPackagingElement;
 
-/**
- * @author nik
- */
 public class JpsDirectoryPackagingElementImpl extends JpsCompositePackagingElementBase<JpsDirectoryPackagingElementImpl> implements JpsDirectoryPackagingElement {
   private String myDirectoryName;
 

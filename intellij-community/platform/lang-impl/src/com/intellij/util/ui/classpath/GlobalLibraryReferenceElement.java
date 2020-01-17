@@ -14,9 +14,6 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.io.IOException;
 
-/**
- * @author nik
- */
 public class GlobalLibraryReferenceElement implements SimpleClasspathElement {
   @NonNls public static final String NAME_ATTRIBUTE = "name";
   @NonNls public static final String LEVEL_ATTRIBUTE = "level";

@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 @State(name = ProjectFacetManagerImpl.COMPONENT_NAME)
 public class ProjectFacetManagerImpl extends ProjectFacetManagerEx implements PersistentStateComponent<ProjectFacetManagerImpl.ProjectFacetManagerState> {
   @NonNls public static final String COMPONENT_NAME = "ProjectFacetManager";

@@ -14,9 +14,6 @@ package com.intellij.openapi.roots.libraries.ui;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class OrderRootTypePresentation {
   private final String myNodeText;
   private final Icon myIcon;

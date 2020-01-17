@@ -29,8 +29,6 @@ import static org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage
 
 /**
  * Allows to control the list of build targets which are compiled when the Make action is invoked for a specific scope.
- *
- * @author nik
  */
 public abstract class BuildTargetScopeProvider {
   public static final ExtensionPointName<BuildTargetScopeProvider> EP_NAME = ExtensionPointName.create("com.intellij.compiler.buildTargetScopeProvider");

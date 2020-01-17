@@ -24,9 +24,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import javax.swing.*;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ConfigureDetectedFrameworksDialog extends DialogWrapper {
   private final DetectedFrameworksComponent myComponent;
   private final Project myProject;

@@ -40,7 +40,6 @@ import java.util.List;
  * &lt;/extensions&gt;
  *
  * @see LibraryPresentationProvider
- * @author nik
  */
 public abstract class LibraryType<P extends LibraryProperties> extends LibraryPresentationProvider<P> {
   public static final ExtensionPointName<LibraryType<?>> EP_NAME = ExtensionPointName.create("com.intellij.library.type");

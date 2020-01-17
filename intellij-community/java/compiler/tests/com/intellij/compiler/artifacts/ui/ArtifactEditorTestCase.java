@@ -19,9 +19,6 @@ import javax.swing.tree.TreePath;
 import java.util.Arrays;
 import java.util.Collections;
 
-/**
- * @author nik
- */
 public abstract class ArtifactEditorTestCase extends PackagingElementsTestCase {
   protected ArtifactEditorImpl myArtifactEditor;
 

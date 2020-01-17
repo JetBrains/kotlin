@@ -16,9 +16,6 @@ import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public class ExcludeFromValidationAction extends AnAction {
 
   public ExcludeFromValidationAction() {

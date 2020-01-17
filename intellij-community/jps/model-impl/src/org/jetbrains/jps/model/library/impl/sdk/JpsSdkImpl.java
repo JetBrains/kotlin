@@ -25,9 +25,6 @@ import org.jetbrains.jps.model.library.impl.JpsLibraryImpl;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.library.sdk.JpsSdkReference;
 
-/**
- * @author nik
- */
 public class JpsSdkImpl<P extends JpsElement> extends JpsCompositeElementBase<JpsSdkImpl<P>> implements JpsSdk<P> {
   private final JpsSdkType<P> mySdkType;
   private String myHomePath;

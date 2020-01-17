@@ -20,9 +20,6 @@ import org.jetbrains.jps.model.JpsEventDispatcher;
 import org.jetbrains.jps.model.JpsModel;
 import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 
-/**
- * @author nik
- */
 public abstract class JpsRootElementBase<E extends JpsRootElementBase<E>> extends JpsCompositeElementBase<E> {
   private final JpsModel myModel;
   private final JpsEventDispatcher myEventDispatcher;

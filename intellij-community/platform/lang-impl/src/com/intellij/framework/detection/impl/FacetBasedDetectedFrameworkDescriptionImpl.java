@@ -29,9 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class FacetBasedDetectedFrameworkDescriptionImpl<F extends Facet, C extends FacetConfiguration> extends FacetBasedDetectedFrameworkDescription<F, C> {
   private final Module myModule;
 

@@ -21,9 +21,6 @@ import org.jetbrains.jps.model.ex.JpsElementBase;
 import org.jetbrains.jps.model.java.JpsJavaProjectExtension;
 import org.jetbrains.jps.model.java.LanguageLevel;
 
-/**
- * @author nik
- */
 public class JpsJavaProjectExtensionImpl extends JpsElementBase<JpsJavaProjectExtensionImpl> implements JpsJavaProjectExtension {
   private String myOutputUrl;
   private LanguageLevel myLanguageLevel;

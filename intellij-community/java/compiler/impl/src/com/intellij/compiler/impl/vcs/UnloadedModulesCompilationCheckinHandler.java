@@ -37,9 +37,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author nik
- */
 public class UnloadedModulesCompilationCheckinHandler extends CheckinHandler {
   private final Project myProject;
   private final CheckinProjectPanel myCheckinPanel;

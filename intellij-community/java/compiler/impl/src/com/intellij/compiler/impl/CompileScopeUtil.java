@@ -32,9 +32,6 @@ import org.jetbrains.jps.incremental.artifacts.ArtifactBuildTargetType;
 import java.util.*;
 import java.util.function.Function;
 
-/**
- * @author nik
- */
 public class CompileScopeUtil {
   private static final Key<List<TargetTypeBuildScope>> BASE_SCOPE_FOR_EXTERNAL_BUILD = Key.create("SCOPE_FOR_EXTERNAL_BUILD");
 

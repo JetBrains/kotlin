@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class InvalidFacetManager {
   public static InvalidFacetManager getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, InvalidFacetManager.class);

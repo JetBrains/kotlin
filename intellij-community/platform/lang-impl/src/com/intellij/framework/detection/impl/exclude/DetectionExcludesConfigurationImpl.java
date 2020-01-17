@@ -20,9 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 @State(name = "FrameworkDetectionExcludesConfiguration")
 public class DetectionExcludesConfigurationImpl extends DetectionExcludesConfiguration
          implements PersistentStateComponent<ExcludesConfigurationState>, Disposable {

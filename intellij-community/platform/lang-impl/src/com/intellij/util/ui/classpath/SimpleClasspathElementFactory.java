@@ -17,9 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class SimpleClasspathElementFactory {
   private SimpleClasspathElementFactory() {
   }

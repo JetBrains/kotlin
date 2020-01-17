@@ -22,9 +22,6 @@ import org.jetbrains.jps.model.impl.JpsProjectElementReference;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleReference;
 
-/**
- * @author nik
- */
 public class JpsModuleReferenceImpl extends JpsNamedElementReferenceImpl<JpsModule, JpsModuleReferenceImpl> implements JpsModuleReference {
   public JpsModuleReferenceImpl(String elementName) {
     super(JpsModuleRole.MODULE_COLLECTION_ROLE, elementName, new JpsProjectElementReference());

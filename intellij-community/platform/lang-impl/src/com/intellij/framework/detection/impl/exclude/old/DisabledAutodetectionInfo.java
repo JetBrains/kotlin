@@ -10,9 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DisabledAutodetectionInfo {
   private List<DisabledAutodetectionByTypeElement> myElements = new SortedList<>(DisabledAutodetectionByTypeElement.COMPARATOR);
 

@@ -40,9 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class FrameworkDetectionProcessor {
 
   public static final Set<String> SKIPPED_DIRECTORIES = ContainerUtil.newHashSet("node_modules");

@@ -21,9 +21,6 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.java.JpsJavaDependencyExtension;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
 
-/**
- * @author nik
- */
 public class JpsJavaDependencyExtensionRole extends JpsElementChildRoleBase<JpsJavaDependencyExtension> implements JpsElementCreator<JpsJavaDependencyExtension> {
   public static final JpsJavaDependencyExtensionRole INSTANCE = new JpsJavaDependencyExtensionRole();
 

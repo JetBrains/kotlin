@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public abstract class ComplexPackagingElementType<E extends ComplexPackagingElement<?>> extends PackagingElementType<E> {
   protected ComplexPackagingElementType(@NotNull @NonNls String id, @NotNull String presentableName) {
     super(id, presentableName);

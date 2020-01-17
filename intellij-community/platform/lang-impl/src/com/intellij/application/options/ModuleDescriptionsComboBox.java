@@ -35,8 +35,6 @@ import java.util.Comparator;
  * Use it instead of {@link ModulesComboBox} for configuration elements which may refer to unloaded modules.
  *
  * @see ModulesComboBox
- *
- * @author nik
  */
 public final class ModuleDescriptionsComboBox extends ComboBox<ModuleDescription> {
   private final SortedComboBoxModel<ModuleDescription> myModel;

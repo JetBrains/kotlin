@@ -8,9 +8,6 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class JavacConfigurationMacroFilter extends PathMacroFilter {
   @Override
   public boolean recursePathMacros(@NotNull Attribute attribute) {

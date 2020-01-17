@@ -26,8 +26,6 @@ import com.intellij.openapi.options.ConfigurableEP;
  * &lt;/extensions&gt;
  * <p>
  * A new instance of the specified class will be created each time then the Settings dialog is opened
- *
- * @author nik
  */
 public class EditorOptionsProviderEP extends ConfigurableEP<EditorOptionsProvider> {
   public static final ExtensionPointName<EditorOptionsProviderEP> EP_NAME = ExtensionPointName.create("com.intellij.editorOptionsProvider");

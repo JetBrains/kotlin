@@ -27,9 +27,6 @@ import org.jetbrains.jps.model.library.JpsTypedLibrary;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsLibraryCollectionImpl implements JpsLibraryCollection {
   private final JpsElementCollection<JpsLibrary> myCollection;
 

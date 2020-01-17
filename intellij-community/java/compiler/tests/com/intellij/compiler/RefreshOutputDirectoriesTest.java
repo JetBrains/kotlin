@@ -15,9 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class RefreshOutputDirectoriesTest extends BaseCompilerTestCase {
   private int myRootsChangedCount;
 

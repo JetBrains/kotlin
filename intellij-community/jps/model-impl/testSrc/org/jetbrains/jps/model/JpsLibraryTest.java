@@ -23,9 +23,6 @@ import org.jetbrains.jps.model.library.JpsLibraryCollection;
 import org.jetbrains.jps.model.library.JpsLibraryReference;
 import org.jetbrains.jps.model.library.JpsOrderRootType;
 
-/**
- * @author nik
- */
 public class JpsLibraryTest extends JpsModelTestCase {
   public void testAddLibrary() {
     JpsLibrary a = myProject.addLibrary("a", JpsJavaLibraryType.INSTANCE);

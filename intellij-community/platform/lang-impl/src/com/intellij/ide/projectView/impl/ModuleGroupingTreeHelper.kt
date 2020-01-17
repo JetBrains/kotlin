@@ -46,8 +46,6 @@ import javax.swing.tree.TreeNode
 /**
  * Provides methods to build trees where nodes are grouped by modules (and optionally by module groups). Type parameter M specified class
  * of modules (may be [Module] if real modules are shown, or [com.intellij.openapi.module.ModuleDescription] if loaded and unloaded modules are shown.
- *
- * @author nik
  */
 class ModuleGroupingTreeHelper<M: Any, N: MutableTreeNode> private constructor(
   private val groupingEnabled: Boolean,

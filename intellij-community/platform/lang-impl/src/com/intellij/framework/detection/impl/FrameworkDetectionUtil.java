@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class FrameworkDetectionUtil {
   private FrameworkDetectionUtil() {
   }

@@ -22,9 +22,6 @@ import com.intellij.openapi.module.ConfigurationErrorDescription;
 import com.intellij.openapi.module.ConfigurationErrorType;
 import com.intellij.openapi.project.ProjectBundle;
 
-/**
- * @author nik
- */
 public class FacetLoadingErrorDescription extends ConfigurationErrorDescription {
   private final InvalidFacet myFacet;
 

@@ -30,9 +30,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public abstract class FrameworkDetectorRegistry {
   public static FrameworkDetectorRegistry getInstance() {
     return ServiceManager.getService(FrameworkDetectorRegistry.class);

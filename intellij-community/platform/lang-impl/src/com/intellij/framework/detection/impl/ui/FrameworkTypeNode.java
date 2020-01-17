@@ -20,9 +20,6 @@ import com.intellij.framework.detection.DetectionExcludesConfiguration;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 class FrameworkTypeNode extends DetectedFrameworkTreeNodeBase {
   private final FrameworkType myFrameworkType;
 

@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public abstract class PackagingValidationTestCase extends PackagingElementsTestCase {
   protected PackagingValidationTestCase() {
     mySetupModule = true;

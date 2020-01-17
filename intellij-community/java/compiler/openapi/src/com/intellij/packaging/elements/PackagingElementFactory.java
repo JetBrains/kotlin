@@ -28,9 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class PackagingElementFactory {
 
   public static PackagingElementFactory getInstance() {

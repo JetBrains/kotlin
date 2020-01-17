@@ -8,9 +8,6 @@ import com.intellij.packaging.impl.artifacts.ArtifactBySourceFileFinder;
 
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public class ArtifactBySourceFileFinderTest extends PackagingElementsTestCase {
   public void testAddRemoveDirectoryCopy() {
     final VirtualFile file = createFile("a/b/c.txt");

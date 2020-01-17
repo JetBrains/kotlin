@@ -24,9 +24,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author nik
- */
 public class JpsServiceManagerImpl extends JpsServiceManager {
   private final ConcurrentMap<Class, Object> myServices = new ConcurrentHashMap<>(16, 0.75f, 1);
   private final ConcurrentMap<Class, List<?>> myExtensions = new ConcurrentHashMap<>(16, 0.75f, 1);

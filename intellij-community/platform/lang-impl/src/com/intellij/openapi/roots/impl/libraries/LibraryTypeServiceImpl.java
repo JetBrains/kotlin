@@ -22,9 +22,6 @@ import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class LibraryTypeServiceImpl extends LibraryTypeService {
   private static final String DEFAULT_LIBRARY_NAME = "Unnamed";
 

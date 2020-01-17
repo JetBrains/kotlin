@@ -12,9 +12,6 @@ import java.io.IOException;
 
 import static com.intellij.util.io.TestFileSystemItem.fs;
 
-/**
- * @author nik
- */
 public class CorruptedBuildCachesTest extends BaseCompilerTestCase {
 
   public void testTimestampsStorage() {

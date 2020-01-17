@@ -23,9 +23,6 @@ import org.jetbrains.jps.model.impl.JpsUrlListRole;
 import org.jetbrains.jps.model.java.JpsJavaModuleExtension;
 import org.jetbrains.jps.model.java.LanguageLevel;
 
-/**
- * @author nik
- */
 public class JpsJavaModuleExtensionImpl extends JpsCompositeElementBase<JpsJavaModuleExtensionImpl> implements JpsJavaModuleExtension {
   private static final JpsUrlListRole JAVADOC_ROOTS_ROLE = new JpsUrlListRole("javadoc roots");
   private static final JpsUrlListRole ANNOTATIONS_ROOTS_ROLE = new JpsUrlListRole("annotation roots");

@@ -16,9 +16,6 @@
 
 package com.intellij.conversion;
 
-/**
- * @author nik
- */
 public abstract class ConversionProcessor<Settings> {
   /**
    * @return {@code true} if the settings are in old format and need to be converted

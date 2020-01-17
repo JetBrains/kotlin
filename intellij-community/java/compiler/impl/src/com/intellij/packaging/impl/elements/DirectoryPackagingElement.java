@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author nik
- *
  * classpath is used for exploded WAR and EJB directories under exploded EAR
  */
 public class DirectoryPackagingElement extends CompositeElementWithManifest<DirectoryPackagingElement> {

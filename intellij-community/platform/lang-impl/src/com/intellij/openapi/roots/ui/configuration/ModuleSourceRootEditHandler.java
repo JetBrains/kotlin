@@ -14,9 +14,6 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @author nik
- */
 public abstract class ModuleSourceRootEditHandler<P extends JpsElement> {
   public static final ExtensionPointName<ModuleSourceRootEditHandler> EP_NAME = ExtensionPointName.create("com.intellij.projectStructure.sourceRootEditHandler");
   private final JpsModuleSourceRootType<P> myRootType;

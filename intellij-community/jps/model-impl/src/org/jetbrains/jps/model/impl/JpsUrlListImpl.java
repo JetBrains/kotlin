@@ -22,9 +22,6 @@ import org.jetbrains.jps.model.ex.JpsElementBase;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsUrlListImpl extends JpsElementBase<JpsUrlListImpl> implements JpsUrlList {
   private final List<String> myUrls = new ArrayList<>();
 

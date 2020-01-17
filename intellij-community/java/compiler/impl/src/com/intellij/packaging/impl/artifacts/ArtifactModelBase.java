@@ -24,9 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public abstract class ArtifactModelBase implements ArtifactModel {
   private Map<String, Artifact> myArtifactsMap;
   private Artifact[] myArtifactsArray;

@@ -19,9 +19,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class MultipleFacetEditorHelperImpl implements MultipleFacetEditorHelper {
   private static final Logger LOG = Logger.getInstance(MultipleFacetSettingsEditor.class);
   private final List<AbstractBinding> myBindings = new ArrayList<>();

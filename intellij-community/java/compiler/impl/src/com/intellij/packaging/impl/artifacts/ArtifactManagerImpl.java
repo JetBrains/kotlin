@@ -36,9 +36,6 @@ import org.jetbrains.jps.model.serialization.artifact.ArtifactState;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 @State(name = ArtifactManagerImpl.COMPONENT_NAME, storages = @Storage(value = "artifacts", stateSplitter = ArtifactManagerStateSplitter.class))
 public final class ArtifactManagerImpl extends ArtifactManager implements PersistentStateComponent<ArtifactManagerState>, Disposable {
   private static final Logger LOG = Logger.getInstance(ArtifactManagerImpl.class);

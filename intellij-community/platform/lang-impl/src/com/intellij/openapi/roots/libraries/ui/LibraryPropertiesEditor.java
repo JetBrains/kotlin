@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public abstract class LibraryPropertiesEditor implements UnnamedConfigurable {
   @Override
   @NotNull

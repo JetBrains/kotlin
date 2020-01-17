@@ -25,9 +25,6 @@ import org.jetbrains.jps.model.module.JpsModule;
 import java.io.File;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class JpsJavaCompilerConfigurationImpl extends JpsCompositeElementBase<JpsJavaCompilerConfigurationImpl> implements JpsJavaCompilerConfiguration {
   public static final JpsFactoryElementChildRoleBase<JpsJavaCompilerConfiguration> ROLE = JpsFactoryElementChildRoleBase.create("compiler configuration", () -> new JpsJavaCompilerConfigurationImpl());
   private boolean myAddNotNullAssertions = true;

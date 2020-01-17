@@ -34,9 +34,6 @@ import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 import java.util.*;
 import java.util.function.Predicate;
 
-/**
- * @author nik
- */
 @State(name = JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME, useLoadedStateAsExisting = false)
 @ApiStatus.Internal
 public final class FacetManagerImpl extends FacetManagerBase implements ModuleComponent, PersistentStateComponent<FacetManagerState> {

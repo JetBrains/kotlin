@@ -20,9 +20,6 @@ import org.jetbrains.jps.model.JpsElementReference;
 import org.jetbrains.jps.model.JpsEventDispatcher;
 import org.jetbrains.jps.model.JpsModel;
 
-/**
- * @author nik
- */
 public class JpsModelImpl implements JpsModel {
   private final JpsProjectImpl myProject;
   private final JpsGlobalImpl myGlobal;

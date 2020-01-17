@@ -33,9 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class InjectedLanguageBlockBuilder {
   private static final Logger LOG = Logger.getInstance(InjectedLanguageBlockBuilder.class);
 

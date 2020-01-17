@@ -22,9 +22,6 @@ import com.intellij.util.ui.ThreeStateCheckBox;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class MultipleInvalidFacetEditor extends MultipleFacetSettingsEditor {
   private final MultipleFacetEditorHelperImpl myHelper;
   private JPanel myMainPanel;

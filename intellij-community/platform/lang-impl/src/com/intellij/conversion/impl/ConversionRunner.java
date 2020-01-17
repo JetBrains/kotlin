@@ -11,9 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class ConversionRunner {
   private final ConverterProvider myProvider;
   private final ConversionContextImpl myContext;

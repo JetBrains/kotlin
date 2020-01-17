@@ -19,9 +19,6 @@ import com.intellij.util.messages.Topic;
 
 import java.util.EventListener;
 
-/**
- * @author nik
- */
 public interface CustomBuilderMessageHandler extends EventListener {
   Topic<CustomBuilderMessageHandler> TOPIC = Topic.create("custom builder message", CustomBuilderMessageHandler.class);
 

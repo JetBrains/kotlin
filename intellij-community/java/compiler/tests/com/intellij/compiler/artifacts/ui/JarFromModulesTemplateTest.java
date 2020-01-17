@@ -16,9 +16,6 @@ import com.intellij.packaging.impl.artifacts.JarFromModulesTemplate;
 import com.intellij.testFramework.PsiTestUtil;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public class JarFromModulesTemplateTest extends PackagingElementsTestCase {
   private Artifact myArtifact;
 

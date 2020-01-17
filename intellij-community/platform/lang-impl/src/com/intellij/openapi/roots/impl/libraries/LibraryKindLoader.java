@@ -4,9 +4,6 @@ package com.intellij.openapi.roots.impl.libraries;
 import com.intellij.ide.ApplicationInitializedListener;
 import com.intellij.openapi.roots.libraries.LibraryType;
 
-/**
- * @author nik
- */
 public class LibraryKindLoader implements ApplicationInitializedListener {
   @Override
   public void componentsInitialized() {

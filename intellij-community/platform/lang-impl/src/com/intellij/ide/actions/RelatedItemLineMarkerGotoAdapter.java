@@ -29,9 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class RelatedItemLineMarkerGotoAdapter extends GotoRelatedProvider {
   @NotNull
   @Override

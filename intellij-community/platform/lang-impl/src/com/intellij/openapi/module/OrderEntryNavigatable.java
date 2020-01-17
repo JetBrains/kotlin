@@ -19,9 +19,6 @@ import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.pom.Navigatable;
 
-/**
- * @author nik
- */
 public class OrderEntryNavigatable implements Navigatable {
   private final Module myModule;
   private final OrderEntry myOrderEntry;

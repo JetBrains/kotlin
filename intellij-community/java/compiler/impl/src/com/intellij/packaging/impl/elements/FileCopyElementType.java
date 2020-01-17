@@ -30,9 +30,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
-* @author nik
-*/
 public class FileCopyElementType extends PackagingElementType<FileCopyPackagingElement> {
 
   FileCopyElementType() {

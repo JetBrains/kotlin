@@ -30,9 +30,6 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author nik
- */
 public final class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceFileChangeTracker {
   private final Project myProject;
   private final SingleAlarm myCheckingQueue;

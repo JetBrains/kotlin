@@ -23,9 +23,6 @@ import org.jetbrains.jps.model.artifact.JpsArtifactReference;
 import org.jetbrains.jps.model.artifact.elements.*;
 import org.jetbrains.jps.model.library.JpsLibraryReference;
 
-/**
- * @author nik
- */
 public class JpsPackagingElementFactoryImpl extends JpsPackagingElementFactory {
 
   @Override

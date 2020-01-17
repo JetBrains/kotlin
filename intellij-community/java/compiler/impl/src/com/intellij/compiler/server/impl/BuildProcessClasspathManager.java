@@ -24,9 +24,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.JarFile;
 
-/**
- * @author nik
- */
 public class BuildProcessClasspathManager {
   private static final Logger LOG = Logger.getInstance(BuildProcessClasspathManager.class);
 

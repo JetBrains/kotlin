@@ -24,9 +24,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements ModuleSettings {
   private final String myModuleName;
 

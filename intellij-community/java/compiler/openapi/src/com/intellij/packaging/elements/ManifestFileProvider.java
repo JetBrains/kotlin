@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public interface ManifestFileProvider {
   @Nullable
   List<String> getClasspathFromManifest(@NotNull CompositePackagingElement<?> archiveRoot, @NotNull ArtifactType artifactType);

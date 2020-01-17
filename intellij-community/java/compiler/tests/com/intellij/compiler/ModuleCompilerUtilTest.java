@@ -28,9 +28,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ModuleCompilerUtilTest extends JavaModuleTestCase {
   private TempDirTestFixture myTempDirTestFixture;
 

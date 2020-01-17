@@ -13,9 +13,6 @@ import java.io.IOException;
 
 import static com.intellij.util.io.TestFileSystemBuilder.fs;
 
-/**
- * @author nik
- */
 public class ForcedCompilationTest extends BaseCompilerTestCase {
 
   public void testHandleDeletedFilesOnForcedCompilation() {

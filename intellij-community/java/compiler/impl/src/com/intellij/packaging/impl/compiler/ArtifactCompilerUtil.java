@@ -27,9 +27,6 @@ import org.jetbrains.jps.incremental.artifacts.ArtifactBuildTargetType;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ArtifactCompilerUtil {
   private ArtifactCompilerUtil() {
   }

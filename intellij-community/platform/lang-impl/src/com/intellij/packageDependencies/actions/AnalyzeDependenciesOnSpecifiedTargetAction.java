@@ -21,9 +21,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class AnalyzeDependenciesOnSpecifiedTargetAction extends AnAction {
   public static final DataKey<GlobalSearchScope> TARGET_SCOPE_KEY = DataKey.create("MODULE_DEPENDENCIES_TARGET_SCOPE");
 

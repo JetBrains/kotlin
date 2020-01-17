@@ -31,9 +31,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author nik
- */
 public class FrameworkDetectionIndex extends ScalarIndexExtension<Integer> {
   private static final Logger LOG = Logger.getInstance(FrameworkDetectionIndex.class);
   public static final ID<Integer,Void> NAME = ID.create("FrameworkDetectionIndex");

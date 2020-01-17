@@ -35,9 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class FacetFinderImpl extends FacetFinder {
   private static final Logger LOG = Logger.getInstance(FacetFinderImpl.class);
   private final Map<FacetTypeId, AllFacetsOfTypeModificationTracker> myAllFacetTrackers = new HashMap<>();

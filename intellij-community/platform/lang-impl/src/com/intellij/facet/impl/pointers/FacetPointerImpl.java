@@ -30,9 +30,6 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public class FacetPointerImpl<F extends Facet> implements FacetPointer<F> {
   private final FacetPointersManagerImpl myManager;
   private String myModuleName;

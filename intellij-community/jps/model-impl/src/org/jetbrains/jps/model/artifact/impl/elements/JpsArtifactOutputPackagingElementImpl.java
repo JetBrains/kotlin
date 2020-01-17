@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsArtifactOutputPackagingElementImpl extends JpsComplexPackagingElementBase<JpsArtifactOutputPackagingElementImpl>
   implements JpsArtifactOutputPackagingElement {
   private static final JpsElementChildRole<JpsArtifactReference>

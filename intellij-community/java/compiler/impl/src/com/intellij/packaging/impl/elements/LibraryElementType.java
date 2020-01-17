@@ -32,9 +32,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
-* @author nik
-*/
 public class LibraryElementType extends ComplexPackagingElementType<LibraryPackagingElement> {
   public static final LibraryElementType LIBRARY_ELEMENT_TYPE = new LibraryElementType();
 

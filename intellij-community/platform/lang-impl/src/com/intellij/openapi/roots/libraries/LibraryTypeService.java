@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public abstract class LibraryTypeService {
   public static LibraryTypeService getInstance() {
     return ServiceManager.getService(LibraryTypeService.class);

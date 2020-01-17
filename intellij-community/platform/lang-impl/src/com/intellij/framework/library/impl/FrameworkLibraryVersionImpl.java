@@ -25,9 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class FrameworkLibraryVersionImpl extends DownloadableFileSetDescriptionImpl<DownloadableLibraryFileDescription> implements FrameworkLibraryVersion {
   @Nullable private final String myLibraryName;
   @NotNull private final FrameworkAvailabilityCondition myAvailabilityCondition;

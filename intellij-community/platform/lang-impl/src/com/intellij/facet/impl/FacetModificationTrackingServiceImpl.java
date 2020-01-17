@@ -32,9 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author nik
- */
 public class FacetModificationTrackingServiceImpl extends FacetModificationTrackingService {
   private final ConcurrentMap<Facet, Pair<SimpleModificationTracker, EventDispatcher<ModificationTrackerListener>>> myModificationsTrackers =
     ContainerUtil.newConcurrentMap();

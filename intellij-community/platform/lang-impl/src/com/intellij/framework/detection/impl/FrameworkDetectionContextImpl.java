@@ -37,9 +37,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class FrameworkDetectionContextImpl extends FrameworkDetectionContextBase {
   private final Project myProject;
 

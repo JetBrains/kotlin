@@ -12,9 +12,6 @@ import com.intellij.testFramework.VfsTestUtil;
 
 import java.io.IOException;
 
-/**
- * @author nik
- */
 public class IncrementalArtifactsCompilerTest extends ArtifactCompilerTestCase {
   public void testAddFile() {
     VirtualFile file = createFile("dir/file.txt");

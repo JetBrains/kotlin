@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public abstract class LibraryRootsDetector {
   /**
    * Find suitable roots in {@code rootCandidate} or its descendants.

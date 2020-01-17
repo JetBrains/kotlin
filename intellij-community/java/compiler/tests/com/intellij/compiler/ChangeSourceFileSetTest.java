@@ -9,9 +9,6 @@ import com.intellij.util.io.TestFileSystemBuilder;
 
 import static com.intellij.util.io.TestFileSystemBuilder.fs;
 
-/**
- * @author nik
- */
 public class ChangeSourceFileSetTest extends BaseCompilerTestCase {
 
   public void testAddRemoveSourceRoot() {

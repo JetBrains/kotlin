@@ -19,9 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * @author nik
- */
 public class FileCopyPackagingElement extends FileOrDirectoryCopyPackagingElement<FileCopyPackagingElement> implements RenameablePackagingElement {
   @NonNls public static final String OUTPUT_FILE_NAME_ATTRIBUTE = "output-file-name";
   private String myRenamedOutputFileName;

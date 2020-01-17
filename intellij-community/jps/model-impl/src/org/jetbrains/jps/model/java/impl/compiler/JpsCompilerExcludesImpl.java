@@ -23,9 +23,6 @@ import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class JpsCompilerExcludesImpl implements JpsCompilerExcludes {
   private final Set<File> myFiles = new LinkedHashSet<>();
   private final Set<File> myDirectories = new LinkedHashSet<>();

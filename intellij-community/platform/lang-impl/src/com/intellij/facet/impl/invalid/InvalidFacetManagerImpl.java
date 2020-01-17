@@ -15,9 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 @State(name = InvalidFacetManagerImpl.COMPONENT_NAME, storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public class InvalidFacetManagerImpl extends InvalidFacetManager implements PersistentStateComponent<InvalidFacetManagerImpl.InvalidFacetManagerState> {
   public static final String COMPONENT_NAME = "InvalidFacetManager";

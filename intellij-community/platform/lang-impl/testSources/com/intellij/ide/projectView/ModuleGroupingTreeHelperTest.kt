@@ -28,9 +28,6 @@ import java.util.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
-/**
- * @author nik
- */
 class ModuleGroupingTreeHelperTest: UsefulTestCase() {
   private lateinit var tree: Tree
   private lateinit var root: MockModuleTreeNode
