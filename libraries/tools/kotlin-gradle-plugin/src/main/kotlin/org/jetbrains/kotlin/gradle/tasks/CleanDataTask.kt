@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
@@ -13,8 +14,7 @@ import java.time.Duration
 import java.time.Instant
 
 /**
- * Task to clean all old loaded files based on a date of special access file.
- * The access file should be updated every time when loaded files are used
+ * Task to clean all old unused loaded files from registered stores in [CleanableStore].
  */
 open class CleanDataTask : DefaultTask() {
 
@@ -23,7 +23,7 @@ open class CleanDataTask : DefaultTask() {
      * Use path instead of file to avoid file scanning for change check
      */
     @Input
-    lateinit var cleanableStore: CleanableStore
+    lateinit var cleanableStoreProvider: Provider<CleanableStore>
 
     /**
      * Time to live in days
@@ -36,7 +36,7 @@ open class CleanDataTask : DefaultTask() {
     fun exec() {
         val expirationDate = Instant.now().minus(Duration.ofDays(timeToLiveInDays))
 
-        cleanableStore.cleanDir(expirationDate)
+        cleanableStoreProvider.get().cleanDir(expirationDate)
 
     }
 

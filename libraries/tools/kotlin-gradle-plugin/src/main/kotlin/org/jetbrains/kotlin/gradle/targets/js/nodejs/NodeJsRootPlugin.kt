@@ -29,7 +29,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
         }
 
         tasks.register("node" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
-            it.cleanableStore = settings.requireConfigured().cleanableStore
+            it.cleanableStoreProvider = provider { settings.requireConfigured().cleanableStore }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
         }
