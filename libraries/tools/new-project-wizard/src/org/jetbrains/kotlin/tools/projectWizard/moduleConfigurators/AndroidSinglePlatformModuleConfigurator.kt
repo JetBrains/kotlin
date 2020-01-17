@@ -92,7 +92,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
         )
     }
 
-    override fun createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    override fun ValuesReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
         buildList {
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.GOOGLE, "androidx.appcompat", "appcompat"),
