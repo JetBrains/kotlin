@@ -32,8 +32,8 @@ import java.util.*;
 
 public class FacetModelImpl extends FacetModelBase implements ModifiableFacetModel {
   private static final Logger LOG = Logger.getInstance(FacetModelImpl.class);
-  private final List<Facet> myFacets = new ArrayList<>();
-  private final Map<Facet, String> myFacet2NewName = new HashMap<>();
+  private final List<Facet<?>> myFacets = new ArrayList<>();
+  private final Map<Facet<?>, String> myFacet2NewName = new HashMap<>();
   private final FacetManagerImpl myManager;
   private final List<Listener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 
@@ -42,13 +42,13 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
   }
 
   public void addFacetsFromManager() {
-    for (Facet facet : myManager.getAllFacets()) {
+    for (Facet<?> facet : myManager.getAllFacets()) {
       addFacet(facet);
     }
   }
 
   @Override
-  public void addFacet(Facet facet) {
+  public void addFacet(Facet<?> facet) {
     if (myFacets.contains(facet)) {
       LOG.error("Facet " + facet + " [" + facet.getTypeId() + "] is already added");
     }
@@ -58,13 +58,13 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
   }
 
   @Override
-  public void addFacet(Facet facet, @Nullable ProjectModelExternalSource externalSource) {
+  public void addFacet(Facet<?> facet, @Nullable ProjectModelExternalSource externalSource) {
     addFacet(facet);
     myManager.setExternalSource(facet, externalSource);
   }
 
   @Override
-  public void removeFacet(Facet facet) {
+  public void removeFacet(Facet<?> facet) {
     if (!myFacets.remove(facet)) {
       LOG.error("Facet " + facet + " [" + facet.getTypeId() + "] not found");
     }
@@ -73,7 +73,7 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
   }
 
   @Override
-  public void rename(final Facet facet, final String newName) {
+  public void rename(final Facet<?> facet, final String newName) {
     if (!newName.equals(facet.getName())) {
       myFacet2NewName.put(facet, newName);
     } else {
@@ -84,7 +84,7 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
 
   @Override
   @Nullable
-  public String getNewName(final Facet facet) {
+  public String getNewName(final Facet<?> facet) {
     return myFacet2NewName.get(facet);
   }
 
@@ -99,18 +99,18 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
   }
 
   @Override
-  public boolean isNewFacet(final Facet facet) {
+  public boolean isNewFacet(final Facet<?> facet) {
     return myFacets.contains(facet) && ArrayUtil.find(myManager.getAllFacets(), facet) == -1;
   }
 
   @Override
-  public Facet @NotNull [] getAllFacets() {
+  public Facet<?> @NotNull [] getAllFacets() {
     return myFacets.toArray(Facet.EMPTY_ARRAY);
   }
 
   @Override
   @NotNull
-  public String getFacetName(@NotNull final Facet facet) {
+  public String getFacetName(@NotNull final Facet<?> facet) {
     return myFacet2NewName.containsKey(facet) ? myFacet2NewName.get(facet) : facet.getName();
   }
 

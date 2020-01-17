@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFacetListenersRegistry {
-  private final Map<FacetTypeId, EventDispatcher<ProjectWideFacetListener>> myDispatchers = new HashMap<>();
-  private final Map<FacetTypeId, Map<Facet, Boolean>> myFacetsByType = new HashMap<>();
+  private final Map<FacetTypeId<?>, EventDispatcher<ProjectWideFacetListener>> myDispatchers = new HashMap<>();
+  private final Map<FacetTypeId<?>, Map<Facet<?>, Boolean>> myFacetsByType = new HashMap<>();
   private final Map<Module, MessageBusConnection> myModule2Connection = new HashMap<>();
   private final FacetManagerAdapter myFacetListener;
   private final EventDispatcher<ProjectWideFacetListener> myAllFacetsListener = EventDispatcher.create(ProjectWideFacetListener.class);
@@ -35,8 +35,8 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
 
       @Override
       public void beforeModuleRemoved(@NotNull final Project project, @NotNull final Module module) {
-        Facet[] allFacets = FacetManager.getInstance(module).getAllFacets();
-        for (Facet facet : allFacets) {
+        Facet<?>[] allFacets = FacetManager.getInstance(module).getAllFacets();
+        for (Facet<?> facet : allFacets) {
           onFacetRemoved(facet, true);
         }
       }
@@ -59,16 +59,16 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
     }
 
     final FacetManager facetManager = FacetManager.getInstance(module);
-    final Facet[] facets = facetManager.getAllFacets();
-    for (Facet facet : facets) {
+    final Facet<?>[] facets = facetManager.getAllFacets();
+    for (Facet<?> facet : facets) {
       onFacetRemoved(facet, false);
     }
   }
 
   private void onModuleAdded(final Module module) {
     final FacetManager facetManager = FacetManager.getInstance(module);
-    final Facet[] facets = facetManager.getAllFacets();
-    for (Facet facet : facets) {
+    final Facet<?>[] facets = facetManager.getAllFacets();
+    for (Facet<?> facet : facets) {
       onFacetAdded(facet);
     }
     final MessageBusConnection connection = module.getMessageBus().connect();
@@ -76,9 +76,9 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
     connection.subscribe(FacetManager.FACETS_TOPIC, myFacetListener);
   }
 
-  private void onFacetRemoved(@NotNull Facet facet, final boolean before) {
-    final FacetTypeId typeId = facet.getTypeId();
-    Map<Facet, Boolean> facets = myFacetsByType.get(typeId);
+  private void onFacetRemoved(@NotNull Facet<?> facet, final boolean before) {
+    final FacetTypeId<?> typeId = facet.getTypeId();
+    Map<Facet<?>, Boolean> facets = myFacetsByType.get(typeId);
     boolean lastFacet;
     if (facets != null) {
       facets.remove(facet);
@@ -116,15 +116,15 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
     }
   }
 
-  private ProjectWideFacetListener<Facet> getAllFacetsMulticaster() {
+  private ProjectWideFacetListener<Facet<?>> getAllFacetsMulticaster() {
     //noinspection unchecked
     return myAllFacetsListener.getMulticaster();
   }
 
-  private void onFacetAdded(@NotNull Facet facet) {
+  private void onFacetAdded(@NotNull Facet<?> facet) {
     boolean firstFacet = myFacetsByType.isEmpty();
-    final FacetTypeId typeId = facet.getTypeId();
-    Map<Facet, Boolean> facets = myFacetsByType.get(typeId);
+    final FacetTypeId<?> typeId = facet.getTypeId();
+    Map<Facet<?>, Boolean> facets = myFacetsByType.get(typeId);
     if (facets == null) {
       facets = ContainerUtil.createWeakMap();
       myFacetsByType.put(typeId, facets);
@@ -147,7 +147,7 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
     }
   }
 
-  private void onFacetChanged(@NotNull Facet facet) {
+  private void onFacetChanged(@NotNull Facet<?> facet) {
     final EventDispatcher<ProjectWideFacetListener> dispatcher = myDispatchers.get(facet.getTypeId());
     if (dispatcher != null) {
       //noinspection unchecked
@@ -157,7 +157,7 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
   }
 
   @Override
-  public <F extends Facet> void registerListener(@NotNull FacetTypeId<F> typeId, @NotNull ProjectWideFacetListener<? extends F> listener) {
+  public <F extends Facet<?>> void registerListener(@NotNull FacetTypeId<F> typeId, @NotNull ProjectWideFacetListener<? extends F> listener) {
     EventDispatcher<ProjectWideFacetListener> dispatcher = myDispatchers.get(typeId);
     if (dispatcher == null) {
       dispatcher = EventDispatcher.create(ProjectWideFacetListener.class);
@@ -167,7 +167,7 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
   }
 
   @Override
-  public <F extends Facet> void unregisterListener(@NotNull FacetTypeId<F> typeId, @NotNull ProjectWideFacetListener<? extends F> listener) {
+  public <F extends Facet<?>> void unregisterListener(@NotNull FacetTypeId<F> typeId, @NotNull ProjectWideFacetListener<? extends F> listener) {
     final EventDispatcher<ProjectWideFacetListener> dispatcher = myDispatchers.get(typeId);
     if (dispatcher != null) {
       dispatcher.removeListener(listener);
@@ -175,7 +175,7 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
   }
 
   @Override
-  public <F extends Facet> void registerListener(@NotNull final FacetTypeId<F> typeId, @NotNull final ProjectWideFacetListener<? extends F> listener,
+  public <F extends Facet<?>> void registerListener(@NotNull final FacetTypeId<F> typeId, @NotNull final ProjectWideFacetListener<? extends F> listener,
                                                  @NotNull final Disposable parentDisposable) {
     registerListener(typeId, listener);
     Disposer.register(parentDisposable, new Disposable() {

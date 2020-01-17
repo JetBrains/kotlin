@@ -69,7 +69,7 @@ public abstract class FacetModelBase implements FacetModel {
 
   @Override
   @NotNull
-  public String getFacetName(@NotNull Facet facet) {
+  public String getFacetName(@NotNull Facet<?> facet) {
     return facet.getName();
   }
 

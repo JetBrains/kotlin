@@ -68,7 +68,7 @@ public abstract class FacetManagerBase extends FacetManager {
   }
 
   @Override
-  public void facetConfigurationChanged(@NotNull Facet facet) {
+  public void facetConfigurationChanged(@NotNull Facet<?> facet) {
     getModule().getMessageBus().syncPublisher(FacetManager.FACETS_TOPIC).facetConfigurationChanged(facet);
   }
 

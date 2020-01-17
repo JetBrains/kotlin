@@ -12,15 +12,15 @@ import java.util.*;
 
 public class FacetTypeRegistryImpl extends FacetTypeRegistry {
   private static final Logger LOG = Logger.getInstance(FacetTypeRegistryImpl.class);
-  private static final Comparator<FacetType> FACET_TYPE_COMPARATOR =
+  private static final Comparator<FacetType<?, ?>> FACET_TYPE_COMPARATOR =
     (o1, o2) -> o1.getPresentableName().compareToIgnoreCase(o2.getPresentableName());
-  private final Map<String, FacetTypeId> myTypeIds = new HashMap<>();
-  private final Map<FacetTypeId, FacetType> myFacetTypes = new HashMap<>();
+  private final Map<String, FacetTypeId<?>> myTypeIds = new HashMap<>();
+  private final Map<FacetTypeId<?>, FacetType<?, ?>> myFacetTypes = new HashMap<>();
   private boolean myExtensionsLoaded = false;
 
   @Override
-  public synchronized void registerFacetType(FacetType facetType) {
-    final FacetTypeId typeId = facetType.getId();
+  public synchronized void registerFacetType(FacetType<?, ?> facetType) {
+    final FacetTypeId<?> typeId = facetType.getId();
     String id = facetType.getStringId();
     LOG.assertTrue(!id.contains("/"), "Facet type id '" + id + "' contains illegal character '/'");
     LOG.assertTrue(!myFacetTypes.containsKey(typeId), "Facet type '" + id + "' is already registered");
@@ -31,8 +31,8 @@ public class FacetTypeRegistryImpl extends FacetTypeRegistry {
   }
 
   @Override
-  public synchronized void unregisterFacetType(FacetType facetType) {
-    final FacetTypeId id = facetType.getId();
+  public synchronized void unregisterFacetType(FacetType<?, ?> facetType) {
+    final FacetTypeId<?> id = facetType.getId();
     final String stringId = facetType.getStringId();
     LOG.assertTrue(myFacetTypes.remove(id) != null, "Facet type '" + stringId + "' is not registered");
     myFacetTypes.remove(id);
@@ -40,24 +40,24 @@ public class FacetTypeRegistryImpl extends FacetTypeRegistry {
   }
 
   @Override
-  public synchronized FacetTypeId @NotNull [] getFacetTypeIds() {
+  public synchronized FacetTypeId<?> @NotNull [] getFacetTypeIds() {
     loadExtensions();
-    final Set<FacetTypeId> ids = myFacetTypes.keySet();
+    final Set<FacetTypeId<?>> ids = myFacetTypes.keySet();
     return ids.toArray(new FacetTypeId[0]);
   }
 
   @Override
-  public synchronized FacetType @NotNull [] getFacetTypes() {
+  public synchronized FacetType<?, ?> @NotNull [] getFacetTypes() {
     loadExtensions();
-    final Collection<FacetType> types = myFacetTypes.values();
-    final FacetType[] facetTypes = types.toArray(new FacetType[0]);
+    final Collection<FacetType<?, ?>> types = myFacetTypes.values();
+    final FacetType<?, ?>[] facetTypes = types.toArray(new FacetType[0]);
     Arrays.sort(facetTypes, FACET_TYPE_COMPARATOR);
     return facetTypes;
   }
 
   @Override
-  public FacetType @NotNull [] getSortedFacetTypes() {
-    final FacetType[] types = getFacetTypes();
+  public FacetType<?, ?> @NotNull [] getSortedFacetTypes() {
+    final FacetType<?, ?>[] types = getFacetTypes();
     Arrays.sort(types, FACET_TYPE_COMPARATOR);
     return types;
   }
@@ -66,7 +66,7 @@ public class FacetTypeRegistryImpl extends FacetTypeRegistry {
   @Nullable
   public synchronized FacetType findFacetType(String id) {
     loadExtensions();
-    final FacetTypeId typeId = myTypeIds.get(id);
+    final FacetTypeId<?> typeId = myTypeIds.get(id);
     return typeId == null ? null : myFacetTypes.get(typeId);
   }
 
@@ -74,9 +74,9 @@ public class FacetTypeRegistryImpl extends FacetTypeRegistry {
   @Override
   public synchronized <F extends Facet<C>, C extends FacetConfiguration> FacetType<F, C> findFacetType(@NotNull FacetTypeId<F> typeId) {
     loadExtensions();
-    FacetType type = myFacetTypes.get(typeId);
+    @SuppressWarnings("unchecked")
+    FacetType<F, C> type = (FacetType<F, C>)myFacetTypes.get(typeId);
     LOG.assertTrue(type != null, "Cannot find facet by id '" + typeId + "'");
-    //noinspection unchecked
     return type;
   }
 
