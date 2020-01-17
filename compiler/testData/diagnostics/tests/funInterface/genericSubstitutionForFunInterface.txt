@@ -2,7 +2,7 @@ package
 
 public fun test(/*0*/ k: K<kotlin.String>, /*1*/ f_string: F<kotlin.String>, /*2*/ f_int: F<kotlin.Int>, /*3*/ f_pr: F<PR<kotlin.String, kotlin.Int>>): kotlin.Unit
 
-public interface F</*0*/ S> {
+public fun interface F</*0*/ S> {
     public abstract fun apply(/*0*/ s: S): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
