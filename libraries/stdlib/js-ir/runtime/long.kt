@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -150,30 +150,6 @@ public class Long internal constructor(
 
     /** Divides this value by the other value. */
     public inline operator fun div(other: Double): Double = toDouble() / other
-
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
-    public inline operator fun mod(other: Byte): Long = rem(other)
-
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
-    public inline operator fun mod(other: Short): Long = rem(other)
-
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
-    public inline operator fun mod(other: Int): Long = rem(other)
-
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
-    public inline operator fun mod(other: Long): Long = rem(other)
-
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
-    public inline operator fun mod(other: Float): Float = rem(other)
-
-    /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
-    public inline operator fun mod(other: Double): Double = rem(other)
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SinceKotlin("1.1")
