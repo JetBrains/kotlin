@@ -15,11 +15,11 @@ import java.nio.file.StandardOpenOption
 import java.util.*
 
 class MetricsContainer : IStatisticsValuesConsumer {
-
     data class MetricDescriptor(val name: String, val projectHash: String?) : Comparable<MetricDescriptor> {
         override fun compareTo(other: MetricDescriptor): Int {
+            val compareNames = name.compareTo(other.name)
             return when {
-                name.compareTo(other.name) != 0 -> name.compareTo(other.name)
+                compareNames != 0 -> compareNames
                 projectHash == other.projectHash -> 0
                 else -> (projectHash ?: "").compareTo(other.projectHash ?: "")
             }
@@ -33,16 +33,15 @@ class MetricsContainer : IStatisticsValuesConsumer {
     private val stringMetrics = TreeMap<MetricDescriptor, IMetricContainer<String>>()
 
     companion object {
-
         private const val BUILD_SESSION_SEPARATOR = "BUILD FINISHED"
 
         val ENCODING = Charsets.UTF_8
 
-        private val stringMetricsMap = StringMetrics.values().map { m -> m.name to m }.toMap()
+        private val stringMetricsMap = StringMetrics.values().associateBy(StringMetrics::name)
 
-        private val booleanMetricsMap = BooleanMetrics.values().map { m -> m.name to m }.toMap()
+        private val booleanMetricsMap = BooleanMetrics.values().associateBy(BooleanMetrics::name)
 
-        private val numericalMetricsMap = NumericalMetrics.values().map { m -> m.name to m }.toMap()
+        private val numericalMetricsMap = NumericalMetrics.values().associateBy(NumericalMetrics::name)
 
         fun readFromFile(file: File, consumer: (MetricsContainer) -> Unit) {
             val channel = FileChannel.open(Paths.get(file.toURI()), StandardOpenOption.WRITE, StandardOpenOption.READ)

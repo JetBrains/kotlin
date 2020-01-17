@@ -12,11 +12,9 @@ import javax.management.ObjectName
 import javax.management.StandardMBean
 
 interface IDaemonReuseCounterMXBean {
-
     fun getOrdinal(): Long
 
     fun incrementAndGetOrdinal(): Long
-
 }
 
 /**

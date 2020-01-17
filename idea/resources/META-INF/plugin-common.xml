@@ -879,6 +879,8 @@
 
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.CreateKotlinSdkActivity"/>
 
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.statistics.KotlinGradleFUSLogger"/>
+
     <moduleConfigurationEditorProvider implementation="org.jetbrains.kotlin.idea.roots.ui.NonJvmKotlinModuleEditorsProvider"/>
 
     <projectStructure.sourceRootEditHandler implementation="org.jetbrains.kotlin.idea.roots.ui.KotlinModuleSourceRootEditHandler$Source"/>

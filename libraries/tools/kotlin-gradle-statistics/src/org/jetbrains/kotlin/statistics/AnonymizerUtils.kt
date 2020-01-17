@@ -21,8 +21,9 @@ internal val salt: String by lazy {
 fun anonymizeComponentVersion(version: String): String {
     return version.replace('-', '.')
         .split(".")
-        .filterIndexed { i, _ -> i < 3 }
-        .map { s -> s.toIntOrNull() ?: "?" }
+        .plus(listOf("0", "0")) // pad with zeros
+        .take(3)
+        .map { s -> s.toIntOrNull() ?: "0" }
         .joinToString(".")
 }
 

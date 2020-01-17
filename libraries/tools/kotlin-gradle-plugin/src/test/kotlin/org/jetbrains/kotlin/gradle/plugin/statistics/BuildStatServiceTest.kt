@@ -25,7 +25,5 @@ class BuildStatServiceTest {
         jmxService.report(StringMetrics.KOTLIN_COMPILER_VERSION, "1.2.3")
         jmxService.report(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 10)
         jmxService.report(BooleanMetrics.ENABLED_DATABINDING, true)
-
-        jmxService.completed()
     }
 }

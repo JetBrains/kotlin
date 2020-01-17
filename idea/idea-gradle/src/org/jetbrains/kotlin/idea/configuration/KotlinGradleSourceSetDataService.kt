@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedVersionByModuleData
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.idea.statistics.KotlinGradleFUSLogger
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
@@ -153,6 +155,10 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
 
         val codeStyleStr = GradlePropertiesFileFacade.forProject(project).readProperty(KOTLIN_CODE_STYLE_GRADLE_SETTING)
         ProjectCodeStyleImporter.apply(project, codeStyleStr)
+
+        ApplicationManager.getApplication().executeOnPooledThread {
+            KotlinGradleFUSLogger.reportStatistics()
+        }
     }
 }
 
