@@ -159,7 +159,7 @@ class IrInlineCodegen(
         try {
             performInline(
                 expression.symbol.owner.typeParameters.map { it.symbol },
-                function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+                function.origin.isDefaultStub,
                 false,
                 codegen.typeMapper.typeSystem
             )

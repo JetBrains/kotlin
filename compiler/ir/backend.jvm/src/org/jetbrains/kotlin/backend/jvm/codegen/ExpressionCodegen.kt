@@ -174,7 +174,7 @@ class ExpressionCodegen(
     }
 
     internal fun genOrGetLocal(expression: IrExpression, data: BlockInfo): StackValue {
-        if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (irFunction.origin.isDefaultStub) {
             if (expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST) {
                 // inline lambda parameters are passed from `foo$default` to `foo` call with implicit cast,
                 // we need return pure StackValue.local value to be able proper inline this parameter later
@@ -255,10 +255,7 @@ class ExpressionCodegen(
 
         // Do not generate non-null checks for suspend function views. When resumed the arguments
         // will be null and the actual values are taken from the continuation.
-        val isSuspendFunctionView = irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
-
-        if (isSuspendFunctionView)
+        if (irFunction.origin.isSuspendView)
             return
 
         irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }

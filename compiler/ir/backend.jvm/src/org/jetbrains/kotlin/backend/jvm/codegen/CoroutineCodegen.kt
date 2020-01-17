@@ -121,25 +121,31 @@ internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspen
 
 internal fun IrFunction.isKnownToBeTailCall(): Boolean =
     when (origin) {
-        IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
         JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
         JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
         JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
         IrDeclarationOrigin.BRIDGE,
         IrDeclarationOrigin.BRIDGE_SPECIAL,
         IrDeclarationOrigin.DELEGATED_MEMBER -> true
-        else -> isInvokeOfSuspendCallableReference()
+        else -> origin.isDefaultStub || isInvokeOfSuspendCallableReference()
     }
 
 internal fun IrFunction.shouldNotContainSuspendMarkers(): Boolean =
     isInvokeSuspendOfContinuation() || isKnownToBeTailCall()
 
+internal val IrDeclarationOrigin.isDefaultStub: Boolean
+    get() = this == JvmLoweredDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER_SUSPEND_VIEW ||
+            this == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+
+internal val IrDeclarationOrigin.isSuspendView: Boolean
+    get() = this == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW ||
+            this == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW ||
+            this == JvmLoweredDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER_SUSPEND_VIEW
+
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
 internal fun IrFunction.getOrCreateSuspendFunctionViewIfNeeded(context: JvmBackendContext): IrFunction {
-    if (!isSuspend || origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW ||
-        origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
-    ) return this
+    if (!isSuspend || origin.isSuspendView) return this
     return context.suspendFunctionOriginalToView[this] ?: suspendFunctionView(context, true)
 }
 
@@ -158,10 +164,14 @@ fun IrFunction.suspendFunctionView(context: JvmBackendContext, generateBody: Boo
     return buildFunWithDescriptorForInlining(descriptor) {
         updateFrom(this@suspendFunctionView)
         name = this@suspendFunctionView.name
-        origin = if (origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE)
-            JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
-        else
-            JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW
+        origin = when (origin) {
+            JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ->
+                JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
+            IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ->
+                JvmLoweredDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER_SUSPEND_VIEW
+            else ->
+                JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW
+        }
         returnType = context.irBuiltIns.anyNType
     }.also {
         it.parent = parent

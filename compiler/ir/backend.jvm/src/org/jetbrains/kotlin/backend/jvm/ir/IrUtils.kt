@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.codegen.isDefaultStub
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
@@ -114,7 +115,7 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
     val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*> ?: return null
     val value = const.value as? String ?: return null
-    return if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) "$value\$default" else value
+    return if (origin.isDefaultStub) "$value\$default" else value
 }
 
 val IrFunction.propertyIfAccessor: IrDeclaration

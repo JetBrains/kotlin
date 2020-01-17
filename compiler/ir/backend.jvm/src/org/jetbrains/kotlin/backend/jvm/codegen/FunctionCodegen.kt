@@ -64,7 +64,7 @@ open class FunctionCodegen(
             generateParameterNames(irFunction, methodVisitor, signature, state)
         }
 
-        if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (!irFunction.origin.isDefaultStub) {
             AnnotationCodegen(classCodegen, context, methodVisitor::visitAnnotation).genAnnotations(
                 functionView,
                 signature.asmMethod.returnType
@@ -151,7 +151,7 @@ open class FunctionCodegen(
         }
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {
-        if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (irFunction.origin.isDefaultStub) {
             return irFunction.getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC.let {
                 if (irFunction is IrConstructor) it else it or Opcodes.ACC_STATIC
             }
