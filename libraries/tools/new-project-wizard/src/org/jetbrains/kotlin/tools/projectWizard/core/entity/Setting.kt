@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfig
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import java.nio.file.Files
@@ -243,9 +242,8 @@ object StringSettingType : SettingType<String>() {
         private val title: String,
         neededAtPhase: GenerationPhase
     ) : SettingBuilder<String, StringSettingType>(path, title, neededAtPhase) {
-        fun shouldNotBeBlank() = validate { value: String ->
-            if (value.isBlank()) ValidationResult.ValidationError("`${title.capitalize()}` should not be blank ")
-            else ValidationResult.OK
+        fun shouldNotBeBlank() {
+            validate(StringValidators.shouldNotBeBlank(title.capitalize()))
         }
 
         override val type = StringSettingType
