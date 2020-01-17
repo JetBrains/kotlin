@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.utils.rethrow
 import org.junit.After
 import java.io.File
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLClassLoader
@@ -70,6 +72,70 @@ abstract class AbstractCompilerTest : TestCase() {
         classFileFactory = null
         Disposer.dispose(myTestRootDisposable)
         super.tearDown()
+    }
+
+    /**
+     * Turn this flag to true to make it so that only the tests that had COMPOSER_PARAM = true flag
+     * turned off are run, and run with COMPOSER_PARAM = true. This is useful locally as every
+     * test that succeeds is one that can be *changed* to now include both values of the flag.
+     *
+     * This value should always be "false" in master!
+     */
+    private val INVERT_COMPOSER_PARAM_TESTS = false
+
+    open fun forComposerParam(vararg values: Boolean, block: () -> Unit) {
+        val exceptions = mutableListOf<Pair<Boolean, Throwable>>()
+        val valuesToRun = if (INVERT_COMPOSER_PARAM_TESTS) {
+            if (values.size == 2) error("Intentional failure to make success indicate a change")
+            arrayOf(true) // assume if there is just one value provided that it was "false"
+        } else
+            values.toTypedArray()
+        for (flag in valuesToRun) {
+            val prevValue = ComposeFlags.COMPOSER_PARAM
+            try {
+                ComposeFlags.COMPOSER_PARAM = flag
+                setUp()
+                block()
+            } catch (e: Throwable) {
+                exceptions.add(flag to e)
+            } finally {
+                myFiles = null
+                myEnvironment = null
+                javaClassesOutputDirectory = null
+                additionalDependencies = null
+                classFileFactory = null
+                ComposeFlags.COMPOSER_PARAM = prevValue
+            }
+        }
+        if (exceptions.isNotEmpty()) {
+            error(
+                buildString {
+                    for ((flag, throwable) in exceptions) {
+                        appendln("Test failed with ComposeFlags.COMPOSER_PARAM = $flag")
+                        appendThrowable(throwable)
+                        appendStackTrace(throwable)
+                    }
+                }
+            )
+        }
+    }
+
+    fun StringBuilder.appendThrowable(e: Throwable) {
+        if (e.message?.isNotEmpty() == true) {
+            appendln(e.message)
+        }
+        e.cause?.let {
+            if (it !== e) {
+                appendln("Caused by:")
+                appendThrowable(it)
+            }
+        }
+    }
+
+    fun StringBuilder.appendStackTrace(e: Throwable) {
+        val sw = StringWriter()
+        e.printStackTrace(PrintWriter(sw))
+        appendln(sw.toString())
     }
 
     @After

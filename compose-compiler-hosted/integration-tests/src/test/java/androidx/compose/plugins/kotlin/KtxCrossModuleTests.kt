@@ -22,12 +22,15 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Compose
+import androidx.compose.Composer
+import androidx.compose.currentComposerNonNull
 import androidx.compose.runWithCurrent
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -45,7 +48,7 @@ import java.net.URLClassLoader
 class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Test
-    fun testRemappedTypes(): Unit = ensureSetup(composerParam = true) {
+    fun testRemappedTypes(): Unit = forComposerParam(true, false) {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -81,7 +84,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleXModuleCall(): Unit = ensureSetup(composerParam = true) {
+    fun testSimpleXModuleCall(): Unit = forComposerParam(true, false) {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -112,7 +115,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInstanceXModuleCall(): Unit = ensureSetup(composerParam = true) {
+    fun testInstanceXModuleCall(): Unit = forComposerParam(true, false) {
         compile(
             "TestH", mapOf(
                 "library module" to mapOf(
@@ -143,7 +146,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleProperty(): Unit = ensureSetup(composerParam = true) {
+    fun testXModuleProperty(): Unit = forComposerParam(true, false) {
         compile(
             "TestI", mapOf(
                 "library module" to mapOf(
@@ -170,7 +173,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         )
     }
     @Test
-    fun testXModuleInterface(): Unit = ensureSetup(composerParam = true) {
+    fun testXModuleInterface(): Unit = forComposerParam(true, false) {
         compile(
             "TestJ", mapOf(
                 "library module" to mapOf(
@@ -204,7 +207,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_SimpleComposition(): Unit = ensureSetup {
+    fun testCrossModule_SimpleComposition(): Unit = forComposerParam(/*true, */false) {
         val tvId = 29
 
         compose(
@@ -265,7 +268,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_ComponentFunction(): Unit = ensureSetup {
+    fun testCrossModule_ComponentFunction(): Unit = forComposerParam(/*true, */false) {
         val tvName = 101
         val tvAge = 102
 
@@ -336,7 +339,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_ObjectFunction(): Unit = ensureSetup {
+    fun testCrossModule_ObjectFunction(): Unit = forComposerParam(/*true, */false) {
         val tvName = 101
         val tvAge = 102
 
@@ -463,9 +466,17 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
         val advanceMethod = instanceClass.getMethod("advance")
-        val composeMethod = instanceClass.getMethod("compose")
+        val composeMethod = if (ComposeFlags.COMPOSER_PARAM)
+            instanceClass.getMethod("compose", Composer::class.java)
+        else
+            instanceClass.getMethod("compose")
 
-        return composeMulti({ composeMethod.invoke(instanceOfClass) }) {
+        return composeMulti({
+            if (ComposeFlags.COMPOSER_PARAM)
+                composeMethod.invoke(instanceOfClass, currentComposerNonNull)
+            else
+                composeMethod.invoke(instanceOfClass)
+        }) {
             advanceMethod.invoke(instanceOfClass)
         }
     }
@@ -484,7 +495,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     override fun setUp() {
-        isSetup = true
         if (disableIrAndKtx) {
             super.setUp()
         } else {
@@ -513,18 +523,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     )
 
     override val additionalPaths: List<File> = listOf(classesDirectory)
-
-    private var isSetup = false
-    private fun <T> ensureSetup(composerParam: Boolean = false, block: () -> T): T {
-        val current = ComposeFlags.COMPOSER_PARAM
-        try {
-            ComposeFlags.COMPOSER_PARAM = composerParam
-            if (!isSetup) setUp()
-            return block()
-        } finally {
-            ComposeFlags.COMPOSER_PARAM = current
-        }
-    }
 }
 
 fun OutputFile.writeToDir(directory: File) =
