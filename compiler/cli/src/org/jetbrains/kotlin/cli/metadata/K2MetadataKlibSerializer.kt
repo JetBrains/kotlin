@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -111,8 +108,7 @@ private class KlibMetadataDependencyContainer(
             .filter { it.extension == "klib" || it.isDirectory }
 
         // TODO: need to move K2Metadata to SearchPathResolver.
-        // Otherewise there's no good way to choose between the components.
-        klibFiles.map { createKotlinLibraryComponents(org.jetbrains.kotlin.konan.file.File(it.absolutePath)).single() }
+        klibFiles.map { resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.absolutePath)) }
     }
 
     private val builtIns
