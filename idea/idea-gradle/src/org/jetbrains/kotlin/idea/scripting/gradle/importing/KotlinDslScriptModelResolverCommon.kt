@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.externalSystem.model.DataNode
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.util.Pair
 import com.intellij.util.Consumer
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
@@ -12,6 +15,8 @@ import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.scripting.gradle.minimal_gradle_version_supported
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
+
+internal val LOG = Logger.getInstance(KotlinDslScriptModelResolverCommon::class.java)
 
 abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExtension() {
     override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
@@ -71,4 +76,18 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
                 messages
             )
         }
+
+    protected fun processScriptModel(
+        ideProject: DataNode<ProjectData>,
+        model: KotlinDslScriptsModel,
+        projectName: String
+    ) {
+        if (model is BrokenKotlinDslScriptsModel) {
+            LOG.error(
+                "Couldn't get KotlinDslScriptsModel for $projectName:\n${model.message}\n${model.stackTrace}"
+            )
+        } else {
+            ideProject.KOTLIN_DSL_SCRIPT_MODELS.addAll(model.toListOfScriptModels())
+        }
+    }
 }

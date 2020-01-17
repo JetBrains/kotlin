@@ -34,9 +34,10 @@ class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
         ideProject: DataNode<ProjectData>
     ) {
         root.projects.forEach {
-            if ((it as? GradleProject)?.parent == null) {
+            val gradleProject = it as? GradleProject ?: return@forEach
+            if (gradleProject.parent == null) {
                 resolverCtx.models.getModel(it, KotlinDslScriptsModel::class.java)?.let { model ->
-                    ideProject.KOTLIN_DSL_SCRIPT_MODELS.addAll(model.toListOfScriptModels())
+                    processScriptModel(ideProject, model, gradleProject.name)
                 }
             }
         }
