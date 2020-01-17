@@ -25,9 +25,14 @@ import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSER_I
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -97,24 +102,24 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
             return when (val descriptor = resolvedCall.candidateDescriptor) {
                 is ComposableFunctionDescriptor -> statementGenerator
                     .visitCallExpressionWithoutInterception(element)
-                    .also { call ->
+                    .also { expr ->
                         statementGenerator.context.irTrace.record(
                             COMPOSER_IR_METADATA,
-                            call,
+                            irCallFrom(expr),
                             descriptor.composerMetadata
                         )
                     }
                 is ComposableEmitDescriptor -> statementGenerator
                     .visitCallExpressionWithoutInterception(element)
-                    .also { call ->
+                    .also { expr ->
                         statementGenerator.context.irTrace.record(
                             COMPOSER_IR_METADATA,
-                            call,
+                            irCallFrom(expr),
                             descriptor.composerMetadata
                         )
                         statementGenerator.context.irTrace.record(
                             COMPOSABLE_EMIT_METADATA,
-                            call,
+                            irCallFrom(expr),
                             descriptor
                         )
                     }
@@ -165,10 +170,10 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         descriptor,
                         resolvedCall,
                         null
-                    ).also { call ->
+                    ).also { expr ->
                         statementGenerator.context.irTrace.record(
                             COMPOSER_IR_METADATA,
-                            call,
+                            irCallFrom(expr),
                             descriptor.composerMetadata
                         )
                     }
@@ -188,6 +193,23 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         }
 
         return super.visitSimpleNameExpression(statementGenerator, element)
+    }
+
+    fun irCallFrom(expr: IrStatement): IrExpression {
+        return when (expr) {
+            is IrCall -> expr
+            is IrTypeOperatorCall -> when (expr.operator) {
+                IrTypeOperator.IMPLICIT_CAST -> irCallFrom(expr.argument)
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> irCallFrom(expr.argument)
+                else -> error("Unhandled IrTypeOperatorCall: ${expr.operator}")
+            }
+            is IrBlock -> when (expr.origin) {
+                IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL ->
+                    irCallFrom(expr.statements.last())
+                else -> error("Unhandled IrBlock origin: ${expr.origin}")
+            }
+            else -> error("Unhandled IrExpression: ${expr::class.java.simpleName}")
+        }
     }
 
     private fun StatementGenerator.visitEmitCall(

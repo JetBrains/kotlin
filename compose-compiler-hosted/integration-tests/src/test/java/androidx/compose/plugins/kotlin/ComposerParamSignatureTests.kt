@@ -325,7 +325,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
             public final class TestKt {
               public final static Bar(Lkotlin/jvm/functions/Function1;Landroidx/compose/Composer;)V
-              public final static synthetic Bar(Lkotlin/jvm/functions/Function1;)V
+              public final static synthetic Bar(Lkotlin/jvm/functions/Function0;)V
               final static INNERCLASS TestKt%Bar%foo%1 null null
             }
             final class TestKt%Bar%foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
@@ -361,7 +361,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public final class TestKt {
               public final static Wrap(Lkotlin/jvm/functions/Function2;Landroidx/compose/Composer;)V
               public final static App(ILandroidx/compose/Composer;)V
-              public final static synthetic Wrap(Lkotlin/jvm/functions/Function2;)V
+              public final static synthetic Wrap(Lkotlin/jvm/functions/Function1;)V
               public final static synthetic App(I)V
               final static INNERCLASS TestKt%App%1 null null
             }
@@ -599,6 +599,27 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public final class TestKt {
               public final static Example(Landroidx/compose/Composer;)V
               public final static synthetic Example()V
+            }
+        """
+    )
+
+    @Test
+    fun testInlineCall(): Unit = checkApi(
+        """
+            @Composable inline fun Example(children: @Composable() () -> Unit) {
+                children()
+            }
+
+            @Composable fun Test() {
+                Example {}
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static Example(Lkotlin/jvm/functions/Function1;Landroidx/compose/Composer;)V
+              public final static Test(Landroidx/compose/Composer;)V
+              public final static synthetic Example(Lkotlin/jvm/functions/Function0;)V
+              public final static synthetic Test()V
             }
         """
     )
