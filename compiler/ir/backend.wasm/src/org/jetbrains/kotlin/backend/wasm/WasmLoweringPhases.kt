@@ -190,7 +190,7 @@ private val defaultParameterCleanerPhase = makeWasmModulePhase(
 //)
 
 private val propertiesLoweringPhase = makeWasmModulePhase(
-    { context -> PropertiesLowering(context, skipExternalProperties = true, generateAnnotationFields = true) },
+    { PropertiesLowering() },
     name = "PropertiesLowering",
     description = "Move fields and accessors out from its property"
 )
