@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.NullableNotNullManager
+import com.intellij.codeInsight.NullableNotNullManagerImpl
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.JavaCoreApplicationEnvironment
@@ -73,7 +74,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             }
         }
 
-        javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManager(javaCoreEnvironment.project) {
+        javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManagerImpl(javaCoreEnvironment.project) {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
