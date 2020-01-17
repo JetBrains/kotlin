@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea
 import com.intellij.openapi.util.IconLoader
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.impl.ElementPresentationUtil
+import com.intellij.ui.IconManager
 import com.intellij.util.PlatformIcons
 import javax.swing.Icon
 
@@ -15,7 +16,9 @@ class KotlinIdeFileIconProviderService : KotlinIconProviderService() {
     override fun getFileIcon(): Icon = KOTLIN_FILE
 
     override fun getLightVariableIcon(element: PsiModifierListOwner, flags: Int): Icon {
-        val baseIcon = ElementPresentationUtil.createLayeredIcon(PlatformIcons.VARIABLE_ICON, element, false)
+        val iconManager = IconManager.getInstance()
+        val elementFlags = ElementPresentationUtil.getFlags(element, false)
+        val baseIcon = iconManager.createLayeredIcon(element, PlatformIcons.VARIABLE_ICON, elementFlags)
         return ElementPresentationUtil.addVisibilityIcon(element, flags, baseIcon)
     }
 
