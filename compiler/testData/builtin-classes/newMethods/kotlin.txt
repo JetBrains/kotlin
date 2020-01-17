@@ -287,13 +287,13 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double>, jav
     public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Double
-    public open override /*1*/ fun toByte(): kotlin.Byte
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {})) public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
     public open override /*1*/ fun toFloat(): kotlin.Float
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
-    public open override /*1*/ fun toShort(): kotlin.Short
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {})) public open override /*1*/ fun toShort(): kotlin.Short
     public final operator fun unaryMinus(): kotlin.Double
     public final operator fun unaryPlus(): kotlin.Double
 
@@ -393,13 +393,13 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.
     public final operator fun times(/*0*/ other: kotlin.Int): kotlin.Float
     public final operator fun times(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun times(/*0*/ other: kotlin.Short): kotlin.Float
-    public open override /*1*/ fun toByte(): kotlin.Byte
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {})) public open override /*1*/ fun toByte(): kotlin.Byte
     public open override /*1*/ fun toChar(): kotlin.Char
     public open override /*1*/ fun toDouble(): kotlin.Double
     public open override /*1*/ fun toFloat(): kotlin.Float
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
-    public open override /*1*/ fun toShort(): kotlin.Short
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {})) public open override /*1*/ fun toShort(): kotlin.Short
     public final operator fun unaryMinus(): kotlin.Float
     public final operator fun unaryPlus(): kotlin.Float
 

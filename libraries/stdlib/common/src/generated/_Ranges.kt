@@ -670,11 +670,11 @@ internal fun Short.toByteExactOrNull(): Byte? {
 }
 
 internal fun Double.toByteExactOrNull(): Byte? {
-    return if (this in Byte.MIN_VALUE.toDouble()..Byte.MAX_VALUE.toDouble()) this.toByte() else null
+    return if (this in Byte.MIN_VALUE.toDouble()..Byte.MAX_VALUE.toDouble()) this.toInt().toByte() else null
 }
 
 internal fun Float.toByteExactOrNull(): Byte? {
-    return if (this in Byte.MIN_VALUE.toFloat()..Byte.MAX_VALUE.toFloat()) this.toByte() else null
+    return if (this in Byte.MIN_VALUE.toFloat()..Byte.MAX_VALUE.toFloat()) this.toInt().toByte() else null
 }
 
 internal fun Long.toIntExactOrNull(): Int? {
@@ -706,11 +706,11 @@ internal fun Long.toShortExactOrNull(): Short? {
 }
 
 internal fun Double.toShortExactOrNull(): Short? {
-    return if (this in Short.MIN_VALUE.toDouble()..Short.MAX_VALUE.toDouble()) this.toShort() else null
+    return if (this in Short.MIN_VALUE.toDouble()..Short.MAX_VALUE.toDouble()) this.toInt().toShort() else null
 }
 
 internal fun Float.toShortExactOrNull(): Short? {
-    return if (this in Short.MIN_VALUE.toFloat()..Short.MAX_VALUE.toFloat()) this.toShort() else null
+    return if (this in Short.MIN_VALUE.toFloat()..Short.MAX_VALUE.toFloat()) this.toInt().toShort() else null
 }
 
 /**

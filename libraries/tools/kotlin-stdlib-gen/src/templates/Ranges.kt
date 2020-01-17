@@ -220,8 +220,12 @@ object RangeOps : TemplateGroupBase() {
 
         signature("to${toType}ExactOrNull()")
         returns("$toType?")
+
+        val isConversionDeprecated = fromType.isFloatingPoint() && toType in listOf(PrimitiveType.Byte, PrimitiveType.Short)
+        val conversion = if (isConversionDeprecated) "toInt().to$toType" else "to$toType"
+
         body {
-            "return if (this in $toType.MIN_VALUE.to$fromType()..$toType.MAX_VALUE.to$fromType()) this.to$toType() else null"
+            "return if (this in $toType.MIN_VALUE.to$fromType()..$toType.MAX_VALUE.to$fromType()) this.$conversion() else null"
         }
     }
 }

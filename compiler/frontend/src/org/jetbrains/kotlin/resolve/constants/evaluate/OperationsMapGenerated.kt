@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
