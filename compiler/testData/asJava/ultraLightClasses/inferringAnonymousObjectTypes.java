@@ -36,7 +36,7 @@ public final class ArrayOfAnonymous /* ArrayOfAnonymous*/ {
 }
 
 final class null /* null*/ {
-  private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
+  private static final java.lang.String fy;
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getFy();
@@ -89,7 +89,7 @@ public final class Sub /* Sub*/ extends Super {
 }
 
 final class null /* null*/ {
-  private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
+  private static final java.lang.String fy;
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getFy();

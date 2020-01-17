@@ -184,7 +184,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                     membersBuilder.generateUniqueFieldName(companion.name.orEmpty(), usedNames),
                     this,
                     support,
-                    setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)
+                    setOf(PsiModifier.STATIC, PsiModifier.FINAL, companion.simpleVisibility())
                 )
             )
 
