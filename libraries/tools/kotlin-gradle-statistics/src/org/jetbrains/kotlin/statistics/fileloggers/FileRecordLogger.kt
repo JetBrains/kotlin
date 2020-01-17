@@ -15,7 +15,6 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 
 class FileRecordLogger(file: File) : IRecordLogger {
-
     private val channel: FileChannel =
         FileChannel.open(Paths.get(file.toURI()), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
             ?: throw IOException("Could not open file $file")

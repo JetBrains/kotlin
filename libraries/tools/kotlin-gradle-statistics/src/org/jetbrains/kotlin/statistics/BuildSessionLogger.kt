@@ -16,17 +16,23 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class BuildSessionLogger(
-    private val rootPath: File,
+    rootPath: File,
     private val maxProfileFiles: Int = DEFAULT_MAX_PROFILE_FILES,
-    private val maxFileSize: Long = DEFAULT_MAX_PROFILE_FILE_SIZE
+    private val maxFileSize: Long = DEFAULT_MAX_PROFILE_FILE_SIZE,
+    private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE
 ) : IStatisticsValuesConsumer {
 
     companion object {
         const val STATISTICS_FOLDER_NAME = "kotlin-profile"
-        const val STATISTICS_FILE_NAME_PATTERN = "\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{3}.profile"
+        internal const val STATISTICS_FILE_NAME_PATTERN = "\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{3}.profile"
 
         private const val DEFAULT_MAX_PROFILE_FILES = 1_000
         private const val DEFAULT_MAX_PROFILE_FILE_SIZE = 100_000L
+        private const val DEFAULT_MAX_FILE_AGE = 30 * 24 * 3600 * 1000L //30 days
+
+        fun listProfileFiles(statisticsFolder: File): List<File>? {
+            return statisticsFolder.listFiles()?.filterTo(ArrayList()) { it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }?.sorted()
+        }
     }
 
     private val profileFileNameFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm-ss-SSS'.profile'")
@@ -53,29 +59,44 @@ class BuildSessionLogger(
 
     @Synchronized
     private fun closeTrackingFile() {
-        metricsContainer.flush(trackingFile)
-        trackingFile?.close()
-        trackingFile = null
+        trackingFile?.let {
+            metricsContainer.flush(it)
+            it.close()
+            trackingFile = null
+        }
     }
 
+    /**
+     * Initializes a new tracking file
+     * The following contracts are implemented:
+     * - number of tracking files should not be more than maxProfileFiles (the earlier file created the earlier deleted)
+     * - files with age (current time - last modified) more than maxFileAge should be deleted (if we trust lastModified returned by FS)
+     * - files are ordered on the basis of name (creation timestamp)
+     * - if the last file has size less then maxFileSize, the next record will be append to it (new file created otherwise)
+     * -
+     */
     @Synchronized
     private fun initTrackingFile() {
         closeTrackingFile()
 
         // Get list of existing files. Try to create folder if possible, return from function if failed to create folder
-        val fileCandidates =
-            statisticsFolder.listFiles()?.filter { it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }?.toMutableList()
-                ?: if (statisticsFolder.mkdirs()) emptyList<File>() else return
+        val fileCandidates = listProfileFiles(statisticsFolder) ?: if (statisticsFolder.mkdirs()) emptyList<File>() else return
 
-        for (i in 0 until fileCandidates.size - maxProfileFiles) {
-            val file2delete = fileCandidates[i]
-            if (file2delete.isFile) {
-                file2delete.delete()
+        for ((index, file) in fileCandidates.withIndex()) {
+            val toDelete = if (index < fileCandidates.size - maxProfileFiles)
+                true
+            else {
+                val lastModified = file.lastModified()
+                (lastModified > 0) && (System.currentTimeMillis() - maxFileAge > lastModified)
+            }
+            if (toDelete) {
+                file.delete()
             }
         }
 
         // emergency check. What if a lot of files are locked due to some reason
-        if (statisticsFolder.listFiles()?.size ?: 0 > maxProfileFiles * 2) {
+        if (listProfileFiles(statisticsFolder)?.size ?: 0 > maxProfileFiles * 2) {
+            trackingFile = NullRecordLogger()
             return
         }
 
@@ -99,20 +120,24 @@ class BuildSessionLogger(
 
     @Synchronized
     fun finishBuildSession(action: String?, failure: Throwable?) {
-        // nanotime could not be used as build start time in nanotime is unknown. As result, the measured duration
-        // could be affected by system clock correction
-        val finishTime = System.currentTimeMillis()
-        buildSession?.also {
-            if (it.buildStartedTime != null) {
-                report(NumericalMetrics.GRADLE_BUILD_DURATION, finishTime - it.buildStartedTime)
+        try {
+            // nanotime could not be used as build start time in nanotime is unknown. As result, the measured duration
+            // could be affected by system clock correction
+            val finishTime = System.currentTimeMillis()
+            buildSession?.also {
+                if (it.buildStartedTime != null) {
+                    report(NumericalMetrics.GRADLE_BUILD_DURATION, finishTime - it.buildStartedTime)
+                }
+                report(NumericalMetrics.GRADLE_EXECUTION_DURATION, finishTime - it.projectEvaluatedTime)
             }
-            report(NumericalMetrics.GRADLE_EXECUTION_DURATION, finishTime - it.projectEvaluatedTime)
+            buildSession = null
+        } finally {
+            unlockJournalFile()
         }
-        buildSession = null
     }
 
     @Synchronized
-    fun unlockJournalFile() {
+    private fun unlockJournalFile() {
         closeTrackingFile()
     }
 

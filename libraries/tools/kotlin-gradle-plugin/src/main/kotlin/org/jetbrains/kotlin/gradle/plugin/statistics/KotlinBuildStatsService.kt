@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
-import org.gradle.initialization.BuildCompletionListener
 import org.gradle.initialization.BuildRequestMetaData
 import org.gradle.invocation.DefaultGradle
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
@@ -20,6 +20,7 @@ import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
 import javax.management.ObjectName
 import javax.management.StandardMBean
+import kotlin.system.measureTimeMillis
 
 /**
  * Interface for populating statistics collection method via JXM interface
@@ -27,21 +28,16 @@ import javax.management.StandardMBean
  * of Kotlin Plugin and other classloaders
  */
 interface KotlinBuildStatsMXBean {
-
     fun reportBoolean(name: String, value: Boolean, subprojectName: String?)
 
     fun reportNumber(name: String, value: Long, subprojectName: String?)
 
     fun reportString(name: String, value: String, subprojectName: String?)
-
 }
 
 
-internal abstract class KotlinBuildStatsService internal constructor() : BuildAdapter(), IStatisticsValuesConsumer,
-    BuildCompletionListener {
-
+internal abstract class KotlinBuildStatsService internal constructor() : BuildAdapter(), IStatisticsValuesConsumer {
     companion object {
-
         // Do not rename this bean otherwise compatibility with the older Kotlin Gradle Plugins would be lost
         const val JMX_BEAN_NAME = "org.jetbrains.kotlin.gradle.plugin.statistics:type=StatsService"
 
@@ -53,7 +49,6 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
 
         // "emergency file" collecting statistics is disabled it the file exists
         const val DISABLE_STATISTICS_FILE_NAME = "${STATISTICS_FOLDER_NAME}/.disable"
-
 
         /**
          * Method for getting IStatisticsValuesConsumer for reporting some statistics
@@ -145,15 +140,10 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
             }
         }
     }
-
-
 }
 
 internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private val beanName: ObjectName) :
     KotlinBuildStatsService() {
-
-    override fun buildFinished(result: BuildResult) {
-    }
 
     private fun callJmx(method: String, type: String, metricName: String, value: Any, subprojectName: String?) {
         mbs.invoke(
@@ -182,50 +172,89 @@ internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private 
         }
     }
 
-    override fun completed() {
+    override fun buildFinished(result: BuildResult) {
         instance = null
     }
-
 }
 
 internal class DefaultKotlinBuildStatsService internal constructor(
     gradle: Gradle,
     val beanName: ObjectName
 ) : KotlinBuildStatsService(), KotlinBuildStatsMXBean {
-
     private val sessionLogger = BuildSessionLogger(gradle.gradleUserHomeDir)
 
     private fun gradleBuildStartTime(gradle: Gradle): Long? {
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
     }
 
+    private fun reportLibrariesVersions(dependencies: DependencySet?) {
+        dependencies?.forEach { dependency ->
+            when {
+                dependency.group?.startsWith("org.springframework") ?: false -> sessionLogger.report(
+                    StringMetrics.LIBRARY_SPRING_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+                dependency.group?.startsWith("com.vaadin") ?: false -> sessionLogger.report(
+                    StringMetrics.LIBRARY_VAADIN_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+                dependency.group?.startsWith("com.google.gwt") ?: false -> sessionLogger.report(
+                    StringMetrics.LIBRARY_GWT_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+                dependency.group?.startsWith("org.hibernate") ?: false -> sessionLogger.report(
+                    StringMetrics.LIBRARY_HIBERNATE_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+            }
+        }
+    }
+
     private fun reportGlobalMetrics(gradle: Gradle) {
         System.getProperty("os.name")?.also {
-            sessionLogger.report(StringMetrics.OS_TYPE, gradle.gradleVersion)
+            sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name"))
         }
         sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
         sessionLogger.report(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
         sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
 
+        val statisticOverhead = measureTimeMillis {
+            gradle.allprojects { project ->
+                for (configuration in project.configurations) {
+                    val configurationName = configuration.name
+                    val dependencies = configuration.dependencies
 
-        gradle.allprojects { project ->
-            for (configuration in project.configurations) {
-                val configurationName = configuration.name
-                val dependencies = configuration.dependencies
-
-                when (configurationName) {
-                    "kapt" -> {
-                        sessionLogger.report(BooleanMetrics.ENABLED_KAPT, true)
-                        dependencies.forEach { dependency ->
-                            when (dependency.group) {
-                                "com.google.dagger" -> sessionLogger.report(BooleanMetrics.ENABLED_DAGGER, true)
-                                "com.android.databinding" -> sessionLogger.report(BooleanMetrics.ENABLED_DATABINDING, true)
+                    when (configurationName) {
+                        "kapt" -> {
+                            sessionLogger.report(BooleanMetrics.ENABLED_KAPT, true)
+                            dependencies?.forEach { dependency ->
+                                when (dependency.group) {
+                                    "com.google.dagger" -> sessionLogger.report(BooleanMetrics.ENABLED_DAGGER, true)
+                                    "com.android.databinding" -> sessionLogger.report(BooleanMetrics.ENABLED_DATABINDING, true)
+                                }
                             }
+                        }
+                        "api" -> {
+                            sessionLogger.report(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
+                            reportLibrariesVersions(dependencies)
+                        }
+                        "implementation" -> {
+                            sessionLogger.report(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
+                            reportLibrariesVersions(dependencies)
+                        }
+                        "compile" -> {
+                            sessionLogger.report(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
+                            reportLibrariesVersions(dependencies)
+                        }
+                        "runtime" -> {
+                            sessionLogger.report(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
+                            reportLibrariesVersions(dependencies)
                         }
                     }
                 }
             }
         }
+        sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
     }
 
     override fun projectsEvaluated(gradle: Gradle) {
@@ -243,16 +272,8 @@ internal class DefaultKotlinBuildStatsService internal constructor(
     @Synchronized
     override fun buildFinished(result: BuildResult) {
         runSafe("${DefaultKotlinBuildStatsService::class.java}.buildFinished") {
-            sessionLogger.finishBuildSession(result.action, result.failure)
-        }
-    }
-
-
-    @Synchronized
-    override fun completed() {
-        runSafe("${DefaultKotlinBuildStatsService::class.java}.completed") {
             try {
-                sessionLogger.unlockJournalFile()
+                sessionLogger.finishBuildSession(result.action, result.failure)
             } finally {
                 val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
                 if (mbs.isRegistered(beanName)) {

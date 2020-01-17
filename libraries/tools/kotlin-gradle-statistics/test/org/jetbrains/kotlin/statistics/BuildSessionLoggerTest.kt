@@ -5,25 +5,21 @@
 
 package org.jetbrains.kotlin.statistics
 
-import com.sun.javafx.font.Metrics
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FILE_NAME_PATTERN
+import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.listProfileFiles
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
-import org.jetbrains.kotlin.statistics.metrics.OverrideMetricContainer
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.junit.After
 import org.junit.Before
 import java.io.File
 import java.lang.IllegalStateException
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 class BuildSessionLoggerTest {
 
-    lateinit var rootFolder: File
+    private lateinit var rootFolder: File
 
     private fun statFilesCount() = rootFolder.listFiles().single().listFiles().size
 
@@ -74,7 +70,6 @@ class BuildSessionLoggerTest {
         val logger = BuildSessionLogger(rootFolder, 100, maxFileSize.toLong())
         logger.startBuildSession(0, null)
         logger.finishBuildSession("", null)
-        logger.unlockJournalFile()
 
         assertEquals(1, statFilesCount())
 
@@ -82,7 +77,6 @@ class BuildSessionLoggerTest {
 
         logger.startBuildSession(0, 0)
         logger.finishBuildSession("", null)
-        logger.unlockJournalFile()
         //new file should not be created
         assertEquals(1, statFilesCount())
 
@@ -90,7 +84,6 @@ class BuildSessionLoggerTest {
 
         logger.startBuildSession(0, 0)
         logger.finishBuildSession("", null)
-        logger.unlockJournalFile()
 
         // a new file should be created as maximal file size
         assertEquals(2, statFilesCount())
@@ -102,7 +95,6 @@ class BuildSessionLoggerTest {
         val logger = BuildSessionLogger(rootFolder, maxFiles)
         logger.startBuildSession(0, null)
         logger.finishBuildSession("", null)
-        logger.unlockJournalFile()
         assertEquals(1, statFilesCount())
 
         val statsFolder = rootFolder.listFiles().single()
@@ -116,7 +108,6 @@ class BuildSessionLoggerTest {
 
         logger.startBuildSession(0, 0)
         logger.finishBuildSession("", null)
-        logger.unlockJournalFile()
 
         assertTrue(
             statsFolder.listFiles().filter { it.name == singleStatFile.name }.count() == 1,
@@ -135,6 +126,10 @@ class BuildSessionLoggerTest {
             statsFolder.listFiles().filter { it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }.count(),
             "Some files which should not be affected, were removed"
         )
+        assertEquals(
+            statsFolder.listFiles().filter { it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }.sorted(),
+            listProfileFiles(statsFolder)
+        )
     }
 
     @Test
@@ -142,10 +137,9 @@ class BuildSessionLoggerTest {
         val logger = BuildSessionLogger(rootFolder)
         logger.report(StringMetrics.KOTLIN_COMPILER_VERSION, "1.2.3.4-snapshot")
 
-        val startTime = System.currentTimeMillis() - 1000
+        val startTime = System.currentTimeMillis() - 1001
         logger.startBuildSession(1, startTime)
         logger.finishBuildSession("Build", null)
-        logger.unlockJournalFile()
         assertEquals(1, statFilesCount())
 
         val statFile = rootFolder.listFiles().single().listFiles().single()
@@ -165,7 +159,6 @@ class BuildSessionLoggerTest {
 
 
         logger.finishBuildSession("", null)
-        logger.unlockJournalFile()
 
         val metrics = ArrayList<MetricsContainer>()
         MetricsContainer.readFromFile(statFile) {
@@ -185,5 +178,34 @@ class BuildSessionLoggerTest {
 
         val buildDuration = metrics[0].getMetric(NumericalMetrics.GRADLE_BUILD_DURATION)?.getValue() ?: 0L
         assertTrue(buildDuration > 1000, "It was expected that build duration is > 1000, but got $buildDuration")
+    }
+
+    @Test
+    fun testSaveAndReadAllMetrics() {
+        val logger = BuildSessionLogger(rootFolder)
+        logger.startBuildSession(1, 1)
+        for (metric in StringMetrics.values()) {
+            logger.report(metric, "value")
+            logger.report(metric, metric.name)
+        }
+        for (metric in BooleanMetrics.values()) {
+            logger.report(metric, true)
+        }
+        for (metric in NumericalMetrics.values()) {
+            logger.report(metric, System.currentTimeMillis())
+        }
+        logger.finishBuildSession("Build", null)
+
+        MetricsContainer.readFromFile(rootFolder.listFiles().single().listFiles().single()) {
+            for (metric in StringMetrics.values()) {
+                assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
+            }
+            for (metric in BooleanMetrics.values()) {
+                assertTrue(it.getMetric(metric)?.getValue() ?: false, "Could not find metric ${metric.name}")
+            }
+            for (metric in NumericalMetrics.values()) {
+                assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
+            }
+        }
     }
 }
