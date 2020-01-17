@@ -4,6 +4,9 @@ package com.intellij.codeInsight.intention.impl.config;
 import com.intellij.ide.ui.OptionsTopHitProvider;
 import com.intellij.ide.ui.search.BooleanOptionDescription;
 import com.intellij.ide.ui.search.OptionDescription;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.impl.ApplicationImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,6 +21,12 @@ final class IntentionsOptionsTopHitProvider implements OptionsTopHitProvider.App
   @Override
   public String getId() {
     return "intentions";
+  }
+
+  @Override
+  public boolean preloadNeeded() {
+    Application application = ApplicationManager.getApplication();
+    return !(application instanceof ApplicationImpl) || ((ApplicationImpl)application).isLightEditMode();
   }
 
   @NotNull
