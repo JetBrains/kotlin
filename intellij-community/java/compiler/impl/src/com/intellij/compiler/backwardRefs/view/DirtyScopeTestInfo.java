@@ -20,8 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 public class DirtyScopeTestInfo {
   private final Module[] myDirtyModules;
   private final Module[] myDirtyUnsavedModules;
@@ -39,18 +37,15 @@ public class DirtyScopeTestInfo {
     myDirtyScope = dirtyScope;
   }
 
-  @NotNull
-  Module[] getDirtyModules() {
+  Module @NotNull [] getDirtyModules() {
     return myDirtyModules;
   }
 
-  @NotNull
-  Module[] getDirtyUnsavedModules() {
+  Module @NotNull [] getDirtyUnsavedModules() {
     return myDirtyUnsavedModules;
   }
 
-  @NotNull
-  VirtualFile[] getExcludedFiles() {
+  VirtualFile @NotNull [] getExcludedFiles() {
     return myExcludedFiles;
   }
 

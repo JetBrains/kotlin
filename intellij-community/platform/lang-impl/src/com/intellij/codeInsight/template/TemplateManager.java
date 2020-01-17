@@ -55,7 +55,7 @@ public abstract class TemplateManager {
 
   public abstract Template createTemplate(@NotNull String key, String group);
 
-  public abstract Template createTemplate(@NotNull String key, String group, @NonNls String text);
+  public abstract Template createTemplate(@NotNull String key, @NotNull String group, @NonNls String text);
 
   @Nullable
   public abstract Template getActiveTemplate(@NotNull Editor editor);

@@ -4,9 +4,6 @@ import com.intellij.packaging.elements.CompositePackagingElement;
 import com.intellij.packaging.elements.PackagingElement;
 import com.intellij.packaging.elements.PackagingElementFactory;
 
-/**
- * @author nik
- */
 public class PackagingElementFactoryTest extends PackagingElementsTestCase {
   public void testDirectory() {
     final CompositePackagingElement<?> root = createRoot();

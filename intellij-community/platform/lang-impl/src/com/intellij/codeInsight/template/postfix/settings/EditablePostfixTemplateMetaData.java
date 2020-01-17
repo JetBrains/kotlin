@@ -24,15 +24,13 @@ public class EditablePostfixTemplateMetaData implements BeforeAfterMetaData {
     myAfterText = StringUtil.replace(text, "$END$", "<spot></spot>", true);
   }
 
-  @NotNull
   @Override
-  public TextDescriptor[] getExampleUsagesBefore() {
+  public TextDescriptor @NotNull [] getExampleUsagesBefore() {
     return new TextDescriptor[]{new PlainTextDescriptor(myBeforeText, "before.txt")};
   }
 
-  @NotNull
   @Override
-  public TextDescriptor[] getExampleUsagesAfter() {
+  public TextDescriptor @NotNull [] getExampleUsagesAfter() {
     return new TextDescriptor[]{new PlainTextDescriptor(myAfterText, "after.txt")};
   }
 

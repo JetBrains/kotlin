@@ -16,6 +16,7 @@
 
 package com.intellij.codeInsight.template;
 
+import com.intellij.codeInsight.lookup.PresentableLookupValue;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.codeInsight.template.impl.Variable;
 import com.intellij.util.PairProcessor;
@@ -29,7 +30,7 @@ import java.util.Map;
  * Used to build and run a live template.
  * @see TemplateManager
  */
-public abstract class Template {
+public abstract class Template implements PresentableLookupValue {
 
   public enum Property {
     USE_STATIC_IMPORT_IF_POSSIBLE
@@ -121,5 +122,10 @@ public abstract class Template {
 
   public static boolean getDefaultValue(@NotNull Property key) {
     return false;
+  }
+
+  @Override
+  public String getPresentation() {
+    return getKey();
   }
 }

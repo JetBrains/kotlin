@@ -35,9 +35,6 @@ import java.util.Collections;
 import static org.jetbrains.jps.model.java.JpsJavaExtensionService.dependencies;
 
 
-/**
- * @author nik
- */
 public class JpsDependenciesEnumeratorTest extends JpsJavaModelTestCase {
   private JpsModule myModule;
 

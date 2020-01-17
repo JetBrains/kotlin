@@ -16,6 +16,7 @@
 package com.intellij.openapi.roots.libraries.ui;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Implementation of {@link RootDetector} which detects a root by presence of files of some specified type under it
  *
- * @author nik
  * @deprecated use {@link DescendentBasedRootFilter#createFileTypeBasedFilter(OrderRootType, boolean, FileType, String)} instead
  */
 @Deprecated
@@ -44,6 +44,6 @@ public class FileTypeBasedRootFilter extends RootFilter {
   }
 
   protected boolean isFileAccepted(VirtualFile virtualFile) {
-    return virtualFile.getFileType().equals(myFileType);
+    return FileTypeRegistry.getInstance().isFileOfType(virtualFile, myFileType);
   }
 }

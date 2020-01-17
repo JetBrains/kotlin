@@ -12,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractPerformFixesTask extends PerformFixesModalTask {
   private boolean myApplicableFixFound = false;
-  protected final Class myQuickfixClass;
+  protected final Class<?> myQuickfixClass;
 
   public AbstractPerformFixesTask(@NotNull Project project,
-                                  @NotNull CommonProblemDescriptor[] descriptors,
-                                  @Nullable Class quickfixClass) {
+                                  CommonProblemDescriptor @NotNull [] descriptors,
+                                  @Nullable Class<?> quickfixClass) {
     super(project, descriptors);
     myQuickfixClass = quickfixClass;
   }

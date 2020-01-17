@@ -23,9 +23,6 @@ import org.jetbrains.jps.model.serialization.artifact.ArtifactState;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 final class ArtifactManagerStateSplitter extends StateSplitterEx {
   @NotNull
   @Override

@@ -40,9 +40,8 @@ public class OfflineInspectionRVContentProvider extends InspectionRVContentProvi
     return Collections.singletonList(tools.getDefaultState());
   }
 
-  @NotNull
   @Override
-  public QuickFixAction[] getCommonQuickFixes(@NotNull final InspectionToolWrapper toolWrapper, @NotNull final InspectionTree tree) {
+  public QuickFixAction @NotNull [] getCommonQuickFixes(@NotNull final InspectionToolWrapper toolWrapper, @NotNull final InspectionTree tree) {
     GlobalInspectionContextImpl context = tree.getContext();
     InspectionToolPresentation presentation = context.getPresentation(toolWrapper);
     return getCommonFixes(presentation, tree.getSelectedDescriptors());

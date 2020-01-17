@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ide.bookmarks;
 
 import com.intellij.codeInsight.daemon.GutterMark;
@@ -10,6 +9,8 @@ import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.lang.LanguageStructureViewBuilder;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
@@ -30,6 +31,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -41,6 +43,7 @@ import com.intellij.util.IconUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBCachingScalableIcon;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,27 +59,53 @@ import java.lang.ref.WeakReference;
 import static com.intellij.ide.ui.UISettings.setupAntialiasing;
 import static com.intellij.ui.scale.ScaleType.OBJ_SCALE;
 
-public class Bookmark implements Navigatable, Comparable<Bookmark> {
+public final class Bookmark implements Navigatable, Comparable<Bookmark> {
   static final Icon DEFAULT_ICON = new MyCheckedIcon();
 
-  private final VirtualFile myFile;
-  @NotNull
   private OpenFileDescriptor myTarget;
-  private final Project myProject;
   private Reference<RangeHighlighterEx> myHighlighterRef;
+
+  // hold values only if uninitialized
+  private int myLine;
+  private String myUrl;
 
   @NotNull
   private String myDescription;
   private char myMnemonic;
   int index; // index in the list of bookmarks in the Navigate|Bookmarks|show
 
-  public Bookmark(@NotNull Project project, @NotNull VirtualFile file, int line, @NotNull String description) {
-    myFile = file;
-    myProject = project;
+  @ApiStatus.Internal
+  public Bookmark(@NotNull String url, int line, @NotNull String description) {
+    myUrl = url;
+    myLine = line;
+    myDescription = description;
+  }
+
+  Bookmark(@NotNull Project project, @NotNull VirtualFile file, int line, @NotNull String description) {
     myDescription = description;
 
-    myTarget = new OpenFileDescriptor(project, file, line, -1, true);
+    initTarget(project, file, line);
+  }
 
+  @Nullable
+  OpenFileDescriptor init(@NotNull Project project) {
+    if (myTarget != null) {
+      throw new IllegalStateException("Bookmark is already initialized (file=" + myTarget + ")");
+    }
+
+    VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(myUrl);
+    if (file == null) {
+      return null;
+    }
+
+    myUrl = null;
+    initTarget(project, file, myLine);
+    myLine = -1;
+    return myTarget;
+  }
+
+  private void initTarget(@NotNull Project project, @NotNull VirtualFile file, int line) {
+    myTarget = new OpenFileDescriptor(project, file, line, -1, true);
     addHighlighter();
   }
 
@@ -88,11 +117,19 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
   @Override
   public int compareTo(@NotNull Bookmark o) {
     int i = myMnemonic != 0 ? o.myMnemonic != 0 ? myMnemonic - o.myMnemonic : -1: o.myMnemonic != 0 ? 1 : 0;
-    if (i != 0) return i;
-    i = myProject.getName().compareTo(o.myProject.getName());
-    if (i != 0) return i;
-    i = myFile.getName().compareTo(o.getFile().getName());
-    if (i != 0) return i;
+    if (i != 0) {
+      return i;
+    }
+
+    i = myTarget.getProject().getName().compareTo(o.myTarget.getProject().getName());
+    if (i != 0) {
+      return i;
+    }
+
+    i = myTarget.getFile().getName().compareTo(o.getFile().getName());
+    if (i != 0) {
+      return i;
+    }
     return getTarget().compareTo(o.getTarget());
   }
 
@@ -104,7 +141,7 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
   private void addHighlighter() {
     Document document = getCachedDocument();
     if (document != null) {
-      createHighlighter((MarkupModelEx)DocumentMarkupModel.forDocument(document, myProject, true));
+      createHighlighter((MarkupModelEx)DocumentMarkupModel.forDocument(document, myTarget.getProject(), true));
     }
   }
 
@@ -156,7 +193,7 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
     }
     final Document document = getCachedDocument();
     if (document == null) return;
-    MarkupModelEx markup = (MarkupModelEx)DocumentMarkupModel.forDocument(document, myProject, true);
+    MarkupModelEx markup = (MarkupModelEx)DocumentMarkupModel.forDocument(document, myTarget.getProject(), true);
     final Document markupDocument = markup.getDocument();
     if (markupDocument.getLineCount() <= line) return;
     RangeHighlighterEx highlighter = findMyHighlighter();
@@ -173,7 +210,7 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
     if (result != null) {
       return result;
     }
-    MarkupModelEx markup = (MarkupModelEx)DocumentMarkupModel.forDocument(document, myProject, true);
+    MarkupModelEx markup = (MarkupModelEx)DocumentMarkupModel.forDocument(document, myTarget.getProject(), true);
     final Document markupDocument = markup.getDocument();
     final int startOffset = 0;
     final int endOffset = markupDocument.getTextLength();
@@ -215,7 +252,7 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
 
   @NotNull
   public VirtualFile getFile() {
-    return myFile;
+    return myTarget.getFile();
   }
 
   @Nullable
@@ -270,14 +307,14 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
   private OpenFileDescriptor getTarget() {
     int line = getLine();
     if (line != myTarget.getLine()) {
-      myTarget = new OpenFileDescriptor(myProject, myFile, line, -1, true);
+      myTarget = new OpenFileDescriptor(myTarget.getProject(), myTarget.getFile(), line, -1, true);
     }
     return myTarget;
   }
 
   @Override
   public String toString() {
-    StringBuilder result = new StringBuilder(getQualifiedName());
+    StringBuilder result = new StringBuilder(myTarget == null ? myUrl : getQualifiedName());
     String text = nullizeEmptyDescription();
     String description = text == null ? null : StringUtil.escapeXmlEntities(text);
     if (description != null) {
@@ -288,10 +325,12 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
 
   @NotNull
   public String getQualifiedName() {
-    String presentableUrl = myFile.getPresentableUrl();
-    if (myFile.isDirectory()) return presentableUrl;
+    String presentableUrl = myTarget.getFile().getPresentableUrl();
+    if (myTarget.getFile().isDirectory()) {
+      return presentableUrl;
+    }
 
-    final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(myFile);
+    final PsiFile psiFile = PsiManager.getInstance(myTarget.getProject()).findFile(myTarget.getFile());
 
     if (psiFile == null) return presentableUrl;
 
@@ -509,7 +548,7 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
       return new GutterDraggableObject() {
         @Override
         public boolean copy(int line, VirtualFile file, int actionId) {
-          myBookmark.myTarget = new OpenFileDescriptor(myBookmark.myProject, file, line, -1, true);
+          myBookmark.myTarget = new OpenFileDescriptor(myBookmark.myTarget.getProject(), file, line, -1, true);
           myBookmark.updateHighlighter();
           return true;
         }
@@ -537,6 +576,12 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
     @Override
      public int hashCode() {
       return getIcon().hashCode();
+    }
+
+    @Nullable
+    @Override
+    public ActionGroup getPopupMenuActions() {
+      return (ActionGroup)ActionManager.getInstance().getAction("popup@BookmarkContextMenu");
     }
   }
 }

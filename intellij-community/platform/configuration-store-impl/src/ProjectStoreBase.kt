@@ -13,21 +13,21 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectCoreUtil
 import com.intellij.openapi.project.getProjectCacheFileName
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.PathUtilRt
+import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
-import com.intellij.util.containers.computeIfAny
 import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.util.io.exists
 import com.intellij.util.io.move
 import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.text.nullize
 import kotlinx.coroutines.runBlocking
+import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.streams.asSequence
 
 internal const val PROJECT_FILE = "\$PROJECT_FILE$"
 internal const val PROJECT_CONFIG_DIR = "\$PROJECT_CONFIG_DIR$"
@@ -37,7 +37,7 @@ private val DEPRECATED_PROJECT_FILE_STORAGE_ANNOTATION = FileStorageAnnotation(P
 
 // cannot be `internal`, used in Upsource
 abstract class ProjectStoreBase(final override val project: Project) : ComponentStoreWithExtraComponents(), IProjectStore {
-  // protected setter used in upsource
+  // the protected setter used in Upsource
   // Zelix KlassMaster - ERROR: Could not find method 'getScheme()'
   var scheme = StorageScheme.DEFAULT
 
@@ -68,9 +68,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
   final override fun getWorkspaceFilePath() = storageManager.expandMacro(StoragePathMacros.WORKSPACE_FILE)
 
-  final override fun clearStorages() {
-    storageManager.clearStorages()
-  }
+  final override fun clearStorages() = storageManager.clearStorages()
 
   private fun loadProjectFromTemplate(defaultProject: Project) {
     val stateStore = defaultProject.stateStore as DefaultProjectStoreImpl
@@ -91,22 +89,22 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
   final override fun getProjectBasePath(): String {
     if (isDirectoryBased) {
-      val path = PathUtilRt.getParentPath(storageManager.expandMacro(PROJECT_CONFIG_DIR))
-      if (Registry.`is`("store.basedir.parent.detection", true) && PathUtilRt.getFileName(
-          path).startsWith("${Project.DIRECTORY_STORE_FOLDER}.")) {
-        return PathUtilRt.getParentPath(PathUtilRt.getParentPath(path))
-      }
-      return path
+      val path = PathUtil.getParentPath(storageManager.expandMacro(PROJECT_CONFIG_DIR))
+      val parent = Registry.`is`("store.basedir.parent.detection", true) && PathUtil.getFileName(path).startsWith("${Project.DIRECTORY_STORE_FOLDER}.")
+      return if (parent) PathUtil.getParentPath(PathUtil.getParentPath(path)) else path
     }
     else {
-      return PathUtilRt.getParentPath(projectFilePath)
+      return PathUtil.getParentPath(projectFilePath)
     }
   }
 
-  override fun setPath(filePath: String, isRefreshVfsNeeded: Boolean, template: Project?) {
+  override fun getProjectWorkspaceId() = ProjectIdManager.getInstance(project).state.id
+
+  override fun setPath(file: Path, isRefreshVfsNeeded: Boolean, template: Project?) {
     val storageManager = storageManager
     val fs = LocalFileSystem.getInstance()
     val isUnitTestMode = ApplicationManager.getApplication().isUnitTestMode
+    val filePath = file.systemIndependentPath
     if (filePath.endsWith(ProjectFileType.DOT_DEFAULT_EXTENSION)) {
       scheme = StorageScheme.DEFAULT
 
@@ -121,7 +119,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
       if (isUnitTestMode) {
         // load state only if there are existing files
-        isOptimiseTestLoadSpeed = !Paths.get(filePath).toFile().exists()
+        isOptimiseTestLoadSpeed = !file.exists()
 
         storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, workspacePath)
       }
@@ -136,7 +134,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
       if (isUnitTestMode) {
         // load state only if there are existing files
-        isOptimiseTestLoadSpeed = !Paths.get(filePath).exists()
+        isOptimiseTestLoadSpeed = !file.exists()
 
         storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, "$configDir/product-workspace.xml")
       }
@@ -190,7 +188,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
       if (storages.size == 2 && ApplicationManager.getApplication().isUnitTestMode &&
           isSpecialStorage(storages.first()) &&
-          storages.get(1).path == StoragePathMacros.WORKSPACE_FILE) {
+          storages[1].path == StoragePathMacros.WORKSPACE_FILE) {
         return listOf(storages.first())
       }
 
@@ -209,12 +207,10 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       else {
         result!!.sortWith(deprecatedComparator)
         if (isDirectoryBased) {
-          StreamProviderFactory.EP_NAME.getExtensions(project).computeIfAny {
-            LOG.runAndLogException { it.customizeStorageSpecs(component, storageManager, stateSpec, result!!, operation) }
-          }?.let {
-              // yes, DEPRECATED_PROJECT_FILE_STORAGE_ANNOTATION is not added in this case
-              return it
-            }
+          StreamProviderFactory.EP_NAME.extensions(project).asSequence()
+            .map { LOG.runAndLogException { it.customizeStorageSpecs(component, storageManager, stateSpec, result!!, operation) } }
+            .find { it != null }
+            ?.let { return it }  // yes, DEPRECATED_PROJECT_FILE_STORAGE_ANNOTATION is not added in this case
         }
 
         // if we create project from default, component state written not to own storage file, but to project file,
@@ -263,29 +259,24 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     if (!isDirectoryBased) {
       return filePath == projectFilePath || filePath == workspaceFilePath
     }
-    return FileUtil.isAncestor(PathUtilRt.getParentPath(projectFilePath), filePath, false)
+
+    return FileUtil.isAncestor(PathUtil.getParentPath(projectFilePath), filePath, false)
   }
 
-  override fun getDirectoryStorePath(ignoreProjectStorageScheme: Boolean): String? {
-    return when {
-      !ignoreProjectStorageScheme && !isDirectoryBased -> null
-      else -> PathUtilRt.getParentPath(projectFilePath).nullize()
-    }
-  }
+  override fun getDirectoryStorePath(ignoreProjectStorageScheme: Boolean): String? =
+    if (!ignoreProjectStorageScheme && !isDirectoryBased) null
+    else PathUtil.getParentPath(projectFilePath).nullize()
 
   override fun getDirectoryStoreFile(): VirtualFile? = directoryStorePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
 
-  override fun getDirectoryStorePathOrBase(): String = PathUtilRt.getParentPath(projectFilePath)
+  override fun getDirectoryStorePathOrBase(): String = PathUtil.getParentPath(projectFilePath)
 
-  override suspend fun doSave(result: SaveResult, forceSavingAllSettings: Boolean) {
-    // do nothing, dummy implementation for Upsource
-  }
+  override suspend fun doSave(result: SaveResult, forceSavingAllSettings: Boolean) { }  // dummy implementation for Upsource
 }
 
-private fun composeFileBasedProjectWorkSpacePath(filePath: String) = "${FileUtilRt.getNameWithoutExtension(filePath)}${WorkspaceFileType.DOT_DEFAULT_EXTENSION}"
+private fun composeFileBasedProjectWorkSpacePath(filePath: String) = "${FileUtil.getNameWithoutExtension(filePath)}${WorkspaceFileType.DOT_DEFAULT_EXTENSION}"
 
 private fun isSpecialStorage(storage: Storage) = isSpecialStorage(storage.path)
 
-internal fun isSpecialStorage(collapsedPath: String): Boolean {
-  return collapsedPath == StoragePathMacros.CACHE_FILE || collapsedPath == StoragePathMacros.PRODUCT_WORKSPACE_FILE
-}
+internal fun isSpecialStorage(collapsedPath: String): Boolean =
+  collapsedPath == StoragePathMacros.CACHE_FILE || collapsedPath == StoragePathMacros.PRODUCT_WORKSPACE_FILE

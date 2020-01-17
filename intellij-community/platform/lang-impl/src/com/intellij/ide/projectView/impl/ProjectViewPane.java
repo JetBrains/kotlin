@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView.impl;
 
@@ -16,8 +16,6 @@ import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeUpdater;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -31,6 +29,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.util.PlatformUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -41,12 +40,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
 
+import static com.intellij.openapi.module.ModuleGrouperKt.isQualifiedModuleNamesEnabled;
+import static java.awt.EventQueue.isDispatchThread;
+
 public class ProjectViewPane extends AbstractProjectViewPSIPane {
   @NonNls public static final String ID = "ProjectPane";
-  private static final String SHOW_EXCLUDED_FILES_OPTION = "show-excluded-files";
   private static final String USE_FILE_NESTING_RULES = "use-file-nesting-rules";
 
-  boolean myShowExcludedFiles = true;
   private boolean myUseFileNestingRules = true;
 
   public ProjectViewPane(Project project) {
@@ -117,9 +117,6 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
   @Override
   public void readExternal(@NotNull Element element) {
     super.readExternal(element);
-
-    String showExcludedOption = JDOMExternalizerUtil.readField(element, SHOW_EXCLUDED_FILES_OPTION);
-    myShowExcludedFiles = showExcludedOption == null || Boolean.parseBoolean(showExcludedOption);
     String useFileNestingRules = JDOMExternalizerUtil.readField(element, USE_FILE_NESTING_RULES);
     myUseFileNestingRules = useFileNestingRules == null || Boolean.parseBoolean(useFileNestingRules);
   }
@@ -134,19 +131,15 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
 
   @Override
   public void addToolbarActions(@NotNull DefaultActionGroup actionGroup) {
-    //if there is a single content root in the project containing all other content roots (it's a rather common case) there will be no
-    // special module nodes so it's better to hide 'Flatten Modules' action to avoid confusion
-    actionGroup.addAction(createFlattenModulesAction(this::hasSeveralTopLevelModuleNodes)).setAsSecondary(true);
-
     actionGroup.addAction(new ConfigureFilesNestingAction()).setAsSecondary(true);
-    AnAction editScopesAction = ActionManager.getInstance().getAction("ScopeView.EditScopes");
-    if (editScopesAction != null) actionGroup.addAction(editScopesAction).setAsSecondary(true);
   }
 
   /**
    * @return {@code true} if 'Project View' have more than one top-level module node or have top-level module group nodes
    */
   private boolean hasSeveralTopLevelModuleNodes() {
+    if (!isDispatchThread()) return true; // do not check nodes during building
+    // TODO: have to rewrite this logic without using walking in a tree
     TreeModel treeModel = myTree.getModel();
     Object root = treeModel.getRoot();
     int count = treeModel.getChildCount(root);
@@ -214,19 +207,24 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
     }
   }
 
-  private class ProjectViewPaneTreeStructure extends ProjectTreeStructure implements ProjectViewSettings {
+  private final class ProjectViewPaneTreeStructure extends ProjectTreeStructure implements ProjectViewSettings {
     ProjectViewPaneTreeStructure() {
       super(ProjectViewPane.this.myProject, ID);
     }
 
     @Override
-    protected AbstractTreeNode createRoot(@NotNull final Project project, @NotNull ViewSettings settings) {
+    protected AbstractTreeNode<?> createRoot(@NotNull Project project, @NotNull ViewSettings settings) {
       return new ProjectViewProjectNode(project, settings);
     }
 
     @Override
     public boolean isShowExcludedFiles() {
       return ProjectView.getInstance(myProject).isShowExcludedFiles(ID);
+    }
+
+    @Override
+    public boolean isShowLibraryContents() {
+      return true;
     }
 
     @Override
@@ -262,7 +260,11 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
       dialog.reset(myUseFileNestingRules);
       dialog.show();
       if (dialog.isOK()) {
-        dialog.apply(useFileNestingRules -> myUseFileNestingRules = useFileNestingRules);
+        dialog.apply(useFileNestingRules -> {
+          myUseFileNestingRules = useFileNestingRules;
+          ProjectViewState.getInstance(myProject).setUseFileNestingRules(useFileNestingRules);
+          ProjectViewState.getDefaultInstance().setUseFileNestingRules(useFileNestingRules);
+        });
         updateFromRoot(true);
       }
     }
@@ -287,5 +289,15 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
            index.isInLibrary(file) ||
            Comparing.equal(file.getParent(), project.getBaseDir()) ||
            ScratchProjectViewPane.isScratchesMergedIntoProjectTab() && ScratchUtil.isScratch(file);
+  }
+
+  @Override
+  public boolean supportsFlattenModules() {
+    return PlatformUtils.isIntelliJ() && isQualifiedModuleNamesEnabled(myProject) && hasSeveralTopLevelModuleNodes();
+  }
+
+  @Override
+  public boolean supportsShowExcludedFiles() {
+    return true;
   }
 }

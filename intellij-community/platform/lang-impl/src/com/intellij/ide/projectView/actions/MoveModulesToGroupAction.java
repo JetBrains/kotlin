@@ -26,7 +26,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +49,7 @@ public class MoveModulesToGroupAction extends AnAction {
     }
   }
 
-  protected static String whatToMove(@NotNull Module[] modules) {
+  protected static String whatToMove(Module @NotNull [] modules) {
     return modules.length == 1 ? IdeBundle.message("message.module", modules[0].getName()) : IdeBundle.message("message.modules");
   }
 
@@ -60,7 +59,7 @@ public class MoveModulesToGroupAction extends AnAction {
     doMove(modules, myModuleGroup, e.getDataContext());
   }
 
-  public static void doMove(final @NotNull Module[] modules, final ModuleGroup group, @Nullable final DataContext dataContext) {
+  public static void doMove(final Module @NotNull [] modules, final ModuleGroup group, @Nullable final DataContext dataContext) {
     Project project = modules[0].getProject();
     for (final Module module : modules) {
       ModifiableModuleModel model = dataContext != null

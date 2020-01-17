@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * By implementing this extension it is possible to provide an updater and make Update Running Application action
  * available for particular running application.
  * The action will be available for user if at least one updater is provided.
- * {@link RunningApplicationUpdater#performUpdate()} will be called on performing the action.
+ * {@link RunningApplicationUpdater#performUpdate(com.intellij.openapi.actionSystem.AnActionEvent)} will be called on performing the action.
  * Popup with available updaters will be shown at first if there is more then one available updater.
  */
 public interface RunningApplicationUpdaterProvider {

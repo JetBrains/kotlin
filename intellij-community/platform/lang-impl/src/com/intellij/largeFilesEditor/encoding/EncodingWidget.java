@@ -28,31 +28,17 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   private static final Logger logger = Logger.getInstance(EncodingWidget.class);
 
   private final TextPanel myComponent;
-  private final Alarm myUpdateAlarm;
+  private Alarm myUpdateAlarm;
 
-  private final EditorManagerAccessor editorManagerAccessor;
+  private final LargeFileEditorAccessor myLargeFileEditorAccessor;
 
   private boolean myActionEnabled;
 
-  public EncodingWidget(@NotNull final Project project, EditorManagerAccessor editorManagerAccessor) {
+  public EncodingWidget(@NotNull final Project project, LargeFileEditorAccessor largeFileEditorAccessor) {
     super(project);
-
-    this.editorManagerAccessor = editorManagerAccessor;
-
-    myUpdateAlarm = new Alarm(this);
-
+    myLargeFileEditorAccessor = largeFileEditorAccessor;
     myComponent = new TextPanel.WithIconAndArrows();
-
     myComponent.setBorder(WidgetBorder.WIDE);
-
-    new ClickListener() {
-      @Override
-      public boolean onClick(@NotNull MouseEvent e, int clickCount) {
-        requestUpdate();
-        tryShowPopup();
-        return true;
-      }
-    }.installOn(myComponent);
   }
 
   @Override
@@ -67,13 +53,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
 
   @Override
   public StatusBarWidget copy() {
-    if (getProject() != null) {
-      return new EncodingWidget(getProject(), editorManagerAccessor);
-    }
-    else {
-      logger.warn("[LargeFileEditorSubsystem] EncodingWidget.copy(): getProject() is Null");
-      return null;
-    }
+    return new EncodingWidget(getProject(), myLargeFileEditorAccessor);
   }
 
   @Override
@@ -83,36 +63,43 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   }
 
   @Override
-  public WidgetPresentation getPresentation(@NotNull PlatformType type) {
+  public WidgetPresentation getPresentation() {
     return null;
   }
 
   @Override
   public void install(@NotNull StatusBar statusBar) {
     super.install(statusBar);
+    myUpdateAlarm = new Alarm(this);
+    new ClickListener() {
+      @Override
+      public boolean onClick(@NotNull MouseEvent e, int clickCount) {
+        requestUpdate();
+        tryShowPopup();
+        return true;
+      }
+    }.installOn(myComponent);
   }
 
   private void tryShowPopup() {
     if (!myActionEnabled) {
       return;
     }
-    //EditorManager editorManager = tryGetActiveEditorManager();
-    EditorManagerAccess editorManagerAccess = editorManagerAccessor.getAccess(myProject, myStatusBar);
-    if (editorManagerAccess != null) {
-      showPopup(editorManagerAccess);
+    LargeFileEditorAccess largeFileEditorAccess = myLargeFileEditorAccessor.getAccess(getProject(), myStatusBar);
+    if (largeFileEditorAccess != null) {
+      showPopup(largeFileEditorAccess);
     }
     else {
       logger.warn("[LargeFileEditorSubsystem] EncodingWidget.tryShowPopup():" +
-                  " this method was called while editorManager is not available as active text editor");
+                  " this method was called while LargeFileEditor is not available as active text editor");
       requestUpdate();
     }
   }
 
-  private void showPopup(@NotNull EditorManagerAccess editorManagerAccess) {
-    ChangeFileEncodingAction action = new ChangeFileEncodingAction(
-      editorManagerAccessor, myProject, myStatusBar);
+  private void showPopup(@NotNull LargeFileEditorAccess largeFileEditorAccess) {
+    ChangeFileEncodingAction action = new ChangeFileEncodingAction(myLargeFileEditorAccessor, getProject(), myStatusBar);
     JComponent where = getComponent();
-    ListPopup popup = action.createPopup(editorManagerAccess.getVirtualFile(), editorManagerAccess.getEditor(),
+    ListPopup popup = action.createPopup(largeFileEditorAccess.getVirtualFile(), largeFileEditorAccess.getEditor(),
                                          where);
     RelativePoint pos = JBPopupFactory.getInstance().guessBestPopupLocation(where);
     popup.showInScreenCoordinates(where, pos.getScreenPoint());
@@ -132,20 +119,20 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   private void update() {
     if (isDisposed()) return;
 
-    EditorManagerAccess editorManagerAccess = editorManagerAccessor.getAccess(myProject, myStatusBar);
+    LargeFileEditorAccess largeFileEditorAccess = myLargeFileEditorAccessor.getAccess(getProject(), myStatusBar);
 
     myActionEnabled = false;
     String charsetName;
     String toolTipText;
 
-    if (editorManagerAccess == null) {
+    if (largeFileEditorAccess == null) {
       toolTipText = "";
       charsetName = "";
       myComponent.setVisible(false);
     }
     else {
       myActionEnabled = true;
-      charsetName = editorManagerAccess.getCharsetName();
+      charsetName = largeFileEditorAccess.getCharsetName();
       toolTipText = "File Encoding: " + charsetName;
       myComponent.setVisible(true);
     }

@@ -6,16 +6,13 @@ import com.intellij.openapi.roots.GeneratedSourcesFilter;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.ExtensionTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author nik
- */
 public class GeneratedSourceFileChangeTrackerTest extends CodeInsightFixtureTestCase {
   private final GeneratedSourcesFilter myGeneratedSourcesFilter = new GeneratedSourcesFilter() {
     @Override
@@ -28,7 +25,8 @@ public class GeneratedSourceFileChangeTrackerTest extends CodeInsightFixtureTest
   protected void setUp() throws Exception {
     GeneratedSourceFileChangeTrackerImpl.IN_TRACKER_TEST = true;
     super.setUp();
-    PlatformTestUtil.maskExtensions(GeneratedSourcesFilter.EP_NAME, Collections.singletonList(myGeneratedSourcesFilter), getTestRootDisposable());
+    ExtensionTestUtil
+      .maskExtensions(GeneratedSourcesFilter.EP_NAME, Collections.singletonList(myGeneratedSourcesFilter), getTestRootDisposable());
   }
 
   @Override

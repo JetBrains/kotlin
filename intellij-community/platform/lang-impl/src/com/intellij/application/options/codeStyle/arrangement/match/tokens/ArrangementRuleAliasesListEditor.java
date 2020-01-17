@@ -16,6 +16,7 @@
 package com.intellij.application.options.codeStyle.arrangement.match.tokens;
 
 import com.intellij.application.options.codeStyle.arrangement.color.ArrangementColorsProvider;
+import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -99,7 +100,7 @@ public class ArrangementRuleAliasesListEditor extends NamedItemsListEditor<StdAr
   @Nls
   @Override
   public String getDisplayName() {
-    return "Custom Composite Tokens";
+    return ApplicationBundle.message("configurable.ArrangementRuleAliasesListEditor.display.name");
   }
 
   @Nullable

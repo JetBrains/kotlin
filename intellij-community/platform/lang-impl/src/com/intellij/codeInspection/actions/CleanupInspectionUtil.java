@@ -18,13 +18,13 @@ public interface CleanupInspectionUtil {
   AbstractPerformFixesTask applyFixesNoSort(@NotNull Project project,
                                             @NotNull String presentationText,
                                             @NotNull List<? extends ProblemDescriptor> descriptions,
-                                            @Nullable Class quickfixClass,
+                                            @Nullable Class<?> quickfixClass,
                                             boolean startInWriteAction);
 
   default AbstractPerformFixesTask applyFixesNoSort(@NotNull Project project,
                                                     @NotNull String presentationText,
                                                     @NotNull List<? extends ProblemDescriptor> descriptions,
-                                                    @Nullable Class quickfixClass,
+                                                    @Nullable Class<?> quickfixClass,
                                                     boolean startInWriteAction,
                                                     boolean markGlobal) {
     return applyFixesNoSort(project, presentationText, descriptions, quickfixClass, startInWriteAction);
@@ -33,7 +33,7 @@ public interface CleanupInspectionUtil {
   default AbstractPerformFixesTask applyFixes(@NotNull Project project,
                                               @NotNull String presentationText,
                                               @NotNull List<? extends ProblemDescriptor> descriptions,
-                                              @Nullable Class quickfixClass,
+                                              @Nullable Class<?> quickfixClass,
                                               boolean startInWriteAction) {
     sortDescriptions(descriptions);
     return applyFixesNoSort(project, presentationText, descriptions, quickfixClass, startInWriteAction, true);

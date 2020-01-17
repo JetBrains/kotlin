@@ -41,7 +41,7 @@ public class JavaCompilerRefAdapter implements LanguageCompilerRefAdapter {
         if (aClass == null || aClass instanceof PsiAnonymousClass) return null;
         final String jvmOwnerName = ClassUtil.getJVMClassName(aClass);
         final String name = field.getName();
-        if (name == null || jvmOwnerName == null) return null;
+        if (jvmOwnerName == null) return null;
         final int ownerId = names.tryEnumerate(jvmOwnerName);
         if (ownerId == 0) return null;
         final int nameId = names.tryEnumerate(name);
@@ -121,17 +121,15 @@ public class JavaCompilerRefAdapter implements LanguageCompilerRefAdapter {
     return CompilerRef.JavaCompilerFunExprDef.class;
   }
 
-  @NotNull
   @Override
-  public PsiClass[] findDirectInheritorCandidatesInFile(@NotNull SearchId[] internalNames,
-                                                        @NotNull PsiFileWithStubSupport file) {
+  public PsiClass @NotNull [] findDirectInheritorCandidatesInFile(SearchId @NotNull [] internalNames,
+                                                                  @NotNull PsiFileWithStubSupport file) {
     return JavaCompilerElementRetriever.retrieveClassesByInternalIds(internalNames, file);
   }
 
-  @NotNull
   @Override
-  public PsiFunctionalExpression[] findFunExpressionsInFile(@NotNull SearchId[] funExpressions,
-                                                            @NotNull PsiFileWithStubSupport file) {
+  public PsiFunctionalExpression @NotNull [] findFunExpressionsInFile(SearchId @NotNull [] funExpressions,
+                                                                      @NotNull PsiFileWithStubSupport file) {
     TIntHashSet requiredIndices = new TIntHashSet(funExpressions.length);
     for (SearchId funExpr : funExpressions) {
       requiredIndices.add(funExpr.getId());
@@ -144,9 +142,8 @@ public class JavaCompilerRefAdapter implements LanguageCompilerRefAdapter {
     return element instanceof PsiClass;
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getInstantiableConstructors(@NotNull PsiElement aClass) {
+  public PsiElement @NotNull [] getInstantiableConstructors(@NotNull PsiElement aClass) {
     if (!(aClass instanceof PsiClass)) {
       throw new IllegalArgumentException("parameter should be an instance of PsiClass: " + aClass);
     }

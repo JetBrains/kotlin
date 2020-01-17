@@ -29,9 +29,6 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-/**
- * @author nik
- */
 public class JavaModuleSourceRootEditHandler extends JavaSourceRootEditHandlerBase {
   private static final Color SOURCES_COLOR = new JBColor(new Color(0x0A50A1), DarculaColors.BLUE);
 

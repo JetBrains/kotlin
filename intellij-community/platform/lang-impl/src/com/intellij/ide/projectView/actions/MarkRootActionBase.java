@@ -60,11 +60,11 @@ public abstract class MarkRootActionBase extends DumbAwareAction {
     modifyRoots(e, module, files);
   }
 
-  protected void modifyRoots(@NotNull AnActionEvent e, @NotNull final Module module, @NotNull VirtualFile[] files) {
+  protected void modifyRoots(@NotNull AnActionEvent e, @NotNull final Module module, VirtualFile @NotNull [] files) {
     modifyRoots(module, files);
   }
 
-  protected void modifyRoots(@NotNull Module module, @NotNull VirtualFile[] files) {
+  protected void modifyRoots(@NotNull Module module, VirtualFile @NotNull [] files) {
     final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
     for (VirtualFile file : files) {
       ContentEntry entry = findContentEntry(model, file);
@@ -148,7 +148,7 @@ public abstract class MarkRootActionBase extends DumbAwareAction {
   }
 
   @Nullable
-  static Module getModule(@NotNull AnActionEvent e, @Nullable VirtualFile[] files) {
+  static Module getModule(@NotNull AnActionEvent e, VirtualFile @Nullable [] files) {
     if (files == null) return null;
     Module module = e.getData(LangDataKeys.MODULE);
     if (module == null) {
@@ -158,7 +158,7 @@ public abstract class MarkRootActionBase extends DumbAwareAction {
   }
 
   @Nullable
-  private static Module findParentModule(@Nullable Project project, @NotNull VirtualFile[] files) {
+  private static Module findParentModule(@Nullable Project project, VirtualFile @NotNull [] files) {
     if (project == null) return null;
     Module result = null;
     DirectoryIndex index = DirectoryIndex.getInstance(project);

@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class LibraryRootsDetectorImpl extends LibraryRootsDetector {
   private final List<? extends RootDetector> myDetectors;
 

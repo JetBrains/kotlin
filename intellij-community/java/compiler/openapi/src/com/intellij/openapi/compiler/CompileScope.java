@@ -15,14 +15,17 @@
  */
 package com.intellij.openapi.compiler;
 
+import com.intellij.compiler.ModuleSourceSet;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Interface describing the current compilation scope.
@@ -40,8 +43,7 @@ public interface CompileScope extends ExportableUserDataHolder {
    *                     Otherwise files are searched in all directories that belong to the scope.
    * @return a list of files of given type that belong to this scope.
    */
-  @NotNull
-  VirtualFile[] getFiles(@Nullable FileType fileType, boolean inSourceOnly);
+  VirtualFile @NotNull [] getFiles(@Nullable FileType fileType, boolean inSourceOnly);
 
   /**
    * Checks if the file with the specified URL belongs to the scope.
@@ -57,8 +59,7 @@ public interface CompileScope extends ExportableUserDataHolder {
    *
    * @return a list of modules this scope affects.
    */
-  @NotNull
-  Module[] getAffectedModules();
+  Module @NotNull [] getAffectedModules();
 
   /**
    * @return list of names of unloaded modules this scope affects.
@@ -66,5 +67,18 @@ public interface CompileScope extends ExportableUserDataHolder {
   @NotNull
   default Collection<String> getAffectedUnloadedModules() {
     return Collections.emptyList();
+  }
+
+  /**
+   * @return similar to {getAffectedModules}, but is more precise about which kinds of source roots are affected: production and/or tests
+   */
+  default Collection<ModuleSourceSet> getAffectedSourceSets() {
+    List<ModuleSourceSet> sets = new SmartList<>();
+    for (Module module : getAffectedModules()) {
+      for (ModuleSourceSet.Type setType : ModuleSourceSet.Type.values()) {
+        sets.add(new ModuleSourceSet(module, setType));
+      }
+    }
+    return sets;
   }
 }

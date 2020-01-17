@@ -36,7 +36,7 @@ import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
 import com.intellij.psi.codeStyle.CodeStyleSchemes;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.ExtensionTestUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
@@ -170,7 +170,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
   }
 
   private void maskRunImporter(@NotNull RunConfigurationImporter testExtension) {
-    PlatformTestUtil.maskExtensions(RunConfigurationImporter.EP_NAME, Collections.singletonList(testExtension), getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(RunConfigurationImporter.EP_NAME, Collections.singletonList(testExtension), getTestRootDisposable());
   }
 
   @Test
@@ -281,7 +281,9 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
   @Test
   public void testFacetSettingsImport() throws Exception {
     TestFacetConfigurationImporter testExtension = new TestFacetConfigurationImporter("spring");
-    PlatformTestUtil.maskExtensions(FacetConfigurationImporter.EP_NAME, Collections.singletonList(testExtension), getTestRootDisposable());
+    ExtensionTestUtil
+      .maskExtensions(FacetConfigurationImporter.EP_NAME, Collections.<FacetConfigurationImporter>singletonList(testExtension),
+                      getTestRootDisposable());
     importProject(
       withGradleIdeaExtPlugin(
         "import org.jetbrains.gradle.ext.*\n" +
@@ -565,7 +567,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
       assertFalse(sourceFolderManager.isDisposed());
     }
     finally {
-      application.invokeAndWait(() -> ProjectManagerEx.getInstanceEx().forceCloseProject(project, true));
+      application.invokeAndWait(() -> ProjectManagerEx.getInstanceEx().forceCloseProject(project));
     }
     assertTrue(project.isDisposed());
     assertTrue(sourceFolderManager.isDisposed());
@@ -578,7 +580,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
       new GradleBuildScriptBuilderEx()
         .withGradleIdeaExtPlugin(IDEA_EXT_PLUGIN_VERSION)
         .withJavaPlugin()
-        .withKotlinPlugin("1.3.0")
+        .withKotlinPlugin("1.3.50")
         .addPostfix("idea {")
         .addPostfix("  module {")
         .addPostfix("    settings {")
@@ -606,7 +608,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
       new GradleBuildScriptBuilderEx()
         .withGradleIdeaExtPlugin(IDEA_EXT_PLUGIN_VERSION)
         .withJavaPlugin()
-        .withKotlinPlugin("1.3.0")
+        .withKotlinPlugin("1.3.50")
         .addPostfix("idea {")
         .addPostfix("  module {")
         .addPostfix("    settings {")

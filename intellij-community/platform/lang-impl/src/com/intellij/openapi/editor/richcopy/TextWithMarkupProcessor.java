@@ -3,7 +3,6 @@ package com.intellij.openapi.editor.richcopy;
 
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor;
 import com.intellij.codeInsight.editorActions.CopyPastePreProcessor;
-import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Caret;
@@ -11,6 +10,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RawText;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -38,9 +38,9 @@ import static com.intellij.openapi.editor.richcopy.SyntaxInfoBuilder.createMarku
 
 /**
  * Generates text with markup (in RTF and HTML formats) for interaction via clipboard with third-party applications.
- *
+ * <p>
  * Interoperability with the following applications was tested:
- *   MS Office 2010 (Word, PowerPoint, Outlook), OpenOffice (Writer, Impress), Gmail, Mac TextEdit, Mac Mail, Mac Keynote.
+ * MS Office 2010 (Word, PowerPoint, Outlook), OpenOffice (Writer, Impress), Gmail, Mac TextEdit, Mac Mail, Mac Keynote.
  */
 public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithMarkup> {
   private static final Logger LOG = Logger.getInstance(TextWithMarkupProcessor.class);
@@ -50,14 +50,15 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
   @NotNull
   @Override
   public List<RawTextWithMarkup> collectTransferableData(PsiFile file, Editor editor, int[] startOffsets, int[] endOffsets) {
-    if (!RichCopySettings.getInstance().isEnabled()) {
+    if (!RichCopySettings.getInstance().isEnabled() || !(editor instanceof EditorEx)) {
       return Collections.emptyList();
     }
 
     EditorHighlighter highlighter = null;
+    EditorColorsScheme editorColorsScheme = editor.getColorsScheme();
+    EditorColorsScheme schemeToUse = RichCopySettings.getInstance().getColorsScheme(editorColorsScheme);
 
     try {
-      RichCopySettings settings = RichCopySettings.getInstance();
       List<Caret> carets = editor.getCaretModel().getAllCarets();
       Caret firstCaret = carets.get(0);
       final int indentSymbolsToStrip;
@@ -73,10 +74,10 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
       }
       logInitial(editor, startOffsets, endOffsets, indentSymbolsToStrip, firstLineStartOffset);
       CharSequence text = editor.getDocument().getCharsSequence();
-      EditorColorsScheme schemeToUse = settings.getColorsScheme(editor.getColorsScheme());
-      highlighter = HighlighterFactory.createHighlighter(file.getViewProvider().getVirtualFile(),
-                                                         schemeToUse, file.getProject());
-      highlighter.setText(text);
+      highlighter = ((EditorEx)editor).getHighlighter();
+      if (editorColorsScheme != schemeToUse) {
+        highlighter.setColorScheme(schemeToUse);
+      }
       MarkupModel markupModel = DocumentMarkupModel.forDocument(editor.getDocument(), file.getProject(), false);
       Context context = new Context(text, schemeToUse, indentSymbolsToStrip);
       int endOffset = 0;
@@ -121,9 +122,12 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
     }
     catch (Throwable t) {
       // catching the exception so that the rest of copy/paste functionality can still work fine
-      LOG.error("Error generating text with markup",
-                new Attachment("exception", t),
-                new Attachment("highlighter.txt", String.valueOf(highlighter)));
+      LOG.error("Error generating text with markup", t, new Attachment("highlighter.txt", String.valueOf(highlighter)));
+    }
+    finally {
+      if (highlighter != null && editorColorsScheme != schemeToUse) {
+        highlighter.setColorScheme(editorColorsScheme);
+      }
     }
     return Collections.emptyList();
   }
@@ -145,11 +149,10 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
   }
 
   private static void logInitial(@NotNull Editor editor,
-                                 @NotNull int[] startOffsets,
-                                 @NotNull int[] endOffsets,
+                                 int @NotNull [] startOffsets,
+                                 int @NotNull [] endOffsets,
                                  int indentSymbolsToStrip,
-                                 int firstLineStartOffset)
-  {
+                                 int firstLineStartOffset) {
     if (!LOG.isDebugEnabled()) {
       return;
     }
@@ -181,8 +184,7 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
   }
 
   private static Pair<Integer/* start offset to use */, Integer /* indent symbols to strip */> calcIndentSymbolsToStrip(
-    @NotNull Document document, int startOffset, int endOffset)
-  {
+    @NotNull Document document, int startOffset, int endOffset) {
     int startLine = document.getLineNumber(startOffset);
     int endLine = document.getLineNumber(endOffset);
     CharSequence text = document.getCharsSequence();

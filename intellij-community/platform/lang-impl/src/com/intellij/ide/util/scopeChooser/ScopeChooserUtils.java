@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packageDependencies.ChangeListsScopesProvider;
 import com.intellij.psi.search.*;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.ProjectFilesScope;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
@@ -19,10 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ScopeChooserUtils {
-
-  private static final String CURRENT_FILE_SCOPE_NAME = IdeBundle.message("scope.current.file");
-  private static final String OPEN_FILES_SCOPE_NAME = IdeBundle.message("scope.open.files");
-
   private ScopeChooserUtils() {
   }
 
@@ -41,14 +38,14 @@ public class ScopeChooserUtils {
 
     if (scopeName == null) return GlobalSearchScope.EMPTY_SCOPE;
 
-    if (OPEN_FILES_SCOPE_NAME.equals(scopeName)) {
+    if (getOpenFilesScopeName().equals(scopeName)) {
       return intersectWithContentScope(project, GlobalSearchScopes.openFilesScope(project));
     }
 
-    if (CURRENT_FILE_SCOPE_NAME.equals(scopeName)) {
+    if (getCurrentFileScopeName().equals(scopeName)) {
       VirtualFile[] array = FileEditorManager.getInstance(project).getSelectedFiles();
       List<VirtualFile> files = ContainerUtil.createMaybeSingletonList(ArrayUtil.getFirstElement(array));
-      GlobalSearchScope scope = GlobalSearchScope.filesScope(project, files, CURRENT_FILE_SCOPE_NAME);
+      GlobalSearchScope scope = GlobalSearchScope.filesScope(project, files, getCurrentFileScopeName());
       return intersectWithContentScope(project, scope);
     }
 
@@ -89,5 +86,13 @@ public class ScopeChooserUtils {
   @NotNull
   private static GlobalSearchScope intersectWithContentScope(@NotNull Project project, @NotNull GlobalSearchScope scope) {
     return scope.intersectWith(ProjectScope.getContentScope(project));
+  }
+
+  private static String getCurrentFileScopeName() {
+    return IdeBundle.message("scope.current.file");
+  }
+
+  private static String getOpenFilesScopeName() {
+    return IdeBundle.message("scope.open.files");
   }
 }

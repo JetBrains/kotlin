@@ -1,7 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.search;
 
 import com.intellij.core.CoreProjectScopeBuilder;
+import com.intellij.ide.lightEdit.LightEditUtil;
 import com.intellij.ide.scratch.RootType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.UnloadedModuleDescription;
@@ -68,16 +69,13 @@ public class ProjectScopeBuilderImpl extends ProjectScopeBuilder {
   @NotNull
   @Override
   public GlobalSearchScope buildAllScope() {
-    final ProjectRootManager projectRootManager = ProjectRootManager.getInstance(myProject);
-    if (projectRootManager == null) return new EverythingGlobalScope(myProject);
-
-    boolean searchOutsideRootModel = false;
-    for (SearchScopeEnlarger each : SearchScopeEnlarger.EXTENSION.getExtensionList()) {
-      searchOutsideRootModel = each.allScopeSearchesOutsideRootModel(myProject);
-      if (searchOutsideRootModel) break;
+    ProjectRootManager projectRootManager = myProject.isDefault() || LightEditUtil.isLightEditProject(myProject)
+                                            ? null : ProjectRootManager.getInstance(myProject);
+    if (projectRootManager == null) {
+      return new EverythingGlobalScope(myProject);
     }
 
-    return new ProjectAndLibrariesScope(myProject, searchOutsideRootModel) {
+    return new ProjectAndLibrariesScope(myProject) {
       @Override
       public boolean contains(@NotNull VirtualFile file) {
         DirectoryInfo info = ((ProjectFileIndexImpl)myProjectFileIndex).getInfoForFileOrDirectory(file);

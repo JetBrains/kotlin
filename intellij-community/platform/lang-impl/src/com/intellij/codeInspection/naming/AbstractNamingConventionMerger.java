@@ -24,9 +24,8 @@ public abstract class AbstractNamingConventionMerger<T extends PsiNameIdentifier
     return myNewInspection.getShortName();
   }
 
-  @NotNull
   @Override
-  public String[] getSourceToolNames() {
+  public String @NotNull [] getSourceToolNames() {
     return ArrayUtilRt.toStringArray(myNewInspection.getOldToolNames());
   }
 

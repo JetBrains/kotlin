@@ -29,9 +29,6 @@ import org.jetbrains.jps.incremental.artifacts.impl.JpsArtifactUtil;
 
 import javax.swing.*;
 
-/**
-* @author nik
-*/
 class DirectoryElementType extends CompositePackagingElementType<DirectoryPackagingElement> {
 
   DirectoryElementType() {

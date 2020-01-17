@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ex.ScopeToolState;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.project.ExternalStorageConfigurationManager;
@@ -25,10 +26,10 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.testFramework.EdtTestUtilKt;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.settings.TestRunner;
@@ -104,7 +105,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
   }
 
   @Test
-  public void testGradleSettingsFileModification() throws IOException {
+  public void testGradleSettingsFileModification() throws Exception {
     VirtualFile foo = createProjectSubDir("foo");
     createProjectSubFile("foo/build.gradle", "apply plugin: 'java'");
     createProjectSubFile("foo/.idea/modules.xml",
@@ -133,15 +134,16 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
                          "</module>");
 
     Project fooProject = executeOnEdt(() -> ProjectUtil.openProject(foo.getPath(), null, true));
+    AutoImportProjectTracker.getInstance(fooProject).enableAutoImportInTests();
 
     try {
       assertTrue(fooProject.isOpen());
       edt(() -> UIUtil.dispatchAllInvocationEvents());
       assertModules(fooProject, "foo", "bar");
 
-      Semaphore semaphore = new Semaphore(1);
+      AsyncPromise<?> promise = new AsyncPromise<>();
       final MessageBusConnection myBusConnection = fooProject.getMessageBus().connect();
-      myBusConnection.subscribe(ProjectDataImportListener.TOPIC, path -> semaphore.up());
+      myBusConnection.subscribe(ProjectDataImportListener.TOPIC, path -> promise.setResult(null));
       createProjectSubFile("foo/.idea/gradle.xml",
                            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                            "<project version=\"4\">\n" +
@@ -163,7 +165,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
                            "</project>");
       edt(() -> UIUtil.dispatchAllInvocationEvents());
       edt(() -> PlatformTestUtil.saveProject(fooProject));
-      assert semaphore.waitFor(TimeUnit.SECONDS.toMillis(10));
+      edt(() -> PlatformTestUtil.waitForPromise(promise, TimeUnit.MINUTES.toMillis(1)));
       assertTrue("The module has not been linked",
                  ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, getModule(fooProject, "foo")));
     }
@@ -190,10 +192,9 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
       assertTrue(GradleSettings.getInstance(fooProject).getStoreProjectFilesExternally());
       GradleProjectSettings fooSettings = GradleSettings.getInstance(fooProject).getLinkedProjectSettings(foo.getPath());
       assertTrue(fooSettings.isResolveModulePerSourceSet());
-      assertFalse(fooSettings.isResolveExternalAnnotations());
+      assertTrue(fooSettings.isResolveExternalAnnotations());
       assertTrue(fooSettings.getDelegatedBuild());
       assertEquals(TestRunner.GRADLE, fooSettings.getTestRunner());
-      assertFalse(fooSettings.isUseAutoImport());
       assertTrue(fooSettings.isUseQualifiedModuleNames());
     }
     finally {

@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author nik
- */
 final class ArtifactVirtualFileListener implements BulkFileListener {
   private final CachedValue<MultiValuesMap<String, Artifact>> myParentPathsToArtifacts;
   private final ArtifactManagerImpl myArtifactManager;

@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 class DocumentFoldingInfo implements CodeFoldingState {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.folding.impl.DocumentFoldingInfo");
+  private static final Logger LOG = Logger.getInstance(DocumentFoldingInfo.class);
   private static final Key<FoldingInfo> FOLDING_INFO_KEY = Key.create("FOLDING_INFO");
 
   @NotNull private final Project myProject;
@@ -60,7 +60,7 @@ class DocumentFoldingInfo implements CodeFoldingState {
 
     FoldRegion[] foldRegions = editor.getFoldingModel().getAllFoldRegions();
     for (FoldRegion region : foldRegions) {
-      if (!region.isValid()) continue;
+      if (!region.isValid() || region.shouldNeverExpand()) continue;
       boolean expanded = region.isExpanded();
       String signature = region.getUserData(UpdateFoldRegionsOperation.SIGNATURE);
       if (signature == UpdateFoldRegionsOperation.NO_SIGNATURE) continue;

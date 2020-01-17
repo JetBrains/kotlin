@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
 import com.intellij.execution.actions.RunContextAction;
@@ -8,88 +8,103 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.executors.ExecutorGroup;
 import com.intellij.execution.impl.ExecutionManagerImpl;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.macro.MacroManager;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.ActionConfigurationCustomizer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.*;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.util.IconUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
-public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disposable {
+public final class ExecutorRegistryImpl extends ExecutorRegistry {
   private static final Logger LOG = Logger.getInstance(ExecutorRegistryImpl.class);
 
   public static final String RUNNERS_GROUP = "RunnerActions";
   public static final String RUN_CONTEXT_GROUP = "RunContextGroupInner";
 
-  private List<Executor> myExecutors = new ArrayList<>();
-  private final Map<String, Executor> myId2Executor = new THashMap<>();
   private final Set<String> myContextActionIdSet = new THashSet<>();
-  private final Map<String, AnAction> myId2Action = new THashMap<>();
-  private final Map<String, AnAction> myContextActionId2Action = new THashMap<>();
-
-  // [Project, ExecutorId, RunnerId]
-  private final Set<Trinity<Project, String, String>> myInProgress = Collections.synchronizedSet(new THashSet<>());
+  private final Map<String, AnAction> myIdToAction = new THashMap<>();
+  private final Map<String, AnAction> myContextActionIdToAction = new THashMap<>();
 
   public ExecutorRegistryImpl() {
-    initComponent();
+    Executor.EXECUTOR_EXTENSION_NAME.addExtensionPointListener(new ExtensionPointListener<Executor>() {
+      @Override
+      public void extensionAdded(@NotNull Executor extension, @NotNull PluginDescriptor pluginDescriptor) {
+        //noinspection TestOnlyProblems
+        initExecutorActions(extension, ActionManager.getInstance());
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull Executor extension, @NotNull PluginDescriptor pluginDescriptor) {
+        deinitExecutor(extension);
+      }
+    }, ApplicationManager.getApplication());
   }
 
-  synchronized void initExecutor(@NotNull Executor executor) {
-    if (myId2Executor.get(executor.getId()) != null) {
-      LOG.error("Executor with id: \"" + executor.getId() + "\" was already registered!");
+  final static class ExecutorRegistryActionConfigurationTuner implements ActionConfigurationCustomizer {
+    @Override
+    public void customize(@NotNull ActionManager manager) {
+      if (Executor.EXECUTOR_EXTENSION_NAME.hasAnyExtensions()) {
+        ((ExecutorRegistryImpl)getInstance()).init(manager);
+      }
     }
+  }
 
+  @TestOnly
+  public synchronized void initExecutorActions(@NotNull Executor executor, @NotNull ActionManager actionManager) {
     if (myContextActionIdSet.contains(executor.getContextActionId())) {
       LOG.error("Executor with context action id: \"" + executor.getContextActionId() + "\" was already registered!");
     }
 
-    final AnAction toolbarAction;
-    final AnAction runContextAction;
+    AnAction toolbarAction;
+    AnAction runContextAction;
     if (executor instanceof ExecutorGroup) {
-      final ActionGroup toolbarActionGroup = new ExecutorGroupActionGroup((ExecutorGroup)executor, ExecutorAction::new);
-      toolbarActionGroup.setPopup(true);
-      final Presentation presentation = toolbarActionGroup.getTemplatePresentation();
+      ExecutorGroup<?> executorGroup = (ExecutorGroup<?>)executor;
+      ActionGroup toolbarActionGroup = new SplitButtonAction(new ExecutorGroupActionGroup(executorGroup, ExecutorAction::new));
+      Presentation presentation = toolbarActionGroup.getTemplatePresentation();
       presentation.setIcon(executor.getIcon());
       presentation.setText(executor.getStartActionText());
       presentation.setDescription(executor.getDescription());
       toolbarAction = toolbarActionGroup;
-      runContextAction = new ExecutorGroupActionGroup((ExecutorGroup)executor, RunContextAction::new);
+      runContextAction = new ExecutorGroupActionGroup(executorGroup, RunContextAction::new);
     }
     else {
       toolbarAction = new ExecutorAction(executor);
       runContextAction = new RunContextAction(executor);
     }
-    final Executor.ActionWrapper customizer = executor.runnerActionsGroupExecutorActionCustomizer();
-    registerAction(executor.getId(), customizer != null ? customizer.wrap(toolbarAction) : toolbarAction, RUNNERS_GROUP, myId2Action);
-    registerAction(executor.getContextActionId(), runContextAction, RUN_CONTEXT_GROUP, myContextActionId2Action);
 
-    myExecutors.add(executor);
-    myId2Executor.put(executor.getId(), executor);
+    Executor.ActionWrapper customizer = executor.runnerActionsGroupExecutorActionCustomizer();
+    registerAction(actionManager, executor.getId(), customizer == null ? toolbarAction : customizer.wrap(toolbarAction), RUNNERS_GROUP, myIdToAction);
+    registerAction(actionManager, executor.getContextActionId(), runContextAction, RUN_CONTEXT_GROUP, myContextActionIdToAction);
+
     myContextActionIdSet.add(executor.getContextActionId());
   }
 
-  private static void registerAction(@NotNull String actionId, @NotNull AnAction anAction, @NotNull String groupId, @NotNull Map<String, AnAction> map) {
-    ActionManager actionManager = ActionManager.getInstance();
+  private static void registerAction(@NotNull ActionManager actionManager, @NotNull String actionId, @NotNull AnAction anAction, @NotNull String groupId, @NotNull Map<String, AnAction> map) {
     AnAction action = actionManager.getAction(actionId);
     if (action == null) {
       actionManager.registerAction(actionId, anAction);
@@ -97,77 +112,47 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
       action = anAction;
     }
 
-    ((DefaultActionGroup)actionManager.getAction(groupId)).add(action);
+    ((DefaultActionGroup)actionManager.getAction(groupId)).add(action, actionManager);
   }
 
   synchronized void deinitExecutor(@NotNull Executor executor) {
-    myExecutors.remove(executor);
-    myId2Executor.remove(executor.getId());
     myContextActionIdSet.remove(executor.getContextActionId());
 
-    unregisterAction(executor.getId(), RUNNERS_GROUP, myId2Action);
-    unregisterAction(executor.getContextActionId(), RUN_CONTEXT_GROUP, myContextActionId2Action);
+    unregisterAction(executor.getId(), RUNNERS_GROUP, myIdToAction);
+    unregisterAction(executor.getContextActionId(), RUN_CONTEXT_GROUP, myContextActionIdToAction);
   }
 
   private static void unregisterAction(@NotNull String actionId, @NotNull String groupId, @NotNull Map<String, AnAction> map) {
     ActionManager actionManager = ActionManager.getInstance();
-    final DefaultActionGroup group = (DefaultActionGroup)actionManager.getAction(groupId);
-    if (group != null) {
-      group.remove(actionManager.getAction(actionId));
-      final AnAction action = map.get(actionId);
-      if (action != null) {
-        actionManager.unregisterAction(actionId);
-        map.remove(actionId);
-      }
+    DefaultActionGroup group = (DefaultActionGroup)actionManager.getAction(groupId);
+    if (group == null) {
+      return;
+    }
+
+    group.remove(actionManager.getAction(actionId), actionManager);
+    AnAction action = map.get(actionId);
+    if (action != null) {
+      actionManager.unregisterAction(actionId);
+      map.remove(actionId);
     }
   }
 
   @Override
-  @NotNull
-  public synchronized Executor[] getRegisteredExecutors() {
-    return myExecutors.toArray(new Executor[0]);
+  public Executor getExecutorById(@NotNull String executorId) {
+    // even IJ Ultimate with all plugins has ~7 executors - linear search is ok here
+    for (Executor executor : Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
+      if (executorId.equals(executor.getId())) {
+        return executor;
+      }
+    }
+    return null;
   }
 
-  @Override
-  public Executor getExecutorById(final String executorId) {
-    return myId2Executor.get(executorId);
-  }
-
-  private void initComponent() {
-    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(this);
-    connection.subscribe(ExecutionManager.EXECUTION_TOPIC, new ExecutionListener() {
-      @Override
-      public void processStartScheduled(@NotNull String executorId, @NotNull ExecutionEnvironment environment) {
-        myInProgress.add(createExecutionId(executorId, environment));
-      }
-
-      @Override
-      public void processNotStarted(@NotNull String executorId, @NotNull ExecutionEnvironment environment) {
-        myInProgress.remove(createExecutionId(executorId, environment));
-      }
-
-      @Override
-      public void processStarted(@NotNull String executorId, @NotNull ExecutionEnvironment environment, @NotNull ProcessHandler handler) {
-        myInProgress.remove(createExecutionId(executorId, environment));
-      }
-    });
-    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-      @Override
-      public void projectClosed(@NotNull final Project project) {
-        // perform cleanup
-        synchronized (myInProgress) {
-          for (Iterator<Trinity<Project, String, String>> it = myInProgress.iterator(); it.hasNext(); ) {
-            if (project == it.next().first) {
-              it.remove();
-            }
-          }
-        }
-      }
-    });
-
+  private void init(@NotNull ActionManager actionManager) {
     for (Executor executor : Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
       try {
-        initExecutor(executor);
+        //noinspection TestOnlyProblems
+        initExecutorActions(executor, actionManager);
       }
       catch (Throwable t) {
         LOG.error("executor initialization failed: " + executor.getClass().getName(), t);
@@ -175,41 +160,11 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     }
   }
 
-  @NotNull
-  private static Trinity<Project, String, String> createExecutionId(String executorId, @NotNull ExecutionEnvironment environment) {
-    return Trinity.create(environment.getProject(), executorId, environment.getRunner().getRunnerId());
-  }
-
-  @Override
-  public boolean isStarting(Project project, String executorId, String runnerId) {
-    return myInProgress.contains(Trinity.create(project, executorId, runnerId));
-  }
-
-  @Override
-  public boolean isStarting(@NotNull ExecutionEnvironment environment) {
-    return isStarting(environment.getProject(), environment.getExecutor().getId(), environment.getRunner().getRunnerId());
-  }
-
-  @Override
-  public synchronized void dispose() {
-    if (!myExecutors.isEmpty()) {
-      for (Executor executor : new ArrayList<>(myExecutors)) {
-        deinitExecutor(executor);
-      }
-    }
-    myExecutors = null;
-  }
-
-  private class ExecutorAction extends AnAction implements DumbAware, UpdateInBackground {
+  private static final class ExecutorAction extends AnAction implements DumbAware, UpdateInBackground {
     private final Executor myExecutor;
 
-    private ExecutorAction(@NotNull final Executor executor) {
-      super(executor.getStartActionText(), executor.getDescription(), new IconLoader.LazyIcon() {
-        @Override
-        protected Icon compute() {
-          return executor.getIcon();
-        }
-      });
+    private ExecutorAction(@NotNull Executor executor) {
+      super(executor.getStartActionText(), executor.getDescription(), IconLoader.createLazy(() -> executor.getIcon()));
       myExecutor = executor;
     }
 
@@ -217,17 +172,20 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
       if (pairs.isEmpty()) {
         return false;
       }
+
       for (SettingsAndEffectiveTarget pair : pairs) {
         RunConfiguration configuration = pair.getConfiguration();
         if (configuration instanceof CompoundRunConfiguration) {
           if (!canRun(project, ((CompoundRunConfiguration)configuration).getConfigurationsWithEffectiveRunTargets())) {
             return false;
           }
+          continue;
         }
-        final ProgramRunner runner = ProgramRunner.getRunner(myExecutor.getId(), configuration);
+
+        ProgramRunner<?> runner = ProgramRunner.getRunner(myExecutor.getId(), configuration);
         if (runner == null
             || !ExecutionTargetManager.canRun(configuration, pair.getTarget())
-            || isStarting(project, myExecutor.getId(), runner.getRunnerId())) {
+            || ExecutionManager.getInstance(project).isStarting(myExecutor.getId(), runner.getRunnerId())) {
           return false;
         }
       }
@@ -235,16 +193,15 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     }
 
     @Override
-    public void update(@NotNull final AnActionEvent e) {
-      final Presentation presentation = e.getPresentation();
-      final Project project = e.getProject();
-
+    public void update(@NotNull AnActionEvent e) {
+      Presentation presentation = e.getPresentation();
+      Project project = e.getProject();
       if (project == null || !project.isInitialized() || project.isDisposed()) {
         presentation.setEnabled(false);
         return;
       }
 
-      final RunnerAndConfigurationSettings selectedSettings = getSelectedConfiguration(project);
+      RunnerAndConfigurationSettings selectedSettings = getSelectedConfiguration(project);
       boolean enabled = false;
       boolean hideDisabledExecutorButtons = false;
       String text;
@@ -286,9 +243,8 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
       presentation.setText(text);
     }
 
-    private Icon getInformativeIcon(Project project, final RunnerAndConfigurationSettings selectedConfiguration) {
-      final ExecutionManagerImpl executionManager = ExecutionManagerImpl.getInstance(project);
-
+    private Icon getInformativeIcon(@NotNull Project project, @NotNull RunnerAndConfigurationSettings selectedConfiguration) {
+      ExecutionManagerImpl executionManager = ExecutionManagerImpl.getInstance(project);
       RunConfiguration configuration = selectedConfiguration.getConfiguration();
       if (configuration instanceof RunnerIconProvider) {
         RunnerIconProvider provider = (RunnerIconProvider)configuration;
@@ -298,11 +254,11 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
         }
       }
 
-      List<RunContentDescriptor> runningDescriptors =
-        executionManager.getRunningDescriptors(s -> s != null && s.getConfiguration() == selectedConfiguration.getConfiguration());
+      List<RunContentDescriptor> runningDescriptors = executionManager.getRunningDescriptors(s -> {
+        return s != null && s.getConfiguration() == selectedConfiguration.getConfiguration();
+      });
       runningDescriptors = ContainerUtil.filter(runningDescriptors, descriptor -> {
-        RunContentDescriptor contentDescriptor =
-          executionManager.getContentManager().findContentDescriptor(myExecutor, descriptor.getProcessHandler());
+        RunContentDescriptor contentDescriptor = RunContentManager.getInstance(project).findContentDescriptor(myExecutor, descriptor.getProcessHandler());
         return contentDescriptor != null && executionManager.getExecutors(contentDescriptor).contains(myExecutor);
       });
 
@@ -317,12 +273,12 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
         return ExecutionUtil.getLiveIndicator(myExecutor.getIcon());
       }
       else {
-        return IconUtil.addText(myExecutor.getIcon(), String.valueOf(runningDescriptors.size()));
+        return IconUtil.addText(myExecutor.getIcon(), Integer.toString(runningDescriptors.size()));
       }
     }
 
     @Nullable
-    private RunnerAndConfigurationSettings getSelectedConfiguration(@NotNull final Project project) {
+    private static RunnerAndConfigurationSettings getSelectedConfiguration(@NotNull Project project) {
       return RunManager.getInstance(project).getSelectedConfiguration();
     }
 
@@ -344,7 +300,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     }
 
     @Override
-    public void actionPerformed(@NotNull final AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       final Project project = e.getProject();
       if (project == null || project.isDisposed()) {
         return;
@@ -360,18 +316,17 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
   // TODO: make private as soon as IDEA-207986 will be fixed
   // RunExecutorSettings configurations can be modified, so we request current childExecutors on each AnAction#update call
-  public static class ExecutorGroupActionGroup extends ActionGroup implements DumbAware {
+  public final static class ExecutorGroupActionGroup extends ActionGroup implements DumbAware {
     private final ExecutorGroup<?> myExecutorGroup;
     private final Function<? super Executor, ? extends AnAction> myChildConverter;
 
-    private ExecutorGroupActionGroup(ExecutorGroup executorGroup, Function<? super Executor, ? extends AnAction> childConverter) {
+    private ExecutorGroupActionGroup(@NotNull ExecutorGroup<?> executorGroup, @NotNull Function<? super Executor, ? extends AnAction> childConverter) {
       myExecutorGroup = executorGroup;
       myChildConverter = childConverter;
     }
 
-    @NotNull
     @Override
-    public AnAction[] getChildren(@Nullable AnActionEvent e) {
+    public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
       List<Executor> childExecutors = myExecutorGroup.childExecutors();
       AnAction[] result = new AnAction[childExecutors.size()];
       for (int i = 0; i < childExecutors.size(); i++) {

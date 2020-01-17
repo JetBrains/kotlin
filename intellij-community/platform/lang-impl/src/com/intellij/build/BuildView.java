@@ -56,10 +56,12 @@ import java.util.function.Supplier;
 /**
  * @author Vladislav.Soroka
  */
-@ApiStatus.Experimental
 public class BuildView extends CompositeView<ExecutionConsole>
   implements BuildProgressListener, ConsoleView, DataProvider, Filterable<ExecutionNode>, OccurenceNavigator {
   public static final String CONSOLE_VIEW_NAME = "consoleView";
+  @ApiStatus.Experimental
+  public static final DataKey<AnAction[]> RESTART_ACTIONS = DataKey.create("restart actions");
+
   private final AtomicReference<StartBuildEvent> myStartBuildEventRef = new AtomicReference<>();
   private final BuildDescriptor myBuildDescriptor;
   private final Project myProject;
@@ -83,6 +85,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
     myBuildDescriptor = buildDescriptor;
     myViewManager = viewManager;
     myExecutionConsole = executionConsole;
+    Disposer.register(project, this);
   }
 
   @Override
@@ -134,8 +137,8 @@ public class BuildView extends CompositeView<ExecutionConsole>
       Supplier<RunContentDescriptor> descriptorSupplier = startBuildEvent.getContentDescriptorSupplier();
       RunContentDescriptor runContentDescriptor = descriptorSupplier != null ? descriptorSupplier.get() : null;
       myExecutionConsole = runContentDescriptor != null &&
-                             runContentDescriptor.getExecutionConsole() != null &&
-                             runContentDescriptor.getExecutionConsole() != this ?
+                           runContentDescriptor.getExecutionConsole() != null &&
+                           runContentDescriptor.getExecutionConsole() != this ?
                            runContentDescriptor.getExecutionConsole() : new BuildTextConsoleView(myProject);
       if (runContentDescriptor != null && Disposer.findRegisteredObject(runContentDescriptor, this) == null) {
         Disposer.register(this, runContentDescriptor);
@@ -144,7 +147,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
     if (myExecutionConsole != null) {
       myExecutionConsole.getComponent(); //create editor to be able to add console editor actions
       if (myViewSettingsProvider.isExecutionViewHidden() || !myViewSettingsProvider.isSideBySideView()) {
-        addView(myExecutionConsole, CONSOLE_VIEW_NAME, myViewManager.isConsoleEnabledByDefault());
+        addViewAndShowIfNeeded(myExecutionConsole, CONSOLE_VIEW_NAME, myViewManager.isConsoleEnabledByDefault());
       }
     }
 
@@ -156,7 +159,13 @@ public class BuildView extends CompositeView<ExecutionConsole>
         eventView = new BuildTreeConsoleView(myProject, myBuildDescriptor,
                                              myExecutionConsole,
                                              myViewSettingsProvider);
-        addView(eventView, eventViewName, myViewSettingsProvider.isSideBySideView() || !myViewManager.isConsoleEnabledByDefault());
+        if (myViewSettingsProvider.isSideBySideView()) {
+          addView(eventView, eventViewName);
+          showView(eventViewName);
+        }
+        else {
+          addViewAndShowIfNeeded(eventView, eventViewName, !myViewManager.isConsoleEnabledByDefault());
+        }
       }
     }
 
@@ -283,9 +292,8 @@ public class BuildView extends CompositeView<ExecutionConsole>
     return result != null && result;
   }
 
-  @NotNull
   @Override
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     final DefaultActionGroup rerunActionGroup = new DefaultActionGroup();
     AnAction stopAction = null;
     StartBuildEvent startBuildEvent = myStartBuildEventRef.get();
@@ -300,7 +308,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
         super.update(e);
         String eventViewName = BuildTreeConsoleView.class.getName();
         e.getPresentation().setVisible(myViewSettingsProvider != null && !myViewSettingsProvider.isSideBySideView()
-                                       && !BuildView.this.isViewEnabled(eventViewName));
+                                       && !BuildView.this.isViewVisible(eventViewName));
       }
     };
 
@@ -352,12 +360,17 @@ public class BuildView extends CompositeView<ExecutionConsole>
     Object data = super.getData(dataId);
     if (data != null) return data;
     StartBuildEvent startBuildEvent = myStartBuildEventRef.get();
-    if (startBuildEvent != null && LangDataKeys.RUN_PROFILE.is(dataId)) {
-      ExecutionEnvironment environment = startBuildEvent.getExecutionEnvironment();
-      return environment == null ? null : environment.getRunProfile();
-    }
-    if (startBuildEvent != null && LangDataKeys.EXECUTION_ENVIRONMENT.is(dataId)) {
-      return startBuildEvent.getExecutionEnvironment();
+    if (startBuildEvent != null) {
+      if (LangDataKeys.RUN_PROFILE.is(dataId)) {
+        ExecutionEnvironment environment = startBuildEvent.getExecutionEnvironment();
+        return environment == null ? null : environment.getRunProfile();
+      }
+      if (LangDataKeys.EXECUTION_ENVIRONMENT.is(dataId)) {
+        return startBuildEvent.getExecutionEnvironment();
+      }
+      if (RESTART_ACTIONS.is(dataId)) {
+        return startBuildEvent.getRestartActions();
+      }
     }
     return null;
   }

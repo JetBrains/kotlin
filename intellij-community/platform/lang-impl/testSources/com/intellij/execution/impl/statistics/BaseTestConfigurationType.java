@@ -27,7 +27,7 @@ public abstract class BaseTestConfigurationType implements ConfigurationType {
 
   @Override
   public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[0];
+    return ConfigurationFactory.EMPTY_ARRAY;
   }
 
   protected static class FirstTestRunConfigurationType extends BaseTestConfigurationType {

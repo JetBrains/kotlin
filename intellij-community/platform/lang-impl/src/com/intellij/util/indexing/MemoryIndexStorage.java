@@ -36,8 +36,9 @@ import java.util.*;
 public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key, Value> {
   private final Map<Key, ChangeTrackingValueContainer<Value>> myMap = new HashMap<>();
   @NotNull
-  private final IndexStorage<Key, Value> myBackendStorage;
+  private final VfsAwareIndexStorage<Key, Value> myBackendStorage;
   private final List<BufferingStateListener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
+  @NotNull
   private final ID<?, ?> myIndexId;
   private boolean myBufferingEnabled;
 
@@ -47,17 +48,13 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     void memoryStorageCleared();
   }
 
-  public MemoryIndexStorage(@NotNull IndexStorage<Key, Value> backend) {
-    this(backend, null);
-  }
-
-  public MemoryIndexStorage(@NotNull IndexStorage<Key, Value> backend, ID<?, ?> indexId) {
-    myBackendStorage = backend;
+  public MemoryIndexStorage(@NotNull IndexStorage<Key, Value> backend, @NotNull ID<?, ?> indexId) {
+    myBackendStorage = (VfsAwareIndexStorage<Key, Value>)backend;
     myIndexId = indexId;
   }
 
   @NotNull
-  public IndexStorage<Key, Value> getBackendStorage() {
+  VfsAwareIndexStorage<Key, Value> getBackendStorage() {
     return myBackendStorage;
   }
 
@@ -65,33 +62,32 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     myListeners.add(listener);
   }
 
-  public void removeBufferingStateListener(@NotNull BufferingStateListener listener) {
-    myListeners.remove(listener);
-  }
-
   public void setBufferingEnabled(boolean enabled) {
     final boolean wasEnabled = myBufferingEnabled;
     assert wasEnabled != enabled;
 
     myBufferingEnabled = enabled;
+    if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+      FileBasedIndexImpl.LOG.info("buffering state changed: " + myIndexId + "; enabled = " + enabled);
+    }
     for (BufferingStateListener listener : myListeners) {
       listener.bufferingStateChanged(enabled);
     }
   }
 
-  public boolean isBufferingEnabled() {
-    return myBufferingEnabled;
-  }
-
-  public void clearMemoryMap() {
+  public boolean clearMemoryMap() {
+    boolean modified = !myMap.isEmpty();
     myMap.clear();
+    return modified;
   }
 
-  public void clearMemoryMapForId(Key key, int fileId) {
+  public boolean clearMemoryMapForId(Key key, int fileId) {
     ChangeTrackingValueContainer<Value> container = myMap.get(key);
     if (container != null) {
       container.dropAssociatedValue(fileId);
+      return true;
     }
+    return false;
   }
 
   public void fireMemoryStorageCleared() {
@@ -106,7 +102,7 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
       if (myMap.size() == 0) return;
 
       if (DebugAssertions.DEBUG) {
-        String message = "Dropping caches for " + (myIndexId != null ? myIndexId : this) + ", number of items:" + myMap.size();
+        String message = "Dropping caches for " + myIndexId + ", number of items:" + myMap.size();
         FileBasedIndexImpl.LOG.info(message);
       }
 
@@ -154,7 +150,7 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
       }
       stopList.add(key);
     }
-    return ((VfsAwareIndexStorage<Key, Value>) myBackendStorage).processKeys(stopList.isEmpty() && myMap.isEmpty() ? processor : decoratingProcessor, scope, idFilter);
+    return myBackendStorage.processKeys(stopList.isEmpty() && myMap.isEmpty() ? processor : decoratingProcessor, scope, idFilter);
   }
 
   @Override

@@ -9,13 +9,14 @@ import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.openapi.vfs.refreshVfs
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.DisposableRule
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.TemporaryDirectory
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.io.lastModified
 import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.io.write
 import com.intellij.util.io.writeChild
+import com.intellij.util.pico.DefaultPicoContainer
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
 import gnu.trove.THashMap
@@ -28,7 +29,6 @@ import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import org.picocontainer.MutablePicoContainer
-import org.picocontainer.defaults.InstanceComponentAdapter
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -81,8 +81,8 @@ internal class ApplicationStoreTest {
     val streamProvider = MyStreamProvider()
     val map = THashMap<String, String>()
     val fileSpec = "new.xml"
-    map.put(fileSpec, "<application>\n  <component name=\"A\" foo=\"newValue\" />\n</application>")
-    streamProvider.data.put(RoamingType.DEFAULT, map)
+    map[fileSpec] = "<application>\n  <component name=\"A\" foo=\"newValue\" />\n</application>"
+    streamProvider.data[RoamingType.DEFAULT] = map
 
     val storageManager = componentStore.storageManager
     storageManager.removeStreamProvider(MyStreamProvider::class.java)
@@ -136,7 +136,7 @@ internal class ApplicationStoreTest {
 
     fun test(item: ExportableItem) {
       val file = item.file
-      assertThat(map.get(file)).containsExactly(item)
+      assertThat(map[file]).containsExactly(item)
       assertThat(file).doesNotExist()
     }
 
@@ -179,7 +179,7 @@ internal class ApplicationStoreTest {
 
     val picoContainer = ApplicationManager.getApplication().picoContainer as MutablePicoContainer
     val componentKey = A::class.java.name
-    picoContainer.registerComponent(InstanceComponentAdapter(componentKey, component))
+    picoContainer.registerComponent(DefaultPicoContainer.InstanceComponentAdapter(componentKey, component))
     try {
       assertThat(getExportableComponentsMap(false, false, storageManager, relativePaths)).containsOnly(
         componentPath.to(listOf(ExportableItem(componentPath, ""))), additionalPath.to(listOf(ExportableItem(additionalPath, " (schemes)"))))
@@ -302,7 +302,7 @@ internal class ApplicationStoreTest {
     val obsoleteStorageBean = ObsoleteStorageBean()
     obsoleteStorageBean.file = "i_do_not_want_to_be_deleted_but.xml"
     obsoleteStorageBean.components.addAll(listOf("loser1", "loser2", "lucky"))
-    PlatformTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
+    ExtensionTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
 
     @State(name = "loser1", storages = [(Storage(value = "i_do_not_want_to_be_deleted_but.xml"))])
     class AOther : A()
@@ -361,7 +361,7 @@ internal class ApplicationStoreTest {
     val obsoleteStorageBean = ObsoleteStorageBean()
     obsoleteStorageBean.file = "i_will_be_not_deleted.xml"
     obsoleteStorageBean.components.addAll(listOf("Loser"))
-    PlatformTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
+    ExtensionTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
 
     testAppConfig.resolve(obsoleteStorageBean.file).write("""
       <application>
@@ -389,21 +389,19 @@ internal class ApplicationStoreTest {
     val data: MutableMap<RoamingType, MutableMap<String, String>> = THashMap()
 
     override fun write(fileSpec: String, content: ByteArray, size: Int, roamingType: RoamingType) {
-      getMap(roamingType).put(fileSpec, String(content, 0, size, Charsets.UTF_8))
+      getMap(roamingType)[fileSpec] = String(content, 0, size, Charsets.UTF_8)
     }
 
-    private fun getMap(roamingType: RoamingType): MutableMap<String, String> {
-      return data.getOrPut(roamingType) { THashMap<String, String>() }
-    }
+    private fun getMap(roamingType: RoamingType): MutableMap<String, String> = data.getOrPut(roamingType) { THashMap() }
 
     override fun read(fileSpec: String, roamingType: RoamingType, consumer: (InputStream?) -> Unit): Boolean {
-      val data = getMap(roamingType).get(fileSpec)
+      val data = getMap(roamingType)[fileSpec]
       data?.let { ByteArrayInputStream(it.toByteArray()) }.let(consumer)
       return true
     }
 
     override fun delete(fileSpec: String, roamingType: RoamingType): Boolean {
-      data.get(roamingType)?.remove(fileSpec)
+      data[roamingType]?.remove(fileSpec)
       return true
     }
   }

@@ -7,6 +7,7 @@ import com.intellij.codeInsight.navigation.IncrementalSearchHandler;
 import com.intellij.codeInsight.template.impl.editorActions.TypedActionHandlerBase;
 import com.intellij.execution.ConsoleFolding;
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.actions.EOFAction;
 import com.intellij.execution.filters.*;
@@ -15,7 +16,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ObservableConsoleView;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.OccurenceNavigator;
 import com.intellij.ide.startup.StartupManagerEx;
@@ -58,14 +58,13 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SideBorder;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.*;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.Alarm;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.DocumentUtil;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -81,7 +80,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableConsoleView, DataProvider, OccurenceNavigator {
   @NonNls private static final String CONSOLE_VIEW_POPUP_MENU = "ConsoleView.PopupMenu";
-  private static final Logger LOG = Logger.getInstance("#com.intellij.execution.impl.ConsoleViewImpl");
+  private static final Logger LOG = Logger.getInstance(ConsoleViewImpl.class);
 
   private static final int DEFAULT_FLUSH_DELAY = SystemProperties.getIntProperty("console.flush.delay.ms", 200);
 
@@ -171,7 +170,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     myPsiDisposedCheck = new DisposedPsiManagerCheck(project);
     myProject = project;
 
-    myFilters = new CompositeFilter(project, usePredefinedMessageFilter ? computeConsoleFilters(project, searchScope) : new SmartList<>());
+    myFilters = new CompositeFilter(project, usePredefinedMessageFilter ? ConsoleViewUtil.computeConsoleFilters(project, this, searchScope)
+                                                                        : Collections.emptyList());
     myFilters.setForceUseAllFilters(true);
 
     List<ConsoleInputFilterProvider> inputFilters = ConsoleInputFilterProvider.INPUT_FILTER_PROVIDERS.getExtensionList();
@@ -225,7 +225,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
   private static synchronized void initTypedHandler() {
     if (ourTypedHandlerInitialized) return;
-    TypedAction typedAction = EditorActionManager.getInstance().getTypedAction();
+    EditorActionManager.getInstance();
+    TypedAction typedAction = TypedAction.getInstance();
     typedAction.setupHandler(new MyTypedHandler(typedAction.getHandler()));
     ourTypedHandlerInitialized = true;
   }
@@ -259,25 +260,6 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     });
 
     updateFoldings(0, myEditor.getDocument().getLineCount() - 1);
-  }
-
-  @NotNull
-  private List<Filter> computeConsoleFilters(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
-    List<Filter> result = new ArrayList<>();
-    for (ConsoleFilterProvider eachProvider : ConsoleFilterProvider.FILTER_PROVIDERS.getExtensions()) {
-      Filter[] filters;
-      if (eachProvider instanceof ConsoleDependentFilterProvider) {
-        filters = ((ConsoleDependentFilterProvider)eachProvider).getDefaultFilters(this, project, searchScope);
-      }
-      else if (eachProvider instanceof ConsoleFilterProviderEx) {
-        filters = ((ConsoleFilterProviderEx)eachProvider).getDefaultFilters(project, searchScope);
-      }
-      else {
-        filters = eachProvider.getDefaultFilters(project);
-      }
-      ContainerUtil.addAll(result, filters);
-    }
-    return result;
   }
 
   @Override
@@ -322,6 +304,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     addFlushRequest(0, new ScrollRunnable());
   }
 
+  @Override
   public void requestScrollingToEnd() {
     if (myEditor == null) {
       return;
@@ -820,7 +803,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     tokenMarker.putUserData(CONTENT_TYPE, contentType);
   }
 
-  boolean isDisposed() {
+  private boolean isDisposed() {
     return myProject.isDisposed() || myEditor == null;
   }
 
@@ -1110,7 +1093,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     }
 
     int oStart = document.getLineStartOffset(startLine);
-    if (oStart > 0) oStart--;
+    if (oStart > 0 && folding.shouldBeAttachedToThePreviousLine()) oStart--;
     int oEnd = CharArrayUtil.shiftBackward(document.getImmutableCharSequence(), document.getLineEndOffset(endLine) - 1, " \t") + 1;
 
     String placeholder = folding.getPlaceholderText(getProject(), toFold);
@@ -1136,7 +1119,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     return null;
   }
 
-  private static class ClearThisConsoleAction extends ClearAllAction {
+  private static class ClearThisConsoleAction extends ClearConsoleAction {
     private final ConsoleView myConsoleView;
 
     ClearThisConsoleAction(@NotNull ConsoleView consoleView) {
@@ -1155,25 +1138,12 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     }
   }
 
-  public static class ClearAllAction extends DumbAwareAction {
-    public ClearAllAction() {
-      super(ExecutionBundle.message("clear.all.from.console.action.name"), "Clear the contents of the console", AllIcons.Actions.GC);
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-      ConsoleView data = e.getData(LangDataKeys.CONSOLE_VIEW);
-      boolean enabled = data != null && data.getContentSize() > 0;
-      e.getPresentation().setEnabled(enabled);
-    }
-
-    @Override
-    public void actionPerformed(@NotNull final AnActionEvent e) {
-      final ConsoleView consoleView = e.getData(LangDataKeys.CONSOLE_VIEW);
-      if (consoleView != null) {
-        consoleView.clear();
-      }
-    }
+  /**
+   * @deprecated use {@link ClearConsoleAction} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  public static class ClearAllAction extends ClearConsoleAction {
   }
 
   // finds range marker the [offset..offset+1) belongs to
@@ -1298,7 +1268,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       final Editor editor = consoleView.myEditor;
 
       if (IncrementalSearchHandler.isHintVisible(editor)) {
-        getDefaultActionHandler().execute(editor, context);
+        getDefaultActionHandler().execute(editor, null, context);
         return;
       }
 
@@ -1329,7 +1299,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       final Editor editor = consoleView.myEditor;
 
       if (IncrementalSearchHandler.isHintVisible(editor)) {
-        getDefaultActionHandler().execute(editor, context);
+        getDefaultActionHandler().execute(editor, null, context);
         return;
       }
 
@@ -1432,8 +1402,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
   }
 
   @Override
-  @NotNull
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     //Initializing prev and next occurrences actions
     final CommonActionsManager actionsManager = CommonActionsManager.getInstance();
     final AnAction prevAction = actionsManager.createPrevOccurenceAction(this);
@@ -1536,6 +1505,12 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
   public boolean isRunning() {
     return myState.isRunning();
+  }
+
+  @TestOnly
+  @NotNull
+  ConsoleState getState() {
+    return myState;
   }
 
   /**

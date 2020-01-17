@@ -86,12 +86,14 @@ public class InstalledPackagesPanel extends JPanel {
     myUpgradeButton = new DumbAwareActionButton("Upgrade", IconUtil.getMoveUpIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
+        PackageManagementUsageCollector.triggerUpgradePerformed(myProject, myPackageManagementService);
         upgradeAction();
       }
     };
     myInstallButton = new DumbAwareActionButton("Install", IconUtil.getAddIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
+        PackageManagementUsageCollector.triggerBrowseAvailablePackagesPerformed(myProject, myPackageManagementService);
         if (myPackageManagementService != null) {
           ManagePackagesDialog dialog = createManagePackagesDialog();
           dialog.show();
@@ -102,6 +104,7 @@ public class InstalledPackagesPanel extends JPanel {
     myUninstallButton = new DumbAwareActionButton("Uninstall", IconUtil.getRemoveIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
+        PackageManagementUsageCollector.triggerUninstallPerformed(myProject, myPackageManagementService);
         uninstallAction();
       }
     };
@@ -399,7 +402,7 @@ public class InstalledPackagesPanel extends JPanel {
 
   private void onUpdateFinished() {
     myPackagesTable.setPaintBusy(!myCurrentlyInstalling.isEmpty());
-    myPackagesTable.getEmptyText().setText(StatusText.DEFAULT_EMPTY_TEXT);
+    myPackagesTable.getEmptyText().setText(StatusText.getDefaultEmptyText());
     updateUninstallUpgrade();
     // Action button presentations won't be updated if no events occur (e.g. mouse isn't moving, keys aren't being pressed).
     // In that case emulating activity will help:

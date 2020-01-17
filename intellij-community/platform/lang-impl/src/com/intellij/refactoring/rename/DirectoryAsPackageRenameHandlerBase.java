@@ -44,7 +44,7 @@ import java.util.List;
  * @author yole
  */
 public abstract class DirectoryAsPackageRenameHandlerBase<T extends PsiDirectoryContainer> extends DirectoryRenameHandlerBase {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.DirectoryAsPackageRenameHandler");
+  private static final Logger LOG = Logger.getInstance(DirectoryAsPackageRenameHandlerBase.class);
 
   protected abstract VirtualFile[] occursInPackagePrefixes(T aPackage);
 

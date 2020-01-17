@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +54,7 @@ public class SourceRootIconProvider {
 
   @Nullable
   private static Icon calcFileLayerIcon(VirtualFile vFile, Project project) {
-    ProjectFileIndexImpl index = (ProjectFileIndexImpl)ProjectFileIndex.getInstance(project);
+    ProjectFileIndex index = ProjectFileIndex.getInstance(project);
     if (vFile != null) {
       VirtualFile parent = vFile.getParent();
       
@@ -65,9 +66,10 @@ public class SourceRootIconProvider {
         }
       }
       else {
-        SourceFolder sourceFolder = index.getSourceFolder(vFile);
+        ProjectFileIndexImpl indexImpl = ObjectUtils.tryCast(index, ProjectFileIndexImpl.class);
+        SourceFolder sourceFolder = indexImpl != null ? indexImpl.getSourceFolder(vFile) : null;
         if (sourceFolder != null && vFile.equals(sourceFolder.getFile())) {
-          SourceFolder parentSourceFolder = parent == null ? null : index.getSourceFolder(parent);
+          SourceFolder parentSourceFolder = parent == null ? null : indexImpl.getSourceFolder(parent);
 
           // do not mark files under folder of the same root type (e.g. test root file under test root dir)
           // but mark file if they are under different root type (e.g. test root file under source root dir)

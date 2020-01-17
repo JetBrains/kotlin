@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.daemon.impl;
 
@@ -50,8 +50,8 @@ import java.util.regex.Pattern;
 /**
  * @author cdr
  */
-class PassExecutorService implements Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.daemon.impl.PassExecutorService");
+final class PassExecutorService implements Disposable {
+  private static final Logger LOG = Logger.getInstance(PassExecutorService.class);
   private static final boolean CHECK_CONSISTENCY = ApplicationManager.getApplication().isUnitTestMode();
 
   private final Map<ScheduledPass, Job<Void>> mySubmittedPasses = new ConcurrentHashMap<>();
@@ -188,7 +188,7 @@ class PassExecutorService implements Disposable {
     log(updateProgress, null, vFiles + " ----- starting " + threadsToStartCountdown.get(), freePasses);
 
     for (ScheduledPass dependentPass : dependentPasses) {
-      mySubmittedPasses.put(dependentPass, Job.NULL_JOB);
+      mySubmittedPasses.put(dependentPass, Job.nullJob());
     }
     for (ScheduledPass freePass : freePasses) {
       submit(freePass);
@@ -321,7 +321,7 @@ class PassExecutorService implements Disposable {
 
     if (pass.isRunIntentionPassAfter() && fileEditor instanceof TextEditor) {
       Editor editor = ((TextEditor)fileEditor).getEditor();
-      ShowIntentionsPass ip = new ShowIntentionsPass(myProject, editor, -1);
+      ShowIntentionsPass ip = new ShowIntentionsPass(myProject, editor, false);
       ip.setId(nextPassId.incrementAndGet());
       ip.setCompletionPredecessorIds(new int[]{scheduledPass.myPass.getId()});
 
@@ -485,7 +485,7 @@ class PassExecutorService implements Disposable {
                                               @NotNull final AtomicInteger threadsToStartCountdown,
                                               @NotNull Runnable callbackOnApplied) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      if (isDisposed() || myProject.isDisposed() || !fileEditor.isValid()) {
+      if (isDisposed() || !fileEditor.isValid()) {
         updateProgress.cancel();
       }
       if (updateProgress.isCanceled()) {
@@ -533,8 +533,8 @@ class PassExecutorService implements Disposable {
     }
   }
 
-  protected boolean isDisposed() {
-    return isDisposed;
+  private boolean isDisposed() {
+    return isDisposed || myProject.isDisposed();
   }
 
   @NotNull
@@ -559,7 +559,7 @@ class PassExecutorService implements Disposable {
     return StringUtil.parseInt(num, 0);
   }
 
-  static void log(ProgressIndicator progressIndicator, TextEditorHighlightingPass pass, @NonNls @NotNull Object... info) {
+  static void log(ProgressIndicator progressIndicator, TextEditorHighlightingPass pass, @NonNls Object @NotNull ... info) {
     if (LOG.isDebugEnabled()) {
       CharSequence docText = pass == null || pass.getDocument() == null ? "" : ": '" + StringUtil.first(pass.getDocument().getCharsSequence(), 10, true)+ "'";
       synchronized (PassExecutorService.class) {

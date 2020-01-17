@@ -15,13 +15,13 @@
  */
 package org.jetbrains.plugins.gradle.model;
 
-import org.gradle.api.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.Serializable;
 
 /**
- * @deprecated to be removed in 2018.1
+ * @deprecated to be removed in 2020.1
  */
 @Deprecated
 public interface ExtIdeaCompilerOutput extends Serializable {

@@ -8,12 +8,12 @@ import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.externalSystem.model.project.ProjectId;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataStorage;
-import com.intellij.openapi.externalSystem.service.ui.SelectExternalProjectDialog;
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.externalSystem.view.ProjectNode;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -34,24 +34,26 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.RunAll;
-import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder;
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep;
+import org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder;
+import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.collectRootsInside;
 
@@ -78,19 +80,27 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
       if (step instanceof ProjectTypeStep) {
         assertTrue(((ProjectTypeStep)step).setSelectedTemplate("Gradle", null));
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
-        assertEquals(4, steps.size());
+        assertEquals(3, steps.size());
         final ProjectBuilder projectBuilder = myWizard.getProjectBuilder();
-        assertInstanceOf(projectBuilder, GradleModuleBuilder.class);
-        ((GradleModuleBuilder)projectBuilder).setName(projectName);
+        assertInstanceOf(projectBuilder, AbstractGradleModuleBuilder.class);
+        AbstractGradleModuleBuilder gradleProjectBuilder = (AbstractGradleModuleBuilder)projectBuilder;
+        gradleProjectBuilder.setName(projectName);
+        gradleProjectBuilder.setProjectId(new ProjectId("", null, null));
       }
     });
+    CountDownLatch latch = new CountDownLatch(1);
+    MessageBusConnection connection = project.getMessageBus().connect();
+    connection.subscribe(ProjectDataImportListener.TOPIC, path -> latch.countDown());
+    while (latch.getCount() == 1) {
+      UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
+      Thread.yield();
+    }
 
     assertEquals(projectName, project.getName());
+    assertModules(project, projectName, projectName + ".main", projectName + ".test");
     Module[] modules = ModuleManager.getInstance(project).getModules();
-    assertEquals(1, modules.length);
-    final Module module = modules[0];
+    final Module module = ContainerUtil.find(modules, it -> it.getName().equals(projectName));
     assertTrue(ModuleRootManager.getInstance(module).isSdkInherited());
-    assertEquals(projectName, module.getName());
 
     VirtualFile root = ProjectRootManager.getInstance(project).getContentRoots()[0];
     VirtualFile settingsScript = VfsUtilCore.findRelativeFile("settings.gradle", root);
@@ -119,25 +129,30 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     Module childModule = createModuleFromTemplate("Gradle", null, project, step -> {
       if (step instanceof ProjectTypeStep) {
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
-        assertEquals(4, steps.size());
+        assertEquals(3, steps.size());
       }
-      else if (step instanceof GradleModuleWizardStep) {
-        SelectExternalProjectDialog projectDialog = new SelectExternalProjectDialog(GradleConstants.SYSTEM_ID, project, null);
-        Disposer.register(getTestRootDisposable(), projectDialog.getDisposable());
-        JComponent component = projectDialog.getPreferredFocusedComponent();
-        ProjectNode projectNode = (ProjectNode)((SimpleTree)component).getNodeFor(0);
-        assertEquals(projectName, projectNode.getName());
-        ((GradleModuleWizardStep)step).setArtifactId("childModule");
+      else if (step instanceof GradleStructureWizardStep) {
+        GradleStructureWizardStep gradleStructureWizardStep = (GradleStructureWizardStep)step;
+        assertEquals(projectName, gradleStructureWizardStep.getParentData().getExternalName());
+        gradleStructureWizardStep.setArtifactId("childModule");
+        gradleStructureWizardStep.setGroupId("");
       }
     });
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
 
-    modules = ModuleManager.getInstance(project).getModules();
-    assertEquals(2, modules.length);
+    assertModules(project, projectName, projectName + ".main", projectName + ".test",
+                  projectName + ".childModule", projectName + ".childModule.main", projectName + ".childModule.test");
 
     assertEquals("childModule", childModule.getName());
     assertEquals(String.format("rootProject.name = '%s'\n" +
                                "include '%s'\n\n", projectName, childModule.getName()),
                  StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript)));
+  }
+
+  private static void assertModules(@NotNull Project project, String @NotNull ... expectedNames) {
+    Module[] actual = ModuleManager.getInstance(project).getModules();
+    Collection<String> actualNames = ContainerUtil.map(actual, it -> it.getName());
+    assertEquals(ContainerUtil.newHashSet(expectedNames), new HashSet<>(actualNames));
   }
 
   @Override
@@ -156,8 +171,8 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     File directory;
     Object settings = ContainerUtil.getFirstItem(linkedProjectsSettings);
     if (settings instanceof ExternalProjectSettings) {
-      directory =
-        FileUtil.createTempDirectory(new File(((ExternalProjectSettings)settings).getExternalProjectPath()), getName(), "new", false);
+      directory = new File(((ExternalProjectSettings)settings).getExternalProjectPath());
+      FileUtil.createDirectory(directory);
     }
     else {
       directory = FileUtil.createTempDirectory(getName(), "new", false);
@@ -168,7 +183,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
       myWizard = null;
     }
     myWizard = createWizard(project, directory);
-    UIUtil.dispatchAllInvocationEvents(); // to make default selection applied
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
   }
 
   protected void collectAllowedRoots(final List<String> roots) {

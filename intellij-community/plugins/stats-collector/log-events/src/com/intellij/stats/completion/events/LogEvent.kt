@@ -23,12 +23,12 @@ abstract class LogEvent(
         @Transient var userUid: String,
         @Transient var sessionUid: String,
         @Transient var actionType: Action,
+        @Transient var bucket: String,
         @Transient var timestamp: Long
 ) {
 
     @Transient var recorderId: String = "completion-stats"
-    @Transient var recorderVersion: String = "6"
-    @Transient var bucket: String = "-1"
+    @Transient var recorderVersion: String = "7"
     var validationStatus: ValidationStatus = ValidationStatus.UNKNOWN
 
     abstract fun accept(visitor: LogEventVisitor)
@@ -40,13 +40,15 @@ abstract class LookupStateLogData(
         sessionId: String,
         action: Action,
         state: LookupState,
+        bucket: String,
         timestamp: Long
-) : LogEvent(userId, sessionId, action, timestamp) {
+) : LogEvent(userId, sessionId, action, bucket, timestamp) {
 
     @JvmField var completionListIds: List<Int> = state.ids
     @JvmField var newCompletionListItems: List<LookupEntryInfo> = state.newItems
     @JvmField var itemsDiff: List<LookupEntryDiff> = state.itemsDiff
     @JvmField var currentPosition: Int = state.selectedPosition
+    @JvmField var commonSessionFactors: Map<String, String> = state.commonSessionFactors
 
     @JvmField var originalCompletionType: String = ""
     @JvmField var originalInvokationCount: Int = -1

@@ -1,7 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.UIUtil;
@@ -9,15 +11,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 
 class ServiceViewSingleUi implements ServiceViewUi {
   private final SimpleToolWindowPanel myMainPanel = new SimpleToolWindowPanel(false);
   private final JPanel myMessagePanel = new JBPanelWithEmptyText().withEmptyText("No content available");
 
   ServiceViewSingleUi() {
-    UIUtil.putClientProperty(myMainPanel, UIUtil.NOT_IN_HIERARCHY_COMPONENTS,
-                             (Iterable<JComponent>)() -> JBIterable.of((JComponent)myMessagePanel)
-                               .filter(component -> myMainPanel != component.getParent()).iterator());
+    ComponentUtil.putClientProperty(myMainPanel, UIUtil.NOT_IN_HIERARCHY_COMPONENTS,
+                                    (Iterable<? extends Component>)(Iterable<JComponent>)() -> JBIterable.of((JComponent)myMessagePanel)
+                                      .filter(component -> myMainPanel != component.getParent()).iterator());
+    myMessagePanel.setFocusable(true);
   }
 
   @NotNull
@@ -32,11 +36,12 @@ class ServiceViewSingleUi implements ServiceViewUi {
 
   @Override
   public void setServiceToolbar(@NotNull ServiceViewActionProvider actionManager) {
-    myMainPanel.setToolbar(actionManager.createServiceToolbar(myMainPanel).getComponent());
+    ActionToolbar toolbar = actionManager.createServiceToolbar(myMainPanel);
+    myMainPanel.setToolbar(actionManager.wrapServiceToolbar(toolbar));
   }
 
   @Override
-  public void setMasterPanel(@NotNull JComponent component, @NotNull ServiceViewActionProvider actionManager) {
+  public void setMasterComponent(@NotNull JComponent component, @NotNull ServiceViewActionProvider actionManager) {
   }
 
   @Override
@@ -47,6 +52,14 @@ class ServiceViewSingleUi implements ServiceViewUi {
     if (component.getParent() == myMainPanel) return;
 
     myMainPanel.setContent(component);
+  }
+
+  @Override
+  public void setNavBar(@NotNull JComponent component) {
+  }
+
+  @Override
+  public void setMasterComponentVisible(boolean visible) {
   }
 
   @Nullable

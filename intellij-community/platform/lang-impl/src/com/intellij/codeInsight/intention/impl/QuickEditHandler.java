@@ -93,12 +93,11 @@ public class QuickEditHandler implements Disposable, DocumentListener {
     // preserve \r\n as it is done in MultiHostRegistrarImpl
     myNewFile = factory.createFileFromText(newFileName, language, text, true, false);
     myNewVirtualFile = ObjectUtils.assertNotNull((LightVirtualFile)myNewFile.getVirtualFile());
-    myNewVirtualFile.setOriginalFile(origFile.getVirtualFile());
+    myNewVirtualFile.setOriginalFile(injectedFile.getVirtualFile());
 
     assert myNewFile != null : "PSI file is null";
     assert myNewFile.getTextLength() == myNewVirtualFile.getContent().length() : "PSI / Virtual file text mismatch";
 
-    myNewVirtualFile.setOriginalFile(origFile.getVirtualFile());
     // suppress possible errors as in injected mode
     myNewFile.putUserData(InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
                           injectedFile.getUserData(InjectedLanguageUtil.FRANKENSTEIN_INJECTION));
@@ -216,9 +215,7 @@ public class QuickEditHandler implements Disposable, DocumentListener {
 
   @Override
   public void documentChanged(@NotNull DocumentEvent e) {
-    UndoManager undoManager = UndoManager.getInstance(myProject);
-    boolean undoOrRedo = undoManager.isUndoInProgress() || undoManager.isRedoInProgress();
-    if (undoOrRedo) {
+    if (UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
       // allow undo/redo up until 'creation stamp' back in time
       // and check it after action is completed
       if (e.getDocument() == myOrigDocument) {

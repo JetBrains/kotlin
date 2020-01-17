@@ -1,9 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.impl
 
 import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configurations.RuntimeConfigurationException
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
@@ -15,7 +17,7 @@ import javax.swing.Icon
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-class TimedIconCache {
+internal class TimedIconCache {
   private val idToIcon = THashMap<String, Icon>()
   private val idToInvalid = THashMap<String, Boolean>()
   private val iconCheckTimes = ObjectLongHashMap<String>()
@@ -36,6 +38,7 @@ class TimedIconCache {
       idToIcon.get(id)?.let {
         return it
       }
+
       val icon = IconDeferrer.getInstance().deferAutoUpdatable(settings.configuration.icon, project.hashCode() xor settings.hashCode()) {
         if (project.isDisposed) {
           return@deferAutoUpdatable null
@@ -46,14 +49,18 @@ class TimedIconCache {
         }
 
         val startTime = System.currentTimeMillis()
-
-        val icon2Valid = calcIcon(settings, project)
+        val iconToValid = try {
+          calcIcon(settings, project)
+        }
+        catch (e: ProcessCanceledException) {
+          return@deferAutoUpdatable null
+        }
 
         lock.write {
           iconCalcTime.put(id, System.currentTimeMillis() - startTime)
-          idToInvalid.set(id, icon2Valid.second)
+          idToInvalid.set(id, iconToValid.second)
         }
-        icon2Valid.first
+        iconToValid.first
       }
 
       set(id, icon)
@@ -68,15 +75,17 @@ class TimedIconCache {
 
   private fun calcIcon(settings: RunnerAndConfigurationSettings, project: Project): Pair<Icon, Boolean> {
     try {
-      settings.checkSettings()
-      return ProgramRunnerUtil.getConfigurationIcon(settings, false).to(false)
+      BackgroundTaskUtil.runUnderDisposeAwareIndicator(project, Runnable {
+        settings.checkSettings()
+      })
+      return ProgramRunnerUtil.getConfigurationIcon(settings, false) to false
     }
     catch (e: IndexNotReadyException) {
-      return ProgramRunnerUtil.getConfigurationIcon(settings, false).to(false)
+      return ProgramRunnerUtil.getConfigurationIcon(settings, false) to false
     }
     catch (ignored: RuntimeConfigurationException) {
       val invalid = !DumbService.isDumb(project)
-      return ProgramRunnerUtil.getConfigurationIcon(settings, invalid).to(invalid)
+      return ProgramRunnerUtil.getConfigurationIcon(settings, invalid) to invalid
     }
   }
 

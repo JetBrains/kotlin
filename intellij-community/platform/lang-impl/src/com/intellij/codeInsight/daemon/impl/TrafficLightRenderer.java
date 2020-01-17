@@ -27,6 +27,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiCompiledElement;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
@@ -46,7 +47,6 @@ import java.util.*;
 public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   private final Project myProject;
   private final Document myDocument;
-  private final PsiFile myFile;
   private final DaemonCodeAnalyzerImpl myDaemonCodeAnalyzer;
   private final SeverityRegistrar mySeverityRegistrar;
   private Icon icon;
@@ -66,15 +66,22 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
    */
   protected int[] errorCount;
 
-  public TrafficLightRenderer(@Nullable Project project, Document document, PsiFile file) {
+  /**
+   * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
+   */
+  @Deprecated
+  public TrafficLightRenderer(@Nullable Project project, Document document, PsiFile psiFile) {
+    this(project, document);
+  }
+
+  public TrafficLightRenderer(@Nullable Project project, @Nullable Document document) {
     myProject = project;
     myDaemonCodeAnalyzer = project == null ? null : (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     myDocument = document;
-    myFile = file;
     mySeverityRegistrar = SeverityRegistrar.getSeverityRegistrar(myProject);
     refresh(null);
 
-    if (project != null) {
+    if (project != null && document != null) {
       final MarkupModelEx model = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
       model.addMarkupModelListener(this, new MarkupModelListener() {
         @Override
@@ -93,6 +100,10 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         }
       });
     }
+  }
+
+  private PsiFile getPsiFile() {
+    return myProject == null ? null : PsiDocumentManager.getInstance(myProject).getPsiFile(myDocument);
   }
 
   @NotNull
@@ -122,7 +133,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   public boolean isValid() {
-    return myFile == null || myFile.isValid();
+    return myProject == null || myDocument == null || getPsiFile() != null;
   }
 
   protected static class DaemonCodeAnalyzerStatus {
@@ -152,7 +163,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @NotNull
   protected DaemonCodeAnalyzerStatus getDaemonCodeAnalyzerStatus(@NotNull SeverityRegistrar severityRegistrar) {
     DaemonCodeAnalyzerStatus status = new DaemonCodeAnalyzerStatus();
-    if (myFile == null) {
+    PsiFile psiFile = getPsiFile();
+    if (psiFile == null) {
       status.reasonWhyDisabled = "No file";
       status.errorAnalyzingFinished = true;
       return status;
@@ -162,18 +174,18 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       status.errorAnalyzingFinished = true;
       return status;
     }
-    if (!myDaemonCodeAnalyzer.isHighlightingAvailable(myFile)) {
-      if (!myFile.isPhysical()) {
+    if (!myDaemonCodeAnalyzer.isHighlightingAvailable(psiFile)) {
+      if (!psiFile.isPhysical()) {
         status.reasonWhyDisabled = "File is generated";
         status.errorAnalyzingFinished = true;
         return status;
       }
-      if (myFile instanceof PsiCompiledElement) {
+      if (psiFile instanceof PsiCompiledElement) {
         status.reasonWhyDisabled = "File is decompiled";
         status.errorAnalyzingFinished = true;
         return status;
       }
-      final FileType fileType = myFile.getFileType();
+      final FileType fileType = psiFile.getFileType();
       if (fileType.isBinary()) {
         status.reasonWhyDisabled = "File is binary";
         status.errorAnalyzingFinished = true;
@@ -184,7 +196,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       return status;
     }
 
-    FileViewProvider provider = myFile.getViewProvider();
+    FileViewProvider provider = psiFile.getViewProvider();
     Set<Language> languages = provider.getLanguages();
     HighlightingSettingsPerFile levelSettings = HighlightingSettingsPerFile.getInstance(myProject);
     boolean shouldHighlight = languages.isEmpty();
@@ -221,7 +233,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       if (pass.getProgress() < 0) continue;
       status.passStati.add(pass);
     }
-    status.errorAnalyzingFinished = myDaemonCodeAnalyzer.isAllAnalysisFinished(myFile);
+    status.errorAnalyzingFinished = myDaemonCodeAnalyzer.isAllAnalysisFinished(psiFile);
     status.reasonWhySuspended = myDaemonCodeAnalyzer.isUpdateByTimerEnabled() ? null : "Highlighting is paused temporarily";
     fillDaemonCodeAnalyzerErrorsStatus(status, severityRegistrar);
 

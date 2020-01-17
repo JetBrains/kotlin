@@ -96,7 +96,7 @@ public class MoveDirectoryWithClassesProcessor extends BaseRefactoringProcessor 
 
   @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     PsiElement[] elements = new PsiElement[myFilesToMove.size()];
     final PsiFile[] classes = PsiUtilCore.toPsiFileArray(getPsiFiles());
     System.arraycopy(classes, 0, elements, 0, classes.length);
@@ -111,9 +111,8 @@ public class MoveDirectoryWithClassesProcessor extends BaseRefactoringProcessor 
     return RefactoringUIUtil.getDescription(getTargetDirectory(null).getTargetDirectory(), false);
   }
 
-  @NotNull
   @Override
-  public UsageInfo[] findUsages() {
+  public UsageInfo @NotNull [] findUsages() {
     final List<UsageInfo> usages = new ArrayList<>();
     for (MoveDirectoryWithClassesHelper helper : MoveDirectoryWithClassesHelper.findAll()) {
       helper.findUsages(getPsiFiles(), myDirectories, usages, mySearchInComments, mySearchInNonJavaFiles, myProject);
@@ -149,7 +148,7 @@ public class MoveDirectoryWithClassesProcessor extends BaseRefactoringProcessor 
   }
 
   @Override
-  public void performRefactoring(@NotNull UsageInfo[] usages) {
+  public void performRefactoring(UsageInfo @NotNull [] usages) {
     //try to create all directories beforehand
     try {
       //top level directories should be created even if they are empty
@@ -250,7 +249,7 @@ public class MoveDirectoryWithClassesProcessor extends BaseRefactoringProcessor 
 
   @Nullable
   @Override
-  protected RefactoringEventData getAfterData(@NotNull UsageInfo[] usages) {
+  protected RefactoringEventData getAfterData(UsageInfo @NotNull [] usages) {
     RefactoringEventData data = new RefactoringEventData();
     data.addElement(myTargetDirectory);
     return data;
@@ -299,6 +298,7 @@ public class MoveDirectoryWithClassesProcessor extends BaseRefactoringProcessor 
     return RefactoringBundle.message("moving.directories.command");
   }
 
+  @NotNull
   public TargetDirectoryWrapper getTargetDirectory(PsiDirectory dir) {
     return new TargetDirectoryWrapper(myTargetDirectory);
   }

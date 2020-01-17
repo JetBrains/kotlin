@@ -23,6 +23,7 @@ import org.jetbrains.jps.backwardRefs.JavaCompilerBackwardReferenceIndex;
 import org.jetbrains.jps.backwardRefs.SignatureData;
 import org.jetbrains.jps.backwardRefs.index.CompilerReferenceIndex;
 import org.jetbrains.jps.backwardRefs.index.JavaCompilerIndices;
+import org.jetbrains.jps.incremental.relativizer.PathRelativizerService;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
     }
 
     try {
-      return new BackwardReferenceReader(buildDir);
+      return new BackwardReferenceReader(project, buildDir);
     }
     catch (RuntimeException e) {
       LOG.error("An exception while initialization of compiler reference index.", e);
@@ -59,8 +60,8 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
   }
 
   public static class BackwardReferenceReader extends CompilerReferenceReader<JavaCompilerBackwardReferenceIndex> {
-    protected BackwardReferenceReader(File buildDir) {
-      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, true));
+    protected BackwardReferenceReader(Project project, File buildDir) {
+      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, new PathRelativizerService(project.getBasePath(), buildDir.getPath()), true));
     }
 
     @Override
@@ -222,11 +223,10 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
     }
 
     @Override
-    @Nullable("return null if the class hierarchy contains ambiguous qualified names")
-    public CompilerRef.CompilerClassHierarchyElementDef[] getHierarchy(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement,
-                                                                       boolean checkBaseClassAmbiguity,
-                                                                       boolean includeAnonymous,
-                                                                       int interruptNumber) {
+    public CompilerRef.CompilerClassHierarchyElementDef @Nullable("return null if the class hierarchy contains ambiguous qualified names") [] getHierarchy(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement,
+                                                                                                                                                           boolean checkBaseClassAmbiguity,
+                                                                                                                                                           boolean includeAnonymous,
+                                                                                                                                                           int interruptNumber) {
       try {
         Set<CompilerRef.CompilerClassHierarchyElementDef> result = new THashSet<>();
         Queue<CompilerRef.CompilerClassHierarchyElementDef> q = new Queue<>(10);
@@ -264,8 +264,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
       }
     }
 
-    @NotNull
-    CompilerRef.CompilerClassHierarchyElementDef[] getDirectInheritors(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement)
+    CompilerRef.CompilerClassHierarchyElementDef @NotNull [] getDirectInheritors(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement)
       throws StorageException {
       Set<CompilerRef.CompilerClassHierarchyElementDef> result = new THashSet<>();
       myIndex.get(JavaCompilerIndices.BACK_HIERARCHY).getData(hierarchyElement).forEach((id, children) -> {

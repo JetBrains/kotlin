@@ -15,7 +15,6 @@
  */
 package com.intellij.execution.dashboard.actions;
 
-import com.intellij.execution.dashboard.RunDashboardManager;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.ui.RunContentManagerImpl;
@@ -41,19 +40,13 @@ public class StopAction extends DumbAwareAction {
       return;
     }
 
-    if (RunDashboardManager.getInstance(project).isShowConfigurations()) {
-      JBIterable<RunDashboardRunConfigurationNode> targetNodes = getLeafTargets(e);
-      boolean enabled = targetNodes.filter(node -> {
-        Content content = node.getContent();
-        return content != null && !RunContentManagerImpl.isTerminated(content);
-      }).isNotEmpty();
-      e.getPresentation().setEnabled(enabled);
-      e.getPresentation().setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
-    }
-    else {
-      Content content = RunDashboardManager.getInstance(project).getDashboardContentManager().getSelectedContent();
-      e.getPresentation().setEnabled(content != null && !RunContentManagerImpl.isTerminated(content));
-    }
+    JBIterable<RunDashboardRunConfigurationNode> targetNodes = getLeafTargets(e);
+    boolean enabled = targetNodes.filter(node -> {
+      Content content = node.getContent();
+      return content != null && !RunContentManagerImpl.isTerminated(content);
+    }).isNotEmpty();
+    e.getPresentation().setEnabled(enabled);
+    e.getPresentation().setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
   }
 
   @Override
@@ -61,16 +54,8 @@ public class StopAction extends DumbAwareAction {
     Project project = e.getProject();
     if (project == null) return;
 
-    if (RunDashboardManager.getInstance(project).isShowConfigurations()) {
-      for (RunDashboardRunConfigurationNode node : getLeafTargets(e)) {
-        ExecutionManagerImpl.stopProcess(node.getDescriptor());
-      }
-    }
-    else {
-      Content content = RunDashboardManager.getInstance(project).getDashboardContentManager().getSelectedContent();
-      if (content != null) {
-        ExecutionManagerImpl.stopProcess(RunContentManagerImpl.getRunContentDescriptorByContent(content));
-      }
+    for (RunDashboardRunConfigurationNode node : getLeafTargets(e)) {
+      ExecutionManagerImpl.stopProcess(node.getDescriptor());
     }
   }
 }

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.IdeView;
@@ -38,7 +24,7 @@ public final class NavBarIdeView implements IdeView {
 
   @Override
   public void selectElement(PsiElement element) {
-    myPanel.getModel().updateModel(element);
+    myPanel.getModel().updateModel(element, null);
 
     if (element instanceof Navigatable) {
       final Navigatable navigatable = (Navigatable)element;
@@ -49,9 +35,8 @@ public final class NavBarIdeView implements IdeView {
     myPanel.hideHint();
   }
 
-  @NotNull
   @Override
-  public PsiDirectory[] getDirectories() {
+  public PsiDirectory @NotNull [] getDirectories() {
     NavBarPopup nodePopup = myPanel.getNodePopup();
     JBIterable<?> selection =
       nodePopup != null && nodePopup.isVisible() ? JBIterable.from(nodePopup.getList().getSelectedValuesList()) :

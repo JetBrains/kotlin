@@ -22,7 +22,6 @@ import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
 import com.intellij.psi.codeStyle.arrangement.match.ArrangementSectionRule;
 import com.intellij.psi.codeStyle.arrangement.std.*;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -143,7 +142,7 @@ public class ArrangementSettingsPanel extends CodeStyleAbstractPanel {
     }
     else {
       List<ArrangementGroupingRule> groupings = s.getGroupings();
-      myGroupingRulesPanel.setRules(ContainerUtilRt.newArrayList(groupings));
+      myGroupingRulesPanel.setRules(new ArrayList<>(groupings));
       myMatchingRulesPanel.setSections(copy(s.getSections()));
       if (s instanceof StdArrangementExtendableSettings) {
         myMatchingRulesPanel.setRulesAliases(((StdArrangementExtendableSettings)s).getRuleAliases());

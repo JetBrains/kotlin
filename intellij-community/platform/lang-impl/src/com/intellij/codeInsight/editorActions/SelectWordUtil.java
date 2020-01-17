@@ -14,7 +14,6 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.StringEscapesTokenTypes;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,22 +25,7 @@ import java.util.List;
  * @author Mike
  */
 public class SelectWordUtil {
-  private static ExtendWordSelectionHandler[] SELECTIONERS = new ExtendWordSelectionHandler[]{
-  };
-
-  private static boolean ourExtensionsLoaded = false;
-
   private SelectWordUtil() {
-  }
-
-  static ExtendWordSelectionHandler[] getExtendWordSelectionHandlers() {
-    if (!ourExtensionsLoaded) {
-      ourExtensionsLoaded = true;
-      for (ExtendWordSelectionHandler handler : ExtendWordSelectionHandler.EP_NAME.getExtensionList()) {
-        SELECTIONERS = ArrayUtil.append(SELECTIONERS, handler);
-      }
-    }
-    return SELECTIONERS;
   }
 
   public static final CharCondition JAVA_IDENTIFIER_PART_CONDITION = ch -> Character.isJavaIdentifierPart(ch);
@@ -216,7 +200,7 @@ public class SelectWordUtil {
                                         @NotNull CharSequence text,
                                         int cursorOffset,
                                         @NotNull Editor editor) {
-    ExtendWordSelectionHandler[] extendWordSelectionHandlers = getExtendWordSelectionHandlers();
+    ExtendWordSelectionHandler[] extendWordSelectionHandlers = ExtendWordSelectionHandler.EP_NAME.getExtensions();
     int minimalTextRangeLength = 0;
     List<ExtendWordSelectionHandler> availableSelectioners = new LinkedList<>();
     for (ExtendWordSelectionHandler selectioner : extendWordSelectionHandlers) {

@@ -15,19 +15,18 @@ import java.util.List;
 
 public interface ChooseByNameContributorEx extends ChooseByNameContributor {
 
-  void processNames(@NotNull Processor<String> processor,
+  void processNames(@NotNull Processor<? super String> processor,
                     @NotNull GlobalSearchScope scope,
                     @Nullable IdFilter filter);
 
   void processElementsWithName(@NotNull String name,
-                               @NotNull Processor<NavigationItem> processor,
+                               @NotNull Processor<? super NavigationItem> processor,
                                @NotNull FindSymbolParameters parameters);
 
   /** @deprecated Use {@link #processNames(Processor, GlobalSearchScope, IdFilter)} instead */
   @Deprecated
   @Override
-  @NotNull
-  default String[] getNames(Project project, boolean includeNonProjectItems) {
+  default String @NotNull [] getNames(Project project, boolean includeNonProjectItems) {
     List<String> result = new ArrayList<>();
     processNames(result::add, FindSymbolParameters.searchScopeFor(project, includeNonProjectItems), null);
     return ArrayUtilRt.toStringArray(result);
@@ -36,8 +35,7 @@ public interface ChooseByNameContributorEx extends ChooseByNameContributor {
   /** @deprecated Use {@link #processElementsWithName(String, Processor, FindSymbolParameters)} instead */
   @Deprecated
   @Override
-  @NotNull
-  default NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
+  default NavigationItem @NotNull [] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
     List<NavigationItem> result = new ArrayList<>();
     processElementsWithName(name, result::add, FindSymbolParameters.simple(project, includeNonProjectItems));
     return result.isEmpty() ? NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY : result.toArray(NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY);

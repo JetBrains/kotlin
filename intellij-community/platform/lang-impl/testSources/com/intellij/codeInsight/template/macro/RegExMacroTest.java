@@ -26,8 +26,7 @@ public class RegExMacroTest {
     assertNull(new RegExMacro().calculateResult(new Expression[]{new TextExpression("one"), new TextExpression("two")}, null, false));
   }
 
-  @NotNull
-  private static Expression[] createParams(String value, String pattern, String replacement) {
+  private static Expression @NotNull [] createParams(String value, String pattern, String replacement) {
     return new Expression[]{createExpression(value), createExpression(pattern), createExpression(replacement)};
   }
 

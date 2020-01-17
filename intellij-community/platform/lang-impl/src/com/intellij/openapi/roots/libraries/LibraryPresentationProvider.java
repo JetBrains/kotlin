@@ -35,7 +35,6 @@ import java.util.List;
  * </pre>
  *
  * @see LibraryType
- * @author nik
  */
 public abstract class LibraryPresentationProvider<P extends LibraryProperties> {
   public static final ExtensionPointName<LibraryPresentationProvider> EP_NAME = ExtensionPointName.create("com.intellij.library.presentationProvider");
@@ -61,7 +60,6 @@ public abstract class LibraryPresentationProvider<P extends LibraryProperties> {
 
   @Nullable
   public Icon getIcon(@Nullable P properties) {
-    //noinspection deprecation
     return getIcon();
   }
 

@@ -3,7 +3,6 @@ package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.actions.GotoClassAction;
 import com.intellij.ide.actions.GotoClassPresentationUpdater;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
@@ -14,6 +13,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -35,11 +36,14 @@ import java.util.stream.Collectors;
  */
 public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor {
 
+  private static final Pattern ourPatternToDetectAnonymousClasses = Pattern.compile("([.\\w]+)((\\$[\\d]+)*(\\$)?)");
+  private static final Pattern ourPatternToDetectMembers = Pattern.compile("(.+)(#)(.*)");
+
   private final PersistentSearchEverywhereContributorFilter<Language> myFilter;
 
-  public ClassSearchEverywhereContributor(@Nullable Project project, @Nullable PsiElement context) {
-    super(project, context);
-    myFilter = project == null ? null : createLanguageFilter(project);
+  public ClassSearchEverywhereContributor(@NotNull AnActionEvent event) {
+    super(event);
+    myFilter = createLanguageFilter(event.getRequiredData(CommonDataKeys.PROJECT));
   }
 
   @NotNull
@@ -87,11 +91,11 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
   @Override
   public String filterControlSymbols(@NotNull String pattern) {
     if (pattern.indexOf('#') != -1) {
-      pattern = applyPatternFilter(pattern, patternToDetectMembers);
+      pattern = applyPatternFilter(pattern, ourPatternToDetectMembers);
     }
 
     if (pattern.indexOf('$') != -1) {
-      pattern = applyPatternFilter(pattern, patternToDetectAnonymousClasses);
+      pattern = applyPatternFilter(pattern, ourPatternToDetectAnonymousClasses);
     }
 
     return super.filterControlSymbols(pattern);
@@ -149,7 +153,11 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
   }
 
   private static String pathToAnonymousClass(String searchedText) {
-    final Matcher matcher = patternToDetectAnonymousClasses.matcher(searchedText);
+    return pathToAnonymousClass(ourPatternToDetectAnonymousClasses.matcher(searchedText));
+  }
+
+  @Nullable
+  public static String pathToAnonymousClass(Matcher matcher) {
     if (matcher.matches()) {
       String path = matcher.group(2);
       if (path != null) {
@@ -179,7 +187,7 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
     @NotNull
     @Override
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
-      return new ClassSearchEverywhereContributor(initEvent.getProject(), GotoActionBase.getPsiContext(initEvent));
+      return new ClassSearchEverywhereContributor(initEvent);
     }
   }
 

@@ -6,7 +6,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.findAllTargets
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction.isKeywordUnderCaret
-import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction.underModalProgress
+import com.intellij.openapi.actionSystem.ex.ActionUtil.underModalProgress
 import com.intellij.featureStatistics.FeatureUsageTracker
 import com.intellij.navigation.NavigationTarget
 import com.intellij.navigation.chooseTarget
@@ -41,7 +41,7 @@ object GotoDeclarationOnlyHandler2 : CodeInsightActionHandler {
       notifyCantGoAnywhere(project, editor, file)
     }
     else {
-      chooseTarget(project, editor, CodeInsightBundle.message("declaration.navigation.title"), targets.toList()) {
+      chooseTarget(editor, CodeInsightBundle.message("declaration.navigation.title"), targets.toList()) {
         gotoTarget(project, editor, file, it)
       }
     }

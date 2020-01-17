@@ -12,10 +12,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.indexing.*;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.IOUtil;
-import com.intellij.util.io.KeyDescriptor;
+import com.intellij.util.io.*;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
@@ -24,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Dmitry Avdeev
@@ -50,10 +50,6 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
     return result;
   }
 
-  private static class Holder {
-    private static final List<FileIncludeProvider> myProviders = FileIncludeProvider.EP_NAME.getExtensionList();
-  }
-
   @NotNull
   @Override
   public ID<String, List<FileIncludeInfoImpl>> getName() {
@@ -63,19 +59,37 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
   @NotNull
   @Override
   public DataIndexer<String, List<FileIncludeInfoImpl>, FileContent> getIndexer() {
-    return new DataIndexer<String, List<FileIncludeInfoImpl>, FileContent>() {
-      @Override
+    return new CompositeDataIndexer<String, List<FileIncludeInfoImpl>, Set<FileIncludeProvider>, Set<String>>() {
       @NotNull
-      public Map<String, List<FileIncludeInfoImpl>> map(@NotNull FileContent inputData) {
+      @Override
+      public Set<FileIncludeProvider> calculateSubIndexer(@NotNull IndexedFile file) {
+        return
+          FileIncludeProvider
+            .EP_NAME
+            .getExtensionList()
+            .stream()
+            .filter(provider -> provider.acceptFile(file.getFile()))
+            .collect(Collectors.toSet());
+      }
 
+      @NotNull
+      @Override
+      public Set<String> getSubIndexerVersion(@NotNull Set<FileIncludeProvider> providers) {
+        return ContainerUtil.map2Set(providers, provider -> provider.getId() + ":" + provider.getVersion());
+      }
+
+      @NotNull
+      @Override
+      public KeyDescriptor<Set<String>> getSubIndexerVersionDescriptor() {
+        return new StringSetDescriptor();
+      }
+
+      @NotNull
+      @Override
+      public Map<String, List<FileIncludeInfoImpl>> map(@NotNull FileContent inputData, @NotNull Set<FileIncludeProvider> providers) {
         Map<String, List<FileIncludeInfoImpl>> map = FactoryMap.create(key -> new ArrayList<>());
-
-        for (FileIncludeProvider provider : Holder.myProviders) {
-          if (!provider.acceptFile(inputData.getFile())) continue;
-          FileIncludeInfo[] infos = provider.getIncludeInfos(inputData);
-          if (infos.length  == 0) continue;
-
-          for (FileIncludeInfo info : infos) {
+        for (FileIncludeProvider provider : providers) {
+          for (FileIncludeInfo info : provider.getIncludeInfos(inputData)) {
             FileIncludeInfoImpl impl = new FileIncludeInfoImpl(info.path, info.offset, info.runtimeOnly, provider.getId());
             map.get(info.fileName).add(impl);
           }
@@ -127,7 +141,7 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
         if (file.getFileSystem() == JarFileSystem.getInstance()) {
           return false;
         }
-        for (FileIncludeProvider provider : Holder.myProviders) {
+        for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
           if (provider.acceptFile(file)) {
             return true;
           }
@@ -137,7 +151,7 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
 
       @Override
       public void registerFileTypesUsedForIndexing(@NotNull Consumer<FileType> fileTypeSink) {
-        for (FileIncludeProvider provider : Holder.myProviders) {
+        for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
           provider.registerFileTypesUsedForIndexing(fileTypeSink);
         }
       }
@@ -152,11 +166,46 @@ public class FileIncludeIndex extends FileBasedIndexExtension<String, List<FileI
   @Override
   public int getVersion() {
     int version = BASE_VERSION;
-    for (FileIncludeProvider provider : Holder.myProviders) {
-      version = version * 31 + (provider.getVersion() ^ provider.getClass().getName().hashCode());
+
+    if (!InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
+      for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensionList()) {
+        version = version * 31 + (provider.getVersion() ^ provider.getClass().getName().hashCode());
+      }
     }
+
     return version;
   }
+
+  private static class StringSetDescriptor implements KeyDescriptor<Set<String>> {
+    @Override
+    public int getHashCode(Set<String> value) {
+      return value.hashCode();
+    }
+
+    @Override
+    public boolean isEqual(Set<String> val1, Set<String> val2) {
+      return val1.equals(val2);
+    }
+
+    @Override
+    public void save(@NotNull DataOutput out, Set<String> value) throws IOException {
+      DataInputOutputUtil.writeINT(out, value.size());
+      for (String s : value) {
+        IOUtil.writeUTF(out, s);
+      }
+    }
+
+    @Override
+    public Set<String> read(@NotNull DataInput in) throws IOException {
+      int size = DataInputOutputUtil.readINT(in);
+      THashSet<String> result = new THashSet<>(size);
+      for (int i = 0; i < size; i++) {
+        result.add(IOUtil.readUTF(in));
+      }
+      return result;
+    }
+  }
+
 }
 
 

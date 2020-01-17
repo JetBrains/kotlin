@@ -4,7 +4,6 @@ package com.intellij.openapi.compiler;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -36,8 +35,8 @@ public abstract class CompilerManager {
    * @param project the project for which the manager is requested.
    * @return the manager instance.
    */
-  public static CompilerManager getInstance(Project project) {
-    return ServiceManager.getService(project, CompilerManager.class);
+  public static CompilerManager getInstance(@NotNull Project project) {
+    return project.getService(CompilerManager.class);
   }
 
   public abstract boolean isCompilationActive();
@@ -45,8 +44,9 @@ public abstract class CompilerManager {
   /**
    * Registers a custom compiler.
    *
-   * @param compiler the compiler to register.
+   * @deprecated use {@link CompileTask} extension instead
    */
+  @Deprecated
   public abstract void addCompiler(@NotNull Compiler compiler);
 
   /**
@@ -67,8 +67,9 @@ public abstract class CompilerManager {
   /**
    * Unregisters a custom compiler.
    *
-   * @param compiler the compiler to unregister.
+   * @deprecated use {@link CompileTask} extension instead
    */
+  @Deprecated
   public abstract void removeCompiler(@NotNull Compiler compiler);
 
   /**
@@ -77,8 +78,7 @@ public abstract class CompilerManager {
    * @param compilerClass the class for which the compilers should be returned.
    * @return all registered compilers of the specified class.
    */
-  @NotNull
-  public abstract <T  extends Compiler> T[] getCompilers(@NotNull Class<T> compilerClass);
+  public abstract <T  extends Compiler> T @NotNull [] getCompilers(@NotNull Class<T> compilerClass);
 
   /**
    * Registers the type as a compilable type so that Compile action will be enabled on files of this type.
@@ -112,9 +112,10 @@ public abstract class CompilerManager {
   public abstract void addBeforeTask(@NotNull CompileTask task);
 
   /**
-   * Registers a compiler task  that will be executed after the compilation. Consider using {@code compiler.task} extension point instead
-   * (see {@link CompileTask} for details), this way you won't need to call this method during project's initialization.
+   * Registers a compiler task  that will be executed after the compilation.
+   * @deprecated Use {@code compiler.task} extension point instead (see {@link CompileTask} for details).
    */
+  @Deprecated
   public abstract void addAfterTask(@NotNull CompileTask task);
 
   /**
@@ -129,8 +130,7 @@ public abstract class CompilerManager {
    * @deprecated Use {@link #getAfterTaskList}
    */
   @Deprecated
-  @NotNull
-  public CompileTask[] getAfterTasks() {
+  public CompileTask @NotNull [] getAfterTasks() {
     return getAfterTaskList().toArray(new CompileTask[0]);
   }
 
@@ -149,7 +149,7 @@ public abstract class CompilerManager {
    *                          Compiler excludes are not honored.
    * @param callback          a notification callback, or null if no notifications needed.
    */
-  public abstract void compile(@NotNull VirtualFile[] files, @Nullable CompileStatusNotification callback);
+  public abstract void compile(VirtualFile @NotNull [] files, @Nullable CompileStatusNotification callback);
 
   /**
    * Compile all sources (including test sources) from the module. Compiler excludes are not honored.
@@ -192,7 +192,7 @@ public abstract class CompilerManager {
    * @param modules  modules to compile
    * @param callback a notification callback, or null if no notifications needed.
    */
-  public abstract void make(@NotNull Project project, @NotNull Module[] modules, @Nullable CompileStatusNotification callback);
+  public abstract void make(@NotNull Project project, Module @NotNull [] modules, @Nullable CompileStatusNotification callback);
 
   /**
    * Compile all modified files and all files that depend on them from the scope given.
@@ -262,19 +262,19 @@ public abstract class CompilerManager {
    * Convenience methods for creating frequently-used compile scopes
    */
   @NotNull
-  public abstract CompileScope createFilesCompileScope(@NotNull VirtualFile[] files);
+  public abstract CompileScope createFilesCompileScope(VirtualFile @NotNull [] files);
   @NotNull
   public abstract CompileScope createModuleCompileScope(@NotNull Module module, boolean includeDependentModules);
   @NotNull
-  public abstract CompileScope createModulesCompileScope(@NotNull Module[] modules, boolean includeDependentModules);
+  public abstract CompileScope createModulesCompileScope(Module @NotNull [] modules, boolean includeDependentModules);
   @NotNull
-  public abstract CompileScope createModulesCompileScope(@NotNull Module[] modules, boolean includeDependentModules, boolean includeRuntimeDependencies);
+  public abstract CompileScope createModulesCompileScope(Module @NotNull [] modules, boolean includeDependentModules, boolean includeRuntimeDependencies);
   @NotNull
-  public abstract CompileScope createModuleGroupCompileScope(@NotNull Project project, @NotNull Module[] modules, boolean includeDependentModules);
+  public abstract CompileScope createModuleGroupCompileScope(@NotNull Project project, Module @NotNull [] modules, boolean includeDependentModules);
   @NotNull
   public abstract CompileScope createProjectCompileScope(@NotNull Project project);
 
-  public abstract void setValidationEnabled(ModuleType moduleType, boolean enabled);
+  public abstract void setValidationEnabled(ModuleType<?> moduleType, boolean enabled);
 
   public abstract boolean isValidationEnabled(Module moduleType);
 

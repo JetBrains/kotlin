@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.find.findUsages;
 
@@ -56,12 +42,9 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author max
- */
 public class PsiElement2UsageTargetAdapter
   implements PsiElementUsageTarget, TypeSafeDataProvider, PsiElementNavigationItem, ItemPresentation, ConfigurableUsageTarget {
-  private final SmartPsiElementPointer myPointer;
+  private final SmartPsiElementPointer<?> myPointer;
   @NotNull protected final FindUsagesOptions myOptions;
   private String myPresentableText;
   private Icon myIcon;
@@ -182,8 +165,7 @@ public class PsiElement2UsageTargetAdapter
     return virtualFile == null ? null : new VirtualFile[]{virtualFile};
   }
 
-  @NotNull
-  public static PsiElement2UsageTargetAdapter[] convert(@NotNull PsiElement[] psiElements) {
+  public static PsiElement2UsageTargetAdapter @NotNull [] convert(PsiElement @NotNull [] psiElements) {
     PsiElement2UsageTargetAdapter[] targets = new PsiElement2UsageTargetAdapter[psiElements.length];
     for (int i = 0; i < targets.length; i++) {
       targets[i] = new PsiElement2UsageTargetAdapter(psiElements[i]);
@@ -192,8 +174,7 @@ public class PsiElement2UsageTargetAdapter
     return targets;
   }
 
-  @NotNull
-  static PsiElement[] convertToPsiElements(@NotNull PsiElement2UsageTargetAdapter[] adapters) {
+  static PsiElement @NotNull [] convertToPsiElements(PsiElement2UsageTargetAdapter @NotNull [] adapters) {
     PsiElement[] targets = new PsiElement[adapters.length];
     for (int i = 0; i < targets.length; i++) {
       targets[i] = adapters[i].getElement();
@@ -286,5 +267,10 @@ public class PsiElement2UsageTargetAdapter
   @Override
   public Icon getIcon(boolean open) {
     return myIcon;
+  }
+
+  @NotNull
+  public Project getProject() {
+    return myPointer.getProject();
   }
 }

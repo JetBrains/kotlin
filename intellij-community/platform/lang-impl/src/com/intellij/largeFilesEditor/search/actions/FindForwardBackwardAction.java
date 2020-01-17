@@ -2,7 +2,7 @@
 package com.intellij.largeFilesEditor.search.actions;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.largeFilesEditor.search.SearchManager;
+import com.intellij.largeFilesEditor.search.LfeSearchManager;
 import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -12,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class FindForwardBackwardAction extends AnAction implements DumbAware {
 
-  private final SearchManager searchManager;
+  private final LfeSearchManager searchManager;
   private final boolean directionForward;
 
-  public FindForwardBackwardAction(boolean directionForward, SearchManager searchManager) {
+  public FindForwardBackwardAction(boolean directionForward, LfeSearchManager searchManager) {
     this.directionForward = directionForward;
     this.searchManager = searchManager;
 
@@ -29,12 +29,12 @@ public class FindForwardBackwardAction extends AnAction implements DumbAware {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    if (StringUtil.isEmpty(searchManager.getSearchManageGUI().getSearchTextComponent().getText())) {
+    if (StringUtil.isEmpty(searchManager.getSearchReplaceComponent().getSearchTextComponent().getText())) {
       return;
     }
     searchManager.launchNewRangeSearch(
-      directionForward ? searchManager.getEditorManager().getCaretPageNumber() : SearchTaskOptions.NO_LIMIT,
-      directionForward ? SearchTaskOptions.NO_LIMIT : searchManager.getEditorManager().getCaretPageNumber(),
+      directionForward ? searchManager.getLargeFileEditor().getCaretPageNumber() : SearchTaskOptions.NO_LIMIT,
+      directionForward ? SearchTaskOptions.NO_LIMIT : searchManager.getLargeFileEditor().getCaretPageNumber(),
       directionForward);
   }
 }

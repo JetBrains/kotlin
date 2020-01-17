@@ -1,8 +1,6 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.elements;
 
-import com.intellij.compiler.ant.BuildProperties;
-import com.intellij.compiler.ant.Generator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.packaging.artifacts.Artifact;
@@ -20,14 +18,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ArtifactPackagingElement extends ComplexPackagingElement<ArtifactPackagingElement.ArtifactPackagingElementState> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.elements.ArtifactPackagingElement");
+  private static final Logger LOG = Logger.getInstance(ArtifactPackagingElement.class);
   private final Project myProject;
   private ArtifactPointer myArtifactPointer;
   @NonNls public static final String ARTIFACT_NAME_ATTRIBUTE = "artifact-name";
@@ -63,22 +57,6 @@ public class ArtifactPackagingElement extends ComplexPackagingElement<ArtifactPa
       return elements;
     }
     return null;
-  }
-
-  @NotNull
-  @Override
-  public List<? extends Generator> computeAntInstructions(@NotNull PackagingElementResolvingContext resolvingContext, @NotNull AntCopyInstructionCreator creator,
-                                                          @NotNull ArtifactAntGenerationContext generationContext,
-                                                          @NotNull ArtifactType artifactType) {
-    final Artifact artifact = findArtifact(resolvingContext);
-    if (artifact != null) {
-      if (artifact.getArtifactType().getSubstitution(artifact, resolvingContext, artifactType) != null) {
-        return super.computeAntInstructions(resolvingContext, creator, generationContext, artifactType);
-      }
-      final String outputPath = BuildProperties.propertyRef(generationContext.getArtifactOutputProperty(artifact));
-      return Collections.singletonList(creator.createDirectoryContentCopyInstruction(outputPath));
-    }
-    return Collections.emptyList();
   }
 
   @Override

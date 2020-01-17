@@ -36,6 +36,11 @@ public final class GradleExternalTaskConfigurationType extends AbstractExternalS
                                                                  @NotNull String name) {
     return new GradleRunConfiguration(project, factory, name);
   }
+
+  @Override
+  public boolean isDumbAware() {
+    return true;
+  }
 }
 
 

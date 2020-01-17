@@ -152,7 +152,6 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
 
   @Nullable
   protected TreeBasedStructureViewBuilder createMainBuilder(@NotNull PsiFile psi) {
-    //noinspection deprecation
     StructureViewComposite.StructureViewDescriptor descriptor = createMainView(null, psi);
     if (descriptor == null) return null;
     return new TreeBasedStructureViewBuilder() {
@@ -172,7 +171,7 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
   }
 
   /** @deprecated override {@link #createMainBuilder(PsiFile)} instead */
-  @ApiStatus.ScheduledForRemoval
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Deprecated
   protected StructureViewComposite.StructureViewDescriptor createMainView(FileEditor fileEditor, PsiFile mainFile) {
     throw new AssertionError();

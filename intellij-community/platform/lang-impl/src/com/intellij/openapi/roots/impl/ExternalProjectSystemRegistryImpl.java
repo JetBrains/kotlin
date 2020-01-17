@@ -20,9 +20,6 @@ import com.intellij.openapi.roots.ExternalProjectSystemRegistry;
 import com.intellij.openapi.roots.ProjectModelExternalSource;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ExternalProjectSystemRegistryImpl implements ExternalProjectSystemRegistry {
   @Override
   public ProjectModelExternalSource getExternalSource(@NotNull Module module) {

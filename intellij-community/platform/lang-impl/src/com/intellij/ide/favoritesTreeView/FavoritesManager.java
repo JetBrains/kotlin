@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.ide.IdeBundle;
@@ -27,7 +26,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.TreeItem;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Convertor;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,10 +33,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 
 import static com.intellij.ide.favoritesTreeView.FavoritesListProvider.EP_NAME;
 
-public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
+public final class FavoritesManager implements ProjectComponent, JDOMExternalizable {
   // fav list name -> list of (root: root url, root class)
   private final Map<String, List<TreeItem<Pair<AbstractUrl, String>>>> myName2FavoritesRoots =
     new TreeMap<>();
@@ -51,7 +50,10 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
 
   @NotNull
   private Map<String, FavoritesListProvider> getProviders() {
-    if (myProviders != null) return myProviders;
+    if (myProviders != null) {
+      return myProviders;
+    }
+
     myProviders = new HashMap<>();
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       final FavoritesListProvider[] providers = EP_NAME.getExtensions(myProject);
@@ -124,8 +126,8 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     });
   }
 
-  List<AbstractTreeNode> createRootNodes() {
-    List<AbstractTreeNode> result = new ArrayList<>();
+  List<AbstractTreeNode<?>> createRootNodes() {
+    List<AbstractTreeNode<?>> result = new ArrayList<>();
     for (String listName : myFavoritesRootsOrder) {
       result.add(new FavoritesListNode(myProject, listName, myDescriptions.get(listName)));
     }
@@ -165,12 +167,11 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     return myViewSettings;
   }
 
-  public synchronized boolean removeFavoritesList(@NotNull String name) {
-    boolean result = myName2FavoritesRoots.remove(name) != null;
+  public synchronized void removeFavoritesList(@NotNull String name) {
+    myName2FavoritesRoots.remove(name);
     myFavoritesRootsOrder.remove(name);
     myDescriptions.remove(name);
     listRemoved(name);
-    return result;
   }
 
   @NotNull
@@ -180,11 +181,11 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
   }
 
   public synchronized boolean addRoots(@NotNull String name, Module moduleContext, @NotNull Object elements) {
-    Collection<AbstractTreeNode> nodes = AddToFavoritesAction.createNodes(myProject, moduleContext, elements, true, getViewSettings());
+    Collection<AbstractTreeNode<?>> nodes = AddToFavoritesAction.createNodes(myProject, moduleContext, elements, true, getViewSettings());
     return !nodes.isEmpty() && addRoots(name, nodes);
   }
 
-  public synchronized Comparator<FavoritesTreeNodeDescriptor> getCustomComparator(@NotNull final String name) {
+  public synchronized Comparator<FavoriteTreeNodeDescriptor> getCustomComparator(@NotNull final String name) {
     return getProviders().get(name);
   }
 
@@ -196,7 +197,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     return Pair.create(url, className);
   }
 
-  public boolean addRoots(final String name, final Collection<? extends AbstractTreeNode> nodes) {
+  public boolean addRoots(final String name, final Collection<? extends AbstractTreeNode<?>> nodes) {
     final Collection<TreeItem<Pair<AbstractUrl, String>>> list = getFavoritesListRootUrls(name);
 
     final HashSet<AbstractUrl> set =
@@ -215,7 +216,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     return true;
   }
 
-  public boolean canAddRoots(@NotNull String name, @NotNull Collection<? extends AbstractTreeNode> nodes) {
+  public boolean canAddRoots(@NotNull String name, @NotNull Collection<? extends AbstractTreeNode<?>> nodes) {
     final Collection<TreeItem<Pair<AbstractUrl, String>>> list = getFavoritesListRootUrls(name);
 
     final HashSet<AbstractUrl> set =
@@ -228,7 +229,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
   }
 
   private void appendChildNodes(AbstractTreeNode node, TreeItem<Pair<AbstractUrl, String>> treeItem) {
-    final Collection<? extends AbstractTreeNode> children = node.getChildren();
+    final Collection<? extends AbstractTreeNode<?>> children = node.getChildren();
     for (AbstractTreeNode child : children) {
       final TreeItem<Pair<AbstractUrl, String>> childTreeItem = new TreeItem<>(createPairForNode(child));
       treeItem.addChild(childTreeItem);
@@ -237,12 +238,12 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
   }
 
   private <T> boolean findListToRemoveFrom(@NotNull String name, @NotNull final List<T> elements,
-                                           final Convertor<? super T, ? extends AbstractUrl> convertor) {
+                                           final Function<? super T, ? extends AbstractUrl> convertor) {
     Collection<TreeItem<Pair<AbstractUrl, String>>> list = getFavoritesListRootUrls(name);
     if (elements.size() > 1) {
       final List<T> sublist = elements.subList(0, elements.size() - 1);
       for (T obj : sublist) {
-        AbstractUrl objUrl = convertor.convert(obj);
+        AbstractUrl objUrl = convertor.apply(obj);
         final TreeItem<Pair<AbstractUrl, String>> item = findNextItem(objUrl, list);
         if (item == null || item.getChildren() == null) return false;
         list = item.getChildren();
@@ -250,7 +251,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     }
 
     TreeItem<Pair<AbstractUrl, String>> found = null;
-    AbstractUrl url = convertor.convert(elements.get(elements.size() - 1));
+    AbstractUrl url = convertor.apply(elements.get(elements.size() - 1));
     if (url == null) return false;
     for (TreeItem<Pair<AbstractUrl, String>> pair : list) {
       if (url.equals(pair.getData().getFirst())) {
@@ -267,11 +268,11 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     return false;
   }
 
-  public synchronized boolean removeRoot(@NotNull String name, @NotNull List<? extends AbstractTreeNode> elements) {
-    final Convertor<AbstractTreeNode, AbstractUrl> convertor = obj -> createUrlByElement(obj.getValue(), myProject);
+  public synchronized boolean removeRoot(@NotNull String name, @NotNull List<? extends AbstractTreeNode<?>> elements) {
+    Function<AbstractTreeNode, AbstractUrl> convertor = obj -> createUrlByElement(obj.getValue(), myProject);
     boolean result = true;
     for (AbstractTreeNode element : elements) {
-      final List<AbstractTreeNode> path = TaskDefaultFavoriteListProvider.getPathToUsualNode(element);
+      final List<AbstractTreeNode<?>> path = TaskDefaultFavoriteListProvider.getPathToUsualNode(element);
       result &= findListToRemoveFrom(name, path.subList(1, path.size()), convertor);
     }
     return result;
@@ -468,7 +469,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     final Set<Boolean> find = new HashSet<>();
     final ContentIterator contentIterator = fileOrDir -> {
-      if (fileOrDir != null && fileOrDir.getPath().equals(vFile.getPath())) {
+      if (fileOrDir.getPath().equals(vFile.getPath())) {
         find.add(Boolean.TRUE);
       }
       return true;

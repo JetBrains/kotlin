@@ -1,11 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
 import com.intellij.ide.util.treeView.NodeRenderer;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,8 +13,7 @@ import java.awt.*;
 
 import static com.intellij.execution.services.RepaintLinkMouseListenerBase.ACTIVE_TAG;
 
-@ApiStatus.Internal
-public abstract class ServiceViewTreeCellRendererBase extends NodeRenderer {
+abstract class ServiceViewTreeCellRendererBase extends NodeRenderer {
   private boolean myAppendingTag;
 
   protected abstract Object getTag(String fragment);
@@ -27,7 +26,7 @@ public abstract class ServiceViewTreeCellRendererBase extends NodeRenderer {
       return;
     }
 
-    boolean isActive = mySelected || tag.equals(UIUtil.getClientProperty(myTree, ACTIVE_TAG));
+    boolean isActive = mySelected || tag.equals(ComponentUtil.getClientProperty(myTree, ACTIVE_TAG));
     int linkStyle = getLinkStyle(attributes, isActive);
     Color linkColor = getLinkColor(isActive);
     myAppendingTag = true;

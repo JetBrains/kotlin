@@ -20,9 +20,6 @@ import com.intellij.packaging.elements.CompositePackagingElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public interface ModifiableArtifactModel extends ArtifactModel {
 
   @NotNull

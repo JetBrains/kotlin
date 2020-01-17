@@ -3,9 +3,6 @@ package com.intellij.compiler.artifacts;
 import com.intellij.packaging.artifacts.*;
 import com.intellij.packaging.impl.artifacts.PlainArtifactType;
 
-/**
- * @author nik
- */
 public class ArtifactPointerTest extends ArtifactsTestCase {
   public void testCreateFromName() {
     final Artifact artifact = addArtifact("art");

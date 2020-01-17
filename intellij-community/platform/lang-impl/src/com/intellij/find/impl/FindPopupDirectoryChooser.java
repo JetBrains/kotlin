@@ -144,7 +144,7 @@ public class FindPopupDirectoryChooser extends JPanel {
   public ValidationInfo validate(@NotNull FindModel model) {
     VirtualFile directory = FindInProjectUtil.getDirectory(model);
     if (directory == null) {
-      return new ValidationInfo(FindBundle.message("find.directory.not.found.error", getDirectory()), myDirectoryComboBox);
+      return new ValidationInfo(FindBundle.message("find.directory.not.found.error"), myDirectoryComboBox);
     }
     return null;
   }

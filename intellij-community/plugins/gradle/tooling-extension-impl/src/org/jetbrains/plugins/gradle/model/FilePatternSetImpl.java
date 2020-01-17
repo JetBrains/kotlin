@@ -1,22 +1,21 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class FilePatternSetImpl implements FilePatternSet {
-  private final Set<String> includes;
-  private final Set<String> excludes;
+  private Set<String> includes;
+  private Set<String> excludes;
 
   public FilePatternSetImpl(Set<String> includes, Set<String> excludes) {
-    this.includes = includes;
-    this.excludes = excludes;
+    this.includes = new LinkedHashSet<String>(includes);
+    this.excludes = new LinkedHashSet<String>(excludes);
   }
 
-  @SuppressWarnings("unused")
-  private FilePatternSetImpl() {
-    includes = new HashSet<String>();
-    excludes = new HashSet<String>();
+  public FilePatternSetImpl() {
+    includes = new LinkedHashSet<String>(0);
+    excludes = new LinkedHashSet<String>(0);
   }
 
   @Override
@@ -24,9 +23,17 @@ public final class FilePatternSetImpl implements FilePatternSet {
     return includes;
   }
 
+  public void setIncludes(Set<String> includes) {
+    this.includes = includes;
+  }
+
   @Override
   public Set<String> getExcludes() {
     return excludes;
+  }
+
+  public void setExcludes(Set<String> excludes) {
+    this.excludes = excludes;
   }
 
   @Override

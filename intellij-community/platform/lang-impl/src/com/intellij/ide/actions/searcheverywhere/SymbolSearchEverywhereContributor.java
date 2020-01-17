@@ -2,17 +2,15 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.ui.IdeUICustomization;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -23,9 +21,9 @@ public class SymbolSearchEverywhereContributor extends AbstractGotoSEContributor
 
   private final PersistentSearchEverywhereContributorFilter<Language> myFilter;
 
-  public SymbolSearchEverywhereContributor(@Nullable Project project, @Nullable PsiElement context) {
-    super(project, context);
-    myFilter = project == null ? null : ClassSearchEverywhereContributor.createLanguageFilter(project);
+  public SymbolSearchEverywhereContributor(@NotNull AnActionEvent event) {
+    super(event);
+    myFilter = ClassSearchEverywhereContributor.createLanguageFilter(event.getRequiredData(CommonDataKeys.PROJECT));
   }
 
   @NotNull
@@ -64,7 +62,7 @@ public class SymbolSearchEverywhereContributor extends AbstractGotoSEContributor
     @NotNull
     @Override
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
-      return new SymbolSearchEverywhereContributor(initEvent.getProject(), GotoActionBase.getPsiContext(initEvent));
+      return new SymbolSearchEverywhereContributor(initEvent);
     }
   }
 }

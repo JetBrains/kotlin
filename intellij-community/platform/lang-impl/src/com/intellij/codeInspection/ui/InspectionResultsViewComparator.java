@@ -10,13 +10,9 @@ import com.intellij.codeInspection.reference.RefFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.profile.codeInspection.ui.inspectionsTree.InspectionsConfigTreeComparator;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiQualifiedNamedElement;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiUtilCore;
 
@@ -129,7 +125,7 @@ public class InspectionResultsViewComparator implements Comparator<InspectionTre
       VirtualFile file1 = ((RefFile)entity1).getPointer().getVirtualFile();
       VirtualFile file2 = ((RefFile)entity2).getPointer().getVirtualFile();
       if (file1 instanceof VirtualFileWithId && file2 instanceof VirtualFileWithId) {
-        return ((VirtualFileWithId)file1).getId() - ((VirtualFileWithId)file2).getId();
+        return Integer.compare(((VirtualFileWithId)file1).getId(), ((VirtualFileWithId)file2).getId());
       }
       int cmp = file1.getName().compareToIgnoreCase(file2.getName());
       if (cmp != 0) return cmp;
@@ -137,8 +133,8 @@ public class InspectionResultsViewComparator implements Comparator<InspectionTre
       return cmp;
     }
     if (entity1 instanceof RefElement && entity2 instanceof RefElement) {
-      final SmartPsiElementPointer p1 = ((RefElement)entity1).getPointer();
-      final SmartPsiElementPointer p2 = ((RefElement)entity2).getPointer();
+      final SmartPsiElementPointer<?> p1 = ((RefElement)entity1).getPointer();
+      final SmartPsiElementPointer<?> p2 = ((RefElement)entity2).getPointer();
       if (p1 != null && p2 != null) {
         final VirtualFile file1 = p1.getVirtualFile();
         final VirtualFile file2 = p2.getVirtualFile();
@@ -147,7 +143,7 @@ public class InspectionResultsViewComparator implements Comparator<InspectionTre
           int cmp = PsiUtilCore.compareElementsByPosition(((RefElement)entity1).getPsiElement(), ((RefElement)entity2).getPsiElement());
           if (cmp != 0) return cmp;
           if (file1 instanceof VirtualFileWithId && file2 instanceof VirtualFileWithId) {
-            return ((VirtualFileWithId)file1).getId() - ((VirtualFileWithId)file2).getId();
+            return Integer.compare(((VirtualFileWithId)file1).getId(), ((VirtualFileWithId)file2).getId());
           }
           return file1.getPath().compareToIgnoreCase(file2.getPath());
         }

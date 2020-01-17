@@ -33,8 +33,7 @@ public class SafeDeleteUsageViewDescriptor extends UsageViewDescriptorAdapter {
   }
 
   @Override
-  @NotNull
-  public PsiElement[] getElements() {
+  public PsiElement @NotNull [] getElements() {
     return myElementsToDelete;
   }
 

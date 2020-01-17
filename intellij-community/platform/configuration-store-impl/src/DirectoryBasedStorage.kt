@@ -17,6 +17,7 @@ import com.intellij.util.isEmpty
 import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jdom.Element
+import org.jetbrains.annotations.ApiStatus
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.file.Path
@@ -72,6 +73,11 @@ abstract class DirectoryBasedStorageBase(@Suppress("DEPRECATION") protected val 
   override fun hasState(storageData: StateMap, componentName: String): Boolean = storageData.hasStates()
 }
 
+@ApiStatus.Internal
+interface DirectoryBasedSaveSessionProducer : SaveSessionProducer {
+  fun setFileState(fileName: String, componentName: String, element: Element?)
+}
+
 open class DirectoryBasedStorage(private val dir: Path,
                                  @Suppress("DEPRECATION") splitter: com.intellij.openapi.components.StateSplitter,
                                  pathMacroSubstitutor: PathMacroSubstitutor? = null) : DirectoryBasedStorageBase(splitter, pathMacroSubstitutor) {
@@ -97,7 +103,7 @@ open class DirectoryBasedStorage(private val dir: Path,
 
   override fun createSaveSessionProducer(): SaveSessionProducer? = if (checkIsSavingDisabled()) null else MySaveSession(this, getStorageData())
 
-  private class MySaveSession(private val storage: DirectoryBasedStorage, private val originalStates: StateMap) : SaveSessionBase(), SaveSession {
+  private class MySaveSession(private val storage: DirectoryBasedStorage, private val originalStates: StateMap) : SaveSessionBase(), SaveSession, DirectoryBasedSaveSessionProducer {
     private var copiedStorageData: MutableMap<String, Any>? = null
 
     private val dirtyFileNames = SmartHashSet<String>()
@@ -127,13 +133,26 @@ open class DirectoryBasedStorage(private val dir: Path,
         if (existingFiles.contains(key)) {
           continue
         }
-
-        if (copiedStorageData == null) {
-          copiedStorageData = originalStates.toMutableMap()
-        }
-        isSomeFileRemoved = true
-        copiedStorageData!!.remove(key)
+        removeFileData(key)
       }
+    }
+
+    override fun setFileState(fileName: String, componentName: String, element: Element?) {
+      storage.componentName = componentName
+      if (element != null) {
+        doSetState(fileName, element)
+      }
+      else {
+        removeFileData(fileName)
+      }
+    }
+
+    private fun removeFileData(fileName: String) {
+      if (copiedStorageData == null) {
+        copiedStorageData = originalStates.toMutableMap()
+      }
+      isSomeFileRemoved = true
+      copiedStorageData!!.remove(fileName)
     }
 
     private fun doSetState(fileName: String, subState: Element) {
@@ -153,8 +172,8 @@ open class DirectoryBasedStorage(private val dir: Path,
     override fun save() {
       val stateMap = StateMap.fromMap(copiedStorageData!!)
 
-      var dir = storage.virtualFile
       if (copiedStorageData!!.isEmpty()) {
+        val dir = storage.virtualFile
         if (dir != null && dir.exists()) {
           dir.delete(this)
         }
@@ -162,29 +181,37 @@ open class DirectoryBasedStorage(private val dir: Path,
         return
       }
 
-      if (dir == null || !dir.isValid) {
-        dir = createDir(storage.dir, this)
-        storage.cachedVirtualFile = dir
-      }
-
       if (!dirtyFileNames.isEmpty) {
-        saveStates(dir, stateMap)
+        saveStates(stateMap)
       }
-      if (isSomeFileRemoved && dir.exists()) {
-        deleteFiles(dir)
+      if (isSomeFileRemoved) {
+        val dir = storage.virtualFile
+        if (dir != null && dir.exists()) {
+          deleteFiles(dir)
+        }
       }
 
       storage.setStorageData(stateMap)
     }
 
-    private fun saveStates(dir: VirtualFile, states: StateMap) {
+    private fun saveStates(states: StateMap) {
+      var dir = storage.cachedVirtualFile
       for (fileName in states.keys()) {
         if (!dirtyFileNames.contains(fileName)) {
           continue
         }
 
+        val element = states.getElement(fileName) ?: continue
+
+        if (dir == null || !dir.exists()) {
+          dir = storage.virtualFile
+          if (dir == null || !dir.exists()) {
+            dir = createDir(storage.dir, this)
+            storage.cachedVirtualFile = dir
+          }
+        }
+
         try {
-          val element = states.getElement(fileName) ?: continue
           val file = dir.getOrCreateChild(fileName, this)
           // we don't write xml prolog due to historical reasons (and should not in any case)
           val macroManager = if (storage.pathMacroSubstitutor == null) null else (storage.pathMacroSubstitutor as TrackingPathMacroSubstitutorImpl).macroManager

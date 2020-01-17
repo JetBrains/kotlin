@@ -20,11 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A base interface describing shared functionality for various types of file processing compilers.
- * Actual compiler implementation should implement one of these:
- * {@link ClassInstrumentingCompiler}, {@link ClassPostProcessingCompiler},
- * {@link SourceInstrumentingCompiler}.
+ * A base interface describing shared functionality for various types of file processing compilers which participate in the build process
+ * and should be executed inside the IDE process.
+ *
+ * @deprecated starting from IDEA 15 compilers need to be executed inside a separate (external) build process, see
+ * <a href="http://www.jetbrains.org/intellij/sdk/docs/reference_guide/frameworks_and_external_apis/external_builder_api.html">this guide</a>
+ * for details. Implementations of this class aren't used by the IDE (except those which implement {@link Validator} or {@link SourceInstrumentingCompiler}).
  */
+@Deprecated
 public interface FileProcessingCompiler extends Compiler, ValidityStateFactory {
   /**
    * Describes a processing unit for this compiler - a virtual file with associated state.
@@ -61,8 +64,7 @@ public interface FileProcessingCompiler extends Compiler, ValidityStateFactory {
    * @return a non-null array of all items that potentially can be processed at the moment of method call. Even if
    *         the file is not changed, it should be returned if it _can_ be processed by the compiler implementing the interface.
    */
-  @NotNull
-  ProcessingItem[] getProcessingItems(CompileContext context);
+  ProcessingItem @NotNull [] getProcessingItems(CompileContext context);
 
   /**
    * Compiles the specified items.

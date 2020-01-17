@@ -57,7 +57,7 @@ class ShowUsagesTableCellRenderer implements TableCellRenderer {
     Usage usage = usageNode == null ? null : usageNode.getUsage();
 
     Color fileBgColor = getBackgroundColor(isSelected, usage);
-    Color selectionBg = UIUtil.getListSelectionBackground();
+    Color selectionBg = UIUtil.getListSelectionBackground(true);
     Color selectionFg = UIUtil.getListSelectionForeground();
     Color rowBackground = isSelected ? selectionBg : fileBgColor == null ? list.getBackground() : fileBgColor;
     Color rowForeground = isSelected ? selectionFg : list.getForeground();
@@ -242,7 +242,7 @@ class ShowUsagesTableCellRenderer implements TableCellRenderer {
   private Color getBackgroundColor(boolean isSelected, Usage usage) {
     Color fileBgColor = null;
     if (isSelected) {
-      fileBgColor = UIUtil.getListSelectionBackground();
+      fileBgColor = UIUtil.getListSelectionBackground(true);
     }
     else {
       VirtualFile virtualFile = usage instanceof UsageInFile ? ((UsageInFile)usage).getFile() : null;

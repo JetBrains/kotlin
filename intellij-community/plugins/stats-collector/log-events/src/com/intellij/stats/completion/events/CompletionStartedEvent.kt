@@ -17,8 +17,10 @@ class CompletionStartedEvent(
         @JvmField var performExperiment: Boolean,
         @JvmField var experimentVersion: Int,
         lookupState: LookupState,
-        @JvmField var userFactors: Map<String, String?>,
+        @JvmField var userFactors: Map<String, String>,
+        @JvmField var contextFactors: Map<String, String>,
         @JvmField var queryLength: Int,
+        bucket: String,
         timestamp: Long)
 
     : LookupStateLogData(
@@ -26,14 +28,15 @@ class CompletionStartedEvent(
         sessionId,
         Action.COMPLETION_STARTED,
         lookupState,
+        bucket,
         timestamp)
 {
 
     @JvmField var isOneLineMode: Boolean = false
 
     @JvmField var lookupShownTime: Long = -1
-    @JvmField var mlTimeContribution: Long = -1
     @JvmField var isAutoPopup: Boolean? = null
+    @JvmField val additionalDetails: MutableMap<String, String> = mutableMapOf()
 
     override fun accept(visitor: LogEventVisitor) {
         visitor.visit(this)

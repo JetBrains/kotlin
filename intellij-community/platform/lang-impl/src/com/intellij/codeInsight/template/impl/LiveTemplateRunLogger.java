@@ -8,6 +8,7 @@ import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhite
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
@@ -16,16 +17,11 @@ import org.jetbrains.annotations.Nullable;
 class LiveTemplateRunLogger {
   private static final String GROUP = "live.templates";
 
-  static void log(@NotNull TemplateImpl template, @NotNull Language language) {
-    Triple<String, String, PluginInfo> keyGroupPluginToLog = getKeyGroupPluginToLog(template);
-    if (keyGroupPluginToLog == null) return;
-
-    FeatureUsageData data = new FeatureUsageData().addLanguage(language).addData("group", keyGroupPluginToLog.getSecond());
-    PluginInfo plugin = keyGroupPluginToLog.getThird();
-    if (plugin != null) {
-      data.addPluginInfo(plugin);
+  static void log(@NotNull Project project, @NotNull TemplateImpl template, @NotNull Language language) {
+    final FeatureUsageData data = createTemplateData(template, language);
+    if (data != null) {
+      FUCounterUsageLogger.getInstance().logEvent(project, GROUP, "started", data);
     }
-    FUCounterUsageLogger.getInstance().logEvent(GROUP, keyGroupPluginToLog.getFirst(), data);
   }
 
   @Nullable
@@ -46,6 +42,22 @@ class LiveTemplateRunLogger {
     return new Triple<>(key, groupName, plugin);
   }
 
+  @Nullable
+  static FeatureUsageData createTemplateData(@NotNull TemplateImpl template, @NotNull Language language) {
+    Triple<String, String, PluginInfo> keyGroupPluginToLog = getKeyGroupPluginToLog(template);
+    if (keyGroupPluginToLog == null) {
+      return null;
+    }
+
+    FeatureUsageData data = new FeatureUsageData().addLanguage(language).addData("group", keyGroupPluginToLog.getSecond());
+    PluginInfo plugin = keyGroupPluginToLog.getThird();
+    if (plugin != null) {
+      data.addPluginInfo(plugin);
+    }
+    data.addData("key", keyGroupPluginToLog.getFirst());
+    return data;
+  }
+
   private static boolean isCreatedProgrammatically(String key, String groupName) {
     return StringUtil.isEmpty(key) || StringUtil.isEmpty(groupName);
   }
@@ -59,7 +71,12 @@ class LiveTemplateRunLogger {
     @NotNull
     @Override
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      return validateKeyGroup(context.eventId, context.eventData.get("group"));
+      final String key = getEventDataField(context, "key");
+      final String group = getEventDataField(context, "group");
+      if (key == null || group == null || !isKeyOrGroup(data, key, group)) {
+        return ValidationResultType.REJECTED;
+      }
+      return validateKeyGroup(key, group);
     }
 
     @NotNull
@@ -76,6 +93,9 @@ class LiveTemplateRunLogger {
       } catch (Exception ignored) { }
       return ValidationResultType.REJECTED;
     }
-  }
 
+    private static boolean isKeyOrGroup(@NotNull String data, @NotNull String key, @NotNull String group) {
+      return StringUtil.equals(data, key) || StringUtil.equals(data, group);
+    }
+  }
 }

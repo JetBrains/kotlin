@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.settings;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -26,6 +27,8 @@ import java.util.Optional;
  * @author Denis Zhdanov
  */
 public class GradleProjectSettings extends ExternalProjectSettings {
+  private static final Logger LOG = Logger.getInstance(GradleProjectSettings.class);
+
   public static final boolean DEFAULT_DELEGATE = true;
   public static final TestRunner DEFAULT_TEST_RUNNER = TestRunner.GRADLE;
 
@@ -33,8 +36,8 @@ public class GradleProjectSettings extends ExternalProjectSettings {
   @Nullable private String myGradleJvm = ExternalSystemJdkUtil.USE_PROJECT_JDK;
   @Nullable private DistributionType distributionType;
   private boolean disableWrapperSourceDistributionNotification;
-  private boolean resolveModulePerSourceSet = ExternalSystemApiUtil.isJavaCompatibleIde();
-  private boolean resolveExternalAnnotations;
+  private boolean resolveModulePerSourceSet = true;
+  private boolean resolveExternalAnnotations = true;
   @Nullable private CompositeBuild myCompositeBuild;
 
   @Nullable
@@ -184,6 +187,11 @@ public class GradleProjectSettings extends ExternalProjectSettings {
   }
 
   public void setTestRunner(@NotNull TestRunner testRunner) {
+    if (LOG.isDebugEnabled()) {
+      if (testRunner != TestRunner.GRADLE) {
+        LOG.debug(String.format("Gradle test runner sets to %s", testRunner), new Throwable());
+      }
+    }
     this.testRunner = testRunner;
   }
 
@@ -203,9 +211,14 @@ public class GradleProjectSettings extends ExternalProjectSettings {
   public static TestRunner getTestRunner(@NotNull Project project, @Nullable String gradleProjectPath) {
     GradleProjectSettings projectSettings = gradleProjectPath == null
                                             ? null : GradleSettings.getInstance(project).getLinkedProjectSettings(gradleProjectPath);
-    if (projectSettings == null) return TestRunner.PLATFORM;
-
-    return projectSettings.getTestRunner();
+    TestRunner testRunner = projectSettings == null ? TestRunner.PLATFORM : projectSettings.getTestRunner();
+    if (LOG.isDebugEnabled()) {
+      if (testRunner != TestRunner.GRADLE) {
+        String settingsPresentation = projectSettings == null ? String.format("<null: %s>", gradleProjectPath) : gradleProjectPath;
+        LOG.debug(String.format("Get non gradle test runner %s at '%s'", testRunner, settingsPresentation), new Throwable());
+      }
+    }
+    return testRunner;
   }
 
   @NotNull

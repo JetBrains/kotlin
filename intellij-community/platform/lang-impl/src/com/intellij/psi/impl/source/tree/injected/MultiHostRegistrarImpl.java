@@ -5,6 +5,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,12 +13,14 @@ import java.util.List;
 /**
  * @deprecated Use {@link MultiHostRegistrar} instead. to be removed in IDEA 2018.1
  */
+@ApiStatus.ScheduledForRemoval(inVersion = "2018.1")
 @Deprecated
 public abstract class MultiHostRegistrarImpl implements MultiHostRegistrar {
   /**
    * @deprecated to be removed in IDEA 2018.1
    */
   @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2018.1")
   public List<Pair<Place, PsiFile>> getResult() {
     throw new IllegalStateException();
   }
@@ -25,6 +28,7 @@ public abstract class MultiHostRegistrarImpl implements MultiHostRegistrar {
   /**
    * @deprecated Use {@link MultiHostRegistrar#startInjecting(Language)} instead. to be removed in IDEA 2018.1
    */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2018.1")
   @Deprecated
   @NotNull
   @Override

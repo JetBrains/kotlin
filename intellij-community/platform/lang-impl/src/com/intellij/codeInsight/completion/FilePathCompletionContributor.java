@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileNameMatcher;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
@@ -50,7 +51,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author spleaner
  */
 public class FilePathCompletionContributor extends CompletionContributor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.completion.FilePathCompletionContributor");
+  private static final Logger LOG = Logger.getInstance(FilePathCompletionContributor.class);
 
   public FilePathCompletionContributor() {
     extend(CompletionType.BASIC, psiElement(), new CompletionProvider<CompletionParameters>() {
@@ -60,7 +61,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
                                     @NotNull CompletionResultSet result) {
         final PsiReference psiReference = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
         if (getReference(psiReference) != null && parameters.getInvocationCount() == 1) {
-          final String shortcut = getActionShortcut(IdeActions.ACTION_CODE_COMPLETION);
+          final String shortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION);
           result.addLookupAdvertisement(CodeInsightBundle.message("class.completion.file.path", shortcut));
         }
       }
@@ -172,7 +173,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
           }
 
           if (set.getSuitableFileTypes().length > 0 && parameters.getInvocationCount() == 1) {
-            final String shortcut = getActionShortcut(IdeActions.ACTION_CODE_COMPLETION);
+            final String shortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION);
             result.addLookupAdvertisement(CodeInsightBundle.message("class.completion.file.path.all.variants", shortcut));
           }
 
@@ -243,7 +244,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
     return true;
   }
 
-  private static void processAllNames(@NotNull Project project, @NotNull Processor<String> processor) {
+  private static void processAllNames(@NotNull Project project, @NotNull Processor<? super String> processor) {
     for (ChooseByNameContributor contributor : ChooseByNameContributor.FILE_EP_NAME.getExtensionList()) {
       try {
         if (contributor instanceof ChooseByNameContributorEx) {
@@ -310,7 +311,6 @@ public class FilePathCompletionContributor extends CompletionContributor {
       myFile = file;
     }
 
-    @SuppressWarnings({"HardCodedStringLiteral"})
     @Override
     public String toString() {
       return String.format("%s%s", myName, myInfo == null ? "" : " (" + myInfo + ")");

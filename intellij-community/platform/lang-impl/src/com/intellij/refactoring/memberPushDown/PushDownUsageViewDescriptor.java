@@ -34,8 +34,7 @@ public class PushDownUsageViewDescriptor<MemberInfo extends MemberInfoBase<Membe
   }
 
   @Override
-  @NotNull
-  public PsiElement[] getElements() {
+  public PsiElement @NotNull [] getElements() {
     return myMembers;
   }
 

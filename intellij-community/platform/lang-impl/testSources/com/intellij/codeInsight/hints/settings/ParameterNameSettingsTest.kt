@@ -17,6 +17,7 @@ package com.intellij.codeInsight.hints.settings
 
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.codeInsight.hints.InlayParameterHintsProvider
+import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
@@ -137,6 +138,17 @@ class ParameterNameSettingsTest : TestCase() {
     
     assert(diff.removed.contains("removed"))
     assert(diff.removed.size == 1)
+  }
+
+  fun `test disabled languages preserved between restarts`() {
+    val settings = ParameterNameHintsSettings()
+    val language = object : Language("testLanguage") {}
+    settings.setIsEnabledForLanguage(false, language)
+    val state = settings.state
+
+    val newSettings = ParameterNameHintsSettings()
+    newSettings.loadState(state)
+    assertFalse(newSettings.isEnabledForLanguage(language))
   }
 
   fun `test state is correctly loaded from incorrect model`() {

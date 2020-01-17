@@ -5,10 +5,10 @@ package com.intellij.find;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.find.replaceInProject.ReplaceInProjectManager;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -29,8 +29,6 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -78,27 +76,36 @@ public class FindUtil {
     if (editor != null) {
       String s = getSelectedText(editor);
       if (s != null && s.length() < 10000) {
-        FindModel.initStringToFind(findModel, s);
+        if (findModel.isRegularExpressions() && Registry.is("ide.find.escape.selected.text.for.regex")) {
+          findModel.setStringToFind(StringUtil.escapeToRegexp(s));
+        } else {
+          FindModel.initStringToFind(findModel, s);
+        }
       }
     }
   }
 
   public static void configureFindModel(boolean replace, @Nullable Editor editor, FindModel model, boolean firstSearch) {
-    String stringToFind = firstSearch ? "" : model.getStringToFind();
     String selectedText = getSelectedText(editor);
+    boolean multiline = selectedText != null && selectedText.contains("\n");
+    String stringToFind = firstSearch || model.getStringToFind().contains("\n") ? "" : model.getStringToFind();
+    boolean isSelectionUsed = false;
     if (!StringUtil.isEmpty(selectedText)) {
-      stringToFind = selectedText;
+      if (!multiline || !replace) {
+        stringToFind = selectedText;
+        isSelectionUsed = true;
+      } else {
+        stringToFind = "";
+      }
     }
     model.setReplaceState(replace);
-    boolean multiline = stringToFind.contains("\n");
-    boolean isGlobal = true;
-    if (replace && multiline) {
-      isGlobal = false;
-      stringToFind = "";
-      multiline = false;
-    }
-    model.setStringToFind(stringToFind);
-    model.setMultiline(multiline);
+    boolean isGlobal = !multiline || !replace;
+    model.setStringToFind(isSelectionUsed
+                          && model.isRegularExpressions()
+                          && Registry.is("ide.find.escape.selected.text.for.regex")
+                          ? StringUtil.escapeToRegexp(stringToFind)
+                          : stringToFind);
+    model.setMultiline(false);
     model.setGlobal(isGlobal);
     model.setPromptOnReplace(false);
   }
@@ -307,6 +314,9 @@ public class FindUtil {
   }
 
   static void findAllAndShow(@NotNull Project project, @NotNull PsiFile psiFile, @NotNull FindModel findModel) {
+    findModel.setCustomScope(true);
+    findModel.setProjectScope(false);
+    findModel.setCustomScopeName("File " + psiFile.getName());
     List<Usage> usages = findAll(project, psiFile, findModel);
     if (usages == null) return;
     final UsageTarget[] usageTargets = {new FindInProjectUtil.StringUsageTarget(project, findModel)};
@@ -329,7 +339,7 @@ public class FindUtil {
   public static void searchBack(final Project project, final Editor editor, @Nullable DataContext context) {
     FindManager findManager = FindManager.getInstance(project);
     if (!findManager.findWasPerformed() && !findManager.selectNextOccurrenceWasPerformed()) {
-      new IncrementalFindAction().getHandler().execute(editor, context);
+      new IncrementalFindAction().getHandler().execute(editor, null, context);
       return;
     }
 
@@ -363,7 +373,7 @@ public class FindUtil {
   public static boolean searchAgain(final Project project, final Editor editor, @Nullable DataContext context) {
     FindManager findManager = FindManager.getInstance(project);
     if (!findManager.findWasPerformed() && !findManager.selectNextOccurrenceWasPerformed()) {
-      new IncrementalFindAction().getHandler().execute(editor, context);
+      new IncrementalFindAction().getHandler().execute(editor, null, context);
       return false;
     }
 
@@ -884,7 +894,7 @@ public class FindUtil {
   }
 
   public static <T> UsageView showInUsageView(@Nullable PsiElement sourceElement,
-                                              @NotNull T[] targets,
+                                              T @NotNull [] targets,
                                               @NotNull Function<? super T, ? extends Usage> usageConverter,
                                               @NotNull String title,
                                               @Nullable Consumer<? super UsageViewPresentation> presentationSetup,
@@ -924,14 +934,14 @@ public class FindUtil {
 
   @Nullable
   public static UsageView showInUsageView(@Nullable PsiElement sourceElement,
-                                          @NotNull PsiElement[] targets,
+                                          PsiElement @NotNull [] targets,
                                           @NotNull String title,
                                           @NotNull Project project) {
     if (targets.length == 0) return null;
     PsiElement[] primary = sourceElement == null ? PsiElement.EMPTY_ARRAY : new PsiElement[]{sourceElement};
 
     SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(project);
-    SmartPsiElementPointer[] pointers = Stream.of(targets).map(smartPointerManager::createSmartPsiElementPointer).toArray(SmartPsiElementPointer[]::new);
+    SmartPsiElementPointer<?>[] pointers = Stream.of(targets).map(smartPointerManager::createSmartPsiElementPointer).toArray(SmartPsiElementPointer[]::new);
     // usage view will load document/AST so still referencing all these PSI elements might lead to out of memory
     //noinspection UnusedAssignment
     targets = PsiElement.EMPTY_ARRAY;
@@ -1007,14 +1017,19 @@ public class FindUtil {
            ? findResult.getEndOffset() : Math.min(findResult.getStartOffset() + caretShiftFromSelectionStart, findResult.getEndOffset());
   }
 
-  public static void triggerUsedOptionsStats(@NotNull String prefix, @NotNull FindModel model) {
-    FUCounterUsageLogger logger = FUCounterUsageLogger.getInstance();
-    if (model.isCaseSensitive()) logger.logEvent("find", prefix + ".MatchCaseOn");
-    if (model.isWholeWordsOnly()) logger.logEvent("find", prefix + ".WholeWordsOn");
-    if (model.isRegularExpressions()) logger.logEvent("find", prefix + ".RegexOn");
-    if (model.getFileFilter() != null) logger.logEvent("find", prefix + ".FileFilterOn");
-    if (model.getSearchContext() != FindModel.SearchContext.ANY) {
-      logger.logEvent("find", prefix + ".Context." + model.getSearchContext());
-    }
+  public static void triggerUsedOptionsStats(@NotNull String type, @NotNull FindModel model) {
+    FeatureUsageData data = new FeatureUsageData().
+      addData("type", type).
+      addData("case_sensitive", model.isCaseSensitive()).
+      addData("whole_words_only", model.isWholeWordsOnly()).
+      addData("regular_expressions", model.isRegularExpressions()).
+      addData("with_file_filter", model.getFileFilter() != null).
+      addData("context", model.getSearchContext().name());
+    FUCounterUsageLogger.getInstance().logEvent("find", "search.session.started", data);
+  }
+
+  public static void triggerRegexHelpClicked(@Nullable String type) {
+    FeatureUsageData data = new FeatureUsageData().addData("type", StringUtil.notNullize(type, "Unknown"));
+    FUCounterUsageLogger.getInstance().logEvent("find", "regexp.help.clicked", data);
   }
 }

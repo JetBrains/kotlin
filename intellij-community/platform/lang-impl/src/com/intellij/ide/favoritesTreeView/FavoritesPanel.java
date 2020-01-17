@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2011 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -47,7 +33,7 @@ import java.util.List;
 /**
  * @author Konstantin Bulenkov
  */
-public class FavoritesPanel {
+public final class FavoritesPanel {
   private final Project myProject;
   private final FavoritesTreeViewPanel myViewPanel;
   private final DnDAwareTree myTree;
@@ -79,8 +65,8 @@ public class FavoritesPanel {
           Object o = path.getLastPathComponent();
           if (o instanceof DefaultMutableTreeNode) {
             o = ((DefaultMutableTreeNode)o).getUserObject();
-            if (o instanceof FavoritesTreeNodeDescriptor) {
-              FavoritesTreeNodeDescriptor root = ((FavoritesTreeNodeDescriptor)o).getFavoritesRoot();
+            if (o instanceof FavoriteTreeNodeDescriptor) {
+              FavoriteTreeNodeDescriptor root = ((FavoriteTreeNodeDescriptor)o).getFavoritesRoot();
               if (root != null && root != o) {
                 o = root.getElement();
                 if (o instanceof FavoritesListNode && ((FavoritesListNode)o).getProvider() == null) {
@@ -94,8 +80,8 @@ public class FavoritesPanel {
           Object o = path.getLastPathComponent();
           if (o instanceof DefaultMutableTreeNode) {
             o = ((DefaultMutableTreeNode)o).getUserObject();
-            if (o instanceof FavoritesTreeNodeDescriptor) {
-              FavoritesTreeNodeDescriptor root = ((FavoritesTreeNodeDescriptor)o).getFavoritesRoot();
+            if (o instanceof FavoriteTreeNodeDescriptor) {
+              FavoriteTreeNodeDescriptor root = ((FavoriteTreeNodeDescriptor)o).getFavoritesRoot();
               if (root == o) {
                 return new DnDDragStartBean(path);
               }
@@ -161,8 +147,7 @@ public class FavoritesPanel {
             final String listFrom = FavoritesTreeViewPanel.getListNodeFromPath(path).getValue();
             if (listTo.equals(listFrom)) return;
             if (path.getPathCount() == 3) {
-              final AbstractTreeNode abstractTreeNode =
-                ((FavoritesTreeNodeDescriptor)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject()).getElement();
+              AbstractTreeNode<?> abstractTreeNode = ((FavoriteTreeNodeDescriptor)((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject()).getElement();
               Object element = abstractTreeNode.getValue();
               mgr.removeRoot(listFrom, Collections.singletonList(abstractTreeNode));
               if (element instanceof SmartPsiElementPointer) {
@@ -216,8 +201,8 @@ public class FavoritesPanel {
         final Object pathObj = pathToList.getLastPathComponent();
         if (pathObj instanceof DefaultMutableTreeNode) {
           final Object userObject = ((DefaultMutableTreeNode)pathObj).getUserObject();
-          if (userObject instanceof FavoritesTreeNodeDescriptor) {
-            if (((FavoritesTreeNodeDescriptor)userObject).getElement() == node) {
+          if (userObject instanceof FavoriteTreeNodeDescriptor) {
+            if (((FavoriteTreeNodeDescriptor)userObject).getElement() == node) {
               break;
             }
           }
@@ -249,8 +234,7 @@ public class FavoritesPanel {
     }
   }
 
-  @Nullable
-  protected PsiFileSystemItem[] getPsiFiles(@Nullable List<? extends File> fileList) {
+  protected PsiFileSystemItem @Nullable [] getPsiFiles(@Nullable List<? extends File> fileList) {
     if (fileList == null) return null;
     List<PsiFileSystemItem> sourceFiles = new ArrayList<>();
     for (File file : fileList) {

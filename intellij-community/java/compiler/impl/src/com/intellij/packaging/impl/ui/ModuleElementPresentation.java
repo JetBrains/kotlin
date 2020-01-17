@@ -27,9 +27,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public class ModuleElementPresentation extends TreeNodePresentation {
   private final ModulePointer myModulePointer;
   private final ArtifactEditorContext myContext;

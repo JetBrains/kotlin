@@ -69,9 +69,8 @@ public class ExcludedFilesScopeDialog extends ExcludedFilesDialogBase {
     return myForm.getTopPanel();
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[] {getOKAction(), getCancelAction(), myEditAction};
   }
 

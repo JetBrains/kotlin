@@ -10,8 +10,7 @@ import java.lang.annotation.Annotation;
 @SuppressWarnings("ClassExplicitlyAnnotation")
 public class StateAnnotation implements State {
   private final String name;
-  @NotNull
-  private final Storage[] storages;
+  private final Storage @NotNull [] storages;
 
   public StateAnnotation(@NotNull String name, @NotNull Storage storage) {
     this.name = name;
@@ -24,9 +23,8 @@ public class StateAnnotation implements State {
     return name;
   }
 
-  @NotNull
   @Override
-  public Storage[] storages() {
+  public Storage @NotNull [] storages() {
     return storages;
   }
 
@@ -57,6 +55,11 @@ public class StateAnnotation implements State {
 
   @Override
   public boolean reportStatistic() {
+    return false;
+  }
+
+  @Override
+  public boolean allowLoadInTests() {
     return false;
   }
 

@@ -27,9 +27,8 @@ public final class IdeViewForProjectViewPane implements IdeView {
     return DirectoryChooserUtil.getOrChooseDirectory(this);
   }
 
-  @NotNull
   @Override
-  public PsiDirectory[] getDirectories() {
+  public PsiDirectory @NotNull [] getDirectories() {
     AbstractProjectViewPane pane = supplier.get();
     return pane == null ? PsiDirectory.EMPTY_ARRAY : pane.getSelectedDirectories();
   }

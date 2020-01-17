@@ -28,9 +28,6 @@ import org.jetbrains.jps.model.artifact.elements.JpsCompositePackagingElement;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.ex.JpsNamedCompositeElementBase;
 
-/**
- * @author nik
- */
 public class JpsArtifactImpl<P extends JpsElement> extends JpsNamedCompositeElementBase<JpsArtifactImpl<P>> implements JpsArtifact {
   private static final JpsElementChildRole<JpsCompositePackagingElement>
     ROOT_ELEMENT_CHILD_ROLE = JpsElementChildRoleBase.create("root element");

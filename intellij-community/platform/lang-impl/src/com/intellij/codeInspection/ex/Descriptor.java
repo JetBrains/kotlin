@@ -38,7 +38,7 @@ public class Descriptor {
     InspectionToolWrapper tool = state.getTool();
     myText = tool.getDisplayName();
     final String[] groupPath = tool.getGroupPath();
-    myGroup = groupPath.length == 0 ? new String[]{InspectionProfileEntry.GENERAL_GROUP_NAME} : groupPath;
+    myGroup = groupPath.length == 0 ? new String[]{InspectionProfileEntry.getGeneralGroupName()} : groupPath;
     myKey = HighlightDisplayKey.find(tool.getShortName());
     myScopeName = state.getScopeName();
     myScope = state.getScope(project);
@@ -125,8 +125,7 @@ public class Descriptor {
     return element;
   }
 
-  @NotNull
-  public String[] getGroup() {
+  public String @NotNull [] getGroup() {
     return myGroup;
   }
 

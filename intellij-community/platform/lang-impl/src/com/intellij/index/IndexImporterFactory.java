@@ -3,7 +3,7 @@ package com.intellij.index;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.indexing.IndexExtension;
-import com.intellij.util.indexing.SnapshotInputMappingIndex;
+import com.intellij.util.indexing.snapshot.SnapshotInputMappingIndex;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

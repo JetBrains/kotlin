@@ -41,6 +41,7 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
     myBuildStatus = CmdlineRemoteProto.Message.BuilderMessage.BuildEvent.Status.SUCCESS;
     myWolf = WolfTheProblemSolver.getInstance(project);
     myContext = new AutomakeCompileContext(project);
+    myContext.getProgressIndicator().start();
   }
 
   public boolean unprocessedFSChangesDetected() {

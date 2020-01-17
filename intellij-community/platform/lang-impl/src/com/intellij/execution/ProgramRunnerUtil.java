@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
@@ -26,17 +27,17 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-public class ProgramRunnerUtil {
+public final class ProgramRunnerUtil {
   private static final Logger LOG = Logger.getInstance(ProgramRunnerUtil.class);
 
   private ProgramRunnerUtil() { }
 
   @Nullable
-  public static ProgramRunner getRunner(@NotNull String executorId, @Nullable RunnerAndConfigurationSettings configuration) {
+  public static ProgramRunner<?> getRunner(@NotNull String executorId, @Nullable RunnerAndConfigurationSettings configuration) {
     return configuration == null ? null : ProgramRunner.getRunner(executorId, configuration.getConfiguration());
   }
 
-  public static void executeConfiguration(@NotNull final ExecutionEnvironment environment, boolean showSettings, boolean assignNewId) {
+  public static void executeConfiguration(@NotNull ExecutionEnvironment environment, boolean showSettings, boolean assignNewId) {
     executeConfigurationAsync(environment, showSettings, assignNewId, null);
   }
 
@@ -49,14 +50,17 @@ public class ProgramRunnerUtil {
                                                boolean showSettings,
                                                boolean assignNewId,
                                                ProgramRunner.Callback callback) {
-    if (ExecutorRegistry.getInstance().isStarting(environment)) {
+    if (ExecutionManager.getInstance(environment.getProject()).isStarting(environment)) {
       return;
     }
 
     RunnerAndConfigurationSettings runnerAndConfigurationSettings = environment.getRunnerAndConfigurationSettings();
-    final Project project = environment.getProject();
+    Project project = environment.getProject();
+    ProgramRunner<?> runner = environment.getRunner();
+
     if (runnerAndConfigurationSettings != null) {
-      if (!ExecutionTargetManager.canRun(environment)) {
+      ExecutionTargetManager targetManager = ExecutionTargetManager.getInstance(project);
+      if (!targetManager.doCanRun(runnerAndConfigurationSettings.getConfiguration(), environment.getExecutionTarget())) {
         ExecutionUtil.handleExecutionError(environment, new ExecutionException(
           getCannotRunOnErrorMessage(environment.getRunProfile(), environment.getExecutionTarget())));
         return;
@@ -78,10 +82,19 @@ public class ProgramRunnerUtil {
             return;
           }
         }
+
+        // corresponding runner can be changed after configuration edit
+        runner = getRunner(environment.getExecutor().getId(), runnerAndConfigurationSettings);
       }
     }
 
     try {
+      if (runner == null) {
+        throw new ExecutionException("Cannot find runner for " + environment.getRunProfile().getName());
+      }
+      if (!runner.equals(environment.getRunner())) {
+        environment = new ExecutionEnvironmentBuilder(environment).runner(runner).build();
+      }
       if (assignNewId) {
         environment.assignNewExecutionId();
       }
@@ -102,7 +115,7 @@ public class ProgramRunnerUtil {
                                           Throwable e,
                                           RunProfile configuration) {
     String name = configuration != null ? configuration.getName() : environment.getRunProfile().getName();
-    String windowId = ExecutionManager.getInstance(project).getContentManager().getToolWindowIdByEnvironment(environment);
+    String windowId = RunContentManager.getInstance(project).getToolWindowIdByEnvironment(environment);
     if (configuration instanceof ConfigurationWithCommandLineShortener && ExecutionUtil.isProcessNotCreated(e)) {
       handleProcessNotStartedError((ConfigurationWithCommandLineShortener)configuration, (ProcessNotCreatedException)e, name, windowId);
     }
@@ -170,14 +183,13 @@ public class ProgramRunnerUtil {
     executeConfiguration(builder.contentToReuse(null).dataContext(null).activeTarget().build(), true, true);
   }
 
-  public static Icon getConfigurationIcon(RunnerAndConfigurationSettings settings, boolean invalid) {
+  @NotNull
+  public static Icon getConfigurationIcon(@NotNull RunnerAndConfigurationSettings settings, boolean invalid) {
     Icon icon = getRawIcon(settings);
-
-    final Icon configurationIcon = settings.isTemporary() ?  getTemporaryIcon(icon): icon;
+    Icon configurationIcon = settings.isTemporary() ? getTemporaryIcon(icon) : icon;
     if (invalid) {
       return LayeredIcon.create(configurationIcon, AllIcons.RunConfigurations.InvalidConfigurationLayer);
     }
-
     return configurationIcon;
   }
 

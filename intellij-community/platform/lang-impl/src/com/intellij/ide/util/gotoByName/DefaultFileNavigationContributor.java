@@ -33,7 +33,7 @@ public class DefaultFileNavigationContributor implements ChooseByNameContributor
   private static final Logger LOG = Logger.getInstance(DefaultFileNavigationContributor.class);
 
   @Override
-  public void processNames(@NotNull final Processor<String> processor, @NotNull GlobalSearchScope scope, IdFilter filter) {
+  public void processNames(@NotNull final Processor<? super String> processor, @NotNull GlobalSearchScope scope, IdFilter filter) {
     long started = System.currentTimeMillis();
     FilenameIndex.processAllFileNames(processor, scope, filter);
     if (LOG.isDebugEnabled()) {
@@ -43,7 +43,7 @@ public class DefaultFileNavigationContributor implements ChooseByNameContributor
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @NotNull final Processor<NavigationItem> _processor,
+                                      @NotNull final Processor<? super NavigationItem> _processor,
                                       @NotNull FindSymbolParameters parameters) {
     final boolean globalSearch = parameters.getSearchScope().isSearchInLibraries();
     final Processor<PsiFileSystemItem> processor = item -> {

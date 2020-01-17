@@ -23,7 +23,10 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author cdr
+ *
+ * Use {@link com.intellij.ide.hierarchy.newAPI.ViewClassHierarchyAction} instead
  */
+@Deprecated
 public final class ViewClassHierarchyAction extends ChangeViewTypeActionBase {
   public ViewClassHierarchyAction() {
     super(IdeBundle.message("action.view.class.hierarchy"),
@@ -32,7 +35,7 @@ public final class ViewClassHierarchyAction extends ChangeViewTypeActionBase {
 
   @Override
   protected final String getTypeName() {
-    return TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE;
+    return TypeHierarchyBrowserBase.getTypeHierarchyType();
   }
 
   @Override

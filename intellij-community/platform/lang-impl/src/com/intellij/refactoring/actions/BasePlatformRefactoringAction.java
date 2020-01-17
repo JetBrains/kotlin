@@ -117,7 +117,7 @@ public abstract class BasePlatformRefactoringAction extends BaseRefactoringActio
   }
 
   @Override
-  protected boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  protected boolean isEnabledOnElements(PsiElement @NotNull [] elements) {
     if (elements.length > 0) {
       Language language = elements[0].getLanguage();
       RefactoringActionHandler handler = getHandler(language, elements[0]);

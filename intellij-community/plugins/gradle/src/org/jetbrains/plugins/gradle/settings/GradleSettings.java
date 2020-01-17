@@ -1,8 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.settings;
 
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager;
@@ -29,22 +30,25 @@ import java.util.TreeSet;
 public class GradleSettings extends AbstractExternalSystemSettings<GradleSettings, GradleProjectSettings, GradleSettingsListener>
   implements PersistentStateComponent<GradleSettings.MyState> {
 
-  private final GradleSystemSettings mySystemSettings;
+  private boolean isOfflineMode = false;
 
   public GradleSettings(@NotNull Project project) {
     super(GradleSettingsListener.TOPIC, project);
-    mySystemSettings = GradleSystemSettings.getInstance();
   }
 
   @NotNull
   public static GradleSettings getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, GradleSettings.class);
+    return project.getService(GradleSettings.class);
   }
 
   @Override
   public void subscribe(@NotNull ExternalSystemSettingsListener<GradleProjectSettings> listener) {
-    getProject().getMessageBus().connect(getProject()).subscribe(GradleSettingsListener.TOPIC,
-                                                                 new DelegatingGradleSettingsListenerAdapter(listener));
+    doSubscribe(new DelegatingGradleSettingsListenerAdapter(listener), getProject());
+  }
+
+  @Override
+  public void subscribe(@NotNull ExternalSystemSettingsListener<GradleProjectSettings> listener, @NotNull Disposable parentDisposable) {
+    doSubscribe(new DelegatingGradleSettingsListenerAdapter(listener), parentDisposable);
   }
 
   @Override
@@ -56,6 +60,9 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   public GradleSettings.MyState getState() {
     MyState state = new MyState();
     fillState(state);
+
+    state.setOfflineMode(isOfflineWork());
+
     return state;
   }
 
@@ -63,7 +70,13 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   public void loadState(@NotNull MyState state) {
     super.loadState(state);
 
-    GradleSettingsMigration migration = getProject().getComponent(GradleSettingsMigration.class);
+    setOfflineWork(state.isOfflineMode());
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      return;
+    }
+
+    GradleSettingsMigration migration = getProject().getService(GradleSettingsMigration.class);
 
     // When we are opening pre 2019.2 project, we need to import project defaults from the workspace
     // The migration flag is saved to a separate component to preserve backward and forward compatibility.
@@ -71,7 +84,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
       migration.setMigrationVersion(1);
 
       GradleSettingsMigration.LegacyDefaultGradleProjectSettings.MyState legacyProjectDefaults
-        = getProject().getComponent(GradleSettingsMigration.LegacyDefaultGradleProjectSettings.class).getState();
+        = getProject().getService(GradleSettingsMigration.LegacyDefaultGradleProjectSettings.class).getState();
       if (legacyProjectDefaults != null) {
         for (GradleProjectSettings each : getLinkedProjectsSettings()) {
           if (each.getDirectDelegatedBuild() == null) each.setDelegatedBuild(legacyProjectDefaults.delegatedBuild);
@@ -89,36 +102,36 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
    */
   @Nullable
   public String getServiceDirectoryPath() {
-    return mySystemSettings.getServiceDirectoryPath();
+    return GradleSystemSettings.getInstance().getServiceDirectoryPath();
   }
 
   public void setServiceDirectoryPath(@Nullable String newPath) {
-    String myServiceDirectoryPath = mySystemSettings.getServiceDirectoryPath();
+    String myServiceDirectoryPath = GradleSystemSettings.getInstance().getServiceDirectoryPath();
     if (!Comparing.equal(myServiceDirectoryPath, newPath)) {
-      mySystemSettings.setServiceDirectoryPath(newPath);
+      GradleSystemSettings.getInstance().setServiceDirectoryPath(newPath);
       getPublisher().onServiceDirectoryPathChange(myServiceDirectoryPath, newPath);
     }
   }
 
   @Nullable
   public String getGradleVmOptions() {
-    return mySystemSettings.getGradleVmOptions();
+    return GradleSystemSettings.getInstance().getGradleVmOptions();
   }
 
   public void setGradleVmOptions(@Nullable String gradleVmOptions) {
-    String myGradleVmOptions = mySystemSettings.getGradleVmOptions();
+    String myGradleVmOptions = GradleSystemSettings.getInstance().getGradleVmOptions();
     if (!Comparing.equal(myGradleVmOptions, gradleVmOptions)) {
-      mySystemSettings.setGradleVmOptions(gradleVmOptions);
+      GradleSystemSettings.getInstance().setGradleVmOptions(gradleVmOptions);
       getPublisher().onGradleVmOptionsChange(myGradleVmOptions, gradleVmOptions);
     }
   }
 
   public boolean isOfflineWork() {
-    return mySystemSettings.isOfflineWork();
+    return isOfflineMode;
   }
 
-  public void setOfflineWork(boolean isOfflineWork) {
-    mySystemSettings.setOfflineWork(isOfflineWork);
+  public void setOfflineWork(boolean isOfflineMode) {
+    this.isOfflineMode = isOfflineMode;
   }
 
   public boolean getStoreProjectFilesExternally() {
@@ -152,6 +165,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
 
   public static class MyState implements State<GradleProjectSettings> {
     private final Set<GradleProjectSettings> myProjectSettings = new TreeSet<>();
+    private boolean isOfflineMode = false;
 
     @Override
     @XCollection(elementTypes = {GradleProjectSettings.class})
@@ -164,6 +178,14 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
       if (settings != null) {
         myProjectSettings.addAll(settings);
       }
+    }
+
+    public boolean isOfflineMode() {
+      return isOfflineMode;
+    }
+
+    public void setOfflineMode(boolean isOfflineMode) {
+      this.isOfflineMode = isOfflineMode;
     }
   }
 }

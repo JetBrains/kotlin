@@ -2,8 +2,10 @@
 package com.intellij.build;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
+import java.util.function.Consumer;
 
 /**
  * @author Vladislav.Soroka
@@ -18,6 +20,15 @@ public interface BuildEventDispatcher extends Appendable, Closeable, BuildProgre
 
   @Override
   default BuildEventDispatcher append(char c) {return this;}
+
+  /**
+   * Registers handler which is invoked once the build process is finished and the build messages are dispatched.
+   *
+   * @throws UnsupportedOperationException if underlying implementation doesn't support {@link #invokeOnCompletion}.
+   */
+  default void invokeOnCompletion(@NotNull Consumer<Throwable> consumer) {
+    throw new UnsupportedOperationException("invokeOnCompletion is not supported by this BuildEventDispatcher");
+  }
 
   @Override
   default void close() {}

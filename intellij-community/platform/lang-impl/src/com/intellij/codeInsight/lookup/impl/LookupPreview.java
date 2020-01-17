@@ -98,7 +98,7 @@ class LookupPreview {
         Editor editor = inlay.getEditor();
         g.setColor(JBColor.GRAY);
         g.setFont(getFont(editor));
-        g.drawString(suffix, r.x, r.y + ((EditorImpl)editor).getAscent());
+        g.drawString(suffix, r.x, r.y + editor.getAscent());
       }
 
       private Font getFont(@NotNull Editor editor) {

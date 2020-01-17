@@ -21,7 +21,6 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -30,12 +29,6 @@ import com.intellij.refactoring.copy.CopyHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class CopyElementAction extends AnAction {
-
-  @Override
-  public boolean startInTransaction() {
-    return true;
-  }
-
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final DataContext dataContext = e.getDataContext();
@@ -85,8 +78,7 @@ public class CopyElementAction extends AnAction {
       updateForEditor(dataContext, presentation);
     }
     else {
-      String id = ToolWindowManager.getInstance(project).getActiveToolWindowId();
-      updateForToolWindow(id, dataContext, presentation);
+      updateForToolWindow(dataContext, presentation);
     }
   }
 
@@ -119,7 +111,7 @@ public class CopyElementAction extends AnAction {
     }
   }
 
-  protected void updateForToolWindow(String toolWindowId, DataContext dataContext,Presentation presentation) {
+  protected void updateForToolWindow(DataContext dataContext, Presentation presentation) {
     PsiElement[] elements = LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext);
     Ref<String> actionName = new Ref<>();
     presentation.setEnabled(elements != null && CopyHandler.canCopy(elements, actionName));

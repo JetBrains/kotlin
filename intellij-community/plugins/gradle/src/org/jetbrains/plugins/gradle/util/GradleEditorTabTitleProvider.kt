@@ -16,7 +16,6 @@
 package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
-import com.intellij.openapi.fileEditor.UniqueVFilePathBuilder
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -31,8 +30,6 @@ class GradleEditorTabTitleProvider : EditorTabTitleProvider {
     if (!GradleConstants.KNOWN_GRADLE_FILES.contains(file.name)) return null
 
     val fileParent = file.parent ?: return null
-
-    if (!UniqueVFilePathBuilder.getInstance().hasFilesWithSameName(project, file)) return null
 
     val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file) ?: return null
     val manager = ExternalSystemModulePropertyManager.getInstance(module)

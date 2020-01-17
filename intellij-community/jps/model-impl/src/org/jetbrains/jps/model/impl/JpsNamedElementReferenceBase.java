@@ -23,9 +23,6 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class JpsNamedElementReferenceBase<S extends JpsNamedElement, T extends JpsNamedElement, Self extends JpsNamedElementReferenceBase<S, T, Self>>
   extends JpsCompositeElementBase<Self> implements JpsElementReference<T> {
   private static final JpsElementChildRole<JpsElementReference<? extends JpsCompositeElement>> PARENT_REFERENCE_ROLE = JpsElementChildRoleBase

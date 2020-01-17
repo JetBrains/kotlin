@@ -78,23 +78,6 @@ public abstract class InvertBooleanDelegate {
   }
 
   /**
-   * Use {@link #collectForeignElementsToInvert(PsiElement, PsiElement, Language, Collection)} instead
-   * @deprecated To be removed in 2018.3
-   */
-  @Deprecated
-  protected static PsiElement getForeignElementToInvert(PsiElement namedElement,
-                                                        PsiElement expression,
-                                                        Language language) {
-    if (!expression.getLanguage().is(language)){
-      final InvertBooleanDelegate delegate = findInvertBooleanDelegate(expression);
-      if (delegate != null) {
-        return delegate.getElementToInvert(namedElement, expression);
-      }
-    }
-    return null;
-  }
-
-  /**
    * Should be called from {@link #collectRefElements(PsiElement, RenameProcessor, String, Collection)}
    * to process found usages in foreign languages
    */

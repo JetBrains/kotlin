@@ -5,6 +5,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryKind;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,10 +18,13 @@ public abstract class LibrarySettingsProvider {
     ExtensionPointName.create("com.intellij.librarySettingsProvider");
 
   @NotNull
+  @Contract(pure = true)
   public abstract LibraryKind getLibraryKind();
+  @Contract(pure = true)
   public abstract Configurable getAdditionalSettingsConfigurable(Project project);
 
   @Nullable
+  @Contract(pure = true)
   public static Configurable getAdditionalSettingsConfigurable(Project project, LibraryKind libKind) {
     LibrarySettingsProvider provider = forLibraryType(libKind);
     if (provider == null) return null;
@@ -28,6 +32,7 @@ public abstract class LibrarySettingsProvider {
   }
 
   @Nullable
+  @Contract(pure = true)
   public static LibrarySettingsProvider forLibraryType(LibraryKind libType) {
     for (LibrarySettingsProvider provider : EP_NAME.getExtensionList()) {
       if (provider.getLibraryKind().equals(libType)) {

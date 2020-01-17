@@ -46,5 +46,5 @@ public abstract class CloseViewsActionBase extends BaseViewAction {
     return false;
   }
 
-  protected abstract boolean isAccepted(@NotNull Content c, @NotNull Content[] selectedContents);
+  protected abstract boolean isAccepted(@NotNull Content c, Content @NotNull [] selectedContents);
 }

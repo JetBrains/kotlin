@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.ide.IdeBundle
@@ -38,13 +38,13 @@ private val markedElementNames: Set<String>
     return if (value.isNullOrEmpty()) {
       emptySet()
     }
-    else THashSet(StringUtil.split(value!!.trim { it <= ' ' }, "|"))
+    else THashSet(StringUtil.split(value.trim { it <= ' ' }, "|"))
   }
 
 private fun addToExistingListElement(item: ExportableItem,
                                      itemToContainingListElement: MutableMap<ExportableItem, ComponentElementProperties>,
                                      fileToItem: Map<Path, List<ExportableItem>>): Boolean {
-  val list = fileToItem.get(item.file)
+  val list = fileToItem[item.file]
   if (list == null || list.isEmpty()) {
     return false
   }
@@ -55,12 +55,12 @@ private fun addToExistingListElement(item: ExportableItem,
       continue
     }
 
-    val elementProperties = itemToContainingListElement.get(tiedItem)
+    val elementProperties = itemToContainingListElement[tiedItem]
     if (elementProperties != null && item.file !== file) {
       LOG.assertTrue(file == null, "Component $item serialize itself into $file and ${item.file}")
       // found
       elementProperties.items.add(item)
-      itemToContainingListElement.set(item, elementProperties)
+      itemToContainingListElement[item] = elementProperties
       file = item.file
     }
   }
@@ -106,7 +106,7 @@ fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, desc
 
 internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<ExportableItem>>, private val isShowFilePath: Boolean, title: String, private val description: String) : DialogWrapper(false) {
   private val chooser: ElementsChooser<ComponentElementProperties>
-  private val pathPanel = FieldPanel(IdeBundle.message("editbox.export.settings.to"), null, null, null)
+  private val pathPanel = FieldPanel(IdeBundle.message("editbox.export.settings.to"), null, { browse() }, null)
 
   internal val exportableComponents: Set<ExportableItem>
     get() {
@@ -121,18 +121,13 @@ internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<E
     get() = Paths.get(pathPanel.text)
 
   init {
-    pathPanel.setBrowseButtonActionListener {
-      chooseSettingsFile(pathPanel.text, window, IdeBundle.message("title.export.file.location"), IdeBundle.message("prompt.choose.export.settings.file.path"))
-        .onSuccess { path -> pathPanel.text = FileUtil.toSystemDependentName(path) }
-    }
-
     val componentToContainingListElement = LinkedHashMap<ExportableItem, ComponentElementProperties>()
     for (list in fileToComponents.values) {
       for (item in list) {
         if (!addToExistingListElement(item, componentToContainingListElement, fileToComponents)) {
           val componentElementProperties = ComponentElementProperties()
           componentElementProperties.items.add(item)
-          componentToContainingListElement.set(item, componentElementProperties)
+          componentToContainingListElement[item] = componentElementProperties
         }
       }
     }
@@ -151,6 +146,12 @@ internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<E
 
     setTitle(title)
     init()
+  }
+
+  private fun browse() {
+    chooseSettingsFile(pathPanel.text, window, IdeBundle.message("title.export.file.location"),
+                       IdeBundle.message("prompt.choose.export.settings.file.path"))
+      .onSuccess { path -> pathPanel.text = FileUtil.toSystemDependentName(path) }
   }
 
   private fun updateControls() {

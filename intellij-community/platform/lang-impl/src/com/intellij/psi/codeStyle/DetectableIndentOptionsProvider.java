@@ -3,7 +3,7 @@ package com.intellij.psi.codeStyle;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
-import com.intellij.ide.scratch.ScratchFileType;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.lang.LanguageFormatting;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
@@ -27,7 +27,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
-import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +35,6 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import static com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions;
 import static com.intellij.psi.codeStyle.DetectAndAdjustIndentOptionsTask.getDefaultIndentOptions;
@@ -45,9 +43,6 @@ import static com.intellij.psi.codeStyle.DetectAndAdjustIndentOptionsTask.getDef
  * @author Rustam Vishnyakov
  */
 public class DetectableIndentOptionsProvider extends FileIndentOptionsProvider {
-  private static final ExecutorService BOUNDED_EXECUTOR = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
-    "DetectableIndentOptionsProvider Pool");
-
   private static final NotificationGroup NOTIFICATION_GROUP =
     new NotificationGroup("Automatic indent detection", NotificationDisplayType.STICKY_BALLOON, true);
 
@@ -90,8 +85,7 @@ public class DetectableIndentOptionsProvider extends FileIndentOptionsProvider {
                                                @NotNull Document document,
                                                @NotNull TimeStampedIndentOptions options)
   {
-    DetectAndAdjustIndentOptionsTask task = new DetectAndAdjustIndentOptionsTask(project, document, options, BOUNDED_EXECUTOR);
-    task.scheduleInBackgroundForCommittedDocument();
+    new DetectAndAdjustIndentOptionsTask(project, document, options).scheduleInBackgroundForCommittedDocument();
   }
 
   @Override
@@ -105,10 +99,11 @@ public class DetectableIndentOptionsProvider extends FileIndentOptionsProvider {
   }
 
   private boolean isEnabled(@NotNull CodeStyleSettings settings, @NotNull PsiFile file) {
-    if (!file.isWritable() ||
-        (file instanceof PsiBinaryFile) ||
-        (file instanceof PsiCompiledFile) ||
-        file.getFileType() == ScratchFileType.INSTANCE) {
+    if (!file.isValid() ||
+        !file.isWritable() ||
+        file instanceof PsiBinaryFile ||
+        file instanceof PsiCompiledFile ||
+        ScratchUtil.isScratch(file.getVirtualFile())) {
       return false;
     }
     if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -202,9 +197,8 @@ public class DetectableIndentOptionsProvider extends FileIndentOptionsProvider {
       super(options);
     }
 
-    @Nullable
     @Override
-    public AnAction[] getActions(@NotNull PsiFile file) {
+    public AnAction @Nullable [] getActions(@NotNull PsiFile file) {
       IndentOptions indentOptions = getIndentOptions();
       List<AnAction> actions = new ArrayList<>();
       final VirtualFile virtualFile = file.getVirtualFile();

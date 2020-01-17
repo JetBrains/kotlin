@@ -31,7 +31,7 @@ public abstract class PerformFixesModalTask implements SequentialTask {
   private int myDescriptorIdx = 0;
 
   protected PerformFixesModalTask(@NotNull Project project,
-                                  @NotNull CommonProblemDescriptor[] descriptors) {
+                                  CommonProblemDescriptor @NotNull [] descriptors) {
     this(project, Collections.singletonList(descriptors));
   }
 
@@ -42,10 +42,6 @@ public abstract class PerformFixesModalTask implements SequentialTask {
     myLength = descriptorPacks.stream().mapToInt(ds -> ds.length).sum();
     myDocumentManager = PsiDocumentManager.getInstance(myProject);
     myReformattingAspect = PostprocessReformattingAspect.getInstance(myProject);
-  }
-
-  @Override
-  public void prepare() {
   }
 
   @Override
@@ -111,9 +107,6 @@ public abstract class PerformFixesModalTask implements SequentialTask {
     }
     return isDone();
   }
-
-  @Override
-  public void stop() {}
 
   protected abstract void applyFix(Project project, CommonProblemDescriptor descriptor);
 

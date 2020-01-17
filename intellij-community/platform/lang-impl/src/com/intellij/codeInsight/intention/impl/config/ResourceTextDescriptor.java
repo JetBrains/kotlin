@@ -12,11 +12,11 @@ import java.util.Objects;
 /**
  * @author yole
  */
-public class ResourceTextDescriptor implements TextDescriptor {
+class ResourceTextDescriptor implements TextDescriptor {
   private final ClassLoader myLoader;
   private final String myResourcePath;
 
-  public ResourceTextDescriptor(ClassLoader loader, @NotNull String resourcePath) {
+  ResourceTextDescriptor(ClassLoader loader, @NotNull String resourcePath) {
     myLoader = loader;
     myResourcePath = resourcePath;
   }
@@ -35,12 +35,17 @@ public class ResourceTextDescriptor implements TextDescriptor {
     return Objects.hash(myLoader, myResourcePath);
   }
 
+  @NotNull
   @Override
   public String getText() throws IOException {
     InputStream stream = myLoader.getResourceAsStream(myResourcePath);
-    return stream != null ? ResourceUtil.loadText(stream) : null;
+    if (stream == null) {
+      throw new IOException("Resource not found: " + myResourcePath);
+    }
+    return ResourceUtil.loadText(stream);
   }
 
+  @NotNull
   @Override
   public String getFileName() {
     return StringUtil.trimEnd(myResourcePath.substring(myResourcePath.lastIndexOf('/') + 1), BeforeAfterActionMetaData.EXAMPLE_USAGE_URL_SUFFIX);

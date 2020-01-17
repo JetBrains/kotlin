@@ -16,11 +16,11 @@
 
 package com.intellij.ui.debugger;
 
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
-public class ShowUiDebuggerAction extends AnAction {
+public class ShowUiDebuggerAction extends DumbAwareAction {
 
   private UiDebugger myDebugger;
 

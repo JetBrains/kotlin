@@ -136,8 +136,6 @@ class UpdateFoldRegionsOperation implements Runnable {
                                                         descriptor.isNonExpandable());
       if (region == null) continue;
 
-      if (descriptor.isNonExpandable()) region.putUserData(FoldingModelImpl.SELECT_REGION_ON_CARET_NEARBY, Boolean.TRUE);
-
       PsiElement psi = descriptor.getElement().getPsi();
 
       if (psi == null || !psi.isValid() || !myFile.isValid()) {
@@ -154,14 +152,18 @@ class UpdateFoldRegionsOperation implements Runnable {
       info.addRegion(region, smartPointerManager.createSmartPsiElementPointer(psi));
       newRegions.add(region);
 
-      boolean expandStatus = !descriptor.isNonExpandable() && shouldExpandNewRegion(range, rangeToExpandStatusMap, 
-                                                                                    regionInfo.collapsedByDefault);
-      if (group == null) {
-        shouldExpand.put(region, expandStatus);
+      if (descriptor.isNonExpandable()) {
+        region.putUserData(FoldingModelImpl.SELECT_REGION_ON_CARET_NEARBY, Boolean.TRUE);
       }
       else {
-        final Boolean alreadyExpanded = groupExpand.get(group);
-        groupExpand.put(group, alreadyExpanded == null ? expandStatus : alreadyExpanded.booleanValue() || expandStatus);
+        boolean expandStatus = shouldExpandNewRegion(range, rangeToExpandStatusMap, regionInfo.collapsedByDefault);
+        if (group == null) {
+          shouldExpand.put(region, expandStatus);
+        }
+        else {
+          final Boolean alreadyExpanded = groupExpand.get(group);
+          groupExpand.put(group, alreadyExpanded == null ? expandStatus : alreadyExpanded.booleanValue() || expandStatus);
+        }
       }
     }
 
@@ -183,7 +185,7 @@ class UpdateFoldRegionsOperation implements Runnable {
     }
 
     final Boolean oldStatus = rangeToExpandStatusMap.get(range);
-    return oldStatus == null || FoldingUtil.caretInsideRange(myEditor, range) || oldStatus.booleanValue();
+    return oldStatus == null || oldStatus.booleanValue() || FoldingUtil.caretInsideRange(myEditor, range);
   }
 
   private void removeInvalidRegions(@NotNull EditorFoldingInfo info,
@@ -196,12 +198,12 @@ class UpdateFoldRegionsOperation implements Runnable {
     for (FoldRegion region : foldingModel.getAllFoldRegions()) {
       FoldingGroup group = region.getGroup();
       if (group != null && !processedGroups.add(group)) continue;
-      
+
       List<FoldRegion> regionsToProcess = group == null ? Collections.singletonList(region) : foldingModel.getGroupedRegions(group);
       matchedInfos.clear();
       boolean shouldRemove = false;
       for (FoldRegion regionToProcess : regionsToProcess) {
-        if (shouldRemoveRegion(regionToProcess, info, rangeToExpandStatusMap, infoRef)) {
+        if (!regionToProcess.isValid() || shouldRemoveRegion(regionToProcess, info, rangeToExpandStatusMap, infoRef)) {
           shouldRemove = true;
         }
         FoldingUpdate.RegionInfo regionInfo = infoRef.get();
@@ -229,7 +231,7 @@ class UpdateFoldRegionsOperation implements Runnable {
         }
         if (myGroupedRegionInfos.get(requestedGroup).size() != matchedInfos.size()) {
           shouldRemove = true;
-        }        
+        }
       }
       if (shouldRemove) {
         for (FoldRegion r : regionsToProcess) {
@@ -262,8 +264,7 @@ class UpdateFoldRegionsOperation implements Runnable {
       boolean isInjected = InjectedLanguageManager.getInstance(myProject).isInjectedFragment(containingFile);
       if (isInjected != myForInjected) return false;
     }
-    boolean forceKeepRegion = myKeepCollapsedRegions && region.isValid() && !region.isExpanded() &&
-                              !regionOrGroupCanBeRemovedWhenCollapsed(region);
+    boolean forceKeepRegion = myKeepCollapsedRegions && !region.isExpanded() && !regionOrGroupCanBeRemovedWhenCollapsed(region);
     Boolean storedCollapsedByDefault = region.getUserData(COLLAPSED_BY_DEFAULT);
     final Collection<FoldingUpdate.RegionInfo> regionInfos;
     if (element != null && !(regionInfos = myElementsToFoldMap.get(element)).isEmpty()) {
@@ -272,14 +273,11 @@ class UpdateFoldRegionsOperation implements Runnable {
         FoldingDescriptor descriptor = regionInfo.descriptor;
         TextRange range = descriptor.getRange();
         if (TextRange.areSegmentsEqual(region, range)) {
-          if (!forceKeepRegion && (!region.isValid() ||
-                                   !region.getPlaceholderText().equals(descriptor.getPlaceholderText()) ||
-                                   range.getLength() < 2)
-            ) {
+          if (storedCollapsedByDefault != null && storedCollapsedByDefault != regionInfo.collapsedByDefault) {
+            rangeToExpandStatusMap.put(range, !regionInfo.collapsedByDefault);
             return true;
           }
-          else if (storedCollapsedByDefault != null && storedCollapsedByDefault != regionInfo.collapsedByDefault) {
-            rangeToExpandStatusMap.put(range, !regionInfo.collapsedByDefault);
+          else if (!region.getPlaceholderText().equals(descriptor.getPlaceholderText()) || range.getLength() < 2) {
             return true;
           }
           else {
@@ -295,7 +293,7 @@ class UpdateFoldRegionsOperation implements Runnable {
         return true;
       }
     }
-    else if (!forceKeepRegion && !(region.isValid() && region.getUserData(SIGNATURE) == null /* 'light' region */)) {
+    else if (!forceKeepRegion && !(region.getUserData(SIGNATURE) == null /* 'light' region */)) {
       return true;
     }
     return false;

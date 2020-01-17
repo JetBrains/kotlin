@@ -5,10 +5,8 @@ import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutio
 import com.intellij.util.execution.ParametersListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Denis Zhdanov
@@ -21,8 +19,6 @@ public class GradleExecutionSettings extends ExternalSystemExecutionSettings {
 
   @NotNull private final GradleExecutionWorkspace myExecutionWorkspace = new GradleExecutionWorkspace();
 
-  @NotNull private final List<ClassHolder<? extends GradleProjectResolverExtension>> myResolverExtensions =
-    new ArrayList<>();
   @Nullable private final String myGradleHome;
 
   @Nullable private final String myServiceDirectory;
@@ -120,15 +116,6 @@ public class GradleExecutionSettings extends ExternalSystemExecutionSettings {
     this.delegatedBuild = delegatedBuild;
   }
 
-  @NotNull
-  public List<ClassHolder<? extends GradleProjectResolverExtension>> getResolverExtensions() {
-    return myResolverExtensions;
-  }
-
-  public void addResolverExtensionClass(@NotNull ClassHolder<? extends GradleProjectResolverExtension> holder) {
-    myResolverExtensions.add(holder);
-  }
-
   /**
    * @return VM options to use for the gradle daemon process (if any)
    * @deprecated use {@link #getJvmArguments()}
@@ -171,16 +158,11 @@ public class GradleExecutionSettings extends ExternalSystemExecutionSettings {
   @Override
   public boolean equals(Object o) {
     if (!super.equals(o)) return false;
-
     GradleExecutionSettings that = (GradleExecutionSettings)o;
-
     if (myDistributionType != that.myDistributionType) return false;
-    if (myGradleHome != null ? !myGradleHome.equals(that.myGradleHome) : that.myGradleHome != null) return false;
-    if (myJavaHome != null ? !myJavaHome.equals(that.myJavaHome) : that.myJavaHome != null) return false;
-    if (myServiceDirectory != null ? !myServiceDirectory.equals(that.myServiceDirectory) : that.myServiceDirectory != null) {
-      return false;
-    }
-
+    if (!Objects.equals(myGradleHome, that.myGradleHome)) return false;
+    if (!Objects.equals(myJavaHome, that.myJavaHome)) return false;
+    if (!Objects.equals(myServiceDirectory, that.myServiceDirectory)) return false;
     return true;
   }
 

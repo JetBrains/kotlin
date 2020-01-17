@@ -1,5 +1,5 @@
 #
-# Copyright 2000-2014 JetBrains s.r.o.
+# Copyright 2000-2019 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,12 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+org.jetbrains.plugins.gradle.tooling.builder.AnnotationProcessingModelBuilder
 org.jetbrains.plugins.gradle.tooling.builder.WarModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.EarModelBuilderImpl
-org.jetbrains.plugins.gradle.tooling.builder.ModuleExtendedModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ModelBuildScriptClasspathBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ScalaModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ExternalProjectBuilderImpl
+org.jetbrains.plugins.gradle.tooling.builder.DependencyGraphModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ExternalTestsModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ProjectExtensionsDataBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.IntelliJSettingsBuilder

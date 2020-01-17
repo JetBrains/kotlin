@@ -16,9 +16,11 @@
 package com.intellij.openapi.externalSystem.service.project;
 
 import com.intellij.openapi.externalSystem.model.project.LibraryPathType;
+import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -38,10 +40,13 @@ public class ExternalLibraryPathTypeMapperImpl implements ExternalLibraryPathTyp
     OrderRootType docRootType = stream(OrderRootType.getAllTypes()).anyMatch(JavadocOrderRootType.class::isInstance)
                                 ? JavadocOrderRootType.getInstance() : OrderRootType.DOCUMENTATION;
     MAPPINGS.put(LibraryPathType.DOC, docRootType);
-    assert LibraryPathType.values().length == MAPPINGS.size();
+    stream(OrderRootType.getAllTypes())
+      .filter(AnnotationOrderRootType.class::isInstance)
+      .findFirst()
+      .ifPresent(type -> MAPPINGS.put(LibraryPathType.ANNOTATION, type));
   }
 
-  @NotNull
+  @Nullable
   @Override
   public OrderRootType map(@NotNull LibraryPathType type) {
     return MAPPINGS.get(type);

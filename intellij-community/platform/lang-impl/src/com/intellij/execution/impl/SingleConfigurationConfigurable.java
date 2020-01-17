@@ -1,26 +1,33 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.execution.impl;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.Executor;
-import com.intellij.execution.ExecutorRegistry;
+import com.intellij.execution.RunOnTargetComboBox;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.target.LanguageRuntimeType;
+import com.intellij.execution.target.TargetEnvironmentAwareRunProfile;
+import com.intellij.execution.target.TargetEnvironmentsConfigurable;
+import com.intellij.execution.target.TargetEnvironmentsManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.actionSystem.DataKey;
+import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorListener;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ComponentValidator;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.changes.VcsIgnoreManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,9 +36,12 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UI;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +56,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public final class SingleConfigurationConfigurable<Config extends RunConfiguration>
-    extends BaseRCSettingsConfigurable {
+  extends BaseRCSettingsConfigurable {
+  public static final DataKey<String> RUN_ON_TARGET_NAME_KEY = DataKey.create("RunOnTargetName");
+
   private static final Logger LOG = Logger.getInstance(SingleConfigurationConfigurable.class);
 
   private final PlainDocument myNameDocument = new PlainDocument();
@@ -60,16 +72,14 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
   private final boolean myBrokenConfiguration;
   private boolean myStoreProjectConfiguration;
   private boolean myIsAllowRunningInParallel = false;
+  private String myDefaultTargetName;
   private String myFolderName;
   private boolean myChangingNameFromCode;
-  private VcsIgnoreManager myVcsIgnoreManager;
 
   private SingleConfigurationConfigurable(@NotNull RunnerAndConfigurationSettings settings, @Nullable Executor executor) {
     super(new ConfigurationSettingsEditorWrapper(settings), settings);
 
     myExecutor = executor;
-
-    myVcsIgnoreManager = ServiceManager.getService(getConfiguration().getProject(), VcsIgnoreManager.class);
 
     final Config configuration = getConfiguration();
     myDisplayName = getSettings().getName();
@@ -111,7 +121,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
   void applySnapshotToComparison(RunnerAndConfigurationSettings original, RunnerAndConfigurationSettings snapshot) {
     snapshot.setTemporary(original.isTemporary());
     snapshot.setName(getNameText());
-    snapshot.getConfiguration().setAllowRunningInParallel(myIsAllowRunningInParallel);
+    RunConfiguration runConfiguration = snapshot.getConfiguration();
+    runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
+    if (runConfiguration instanceof TargetEnvironmentAwareRunProfile) {
+      ((TargetEnvironmentAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    }
     snapshot.setFolderName(myFolderName);
   }
 
@@ -127,6 +141,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     RunConfiguration runConfiguration = settings.getConfiguration();
     settings.setName(getNameText());
     runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
+    if (runConfiguration instanceof TargetEnvironmentAwareRunProfile) {
+      ((TargetEnvironmentAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    }
     settings.setFolderName(myFolderName);
     settings.setShared(myStoreProjectConfiguration);
     super.apply();
@@ -162,6 +179,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       if (ConfigurationSettingsEditorWrapper.CONFIGURATION_EDITOR_KEY.is(dataId)) {
         return getEditor();
       }
+      if (RUN_ON_TARGET_NAME_KEY.is(dataId)) {
+        return ((RunOnTargetComboBox)myComponent.myRunOnComboBox).getSelectedTargetName();
+      }
       return null;
     });
     return result;
@@ -184,8 +204,8 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
         snapshot = createSnapshot(false);
         snapshot.setName(getNameText());
         snapshot.checkSettings(myExecutor);
-        for (Executor executor : ExecutorRegistry.getInstance().getRegisteredExecutors()) {
-          ProgramRunner runner = ProgramRunner.getRunner(executor.getId(), snapshot.getConfiguration());
+        for (Executor executor : Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
+          ProgramRunner<?> runner = ProgramRunner.getRunner(executor.getId(), snapshot.getConfiguration());
           if (runner != null) {
             checkConfiguration(runner, snapshot);
           }
@@ -221,10 +241,10 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     return quickFix;
   }
 
-  private static void checkConfiguration(final ProgramRunner runner, final RunnerAndConfigurationSettings snapshot)
-      throws RuntimeConfigurationException {
-    final RunnerSettings runnerSettings = snapshot.getRunnerSettings(runner);
-    final ConfigurationPerRunnerSettings configurationSettings = snapshot.getConfigurationSettings(runner);
+  private static void checkConfiguration(@NotNull ProgramRunner<?> runner, @NotNull RunnerAndConfigurationSettings snapshot)
+    throws RuntimeConfigurationException {
+    RunnerSettings runnerSettings = snapshot.getRunnerSettings(runner);
+    ConfigurationPerRunnerSettings configurationSettings = snapshot.getConfigurationSettings(runner);
     try {
       runner.checkConfiguration(runnerSettings, configurationSettings);
     }
@@ -301,9 +321,13 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
   @NotNull
   public RunnerAndConfigurationSettings createSnapshot(boolean cloneBeforeRunTasks) throws ConfigurationException {
     RunnerAndConfigurationSettings snapshot = getEditor().getSnapshot();
-    snapshot.getConfiguration().setAllowRunningInParallel(myIsAllowRunningInParallel);
+    RunConfiguration runConfiguration = snapshot.getConfiguration();
+    runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
+    if (runConfiguration instanceof TargetEnvironmentAwareRunProfile) {
+      ((TargetEnvironmentAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    }
     if (cloneBeforeRunTasks) {
-      RunManagerImplKt.cloneBeforeRunTasks(snapshot.getConfiguration());
+      RunManagerImplKt.cloneBeforeRunTasks(runConfiguration);
     }
     return snapshot;
   }
@@ -338,13 +362,17 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     private JPanel myValidationPanel;
     private JBScrollPane myJBScrollPane;
     private JPanel myCbStoreProjectConfigurationPanel;
-    private final Project myProject;
+
+    private ComboBox myRunOnComboBox;
+    private JLabel myManageTargetsLabel;
+    private JPanel myRunOnPanel;
+    private JPanel myRunOnPanelInner;
+
     private final ComponentValidator myCbStoreProjectConfigurationValidator;
 
     private Runnable myQuickFix = null;
 
     MyValidatableComponent(@NotNull Project project) {
-      myProject = project;
       myNameLabel.setLabelFor(myNameText);
       myNameText.setDocument(myNameDocument);
 
@@ -356,7 +384,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myComponentPlace.setLayout(new GridBagLayout());
       myComponentPlace.add(getEditorComponent(),
                            new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-                                                  new Insets(0, 0, 0, 0), 0, 0));
+                                                  JBUI.emptyInsets(), 0, 0));
       myComponentPlace.doLayout();
       myFixButton.setIcon(AllIcons.Actions.QuickfixBulb);
       updateWarning();
@@ -377,7 +405,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
               if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                myVcsIgnoreManager.removeRunConfigurationFromVcsIgnore(getConfiguration().getName());
+                VcsIgnoreManager.getInstance(getConfiguration().getProject()).removeRunConfigurationFromVcsIgnore(getConfiguration().getName());
                 myCbStoreProjectConfigurationValidator.revalidate();
               }
             }
@@ -395,11 +423,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myJBScrollPane.setBorder(JBUI.Borders.empty());
       myJBScrollPane.setViewportBorder(JBUI.Borders.empty());
 
-      ComponentPanelBuilder componentPanelBuilder = new ComponentPanelBuilder(myCbStoreProjectConfiguration);
-      @SystemIndependent VirtualFile projectFile = myProject.getProjectFile();
+      ComponentPanelBuilder componentPanelBuilder = UI.PanelFactory.panel(myCbStoreProjectConfiguration);
+      @SystemIndependent VirtualFile projectFile = project.getProjectFile();
       if (projectFile != null) {
         componentPanelBuilder.withTooltip(
-          ProjectKt.isDirectoryBased(myProject)
+          ProjectKt.isDirectoryBased(project)
           ? ExecutionBundle.message("run.configuration.share.hint", ".idea folder")
           : ExecutionBundle.message("run.configuration.share.hint", projectFile.getName())
         );
@@ -407,7 +435,32 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       componentPanelBuilder.addToPanel(myCbStoreProjectConfigurationPanel,
                                        new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
                                                               GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-                                                              JBUI.emptyInsets(), 0, 0));
+                                                              JBUI.emptyInsets(), 0, 0), false);
+
+      myRunOnPanel.setBorder(JBUI.Borders.emptyLeft(5));
+      UI.PanelFactory.panel(myRunOnPanelInner)
+        .withLabel("Run on:")
+        .withComment(ExecutionBundle.message("edit.run.configuration.run.configuration.run.on.comment"))
+        .addToPanel(myRunOnPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+                                                         GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                                                         JBUI.emptyInsets(), 0, 0), false);
+      JLabel runOnLabel = UIUtil.findComponentOfType(myRunOnPanel, JLabel.class);
+      if (runOnLabel != null) {
+        runOnLabel.setLabelFor(myRunOnComboBox);
+        Dimension nameSize = myNameLabel.getPreferredSize();
+        Dimension runOnSize = runOnLabel.getPreferredSize();
+        double width = Math.max(nameSize.getWidth(), runOnSize.getWidth());
+        myNameLabel.setPreferredSize(new Dimension((int)width, (int)nameSize.getHeight()));
+        runOnLabel.setPreferredSize(new Dimension((int)width, (int)runOnSize.getHeight()));
+      }
+
+      myRunOnComboBox.addActionListener(e -> {
+        String chosenTarget = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
+        if (!StringUtil.equals(myDefaultTargetName, chosenTarget)) {
+          setModified(true);
+          myDefaultTargetName = chosenTarget;
+        }
+      });
     }
 
     @Nullable
@@ -424,7 +477,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
         return new ValidationInfo(ExecutionBundle.message("run.configuration.share.vcs.disabled", fileAddToVcs),
                                   myCbStoreProjectConfiguration).asWarning();
       }
-      else if (myVcsIgnoreManager.isRunConfigurationVcsIgnored(getConfiguration().getName())) {
+      else if (VcsIgnoreManager.getInstance(getConfiguration().getProject()).isRunConfigurationVcsIgnored(getConfiguration().getName())) {
         return new ValidationInfo(ExecutionBundle.message("run.configuration.share.vcs.ignored", getConfiguration().getName()),
                                   myCbStoreProjectConfiguration).asWarning();
       }
@@ -432,17 +485,34 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     }
 
     private void doReset(RunnerAndConfigurationSettings settings) {
-      boolean isManagedRunConfiguration = settings.getConfiguration().getType().isManaged();
+      RunConfiguration configuration = settings.getConfiguration();
+      boolean isManagedRunConfiguration = configuration.getType().isManaged();
       myStoreProjectConfiguration = settings.isShared();
       myCbStoreProjectConfiguration.setEnabled(isManagedRunConfiguration);
       myCbStoreProjectConfiguration.setSelected(myStoreProjectConfiguration);
       myCbStoreProjectConfiguration.setVisible(!settings.isTemplate());
       myCbStoreProjectConfigurationValidator.revalidate();
 
-      myIsAllowRunningInParallel = settings.getConfiguration().isAllowRunningInParallel();
+      boolean targetAware = configuration instanceof TargetEnvironmentAwareRunProfile && Experiments.getInstance().isFeatureEnabled("runtime.environments");
+      myRunOnPanel.setVisible(targetAware);
+      if (targetAware) {
+        String defaultTargetName = ((TargetEnvironmentAwareRunProfile)configuration).getDefaultTargetName();
+        LanguageRuntimeType<?> defaultRuntime = ((TargetEnvironmentAwareRunProfile)configuration).getDefaultLanguageRuntimeType();
+        ((RunOnTargetComboBox)myRunOnComboBox).setDefaultLanguageRuntimeTime(defaultRuntime);
+        resetRunOnComboBox(defaultTargetName);
+        myDefaultTargetName = defaultTargetName;
+      }
+
+      myIsAllowRunningInParallel = configuration.isAllowRunningInParallel();
       myIsAllowRunningInParallelCheckBox.setEnabled(isManagedRunConfiguration);
       myIsAllowRunningInParallelCheckBox.setSelected(myIsAllowRunningInParallel);
       myIsAllowRunningInParallelCheckBox.setVisible(settings.getFactory().getSingletonPolicy().isPolicyConfigurable());
+    }
+
+    private void resetRunOnComboBox(@Nullable String targetNameToChoose) {
+      ((RunOnTargetComboBox)myRunOnComboBox).initModel();
+      ((RunOnTargetComboBox)myRunOnComboBox).addTargets(TargetEnvironmentsManager.getInstance().getTargets().resolvedConfigs());
+      ((RunOnTargetComboBox)myRunOnComboBox).selectTarget(targetNameToChoose);
     }
 
     public final JComponent getWholePanel() {
@@ -490,6 +560,15 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
 
     private void createUIComponents() {
       myComponentPlace = new NonOpaquePanel();
+      Project project = getConfiguration().getProject();
+      myRunOnComboBox = new RunOnTargetComboBox(project);
+      myManageTargetsLabel = LinkLabel.create(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), () -> {
+            String selectedName = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
+            TargetEnvironmentsConfigurable configurable = new TargetEnvironmentsConfigurable(project, selectedName);
+            if (ShowSettingsUtil.getInstance().editConfigurable(myWholePanel, configurable)) {
+              resetRunOnComboBox(selectedName);
+            }
+        });
       myJBScrollPane = new JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
         @Override
         public Dimension getMinimumSize() {

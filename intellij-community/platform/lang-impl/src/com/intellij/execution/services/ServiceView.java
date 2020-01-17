@@ -19,14 +19,15 @@ import org.jetbrains.concurrency.Promise;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 abstract class ServiceView extends JPanel implements Disposable {
-  protected final Project myProject;
+  private final Project myProject;
   private final ServiceViewModel myModel;
   protected final ServiceViewUi myUi;
   private AutoScrollToSourceHandler myAutoScrollToSourceHandler;
 
-  ServiceView(LayoutManager layout, @NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewUi ui) {
+  protected ServiceView(LayoutManager layout, @NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewUi ui) {
     super(layout);
     myProject = project;
     myModel = model;
@@ -35,6 +36,10 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   @Override
   public void dispose() {
+  }
+
+  Project getProject() {
+    return myProject;
   }
 
   ServiceViewModel getModel() {
@@ -53,6 +58,8 @@ abstract class ServiceView extends JPanel implements Disposable {
   abstract List<ServiceViewItem> getSelectedItems();
 
   abstract Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass);
+
+  abstract Promise<Void> expand(@NotNull Object service, @NotNull Class<?> contributorClass);
 
   abstract void onViewSelected();
 
@@ -74,7 +81,7 @@ abstract class ServiceView extends JPanel implements Disposable {
     myModel.setGroupByContributor(value);
   }
 
-  abstract List<Object> getChildrenSafe(@NotNull Object value);
+  abstract List<Object> getChildrenSafe(@NotNull List<Object> valueSubPath);
 
   void setAutoScrollToSourceHandler(@NotNull AutoScrollToSourceHandler autoScrollToSourceHandler) {
     myAutoScrollToSourceHandler = autoScrollToSourceHandler;
@@ -87,12 +94,14 @@ abstract class ServiceView extends JPanel implements Disposable {
     }
   }
 
+  abstract void jumpToServices();
+
   static ServiceView createView(@NotNull Project project, @NotNull ServiceViewModel viewModel, @NotNull ServiceViewState viewState) {
+    setViewModelState(viewModel, viewState);
     ServiceView serviceView = viewModel instanceof ServiceViewModel.SingeServiceModel ?
                               createSingleView(project, viewModel) :
                               createTreeView(project, viewModel, viewState);
     setDataProvider(serviceView);
-    setViewModelState(viewModel, viewState);
     return serviceView;
   }
 
@@ -105,6 +114,17 @@ abstract class ServiceView extends JPanel implements Disposable {
   }
 
   private static void setDataProvider(ServiceView serviceView) {
+    ServiceViewOptions viewOptions = new ServiceViewOptions() {
+      @Override
+      public boolean isGroupByContributor() {
+        return serviceView.isGroupByContributor();
+      }
+
+      @Override
+      public boolean isGroupByServiceGroups() {
+        return serviceView.isGroupByServiceGroups();
+      }
+    };
     serviceView.putClientProperty(DataManager.CLIENT_PROPERTY_DATA_PROVIDER, (DataProvider)dataId -> {
       if (PlatformDataKeys.HELP_ID.is(dataId)) {
         return ServiceViewManagerImpl.getToolWindowContextHelpId();
@@ -119,13 +139,24 @@ abstract class ServiceView extends JPanel implements Disposable {
       }
       if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
         List<ServiceViewItem> selection = serviceView.getSelectedItems();
-        ServiceViewContributor contributor = ServiceViewDragHelper.getTheOnlyContributor(selection);
-        DataProvider delegate = contributor == null ? null : contributor.getViewDescriptor().getDataProvider();
+        ServiceViewContributor contributor = ServiceViewDragHelper.getTheOnlyRootContributor(selection);
+        DataProvider delegate = contributor == null ? null : contributor.getViewDescriptor(serviceView.getProject()).getDataProvider();
         DeleteProvider deleteProvider = delegate == null ? null : PlatformDataKeys.DELETE_ELEMENT_PROVIDER.getData(delegate);
-        return deleteProvider == null ? new ServiceViewDeleteProvider(serviceView) : deleteProvider;
+        if (deleteProvider == null) return new ServiceViewDeleteProvider(serviceView);
+
+        if (deleteProvider instanceof ServiceViewContributorDeleteProvider) {
+          ((ServiceViewContributorDeleteProvider)deleteProvider).setFallbackProvider(new ServiceViewDeleteProvider(serviceView));
+        }
+        return deleteProvider;
       }
       if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
         return new ServiceViewCopyProvider(serviceView);
+      }
+      if (ServiceViewActionUtils.CONTRIBUTORS_KEY.is(dataId)) {
+        return serviceView.getModel().getRoots().stream().map(item -> item.getRootContributor()).collect(Collectors.toSet());
+      }
+      if (ServiceViewActionUtils.OPTIONS_KEY.is(dataId)) {
+        return viewOptions;
       }
       List<ServiceViewItem> selectedItems = serviceView.getSelectedItems();
       ServiceViewItem selectedItem = ContainerUtil.getOnlyItem(selectedItems);

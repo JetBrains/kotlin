@@ -1,14 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide;
 
 import com.intellij.AppTopics;
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.Disposable;
+import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -16,6 +14,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManagerListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.roots.GeneratedSourcesFilter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
@@ -31,27 +30,16 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author nik
- */
-public class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceFileChangeTracker implements ProjectComponent, Disposable {
+public final class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceFileChangeTracker {
   private final Project myProject;
-  private final FileDocumentManager myDocumentManager;
-  private final EditorNotifications myEditorNotifications;
   private final SingleAlarm myCheckingQueue;
   private final Set<VirtualFile> myFilesToCheck = Collections.synchronizedSet(new HashSet<>());
   private final Set<VirtualFile> myEditedGeneratedFiles = Collections.synchronizedSet(new HashSet<>());
   public static boolean IN_TRACKER_TEST;
 
-  public GeneratedSourceFileChangeTrackerImpl(Project project, FileDocumentManager documentManager, EditorNotifications editorNotifications) {
+  public GeneratedSourceFileChangeTrackerImpl(@NotNull Project project) {
     myProject = project;
-    myDocumentManager = documentManager;
-    myEditorNotifications = editorNotifications;
-    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, this);
-  }
-
-  @Override
-  public void dispose() {
+    myCheckingQueue = new SingleAlarm(this::checkFiles, 500, Alarm.ThreadToUse.POOLED_THREAD, project);
   }
 
   @TestOnly
@@ -74,28 +62,62 @@ public class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceFileCha
     return myEditedGeneratedFiles.contains(file);
   }
 
-  @Override
-  public void projectOpened() {
-    if (ApplicationManager.getApplication().isUnitTestMode() && !IN_TRACKER_TEST) return; // too many useless listeners which slow down tests and leak threads
-    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener() {
-      @Override
-      public void documentChanged(@NotNull DocumentEvent e) {
-        if (myProject.isDisposed()) return;
-        VirtualFile file = myDocumentManager.getFile(e.getDocument());
-        ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(myProject);
-        if (file != null && (fileIndex.isInContent(file) || fileIndex.isInLibrary(file))) {
-          myFilesToCheck.add(file);
-          myCheckingQueue.cancelAndRequest();
+  static final class MyDocumentListener implements DocumentListener {
+    @Override
+    public void documentChanged(@NotNull DocumentEvent event) {
+      if (isListenerInactive()) {
+        return;
+      }
+
+      Project[] openProjects = ProjectUtil.getOpenProjects();
+      if (openProjects.length == 0) {
+        return;
+      }
+
+      VirtualFile file = FileDocumentManager.getInstance().getFile(event.getDocument());
+      if (file == null) {
+        return;
+      }
+
+      for (Project project : ProjectUtil.getOpenProjects()) {
+        if (project.isDisposed()) {
+          continue;
+        }
+
+        GeneratedSourceFileChangeTrackerImpl fileChangeTracker = (GeneratedSourceFileChangeTrackerImpl)getInstance(project);
+        ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
+        if (fileIndex.isInContent(file) || fileIndex.isInLibrary(file)) {
+          fileChangeTracker.myFilesToCheck.add(file);
+          fileChangeTracker.myCheckingQueue.cancelAndRequest();
+          // don't stop, one file maybe in different projects
         }
       }
-    }, myProject);
+    }
+  }
+
+  private static boolean isListenerInactive() {
+    return !IN_TRACKER_TEST && ApplicationManager.getApplication().isUnitTestMode();
+  }
+
+  static final class MyProjectManagerListener implements ProjectManagerListener {
+    @Override
+    public void projectOpened(@NotNull Project project) {
+      if (isListenerInactive()) {
+        return;
+      }
+
+      ((GeneratedSourceFileChangeTrackerImpl)getInstance(project)).projectOpened();
+    }
+  }
+
+  private void projectOpened() {
     MessageBusConnection connection = myProject.getMessageBus().connect();
     connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new FileDocumentManagerListener() {
       @Override
       public void fileContentReloaded(@NotNull VirtualFile file, @NotNull Document document) {
         myFilesToCheck.remove(file);
         if (myEditedGeneratedFiles.remove(file)) {
-          myEditorNotifications.updateNotifications(file);
+          EditorNotifications.getInstance(myProject).updateNotifications(file);
         }
       }
     });
@@ -134,7 +156,7 @@ public class GeneratedSourceFileChangeTrackerImpl extends GeneratedSourceFileCha
 
     if (!newEditedGeneratedFiles.isEmpty()) {
       myEditedGeneratedFiles.addAll(newEditedGeneratedFiles);
-      myEditorNotifications.updateAllNotifications();
+      EditorNotifications.getInstance(myProject).updateAllNotifications();
     }
   }
 }

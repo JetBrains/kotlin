@@ -5,7 +5,6 @@ package com.intellij.ide;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
@@ -41,14 +40,12 @@ public class CopyPasteDelegator implements CopyPasteSupport {
     myEditable = new MyEditable();
   }
 
-  @NotNull
-  protected PsiElement[] getSelectedElements() {
+  protected PsiElement @NotNull [] getSelectedElements() {
     DataContext dataContext = DataManager.getInstance().getDataContext(myKeyReceiver);
     return ObjectUtils.notNull(LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext), PsiElement.EMPTY_ARRAY);
   }
 
-  @NotNull
-  private PsiElement[] getValidSelectedElements() {
+  private PsiElement @NotNull [] getValidSelectedElements() {
     PsiElement[] selectedElements = getSelectedElements();
     for (PsiElement element : selectedElements) {
       if (element == null || !element.isValid()) {
@@ -142,10 +139,10 @@ public class CopyPasteDelegator implements CopyPasteSupport {
         final Module module = LangDataKeys.MODULE.getData(dataContext);
         PsiElement target = getPasteTarget(dataContext, module);
         if (isCopied[0]) {
-          TransactionGuard.getInstance().submitTransactionAndWait(() -> pasteAfterCopy(elements, module, target, true));
+          pasteAfterCopy(elements, module, target, true);
         }
         else if (MoveHandler.canMove(elements, target)) {
-          TransactionGuard.getInstance().submitTransactionAndWait(() -> pasteAfterCut(dataContext, elements, target));
+          pasteAfterCut(dataContext, elements, target);
         }
         else {
           return false;

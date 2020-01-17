@@ -33,8 +33,8 @@ final class ExternalToolPassFactory implements TextEditorHighlightingPassFactory
     highlightingPassRegistrar.registerTextEditorHighlightingPass(this, new int[]{Pass.UPDATE_ALL}, null, true, Pass.EXTERNAL_TOOLS);
 
     myExternalActivitiesQueue = new MergingUpdateQueue("ExternalActivitiesQueue", 300, true, MergingUpdateQueue.ANY_COMPONENT, project,
-                                                       null, false);
-    myExternalActivitiesQueue.setPassThrough(ApplicationManager.getApplication().isUnitTestMode());
+                                                       null, false)
+      .usePassThroughInUnitTestMode();
   }
 
   @Override

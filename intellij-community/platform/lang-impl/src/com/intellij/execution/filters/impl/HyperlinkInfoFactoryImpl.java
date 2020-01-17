@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
-/**
- * @author nik
- */
 public class HyperlinkInfoFactoryImpl extends HyperlinkInfoFactory {
 
   @NotNull

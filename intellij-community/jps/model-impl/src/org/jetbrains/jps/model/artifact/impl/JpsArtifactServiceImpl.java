@@ -29,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsArtifactServiceImpl extends JpsArtifactService {
 
   @Override

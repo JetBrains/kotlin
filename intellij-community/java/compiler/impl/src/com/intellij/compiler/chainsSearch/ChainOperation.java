@@ -42,18 +42,16 @@ public interface ChainOperation {
   }
 
   class MethodCall implements ChainOperation {
-    @NotNull
-    private final PsiMethod[] myCandidates;
+    private final PsiMethod @NotNull [] myCandidates;
 
-    public MethodCall(@NotNull PsiMethod[] candidates) {
+    public MethodCall(PsiMethod @NotNull [] candidates) {
       if (candidates.length == 0) {
         throw new IllegalStateException();
       }
       myCandidates = candidates;
     }
 
-    @NotNull
-    public PsiMethod[] getCandidates() {
+    public PsiMethod @NotNull [] getCandidates() {
       return myCandidates;
     }
 

@@ -16,8 +16,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 public abstract class BaseCompleteMacro extends Macro {
   private final String myName;
@@ -49,7 +51,7 @@ public abstract class BaseCompleteMacro extends Macro {
   }
 
   @Override
-  public final Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+  public final Result calculateResult(Expression @NotNull [] params, final ExpressionContext context) {
     return new InvokeActionResult(
       () -> invokeCompletion(context)
     );
@@ -83,6 +85,11 @@ public abstract class BaseCompleteMacro extends Macro {
 
   protected abstract void invokeCompletionHandler(Project project, Editor editor);
 
+  @TestOnly
+  public static void waitForNextTab() {
+    UIUtil.dispatchAllInvocationEvents();
+  }
+
   private static class MyLookupListener implements LookupListener {
     private final ExpressionContext myContext;
     private final boolean myCheckCompletionChar;
@@ -107,7 +114,7 @@ public abstract class BaseCompleteMacro extends Macro {
         return;
       }
 
-      Runnable runnable = () -> WriteCommandAction.runWriteCommandAction(project, ()-> {
+      ApplicationManager.getApplication().invokeLater(() -> WriteCommandAction.runWriteCommandAction(project, ()-> {
           Editor editor = myContext.getEditor();
           if (editor != null) {
             TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
@@ -115,12 +122,7 @@ public abstract class BaseCompleteMacro extends Macro {
               templateState.considerNextTabOnLookupItemSelected(item);
             }
           }
-        });
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        runnable.run();
-      } else {
-        ApplicationManager.getApplication().invokeLater(runnable, ModalityState.current(), project.getDisposed());
-      }
+        }), ModalityState.current(), project.getDisposed());
 
     }
   }

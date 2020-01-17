@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.bookmarks.actions;
 
 import com.intellij.ide.bookmarks.Bookmark;
@@ -8,7 +8,9 @@ import com.intellij.ide.bookmarks.BookmarksListener;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -17,8 +19,8 @@ import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.popup.util.DetailViewImpl;
 import com.intellij.ui.popup.util.ItemWrapper;
@@ -35,9 +37,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.*;
 
-/**
- * @author max
- */
 public class BookmarksAction extends AnAction implements DumbAware, MasterDetailPopupBuilder.Delegate {
   private static final String DIMENSION_SERVICE_KEY = "bookmarks";
 
@@ -246,9 +245,10 @@ public class BookmarksAction extends AnAction implements DumbAware, MasterDetail
       BookmarkManager bookmarkManager = BookmarkManager.getInstance(myProject);
       Editor editor = CommonDataKeys.EDITOR.getData(myDataContext);
       if (editor != null) {
-        if (ToolWindowManager.getInstance(myProject).isEditorComponentActive()) {
+        if (ComponentUtil.getParentOfType((Class<? extends EditorsSplitters>)EditorsSplitters.class, editor.getComponent()) != null) {
+          Integer gutterLineAtCursor = EditorGutterComponentEx.LOGICAL_LINE_AT_CURSOR.getData(myDataContext);
           Document document = editor.getDocument();
-          myLine = editor.getCaretModel().getLogicalPosition().line;
+          myLine = gutterLineAtCursor != null ? gutterLineAtCursor : editor.getCaretModel().getLogicalPosition().line;
           myFile = FileDocumentManager.getInstance().getFile(document);
           myBookmarkAtPlace = bookmarkManager.findEditorBookmark(document, myLine);
         }

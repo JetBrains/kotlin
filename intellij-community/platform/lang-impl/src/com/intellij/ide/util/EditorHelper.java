@@ -2,12 +2,12 @@
 
 package com.intellij.ide.util;
 
-import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EditorHelper {
-  public static <T extends PsiElement> void openFilesInEditor(@NotNull T[] elements) {
-    final int limit = UISettings.getInstance().getEditorTabLimit();
+  public static <T extends PsiElement> void openFilesInEditor(T @NotNull [] elements) {
+    final int limit = EditorWindow.getTabLimit();
     final int max = Math.min(limit, elements.length);
     for (int i = 0; i < max; i++) {
       openInEditor(elements[i], true);

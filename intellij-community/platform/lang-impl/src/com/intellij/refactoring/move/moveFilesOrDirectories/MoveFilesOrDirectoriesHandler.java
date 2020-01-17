@@ -15,7 +15,7 @@
  */
 package com.intellij.refactoring.move.moveFilesOrDirectories;
 
-import com.intellij.ide.scratch.ScratchFileService;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
@@ -26,6 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler");
+  private static final Logger LOG = Logger.getInstance(MoveFilesOrDirectoriesHandler.class);
 
   @Override
   public boolean canMove(final PsiElement[] elements, final PsiElement targetContainer, @Nullable PsiReference reference) {
@@ -67,7 +68,8 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
     if (!(psiElement instanceof PsiDirectory || psiElement instanceof PsiDirectoryContainer)) return false;
     if (psiElement.getManager().isInProject(psiElement)) return true;
     VirtualFile virtualFile = PsiUtilCore.getVirtualFile(psiElement);
-    return ScratchFileService.isInScratchRoot(virtualFile) || virtualFile != null && ProjectRootManager.getInstance(psiElement.getProject()).getFileIndex().isExcluded(virtualFile);
+    return ScratchUtil.isScratch(virtualFile) ||
+           virtualFile != null && ProjectRootManager.getInstance(psiElement.getProject()).getFileIndex().isExcluded(virtualFile);
   }
 
   public void doMove(final PsiElement[] elements, final PsiElement targetContainer) {
@@ -76,9 +78,8 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
   }
 
 
-  @Nullable
   @Override
-  public PsiElement[] adjustForMove(Project project, PsiElement[] sourceElements, PsiElement targetElement) {
+  public PsiElement @Nullable [] adjustForMove(Project project, PsiElement[] sourceElements, PsiElement targetElement) {
     return PsiTreeUtil.filterAncestors(sourceElements);
   }
 
@@ -114,12 +115,7 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
 
   @Nullable
   @Override
-  public String getActionName(@NotNull PsiElement[] elements) {
-    return getMoveOrCopyActionName(elements, "Move");
-  }
-
-  @NotNull
-  public static String getMoveOrCopyActionName(@NotNull PsiElement[] elements, final String verb) {
+  public String getActionName(PsiElement @NotNull [] elements) {
     int fileCount = 0, directoryCount = 0;
     for (PsiElement element : elements) {
       if (element instanceof PsiFile) {
@@ -130,11 +126,11 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
       }
     }
     if (directoryCount == 0) {
-      return fileCount == 1 ? verb + " File..." : verb + " Files...";
+      return fileCount == 1 ? RefactoringBundle.message("move.file") : RefactoringBundle.message("move.files");
     }
     if (fileCount == 0) {
-      return directoryCount == 1 ? verb + " Directory..." : verb + " Directories...";
+      return directoryCount == 1 ? RefactoringBundle.message("move.directory") : RefactoringBundle.message("move.directories.with.dialog");
     }
-    return verb + " Files and Directories...";
+    return RefactoringBundle.message("move.files.and.directories");
   }
 }

@@ -28,9 +28,6 @@ import org.jetbrains.jps.model.module.JpsSdkReferencesTable;
 
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author nik
- */
 public class JpsSdkReferencesTableImpl extends JpsCompositeElementBase<JpsSdkReferencesTableImpl> implements JpsSdkReferencesTable {
   public static final JpsSdkReferencesTableRole ROLE = new JpsSdkReferencesTableRole();
   private static final ConcurrentMap<JpsSdkType, JpsSdkReferenceRole> ourReferenceRoles = ContainerUtil.newConcurrentMap();

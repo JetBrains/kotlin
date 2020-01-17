@@ -19,9 +19,6 @@ import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsModule;
 
-/**
- * @author nik
- */
 public abstract class JpsDependencyElementBase<Self extends JpsDependencyElementBase<Self>> extends JpsCompositeElementBase<Self> implements JpsDependencyElement {
   protected JpsDependencyElementBase() {
     super();

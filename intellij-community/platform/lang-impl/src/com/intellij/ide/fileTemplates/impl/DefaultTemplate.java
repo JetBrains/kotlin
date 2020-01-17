@@ -29,7 +29,7 @@ import java.net.URL;
  * @author Eugene Zhuravlev
  */
 public class DefaultTemplate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.fileTemplates.impl.DefaultTemplate");
+  private static final Logger LOG = Logger.getInstance(DefaultTemplate.class);
   
   private final String myName;
   private final String myExtension;

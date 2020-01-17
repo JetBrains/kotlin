@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.icons.AllIcons;
@@ -10,12 +10,16 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PlatformUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author anna
+ * @deprecated added in {@link ProjectViewImpl} automatically
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
 public final class ShowModulesAction extends ToggleAction implements DumbAware {
   private final Project myProject;
   private final String myId;

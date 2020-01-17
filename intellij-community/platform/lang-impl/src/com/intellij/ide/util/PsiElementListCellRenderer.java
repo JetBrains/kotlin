@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util;
 
 import com.intellij.ide.ui.UISettings;
@@ -57,7 +43,7 @@ import java.util.regex.Pattern;
 import static com.intellij.openapi.vfs.newvfs.VfsPresentationUtil.getFileBackgroundColor;
 
 public abstract class PsiElementListCellRenderer<T extends PsiElement> extends JPanel implements ListCellRenderer {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.PsiElementListCellRenderer");
+  private static final Logger LOG = Logger.getInstance(PsiElementListCellRenderer.class);
   private static final String LEFT = BorderLayout.WEST;
   private static final Pattern CONTAINER_PATTERN = Pattern.compile("(\\(in |\\()?([^)]*)(\\))?");
 
@@ -166,7 +152,7 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
         setIcon(IconUtil.getEmptyIcon(false));
         append(value == null ? "" : value.toString(), new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, list.getForeground()));
       }
-      setBackground(selected ? UIUtil.getListSelectionBackground() : bgColor);
+      setBackground(selected ? UIUtil.getListSelectionBackground(true) : bgColor);
     }
 
     private void appendLocationText(boolean selected, Color bgColor, boolean isProblemFile, String containerText) {
@@ -229,7 +215,7 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
     ListCellRenderer leftRenderer = new LeftRenderer(null, value == null ? new ItemMatchers(null, null) : getItemMatchers(list, value));
     final Component leftCellRendererComponent = leftRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     add(leftCellRendererComponent, LEFT);
-    final Color bg = isSelected ? UIUtil.getListSelectionBackground() : leftCellRendererComponent.getBackground();
+    final Color bg = isSelected ? UIUtil.getListSelectionBackground(true) : leftCellRendererComponent.getBackground();
     setBackground(bg);
     if (rightCellRendererComponent != null) {
       rightCellRendererComponent.setBackground(bg);
@@ -261,14 +247,18 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
   @Nullable
   protected DefaultListCellRenderer getRightCellRenderer(final Object value) {
     if (UISettings.getInstance().getShowIconInQuickNavigation()) {
-      final DefaultListCellRenderer renderer = ModuleRendererFactory.findInstance(value).getModuleRenderer();
-      if (renderer instanceof PlatformModuleRendererFactory.PlatformModuleRenderer) {
-        // it won't display any new information
-        return null;
-      }
-      return renderer;
+      return getModuleRenderer(value);
     }
     return null;
+  }
+
+  private static DefaultListCellRenderer getModuleRenderer(Object value) {
+    final DefaultListCellRenderer renderer = ModuleRendererFactory.findInstance(value).getModuleRenderer();
+    if (renderer instanceof PlatformModuleRendererFactory.PlatformModuleRenderer) {
+      // it won't display any new information
+      return null;
+    }
+    return renderer;
   }
 
   public abstract String getElementText(T element);
@@ -298,7 +288,9 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
     return ReadAction.compute(() -> {
       String elementText = getElementText(element);
       String containerText = getContainerText(element, elementText);
-      return containerText == null ? elementText : elementText + " " + containerText;
+      DefaultListCellRenderer moduleRenderer = getModuleRenderer(element);
+      return (containerText == null ? elementText : elementText + " " + containerText) +
+             (moduleRenderer != null ? moduleRenderer.getText() : "");
     });
   }
 

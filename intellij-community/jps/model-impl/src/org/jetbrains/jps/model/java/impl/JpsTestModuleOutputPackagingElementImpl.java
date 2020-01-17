@@ -22,9 +22,6 @@ import org.jetbrains.jps.model.java.JpsTestModuleOutputPackagingElement;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleReference;
 
-/**
- * @author nik
- */
 public class JpsTestModuleOutputPackagingElementImpl extends JpsModuleOutputPackagingElementBase<JpsTestModuleOutputPackagingElementImpl>
   implements JpsTestModuleOutputPackagingElement {
   public JpsTestModuleOutputPackagingElementImpl(JpsModuleReference moduleReference) {

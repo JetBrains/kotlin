@@ -21,11 +21,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class ExtractMethodSettingsImpl<T> implements ExtractMethodSettings<T> {
   @NotNull private final String myMethodName;
-  @NotNull private final AbstractVariableData[] myVariableData;
+  private final AbstractVariableData @NotNull [] myVariableData;
   @Nullable private final T myVisibility;
 
   public ExtractMethodSettingsImpl(@NotNull String methodName,
-                                   @NotNull AbstractVariableData[] abstractVariableData,
+                                   AbstractVariableData @NotNull [] abstractVariableData,
                                    @Nullable T visibility) {
 
     myMethodName = methodName;
@@ -39,9 +39,8 @@ public class ExtractMethodSettingsImpl<T> implements ExtractMethodSettings<T> {
     return myMethodName;
   }
 
-  @NotNull
   @Override
-  public AbstractVariableData[] getAbstractVariableData() {
+  public AbstractVariableData @NotNull [] getAbstractVariableData() {
     return myVariableData;
   }
 

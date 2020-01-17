@@ -17,7 +17,6 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 open class ProjectRunConfigurationConfigurable(project: Project, runDialog: RunDialogBase? = null) : RunConfigurable(project, runDialog) {
   override fun createLeftPanel(): JComponent {
-    initTree()
 
     if (project.isDefault) {
       val panel = ScrollPaneFactory.createScrollPane(tree)
@@ -52,7 +51,9 @@ open class ProjectRunConfigurationConfigurable(project: Project, runDialog: RunD
                            ExecutionBundle.message("move.down.action.name"),
                            ExecutionBundle.message("run.configuration.create.folder.text"))
       .setForcedDnD()
-    return toolbarDecorator!!.createPanel()
+    val panel = toolbarDecorator!!.createPanel()
+    initTree()
+    return panel
   }
 
   override fun createTipPanelAboutAddingNewRunConfiguration(configurationType: ConfigurationType?): JPanel {

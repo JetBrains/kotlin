@@ -19,9 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EventListener;
 
-/**
- * @author nik
- */
 public interface ArtifactListener extends EventListener {
 
   void artifactAdded(@NotNull Artifact artifact);

@@ -6,9 +6,7 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.VisualPosition;
-import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.util.Key;
-import com.intellij.util.DocumentUtil;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +110,7 @@ public class ParameterHintsUpdater {
     myUpdateList = getInlayUpdates(myEditorInlays);
     boolean firstTime = myEditor.getUserData(REPEATED_PASS) == null;
     boolean isUpdateInBulkMode = myUpdateList.size() > 1000;
-    DocumentUtil.executeInBulk(myEditor.getDocument(), isUpdateInBulkMode, () -> performHintsUpdate(firstTime, isUpdateInBulkMode));
+    myEditor.getInlayModel().execute(isUpdateInBulkMode, () -> performHintsUpdate(firstTime, isUpdateInBulkMode));
     myEditor.putUserData(REPEATED_PASS, Boolean.TRUE);
   }
 
@@ -126,7 +124,7 @@ public class ParameterHintsUpdater {
       if (action == InlayUpdateInfo.Action.ADD) {
         boolean useAnimation = !myForceImmediateUpdate && !firstTime && !isSameHintRemovedNear(newText, infoIndex) && !isInBulkMode;
         Inlay inlay = myHintsManager.addHint(myEditor, info.offset, info.relatesToPrecedingText, newText, info.widthAdjustment, useAnimation);
-        if (inlay != null && !((DocumentEx)myEditor.getDocument()).isInBulkUpdate()) {
+        if (inlay != null && !isInBulkMode) {
           VisualPosition inlayPosition = inlay.getVisualPosition();
           VisualPosition visualPosition = new VisualPosition(inlayPosition.line,
                                                              inlayPosition.column + (info.relatesToPrecedingText ? 1 : 0));

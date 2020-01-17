@@ -26,20 +26,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public interface LibraryEditor {
   String getName();
 
-  @NotNull
-  String[] getUrls(@NotNull OrderRootType rootType);
+  String @NotNull [] getUrls(@NotNull OrderRootType rootType);
 
-  @NotNull
-  VirtualFile[] getFiles(@NotNull OrderRootType rootType);
+  VirtualFile @NotNull [] getFiles(@NotNull OrderRootType rootType);
 
-  @NotNull
-  String[] getExcludedRootUrls();
+  String @NotNull [] getExcludedRootUrls();
 
   void setName(String name);
 

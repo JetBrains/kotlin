@@ -30,8 +30,7 @@ public class MoveMemberViewDescriptor implements UsageViewDescriptor {
   }
 
   @Override
-  @NotNull
-  public PsiElement[] getElements() {
+  public PsiElement @NotNull [] getElements() {
     return myElementsToMove;
   }
 

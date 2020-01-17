@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView.impl.nodes;
 
@@ -59,18 +59,20 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
 
   @Nullable
   protected abstract PsiElement extractPsiFromValue();
+
   @Nullable
-  protected abstract Collection<AbstractTreeNode> getChildrenImpl();
+  protected abstract Collection<AbstractTreeNode<?>> getChildrenImpl();
+
   protected abstract void updateImpl(@NotNull PresentationData data);
 
   @Override
   @NotNull
-  public final Collection<AbstractTreeNode> getChildren() {
+  public final Collection<? extends AbstractTreeNode<?>> getChildren() {
     return AstLoadingFilter.disallowTreeLoading(this::doGetChildren);
   }
 
   @NotNull
-  private Collection<AbstractTreeNode> doGetChildren() {
+  private Collection<? extends AbstractTreeNode<?>> doGetChildren() {
     final PsiElement psiElement = extractPsiFromValue();
     if (psiElement == null) {
       return new ArrayList<>();
@@ -82,7 +84,7 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
       return Collections.emptyList();
     }
 
-    final Collection<AbstractTreeNode> children = getChildrenImpl();
+    Collection<AbstractTreeNode<?>> children = getChildrenImpl();
     return children != null ? children : Collections.emptyList();
   }
 
@@ -93,12 +95,12 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
   }
 
   protected boolean isMarkReadOnly() {
-    final AbstractTreeNode parent = getParent();
+    final AbstractTreeNode<?> parent = getParent();
     if (parent == null) {
       return false;
     }
     if (parent instanceof AbstractPsiBasedNode) {
-      final PsiElement psiElement = ((AbstractPsiBasedNode)parent).extractPsiFromValue();
+      final PsiElement psiElement = ((AbstractPsiBasedNode<?>)parent).extractPsiFromValue();
       return psiElement instanceof PsiDirectory;
     }
 

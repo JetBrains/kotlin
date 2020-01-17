@@ -22,9 +22,6 @@ import org.jetbrains.jps.model.ex.JpsElementBase;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.java.ExplodedDirectoryModuleExtension;
 
-/**
- * @author nik
- */
 public class ExplodedDirectoryModuleExtensionImpl extends JpsElementBase<ExplodedDirectoryModuleExtensionImpl> implements
                                                                                                                ExplodedDirectoryModuleExtension {
   private String myExplodedUrl;

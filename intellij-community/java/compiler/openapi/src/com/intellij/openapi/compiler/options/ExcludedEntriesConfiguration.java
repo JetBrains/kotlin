@@ -16,9 +16,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-/**
- * @author nik
- */
 public class ExcludedEntriesConfiguration implements PersistentStateComponent<ExcludedEntriesConfiguration>, JDOMExternalizable, Disposable,
                                                      ExcludesConfiguration {
   @NonNls private static final String FILE = "file";

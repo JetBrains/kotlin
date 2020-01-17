@@ -27,9 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class LibraryPackagingElement extends ComplexPackagingElement<LibraryPackagingElement> {
   @NonNls public static final String LIBRARY_NAME_ATTRIBUTE = "name";
   @NonNls public static final String MODULE_NAME_ATTRIBUTE = "module-name";

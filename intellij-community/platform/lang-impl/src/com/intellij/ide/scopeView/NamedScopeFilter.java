@@ -74,7 +74,7 @@ public final class NamedScopeFilter implements VirtualFileFilter {
   }
 
   @NotNull
-  static List<NamedScopeFilter> list(@NotNull Predicate<? super NamedScope> visible, @NotNull NamedScopesHolder... holders) {
+  static List<NamedScopeFilter> list(@NotNull Predicate<? super NamedScope> visible, NamedScopesHolder @NotNull ... holders) {
     List<NamedScopeFilter> list = new ArrayList<>();
     for (NamedScopesHolder holder : holders) {
       for (NamedScope scope : holder.getScopes()) {

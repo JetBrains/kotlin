@@ -12,7 +12,6 @@ import com.intellij.openapi.options.Scheme
 import com.intellij.openapi.options.SchemeManager
 import com.intellij.openapi.options.SchemeManagerFactory
 import com.intellij.openapi.options.SchemeProcessor
-import com.intellij.openapi.project.DumbAwareRunnable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.SmartList
@@ -118,7 +117,7 @@ sealed class SchemeManagerFactoryBase : SchemeManagerFactory(), com.intellij.ope
     }
 
     override fun pathToFile(path: String): Path {
-      return Paths.get(ApplicationManager.getApplication().stateStore.storageManager.expandMacros(ROOT_CONFIG), path)!!
+      return Paths.get(ApplicationManager.getApplication().stateStore.storageManager.expandMacros(ROOT_CONFIG), path)
     }
   }
 
@@ -135,20 +134,23 @@ sealed class SchemeManagerFactoryBase : SchemeManagerFactory(), com.intellij.ope
 
     override fun createFileChangeSubscriber(): FileChangeSubscriber? {
       return { schemeManager ->
-        val startupManager = if (ApplicationManager.getApplication().isUnitTestMode) null else StartupManagerEx.getInstanceEx(project)
-        if (startupManager == null || startupManager.postStartupActivityPassed()) {
-          addVfsListener(schemeManager)
-        }
-        else {
-          startupManager.registerPostStartupActivity(DumbAwareRunnable { addVfsListener(schemeManager) })
+        if (!ApplicationManager.getApplication().isUnitTestMode || project.getUserData(LISTEN_SCHEME_VFS_CHANGES_IN_TEST_MODE) == true) {
+          StartupManagerEx.getInstanceEx(project).runAfterOpened {
+            addVfsListener(schemeManager)
+          }
         }
       }
     }
 
     override fun pathToFile(path: String): Path {
+      if (project.isDefault) {
+        // not idea how to solve this issue (run SingleInspectionProfilePanelTest) in a quick and safe way
+        return Paths.get("__not_existent_path__")
+      }
+
       val projectFileDir = (project.stateStore as? IProjectStore)?.projectConfigDir
       if (projectFileDir == null) {
-        return Paths.get(project.basePath, ".$path")
+        return Paths.get(project.basePath!!, ".$path")
       }
       else {
         return Paths.get(projectFileDir, path)
@@ -158,6 +160,6 @@ sealed class SchemeManagerFactoryBase : SchemeManagerFactory(), com.intellij.ope
 
   @TestOnly
   class TestSchemeManagerFactory(private val basePath: Path) : SchemeManagerFactoryBase() {
-    override fun pathToFile(path: String) = basePath.resolve(path)!!
+    override fun pathToFile(path: String): Path = basePath.resolve(path)
   }
 }

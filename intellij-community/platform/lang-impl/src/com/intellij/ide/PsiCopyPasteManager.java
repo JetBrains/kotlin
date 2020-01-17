@@ -41,7 +41,7 @@ public final class PsiCopyPasteManager {
     return ServiceManager.getService(PsiCopyPasteManager.class);
   }
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.PsiCopyPasteManagerImpl");
+  private static final Logger LOG = Logger.getInstance(PsiCopyPasteManager.class);
 
   private MyData myRecentData;
   private final CopyPasteManagerEx myCopyPasteManager;
@@ -69,8 +69,7 @@ public final class PsiCopyPasteManager {
     });
   }
 
-  @Nullable
-  public PsiElement[] getElements(boolean[] isCopied) {
+  public PsiElement @Nullable [] getElements(boolean[] isCopied) {
     try {
       Object transferData = myCopyPasteManager.getContents(ourDataFlavor);
       if (!(transferData instanceof MyData)) {
@@ -91,8 +90,7 @@ public final class PsiCopyPasteManager {
     }
   }
 
-  @Nullable
-  static PsiElement[] getElements(final Transferable content) {
+  static PsiElement @Nullable [] getElements(final Transferable content) {
     if (content == null) return null;
     Object transferData;
     try {

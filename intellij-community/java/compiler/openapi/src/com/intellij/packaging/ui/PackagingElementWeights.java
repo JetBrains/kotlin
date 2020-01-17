@@ -15,9 +15,6 @@
  */
 package com.intellij.packaging.ui;
 
-/**
- * @author nik
- */
 public class PackagingElementWeights {
   public static final int ARTIFACT = 100;
   public static final int DIRECTORY = 50;

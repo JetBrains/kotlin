@@ -26,9 +26,6 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleReference;
 import org.jetbrains.jps.model.module.JpsTestModuleProperties;
 
-/**
- * @author nik
- */
 public class JpsTestModulePropertiesImpl extends JpsCompositeElementBase<JpsTestModulePropertiesImpl> implements JpsTestModuleProperties {
   public static final JpsElementChildRole<JpsTestModuleProperties> ROLE = JpsElementChildRoleBase.create("test module properties");
   private static final JpsElementChildRole<JpsModuleReference> MODULE_REFERENCE_CHILD_ROLE = JpsElementChildRoleBase.create("production module reference");

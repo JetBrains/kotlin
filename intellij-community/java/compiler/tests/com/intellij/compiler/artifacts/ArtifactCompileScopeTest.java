@@ -15,9 +15,6 @@ import java.io.File;
 
 import static com.intellij.compiler.artifacts.ArtifactsTestCase.commitModel;
 
-/**
- * @author nik
- */
 public class ArtifactCompileScopeTest extends ArtifactCompilerTestCase {
 
   public void testDoNotCleanArtifactOutputOnRebuild()  {

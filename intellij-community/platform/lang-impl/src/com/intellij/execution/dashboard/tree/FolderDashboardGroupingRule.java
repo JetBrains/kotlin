@@ -21,8 +21,7 @@ import com.intellij.execution.dashboard.RunDashboardGroupingRule;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,22 +40,6 @@ public class FolderDashboardGroupingRule implements RunDashboardGroupingRule {
     return NAME;
   }
 
-  @NotNull
-  @Override
-  public ActionPresentation getPresentation() {
-    return new ActionPresentationData("", "", null);
-  }
-
-  @Override
-  public boolean isAlwaysEnabled() {
-    return true;
-  }
-
-  @Override
-  public boolean shouldGroupSingleNodes() {
-    return true;
-  }
-
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {
@@ -64,15 +47,22 @@ public class FolderDashboardGroupingRule implements RunDashboardGroupingRule {
       RunnerAndConfigurationSettings configurationSettings = ((RunDashboardRunConfigurationNode)node).getConfigurationSettings();
       String folderName = configurationSettings.getFolderName();
       if (folderName != null) {
-        return new FolderDashboardGroup(folderName, folderName, AllIcons.Nodes.Folder);
+        return new FolderDashboardGroup(node.getProject(), folderName, folderName, AllIcons.Nodes.Folder);
       }
     }
     return null;
   }
 
   public static class FolderDashboardGroup extends RunDashboardGroupImpl<String> {
-    public FolderDashboardGroup(String value, String name, Icon icon) {
+    private final Project myProject;
+
+    public FolderDashboardGroup(Project project, String value, String name, Icon icon) {
       super(value, name, icon);
+      myProject = project;
+    }
+
+    public Project getProject() {
+      return myProject;
     }
   }
 }

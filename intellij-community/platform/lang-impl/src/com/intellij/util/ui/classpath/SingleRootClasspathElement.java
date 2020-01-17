@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class SingleRootClasspathElement implements SimpleClasspathElement {
   @NonNls public static final String URL_ELEMENT = "url";
   private final String myUrl;

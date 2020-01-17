@@ -1,24 +1,26 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.completion
 
+import com.intellij.internal.statistic.eventLog.EventLogConfiguration
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
 import com.intellij.stats.logger.ClientSessionValidator
 import com.intellij.stats.logger.EventLoggerWithValidation
 import com.intellij.stats.logger.LogFileManager
-import com.intellij.stats.storage.FilePathProvider
 import java.util.*
 
-class CompletionFileLoggerProvider(filePathProvider: FilePathProvider, private val installationIdProvider: InstallationIdProvider) : Disposable, CompletionLoggerProvider() {
-  private val eventLogger = EventLoggerWithValidation(LogFileManager(filePathProvider), ClientSessionValidator())
+class CompletionFileLoggerProvider : Disposable, CompletionLoggerProvider() {
+  private val eventLogger = EventLoggerWithValidation(LogFileManager(service()), ClientSessionValidator())
 
   override fun dispose() {
     eventLogger.dispose()
   }
 
   override fun newCompletionLogger(): CompletionLogger {
-    val installationUID = installationIdProvider.installationId()
+    val installationUID = service<InstallationIdProvider>().installationId()
     val completionUID = UUID.randomUUID().toString()
-    return CompletionFileLogger(installationUID.shortedUUID(), completionUID.shortedUUID(), eventLogger)
+    val bucket = EventLogConfiguration.bucket.toString()
+    return CompletionFileLogger(installationUID.shortedUUID(), completionUID.shortedUUID(), bucket, eventLogger)
   }
 }
 

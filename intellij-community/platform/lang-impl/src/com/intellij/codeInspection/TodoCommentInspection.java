@@ -33,9 +33,8 @@ import java.util.stream.Collectors;
 
 public class TodoCommentInspection extends LocalInspectionTool {
 
-  @Nullable
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
     final List<TextRange> ranges = getTodoRanges(file);
     if (ranges.isEmpty()) {
       return null;

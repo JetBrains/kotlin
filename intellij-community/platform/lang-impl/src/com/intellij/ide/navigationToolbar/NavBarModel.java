@@ -3,6 +3,7 @@
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.ui.UISettings;
+import com.intellij.ide.util.treeView.TreeAnchorizer;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -19,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.PairProcessor;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -43,9 +45,13 @@ public class NavBarModel {
   private boolean isFixedComponent = false;
 
   public NavBarModel(final Project project) {
+    this(project, project.getMessageBus().syncPublisher(NavBarModelListener.NAV_BAR), NavBarModelBuilder.getInstance());
+  }
+
+  protected NavBarModel(Project project, NavBarModelListener notificator, NavBarModelBuilder builder) {
     myProject = project;
-    myNotificator = project.getMessageBus().syncPublisher(NavBarModelListener.NAV_BAR);
-    myBuilder = NavBarModelBuilder.getInstance();
+    myNotificator = notificator;
+    myBuilder = builder;
   }
 
   public int getSelectedIndex() {
@@ -60,7 +66,7 @@ public class NavBarModel {
   @Nullable
   public Object getElement(int index) {
     if (index != -1 && index < myModel.size()) {
-      return myModel.get(index);
+      return get(index);
     }
     return null;
   }
@@ -84,7 +90,19 @@ public class NavBarModel {
 
     if (PlatformDataKeys.CONTEXT_COMPONENT.getData(dataContext) instanceof NavBarPanel) return;
 
-    PsiElement psiElement = CommonDataKeys.PSI_FILE.getData(dataContext);
+    NavBarModelExtension ownerExtension = null;
+    PsiElement psiElement = null;
+    for (NavBarModelExtension extension : NavBarModelExtension.EP_NAME.getExtensionList()) {
+      psiElement = extension.getLeafElement(dataContext);
+      if (psiElement != null) {
+        ownerExtension = extension;
+        break;
+      }
+    }
+
+    if (psiElement == null) {
+      psiElement = CommonDataKeys.PSI_FILE.getData(dataContext);
+    }
     if (psiElement == null) {
       psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
       if (psiElement == null) {
@@ -94,11 +112,13 @@ public class NavBarModel {
       }
     }
 
-    psiElement = normalize(psiElement);
-    if (!myModel.isEmpty() && myModel.get(myModel.size() - 1).equals(psiElement) && !myChanged) return;
+    if (ownerExtension == null) {
+      psiElement = normalize(psiElement);
+    }
+    if (!myModel.isEmpty() && Objects.equals(get(myModel.size() - 1), psiElement) && !myChanged) return;
 
     if (psiElement != null && psiElement.isValid()) {
-      updateModel(psiElement);
+      updateModel(psiElement, ownerExtension);
     }
     else {
       if (UISettings.getInstance().getShowNavigationBar() && !myModel.isEmpty()) return;
@@ -135,7 +155,7 @@ public class NavBarModel {
     return ObjectUtils.chooseNotNull(projectGrandChild, ObjectUtils.chooseNotNull(projectChild, project));
   }
 
-  protected void updateModel(final PsiElement psiElement) {
+  protected void updateModel(final PsiElement psiElement, @Nullable NavBarModelExtension ownerExtension) {
 
     final Set<VirtualFile> roots = new HashSet<>();
     final ProjectRootManager projectRootManager = ProjectRootManager.getInstance(myProject);
@@ -157,7 +177,7 @@ public class NavBarModel {
       }
     }
 
-    List<Object> updatedModel = ReadAction.compute(() -> isValid(psiElement) ? myBuilder.createModel(psiElement, roots) : Collections.emptyList());
+    List<Object> updatedModel = ReadAction.compute(() -> isValid(psiElement) ? myBuilder.createModel(psiElement, roots, ownerExtension) : Collections.emptyList());
 
     setModel(ContainerUtil.reverse(updatedModel));
   }
@@ -166,7 +186,7 @@ public class NavBarModel {
     final List<Object> objects = new ArrayList<>();
     boolean update = false;
     for (Object o : myModel) {
-      if (isValid(o)) {
+      if (isValid(TreeAnchorizer.getService().retrieveElement(o))) {
         objects.add(o);
       } else {
         update = true;
@@ -179,18 +199,26 @@ public class NavBarModel {
   }
 
   protected void setModel(List<Object> model) {
-    if (!model.equals(myModel)) {
-      myModel = model;
+    setModel(model, false);
+  }
+
+  protected void setModel(List<Object> model, boolean force) {
+    if (!model.equals(TreeAnchorizer.retrieveList(myModel))) {
+      myModel = TreeAnchorizer.anchorizeList(model);
       myNotificator.modelChanged();
 
       mySelectedIndex = myModel.size() - 1;
       myNotificator.selectionChanged();
     }
+    else if (force) {
+      myModel = TreeAnchorizer.anchorizeList(model);
+      myNotificator.modelChanged();
+    }
   }
 
   public void updateModel(final Object object) {
     if (object instanceof PsiElement) {
-      updateModel((PsiElement)object);
+      updateModel((PsiElement)object, null);
     }
     else if (object instanceof Module) {
       List<Object> l = new ArrayList<>();
@@ -238,36 +266,44 @@ public class NavBarModel {
 
   protected List<Object> getChildren(final Object object) {
     final List<Object> result = new ArrayList<>();
-    Processor<Object> processor = o -> {
-      ContainerUtil.addIfNotNull(result, o instanceof PsiElement ? normalize((PsiElement)o) : o);
+    PairProcessor<Object, NavBarModelExtension> processor = (o, ext) -> {
+      ContainerUtil.addIfNotNull(result, o instanceof PsiElement && ext.normalizeChildren() ? normalize((PsiElement)o) : o);
       return true;
     };
 
-    processChildren(object, processor);
+    processChildrenWithExtensions(object, processor);
 
     Collections.sort(result, new SiblingsComparator());
     return result;
   }
 
   private boolean processChildren(Object object, @NotNull Processor<Object> processor) {
+    return processChildrenWithExtensions(object, (o, ext) -> processor.process(o));
+  }
+
+  private boolean processChildrenWithExtensions(Object object, @NotNull PairProcessor<Object, NavBarModelExtension> pairProcessor) {
     if (!isValid(object)) return true;
     final Object rootElement = size() > 1 ? getElement(1) : null;
     if (rootElement != null && !isValid(rootElement)) return true;
 
     for (NavBarModelExtension modelExtension : NavBarModelExtension.EP_NAME.getExtensionList()) {
-      if (modelExtension instanceof AbstractNavBarModelExtension) {
-        if (!((AbstractNavBarModelExtension)modelExtension).processChildren(object, rootElement, processor)) return false;
-      }
+      if (!modelExtension.processChildren(object, rootElement, o -> pairProcessor.process(o, modelExtension))) return false;
     }
     return true;
   }
 
   public Object get(final int index) {
-    return myModel.get(index);
+    return TreeAnchorizer.getService().retrieveElement(myModel.get(index));
   }
 
   public int indexOf(Object value) {
-    return myModel.indexOf(value);
+    for (int i = 0; i < myModel.size(); i++) {
+      Object o = myModel.get(i);
+      if (Objects.equals(TreeAnchorizer.getService().retrieveElement(o), value)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   public void setSelectedIndex(final int selectedIndex) {
@@ -289,8 +325,8 @@ public class NavBarModel {
       if (w1 == 0) return w2 == 0 ? 0 : -1;
       if (w2 == 0) return 1;
       if (w1 != w2) return -w1 + w2;
-      String s1 = NavBarPresentation.calcPresentableText(o1);
-      String s2 = NavBarPresentation.calcPresentableText(o2);
+      String s1 = NavBarPresentation.calcPresentableText(o1, false);
+      String s2 = NavBarPresentation.calcPresentableText(o2, false);
       return Comparing.compare(s1, s2, String.CASE_INSENSITIVE_ORDER);
     }
 

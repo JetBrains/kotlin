@@ -10,6 +10,7 @@ import com.intellij.framework.detection.DetectionExcludesConfiguration;
 import com.intellij.framework.detection.FrameworkDetector;
 import com.intellij.framework.detection.impl.exclude.DetectionExcludesConfigurationImpl;
 import com.intellij.framework.detection.impl.ui.ConfigureDetectedFrameworksDialog;
+import com.intellij.ide.IdeBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroup;
@@ -17,6 +18,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -93,9 +95,8 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
   }
 
   public void doInitialize() {
-    myDetectionQueue = new MergingUpdateQueue("FrameworkDetectionQueue", 500, true, null, myProject);
+    myDetectionQueue = new MergingUpdateQueue("FrameworkDetectionQueue", 500, true, null, myProject, null, false);
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      myDetectionQueue.setPassThrough(false);
       myDetectionQueue.hideNotify();
     }
     myDetectedFrameworksData = new DetectedFrameworksData(myProject);
@@ -151,12 +152,10 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
     if (LOG.isDebugEnabled()) {
       LOG.debug("Starting framework detectors: " + detectorsToProcess);
     }
-    final FileBasedIndex index = FileBasedIndex.getInstance();
     List<DetectedFrameworkDescription> newDescriptions = new ArrayList<>();
     List<DetectedFrameworkDescription> oldDescriptions = new ArrayList<>();
-    final DetectionExcludesConfiguration excludesConfiguration = DetectionExcludesConfiguration.getInstance(myProject);
     for (Integer id : detectorsToProcess) {
-      final List<? extends DetectedFrameworkDescription> frameworks = runDetector(id, index, excludesConfiguration, true);
+      final List<? extends DetectedFrameworkDescription> frameworks = DumbService.getInstance(myProject).runReadActionInSmartMode(() -> runDetector(id, true));
       oldDescriptions.addAll(frameworks);
       final Collection<? extends DetectedFrameworkDescription> updated = myDetectedFrameworksData.updateFrameworksList(id, frameworks);
       newDescriptions.addAll(updated);
@@ -166,30 +165,32 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
       }
     }
 
-    Set<String> frameworkNames = new HashSet<>();
-    for (final DetectedFrameworkDescription description : FrameworkDetectionUtil.removeDisabled(newDescriptions, oldDescriptions)) {
-      frameworkNames.add(description.getDetector().getFrameworkType().getPresentableName());
-    }
-    if (!frameworkNames.isEmpty()) {
-      String names = StringUtil.join(frameworkNames, ", ");
-      final String text = ProjectBundle.message("framework.detected.info.text", names, frameworkNames.size());
-      FRAMEWORK_DETECTION_NOTIFICATION
-        .createNotification("Frameworks Detected", text, NotificationType.INFORMATION, null)
-        .addAction(new NotificationAction("Configure") {
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
-            showSetupFrameworksDialog(notification);
-          }
-        })
-        .notify(myProject);
+    if (!newDescriptions.isEmpty()) {
+      Set<String> frameworkNames = new HashSet<>();
+      ReadAction.run(() -> {
+        for (final DetectedFrameworkDescription description : FrameworkDetectionUtil.removeDisabled(newDescriptions, oldDescriptions)) {
+          frameworkNames.add(description.getDetector().getFrameworkType().getPresentableName());
+        }
+      });
+      if (!frameworkNames.isEmpty()) {
+        String names = StringUtil.join(frameworkNames, ", ");
+        final String text = ProjectBundle.message("framework.detected.info.text", names, frameworkNames.size());
+        FRAMEWORK_DETECTION_NOTIFICATION
+          .createNotification("Frameworks Detected", text, NotificationType.INFORMATION, null)
+          .addAction(new NotificationAction(() -> IdeBundle.message("action.Anonymous.text.configure")) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
+              showSetupFrameworksDialog(notification);
+            }
+          })
+          .notify(myProject);
+      }
     }
   }
 
-  private List<? extends DetectedFrameworkDescription> runDetector(Integer detectorId,
-                                                                   FileBasedIndex index,
-                                                                   DetectionExcludesConfiguration excludesConfiguration,
-                                                                   final boolean processNewFilesOnly) {
-    Collection<VirtualFile> acceptedFiles = index.getContainingFiles(FrameworkDetectionIndex.NAME, detectorId, GlobalSearchScope.projectScope(myProject));
+  private List<? extends DetectedFrameworkDescription> runDetector(Integer detectorId, final boolean processNewFilesOnly) {
+    Collection<VirtualFile> acceptedFiles = FileBasedIndex.getInstance().getContainingFiles(FrameworkDetectionIndex.NAME, detectorId,
+                                                                                            GlobalSearchScope.projectScope(myProject));
     final Collection<VirtualFile> filesToProcess;
     if (processNewFilesOnly) {
       filesToProcess = myDetectedFrameworksData.retainNewFiles(detectorId, acceptedFiles);
@@ -203,7 +204,8 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
       return Collections.emptyList();
     }
 
-    ((DetectionExcludesConfigurationImpl)excludesConfiguration).removeExcluded(filesToProcess, detector.getFrameworkType());
+    DetectionExcludesConfigurationImpl excludesConfiguration = (DetectionExcludesConfigurationImpl)DetectionExcludesConfiguration.getInstance(myProject);
+    excludesConfiguration.removeExcluded(filesToProcess, detector.getFrameworkType());
     if (LOG.isDebugEnabled()) {
       LOG.debug("Detector '" + detector.getDetectorId() + "': " + acceptedFiles.size() + " accepted files, " + filesToProcess.size() + " files to process");
     }
@@ -247,10 +249,8 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
   private List<? extends DetectedFrameworkDescription> getValidDetectedFrameworks() {
     final Set<Integer> detectors = myDetectedFrameworksData.getDetectorsForDetectedFrameworks();
     List<DetectedFrameworkDescription> descriptions = new ArrayList<>();
-    final FileBasedIndex index = FileBasedIndex.getInstance();
-    final DetectionExcludesConfiguration excludesConfiguration = DetectionExcludesConfiguration.getInstance(myProject);
     for (Integer id : detectors) {
-      final Collection<? extends DetectedFrameworkDescription> frameworks = runDetector(id, index, excludesConfiguration, false);
+      final Collection<? extends DetectedFrameworkDescription> frameworks = runDetector(id, false);
       descriptions.addAll(frameworks);
     }
     return FrameworkDetectionUtil.removeDisabled(descriptions);

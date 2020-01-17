@@ -5,31 +5,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DefaultExternalTestSourceMapping implements ExternalTestSourceMapping {
-
   @Nullable
-  private String testName = null;
-
+  private String testName;
   @Nullable
-  private String testTaskPath = null;
-
+  private String testTaskPath;
   @Nullable
-  private String cleanTestTaskPath = null;
-
+  private String cleanTestTaskPath;
   @NotNull
   private Set<String> sourceFolders = Collections.emptySet();
-
-  public DefaultExternalTestSourceMapping() { }
-
-  public DefaultExternalTestSourceMapping(@NotNull ExternalTestSourceMapping externalTestSourceMapping) {
-    testName = externalTestSourceMapping.getTestName();
-    testTaskPath = externalTestSourceMapping.getTestTaskPath();
-    cleanTestTaskPath = externalTestSourceMapping.getCleanTestTaskPath();
-    sourceFolders = new LinkedHashSet<String>(externalTestSourceMapping.getSourceFolders());
-  }
 
   @Override
   @NotNull
@@ -72,5 +58,29 @@ public class DefaultExternalTestSourceMapping implements ExternalTestSourceMappi
 
   public void setCleanTestTaskPath(@NotNull String cleanTestTaskPath) {
     this.cleanTestTaskPath = cleanTestTaskPath;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DefaultExternalTestSourceMapping mapping = (DefaultExternalTestSourceMapping)o;
+
+    if (testName != null ? !testName.equals(mapping.testName) : mapping.testName != null) return false;
+    if (testTaskPath != null ? !testTaskPath.equals(mapping.testTaskPath) : mapping.testTaskPath != null) return false;
+    if (cleanTestTaskPath != null ? !cleanTestTaskPath.equals(mapping.cleanTestTaskPath) : mapping.cleanTestTaskPath != null) return false;
+    if (!sourceFolders.equals(mapping.sourceFolders)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = testName != null ? testName.hashCode() : 0;
+    result = 31 * result + (testTaskPath != null ? testTaskPath.hashCode() : 0);
+    result = 31 * result + (cleanTestTaskPath != null ? cleanTestTaskPath.hashCode() : 0);
+    result = 31 * result + sourceFolders.hashCode();
+    return result;
   }
 }

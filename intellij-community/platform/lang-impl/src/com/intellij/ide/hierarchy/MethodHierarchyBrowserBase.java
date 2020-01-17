@@ -23,15 +23,22 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MultiLineLabelUI;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase} instead
+ */
+@Deprecated
 public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx {
-
-  @SuppressWarnings("UnresolvedPropertyKey")
-  public static final String METHOD_TYPE = IdeBundle.message("title.hierarchy.method");
+  /**
+   * Use {code {@link #getMethodType()}} instead
+   */
+  @Deprecated
+  public static final String METHOD_TYPE = "Method {0}";
 
   public static final DataKey<MethodHierarchyBrowserBase> DATA_KEY = DataKey.create("com.intellij.ide.hierarchy.MethodHierarchyBrowserBase");
 
@@ -57,7 +64,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
     final JPanel panel = new JPanel(new GridBagLayout());
 
     final GridBagConstraints gc =
-      new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 5, 0, 5), 0, 0);
+      new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(3, 5, 0, 5), 0, 0);
 
     JLabel label = new JLabel(methodDefinedText, AllIcons.Hierarchy.MethodDefined, SwingConstants.LEFT);
     label.setUI(new MultiLineLabelUI());
@@ -100,8 +107,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
 
   private final class ShowImplementationsOnlyAction extends ToggleAction {
     private ShowImplementationsOnlyAction() {
-      super(IdeBundle.message("action.hide.non.implementations"), null,
-            AllIcons.General.Filter); // TODO[anton] use own icon!!!
+      super(IdeBundle.message("action.hide.non.implementations"), null, AllIcons.General.Filter);
     }
 
     @Override
@@ -112,7 +118,6 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
     @Override
     public final void setSelected(@NotNull final AnActionEvent event, final boolean flag) {
       HierarchyBrowserManager.getInstance(myProject).getState().HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED = flag;
-
       // invokeLater is called to update state of button before long tree building operation
       ApplicationManager.getApplication().invokeLater(() -> doRefresh(true));
     }
@@ -131,4 +136,8 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
     }
   }
 
+  @SuppressWarnings("UnresolvedPropertyKey")
+  public static String getMethodType() {
+    return IdeBundle.message("title.hierarchy.method");
+  }
 }

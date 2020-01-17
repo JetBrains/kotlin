@@ -23,6 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.awt.*;
 
 /**
+ * @deprecated will be removed 2020.1
  * @author Konstantin Bulenkov
  */
 @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")

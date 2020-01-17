@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.daemon.impl;
 
@@ -46,7 +46,12 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
       if (infoToGo != null) {
         navigateToError(project, editor, infoToGo, () -> {
           if (Registry.is("error.navigation.show.tooltip")) {
-            DaemonTooltipUtil.showInfoTooltip(infoToGo, editor, editor.getCaretModel().getOffset(), 0, false, true);
+            // When there are multiple warnings at the same offset, this will return the HighlightInfo
+            // containing all of them, not just the first one as found by findInfo()
+            HighlightInfo fullInfo = ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project))
+              .findHighlightByOffset(editor.getDocument(), editor.getCaretModel().getOffset(), false);
+            DaemonTooltipUtil.showInfoTooltip(fullInfo != null ? fullInfo : infoToGo,
+                                              editor, editor.getCaretModel().getOffset(), 0, false, true);
           }
         });
 

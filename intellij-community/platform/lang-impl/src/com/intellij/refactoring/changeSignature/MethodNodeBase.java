@@ -17,15 +17,15 @@ package com.intellij.refactoring.changeSignature;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.ui.ColoredTreeCellRenderer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
- * @deprecated to be removed in IDEA 2019.1
+ * @deprecated use {@link MemberNodeBase} instead
  */
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
 @Deprecated
 public abstract class MethodNodeBase<M extends PsiElement> extends MemberNodeBase<M> {
   protected MethodNodeBase(M method,

@@ -13,8 +13,11 @@ import com.intellij.codeInspection.actions.CleanupAllIntention;
 import com.intellij.codeInspection.actions.CleanupInspectionIntention;
 import com.intellij.codeInspection.actions.RunInspectionIntention;
 import com.intellij.codeInspection.ex.*;
-import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -31,7 +34,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-public final class IntentionManagerImpl extends IntentionManager {
+public final class IntentionManagerImpl extends IntentionManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(IntentionManagerImpl.class);
 
   private final List<IntentionAction> myActions;
@@ -41,14 +44,28 @@ public final class IntentionManagerImpl extends IntentionManager {
   public IntentionManagerImpl() {
     List<IntentionAction> actions = new ArrayList<>();
     actions.add(new EditInspectionToolsSettingsInSuppressedPlaceIntention());
-    for (IntentionActionBean extension : IntentionManager.EP_INTENTION_ACTIONS.getExtensionList()) {
-      actions.add(new IntentionActionWrapper(extension, extension.getCategories()));
-    }
+    IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension ->
+      actions.add(new IntentionActionWrapper(extension))
+    );
     myActions = ContainerUtil.createLockFreeCopyOnWriteList(actions);
+
+    IntentionManager.EP_INTENTION_ACTIONS.addExtensionPointListener(new ExtensionPointListener<IntentionActionBean>() {
+      @Override
+      public void extensionAdded(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myActions.add(new IntentionActionWrapper(extension));
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myActions.removeIf((wrapper) ->
+                             wrapper instanceof IntentionActionWrapper &&
+                             ((IntentionActionWrapper) wrapper).getImplementationClassName().equals(extension.className));
+      }
+    }, this);
   }
 
   @Override
-  public void registerIntentionAndMetaData(@NotNull IntentionAction action, @NotNull String... category) {
+  public void registerIntentionAndMetaData(@NotNull IntentionAction action, String @NotNull ... category) {
     addAction(action);
 
     String descriptionDirectoryName = action instanceof IntentionActionWrapper
@@ -103,7 +120,11 @@ public final class IntentionManagerImpl extends IntentionManager {
     return null;
   }
 
-  private static IntentionAction createFixAllIntentionInternal(@NotNull InspectionToolWrapper toolWrapper,
+  @Override
+  public void dispose() {
+  }
+
+  private static IntentionAction createFixAllIntentionInternal(@NotNull InspectionToolWrapper<?, ?> toolWrapper,
                                                                @NotNull IntentionAction action) {
     PsiFile file = null;
     FileModifier fix = action;
@@ -167,15 +188,13 @@ public final class IntentionManagerImpl extends IntentionManager {
   }
 
   @Override
-  @NotNull
-  public IntentionAction[] getIntentionActions() {
+  public IntentionAction @NotNull [] getIntentionActions() {
     if (myIntentionsDisabled) return IntentionAction.EMPTY_ARRAY;
     return myActions.toArray(IntentionAction.EMPTY_ARRAY);
   }
 
-  @NotNull
   @Override
-  public IntentionAction[] getAvailableIntentionActions() {
+  public IntentionAction @NotNull [] getAvailableIntentionActions() {
     if (myIntentionsDisabled) return IntentionAction.EMPTY_ARRAY;
     checkForDuplicates();
     List<IntentionAction> list = new ArrayList<>(myActions.size());
@@ -196,22 +215,17 @@ public final class IntentionManagerImpl extends IntentionManager {
     }
     checkedForDuplicates = true;
     List<String> duplicates = myActions.stream()
-       .collect(Collectors.groupingBy(action -> unwrap(action).getClass()))
+       .collect(Collectors.groupingBy(action -> action instanceof IntentionActionDelegate ? ((IntentionActionDelegate)action).getImplementationClassName() : action.getClass().getName()))
        .values().stream()
        .filter(list -> list.size() > 1)
-       .map(dupList -> dupList.size() + " intention duplicates found for " + unwrap(dupList.get(0))
+       .map(dupList -> dupList.size() + " intention duplicates found for " + IntentionActionDelegate.unwrap(dupList.get(0))
                        + " (" + dupList.get(0).getClass()
-                       +"; plugin " + PluginManagerCore.getPluginOrPlatformByClassName(dupList.get(0).getClass().getName()) +")")
+                       + "; plugin " + PluginManager.getPluginOrPlatformByClassName(dupList.get(0).getClass().getName()) + ")")
        .collect(Collectors.toList());
 
     if (!duplicates.isEmpty()) {
       throw new IllegalStateException(duplicates.toString());
     }
-  }
-
-  @NotNull
-  private static IntentionAction unwrap(@NotNull IntentionAction action) {
-    return action instanceof IntentionActionDelegate ? unwrap(((IntentionActionDelegate)action).getDelegate()) : action;
   }
 
   public boolean hasActiveRequests() {

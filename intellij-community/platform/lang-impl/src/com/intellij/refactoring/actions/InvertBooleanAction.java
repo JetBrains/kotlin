@@ -20,7 +20,7 @@ public class InvertBooleanAction extends BaseRefactoringAction {
   }
 
   @Override
-  protected boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  protected boolean isEnabledOnElements(PsiElement @NotNull [] elements) {
     if (elements.length == 1 && elements[0] != null) {
       for (InvertBooleanDelegate delegate : InvertBooleanDelegate.EP_NAME.getExtensionList()) {
         if (delegate.isVisibleOnElement(elements[0])) {

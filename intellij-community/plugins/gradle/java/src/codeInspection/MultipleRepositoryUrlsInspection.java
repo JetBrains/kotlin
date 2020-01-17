@@ -36,20 +36,13 @@ public class MultipleRepositoryUrlsInspection extends GradleBaseInspection {
   @NotNull
   @Override
   public String getGroupDisplayName() {
-    return PROBABLE_BUGS;
+    return getProbableBugs();
   }
 
 
   @Override
   protected String buildErrorString(Object... args) {
     return GradleInspectionBundle.message("multiple.repository.urls", args);
-  }
-
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return GradleInspectionBundle.message("multiple.repository.urls");
   }
 
   private static class MyVisitor extends BaseInspectionVisitor {

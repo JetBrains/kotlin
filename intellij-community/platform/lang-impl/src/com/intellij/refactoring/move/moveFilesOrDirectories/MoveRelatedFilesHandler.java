@@ -51,11 +51,10 @@ public class MoveRelatedFilesHandler extends MoveFilesOrDirectoriesHandler {
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiElement[] adjustForMove(@NotNull final Project project,
-                                    @NotNull PsiElement[] sourceElements,
-                                    @Nullable final PsiElement targetElement) {
+  public PsiElement @Nullable [] adjustForMove(@NotNull final Project project,
+                                               PsiElement @NotNull [] sourceElements,
+                                               @Nullable final PsiElement targetElement) {
     sourceElements = super.adjustForMove(project, sourceElements, targetElement);
     if (sourceElements == null) return null;
 

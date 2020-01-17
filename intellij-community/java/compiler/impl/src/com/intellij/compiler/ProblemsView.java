@@ -5,7 +5,6 @@ import com.intellij.compiler.progress.CompilerTask;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -23,15 +22,14 @@ import java.util.UUID;
  * @author Eugene Zhuravlev
  */
 public abstract class ProblemsView {
-
   protected final Project myProject;
 
-  public static class SERVICE {
+  public static final class SERVICE {
     private SERVICE() {
     }
 
-    public static ProblemsView getInstance(Project project) {
-      return ServiceManager.getService(project, ProblemsView.class);
+    public static ProblemsView getInstance(@NotNull Project project) {
+      return project.getService(ProblemsView.class);
     }
   }
 
@@ -41,7 +39,7 @@ public abstract class ProblemsView {
 
   public abstract void clearOldMessages(CompileScope scope, UUID currentSessionId);
 
-  public abstract void addMessage(int type, @NotNull String[] text, @Nullable String groupName, @Nullable Navigatable navigatable, @Nullable String exportTextPrefix, @Nullable String rendererTextPrefix, @NotNull UUID sessionId);
+  public abstract void addMessage(int type, String @NotNull [] text, @Nullable String groupName, @Nullable Navigatable navigatable, @Nullable String exportTextPrefix, @Nullable String rendererTextPrefix, @NotNull UUID sessionId);
 
   public final void addMessage(CompilerMessage message, @NotNull UUID sessionId) {
     final VirtualFile file = message.getVirtualFile();

@@ -54,7 +54,6 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,6 +65,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndGet;
@@ -309,6 +309,10 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     assertModuleDeps(moduleName, LibraryOrderEntry.class, expectedDeps);
   }
 
+  protected void assertModuleLibDeps(BiPredicate<String, String> predicate, String moduleName, String... expectedDeps) {
+    assertModuleDeps(predicate, moduleName, LibraryOrderEntry.class, expectedDeps);
+  }
+
   protected void assertExportedDeps(String moduleName, String... expectedDeps) {
     final List<String> actual = new ArrayList<>();
 
@@ -334,7 +338,11 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
   }
 
   private void assertModuleDeps(String moduleName, Class clazz, String... expectedDeps) {
-    assertOrderedElementsAreEqual(collectModuleDepsNames(moduleName, clazz), expectedDeps);
+    assertModuleDeps(equalsPredicate(), moduleName, clazz, expectedDeps);
+  }
+
+  private void assertModuleDeps(BiPredicate<String, String> predicate, String moduleName, Class clazz, String... expectedDeps) {
+    assertOrderedElementsAreEqual(predicate, collectModuleDepsNames(moduleName, clazz), expectedDeps);
   }
 
   protected void assertProductionOnTestDependencies(String moduleName, String... expectedDeps) {
@@ -467,7 +475,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     final ExternalProjectSettings projectSettings = getCurrentExternalProjectSettings();
     projectSettings.setExternalProjectPath(getProjectPath());
     //noinspection unchecked
-    Set<ExternalProjectSettings> projects = ContainerUtilRt.newHashSet(systemSettings.getLinkedProjectsSettings());
+    Set<ExternalProjectSettings> projects = new HashSet<>(systemSettings.getLinkedProjectsSettings());
     projects.remove(projectSettings);
     projects.add(projectSettings);
     //noinspection unchecked
@@ -475,7 +483,8 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
     final Ref<Couple<String>> error = Ref.create();
     ImportSpec importSpec = createImportSpec();
-    if (importSpec.getCallback() == null) {
+    ExternalProjectRefreshCallback callback = importSpec.getCallback();
+    if (callback == null || callback instanceof ImportSpecBuilder.DefaultProjectRefreshCallback) {
       importSpec = new ImportSpecBuilder(importSpec).callback(new ExternalProjectRefreshCallback() {
         @Override
         public void onSuccess(@Nullable final DataNode<ProjectData> externalProject) {
@@ -512,12 +521,16 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     }
 
     if (!error.isNull()) {
-      String failureMsg = "Import failed: " + error.get().first;
-      if (StringUtil.isNotEmpty(error.get().second)) {
-        failureMsg += "\nError details: \n" + error.get().second;
-      }
-      fail(failureMsg);
+      handleImportFailure(error.get().first, error.get().second);
     }
+  }
+
+  protected void handleImportFailure(@NotNull String errorMessage, @Nullable String errorDetails) {
+    String failureMsg = "Import failed: " + errorMessage;
+    if (StringUtil.isNotEmpty(errorDetails)) {
+      failureMsg += "\nError details: \n" + errorDetails;
+    }
+    fail(failureMsg);
   }
 
   protected ImportSpec createImportSpec() {

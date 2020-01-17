@@ -13,14 +13,15 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 
 /**
- * Provides actions for error tooltips 
+ * Provides actions for error tooltips
  *
  * @see com.intellij.codeInsight.daemon.impl.DaemonTooltipActionProvider
  */
 public interface TooltipActionProvider {
-  ExtensionPointName<TooltipActionProvider> EXTENSION_POINT_NAME = ExtensionPointName.create("com.intellij.daemon.tooltipActionProvider");
+  ExtensionPointName<TooltipActionProvider> EP_NAME = ExtensionPointName.create("com.intellij.daemon.tooltipActionProvider");
 
   String SHOW_FIXES_KEY = "tooltips.show.actions.in.key";
   boolean SHOW_FIXES_DEFAULT_VALUE = true;
@@ -35,16 +36,13 @@ public interface TooltipActionProvider {
 
     Project project = editor.getProject();
     if (project == null) return null;
-    
+
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) return null;
-    
-    for (TooltipActionProvider extension : EXTENSION_POINT_NAME.getExtensions()) {
-      TooltipAction action = extension.getTooltipAction(info, editor, file);
-      if (action != null) return action;
-    }
 
-    return null;
+    return EP_NAME.getExtensionList().stream()
+      .map(extension -> extension.getTooltipAction(info, editor, file))
+      .filter(Objects::nonNull).findFirst().orElse(null);
   }
 
   static boolean isShowActions() {

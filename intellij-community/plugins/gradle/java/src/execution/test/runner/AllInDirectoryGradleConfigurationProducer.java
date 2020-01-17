@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.execution.GradleExternalTaskConfigurationType;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
+import org.jetbrains.plugins.gradle.util.GradleUtil;
 
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -117,7 +118,7 @@ public final class AllInDirectoryGradleConfigurationProducer extends GradleTestR
   }
 
   private static List<VirtualFile> findTestSourcesUnderDirectory(@NotNull Module module, @NotNull VirtualFile directory) {
-    DataNode<ModuleData> moduleDataNode = ExternalSystemApiUtil.findModuleData(module, GradleConstants.SYSTEM_ID);
+    DataNode<ModuleData> moduleDataNode = GradleUtil.findGradleModuleData(module);
     if (moduleDataNode == null) return Collections.emptyList();
     String rootPath = directory.getPath();
     return ExternalSystemApiUtil.findAll(moduleDataNode, ProjectKeys.TEST).stream()

@@ -2,90 +2,46 @@
 package com.intellij.psi.stubs;
 
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.ID;
+import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
-import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.DataInputOutputUtil;
-import gnu.trove.THashMap;
+import com.intellij.util.indexing.impl.forward.ForwardIndexAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 
-class StubUpdatingForwardIndexAccessor extends AbstractForwardIndexAccessor<Integer, SerializedStubTree, IndexedStubs> {
-  StubUpdatingForwardIndexAccessor() {super(new DataExternalizer<IndexedStubs>() {
-    private volatile boolean myEnsuredStubElementTypesLoaded;
+class StubUpdatingForwardIndexAccessor implements ForwardIndexAccessor<Integer, SerializedStubTree> {
+  private volatile UpdatableIndex<Integer, SerializedStubTree, FileContent> myIndex;
 
-    @Override
-    public void save(@NotNull DataOutput out, IndexedStubs indexedStubs) throws IOException {
-      byte[] hash = indexedStubs.getStubTreeHash();
-      DataInputOutputUtil.writeINT(out, hash.length);
-      out.write(hash);
-      Map<StubIndexKey, Map<Object, StubIdList>> stubIndicesValueMap = indexedStubs.getStubIndicesValueMap();
-      DataInputOutputUtil.writeINT(out, stubIndicesValueMap.size());
-      if (!stubIndicesValueMap.isEmpty()) {
-        StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
-
-        for (StubIndexKey stubIndexKey : stubIndicesValueMap.keySet()) {
-          DataInputOutputUtil.writeINT(out, stubIndexKey.getUniqueId());
-          Map<Object, StubIdList> map = stubIndicesValueMap.get(stubIndexKey);
-          stubIndex.serializeIndexValue(out, stubIndexKey, map);
-        }
-      }
-    }
-
-    @Override
-    public IndexedStubs read(@NotNull DataInput in) throws IOException {
-      byte[] hash = new byte[DataInputOutputUtil.readINT(in)];
-      in.readFully(hash);
-      if (!myEnsuredStubElementTypesLoaded) {
-        ProgressManager.getInstance().executeNonCancelableSection(() -> {
-          SerializationManager.getInstance().initSerializers();
-          StubIndexImpl.initExtensions();
-        });
-        myEnsuredStubElementTypesLoaded = true;
-      }
-      int stubIndicesValueMapSize = DataInputOutputUtil.readINT(in);
-      if (stubIndicesValueMapSize > 0) {
-        THashMap<StubIndexKey, Map<Object, StubIdList>> stubIndicesValueMap = new THashMap<>(stubIndicesValueMapSize);
-        StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
-
-        for (int i = 0; i < stubIndicesValueMapSize; ++i) {
-          int stubIndexId = DataInputOutputUtil.readINT(in);
-          ID<Object, ?> indexKey = (ID<Object, ?>)ID.findById(stubIndexId);
-          if (indexKey instanceof StubIndexKey) { // indexKey can be ID in case of removed index
-            StubIndexKey<Object, ?> stubIndexKey = (StubIndexKey<Object, ?>)indexKey;
-            stubIndicesValueMap.put(stubIndexKey, stubIndex.deserializeIndexValue(in, stubIndexKey));
-          }
-        }
-        return new IndexedStubs(hash, stubIndicesValueMap);
-      }
-      return new IndexedStubs(hash, Collections.emptyMap());
-    }
-  });}
-
-  @Nullable
+  @NotNull
   @Override
-  public IndexedStubs convertToDataType(@NotNull InputData<Integer, SerializedStubTree> data) {
-    return getIndexedStubs(data.getKeyValues());
-  }
-
-  @Override
-  protected InputDataDiffBuilder<Integer, SerializedStubTree> createDiffBuilder(int inputId,
-                                                                                @Nullable IndexedStubs inputData) {
-    return new StubCumulativeInputDiffBuilder(inputId, inputData);
+  public InputDataDiffBuilder<Integer, SerializedStubTree> getDiffBuilder(int inputId, @Nullable ByteArraySequence sequence) throws IOException {
+    Map<Integer, SerializedStubTree> data;
+    try {
+      data = ProgressManager.getInstance().computeInNonCancelableSection(() -> myIndex.getIndexedFileData(inputId));
+    }
+    catch (StorageException e) {
+      throw new IOException(e);
+    }
+    SerializedStubTree tree = ContainerUtil.isEmpty(data) ? null : ContainerUtil.getFirstItem(data.values());
+    if (tree != null) {
+      tree.restoreIndexedStubs();
+    }
+    return new StubCumulativeInputDiffBuilder(inputId, tree);
   }
 
   @Nullable
-  static IndexedStubs getIndexedStubs(@Nullable Map<? extends Integer, ? extends SerializedStubTree> map) {
-    SerializedStubTree serializedStubTree = ContainerUtil.getFirstItem(ContainerUtil.notNullize(map).values());
-    return serializedStubTree == null ? null : serializedStubTree.getIndexedStubs();
+  @Override
+  public ByteArraySequence serializeIndexedData(@NotNull InputData<Integer, SerializedStubTree> data) {
+    return null;
+  }
+
+  void setIndex(@NotNull UpdatableIndex<Integer, SerializedStubTree, FileContent> index) {
+    myIndex = index;
   }
 }

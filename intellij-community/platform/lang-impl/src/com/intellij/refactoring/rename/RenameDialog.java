@@ -46,8 +46,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class RenameDialog extends RefactoringDialog {
-  private static final String REFACTORING_NAME = RefactoringBundle.message("rename.title");
-
   private SuggestedNameInfo mySuggestedNameInfo;
   private JLabel myNameLabel;
   private NameSuggestionsField myNameSuggestionsField;
@@ -72,7 +70,7 @@ public class RenameDialog extends RefactoringDialog {
     myPsiElement = psiElement;
     myNameSuggestionContext = nameSuggestionContext;
     myEditor = editor;
-    setTitle(REFACTORING_NAME);
+    setTitle(getRefactoringName());
 
     createNewNameComponent();
     init();
@@ -167,13 +165,7 @@ public class RenameDialog extends RefactoringDialog {
       result.add(initialName);
     }
     result.add(UsageViewUtil.getShortName(myPsiElement));
-    for(NameSuggestionProvider provider: NameSuggestionProvider.EP_NAME.getExtensionList()) {
-      SuggestedNameInfo info = provider.getSuggestedNames(myPsiElement, myNameSuggestionContext, result);
-      if (info != null) {
-        mySuggestedNameInfo = info;
-        if (provider instanceof PreferrableNameSuggestionProvider && !((PreferrableNameSuggestionProvider)provider).shouldCheckOthers()) break;
-      }
-    }
+    mySuggestedNameInfo = NameSuggestionProvider.suggestNames(myPsiElement, myNameSuggestionContext, result);
     return ArrayUtilRt.toStringArray(result);
   }
 
@@ -320,7 +312,7 @@ public class RenameDialog extends RefactoringDialog {
     performRename(newName);
   }
 
-  public void performRename(final String newName) {
+  public void performRename(@NotNull String newName) {
     final RenamePsiElementProcessor elementProcessor = RenamePsiElementProcessor.forElement(myPsiElement);
     elementProcessor.setToSearchInComments(myPsiElement, isSearchInComments());
     if (myCbSearchTextOccurrences.isEnabled()) {
@@ -342,7 +334,7 @@ public class RenameDialog extends RefactoringDialog {
     invokeRefactoring(processor);
   }
 
-  protected RenameProcessor createRenameProcessor(String newName) {
+  protected RenameProcessor createRenameProcessor(@NotNull String newName) {
     return new RenameProcessor(getProject(), myPsiElement, newName, getRefactoringScope(), isSearchInComments(), isSearchInNonJavaFiles());
   }
 
@@ -370,5 +362,9 @@ public class RenameDialog extends RefactoringDialog {
 
   public JCheckBox getCbSearchInComments() {
     return myCbSearchInComments;
+  }
+
+  private static String getRefactoringName() {
+    return RefactoringBundle.message("rename.title");
   }
 }

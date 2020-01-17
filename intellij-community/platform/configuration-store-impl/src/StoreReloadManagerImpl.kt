@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.SchemeChangeApplicator
@@ -28,13 +28,13 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.UserDataHolderEx
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.VirtualFileManagerListener
 import com.intellij.ui.AppUIUtil
 import com.intellij.util.ExceptionUtil
 import com.intellij.util.SingleAlarm
 import gnu.trove.THashSet
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.ApiStatus
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
@@ -43,13 +43,18 @@ import kotlin.collections.LinkedHashSet
 private val CHANGED_FILES_KEY = Key<LinkedHashMap<ComponentStoreImpl, LinkedHashSet<StateStorage>>>("CHANGED_FILES_KEY")
 private val CHANGED_SCHEMES_KEY = Key<LinkedHashMap<SchemeChangeApplicator, LinkedHashSet<SchemeChangeEvent>>>("CHANGED_SCHEMES_KEY")
 
-internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
+/**
+ * This service is temporary allowed to be overriden to support reloading of new project model entities. It should be removed after merging
+ * new project model modules to community project.
+ */
+@ApiStatus.Internal
+open class StoreReloadManagerImpl : StoreReloadManager, Disposable {
   private val reloadBlockCount = AtomicInteger()
-  private val blockStackTrace = AtomicReference<String?>()
+  private val blockStackTrace = AtomicReference<Throwable?>()
   private val changedApplicationFiles = LinkedHashSet<StateStorage>()
 
   private val changedFilesAlarm = SingleAlarm(Runnable {
-    if (!isReloadUnblocked() || !tryToReloadApplication()) {
+    if (isReloadBlocked() || !tryToReloadApplication()) {
       return@Runnable
     }
 
@@ -57,7 +62,8 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
     processOpenedProjects { project ->
       val changedSchemes = CHANGED_SCHEMES_KEY.getAndClear(project as UserDataHolderEx)
       val changedStorages = CHANGED_FILES_KEY.getAndClear(project as UserDataHolderEx)
-      if ((changedSchemes == null || changedSchemes.isEmpty()) && (changedStorages == null || changedStorages.isEmpty())) {
+      if ((changedSchemes == null || changedSchemes.isEmpty()) && (changedStorages == null || changedStorages.isEmpty())
+          && !mayHaveAdditionalConfigurations(project)) {
         return@processOpenedProjects
       }
 
@@ -83,6 +89,8 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
             }
           }
         }
+
+        reloadAdditionalConfigurations(project)
       }
     }
 
@@ -91,22 +99,27 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
     }
   }, delay = 300, parentDisposable = this)
 
-  init {
-    VirtualFileManager.getInstance().addVirtualFileManagerListener(object : VirtualFileManagerListener {
-      override fun beforeRefreshStart(asynchronous: Boolean) {
-        blockReloadingProjectOnExternalChanges()
-      }
-
-      override fun afterRefreshFinish(asynchronous: Boolean) {
-        unblockReloadingProjectOnExternalChanges()
-      }
-    })
+  protected open fun reloadAdditionalConfigurations(project: Project) {
   }
 
-  private fun isReloadUnblocked(): Boolean {
+  protected open fun mayHaveAdditionalConfigurations(project: Project): Boolean = false
+
+  internal class MyVirtualFileManagerListener : VirtualFileManagerListener {
+    private val manager = StoreReloadManager.getInstance()
+
+    override fun beforeRefreshStart(asynchronous: Boolean) {
+      manager.blockReloadingProjectOnExternalChanges()
+    }
+
+    override fun afterRefreshFinish(asynchronous: Boolean) {
+      manager.unblockReloadingProjectOnExternalChanges()
+    }
+  }
+
+  override fun isReloadBlocked(): Boolean {
     val count = reloadBlockCount.get()
     LOG.debug { "[RELOAD] myReloadBlockCount = $count" }
-    return count == 0
+    return count > 0
   }
 
   override fun saveChangedProjectFile(file: VirtualFile, project: Project) {
@@ -119,14 +132,14 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
 
   override fun blockReloadingProjectOnExternalChanges() {
     if (reloadBlockCount.getAndIncrement() == 0 && !ApplicationInfoImpl.isInStressTest()) {
-      blockStackTrace.set(ExceptionUtil.currentStackTrace())
+      blockStackTrace.set(Throwable())
     }
   }
 
   override fun unblockReloadingProjectOnExternalChanges() {
     val counter = reloadBlockCount.get()
     if (counter <= 0) {
-      LOG.error("Block counter $counter must be > 0, first block stack trace: ${blockStackTrace.get()}")
+      LOG.error("Block counter $counter must be > 0, first block stack trace: ${blockStackTrace.get()?.let { ExceptionUtil.getThrowableText(it) }}")
     }
 
     if (reloadBlockCount.decrementAndGet() != 0) {
@@ -146,7 +159,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
 
   override suspend fun reloadChangedStorageFiles() {
     val unfinishedRequest = changedFilesAlarm.getUnfinishedRequest() ?: return
-    withContext(storeEdtCoroutineContext) {
+    withContext(storeEdtCoroutineDispatcher) {
       unfinishedRequest.run()
       // just to be sure
       changedFilesAlarm.getUnfinishedRequest()?.run()
@@ -194,9 +207,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       }
     }
 
-    if (isReloadUnblocked()) {
-      changedFilesAlarm.cancelAndRequest()
-    }
+    scheduleProcessingChangedFiles()
   }
 
   internal fun registerChangedSchemes(events: List<SchemeChangeEvent>, schemeFileTracker: SchemeChangeApplicator, project: Project) {
@@ -209,7 +220,11 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       changes.getOrPut(schemeFileTracker) { LinkedHashSet() }.addAll(events)
     }
 
-    if (isReloadUnblocked()) {
+    scheduleProcessingChangedFiles()
+  }
+
+  override fun scheduleProcessingChangedFiles() {
+    if (!isReloadBlocked()) {
       changedFilesAlarm.cancelAndRequest()
     }
   }
@@ -223,7 +238,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       return true
     }
 
-    val changes = LinkedHashSet<StateStorage>(changedApplicationFiles)
+    val changes = LinkedHashSet(changedApplicationFiles)
     changedApplicationFiles.clear()
 
     return reloadAppStore(changes)

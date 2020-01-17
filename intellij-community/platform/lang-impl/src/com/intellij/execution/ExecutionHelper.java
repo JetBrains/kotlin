@@ -54,7 +54,7 @@ import java.util.function.BooleanSupplier;
  * @author Roman Chernyatchik
  */
 public class ExecutionHelper {
-  private static final Logger LOG = Logger.getInstance(ExecutionHelper.class.getName());
+  private static final Logger LOG = Logger.getInstance(ExecutionHelper.class);
 
   private ExecutionHelper() {
   }
@@ -76,6 +76,25 @@ public class ExecutionHelper {
     if (ApplicationManager.getApplication().isUnitTestMode() && !errors.isEmpty()) {
       throw new RuntimeException(errors.get(0));
     }
+
+    errors.forEach(it -> {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Got error: ", it);
+      }
+      else {
+        LOG.warn("Got error: " + it.getMessage());
+      }
+    });
+
+    warnings.forEach(it -> {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Got warning: ", it);
+      }
+      else {
+        LOG.warn("Got warning: " + it.getMessage());
+      }
+    });
+
     ApplicationManager.getApplication().invokeLater(() -> {
       if (myProject.isDisposed()) return;
       if (errors.isEmpty() && warnings.isEmpty()) {
@@ -218,7 +237,7 @@ public class ExecutionHelper {
     final Ref<Collection<RunContentDescriptor>> ref = new Ref<>();
 
     final Runnable computeDescriptors = () -> {
-      RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
+      RunContentManager contentManager = RunContentManager.getInstance(project);
       final RunContentDescriptor selectedContent = contentManager.getSelectedContent();
       if (selectedContent != null) {
         final ToolWindow toolWindow = contentManager.getToolWindowByDescriptor(selectedContent);
@@ -290,7 +309,7 @@ public class ExecutionHelper {
 
   private static void descriptorToFront(@NotNull final Project project, @NotNull final RunContentDescriptor descriptor) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      RunContentManager manager = ExecutionManager.getInstance(project).getContentManager();
+      RunContentManager manager = RunContentManager.getInstance(project);
       ToolWindow toolWindow = manager.getToolWindowByDescriptor(descriptor);
       if (toolWindow != null) {
         toolWindow.show(null);
@@ -323,7 +342,7 @@ public class ExecutionHelper {
                                              @NotNull final ExecutionMode mode,
                                              @NotNull final String presentableCmdline) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      LOG.warn("Running " + presentableCmdline);
+      LOG.debug("Running " + presentableCmdline);
       processHandler.waitFor();
       return;
     }

@@ -18,9 +18,6 @@ package com.intellij.compiler.actions;
 import com.intellij.packaging.artifacts.Artifact;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public interface ArtifactAwareProjectSettingsService {
   void openArtifactSettings(@Nullable Artifact artifact);
 }

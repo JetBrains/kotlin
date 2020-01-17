@@ -6,6 +6,7 @@ import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.util.Pair;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
@@ -68,6 +69,17 @@ public class GradleExecutionWorkspace implements Serializable {
       if (result != null) break;
     }
     return result;
+  }
+
+  @SuppressWarnings("unused")
+  @Nullable
+  @ApiStatus.Experimental
+  public ModuleData findModuleDataByModuleId(@NotNull String moduleId) {
+    final Pair<DataNode<ModuleData>, IdeaModule> pair = myModuleIdIndex.get(moduleId);
+    if (pair != null) {
+      return pair.first.getData();
+    }
+    return null;
   }
 
   @Nullable

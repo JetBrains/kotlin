@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.model;
 
 import org.gradle.tooling.BuildController;
 import org.gradle.tooling.model.Model;
+import org.gradle.tooling.model.gradle.GradleBuild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,14 +12,14 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class ClassSetProjectImportModelProvider implements ProjectImportModelProvider {
-  @NotNull private final Set<Class> classSet;
+  @NotNull private final Set<Class<?>> classSet;
 
-  public ClassSetProjectImportModelProvider(@NotNull Collection<Class> classes) {
-    classSet = new LinkedHashSet<Class>(classes);
+  public ClassSetProjectImportModelProvider(@NotNull Collection<Class<?>> classes) {
+    classSet = new LinkedHashSet<Class<?>>(classes);
   }
 
   @Override
-  public void populateBuildModels(@NotNull BuildController controller, @NotNull Model project, @NotNull BuildModelConsumer consumer) {
+  public void populateBuildModels(@NotNull BuildController controller, @NotNull GradleBuild build, @NotNull BuildModelConsumer consumer) {
     // Do nothing, this provider only works on the project model level
   }
 
@@ -32,5 +33,19 @@ public final class ClassSetProjectImportModelProvider implements ProjectImportMo
         modelConsumer.consume(instance, aClass);
       }
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ClassSetProjectImportModelProvider provider = (ClassSetProjectImportModelProvider)o;
+    if (!classSet.equals(provider.classSet)) return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return classSet.hashCode();
   }
 }

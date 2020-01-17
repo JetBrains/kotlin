@@ -29,7 +29,7 @@ public class ProjectPaneSelectInTarget extends ProjectViewSelectInTarget impleme
 
   @Override
   public String toString() {
-    return SelectInManager.PROJECT;
+    return SelectInManager.getProject();
   }
 
   @Override

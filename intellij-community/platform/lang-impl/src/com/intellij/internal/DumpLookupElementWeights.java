@@ -29,7 +29,6 @@ import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +40,7 @@ import java.util.Map;
  * @author peter
  */
 public class DumpLookupElementWeights extends AnAction implements DumbAware {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.internal.DumpLookupElementWeights");
+  private static final Logger LOG = Logger.getInstance(DumpLookupElementWeights.class);
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {

@@ -24,7 +24,6 @@ import org.jdom.Element;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author Anton Katilin

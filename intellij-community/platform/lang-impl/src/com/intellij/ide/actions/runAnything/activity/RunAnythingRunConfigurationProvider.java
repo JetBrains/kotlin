@@ -6,6 +6,7 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ChooseRunConfigurationPopup;
 import com.intellij.ide.actions.runAnything.RunAnythingRunConfigurationItem;
+import com.intellij.ide.actions.runAnything.RunAnythingUtil;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,7 @@ public abstract class RunAnythingRunConfigurationProvider extends RunAnythingPro
   @Nullable
   @Override
   public String getAdText() {
-    return RunAnythingRunConfigurationItem.RUN_CONFIGURATION_AD_TEXT;
+    return RunAnythingUtil.getAdContextText() + ", " + RunAnythingUtil.getAdDebugText();
   }
 
   @NotNull

@@ -1,6 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
+import com.intellij.ide.lightEdit.LightEditUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
@@ -14,28 +15,32 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class FileBasedIndexScanRunnableCollectorImpl extends FileBasedIndexScanRunnableCollector {
+final class FileBasedIndexScanRunnableCollectorImpl extends FileBasedIndexScanRunnableCollector {
   private final Project myProject;
   private final ProjectFileIndex myProjectFileIndex;
-  private final FileTypeManager myFileTypeManager;
+  private final boolean myDisabled;
 
-  public FileBasedIndexScanRunnableCollectorImpl(Project project, ProjectFileIndex projectFileIndex, FileTypeManager fileTypeManager) {
+  FileBasedIndexScanRunnableCollectorImpl(@NotNull Project project) {
     myProject = project;
-    myProjectFileIndex = projectFileIndex;
-    myFileTypeManager = fileTypeManager;
+    myProjectFileIndex = ProjectFileIndex.getInstance(myProject);
+    myDisabled = LightEditUtil.isLightEditProject(myProject);
   }
 
   @Override
   public boolean shouldCollect(@NotNull VirtualFile file) {
+    if (myDisabled) return false;
     if (myProjectFileIndex.isInContent(file) || myProjectFileIndex.isInLibrary(file)) {
-      return !myFileTypeManager.isFileIgnored(file);
+      return !FileTypeManager.getInstance().isFileIgnored(file);
     }
     return false;
   }
 
   @Override
   public List<Runnable> collectScanRootRunnables(@NotNull ContentIterator processor, ProgressIndicator indicator) {
-    return ReadAction.compute(()-> {
+    if (myDisabled) {
+      return Collections.emptyList();
+    }
+    return ReadAction.compute(() -> {
       if (myProject.isDisposed()) {
         return Collections.emptyList();
       }
@@ -87,21 +92,21 @@ public class FileBasedIndexScanRunnableCollectorImpl extends FileBasedIndexScanR
       for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
         OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         for (OrderEntry orderEntry : orderEntries) {
-          if (orderEntry instanceof LibraryOrSdkOrderEntry) {
-            if (orderEntry.isValid()) {
-              final LibraryOrSdkOrderEntry entry = (LibraryOrSdkOrderEntry)orderEntry;
-              final VirtualFile[] libSources = entry.getRootFiles(OrderRootType.SOURCES);
-              final VirtualFile[] libClasses = entry.getRootFiles(OrderRootType.CLASSES);
-              for (VirtualFile[] roots : new VirtualFile[][]{libSources, libClasses}) {
-                for (final VirtualFile root : roots) {
-                  // do not try to visit under-content-roots because the first task took care of that already
-                  if (!myProjectFileIndex.isInContent(root) && visitedRoots.add(root)) {
-                    tasks.add(() -> {
-                      if (myProject.isDisposed() || module.isDisposed() || !root.isValid()) return;
-                      FileBasedIndex.iterateRecursively(root, processor, indicator, visitedRoots, myProjectFileIndex);
-                    });
-                  }
-                }
+          if (!(orderEntry instanceof LibraryOrSdkOrderEntry) || !orderEntry.isValid()) {
+            continue;
+          }
+
+          final LibraryOrSdkOrderEntry entry = (LibraryOrSdkOrderEntry)orderEntry;
+          final VirtualFile[] libSources = entry.getRootFiles(OrderRootType.SOURCES);
+          final VirtualFile[] libClasses = entry.getRootFiles(OrderRootType.CLASSES);
+          for (VirtualFile[] roots : new VirtualFile[][]{libSources, libClasses}) {
+            for (final VirtualFile root : roots) {
+              // do not try to visit under-content-roots because the first task took care of that already
+              if (!myProjectFileIndex.isInContent(root) && visitedRoots.add(root)) {
+                tasks.add(() -> {
+                  if (myProject.isDisposed() || module.isDisposed() || !root.isValid()) return;
+                  FileBasedIndex.iterateRecursively(root, processor, indicator, visitedRoots, myProjectFileIndex);
+                });
               }
             }
           }

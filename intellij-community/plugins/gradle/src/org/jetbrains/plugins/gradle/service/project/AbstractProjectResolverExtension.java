@@ -29,11 +29,10 @@ import com.intellij.util.Consumer;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.model.ClassSetProjectImportExtraModelProvider;
-import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider;
+import org.jetbrains.plugins.gradle.model.ClassSetProjectImportModelProvider;
+import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -70,18 +69,12 @@ public abstract class AbstractProjectResolverExtension implements GradleProjectR
     return nextResolver;
   }
 
-  @NotNull
-  @Override
-  public ProjectData createProject() {
-    return nextResolver.createProject();
-  }
-
   @Override
   public void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject) {
     nextResolver.populateProjectExtraModels(gradleProject, ideProject);
   }
 
-  @NotNull
+  @Nullable
   @Override
   public DataNode<ModuleData> createModule(@NotNull IdeaModule gradleModule, @NotNull DataNode<ProjectData> projectDataNode) {
     return nextResolver.createModule(gradleModule, projectDataNode);
@@ -123,19 +116,20 @@ public abstract class AbstractProjectResolverExtension implements GradleProjectR
 
   @NotNull
   @Override
-  public Set<Class> getExtraProjectModelClasses() {
+  public Set<Class<?>> getExtraProjectModelClasses() {
     return Collections.emptySet();
   }
 
-  @NotNull
+  @Nullable
   @Override
-  public ProjectImportExtraModelProvider getExtraModelProvider() {
-    return new ClassSetProjectImportExtraModelProvider(getExtraProjectModelClasses());
+  public ProjectImportModelProvider getModelProvider() {
+    Set<Class<?>> projectModelClasses = getExtraProjectModelClasses();
+    return projectModelClasses.isEmpty() ? null : new ClassSetProjectImportModelProvider(projectModelClasses);
   }
 
   @NotNull
   @Override
-  public Set<Class> getToolingExtensionsClasses() {
+  public Set<Class<?>> getToolingExtensionsClasses() {
     return Collections.emptySet();
   }
 
@@ -173,7 +167,4 @@ public abstract class AbstractProjectResolverExtension implements GradleProjectR
                                     @Nullable String jvmParametersSetup,
                                     @NotNull Consumer<String> initScriptConsumer) {
   }
-
-  @ApiStatus.Experimental
-  public void onResolveEnd(@NotNull DataNode<ProjectData> projectDataNode) {}
 }

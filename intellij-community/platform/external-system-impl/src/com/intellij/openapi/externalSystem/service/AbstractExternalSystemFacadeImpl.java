@@ -7,7 +7,6 @@ import com.intellij.openapi.externalSystem.service.project.ExternalSystemProject
 import com.intellij.openapi.externalSystem.service.remote.*;
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +63,18 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
     }
     catch (Exception e) {
       throw new IllegalStateException(String.format("Can't create '%s' service", RemoteExternalSystemProjectResolverImpl.class.getName()),
+                                      e);
+    }
+  }
+
+  @NotNull
+  @Override
+  public RawExternalSystemProjectResolver<S> getRawProjectResolver() throws IllegalStateException {
+    try {
+      return getService(RawExternalSystemProjectResolver.class, new RawExternalSystemProjectResolverImpl<>(myProjectResolver));
+    }
+    catch (Exception e) {
+      throw new IllegalStateException(String.format("Can't create '%s' service", RawExternalSystemProjectResolverImpl.class.getName()),
                                       e);
     }
   }
@@ -174,7 +185,8 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
   @Override
   public void applySettings(@NotNull S settings) throws RemoteException {
     mySettings.set(settings);
-    List<RemoteExternalSystemService<S>> services = ContainerUtilRt.newArrayList(myRemotes.values());
+    List<RemoteExternalSystemService<S>> services =
+      new ArrayList<>(myRemotes.values());
     for (RemoteExternalSystemService<S> service : services) {
       service.setSettings(settings);
     }
@@ -203,10 +215,6 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
 
     SwallowingNotificationListener(@NotNull RemoteExternalSystemProgressNotificationManager manager) {
       myManager = manager;
-    }
-
-    @Override
-    public void onQueued(@NotNull ExternalSystemTaskId id, String workingDir) {
     }
 
     @Override

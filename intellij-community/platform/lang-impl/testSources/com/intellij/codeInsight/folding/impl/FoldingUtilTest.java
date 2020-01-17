@@ -25,14 +25,14 @@ public class FoldingUtilTest extends LightPlatformCodeInsightTestCase {
   public void testFoldTreeIterator() {
     configureFromFileText(getTestName(false) + ".txt",
                           "abcdefghijklmnopqrstuvwxyz");
-    EditorTestUtil.addFoldRegion(myEditor, 0, 10, ".", true);
-    EditorTestUtil.addFoldRegion(myEditor, 0, 5, ".", false);
-    EditorTestUtil.addFoldRegion(myEditor, 1, 2, ".", true);
-    EditorTestUtil.addFoldRegion(myEditor, 7, 10, ".", false);
-    EditorTestUtil.addFoldRegion(myEditor, 10, 11, ".", true);
+    EditorTestUtil.addFoldRegion(getEditor(), 0, 10, ".", true);
+    EditorTestUtil.addFoldRegion(getEditor(), 0, 5, ".", false);
+    EditorTestUtil.addFoldRegion(getEditor(), 1, 2, ".", true);
+    EditorTestUtil.addFoldRegion(getEditor(), 7, 10, ".", false);
+    EditorTestUtil.addFoldRegion(getEditor(), 10, 11, ".", true);
 
     StringBuilder b = new StringBuilder();
-    Iterator<FoldRegion> it = FoldingUtil.createFoldTreeIterator(myEditor);
+    Iterator<FoldRegion> it = FoldingUtil.createFoldTreeIterator(getEditor());
     while (it.hasNext()) {
       FoldRegion region = it.next();
       if (b.length() > 0) {

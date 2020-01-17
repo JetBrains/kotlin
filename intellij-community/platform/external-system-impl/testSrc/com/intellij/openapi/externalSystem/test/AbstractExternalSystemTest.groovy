@@ -9,7 +9,7 @@ import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.SkipInHeadlessEnvironment
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
@@ -44,7 +44,7 @@ abstract class AbstractExternalSystemTest extends UsefulTestCase {
     projectDir.mkdirs()
 
     def externalSystemManagers = StreamEx.of(ExternalSystemManager.EP_NAME.extensions()).append(new TestExternalSystemManager(project)).toList()
-    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, externalSystemManagers, testRootDisposable)
+    ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, externalSystemManagers, testRootDisposable)
   }
 
   private static void ensureTempDirCreated() {

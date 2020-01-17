@@ -45,6 +45,7 @@ public class WhiteSpaceFormattingStrategyFactory {
    * @return            white space strategy to use for the given language
    * @throws IllegalStateException      if white space strategies configuration is invalid
    */
+  @NotNull
   public static WhiteSpaceFormattingStrategy getStrategy(@NotNull Language language) throws IllegalStateException {
     CompositeWhiteSpaceFormattingStrategy result = new CompositeWhiteSpaceFormattingStrategy(SHARED_STRATEGIES);
     WhiteSpaceFormattingStrategy strategy = LanguageWhiteSpaceFormattingStrategy.INSTANCE.forLanguage(language);

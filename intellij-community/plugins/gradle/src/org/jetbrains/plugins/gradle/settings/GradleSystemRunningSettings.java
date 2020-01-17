@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
  * @deprecated use {@link GradleProjectSettings}
  */
 @Deprecated
-@ApiStatus.ScheduledForRemoval(inVersion = "2019.2")
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
 public class GradleSystemRunningSettings {
-  private static final Logger LOG = Logger.getInstance("#" + GradleSystemRunningSettings.class.getPackage().getName());
+  private static final Logger LOG = Logger.getInstance(GradleSystemRunningSettings.class);
   private static boolean alreadyLogged = false;
 
   @NotNull

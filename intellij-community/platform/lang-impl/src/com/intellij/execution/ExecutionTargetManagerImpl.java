@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
 import com.intellij.execution.compound.CompoundRunConfiguration;
@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.function.BiPredicate;
 
 @State(name = "ExecutionTargetManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
-public class ExecutionTargetManagerImpl extends ExecutionTargetManager implements PersistentStateComponent<Element> {
+public final class ExecutionTargetManagerImpl extends ExecutionTargetManager implements PersistentStateComponent<Element> {
   public static final ExecutionTarget MULTIPLE_TARGETS = new ExecutionTarget() {
     @NotNull
     @Override
@@ -200,11 +200,12 @@ public class ExecutionTargetManagerImpl extends ExecutionTargetManager implement
     }
 
     boolean isCompound = configuration instanceof CompoundRunConfiguration;
-    if (isCompound && target == MULTIPLE_TARGETS) return true;
+    if (isCompound && target == MULTIPLE_TARGETS) {
+      return true;
+    }
 
     ExecutionTarget defaultTarget = DefaultExecutionTarget.INSTANCE;
-    boolean checkFallbackToDefault = isCompound
-                                     && !target.equals(defaultTarget);
+    boolean checkFallbackToDefault = isCompound && !target.equals(defaultTarget);
 
     return doWithEachNonCompoundWithSpecifiedTarget(configuration, (subConfiguration, executionTarget) -> {
       if (!(subConfiguration instanceof TargetAwareRunProfile)) {
@@ -217,7 +218,6 @@ public class ExecutionTargetManagerImpl extends ExecutionTargetManager implement
       }
 
       TargetAwareRunProfile targetAwareProfile = (TargetAwareRunProfile)subConfiguration;
-
       return target.canRun(subConfiguration) && targetAwareProfile.canRunOn(target)
              || (checkFallbackToDefault && defaultTarget.canRun(subConfiguration) && targetAwareProfile.canRunOn(defaultTarget));
     });

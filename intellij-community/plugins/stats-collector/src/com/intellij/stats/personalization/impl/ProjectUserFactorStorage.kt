@@ -2,7 +2,6 @@
 
 package com.intellij.stats.personalization.impl
 
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
@@ -14,4 +13,4 @@ import com.intellij.openapi.components.StoragePathMacros
   Storage(StoragePathMacros.CACHE_FILE),
   Storage(StoragePathMacros.WORKSPACE_FILE, deprecated = true)
 ])
-class ProjectUserFactorStorage : ProjectComponent, UserFactorStorageBase()
+class ProjectUserFactorStorage : UserFactorStorageBase()

@@ -24,21 +24,16 @@ class ExternalSystemActionsCollector {
                 place: String?,
                 isFromContextMenu: Boolean,
                 executor : Executor? = null) {
-      val data = FeatureUsageData().addOS().addProject(project)
+      val data = FeatureUsageData().addProject(project)
 
       if (place != null) {
         data.addPlace(place).addData("context_menu", isFromContextMenu)
       }
-      executor?.let { data.addExecutor(it) }
+      executor?.let { data.addData("executor", it.id) }
 
-      addSystemId(data, systemId)
+      addExternalSystemId(data, systemId)
 
       FUCounterUsageLogger.getInstance().logEvent("build.tools.actions", actionId.name, data)
-    }
-
-    private fun addSystemId(data: FeatureUsageData,
-                            systemId: ProjectSystemId?) {
-      data.addData("system_id", systemId?.let { getAnonymizedSystemId(it) } ?: "undefined.system")
     }
 
     @JvmStatic
@@ -46,7 +41,7 @@ class ExternalSystemActionsCollector {
                 systemId: ProjectSystemId?,
                 action: AnAction,
                 event: AnActionEvent) {
-      ActionsCollectorImpl.record("build.tools.actions", project, action, event) { data -> addSystemId(data, systemId) }
+      ActionsCollectorImpl.record("build.tools.actions", project, action, event) { data -> addExternalSystemId(data, systemId) }
     }
 
     @JvmStatic

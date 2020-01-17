@@ -84,15 +84,13 @@ public class StartBuildEventImpl extends StartEventImpl implements StartBuildEve
     return myExecutionEnvironment;
   }
 
-  @NotNull
   @Override
-  public AnAction[] getRestartActions() {
+  public AnAction @NotNull [] getRestartActions() {
     return myRestartActions.toArray(AnAction.EMPTY_ARRAY);
   }
 
-  @NotNull
   @Override
-  public Filter[] getExecutionFilters() {
+  public Filter @NotNull [] getExecutionFilters() {
     return myFilters.toArray(Filter.EMPTY_ARRAY);
   }
 

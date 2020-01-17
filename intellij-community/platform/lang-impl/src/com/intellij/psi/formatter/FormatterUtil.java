@@ -15,18 +15,24 @@ import com.intellij.psi.impl.source.tree.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.CharTable;
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 
 public class FormatterUtil {
 
-  public static final String REFORMAT_BEFORE_COMMIT_COMMAND_NAME = CodeInsightBundle.message("process.reformat.code.before.commit");
-  public static final Collection<String> FORMATTER_ACTION_NAMES = Collections.unmodifiableCollection(ContainerUtilRt.newHashSet(
-    ReformatCodeProcessor.COMMAND_NAME, REFORMAT_BEFORE_COMMIT_COMMAND_NAME
+  /**
+   * Use {code {@link #getReformatBeforeCommitCommandName()}} instead
+   */
+  @Deprecated
+  public static final String REFORMAT_BEFORE_COMMIT_COMMAND_NAME = "Reformat Code Before Commit";
+
+  public static final Collection<String> FORMATTER_ACTION_NAMES = Collections.unmodifiableCollection(ContainerUtil.newHashSet(
+    ReformatCodeProcessor.getCommandName(), getReformatBeforeCommitCommandName()
   ));
 
   private FormatterUtil() {
@@ -38,7 +44,7 @@ public class FormatterUtil {
     return type == TokenType.WHITE_SPACE || (type != TokenType.ERROR_ELEMENT && node.getTextLength() == 0);
   }
 
-  public static boolean isOneOf(@Nullable ASTNode node, @NotNull IElementType... types) {
+  public static boolean isOneOf(@Nullable ASTNode node, IElementType @NotNull ... types) {
     if (node == null) return false;
     IElementType elementType = node.getElementType();
     for (IElementType each : types) {
@@ -48,17 +54,17 @@ public class FormatterUtil {
   }
 
   @Nullable
-  public static ASTNode getPrevious(@Nullable ASTNode node, @NotNull IElementType... typesToIgnore) {
+  public static ASTNode getPrevious(@Nullable ASTNode node, IElementType @NotNull ... typesToIgnore) {
     return getNextOrPrevious(node, false, typesToIgnore);
   }
 
   @Nullable
-  public static ASTNode getNext(@Nullable ASTNode node, @NotNull IElementType... typesToIgnore) {
+  public static ASTNode getNext(@Nullable ASTNode node, IElementType @NotNull ... typesToIgnore) {
     return getNextOrPrevious(node, true, typesToIgnore);
   }
 
   @Nullable
-  private static ASTNode getNextOrPrevious(@Nullable ASTNode node, boolean isNext, @NotNull IElementType... typesToIgnore) {
+  private static ASTNode getNextOrPrevious(@Nullable ASTNode node, boolean isNext, IElementType @NotNull ... typesToIgnore) {
     if (node == null) return null;
 
     ASTNode each = isNext ? node.getTreeNext() : node.getTreePrev();
@@ -82,7 +88,7 @@ public class FormatterUtil {
   }
 
   @Nullable
-  public static ASTNode getPreviousLeaf(@Nullable ASTNode node, @NotNull IElementType... typesToIgnore) {
+  public static ASTNode getPreviousLeaf(@Nullable ASTNode node, IElementType @NotNull ... typesToIgnore) {
     ASTNode prev = getPrevious(node, typesToIgnore);
     if (prev == null) {
       return null;
@@ -252,25 +258,21 @@ public class FormatterUtil {
   public static boolean containsWhiteSpacesOnly(@Nullable ASTNode node) {
     if (node == null) return false;
 
-    final boolean[] spacesOnly = {true};
-    ((TreeElement)node).acceptTree(new RecursiveTreeElementWalkingVisitor() {
-      @Override
-      public void visitComposite(CompositeElement composite) {
-        if (!spacesOnly(composite)) {
-          super.visitComposite(composite);
-        }
+    ArrayDeque<ASTNode> queue = new ArrayDeque<>();
+    queue.offer(node);
+    while (!queue.isEmpty()) {
+      TreeElement each = (TreeElement)queue.poll();
+      if (each instanceof CompositeElement && spacesOnly(each)) {
+        continue;
       }
 
-      @Override
-      public void visitLeaf(LeafElement leaf) {
-        if (!spacesOnly(leaf)) {
-          spacesOnly[0] = false;
-          stopWalking();
-        }
+      if (each instanceof LeafElement && !spacesOnly(each)) {
+        return false;
       }
-    });
-
-    return spacesOnly[0];
+      
+      Collections.addAll(queue, each.getChildren(null));
+    }
+    return true;
   }
 
   private static boolean spacesOnly(@Nullable TreeElement node) {
@@ -497,5 +499,9 @@ public class FormatterUtil {
    */
   public static boolean isFormatterCalledExplicitly() {
     return FORMATTER_ACTION_NAMES.contains(CommandProcessor.getInstance().getCurrentCommandName());
+  }
+
+  public static String getReformatBeforeCommitCommandName() {
+    return CodeInsightBundle.message("process.reformat.code.before.commit");
   }
 }

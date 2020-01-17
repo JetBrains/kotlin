@@ -90,8 +90,7 @@ class FileTemplatesLoader {
     }
   }
 
-  @NotNull
-  FTManager[] getAllManagers() {
+  FTManager @NotNull [] getAllManagers() {
     return myAllManagers;
   }
 

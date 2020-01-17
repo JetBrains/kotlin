@@ -1,15 +1,17 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.containers.Convertor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +23,14 @@ import java.awt.event.MouseEvent;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
 class ServiceViewTree extends Tree {
+  private static final Convertor<TreePath, String> DISPLAY_NAME_CONVERTER = path -> {
+    Object node = path.getLastPathComponent();
+    if (node instanceof ServiceViewItem) {
+      return ServiceViewDragHelper.getDisplayName(((ServiceViewItem)node).getViewDescriptor().getPresentation());
+    }
+    return node.toString();
+  };
+
   private final TreeModel myTreeModel;
 
   ServiceViewTree(@NotNull TreeModel treeModel, @NotNull Disposable parent) {
@@ -35,10 +45,10 @@ class ServiceViewTree extends Tree {
     setRootVisible(false);
     setShowsRootHandles(true);
     setCellRenderer(new ServiceViewTreeCellRenderer());
-    UIUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
+    ComponentUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
 
     // listeners
-    new TreeSpeedSearch(this, TreeSpeedSearch.NODE_DESCRIPTOR_TOSTRING, true);
+    new TreeSpeedSearch(this, DISPLAY_NAME_CONVERTER, true);
     ServiceViewTreeLinkMouseListener mouseListener = new ServiceViewTreeLinkMouseListener(this);
     mouseListener.installOn(this);
     new DoubleClickListener() {
@@ -53,14 +63,11 @@ class ServiceViewTree extends Tree {
                ((ServiceViewItem)lastComponent).getViewDescriptor().handleDoubleClick(e);
       }
     }.installOn(this);
-
-    // DnD
-    //RowsDnDSupport.install(myTree, myTreeModel);
-    setDragEnabled(true);
   }
 
   private static class ServiceViewTreeCellRenderer extends ServiceViewTreeCellRendererBase {
     private ServiceViewDescriptor myDescriptor;
+    private JComponent myComponent;
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree,
@@ -71,6 +78,7 @@ class ServiceViewTree extends Tree {
                                       int row,
                                       boolean hasFocus) {
       myDescriptor = value instanceof ServiceViewItem ? ((ServiceViewItem)value).getViewDescriptor() : null;
+      myComponent = tree;
       super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
     }
 
@@ -80,7 +88,10 @@ class ServiceViewTree extends Tree {
       // Ensure that value != myTreeModel.getRoot() && !(value instanceof LoadingNode)
       if (!(node instanceof ServiceViewItem)) return null;
 
-      ItemPresentation presentation = ((ServiceViewItem)node).getViewDescriptor().getPresentation();
+      ServiceViewOptions viewOptions = DataManager.getInstance().getDataContext(myComponent).getData(ServiceViewActionUtils.OPTIONS_KEY);
+      ServiceViewDescriptor viewDescriptor = ((ServiceViewItem)node).getViewDescriptor();
+      ItemPresentation presentation =
+        viewOptions == null ? viewDescriptor.getPresentation() : viewDescriptor.getCustomPresentation(viewOptions);
       return presentation instanceof PresentationData ? presentation : new PresentationData(presentation.getPresentableText(),
                                                                                             presentation.getLocationString(),
                                                                                             presentation.getIcon(false),

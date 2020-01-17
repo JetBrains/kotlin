@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class ExcludedFromCompileFilesUtil {
-  static GlobalSearchScope getExcludedFilesScope(@NotNull ExcludeEntryDescription[] descriptions,
+  static GlobalSearchScope getExcludedFilesScope(ExcludeEntryDescription @NotNull [] descriptions,
                                                  @NotNull Set<FileType> fileTypes,
                                                  @NotNull Project project,
                                                  @NotNull ProjectFileIndex fileIndex) {

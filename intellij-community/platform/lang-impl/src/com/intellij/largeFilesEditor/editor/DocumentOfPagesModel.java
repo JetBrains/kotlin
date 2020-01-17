@@ -44,6 +44,10 @@ public class DocumentOfPagesModel {
     return pagesInDocument;
   }
 
+  public int getIndexOfPageByPageNumber(long pageNumber) {
+    return (int)(pageNumber - getFirstPage().getPageNumber());
+  }
+
   public Page getPageByIndex(int index) {
     return pagesInDocument.get(index);
   }

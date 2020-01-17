@@ -2,8 +2,10 @@
 package com.intellij.execution.dashboard;
 
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollector;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.beans.MetricEventFactoryKt;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
 import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
@@ -11,6 +13,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,11 +31,18 @@ public class RunDashboardUsagesCollector extends ProjectUsagesCollector {
     return "run.dashboard";
   }
 
+  @Override
+  public int getVersion() {
+    return 2;
+  }
+
   @NotNull
   @Override
   public Set<MetricEvent> getMetrics(@NotNull Project project) {
     final Set<MetricEvent> metricEvents = new HashSet<>();
-    final Set<String> dashboardTypes = RunDashboardManager.getInstance(project).getTypes();
+    RunDashboardManagerImpl runDashboardManager = (RunDashboardManagerImpl)RunDashboardManager.getInstance(project);
+    final Set<String> dashboardTypes = new THashSet<>(runDashboardManager.getTypes());
+    dashboardTypes.removeAll(runDashboardManager.getEnableByDefaultTypes()); // do not report enable by default types
     metricEvents.add(MetricEventFactoryKt.newBooleanMetric("run.dashboard", !dashboardTypes.isEmpty()));
 
     if (!dashboardTypes.isEmpty()) {
@@ -41,8 +51,8 @@ public class RunDashboardUsagesCollector extends ProjectUsagesCollector {
         ConfigurationType configurationType = ContainerUtil.find(configurationTypes, type -> type.getId().equals(dashboardType));
         if (configurationType == null) continue;
 
-        String key = PluginInfoDetectorKt.getPluginInfo(configurationType.getClass()).isDevelopedByJetBrains() ?  dashboardType : "third.party";
-        metricEvents.add(MetricEventFactoryKt.newMetric(key));
+        final FeatureUsageData data = RunConfigurationTypeUsagesCollector.newFeatureUsageData(configurationType, null);
+        metricEvents.add(MetricEventFactoryKt.newMetric("added.run.configuration", data));
       }
     }
     return metricEvents;

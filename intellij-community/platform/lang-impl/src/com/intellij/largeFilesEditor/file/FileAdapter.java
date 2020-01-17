@@ -41,10 +41,6 @@ class FileAdapter {
     }
   }
 
-  Charset getCharset() {
-    return vFile.getCharset();
-  }
-
   void setCharset(Charset newCharset) {
     randomAccessFileLock.lock();
     try {

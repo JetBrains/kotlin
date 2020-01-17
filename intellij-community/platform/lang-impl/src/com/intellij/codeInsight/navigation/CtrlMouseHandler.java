@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.navigation;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -18,6 +18,8 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -38,12 +40,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
-import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
-import com.intellij.openapi.progress.util.ReadTask;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -67,12 +63,14 @@ import com.intellij.usageView.UsageViewShortNameLocation;
 import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.usageView.UsageViewUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.JdkConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.concurrency.CancellablePromise;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -85,19 +83,16 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Future;
 
-public class CtrlMouseHandler {
+public final class CtrlMouseHandler {
   private static final Logger LOG = Logger.getInstance(CtrlMouseHandler.class);
 
   private final Project myProject;
-  private final EditorColorsManager myEditorColorsManager;
 
   private HighlightersSet myHighlighter;
   @JdkConstants.InputEventMask private int myStoredModifiers;
   private TooltipProvider myTooltipProvider;
-  private final DocumentationManager myDocumentationManager;
   @Nullable private Point myPrevMouseLocation;
   private LightweightHint myHint;
 
@@ -181,7 +176,7 @@ public class CtrlMouseHandler {
       Editor editor = e.getEditor();
       if (!(editor instanceof EditorEx) || editor.getProject() != null && editor.getProject() != myProject) return;
       Point point = new Point(mouseEvent.getPoint());
-      if (editor.getInlayModel().getElementAt(point) != null) {
+      if (!EditorUtil.isPointOverText(editor, point)) {
         disposeHighlighter();
         return;
       }
@@ -190,28 +185,20 @@ public class CtrlMouseHandler {
     }
   };
 
-  public CtrlMouseHandler(final Project project,
-                          StartupManager startupManager,
-                          EditorColorsManager colorsManager,
-                          @NotNull DocumentationManager documentationManager,
-                          @NotNull final EditorFactory editorFactory) {
+  public CtrlMouseHandler(@NotNull Project project) {
     myProject = project;
-    myEditorColorsManager = colorsManager;
-    startupManager.registerPostStartupActivity(new DumbAwareRunnable() {
-      @Override
-      public void run() {
-        EditorEventMulticaster eventMulticaster = editorFactory.getEventMulticaster();
-        eventMulticaster.addEditorMouseListener(myEditorMouseAdapter, project);
-        eventMulticaster.addEditorMouseMotionListener(myEditorMouseMotionListener, project);
-        eventMulticaster.addCaretListener(new CaretListener() {
-          @Override
-          public void caretPositionChanged(@NotNull CaretEvent e) {
-            if (myHint != null) {
-              myDocumentationManager.updateToolwindowContext();
-            }
+    StartupManager.getInstance(project).registerPostStartupDumbAwareActivity(() -> {
+      EditorEventMulticaster eventMulticaster = EditorFactory.getInstance().getEventMulticaster();
+      eventMulticaster.addEditorMouseListener(myEditorMouseAdapter, project);
+      eventMulticaster.addEditorMouseMotionListener(myEditorMouseMotionListener, project);
+      eventMulticaster.addCaretListener(new CaretListener() {
+        @Override
+        public void caretPositionChanged(@NotNull CaretEvent e) {
+          if (myHint != null) {
+            DocumentationManager.getInstance(myProject).updateToolwindowContext();
           }
-        }, project);
-      }
+        }
+      }, project);
     });
     project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener(){
       @Override
@@ -220,7 +207,6 @@ public class CtrlMouseHandler {
         cancelPreviousTooltip();
       }
     });
-    myDocumentationManager = documentationManager;
   }
 
   private void cancelPreviousTooltip() {
@@ -494,8 +480,7 @@ public class CtrlMouseHandler {
       final PsiElement element = TargetElementUtil.getInstance().findTargetElement(editor, ImplementationSearcher.getFlags(), offset);
       PsiElement[] targetElements = new ImplementationSearcher() {
         @Override
-        @NotNull
-        protected PsiElement[] searchDefinitions(final PsiElement element, Editor editor) {
+        protected PsiElement @NotNull [] searchDefinitions(final PsiElement element, Editor editor) {
           final List<PsiElement> found = new ArrayList<>(2);
           DefinitionsScopedSearch.search(element, getSearchScope(element, editor)).forEach(psiElement -> {
             found.add(psiElement);
@@ -643,31 +628,29 @@ public class CtrlMouseHandler {
   }
 
 
-  private class TooltipProvider {
+  private final class TooltipProvider {
     @NotNull private final EditorEx myHostEditor;
     private final int myHostOffset;
-    private final boolean myInVirtualSpace;
     private BrowseMode myBrowseMode;
     private boolean myDisposed;
-    private final ProgressIndicator myProgress = new ProgressIndicatorBase();
-    private CompletableFuture myExecutionProgress;
+    private CancellablePromise<?> myExecutionProgress;
 
     TooltipProvider(@NotNull EditorEx hostEditor, @NotNull LogicalPosition hostPos) {
       myHostEditor = hostEditor;
       myHostOffset = hostEditor.logicalPositionToOffset(hostPos);
-      myInVirtualSpace = EditorUtil.inVirtualSpace(hostEditor, hostPos);
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
     TooltipProvider(@NotNull TooltipProvider source) {
       myHostEditor = source.myHostEditor;
       myHostOffset = source.myHostOffset;
-      myInVirtualSpace = source.myInVirtualSpace;
     }
 
     void dispose() {
       myDisposed = true;
-      myProgress.cancel();
+      if (myExecutionProgress != null) {
+        myExecutionProgress.cancel();
+      }
     }
 
     BrowseMode getBrowseMode() {
@@ -679,11 +662,6 @@ public class CtrlMouseHandler {
 
       if (PsiDocumentManager.getInstance(myProject).getPsiFile(myHostEditor.getDocument()) == null) return;
 
-      if (myInVirtualSpace) {
-        disposeHighlighter();
-        return;
-      }
-
       int selStart = myHostEditor.getSelectionModel().getSelectionStart();
       int selEnd = myHostEditor.getSelectionModel().getSelectionEnd();
 
@@ -692,31 +670,20 @@ public class CtrlMouseHandler {
         return;
       }
 
-      PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(
-        () -> myExecutionProgress = ProgressIndicatorUtils.scheduleWithWriteActionPriority(myProgress, new ReadTask() {
-          @Nullable
-          @Override
-          public Continuation performInReadAction(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
-            return doExecute();
-          }
-
-          @Override
-          public void onCanceled(@NotNull ProgressIndicator indicator) {
-            LOG.debug("Highlighting was cancelled");
-          }
-        }));
+      myExecutionProgress = ReadAction
+        .nonBlocking(() -> doExecute())
+        .withDocumentsCommitted(myProject)
+        .expireWhen(() -> isTaskOutdated(myHostEditor))
+        .finishOnUiThread(ModalityState.defaultModalityState(), Runnable::run)
+        .submit(AppExecutorUtil.getAppExecutorService());
     }
 
-    private ReadTask.Continuation createDisposalContinuation() {
-      return new ReadTask.Continuation(() -> {
-        if (!isTaskOutdated(myHostEditor)) disposeHighlighter();
-      });
+    private Runnable createDisposalContinuation() {
+      return CtrlMouseHandler.this::disposeHighlighter;
     }
 
-    @Nullable
-    private ReadTask.Continuation doExecute() {
-      if (isTaskOutdated(myHostEditor)) return null;
-
+    @NotNull
+    private Runnable doExecute() {
       EditorEx editor = getPossiblyInjectedEditor();
       int offset = getOffset(editor);
 
@@ -736,10 +703,7 @@ public class CtrlMouseHandler {
       }
 
       LOG.debug("Obtained info about element under cursor");
-      return new ReadTask.Continuation(() -> {
-        if (isTaskOutdated(editor)) return;
-        addHighlighterAndShowHint(info, docInfo, editor);
-      });
+      return () -> addHighlighterAndShowHint(info, docInfo, editor);
     }
 
     @NotNull
@@ -790,7 +754,7 @@ public class CtrlMouseHandler {
       HyperlinkListener hyperlinkListener = docInfo.docProvider == null
                                    ? null
                                    : new QuickDocHyperlinkListener(docInfo.docProvider, info.myElementAtPointer);
-      Ref<Consumer<String>> newTextConsumerRef = new Ref<>();
+      Ref<Consumer<? super String>> newTextConsumerRef = new Ref<>();
       JComponent component = HintUtil.createInformationLabel(docInfo.text, hyperlinkListener, null, newTextConsumerRef);
       component.setBorder(JBUI.Borders.empty(6, 6, 5, 6));
 
@@ -801,7 +765,7 @@ public class CtrlMouseHandler {
 
       showHint(hint, editor);
 
-      Consumer<String> newTextConsumer = newTextConsumerRef.get();
+      Consumer<? super String> newTextConsumer = newTextConsumerRef.get();
       if (newTextConsumer != null) {
         updateOnPsiChanges(hint, info, newTextConsumer, docInfo.text, editor);
       }
@@ -838,47 +802,27 @@ public class CtrlMouseHandler {
       if (!hint.isVisible()) return;
       Disposable hintDisposable = Disposer.newDisposable("CtrlMouseHandler.TooltipProvider.updateOnPsiChanges");
       hint.addHintListener(__ -> Disposer.dispose(hintDisposable));
-      AtomicBoolean updating = new AtomicBoolean(false);
-      myProject.getMessageBus().connect(hintDisposable).subscribe(PsiModificationTracker.TOPIC, () -> {
-        if (updating.getAndSet(true)) return;
-        PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(() -> {
-          ProgressIndicatorBase progress = new ProgressIndicatorBase();
-          if (Disposer.isDisposed(hintDisposable)) {
-            progress.cancel();
+      myProject.getMessageBus().connect(hintDisposable).subscribe(PsiModificationTracker.TOPIC, () -> ReadAction
+        .nonBlocking(() -> {
+          try {
+            DocInfo newDocInfo = info.getInfo();
+            return (Runnable)() -> {
+              if (newDocInfo.text != null && !oldText.equals(newDocInfo.text)) {
+                updateText(newDocInfo.text, textConsumer, hint, editor);
+              }
+            };
           }
-          else {
-            Disposer.register(hintDisposable, () -> progress.cancel());
+          catch (IndexNotReadyException e) {
+            showDumbModeNotification(myProject);
+            return createDisposalContinuation();
           }
-          ProgressIndicatorUtils.scheduleWithWriteActionPriority(progress, new ReadTask() {
-            @Nullable
-            @Override
-            public Continuation performInReadAction(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
-              if (!info.isValid(editor.getDocument())) {
-                updating.set(false);
-                return null;
-              }
-              try {
-                DocInfo newDocInfo = info.getInfo();
-                return new Continuation(() -> {
-                  updating.set(false);
-                  if (newDocInfo.text != null && !oldText.equals(newDocInfo.text)) {
-                    updateText(newDocInfo.text, textConsumer, hint, editor);
-                  }
-                });
-              }
-              catch (IndexNotReadyException e) {
-                showDumbModeNotification(myProject);
-                return createDisposalContinuation();
-              }
-            }
-
-            @Override
-            public void onCanceled(@NotNull ProgressIndicator indicator) {
-              updating.set(false);
-            }
-          });
-        });
-      });
+        })
+        .finishOnUiThread(ModalityState.defaultModalityState(), Runnable::run)
+        .withDocumentsCommitted(myProject)
+        .expireWith(hintDisposable)
+        .expireWhen(() -> !info.isValid(editor.getDocument()))
+        .coalesceBy(CtrlMouseHandler.class, hint)
+        .submit(AppExecutorUtil.getAppExecutorService()));
     }
 
     public void showHint(@NotNull LightweightHint hint, @NotNull Editor editor) {
@@ -909,7 +853,7 @@ public class CtrlMouseHandler {
 
     if (!highlighterOnly || info.isNavigatable()) {
       TextAttributes attributes = info.isNavigatable()
-                                  ? myEditorColorsManager.getGlobalScheme().getAttributes(EditorColors.REFERENCE_HYPERLINK_COLOR)
+                                  ? EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.REFERENCE_HYPERLINK_COLOR)
                                   : new TextAttributes(null, HintUtil.getInformationColor(), null, null, Font.PLAIN);
       for (TextRange range : info.getRanges()) {
         TextAttributes attr = NavigationUtil.patchAttributesColor(attributes, range, editor);
@@ -928,12 +872,12 @@ public class CtrlMouseHandler {
   public boolean isCalculationInProgress() {
     TooltipProvider provider = myTooltipProvider;
     if (provider == null) return false;
-    CompletableFuture progress = provider.myExecutionProgress;
+    Future<?> progress = provider.myExecutionProgress;
     if (progress == null) return false;
     return !progress.isDone();
   }
 
-  private class HighlightersSet {
+  private final class HighlightersSet {
     @NotNull private final List<? extends RangeHighlighter> myHighlighters;
     @NotNull private final EditorEx myHighlighterView;
     @NotNull private final Info myStoredInfo;
@@ -962,7 +906,7 @@ public class CtrlMouseHandler {
     }
   }
 
-  public static class DocInfo {
+  public static final class DocInfo {
     public static final DocInfo EMPTY = new DocInfo(null, null);
 
     @Nullable public final String text;
@@ -974,7 +918,7 @@ public class CtrlMouseHandler {
     }
   }
 
-  private class QuickDocHyperlinkListener implements HyperlinkListener {
+  private final class QuickDocHyperlinkListener implements HyperlinkListener {
     @NotNull private final DocumentationProvider myProvider;
     @NotNull private final PsiElement myContext;
 
@@ -1003,7 +947,7 @@ public class CtrlMouseHandler {
           if (hint != null) {
             hint.hide(true);
           }
-          myDocumentationManager.showJavaDocInfo(targetElement, myContext, null);
+          DocumentationManager.getInstance(myProject).showJavaDocInfo(targetElement, myContext, null);
         }
       });
     }

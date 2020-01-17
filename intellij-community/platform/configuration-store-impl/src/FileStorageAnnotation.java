@@ -15,10 +15,16 @@ public class FileStorageAnnotation implements Storage {
   protected final String path;
 
   private final boolean deprecated;
+  private final Class<? extends StateSplitterEx> mySplitterClass;
 
   public FileStorageAnnotation(@NotNull String path, boolean deprecated) {
+    this(path, deprecated, StateSplitterEx.class);
+  }
+
+  public FileStorageAnnotation(@NotNull String path, boolean deprecated, Class<? extends StateSplitterEx> splitterClass) {
     this.path = path;
     this.deprecated = deprecated;
+    mySplitterClass = splitterClass;
   }
 
   @Override
@@ -62,8 +68,8 @@ public class FileStorageAnnotation implements Storage {
   }
 
   @Override
-  public Class<StateSplitterEx> stateSplitter() {
-    return StateSplitterEx.class;
+  public Class<? extends StateSplitterEx> stateSplitter() {
+    return mySplitterClass;
   }
 
   @NotNull

@@ -4,6 +4,7 @@ package com.intellij.ide.actions.searcheverywhere;
 import com.intellij.ide.SearchTopHitProvider;
 import com.intellij.ide.actions.ActivateToolWindowAction;
 import com.intellij.ide.actions.GotoActionAction;
+import com.intellij.ide.ui.OptionsSearchTopHitProvider;
 import com.intellij.ide.ui.OptionsTopHitProvider;
 import com.intellij.ide.ui.search.BooleanOptionDescription;
 import com.intellij.ide.ui.search.OptionDescription;
@@ -84,8 +85,8 @@ public class TopHitSEContributor implements SearchEverywhereContributor<Object> 
     List<SearchEverywhereCommandInfo> res = new ArrayList<>();
     final HashSet<String> found = new HashSet<>();
     for (SearchTopHitProvider provider : SearchTopHitProvider.EP_NAME.getExtensions()) {
-      if (provider instanceof OptionsTopHitProvider) {
-        final String providerId = ((OptionsTopHitProvider)provider).getId();
+      if (provider instanceof OptionsSearchTopHitProvider) {
+        final String providerId = ((OptionsSearchTopHitProvider)provider).getId();
         if (!found.contains(providerId)) {
           found.add(providerId);
           res.add(new SearchEverywhereCommandInfo(providerId, "", this));

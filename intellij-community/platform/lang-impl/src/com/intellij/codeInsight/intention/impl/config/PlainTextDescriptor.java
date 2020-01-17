@@ -19,8 +19,6 @@ package com.intellij.codeInsight.intention.impl.config;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
 /**
  * @author yole
  */
@@ -35,7 +33,7 @@ public class PlainTextDescriptor implements TextDescriptor {
 
   @Override
   @NotNull
-  public String getText() throws IOException {
+  public String getText() {
     return myText;
   }
 

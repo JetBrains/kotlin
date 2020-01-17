@@ -13,7 +13,7 @@ import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
 public class JavaModuleIndexRole extends JpsElementChildRoleBase<JavaModuleIndex> implements JpsElementParameterizedCreator<JavaModuleIndex, JpsCompilerExcludes>{
   public static final JavaModuleIndexRole INSTANCE = new JavaModuleIndexRole();
 
-  public JavaModuleIndexRole() {
+  private JavaModuleIndexRole() {
     super("java module index");
   }
 

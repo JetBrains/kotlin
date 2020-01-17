@@ -4,6 +4,7 @@ package com.intellij.execution.lineMarker;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -13,9 +14,12 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.MarkupEditorFilter;
 import com.intellij.openapi.editor.markup.MarkupEditorFilterFactory;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
+import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,41 +103,48 @@ public class RunLineMarkerProvider extends LineMarkerProviderDescriptor {
 
       return tooltip.length() == 0 ? null : tooltip.toString();
     };
-    return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), icon, Pass.LINE_MARKERS,
-                                          tooltipProvider, null,
-                                          GutterIconRenderer.Alignment.CENTER) {
-      @Override
-      public GutterIconRenderer createGutterRenderer() {
-        return new LineMarkerGutterIconRenderer<PsiElement>(this) {
-          @Override
-          public AnAction getClickAction() {
-            return null;
-          }
+    return new RunLineMarkerInfo(element, icon, tooltipProvider, actionGroup);
+  }
 
-          @Override
-          public boolean isNavigateAction() {
-            return true;
-          }
+  static class RunLineMarkerInfo extends LineMarkerInfo<PsiElement> {
+    private final DefaultActionGroup myActionGroup;
 
-          @Override
-          public ActionGroup getPopupMenuActions() {
-            return actionGroup;
-          }
-        };
-      }
+    RunLineMarkerInfo(PsiElement element, Icon icon, Function<PsiElement, String> tooltipProvider, DefaultActionGroup actionGroup) {
+      super(element, element.getTextRange(), icon, Pass.LINE_MARKERS, tooltipProvider, null, GutterIconRenderer.Alignment.CENTER);
+      myActionGroup = actionGroup;
+    }
 
-      @NotNull
-      @Override
-      public MarkupEditorFilter getEditorFilter() {
-        return MarkupEditorFilterFactory.createIsNotDiffFilter();
-      }
-    };
+    @Override
+    public GutterIconRenderer createGutterRenderer() {
+      return new LineMarkerGutterIconRenderer<PsiElement>(this) {
+        @Override
+        public AnAction getClickAction() {
+          return null;
+        }
+
+        @Override
+        public boolean isNavigateAction() {
+          return true;
+        }
+
+        @Override
+        public ActionGroup getPopupMenuActions() {
+          return myActionGroup;
+        }
+      };
+    }
+
+    @NotNull
+    @Override
+    public MarkupEditorFilter getEditorFilter() {
+      return MarkupEditorFilterFactory.createIsNotDiffFilter();
+    }
   }
 
   @NotNull
   @Override
   public String getName() {
-    return "Run line marker";
+    return ExecutionBundle.message("run.line.marker.name");
   }
 
   @Nullable
@@ -141,4 +152,17 @@ public class RunLineMarkerProvider extends LineMarkerProviderDescriptor {
   public Icon getIcon() {
     return AllIcons.RunConfigurations.TestState.Run;
   }
+
+  private static final Key<Boolean> HAS_ANYTHING_RUNNABLE = Key.create("HAS_ANYTHING_RUNNABLE");
+
+  @NotNull
+  public static ThreeState hadAnythingRunnable(@NotNull VirtualFile file) {
+    Boolean data = file.getUserData(HAS_ANYTHING_RUNNABLE);
+    return data == null ? ThreeState.UNSURE : ThreeState.fromBoolean(data);
+  }
+
+  public static void markRunnable(@NotNull VirtualFile file, boolean isRunnable) {
+    file.putUserData(HAS_ANYTHING_RUNNABLE, isRunnable);
+  }
+
 }

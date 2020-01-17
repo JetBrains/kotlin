@@ -48,7 +48,7 @@ public class PopupPositionManager {
   public static void positionPopupInBestPosition(final JBPopup hint,
                                                  @Nullable final Editor editor,
                                                  @Nullable DataContext dataContext,
-                                                 @NotNull Position... relationToExistingPopup) {
+                                                 Position @NotNull ... relationToExistingPopup) {
     final LookupEx lookup = LookupManager.getActiveLookup(editor);
     if (lookup != null && lookup.getCurrentItem() != null && lookup.getComponent().isShowing()) {
       new PositionAdjuster(lookup.getComponent()).adjust(hint, relationToExistingPopup);

@@ -18,8 +18,6 @@ package com.intellij.execution;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.PairConsumer;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +28,6 @@ import javax.swing.*;
  */
 public class ExecutionModes {
   private static final Logger LOG = Logger.getInstance(ExecutionMode.class);
-  private static final PairConsumer<ExecutionMode, String> DEFAULT_TIMEOUT_CALLBACK = (mode, presentableCmdLine) ->
-    LOG.error("Timeout (" + mode.getTimeout() + " sec) on executing: " + presentableCmdLine);
 
   /**
    * Process will be run in back ground mode
@@ -70,28 +66,12 @@ public class ExecutionModes {
    */
   public static class SameThreadMode extends ExecutionMode {
     private final int myTimeout;
-    @NotNull
-    private final PairConsumer<ExecutionMode, String> myTimeoutCallback;
 
     public SameThreadMode(final boolean cancelable,
                           @Nullable final String title2,
                           final int timeout) {
-      this(cancelable, title2, timeout, DEFAULT_TIMEOUT_CALLBACK);
-    }
-
-    /**
-     * @deprecated use a constructor without a callback. Instead of callback, override {@link ExecutionMode#onTimeout(ProcessHandler, String, ProcessOutput, Throwable)}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-    @Deprecated
-    public SameThreadMode(final boolean cancelable,
-                          @Nullable final String title2,
-                          final int timeout,
-                          @NotNull final PairConsumer<ExecutionMode, String> timeoutCallback
-    ) {
       super(cancelable, null, title2, false, false, null);
       myTimeout = timeout;
-      myTimeoutCallback = timeoutCallback;
     }
 
     public SameThreadMode(@Nullable final String title2) {
@@ -130,13 +110,6 @@ public class ExecutionModes {
       String output = "\n    stdout: " + outputCollected.getStdout() + ";\n    stderr: " + outputCollected.getStderr();
       LOG.error(new Throwable("Timeout (" + getTimeout() + " sec) on executing: " + commandLineString + "; output collected: " + output,
                               invocatorStack));
-    }
-
-    @Deprecated
-    @NotNull
-    @Override
-    public PairConsumer<ExecutionMode, String> getTimeoutCallback() {
-      return myTimeoutCallback;
     }
   }
 }

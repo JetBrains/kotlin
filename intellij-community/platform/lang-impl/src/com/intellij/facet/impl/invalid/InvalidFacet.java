@@ -18,9 +18,6 @@ package com.intellij.facet.impl.invalid;
 import com.intellij.facet.Facet;
 import com.intellij.openapi.module.Module;
 
-/**
- * @author nik
- */
 public class InvalidFacet extends Facet<InvalidFacetConfiguration> {
   public InvalidFacet(InvalidFacetType invalidFacetType,
                       Module module,

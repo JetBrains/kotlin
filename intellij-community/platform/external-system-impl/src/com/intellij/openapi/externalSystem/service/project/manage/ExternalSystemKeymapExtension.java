@@ -61,7 +61,7 @@ public class ExternalSystemKeymapExtension implements KeymapExtension {
   @Override
   public KeymapGroup createGroup(Condition<AnAction> condition, final Project project) {
     KeymapGroup result = KeymapGroupFactory.getInstance().createGroup(
-      ExternalSystemBundle.message("external.system.keymap.group"), ExternalSystemIcons.TaskGroup);
+      ExternalSystemBundle.message("external.system.keymap.group"), AllIcons.Nodes.ConfigFolder);
 
     AnAction[] externalSystemActions = ActionsTreeUtil.getActions("ExternalSystem.Actions");
     for (AnAction action : externalSystemActions) {

@@ -22,9 +22,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 
-/**
- * @author nik
- */
 class MarkAsContentRootAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     val files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)

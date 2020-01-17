@@ -148,8 +148,7 @@ public class CompilerPaths {
     return StringUtil.isEmpty(sourceDirName)? path : path + "/" + sourceDirName;
   }
 
-  @NotNull
-  public static String[] getOutputPaths(@NotNull Module[] modules) {
+  public static String @NotNull [] getOutputPaths(Module @NotNull [] modules) {
     Set<String> outputPaths = new OrderedSet<>();
     for (Module module : modules) {
       CompilerModuleExtension compilerModuleExtension = !module.isDisposed()? CompilerModuleExtension.getInstance(module) : null;

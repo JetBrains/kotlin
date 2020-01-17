@@ -44,9 +44,8 @@ public class JavaCompilerElementRetriever {
 
   private final static TokenSet FUN_EXPR = TokenSet.create(JavaElementType.LAMBDA_EXPRESSION, JavaElementType.METHOD_REF_EXPRESSION);
 
-  @NotNull
-  static PsiFunctionalExpression[] retrieveFunExpressionsByIndices(@NotNull TIntHashSet indices,
-                                                                   @NotNull PsiFileWithStubSupport psiFile) {
+  static PsiFunctionalExpression @NotNull [] retrieveFunExpressionsByIndices(@NotNull TIntHashSet indices,
+                                                                             @NotNull PsiFileWithStubSupport psiFile) {
     StubbedSpine spine = psiFile.getStubbedSpine();
 
     PsiFunctionalExpression[] result = new PsiFunctionalExpression[indices.size()];
@@ -75,9 +74,8 @@ public class JavaCompilerElementRetriever {
     return result;
   }
 
-  @NotNull
-  static PsiClass[] retrieveClassesByInternalIds(@NotNull SearchId[] internalIds,
-                                                 @NotNull PsiFileWithStubSupport psiFile) {
+  static PsiClass @NotNull [] retrieveClassesByInternalIds(SearchId @NotNull [] internalIds,
+                                                           @NotNull PsiFileWithStubSupport psiFile) {
     ClassMatcher matcher = ClassMatcher.create(internalIds);
     return ReadAction.compute(() -> matcher.retrieveClasses(psiFile));
   }
@@ -158,7 +156,7 @@ public class JavaCompilerElementRetriever {
       return false;
     }
 
-    private static ClassMatcher create(@NotNull SearchId[] internalIds) {
+    private static ClassMatcher create(SearchId @NotNull [] internalIds) {
       List<InternalNameMatcher> nameMatchers = new SmartList<>();
       TIntHashSet anonymousIndices = null;
       for (SearchId internalId : internalIds) {

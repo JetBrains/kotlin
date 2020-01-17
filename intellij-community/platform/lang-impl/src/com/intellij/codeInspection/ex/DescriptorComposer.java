@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ex;
 
@@ -21,11 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author max
- */
 public class DescriptorComposer extends HTMLComposerImpl {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.ex.DescriptorComposer");
+  private static final Logger LOG = Logger.getInstance(DescriptorComposer.class);
   private final InspectionToolPresentation myTool;
 
   public DescriptorComposer(@NotNull InspectionToolPresentation tool) {
@@ -33,7 +30,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
   }
 
   @Override
-  public void compose(StringBuffer buf, RefEntity refEntity) {
+  public void compose(@NotNull StringBuilder buf, RefEntity refEntity) {
     genPageHeader(buf, refEntity);
     if (myTool.getDescriptions(refEntity) != null) {
       appendHeading(buf, InspectionsBundle.message("inspection.problem.synopsis"));
@@ -61,8 +58,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
     }
   }
 
-  @NotNull
-  public static String[] quickFixTexts(RefEntity where, @NotNull InspectionToolPresentation toolPresentation){
+  public static String @NotNull [] quickFixTexts(RefEntity where, @NotNull InspectionToolPresentation toolPresentation){
     QuickFixAction[] quickFixes = toolPresentation.getQuickFixes(where);
     List<String> texts = new ArrayList<>();
     for (QuickFixAction quickFix : quickFixes) {
@@ -77,10 +73,10 @@ public class DescriptorComposer extends HTMLComposerImpl {
     return XmlStringUtil.isWrappedInHtml(text) ? XmlStringUtil.stripHtml(text) : StringUtil.escapeXmlEntities(text);
   }
 
-  protected void composeAdditionalDescription(@NotNull StringBuffer buf, @NotNull RefEntity refEntity) {}
+  protected void composeAdditionalDescription(@NotNull StringBuilder buf, @NotNull RefEntity refEntity) {}
 
   @Override
-  public void compose(StringBuffer buf, RefEntity refElement, CommonProblemDescriptor descriptor) {
+  public void compose(@NotNull StringBuilder buf, RefEntity refElement, CommonProblemDescriptor descriptor) {
     CommonProblemDescriptor[] descriptions = myTool.getDescriptions(refElement);
 
     int problemIdx = 0;
@@ -124,7 +120,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
     }
   }
 
-  protected void composeDescription(@NotNull CommonProblemDescriptor description, int i, @NotNull StringBuffer buf, @NotNull RefEntity refElement) {
+  protected void composeDescription(@NotNull CommonProblemDescriptor description, int i, @NotNull StringBuilder buf, @NotNull RefEntity refElement) {
     PsiElement expression = description instanceof ProblemDescriptor ? ((ProblemDescriptor)description).getPsiElement() : null;
     StringBuilder anchor = new StringBuilder();
     VirtualFile vFile = null;

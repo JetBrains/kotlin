@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.hints.presentation
 
 import com.intellij.openapi.editor.markup.TextAttributes
+import java.awt.AlphaComposite
 import java.awt.Component
 import java.awt.Graphics2D
 import javax.swing.Icon
@@ -16,7 +17,10 @@ class IconPresentation(var icon: Icon, var component: Component) : BasePresentat
     get() = icon.iconHeight
 
   override fun paint(g: Graphics2D, attributes: TextAttributes) {
-    icon.paintIcon(component, g, 0, 0)
+    val graphics = g.create() as Graphics2D
+    graphics.composite = AlphaComposite.SrcAtop.derive(1.0f)
+    icon.paintIcon(component, graphics, 0, 0)
+    graphics.dispose()
   }
 
   override fun toString(): String = "<image>"

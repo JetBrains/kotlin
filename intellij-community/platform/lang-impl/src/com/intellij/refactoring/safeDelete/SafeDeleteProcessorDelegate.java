@@ -35,7 +35,7 @@ public interface SafeDeleteProcessorDelegate {
 
   boolean handlesElement(PsiElement element);
   @Nullable
-  NonCodeUsageSearchInfo findUsages(@NotNull PsiElement element, @NotNull PsiElement[] allElementsToDelete, @NotNull List<UsageInfo> result);
+  NonCodeUsageSearchInfo findUsages(@NotNull PsiElement element, PsiElement @NotNull [] allElementsToDelete, @NotNull List<UsageInfo> result);
 
   /**
    * Called before the refactoring dialog is shown. Returns the list of elements for which the
@@ -54,7 +54,7 @@ public interface SafeDeleteProcessorDelegate {
   Collection<PsiElement> getAdditionalElementsToDelete(@NotNull PsiElement element, @NotNull Collection<PsiElement> allElementsToDelete, final boolean askUser);
 
   @Nullable
-  Collection<String> findConflicts(@NotNull PsiElement element, @NotNull PsiElement[] allElementsToDelete);
+  Collection<String> findConflicts(@NotNull PsiElement element, PsiElement @NotNull [] allElementsToDelete);
 
   /**
    * Called after the user has confirmed the refactoring. Can filter out some of the usages
@@ -65,8 +65,7 @@ public interface SafeDeleteProcessorDelegate {
    * @param usages all usages to be processed by the refactoring. 
    * @return the filtered list of usages, or null if the user has cancelled the refactoring.
    */
-  @Nullable
-  UsageInfo[] preprocessUsages(Project project, UsageInfo[] usages);
+  UsageInfo @Nullable [] preprocessUsages(Project project, UsageInfo[] usages);
 
   void prepareForDeletion(PsiElement element) throws IncorrectOperationException;
 

@@ -25,6 +25,7 @@ import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.openapi.project.Project;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
+import org.jetbrains.annotations.NotNull;
 
 public class CodeCleanupAction extends CodeInspectionAction {
 
@@ -35,7 +36,8 @@ public class CodeCleanupAction extends CodeInspectionAction {
   }
 
   @Override
-  protected void runInspections(Project project, AnalysisScope scope) {
+  protected void runInspections(@NotNull Project project,
+                                @NotNull AnalysisScope scope) {
     final InspectionProfile profile = myExternalProfile != null ? myExternalProfile : InspectionProjectProfileManager.getInstance(project)
       .getCurrentProfile();
     final InspectionManager managerEx = InspectionManager.getInstance(project);

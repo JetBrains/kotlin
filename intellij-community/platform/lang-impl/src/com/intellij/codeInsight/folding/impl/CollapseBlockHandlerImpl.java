@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class CollapseBlockHandlerImpl implements CollapseBlockHandler {
-  Logger LOG = Logger.getInstance("#com.intellij.codeInsight.folding.CollapseBlockHandler");
+  Logger LOG = Logger.getInstance(CollapseBlockHandler.class);
 
   @Override
   public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {

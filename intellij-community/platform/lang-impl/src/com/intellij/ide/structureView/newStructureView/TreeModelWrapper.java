@@ -31,14 +31,13 @@ public class TreeModelWrapper implements StructureViewModel, ProvidingTreeModel 
   }
 
   @Override
-  @NotNull
-  public Grouper[] getGroupers() {
+  public Grouper @NotNull [] getGroupers() {
     List<Grouper> filtered = filterActive(myModel.getGroupers());
     return filtered.toArray(Grouper.EMPTY_ARRAY);
   }
 
   @NotNull
-  private <T extends TreeAction> List<T> filterActive(@NotNull T[] actions) {
+  private <T extends TreeAction> List<T> filterActive(T @NotNull [] actions) {
     List<T> filtered = new ArrayList<>();
     for (T action : actions) {
       if (isFiltered(action)) filtered.add(action);
@@ -60,15 +59,13 @@ public class TreeModelWrapper implements StructureViewModel, ProvidingTreeModel 
   }
 
   @Override
-  @NotNull
-  public Sorter[] getSorters() {
+  public Sorter @NotNull [] getSorters() {
     List<Sorter> filtered = filterActive(myModel.getSorters());
     return filtered.toArray(Sorter.EMPTY_ARRAY);
   }
 
   @Override
-  @NotNull
-  public Filter[] getFilters() {
+  public Filter @NotNull [] getFilters() {
     List<Filter> filtered = filterActive(myModel.getFilters());
     return filtered.toArray(Filter.EMPTY_ARRAY);
   }

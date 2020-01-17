@@ -61,7 +61,8 @@ class ExternalProjectBuilder extends BuilderSupport {
     switch (name) {
       case 'project':
         ProjectSystemId projectSystemId = attributes.projectSystemId ?: TEST_EXTERNAL_SYSTEM_ID
-        ProjectData projectData = new ProjectData(projectSystemId, attributes.name ?: 'project', projectPath, projectPath)
+        String externalProjectPath = attributes.projectPath ?: projectPath
+        ProjectData projectData = new ProjectData(projectSystemId, attributes.name ?: 'project', projectPath, externalProjectPath)
         projectNode = new DataNode<ProjectData>(ProjectKeys.PROJECT, projectData, null)
         return projectNode
       case 'javaProject':
@@ -105,7 +106,7 @@ class ExternalProjectBuilder extends BuilderSupport {
       case 'folder':
         DataNode<ContentRootData> parentNode = current as DataNode
         ContentRootData data = parentNode.data
-        data.storePath(attributes.type, attributes.path)
+        data.storePath(attributes.type, attributes.path, attributes.packagePrefix)
         return null
         
       default: throw new IllegalArgumentException("Unexpected entry: $name")

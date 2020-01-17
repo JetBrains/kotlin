@@ -8,6 +8,7 @@ import java.io.*;
 /**
  * @author Vladislav.Soroka
  */
+@SuppressWarnings("rawtypes")
 public class DefaultSerializationService implements SerializationService {
   @Override
   public byte[] write(Object object, Class modelClazz) throws IOException {
@@ -42,7 +43,7 @@ public class DefaultSerializationService implements SerializationService {
   }
 
   @Override
-  public Class getModelClass() {
+  public Class<Object> getModelClass() {
     throw new IllegalStateException("The method should never be called for this serializer service implementation");
   }
 }

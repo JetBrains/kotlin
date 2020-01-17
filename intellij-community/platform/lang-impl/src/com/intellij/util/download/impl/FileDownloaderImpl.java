@@ -40,9 +40,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author nik
- */
 public class FileDownloaderImpl implements FileDownloader {
   private static final Logger LOG = Logger.getInstance(FileDownloaderImpl.class);
   private static final String LIB_SCHEMA = "lib://";
@@ -297,9 +294,8 @@ public class FileDownloaderImpl implements FileDownloader {
     return this;
   }
 
-  @Nullable
   @Override
-  public VirtualFile[] download() {
+  public VirtualFile @Nullable [] download() {
     List<VirtualFile> files = downloadFilesWithProgress(myDirectoryForDownloadedFilesPath, myProject, myParentComponent);
     return files != null ? VfsUtilCore.toVirtualFileArray(files) : null;
   }

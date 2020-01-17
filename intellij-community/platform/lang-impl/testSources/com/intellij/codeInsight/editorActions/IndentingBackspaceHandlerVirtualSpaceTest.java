@@ -107,10 +107,10 @@ public class IndentingBackspaceHandlerVirtualSpaceTest extends LightPlatformCode
 
   private void doTest(String textBefore, LogicalPosition caretBefore, String textAfter, LogicalPosition caretAfter) {
     configureFromFileText(getTestName(false) + ".java", textBefore);
-    myEditor.getSettings().setVirtualSpace(true);
-    myEditor.getCaretModel().moveToLogicalPosition(caretBefore);
+    getEditor().getSettings().setVirtualSpace(true);
+    getEditor().getCaretModel().moveToLogicalPosition(caretBefore);
     backspace();
     checkResultByText(textAfter);
-    assertEquals(caretAfter, myEditor.getCaretModel().getLogicalPosition());
+    assertEquals(caretAfter, getEditor().getCaretModel().getLogicalPosition());
   }
 }

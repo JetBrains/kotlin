@@ -107,6 +107,18 @@ class InlayModelWindow implements InlayModel {
   }
 
   @Override
+  public void execute(boolean batchMode, @NotNull Runnable operation) {
+    logUnsupported();
+    operation.run();
+  }
+
+  @Override
+  public boolean isInBatchMode() {
+    logUnsupported();
+    return false;
+  }
+
+  @Override
   public void addListener(@NotNull Listener listener, @NotNull Disposable disposable) {
     logUnsupported();
   }

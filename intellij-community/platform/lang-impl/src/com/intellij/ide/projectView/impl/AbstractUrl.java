@@ -46,8 +46,7 @@ public abstract class AbstractUrl {
     element.setAttribute("type", myType);
   }
 
-  @Nullable
-  public abstract Object[] createPath(Project project);
+  public abstract Object @Nullable [] createPath(Project project);
 
   @Nullable("return null if cannot recognize the element")
   public AbstractUrl createUrl(String type, String moduleName, String url){

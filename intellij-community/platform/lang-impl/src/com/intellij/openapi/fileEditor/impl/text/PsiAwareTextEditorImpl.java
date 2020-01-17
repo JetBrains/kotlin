@@ -9,6 +9,7 @@ import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.TextEditorBackgroundHighlighter;
 import com.intellij.codeInsight.daemon.impl.focusMode.FocusModePassFactory;
+import com.intellij.codeInsight.documentation.render.DocRenderPassFactory;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
@@ -22,6 +23,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Segment;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -52,6 +54,9 @@ public class PsiAwareTextEditorImpl extends TextEditorImpl {
 
     List<? extends Segment> focusZones = FocusModePassFactory.calcFocusZones(psiFile);
 
+    DocRenderPassFactory.Items items = document != null && psiFile != null && Registry.is("editor.render.doc.comments")
+                                       ? DocRenderPassFactory.calculateItemsToRender(document, psiFile) : null;
+
     return () -> {
       baseResult.run();
       Editor editor = getEditor();
@@ -65,6 +70,10 @@ public class PsiAwareTextEditorImpl extends TextEditorImpl {
         if (editor instanceof EditorImpl) {
           ((EditorImpl)editor).applyFocusMode();
         }
+      }
+
+      if (items != null) {
+        DocRenderPassFactory.applyItemsToRender(editor, myProject, items, true);
       }
 
       if (psiFile != null && psiFile.isValid()) {

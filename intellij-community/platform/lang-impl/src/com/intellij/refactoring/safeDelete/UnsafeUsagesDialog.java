@@ -43,8 +43,7 @@ public class UnsafeUsagesDialog extends DialogWrapper {
   }
 
   @Override
-  @NotNull
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     final ViewUsagesAction viewUsagesAction = new ViewUsagesAction();
 
     final Action ignoreAction = getOKAction();

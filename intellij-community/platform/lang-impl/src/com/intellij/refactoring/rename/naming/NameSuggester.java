@@ -16,7 +16,7 @@ import java.util.*;
  * @author dsl
  */
 public class NameSuggester {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.naming.NameSuggester");
+  private static final Logger LOG = Logger.getInstance(NameSuggester.class);
   private final String[] myOldClassName;
   private final String[] myNewClassName;
   private final List<OriginalToNewChange> myChanges; // sorted from right to left
@@ -31,17 +31,13 @@ public class NameSuggester {
     myNewClassName = NameUtilCore.splitNameIntoWords(newClassName);
 
     myChanges = new ArrayList<>();
-    int oldIndex = myOldClassName.length - 1;
     int oldLastMatch = myOldClassName.length;
     int newLastMatch = myNewClassName.length;
 
-    while(oldIndex >= 0) {
+    for (int oldIndex = myOldClassName.length - 1; oldIndex >= 0; oldIndex--) {
       final String patternWord = myOldClassName[oldIndex];
       final int matchingWordIndex = findInNewBackwardsFromIndex(patternWord, newLastMatch - 1);
-      if (matchingWordIndex < 0) { // no matching word
-        oldIndex--;
-      }
-      else { // matching word found
+      if (matchingWordIndex >= 0) { // matching word found
         if (oldIndex + 1 <= oldLastMatch - 1 || matchingWordIndex + 1 <= newLastMatch - 1) {
           final OriginalToNewChange change = new OriginalToNewChange(
             oldIndex + 1, oldLastMatch - 1, matchingWordIndex + 1, newLastMatch - 1);
@@ -49,7 +45,6 @@ public class NameSuggester {
         }
         oldLastMatch = oldIndex;
         newLastMatch = matchingWordIndex;
-        oldIndex--;
       }
     }
     if (0 <= oldLastMatch - 1 || 0 <= newLastMatch - 1) {

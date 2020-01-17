@@ -18,9 +18,6 @@ package org.jetbrains.jps.model.artifact.impl.elements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.artifact.elements.JpsArchivePackagingElement;
 
-/**
- * @author nik
- */
 public class JpsArchivePackagingElementImpl extends JpsCompositePackagingElementBase<JpsArchivePackagingElementImpl>
   implements JpsArchivePackagingElement {
   private String myArchiveName;

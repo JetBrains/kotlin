@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.navigationToolbar;
 
@@ -16,8 +16,8 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.util.ui.JBSwingUtilities;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -26,7 +26,7 @@ import java.awt.*;
 /**
  * @author Konstantin Bulenkov
  */
-public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
+public final class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   private JComponent myWrapperPanel;
   @NonNls public static final String NAV_BAR = "NavBar";
   @SuppressWarnings("StatefulEp")
@@ -36,7 +36,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   private final boolean myNavToolbarGroupExist;
   private JScrollPane myScrollPane;
 
-  public NavBarRootPaneExtension(Project project) {
+  public NavBarRootPaneExtension(@NotNull Project project) {
     myProject = project;
 
     myProject.getMessageBus().connect().subscribe(UISettingsListener.TOPIC, uiSettings -> toggleRunPanel(!uiSettings.getShowMainToolbar() && uiSettings.getShowNavigationBar() && !uiSettings.getPresentationMode()));
@@ -70,6 +70,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
            correctedAction instanceof CustomisedActionGroup && ((CustomisedActionGroup)correctedAction).getFirstAction() != null;
   }
 
+  @NotNull
   @Override
   public JComponent getComponent() {
     if (myWrapperPanel == null) {
@@ -85,11 +86,16 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
           return NavBarUIManager.getUI().getWrapperPanelInsets(super.getInsets());
         }
       };
-      myWrapperPanel.add(buildNavBarPanel(), BorderLayout.CENTER);
+
+      addNavigationBarPanel(myWrapperPanel);
+
       toggleRunPanel(!UISettings.getInstance().getShowMainToolbar() && !UISettings.getInstance().getPresentationMode());
     }
-
     return myWrapperPanel;
+  }
+
+  protected void addNavigationBarPanel(JComponent wrapperPanel) {
+    wrapperPanel.add(buildNavBarPanel(), BorderLayout.CENTER);
   }
 
   public static class NavBarWrapperPanel extends JPanel {
@@ -104,7 +110,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
     }
   }
 
-  private static void alignVertically(Container container) {
+  protected static void alignVertically(Container container) {
     if (container.getComponentCount() == 1) {
       Component c = container.getComponent(0);
       Insets insets = container.getInsets();
@@ -199,10 +205,6 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
 
         Rectangle rectangle = new Rectangle(0, 0, r.width + insets.left + insets.right, r.height + insets.top + insets.bottom);
         NavBarUIManager.getUI().doPaintNavBarPanel(g2d, rectangle, isMainToolbarVisible(), isUndocked());
-        if (UIUtil.isUnderAquaLookAndFeel() && isUndocked()) {
-          Rectangle bounds = getParent().getBounds();
-          NavBarUIManager.getUI().doPaintWrapperPanel(g2d, bounds, false);
-        }
 
         g2d.dispose();
       }
@@ -261,7 +263,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   }
 
   @Override
-  @NonNls
+  @NotNull
   public String getKey() {
     return NAV_BAR;
   }

@@ -905,4 +905,9 @@ class EditorWindowImpl extends com.intellij.injected.editor.EditorWindowImpl imp
   public void setCustomCursor(@NotNull Object requestor, @Nullable Cursor cursor) {
     myDelegate.setCustomCursor(requestor, cursor);
   }
+
+  @Override
+  public int getAscent() {
+    return myDelegate.getAscent();
+  }
 }

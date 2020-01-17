@@ -34,9 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author nik
- */
 public class RemoveInvalidElementsDialog extends DialogWrapper {
   private JPanel myContentPanel;
   private JPanel myMainPanel;

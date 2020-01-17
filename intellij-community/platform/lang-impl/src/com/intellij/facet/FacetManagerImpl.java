@@ -2,14 +2,10 @@
 
 package com.intellij.facet;
 
-import com.intellij.facet.impl.FacetLoadingErrorDescription;
 import com.intellij.facet.impl.FacetModelBase;
 import com.intellij.facet.impl.FacetModelImpl;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.facet.impl.invalid.InvalidFacet;
-import com.intellij.facet.impl.invalid.InvalidFacetConfiguration;
-import com.intellij.facet.impl.invalid.InvalidFacetManager;
-import com.intellij.facet.impl.invalid.InvalidFacetType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -17,34 +13,31 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ProjectLoadingErrorsNotifier;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.project.ProjectUtilCore;
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry;
 import com.intellij.openapi.roots.ProjectModelExternalSource;
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.UnknownFeaturesCollector;
-import com.intellij.openapi.util.*;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.facet.FacetManagerState;
 import org.jetbrains.jps.model.serialization.facet.FacetState;
+import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-/**
- * @author nik
- */
-@State(name = FacetManagerImpl.COMPONENT_NAME, useLoadedStateAsExisting = false)
-public final class FacetManagerImpl extends FacetManager implements ModuleComponent, PersistentStateComponent<FacetManagerState> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.facet.FacetManagerImpl");
-  @NonNls public static final String COMPONENT_NAME = "FacetManager";
+@State(name = JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME, useLoadedStateAsExisting = false)
+@ApiStatus.Internal
+public final class FacetManagerImpl extends FacetManagerBase implements ModuleComponent, PersistentStateComponent<FacetManagerState> {
+  private static final Logger LOG = Logger.getInstance(FacetManagerImpl.class);
 
   private final Module myModule;
   private final FacetManagerModel myModel = new FacetManagerModel();
@@ -69,93 +62,16 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
   }
 
   @Override
-  @NotNull
-  public Facet[] getAllFacets() {
-    return myModel.getAllFacets();
+  protected FacetModel getModel() {
+    return myModel;
   }
 
   @Override
-  @Nullable
-  public <F extends Facet> F getFacetByType(FacetTypeId<F> typeId) {
-    return myModel.getFacetByType(typeId);
+  protected Module getModule() {
+    return myModule;
   }
 
-  @Override
-  @Nullable
-  public <F extends Facet> F findFacet(final FacetTypeId<F> type, final String name) {
-    return myModel.findFacet(type, name);
-  }
-
-  @Override
-  @Nullable
-  public <F extends Facet> F getFacetByType(@NotNull final Facet underlyingFacet, final FacetTypeId<F> typeId) {
-    return myModel.getFacetByType(underlyingFacet, typeId);
-  }
-
-  @Override
-  @NotNull
-  public <F extends Facet> Collection<F> getFacetsByType(@NotNull final Facet underlyingFacet, final FacetTypeId<F> typeId) {
-    return myModel.getFacetsByType(underlyingFacet, typeId);
-  }
-
-
-  @Override
-  @NotNull
-  public <F extends Facet> Collection<F> getFacetsByType(FacetTypeId<F> typeId) {
-    return myModel.getFacetsByType(typeId);
-  }
-
-
-  @Override
-  @NotNull
-  public Facet[] getSortedFacets() {
-    return myModel.getSortedFacets();
-  }
-
-  @Override
-  @NotNull
-  public String getFacetName(@NotNull Facet facet) {
-    return myModel.getFacetName(facet);
-  }
-
-  @Override
-  @NotNull
-  public <F extends Facet, C extends FacetConfiguration> F createFacet(@NotNull final FacetType<F, C> type, @NotNull final String name, @NotNull final C configuration,
-                                                                          @Nullable final Facet underlying) {
-    final F facet = type.createFacet(myModule, name, configuration, underlying);
-    assertTrue(facet.getModule() == myModule, facet, "module");
-    assertTrue(facet.getConfiguration() == configuration, facet, "configuration");
-    assertTrue(Comparing.equal(facet.getName(), name), facet, "name");
-    assertTrue(facet.getUnderlyingFacet() == underlying, facet, "underlyingFacet");
-    return facet;
-  }
-
-  @Override
-  @NotNull
-  public <F extends Facet, C extends FacetConfiguration> F createFacet(@NotNull final FacetType<F, C> type, @NotNull final String name, @Nullable final Facet underlying) {
-    C configuration = ProjectFacetManager.getInstance(myModule.getProject()).createDefaultConfiguration(type);
-    return createFacet(type, name, configuration, underlying);
-  }
-
-  @Override
-  @NotNull
-  public <F extends Facet, C extends FacetConfiguration> F addFacet(@NotNull final FacetType<F, C> type, @NotNull final String name, @Nullable final Facet underlying) {
-    final ModifiableFacetModel model = createModifiableModel();
-    final F facet = createFacet(type, name, underlying);
-    model.addFacet(facet);
-    model.commit();
-    return facet;
-  }
-
-  private static void assertTrue(final boolean value, final Facet facet, final String parameter) {
-    if (!value) {
-      LOG.error("Facet type " + facet.getType().getClass().getName() + " violates the contract of FacetType.createFacet method about '" +
-                parameter + "' parameter");
-    }
-  }
-
-  private void addFacets(final List<? extends FacetState> facetStates, final Facet underlyingFacet, ModifiableFacetModel model) {
-
+  private void addFacets(final List<? extends FacetState> facetStates, final Facet<?> underlyingFacet, ModifiableFacetModel model) {
     FacetTypeRegistry registry = FacetTypeRegistry.getInstance();
     for (FacetState child : facetStates) {
       final String typeId = child.getFacetType();
@@ -166,11 +82,11 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
 
       final FacetType<?,?> type = registry.findFacetType(typeId);
       if (type == null) {
-        addInvalidFacet(child, model, underlyingFacet, ProjectBundle.message("error.message.unknown.facet.type.0", typeId), typeId);
+        addInvalidFacet(child, model, underlyingFacet, ProjectBundle.message("error.message.unknown.facet.type.0", typeId), true);
         continue;
       }
 
-      ModuleType moduleType = ModuleType.get(myModule);
+      ModuleType<?> moduleType = ModuleType.get(myModule);
       if (!type.isSuitableModuleType(moduleType)) {
         addInvalidFacet(child, model, underlyingFacet, ProjectBundle.message("error.message.0.facets.are.not.allowed.in.1",
                                                                       type.getPresentableName(), moduleType.getName()));
@@ -182,7 +98,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
       if (underlyingTypeId != null) {
         expectedUnderlyingType = registry.findFacetType(underlyingTypeId);
       }
-      FacetType actualUnderlyingType = underlyingFacet != null ? underlyingFacet.getType() : null;
+      FacetType<?, ?> actualUnderlyingType = underlyingFacet != null ? underlyingFacet.getType() : null;
       if (expectedUnderlyingType != null) {
         if (!expectedUnderlyingType.equals(actualUnderlyingType)) {
           addInvalidFacet(child, model, underlyingFacet, ProjectBundle.message("error.message.0.facet.must.be.placed.under.1.facet",
@@ -209,31 +125,19 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
 
   private void addInvalidFacet(final FacetState state,
                                ModifiableFacetModel model,
-                               final Facet underlyingFacet,
+                               final Facet<?> underlyingFacet,
                                final String errorMessage) {
-    addInvalidFacet(state, model, underlyingFacet, errorMessage, null);
+    addInvalidFacet(state, model, underlyingFacet, errorMessage, false);
   }
 
   private void addInvalidFacet(final FacetState state,
                                ModifiableFacetModel model,
-                               final Facet underlyingFacet,
-                               final String errorMessage,
-                               final String typeId) {
-    final InvalidFacetManager invalidFacetManager = InvalidFacetManager.getInstance(myModule.getProject());
-    final InvalidFacetType type = InvalidFacetType.getInstance();
-    final InvalidFacetConfiguration configuration = new InvalidFacetConfiguration(state, errorMessage);
-    final InvalidFacet facet = createFacet(type, StringUtil.notNullize(state.getName()), configuration, underlyingFacet);
-    model.addFacet(facet);
-    if (!invalidFacetManager.isIgnored(facet)) {
-      FacetLoadingErrorDescription description = new FacetLoadingErrorDescription(facet);
-      ProjectLoadingErrorsNotifier.getInstance(myModule.getProject()).registerError(description);
-      if (typeId != null) {
-        UnknownFeaturesCollector.getInstance(myModule.getProject()).registerUnknownFeature("com.intellij.facetType", typeId, "Facet");
-      }
-    }
+                               final Facet<?> underlyingFacet,
+                               final String errorMessage, boolean unknownType) {
+    model.addFacet(createInvalidFacet(getModule(), state, underlyingFacet, errorMessage, unknownType, true));
   }
 
-  private <F extends Facet<C>, C extends FacetConfiguration> void addFacet(final FacetType<F, C> type, final FacetState state, final Facet underlyingFacet,
+  private <F extends Facet<C>, C extends FacetConfiguration> void addFacet(final FacetType<F, C> type, final FacetState state, final Facet<?> underlyingFacet,
                                                                            final ModifiableFacetModel model) throws InvalidDataException {
     Collection<F> facetsOfThisType = underlyingFacet == null ? model.getFacetsByType(type.getId())
                                                              : model.getFacetsByType(underlyingFacet, type.getId());
@@ -257,22 +161,37 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     }
 
     if (facet == null) {
-      final C configuration = type.createDefaultConfiguration();
-      final Element config = state.getConfiguration();
-      FacetUtil.loadFacetConfiguration(configuration, config);
-      String name = state.getName();
-      facet = createFacet(type, name, configuration, underlyingFacet);
-      if (facet instanceof JDOMExternalizable) {
-        //todo[nik] remove
-        ((JDOMExternalizable)facet).readExternal(config);
-      }
-      String externalSystemId = state.getExternalSystemId();
-      if (externalSystemId != null) {
-        facet.setExternalSource(ExternalProjectSystemRegistry.getInstance().getSourceById(externalSystemId));
-      }
+      facet = createFacetFromState(getModule(), type, state, underlyingFacet);
       model.addFacet(facet);
     }
     addFacets(state.getSubFacets(), facet, model);
+  }
+
+  @ApiStatus.Internal
+  @NotNull
+  public static Facet<?> createFacetFromStateRaw(@NotNull Module module, @NotNull FacetType<?, ?> type, @NotNull FacetState state,
+                                                 @Nullable Facet<?> underlyingFacet) {
+    //noinspection unchecked
+    return createFacetFromState(module, type, state, underlyingFacet);
+  }
+
+  @NotNull
+  private static <F extends Facet<C>, C extends FacetConfiguration> F createFacetFromState(Module module, FacetType<F, C> type,
+                                                                                           FacetState state, Facet<?> underlyingFacet) {
+    C configuration = type.createDefaultConfiguration();
+    Element config = state.getConfiguration();
+    FacetUtil.loadFacetConfiguration(configuration, config);
+    String name = state.getName();
+    F facet = createFacet(module, type, name, configuration, underlyingFacet);
+    if (facet instanceof JDOMExternalizable) {
+      //todo[nik] remove
+      ((JDOMExternalizable)facet).readExternal(config);
+    }
+    String externalSystemId = state.getExternalSystemId();
+    if (externalSystemId != null) {
+      facet.setExternalSource(ExternalProjectSystemRegistry.getInstance().getSourceById(externalSystemId));
+    }
+    return facet;
   }
 
   @Override
@@ -285,7 +204,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     doLoadState(state);
   }
 
-  protected void doLoadState(@Nullable FacetManagerState state) {
+  private void doLoadState(@Nullable FacetManagerState state) {
     ModifiableFacetModel model = new FacetModelImpl(this);
     FacetManagerState importedFacetsState = myExternalSourcesStorage.getLoadedState();
     addFacets(ContainerUtil.concat(state == null ? Collections.emptyList() : state.getFacets(), importedFacetsState.getFacets()), null, model);
@@ -299,7 +218,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
   }
 
   @NotNull
-  static Predicate<Facet> getImportedFacetPredicate(@NotNull Project project) {
+  static Predicate<Facet<?>> getImportedFacetPredicate(@NotNull Project project) {
     if (ProjectUtilCore.isExternalStorageEnabled(project)) {
       //we can store imported facets in a separate component only if that component will be stored separately, otherwise we will get modified *.iml files
       return facet -> facet.getExternalSource() != null;
@@ -308,34 +227,20 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
   }
 
   @NotNull
-  FacetManagerState saveState(Predicate<? super Facet> filter) {
+  FacetManagerState saveState(Predicate<? super Facet<?>> filter) {
     FacetManagerState managerState = new FacetManagerState();
 
-    final Facet[] facets = getSortedFacets();
+    final Facet<?>[] facets = getSortedFacets();
 
-    Map<Facet, List<FacetState>> states = new HashMap<>();
+    Map<Facet<?>, List<FacetState>> states = new HashMap<>();
     states.put(null, managerState.getFacets());
 
-    for (Facet facet : facets) {
+    for (Facet<?> facet : facets) {
       if (!filter.test(facet)) continue;
-      final Facet underlyingFacet = facet.getUnderlyingFacet();
+      final Facet<?> underlyingFacet = facet.getUnderlyingFacet();
 
-      FacetState facetState = createFacetState(facet, myModule.getProject());
-      if (!(facet instanceof InvalidFacet)) {
-        final Element config;
-        try {
-          FacetConfiguration configuration = facet.getConfiguration();
-          config = FacetUtil.saveFacetConfiguration(configuration);
-          if (facet instanceof JDOMExternalizable) {
-            //todo[nik] remove
-            ((JDOMExternalizable)facet).writeExternal(config);
-          }
-        }
-        catch (WriteExternalException e) {
-          continue;
-        }
-        facetState.setConfiguration(config);
-      }
+      FacetState facetState = saveFacetConfiguration(facet);
+      if (facetState == null) continue;
 
       getOrCreateTargetFacetList(underlyingFacet, states, myModule.getProject()).add(facetState);
       states.put(facet, facetState.getSubFacets());
@@ -343,11 +248,22 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     return managerState;
   }
 
+  @ApiStatus.Internal
+  public static @Nullable FacetState saveFacetConfiguration(Facet<?> facet) {
+    FacetState facetState = createFacetState(facet, facet.getModule().getProject());
+    if (!(facet instanceof InvalidFacet)) {
+      final Element config = FacetUtil.saveFacetConfiguration(facet);
+      if (config == null) return null;
+      facetState.setConfiguration(config);
+    }
+    return facetState;
+  }
+
   /**
    * Configuration of some facet may be stored in one file, but configuration of its underlying facet may be stored in another file. For such
    * sub-facets we create parent elements which don't store configuration but only name and type.
    */
-  private static List<FacetState> getOrCreateTargetFacetList(Facet underlyingFacet, Map<Facet, List<FacetState>> states, @NotNull Project project) {
+  private static List<FacetState> getOrCreateTargetFacetList(Facet<?> underlyingFacet, Map<Facet<?>, List<FacetState>> states, @NotNull Project project) {
     List<FacetState> facetStateList = states.get(underlyingFacet);
     if (facetStateList == null) {
       FacetState state = createFacetState(underlyingFacet, project);
@@ -358,7 +274,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     return facetStateList;
   }
 
-  private static FacetState createFacetState(@NotNull Facet facet, @NotNull Project project) {
+  private static FacetState createFacetState(@NotNull Facet<?> facet, @NotNull Project project) {
     if (facet instanceof InvalidFacet) {
       return ((InvalidFacet)facet).getConfiguration().getFacetState();
     }
@@ -384,8 +300,8 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
   private void commit(final ModifiableFacetModel model, final boolean fireEvents) {
     LOG.assertTrue(!myInsideCommit, "Recursive commit");
 
-    Set<Facet> toRemove = new HashSet<>(Arrays.asList(getAllFacets()));
-    List<Facet> toAdd = new ArrayList<>();
+    Set<Facet<?>> toRemove = ContainerUtil.set(getAllFacets());
+    List<Facet<?>> toAdd = new ArrayList<>();
     List<FacetRenameInfo> toRename = new ArrayList<>();
 
     final FacetManagerListener publisher = myMessageBus.syncPublisher(FACETS_TOPIC);
@@ -393,22 +309,22 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     try {
       myInsideCommit = true;
 
-      for (Facet facet : model.getAllFacets()) {
+      for (Facet<?> facet : model.getAllFacets()) {
         boolean isNew = !toRemove.remove(facet);
         if (isNew) {
           toAdd.add(facet);
         }
       }
 
-      List<Facet> newFacets = new ArrayList<>();
-      for (Facet facet : getAllFacets()) {
+      List<Facet<?>> newFacets = new ArrayList<>();
+      for (Facet<?> facet : getAllFacets()) {
         if (!toRemove.contains(facet)) {
           newFacets.add(facet);
         }
       }
       newFacets.addAll(toAdd);
 
-      for (Facet facet : newFacets) {
+      for (Facet<?> facet : newFacets) {
         final String newName = model.getNewName(facet);
         if (newName != null && !newName.equals(facet.getName())) {
           toRename.add(new FacetRenameInfo(facet, facet.getName(), newName));
@@ -416,10 +332,10 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
       }
 
       if (fireEvents) {
-        for (Facet facet : toAdd) {
+        for (Facet<?> facet : toAdd) {
           publisher.beforeFacetAdded(facet);
         }
-        for (Facet facet : toRemove) {
+        for (Facet<?> facet : toRemove) {
           publisher.beforeFacetRemoved(facet);
         }
         for (FacetRenameInfo info : toRename) {
@@ -428,7 +344,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
       }
 
       for (FacetRenameInfo info : toRename) {
-        info.myFacet.setName(info.myNewName);
+        setFacetName(info.myFacet, info.myNewName);
       }
       myModel.setAllFacets(newFacets.toArray(Facet.EMPTY_ARRAY));
     }
@@ -437,26 +353,26 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     }
 
     if (myModuleAdded) {
-      for (Facet facet : toAdd) {
+      for (Facet<?> facet : toAdd) {
         facet.initFacet();
       }
     }
-    for (Facet facet : toRemove) {
+    for (Facet<?> facet : toRemove) {
       Disposer.dispose(facet);
     }
 
     if (fireEvents) {
-      for (Facet facet : toAdd) {
+      for (Facet<?> facet : toAdd) {
         publisher.facetAdded(facet);
       }
-      for (Facet facet : toRemove) {
+      for (Facet<?> facet : toRemove) {
         publisher.facetRemoved(facet);
       }
       for (FacetRenameInfo info : toRename) {
         publisher.facetRenamed(info.myFacet, info.myOldName);
       }
     }
-    for (Facet facet : toAdd) {
+    for (Facet<?> facet : toAdd) {
       final Module module = facet.getModule();
       if (!module.equals(myModule)) {
         LOG.error(facet + " is created for module " + module + " but added to module " + myModule);
@@ -471,7 +387,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
           }
         }
         else {
-          final Facet underlyingFacet = facet.getUnderlyingFacet();
+          final Facet<?> underlyingFacet = facet.getUnderlyingFacet();
           LOG.assertTrue(underlyingFacet != null, "Underlying facet is not specified for '" + facet.getName() + "'");
           final Collection<?> facets = getFacetsByType(underlyingFacet, type.getId());
           if (facets.size() > 1) {
@@ -482,7 +398,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
     }
   }
 
-  public void setExternalSource(Facet facet, ProjectModelExternalSource externalSource) {
+  public void setExternalSource(Facet<?> facet, ProjectModelExternalSource externalSource) {
     facet.setExternalSource(externalSource);
   }
 
@@ -494,25 +410,24 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
   public void moduleAdded() {
     if (myModuleAdded) return;
 
-    for (Facet facet : getAllFacets()) {
+    for (Facet<?> facet : getAllFacets()) {
       facet.initFacet();
     }
     myModuleAdded = true;
   }
 
   private static class FacetManagerModel extends FacetModelBase {
-    private Facet[] myAllFacets = Facet.EMPTY_ARRAY;
+    private Facet<?>[] myAllFacets = Facet.EMPTY_ARRAY;
     private final Set<ProjectModelExternalSource> myExternalSources = new LinkedHashSet<>();
 
     @Override
-    @NotNull
-    public Facet[] getAllFacets() {
+    public Facet<?> @NotNull [] getAllFacets() {
       return myAllFacets;
     }
 
-    void setAllFacets(final Facet[] allFacets) {
+    void setAllFacets(final Facet<?>[] allFacets) {
       myExternalSources.clear();
-      for (Facet facet : allFacets) {
+      for (Facet<?> facet : allFacets) {
         ContainerUtil.addIfNotNull(myExternalSources, facet.getExternalSource());
       }
       myAllFacets = allFacets;
@@ -521,11 +436,11 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
   }
 
   private static class FacetRenameInfo {
-    private final Facet myFacet;
+    private final Facet<?> myFacet;
     private final String myOldName;
     private final String myNewName;
 
-    FacetRenameInfo(final Facet facet, final String oldName, final String newName) {
+    FacetRenameInfo(final Facet<?> facet, final String oldName, final String newName) {
       myFacet = facet;
       myOldName = oldName;
       myNewName = newName;

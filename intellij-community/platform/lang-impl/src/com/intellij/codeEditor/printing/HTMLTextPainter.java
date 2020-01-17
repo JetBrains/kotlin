@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiDocumentManager;
@@ -32,7 +33,7 @@ import java.io.Writer;
 import java.util.*;
 
 public class HTMLTextPainter {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeEditor.printing.HTMLTextPainter");
+  private static final Logger LOG = Logger.getInstance(HTMLTextPainter.class);
 
   private int myOffset = 0;
   private final EditorHighlighter myHighlighter;
@@ -402,6 +403,9 @@ public class HTMLTextPainter {
       StringWriter writer = new StringWriter();
       new HTMLTextPainter(context, codeFragment).paint(null, writer, false);
       return writer.toString();
+    }
+    catch (ProcessCanceledException cancel) {
+      throw cancel;
     }
     catch (Throwable e) {
       LOG.error(e);

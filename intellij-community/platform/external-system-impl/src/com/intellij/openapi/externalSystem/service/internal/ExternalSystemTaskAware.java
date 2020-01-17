@@ -13,7 +13,7 @@ import java.util.Set;
  * 
  * @author Denis Zhdanov
  */
-public interface ExternalSystemTaskAware {
+public interface  ExternalSystemTaskAware {
 
   /**
    * Allows to check if current service executes the target task.

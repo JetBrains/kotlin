@@ -4,8 +4,14 @@
 package org.jetbrains.plugins.gradle.internal.daemon;
 
 import org.gradle.api.internal.file.DefaultFileCollectionFactory;
-import org.gradle.api.internal.file.FileCollectionFactory;
+import org.gradle.api.internal.file.IdentityFileResolver;
+import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory;
+import org.gradle.api.internal.tasks.DefaultTaskDependencyFactory;
+import org.gradle.api.tasks.util.PatternSet;
+import org.gradle.api.tasks.util.internal.PatternSets;
+import org.gradle.api.tasks.util.internal.PatternSpecFactory;
 import org.gradle.initialization.BuildLayoutParameters;
+import org.gradle.internal.Factory;
 import org.gradle.internal.logging.events.OutputEvent;
 import org.gradle.internal.logging.events.OutputEventListener;
 import org.gradle.internal.service.ServiceRegistry;
@@ -14,6 +20,7 @@ import org.gradle.launcher.daemon.configuration.DaemonParameters;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
@@ -33,24 +40,29 @@ public abstract class DaemonAction {
       layout.setGradleUserHomeDir(new File(myServiceDirectoryPath));
     }
     DaemonParameters daemonParameters = getDaemonParameters(layout);
-    return daemonClientFactory.createStopDaemonServices(new OutputEventListener() {
+    return daemonClientFactory.createBuildClientServices(new OutputEventListener() {
       @Override
       public void onOutput(OutputEvent event) { }
-    }, daemonParameters);
+    }, daemonParameters, new ByteArrayInputStream(new byte[0]));
   }
 
   @NotNull
   protected static DaemonParameters getDaemonParameters(BuildLayoutParameters layout) {
     DaemonParameters daemonParameters;
     boolean isGradle5Dot3OrNewer = GradleVersion.current().getBaseVersion().compareTo(GradleVersion.version("5.3")) >= 0;
-    if (!isGradle5Dot3OrNewer) {
-      daemonParameters = new DaemonParameters(layout);
+    if (isGradle5Dot3OrNewer) {
+      Factory<PatternSet> patternSetFactory = PatternSets.getPatternSetFactory(PatternSpecFactory.INSTANCE);
+      daemonParameters = new DaemonParameters(layout, new DefaultFileCollectionFactory(new IdentityFileResolver(patternSetFactory),
+                                                                                       DefaultTaskDependencyFactory
+                                                                                         .withNoAssociatedProject(),
+                                                                                       new DefaultDirectoryFileTreeFactory(),
+                                                                                       patternSetFactory));
     }
     else {
       try {
         //noinspection JavaReflectionMemberAccess
-        daemonParameters = DaemonParameters.class.getConstructor(BuildLayoutParameters.class, FileCollectionFactory.class)
-          .newInstance(layout, new DefaultFileCollectionFactory());
+        daemonParameters = DaemonParameters.class.getConstructor(BuildLayoutParameters.class)
+          .newInstance(layout);
       }
       catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
         throw new RuntimeException("Cannot create DaemonParameters by reflection, gradle version " + GradleVersion.current(), e);

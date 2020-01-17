@@ -25,8 +25,8 @@ public class RunAnythingHelpItem extends RunAnythingItemBase {
 
   @NotNull
   @Override
-  public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
-    JPanel component = (JPanel)super.createComponent(pattern, groupIcon, isSelected, hasFocus);
+  public Component createComponent(@Nullable String pattern, boolean isSelected, boolean hasFocus) {
+    JPanel component = (JPanel)super.createComponent(pattern, isSelected, hasFocus);
 
     SimpleColoredComponent simpleColoredComponent = new SimpleColoredComponent();
     parseAndApplyStyleToParameters(simpleColoredComponent, myPlaceholder);

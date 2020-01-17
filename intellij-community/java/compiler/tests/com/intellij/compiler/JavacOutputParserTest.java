@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
  */
 @SuppressWarnings({"HardCodedStringLiteral"})
 public class JavacOutputParserTest extends TestCase {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.JavacOutputParserTest");
+  private static final Logger LOG = Logger.getInstance(JavacOutputParserTest.class);
   private static final ResourceBundle ourBundle;
 
   static {

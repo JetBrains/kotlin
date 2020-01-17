@@ -3,6 +3,7 @@ package com.intellij.openapi.roots.libraries.ui;
 
 import com.intellij.ide.highlighter.ArchiveFileType;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -15,8 +16,6 @@ import java.util.function.Predicate;
 /**
  * Determines whether an archive or a directory can be used as a root of given type by analyzing its descending files; if there is at least one
  * file under it satisfying the given condition, it assumes that the original archive/directory can be used as a root of the given type.
- *
- * @author nik
  */
 public class DescendentBasedRootFilter extends RootFilter {
   private final Predicate<? super VirtualFile> myCondition;
@@ -31,7 +30,7 @@ public class DescendentBasedRootFilter extends RootFilter {
    */
   public static DescendentBasedRootFilter createFileTypeBasedFilter(OrderRootType rootType, boolean jarDirectory,
                                                                     @NotNull FileType fileType, String presentableRootTypeName) {
-    return new DescendentBasedRootFilter(rootType, jarDirectory, presentableRootTypeName, file -> fileType.equals(file.getFileType()));
+    return new DescendentBasedRootFilter(rootType, jarDirectory, presentableRootTypeName, file -> FileTypeRegistry.getInstance().isFileOfType(file, fileType));
   }
 
   @Override
@@ -41,7 +40,7 @@ public class DescendentBasedRootFilter extends RootFilter {
         return false;
       }
       for (VirtualFile child : rootCandidate.getChildren()) {
-        if (!child.isDirectory() && child.getFileType().equals(ArchiveFileType.INSTANCE)) {
+        if (!child.isDirectory() && FileTypeRegistry.getInstance().isFileOfType(child, ArchiveFileType.INSTANCE)) {
           final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(child);
           if (jarRoot != null && containsFileOfType(jarRoot, progressIndicator)) {
             return true;

@@ -1,14 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
+import com.intellij.build.events.MessageEvent;
+import com.intellij.build.issue.BuildIssue;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.Key;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.ExternalSystemDebugEnvironment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -18,20 +18,26 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.hash.EqualityPolicy;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
+import gnu.trove.TObjectHashingStrategy;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.tooling.model.GradleProject;
-import org.gradle.tooling.model.gradle.BasicGradleProject;
-import org.gradle.tooling.model.gradle.GradleBuild;
+import org.gradle.tooling.model.ProjectIdentifier;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.gradle.tooling.model.idea.IdeaProject;
 import org.gradle.util.GradleVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.ExternalDependencyId;
+import org.jetbrains.plugins.gradle.issue.UnresolvedDependencySyncIssue;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionWorkspace;
@@ -44,23 +50,23 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.CONFIGURATION_ARTIFACTS;
+import java.util.stream.Stream;
 
 /**
  * @author Vladislav.Soroka
  */
 public class GradleProjectResolverUtil {
   private static final Logger LOG = Logger.getInstance(GradleProjectResolverUtil.class);
-  @NotNull
-  private static final Key<Object> CONTAINER_KEY = Key.create(Object.class, ExternalSystemConstants.UNORDERED);
   public static final String BUILD_SRC_NAME = "buildSrc";
 
   @NotNull
   public static DataNode<ModuleData> createMainModule(@NotNull ProjectResolverContext resolverCtx,
                                                       @NotNull IdeaModule gradleModule,
                                                       @NotNull DataNode<ProjectData> projectDataNode) {
-    final String moduleName = gradleModule.getName();
+    final String moduleName = resolverCtx.isUseQualifiedModuleNames()
+                              ? gradleModule.getGradleProject().getName()
+                              : gradleModule.getName();
+
     if (moduleName == null) {
       throw new IllegalStateException("Module with undefined name detected: " + gradleModule);
     }
@@ -96,6 +102,7 @@ public class GradleProjectResolverUtil {
       moduleData.setGroup(externalProject.getGroup());
       moduleData.setVersion(externalProject.getVersion());
       moduleData.setDescription(externalProject.getDescription());
+      moduleData.setModuleName(moduleName);
       if (!resolverCtx.isResolveModulePerSourceSet()) {
         moduleData.setArtifacts(externalProject.getArtifacts());
         moduleData.setPublication(new ProjectId(externalProject.getGroup(),
@@ -162,15 +169,11 @@ public class GradleProjectResolverUtil {
   public static String getModuleConfigPath(@NotNull ProjectResolverContext resolverCtx,
                                            @NotNull IdeaModule gradleModule,
                                            @NotNull String rootProjectPath) {
-    GradleBuild build = resolverCtx.getExtraProject(gradleModule, GradleBuild.class);
-    if (build != null) {
-      String gradlePath = gradleModule.getGradleProject().getPath();
-      File moduleDirPath = getModuleDirPath(build, gradlePath);
-      if (moduleDirPath == null) {
-        throw new IllegalStateException(String.format("Unable to find root directory for module '%s'", gradleModule.getName()));
-      }
+    ExternalProject externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject.class);
+    if (externalProject != null) {
+      File projectDir = externalProject.getProjectDir();
       try {
-        return ExternalSystemApiUtil.toCanonicalPath(moduleDirPath.getCanonicalPath());
+        return ExternalSystemApiUtil.toCanonicalPath(projectDir.getCanonicalPath());
       }
       catch (IOException e) {
         LOG.warn("construction of the canonical path for the module fails", e);
@@ -180,44 +183,34 @@ public class GradleProjectResolverUtil {
     return GradleUtil.getConfigPath(gradleModule.getGradleProject(), rootProjectPath);
   }
 
-  /**
-   * Returns the physical path of the module's root directory (the path in the file system.)
-   * <p>
-   * It is important to note that Gradle has its own "logical" path that may or may not be equal to the physical path of a Gradle project.
-   * For example, the sub-project at ${projectRootDir}/apps/app will have the Gradle path :apps:app. Gradle also allows mapping physical
-   * paths to a different logical path. For example, in settings.gradle:
-   * <pre>
-   *   include ':app'
-   *   project(':app').projectDir = new File(rootDir, 'apps/app')
-   * </pre>
-   * In this example, sub-project at ${projectRootDir}/apps/app will have the Gradle path :app.
-   * </p>
-   *
-   * @param build contains information about the root Gradle project and its sub-projects. Such information includes the physical path of
-   *              the root Gradle project and its sub-projects.
-   * @param path  the Gradle "logical" path. This path uses colon as separator, and may or may not be equal to the physical path of a
-   *              Gradle project.
-   * @return the physical path of the module's root directory.
-   */
-  @Nullable
-  public static File getModuleDirPath(@NotNull GradleBuild build, @NotNull String path) {
-    for (BasicGradleProject project: build.getProjects()) {
-      if (project.getPath().equals(path)) {
-        return project.getProjectDirectory();
-      }
+  @NotNull
+  public static String getModuleId(@NotNull ProjectResolverContext resolverCtx, @NotNull Build build, @NotNull Project project) {
+    ProjectIdentifier projectIdentifier = project.getProjectIdentifier();
+    String gradlePath = projectIdentifier.getProjectPath();
+    String compositePrefix = "";
+    boolean isRootPath = StringUtil.isEmpty(gradlePath) || ":".equals(gradlePath);
+    if (!StringUtil.isEmpty(resolverCtx.getBuildSrcGroup())) {
+      compositePrefix = resolverCtx.getBuildSrcGroup() + (isRootPath ? ":" : ":buildSrc");
     }
-    return null;
+    else if (!isRootPath && build != resolverCtx.getModels().getMainBuild()) {
+      compositePrefix = build.getName();
+    }
+    return compositePrefix + getModuleId(gradlePath, project.getName());
   }
+
 
   @NotNull
   public static String getModuleId(@NotNull ProjectResolverContext resolverCtx, @NotNull IdeaModule gradleModule) {
     GradleProject gradleProject = gradleModule.getGradleProject();
     String gradlePath = gradleProject.getPath();
     String compositePrefix = "";
-    if (gradleModule.getProject() != resolverCtx.getModels().getIdeaProject()) {
-      if (!StringUtil.isEmpty(gradlePath) && !":".equals(gradlePath)) {
-        compositePrefix = gradleModule.getProject().getName();
-      }
+    IdeaProject ideaProject = gradleModule.getProject();
+    boolean isRootPath = StringUtil.isEmpty(gradlePath) || ":".equals(gradlePath);
+    if (!StringUtil.isEmpty(resolverCtx.getBuildSrcGroup())) {
+      compositePrefix = resolverCtx.getBuildSrcGroup() + (isRootPath ? ":" : ":buildSrc");
+    }
+    else if (!isRootPath && ideaProject != resolverCtx.getModels().getModel(IdeaProject.class)) {
+      compositePrefix = ideaProject.getName();
     }
     return compositePrefix + getModuleId(gradlePath, gradleModule.getName());
   }
@@ -363,78 +356,100 @@ public class GradleProjectResolverUtil {
   }
 
   public static void attachSourcesAndJavadocFromGradleCacheIfNeeded(File gradleUserHomeDir, LibraryData libraryData) {
+    attachSourcesAndJavadocFromGradleCacheIfNeeded(null, gradleUserHomeDir, libraryData);
+  }
+
+  private static final com.intellij.openapi.util.Key<Set<LibraryData>> LIBRARIES_CACHE =
+    com.intellij.openapi.util.Key.create("GradleProjectResolverUtil.LIBRARIES_CACHE");
+  private static final com.intellij.openapi.util.Key<Map<String, Map<LibraryPathType, List<String>>>> PATHS_CACHE =
+    com.intellij.openapi.util.Key.create("GradleProjectResolverUtil.PATHS_CACHE");
+
+  public static void attachSourcesAndJavadocFromGradleCacheIfNeeded(ProjectResolverContext context,
+                                                                    File gradleUserHomeDir,
+                                                                    LibraryData libraryData) {
     if (!libraryData.getPaths(LibraryPathType.SOURCE).isEmpty() && !libraryData.getPaths(LibraryPathType.DOC).isEmpty()) {
       return;
     }
 
-    for (String path: libraryData.getPaths(LibraryPathType.BINARY)) {
-      try {
-        final Path file = Paths.get(path);
-        if (!FileUtil.isAncestor(gradleUserHomeDir.getPath(), path, true)) continue;
-        Path binaryFileParent = file.getParent();
-        Path grandParentFile = binaryFileParent.getParent();
-
-        final boolean[] sourceFound = {false};
-        final boolean[] docFound = {false};
-        Files.walkFileTree(grandParentFile, EnumSet.noneOf(FileVisitOption.class), 2, new SimpleFileVisitor<Path>() {
-          @Override
-          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-            if (binaryFileParent.equals(dir)) {
-              return FileVisitResult.SKIP_SUBTREE;
-            }
-            return super.preVisitDirectory(dir, attrs);
-          }
-
-          @Override
-          public FileVisitResult visitFile(Path sourceCandidate, BasicFileAttributes attrs) throws IOException {
-            if (!sourceCandidate.getParent().getParent().equals(grandParentFile)) {
-              return FileVisitResult.SKIP_SIBLINGS;
-            }
-            if (attrs.isRegularFile()) {
-              if (StringUtil.endsWith(sourceCandidate.getFileName().toString(), "-sources.jar")) {
-                libraryData.addPath(LibraryPathType.SOURCE, sourceCandidate.toFile().getAbsolutePath());
-                sourceFound[0] = true;
-              }
-              else if (StringUtil.endsWith(sourceCandidate.getFileName().toString(), "-javadoc.jar")) {
-                libraryData.addPath(LibraryPathType.DOC, sourceCandidate.toFile().getAbsolutePath());
-                docFound[0] = true;
-              }
-            }
-            if (sourceFound[0] && docFound[0]) {
-              return FileVisitResult.TERMINATE;
-            }
-            return super.visitFile(file, attrs);
-          }
-        });
+    Map<String, Map<LibraryPathType, List<String>>> pathsCache = null;
+    if (context != null) {
+      // skip already processed libraries
+      Set<LibraryData> libsCache = context.getUserData(LIBRARIES_CACHE);
+      if (libsCache == null) {
+        libsCache = context.putUserDataIfAbsent(LIBRARIES_CACHE, new THashSet<>(TObjectHashingStrategy.IDENTITY));
       }
-      catch (IOException | InvalidPathException e) {
-        LOG.debug(e);
+      if (!libsCache.add(libraryData)) return;
+
+      pathsCache = context.getUserData(PATHS_CACHE);
+      if (pathsCache == null) pathsCache = context.putUserDataIfAbsent(PATHS_CACHE, new THashMap<>());
+    }
+
+    for (String path: libraryData.getPaths(LibraryPathType.BINARY)) {
+      if (!FileUtil.isAncestor(gradleUserHomeDir.getPath(), path, true)) continue;
+
+      // take already processed paths from cache
+      Map<LibraryPathType, List<String>> collectedPaths = pathsCache == null ? null : pathsCache.get(path);
+      if (collectedPaths == null) {
+        collectedPaths = new THashMap<>();
+        if (pathsCache != null) {
+          pathsCache.put(path, collectedPaths);
+        }
+        collectSourcesAndJavadocsFor(path, collectedPaths);
+      }
+
+      for (Map.Entry<LibraryPathType, List<String>> each : collectedPaths.entrySet()) {
+        for (String cachedPath : each.getValue()) {
+          libraryData.addPath(each.getKey(), cachedPath);
+        }
       }
     }
   }
 
-  @Deprecated
-  @SuppressWarnings("unchecked")
-  public static Collection<DependencyData> getIdeDependencies(@NotNull ProjectResolverContext resolverCtx,
-                                                              @NotNull DataNode<? extends ModuleData> moduleDataNode,
-                                                              @NotNull Collection<ExternalDependency> dependencies)
-    throws IllegalStateException {
+  private static void collectSourcesAndJavadocsFor(@NotNull String binaryPath, @NotNull Map<LibraryPathType, List<String>> collect) {
+    try {
+      final Path file = Paths.get(binaryPath);
+      Path binaryFileParent = file.getParent();
+      Path grandParentFile = binaryFileParent.getParent();
 
-    final DataNode<ProjectData> ideProject = ExternalSystemApiUtil.findParent(moduleDataNode, ProjectKeys.PROJECT);
-    assert ideProject != null;
+      final boolean[] sourceFound = {false};
+      final boolean[] docFound = {false};
 
-    final Map<String, Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> sourceSetMap =
-      ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS);
-    assert sourceSetMap != null;
+      Files.walkFileTree(grandParentFile, EnumSet.noneOf(FileVisitOption.class), 2, new SimpleFileVisitor<Path>() {
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+          if (binaryFileParent.equals(dir)) {
+            return FileVisitResult.SKIP_SUBTREE;
+          }
+          return super.preVisitDirectory(dir, attrs);
+        }
 
-    final Map<String, String> artifactsMap = ideProject.getUserData(CONFIGURATION_ARTIFACTS);
-    assert artifactsMap != null;
-
-    DataNode fakeNode = new DataNode(CONTAINER_KEY, moduleDataNode.getData(), null);
-    buildDependencies(resolverCtx, sourceSetMap, artifactsMap, fakeNode, dependencies, null);
-    final Collection<DataNode<?>> dataNodes =
-      ExternalSystemApiUtil.findAllRecursively(fakeNode, node -> node.getData() instanceof DependencyData);
-    return ContainerUtil.map(dataNodes, node -> (DependencyData)node.getData());
+        @Override
+        public FileVisitResult visitFile(Path sourceCandidate, BasicFileAttributes attrs) throws IOException {
+          if (!sourceCandidate.getParent().getParent().equals(grandParentFile)) {
+            return FileVisitResult.SKIP_SIBLINGS;
+          }
+          if (attrs.isRegularFile()) {
+            if (StringUtil.endsWith(sourceCandidate.getFileName().toString(), "-sources.jar")) {
+              collect.computeIfAbsent(LibraryPathType.SOURCE, type -> new SmartList<>())
+                .add(sourceCandidate.toFile().getAbsolutePath());
+              sourceFound[0] = true;
+            }
+            else if (StringUtil.endsWith(sourceCandidate.getFileName().toString(), "-javadoc.jar")) {
+              collect.computeIfAbsent(LibraryPathType.DOC, type -> new SmartList<>())
+                .add(sourceCandidate.toFile().getAbsolutePath());
+              docFound[0] = true;
+            }
+          }
+          if (sourceFound[0] && docFound[0]) {
+            return FileVisitResult.TERMINATE;
+          }
+          return super.visitFile(file, attrs);
+        }
+      });
+    }
+    catch (IOException | InvalidPathException e) {
+      LOG.debug(e);
+    }
   }
 
   public static void buildDependencies(@NotNull ProjectResolverContext resolverCtx,
@@ -465,21 +480,21 @@ public class GradleProjectResolverUtil {
             mergedDependency.setClasspathOrder(dependency.getClasspathOrder());
             mergedDependency.getDependencies().addAll(dependency.getDependencies());
 
-            mergedDependency.getFiles().addAll(ContainerUtil.packNullables(
-              ((ExternalLibraryDependency)seenDependency).getFile(), ((ExternalLibraryDependency)dependency).getFile()));
-            mergedDependency.getSources().addAll((ContainerUtil.packNullables(
-              ((ExternalLibraryDependency)seenDependency).getSource(), ((ExternalLibraryDependency)dependency).getSource())));
-            mergedDependency.getJavadoc().addAll((ContainerUtil.packNullables(
-              ((ExternalLibraryDependency)seenDependency).getJavadoc(), ((ExternalLibraryDependency)dependency).getJavadoc())));
+            ContainerUtil.addIfNotNull(mergedDependency.getFiles(), ((ExternalLibraryDependency)seenDependency).getFile());
+            ContainerUtil.addIfNotNull(mergedDependency.getFiles(), ((ExternalLibraryDependency)dependency).getFile());
+            ContainerUtil.addIfNotNull(mergedDependency.getSources(), ((ExternalLibraryDependency)seenDependency).getSource());
+            ContainerUtil.addIfNotNull(mergedDependency.getSources(), ((ExternalLibraryDependency)dependency).getSource());
+            ContainerUtil.addIfNotNull(mergedDependency.getJavadoc(), ((ExternalLibraryDependency)seenDependency).getJavadoc());
+            ContainerUtil.addIfNotNull(mergedDependency.getJavadoc(), ((ExternalLibraryDependency)dependency).getJavadoc());
 
             dependencyMap.put(dependency.getId(), mergedDependency);
             continue;
           }
           else if (seenDependency instanceof DefaultExternalMultiLibraryDependency) {
             DefaultExternalMultiLibraryDependency mergedDependency = (DefaultExternalMultiLibraryDependency)seenDependency;
-            mergedDependency.getFiles().addAll(ContainerUtil.packNullables(((ExternalLibraryDependency)dependency).getFile()));
-            mergedDependency.getSources().addAll(ContainerUtil.packNullables(((ExternalLibraryDependency)dependency).getSource()));
-            mergedDependency.getJavadoc().addAll(ContainerUtil.packNullables(((ExternalLibraryDependency)dependency).getJavadoc()));
+            ContainerUtil.addIfNotNull(mergedDependency.getFiles(), ((ExternalLibraryDependency)dependency).getFile());
+            ContainerUtil.addIfNotNull(mergedDependency.getSources(), ((ExternalLibraryDependency)dependency).getSource());
+            ContainerUtil.addIfNotNull(mergedDependency.getJavadoc(), ((ExternalLibraryDependency)dependency).getJavadoc());
             continue;
           }
         }
@@ -507,9 +522,9 @@ public class GradleProjectResolverUtil {
                                           @NotNull DataNode<? extends ExternalEntityData> ownerDataNode,
                                           @NotNull Collection<ExternalDependency> dependencies,
                                           @Nullable DataNode<ProjectData> ideProject) throws IllegalStateException {
-
+    int classpathOrderShift = 0;
     Map<ExternalDependencyId, ExternalDependency> dependencyMap = new LinkedHashMap<>();
-    for (ExternalDependency dependency: dependencies) {
+    for (ExternalDependency dependency : dependencies) {
       final ExternalDependency dep = dependencyMap.get(dependency.getId());
       if (dep instanceof AbstractExternalDependency) {
         dep.getDependencies().addAll(ContainerUtil.subtract(dependency.getDependencies(), dep.getDependencies()));
@@ -520,6 +535,7 @@ public class GradleProjectResolverUtil {
     }
 
     for (ExternalDependency dependency: dependencyMap.values()) {
+      Collection<ExternalDependency> transitiveDependencies = dependency.getDependencies();
       final ExternalDependency mergedDependency = ContainerUtil.getOrElse(mergedDependencyMap, dependency.getId(), dependency);
       DependencyScope dependencyScope = getDependencyScope(mergedDependency.getScope());
 
@@ -528,7 +544,7 @@ public class GradleProjectResolverUtil {
         ownerModule = (ModuleData)ownerDataNode.getData();
       }
       else if (ownerDataNode.getData() instanceof DependencyData) {
-        ownerModule = ((DependencyData)ownerDataNode.getData()).getOwnerModule();
+        ownerModule = ((DependencyData<?>)ownerDataNode.getData()).getOwnerModule();
       }
 
       assert ownerModule != null;
@@ -591,7 +607,7 @@ public class GradleProjectResolverUtil {
           final LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, "");
           LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
           libraryDependencyData.setScope(dependencyScope);
-          libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+          libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
           libraryDependencyData.setExported(mergedDependency.getExported());
 
           if (!projectDependency.getProjectDependencyArtifacts().isEmpty()) {
@@ -605,13 +621,17 @@ public class GradleProjectResolverUtil {
           }
         }
         else {
-          for (ProjectDependencyInfo projectDependencyInfo: projectDependencyInfos) {
+          int i = 0;
+          for (ProjectDependencyInfo projectDependencyInfo : projectDependencyInfos) {
+            if (i++ > 0 && transitiveDependencies.isEmpty()) {
+              classpathOrderShift++;
+            }
             ModuleDependencyData moduleDependencyData = new ModuleDependencyData(ownerModule, projectDependencyInfo.myModuleData);
             moduleDependencyData.setScope(dependencyScope);
             if (projectDependencyInfo.mySourceSet != null && isTestSourceSet(projectDependencyInfo.mySourceSet)) {
               moduleDependencyData.setProductionOnTestDependency(true);
             }
-            moduleDependencyData.setOrder(mergedDependency.getClasspathOrder());
+            moduleDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
             moduleDependencyData.setExported(mergedDependency.getExported());
             moduleDependencyData.setModuleDependencyArtifacts(ContainerUtil.map(projectDependencyInfo.dependencyArtifacts, File::getPath));
             depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData);
@@ -626,7 +646,7 @@ public class GradleProjectResolverUtil {
       }
       else if (mergedDependency instanceof ExternalLibraryDependency) {
         String libraryName = mergedDependency.getId().getPresentableName();
-        final LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, libraryName);
+        LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, libraryName);
         library.setArtifactId(mergedDependency.getId().getName());
         library.setGroup(mergedDependency.getId().getGroup());
         library.setVersion(mergedDependency.getId().getVersion());
@@ -642,13 +662,13 @@ public class GradleProjectResolverUtil {
         }
 
         LibraryLevel level = StringUtil.isNotEmpty(libraryName) ? LibraryLevel.PROJECT : LibraryLevel.MODULE;
-        if (StringUtil.isEmpty(libraryName) || !linkProjectLibrary(ideProject, library)) {
+        if (StringUtil.isEmpty(libraryName) || !linkProjectLibrary(resolverCtx, ideProject, library)) {
           level = LibraryLevel.MODULE;
         }
 
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
-        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         libraryDependencyData.setExported(mergedDependency.getExported());
         depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
@@ -661,7 +681,7 @@ public class GradleProjectResolverUtil {
         library.setVersion(mergedDependency.getId().getVersion());
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
-        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         libraryDependencyData.setExported(mergedDependency.getExported());
 
         for (File file: ((ExternalMultiLibraryDependency)mergedDependency).getFiles()) {
@@ -682,7 +702,7 @@ public class GradleProjectResolverUtil {
         final LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, libraryName);
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
-        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         libraryDependencyData.setExported(mergedDependency.getExported());
 
         for (File file: ((FileCollectionDependency)mergedDependency).getFiles()) {
@@ -698,14 +718,20 @@ public class GradleProjectResolverUtil {
         if (failureMessage != null) {
           library.addPath(LibraryPathType.BINARY, failureMessage);
         }
-        LibraryLevel level = linkProjectLibrary(ideProject, library) ? LibraryLevel.PROJECT : LibraryLevel.MODULE;
+
+        boolean isOfflineWork = resolverCtx.getSettings() != null && resolverCtx.getSettings().isOfflineWork();
+        BuildIssue buildIssue = new UnresolvedDependencySyncIssue(libraryName, failureMessage, resolverCtx.getProjectPath(), isOfflineWork);
+        resolverCtx.report(MessageEvent.Kind.ERROR, buildIssue);
+
+        LibraryLevel level = linkProjectLibrary(resolverCtx, ideProject, library) ? LibraryLevel.PROJECT : LibraryLevel.MODULE;
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
+        libraryDependencyData.setOrder(mergedDependency.getClasspathOrder() + classpathOrderShift);
         ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
 
-      if (depOwnerDataNode != null) {
-        doBuildDependencies(resolverCtx, sourceSetMap, artifactsMap, mergedDependencyMap, depOwnerDataNode, dependency.getDependencies(),
+      if (depOwnerDataNode != null && !transitiveDependencies.isEmpty()) {
+        doBuildDependencies(resolverCtx, sourceSetMap, artifactsMap, mergedDependencyMap, depOwnerDataNode, transitiveDependencies,
                             ideProject);
       }
     }
@@ -724,7 +750,17 @@ public class GradleProjectResolverUtil {
     return infos.stream().noneMatch((info) -> info.myModuleData.equals(data));
   }
 
+  /**
+   * @deprecated use {@link GradleProjectResolverUtil#linkProjectLibrary(ProjectResolverContext, DataNode, LibraryData)}
+   */
+  @Deprecated
   public static boolean linkProjectLibrary(@Nullable DataNode<ProjectData> ideProject, @NotNull final LibraryData library) {
+    return linkProjectLibrary(null, ideProject, library);
+  }
+
+  public static boolean linkProjectLibrary(/*@NotNull*/ ProjectResolverContext context,
+                                                        @Nullable DataNode<ProjectData> ideProject,
+                                                        @NotNull final LibraryData library) {
     if (ideProject == null) return false;
 
     String libraryName = library.getExternalName();
@@ -754,6 +790,23 @@ public class GradleProjectResolverUtil {
   public static DataNode<ModuleData> findModuleById(@Nullable final DataNode<ProjectData> projectNode, @NotNull final String path) {
     if (projectNode == null) return null;
     return ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE, node -> node.getData().getId().equals(path));
+  }
+
+  @ApiStatus.Internal
+  public static Stream<GradleProjectResolverExtension> createProjectResolvers(@Nullable ProjectResolverContext projectResolverContext) {
+    return GradleProjectResolverExtension.EP_NAME.extensions().map(extension -> {
+      try {
+        GradleProjectResolverExtension resolverExtension = extension.getClass().newInstance();
+        if (projectResolverContext != null) {
+          resolverExtension.setProjectResolverContext(projectResolverContext);
+        }
+        return resolverExtension;
+      }
+      catch (Exception e) {
+        LOG.error(e);
+      }
+      return null;
+    }).sorted(ExternalSystemApiUtil.ORDER_AWARE_COMPARATOR);
   }
 
   @Nullable

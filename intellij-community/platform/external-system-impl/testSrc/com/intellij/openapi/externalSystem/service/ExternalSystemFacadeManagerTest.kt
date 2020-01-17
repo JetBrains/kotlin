@@ -15,7 +15,7 @@ import com.intellij.openapi.externalSystem.test.ExternalSystemTestUtil.TEST_EXTE
 import com.intellij.openapi.externalSystem.test.TestExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.test.TestExternalSystemManager
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
@@ -47,7 +47,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
   }
 
   fun `test remote resolve project info`() {
-    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, listOf(SimpleTestExternalSystemManager(project)), testRootDisposable)
+    ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, listOf(SimpleTestExternalSystemManager(project)), testRootDisposable)
 
     val facadeManager: ExternalSystemFacadeManager = ServiceManager.getService(ExternalSystemFacadeManager::class.java)
     TestCase.assertNotNull(facadeManager)
@@ -56,7 +56,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
       TestCase.assertNotNull(facade)
 
       val taskId = ExternalSystemTaskId.create(TEST_EXTERNAL_SYSTEM_ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
-      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, null);
+      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, null, null);
 
       assertNotNull(projectDataNode)
       assertEquals("ExternalName", projectDataNode!!.data.externalName)
@@ -79,7 +79,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
 
     val testExternalSystemManager = CustomClassLoadingTestExternalSystemManager(project)
 
-    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME,
+    ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME,
                                     listOf(testExternalSystemManager, fakeExternalSystemManager),
                                     testRootDisposable)
 
@@ -89,7 +89,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
     try {
       val taskId = ExternalSystemTaskId.create(TEST_EXTERNAL_SYSTEM_ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
       val settings = CustomLibUrlSettings(libUrl)
-      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, settings);
+      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, settings, null);
 
       assertNotNull(projectDataNode)
       assertEquals("ExternalName", projectDataNode!!.data.externalName)

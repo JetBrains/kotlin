@@ -28,9 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
-* @author nik
-*/
 public abstract class ChooserBasedAttachRootButtonDescriptor extends AttachRootButtonDescriptor {
   public ChooserBasedAttachRootButtonDescriptor(@NotNull OrderRootType rootType, @NotNull String buttonText) {
     super(rootType, buttonText);

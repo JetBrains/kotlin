@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public interface ArtifactProblemsHolder {
   @NotNull
   PackagingElementResolvingContext getContext();
@@ -32,8 +29,8 @@ public interface ArtifactProblemsHolder {
   void registerError(@NotNull String message, @NotNull String problemTypeId);
 
   void registerError(@NotNull String message, @NotNull String problemTypeId, @Nullable List<PackagingElement<?>> pathToPlace,
-                     @NotNull ArtifactProblemQuickFix... quickFixes);
+                     ArtifactProblemQuickFix @NotNull ... quickFixes);
 
   void registerWarning(@NotNull String message, @NotNull String problemTypeId, @Nullable List<PackagingElement<?>> pathToPlace,
-                       @NotNull ArtifactProblemQuickFix... quickFixes);
+                       ArtifactProblemQuickFix @NotNull ... quickFixes);
 }

@@ -8,9 +8,12 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.paint.PaintUtil;
 import com.intellij.ui.scale.JBUIScale;
+import com.intellij.ui.scale.ScaleContext;
 import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +33,7 @@ import static com.intellij.ui.RelativeFont.SMALL;
  */
 public abstract class AbstractNavBarUI implements NavBarUI {
 
-  private final static Map<NavBarItem, Map<ImageType, BufferedImage>> myCache = new THashMap<>();
+  private final static Map<NavBarItem, Map<ImageType, ScaleContext.Cache<BufferedImage>>> myCache = new THashMap<>();
 
   private enum ImageType {
     INACTIVE, NEXT_ACTIVE, ACTIVE, INACTIVE_FLOATING, NEXT_ACTIVE_FLOATING, ACTIVE_FLOATING,
@@ -55,7 +58,7 @@ public abstract class AbstractNavBarUI implements NavBarUI {
 
   @Override
   public Color getBackground(boolean selected, boolean focused) {
-    return selected && focused ? UIUtil.getListSelectionBackground() : UIUtil.getListBackground();
+    return selected && focused ? UIUtil.getListSelectionBackground(true) : UIUtil.getListBackground();
   }
 
   @Nullable
@@ -89,31 +92,43 @@ public abstract class AbstractNavBarUI implements NavBarUI {
       }
     }
 
-    Map<ImageType, BufferedImage> cached = myCache.computeIfAbsent(item, k -> new HashMap<>());
+    // see: https://github.com/JetBrains/intellij-community/pull/1111
+    Map<ImageType, ScaleContext.Cache<BufferedImage>> cache = myCache.computeIfAbsent(item, k -> new HashMap<>());
+    ScaleContext.Cache<BufferedImage> imageCache = cache.computeIfAbsent(type, k -> new ScaleContext.Cache<>((ctx) ->
+      drawToBuffer(item, ctx, floating, toolbarVisible, selected, navbar)));
+    BufferedImage image = imageCache.getOrProvide(ScaleContext.create(g));
+    if (image == null) return;
 
-    BufferedImage image = cached.computeIfAbsent(type, k -> drawToBuffer(item, floating, toolbarVisible, selected, navbar));
+    StartupUiUtil.drawImage(g, image, 0, 0, null);
 
-    UIUtil.drawImage(g, image, 0, 0, null);
-
-    Icon icon = item.getIcon();
     final int offset = item.isFirstElement() ? getFirstElementLeftOffset() : 0;
-    final int iconOffset = getElementPadding().left + offset;
-    icon.paintIcon(item, g, iconOffset, (item.getHeight() - icon.getIconHeight()) / 2);
-    final int textOffset = icon.getIconWidth() + getElementPadding().width() + offset;
+    int textOffset = getElementPadding().width() + offset;
+    if (item.needPaintIcon()) {
+      Icon icon = item.getIcon();
+      final int iconOffset = getElementPadding().left + offset;
+      icon.paintIcon(item, g, iconOffset, (item.getHeight() - icon.getIconHeight()) / 2);
+      textOffset += icon.getIconWidth();
+    }
+
     item.doPaintText(g, textOffset);
   }
 
-  private static BufferedImage drawToBuffer(NavBarItem item, boolean floating, boolean toolbarVisible, boolean selected, NavBarPanel navbar) {
+  private static BufferedImage drawToBuffer(NavBarItem item,
+                                            ScaleContext ctx,
+                                            boolean floating,
+                                            boolean toolbarVisible,
+                                            boolean selected,
+                                            NavBarPanel navbar) {
     int w = item.getWidth();
     int h = item.getHeight();
     int offset = (w - getDecorationOffset());
     int h2 = h / 2;
 
-    BufferedImage result = UIUtil.createImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage result = UIUtil.createImage(ctx, w, h, BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.FLOOR);
 
-    Color defaultBg = UIUtil.isUnderDarcula() ? Gray._100 : JBColor.WHITE;
+    Color defaultBg = StartupUiUtil.isUnderDarcula() ? Gray._100 : JBColor.WHITE;
     final Paint bg = floating ? defaultBg : null;
-    final Color selection = UIUtil.getListSelectionBackground();
+    final Color selection = UIUtil.getListSelectionBackground(true);
 
     Graphics2D g2 = result.createGraphics();
     g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));

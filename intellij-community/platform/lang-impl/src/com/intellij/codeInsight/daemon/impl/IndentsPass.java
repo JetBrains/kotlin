@@ -143,7 +143,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     //     1. Show only active indent if it crosses soft wrap-introduced text;
     //     2. Show indent as is if it doesn't intersect with soft wrap-introduced text;
     if (selected) {
-      LinePainter2D.paint((Graphics2D)g, start.x + 2, start.y, start.x + 2, maxY - 1);
+      if (maxY > start.y) LinePainter2D.paint((Graphics2D)g, start.x + 2, start.y, start.x + 2, maxY - 1);
     }
     else {
       int y = start.y;
@@ -208,7 +208,12 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
   private long nowStamp() {
     if (!myEditor.getSettings().isIndentGuidesShown()) return -1;
     assert myDocument != null;
-    return myDocument.getModificationStamp();
+    // include tab size into stamp to make sure indent guides are recalculated on tab size change
+    return myDocument.getModificationStamp() ^ (((long)getTabSize()) << 24);
+  }
+
+  private int getTabSize() {
+    return EditorUtil.getTabSize(myEditor);
   }
 
   @Override
@@ -360,7 +365,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
 
   private class IndentsCalculator {
     @NotNull final Map<Language, TokenSet> myComments = new HashMap<>();
-    @NotNull final int[] lineIndents; // negative value means the line is empty (or contains a comment) and indent
+    final int @NotNull [] lineIndents; // negative value means the line is empty (or contains a comment) and indent
     // (denoted by absolute value) was deduced from enclosing non-empty lines
     @NotNull final CharSequence myChars;
 
@@ -376,7 +381,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     void calculate() {
       assert myDocument != null;
       final FileType fileType = myFile.getFileType();
-      int tabSize = EditorUtil.getTabSize(myEditor);
+      int tabSize = getTabSize();
 
       for (int line = 0; line < lineIndents.length; line++) {
         ProgressManager.checkCanceled();

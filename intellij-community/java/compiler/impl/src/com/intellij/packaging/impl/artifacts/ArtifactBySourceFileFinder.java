@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public abstract class ArtifactBySourceFileFinder {
   public static ArtifactBySourceFileFinder getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, ArtifactBySourceFileFinder.class);

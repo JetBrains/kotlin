@@ -21,7 +21,7 @@ public class CommonMoveUtil {
   private CommonMoveUtil() {
   }
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.move.moveClassesOrPackages.CommonMoveUtil");
+  private static final Logger LOG = Logger.getInstance(CommonMoveUtil.class);
 
   public static NonCodeUsageInfo[] retargetUsages(final UsageInfo[] usages, final Map<PsiElement, PsiElement> oldToNewElementsMapping)
     throws IncorrectOperationException {

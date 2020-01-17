@@ -15,7 +15,6 @@
  */
 package org.jetbrains.plugins.gradle.model;
 
-import org.gradle.api.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

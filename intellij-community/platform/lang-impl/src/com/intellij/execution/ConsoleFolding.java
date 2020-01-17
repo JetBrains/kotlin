@@ -24,6 +24,14 @@ public abstract class ConsoleFolding {
   }
 
   /**
+   * Return true if folded lines should not have dedicated line and should be attached to
+   * the end of the line above instead
+   */
+  public boolean shouldBeAttachedToThePreviousLine() {
+    return true;
+  }
+
+  /**
    * @param project current project
    * @param lines   lines to be folded
    * @return placeholder for lines or {@code null} if these lines should not be folded

@@ -26,10 +26,12 @@ import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.HighlighterLayer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.UsagePreviewPanel;
 import com.intellij.util.containers.ContainerUtil;
@@ -100,10 +102,13 @@ public class ProblemPreviewEditorPresentation {
         editorContainer.validate();
         UsagePreviewPanel.highlight(validUsages, editor, project, false, HighlighterLayer.SELECTION);
         if (validUsages.size() == 1) {
-          final PsiElement element = validUsages.get(0).getElement();
-          if (element != null) {
-            final TextRange range = injectedLanguageManager.injectedToHost(element, element.getTextRange());
-
+          UsageInfo usage = validUsages.get(0);
+          final PsiElement element = usage.getElement();
+          Segment range = usage.getNavigationRange();
+          if (element != null && range != null) {
+            if (injectedLanguageManager.getInjectionHost(element) != null) {
+              range = injectedLanguageManager.injectedToHost(element, new TextRange(range.getStartOffset(), range.getEndOffset()));
+            }
             final Document document = editor.getDocument();
             final int offset = Math.min(range.getEndOffset() + VIEW_ADDITIONAL_OFFSET,
                                         document.getLineEndOffset(document.getLineNumber(range.getEndOffset())));

@@ -2,7 +2,6 @@
 package com.intellij.packageDependencies;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.treeView.WeighedItem;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.psi.search.scope.packageSet.FilteredNamedScope;
@@ -12,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public final class ChangeListScope extends FilteredNamedScope implements WeighedItem {
-  public static final String NAME = IdeBundle.message("scope.modified.files");
   private static final Icon ICON = new OffsetIcon(AllIcons.Scope.ChangedFiles);
+  static final String ALL_CHANGED_FILES_SCOPE_NAME = "All Changed Files";
 
   public ChangeListScope(@NotNull ChangeListManager manager) {
-    super(NAME, AllIcons.Scope.ChangedFilesAll, 0, manager::isFileAffected);
+    super(ALL_CHANGED_FILES_SCOPE_NAME, AllIcons.Scope.ChangedFilesAll, 0, manager::isFileAffected);
   }
 
   public ChangeListScope(@NotNull ChangeListManager manager, @NotNull String name) {
@@ -48,5 +47,9 @@ public final class ChangeListScope extends FilteredNamedScope implements Weighed
   @Override
   public int getWeight() {
     return AllIcons.Scope.ChangedFilesAll == getIcon() ? 0 : 1;
+  }
+
+  public static String getNameText() {
+    return "All Changed Files";
   }
 }

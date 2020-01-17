@@ -22,7 +22,7 @@ import java.util.List;
  * @author Eugene Zhuravlev
  */
 public class FileProcessingCompilerAdapterTask implements CompileTask {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.impl.FileProcessingCompilerAdapterTask");
+  private static final Logger LOG = Logger.getInstance(FileProcessingCompilerAdapterTask.class);
 
   private final FileProcessingCompiler myCompiler;
 

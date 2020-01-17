@@ -2,9 +2,8 @@
 package com.intellij.openapi.project
 
 import com.intellij.openapi.components.BaseState
-import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.SimplePersistentStateComponent
 import com.intellij.openapi.components.State
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.util.xmlb.annotations.Property
 
 @Property(style = Property.Style.ATTRIBUTE)
@@ -13,19 +12,7 @@ class ExternalStorageConfiguration : BaseState() {
 }
 
 @State(name = "ExternalStorageConfigurationManager")
-internal class ExternalStorageConfigurationManagerImpl : PersistentStateComponent<ExternalStorageConfiguration>, ModificationTracker, ExternalStorageConfigurationManager {
-  private var state = ExternalStorageConfiguration()
-
-  override fun getModificationCount(): Long = state.modificationCount
-
-  override fun getState(): ExternalStorageConfiguration {
-    return state
-  }
-
-  override fun loadState(state: ExternalStorageConfiguration) {
-    this.state = state
-  }
-
+internal class ExternalStorageConfigurationManagerImpl : SimplePersistentStateComponent<ExternalStorageConfiguration>(ExternalStorageConfiguration()), ExternalStorageConfigurationManager {
   override fun isEnabled(): Boolean = state.enabled
 
   /**

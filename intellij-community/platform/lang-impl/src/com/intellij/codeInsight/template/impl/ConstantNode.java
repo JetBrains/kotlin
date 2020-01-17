@@ -40,12 +40,12 @@ public final class ConstantNode extends Expression {
     this(value, LookupElement.EMPTY_ARRAY);
   }
 
-  private ConstantNode(@Nullable Result value, @NotNull LookupElement... lookupElements) {
+  private ConstantNode(@Nullable Result value, LookupElement @NotNull ... lookupElements) {
     myValue = value;
     myLookupElements = lookupElements;
   }
 
-  public ConstantNode withLookupItems(@NotNull LookupElement... lookupElements) {
+  public ConstantNode withLookupItems(LookupElement @NotNull ... lookupElements) {
     return new ConstantNode(myValue, lookupElements);
   }
 
@@ -53,11 +53,11 @@ public final class ConstantNode extends Expression {
     return new ConstantNode(myValue, lookupElements.toArray(LookupElement.EMPTY_ARRAY));
   }
 
-  public ConstantNode withLookupStrings(@NotNull String... lookupElements) {
+  public ConstantNode withLookupStrings(String @NotNull ... lookupElements) {
     return new ConstantNode(myValue, ContainerUtil.map2Array(lookupElements, LookupElement.class, LookupElementBuilder::create));
   }
 
-  public ConstantNode withLookupStrings(@NotNull Collection<? extends String> lookupElements) {
+  public ConstantNode withLookupStrings(@NotNull Collection<String> lookupElements) {
     return new ConstantNode(myValue, ContainerUtil.map2Array(lookupElements, LookupElement.class, LookupElementBuilder::create));
   }
 

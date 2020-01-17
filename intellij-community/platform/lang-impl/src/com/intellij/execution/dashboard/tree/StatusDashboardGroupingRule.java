@@ -15,25 +15,22 @@
  */
 package com.intellij.execution.dashboard.tree;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.dashboard.RunDashboardGroup;
 import com.intellij.execution.dashboard.RunDashboardGroupingRule;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationStatus;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Comparator;
 
 /**
  * @author konstantin.aleev
  */
 public class StatusDashboardGroupingRule implements RunDashboardGroupingRule {
-  @NonNls private static final String NAME = "StatusDashboardGroupingRule";
+  @NonNls public static final String NAME = "StatusDashboardGroupingRule";
 
   @Override
   @NotNull
@@ -41,38 +38,18 @@ public class StatusDashboardGroupingRule implements RunDashboardGroupingRule {
     return NAME;
   }
 
-  @NotNull
-  @Override
-  public ActionPresentation getPresentation() {
-    return new ActionPresentationData(ExecutionBundle.message("run.dashboard.group.by.status.action.name"),
-                                      ExecutionBundle.message("run.dashboard.group.by.status.action.name"),
-                                      null);
-  }
-
-  @Override
-  public boolean isAlwaysEnabled() {
-    return false;
-  }
-
-  @Override
-  public boolean shouldGroupSingleNodes() {
-    return true;
-  }
-
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {
+    Project project = node.getProject();
+    if (project != null && !PropertiesComponent.getInstance(project).getBoolean(getName(), true)) {
+      return null;
+    }
     if (node instanceof RunDashboardRunConfigurationNode) {
       RunDashboardRunConfigurationNode runConfigurationNode = (RunDashboardRunConfigurationNode)node;
       RunDashboardRunConfigurationStatus status = runConfigurationNode.getStatus();
       return new RunDashboardGroupImpl<>(status, status.getName(), status.getIcon());
     }
     return null;
-  }
-
-  @Override
-  public Comparator<RunDashboardGroup> getGroupComparator() {
-    //noinspection unchecked
-    return Comparator.comparing(group -> ((RunDashboardGroupImpl<RunDashboardRunConfigurationStatus>)group).getValue().getPriority());
   }
 }

@@ -15,19 +15,22 @@
  */
 package org.jetbrains.plugins.gradle.tooling.builder
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.java.archives.Manifest
+import org.gradle.api.java.archives.internal.ManifestInternal
 import org.gradle.plugins.ear.Ear
 import org.gradle.plugins.ear.EarPlugin
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.plugins.gradle.model.ear.EarConfiguration
+import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
+import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
 import org.jetbrains.plugins.gradle.tooling.internal.ear.EarConfigurationImpl
 import org.jetbrains.plugins.gradle.tooling.internal.ear.EarModelImpl
 import org.jetbrains.plugins.gradle.tooling.internal.ear.EarResourceImpl
@@ -38,24 +41,27 @@ import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
 /**
  * @author Vladislav.Soroka
  */
-class EarModelBuilderImpl implements ModelBuilderService {
+@CompileStatic
+class EarModelBuilderImpl extends AbstractModelBuilderService {
 
   private static final String APP_DIR_PROPERTY = "appDirName"
   private SourceSetCachedFinder mySourceSetFinder = null
-  private static is4OrBetter = GradleVersion.current().baseVersion >= GradleVersion.version("4.0")
+  // Manifest.writeTo(Writer) was deprecated since 2.14.1 version
+  // https://github.com/gradle/gradle/commit/b435112d1baba787fbe4a9a6833401e837df9246
+  private static boolean is2_14_1_OrBetter = GradleVersion.current().baseVersion >= GradleVersion.version("2.14.1")
 
   @Override
   boolean canBuild(String modelName) {
-    return EarConfiguration.name.equals(modelName)
+    return EarConfiguration.name == modelName
   }
 
   @Nullable
   @Override
-  Object buildAll(String modelName, Project project) {
+  Object buildAll(String modelName, Project project, @NotNull ModelBuilderContext context) {
     final EarPlugin earPlugin = project.plugins.findPlugin(EarPlugin)
     if (earPlugin == null) return null
 
-    if(mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(project)
+    if (mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(context)
 
     final String appDirName = !project.hasProperty(APP_DIR_PROPERTY) ?
                               "src/main/application" : String.valueOf(project.property(APP_DIR_PROPERTY))
@@ -64,13 +70,13 @@ class EarModelBuilderImpl implements ModelBuilderService {
     def deployConfiguration = project.configurations.findByName(EarPlugin.DEPLOY_CONFIGURATION_NAME)
     def earlibConfiguration = project.configurations.findByName(EarPlugin.EARLIB_CONFIGURATION_NAME)
 
-    DependencyResolver dependencyResolver = new DependencyResolverImpl(project, false, false, false, mySourceSetFinder)
+    DependencyResolver dependencyResolver = new DependencyResolverImpl(project, false, false, mySourceSetFinder)
 
     def deployDependencies = dependencyResolver.resolveDependencies(deployConfiguration)
     def earlibDependencies = dependencyResolver.resolveDependencies(earlibConfiguration)
     def buildDirPath = project.getBuildDir().absolutePath
 
-    project.tasks.each { Task task ->
+    for (task in project.tasks) {
       if (task instanceof Ear) {
         final EarModelImpl earModel = new EarModelImpl(task.archiveName, appDirName, task.getLibDirName())
 
@@ -82,7 +88,9 @@ class EarModelBuilderImpl implements ModelBuilderService {
             @Override
             void visitSourcePath(String relativePath, String path) {
               def file = new File(path)
-              addPath(buildDirPath, earResources, relativePath, "", file.absolute ? file : new File(earTask.project.projectDir, path), deployConfiguration, earlibConfiguration)
+              addPath(buildDirPath, earResources, relativePath, "",
+                      file.absolute ? file : new File(earTask.project.projectDir, path),
+                      deployConfiguration, earlibConfiguration)
             }
 
             @Override
@@ -92,7 +100,8 @@ class EarModelBuilderImpl implements ModelBuilderService {
 
             @Override
             void visitFile(String relativePath, FileVisitDetails fileDetails) {
-              addPath(buildDirPath, earResources, relativePath, fileDetails.path, fileDetails.file, deployConfiguration, earlibConfiguration)
+              addPath(buildDirPath, earResources, relativePath, fileDetails.path,
+                      fileDetails.file, deployConfiguration, earlibConfiguration)
             }
           })
         }
@@ -104,7 +113,7 @@ class EarModelBuilderImpl implements ModelBuilderService {
         earModel.resources = earResources
 
         def deploymentDescriptor = earTask.deploymentDescriptor
-        if(deploymentDescriptor != null) {
+        if (deploymentDescriptor != null) {
           def writer = new StringWriter()
           deploymentDescriptor.writeTo(writer)
           earModel.deploymentDescriptor = writer.toString()
@@ -114,15 +123,17 @@ class EarModelBuilderImpl implements ModelBuilderService {
 
         Manifest manifest = earTask.manifest
         if (manifest != null) {
-          if(is4OrBetter) {
-            if(manifest instanceof org.gradle.api.java.archives.internal.ManifestInternal) {
-              ByteArrayOutputStream baos = new ByteArrayOutputStream()
-              manifest.writeTo(baos)
-              earModel.manifestContent = baos.toString(manifest.contentCharset)
+          if (is2_14_1_OrBetter) {
+            if (manifest instanceof ManifestInternal) {
+              OutputStream outputStream = new ByteArrayOutputStream()
+              writeToOutputStream(manifest, outputStream)
+              def contentCharset = (manifest as ManifestInternal).contentCharset
+              earModel.manifestContent = outputStream.toString(contentCharset)
             }
-          } else {
-            def writer = new StringWriter()
-            manifest.writeTo(writer)
+          }
+          else {
+            Writer writer = new StringWriter()
+            writeToWriter(manifest, writer)
             earModel.manifestContent = writer.toString()
           }
         }
@@ -142,15 +153,24 @@ class EarModelBuilderImpl implements ModelBuilderService {
     ).withDescription("Ear Artifacts may not be configured properly")
   }
 
-  private static addPath(
-    String buildDirPath,
-    List<EarConfiguration.EarResource> earResources,
-    String earRelativePath,
-    String fileRelativePath,
-    File file,
-    Configuration... earConfigurations) {
+  @CompileDynamic
+  private static Manifest writeToOutputStream(Manifest manifest, OutputStream outputStream) {
+    return manifest.writeTo(outputStream)
+  }
 
-    if(file.absolutePath.startsWith(buildDirPath)) return
+  @CompileDynamic
+  private static Manifest writeToWriter(Manifest manifest, StringWriter writer) {
+    return manifest.writeTo((Writer)writer)
+  }
+
+  private static boolean addPath(String buildDirPath,
+                                 List<EarConfiguration.EarResource> earResources,
+                                 String earRelativePath,
+                                 String fileRelativePath,
+                                 File file,
+                                 Configuration... earConfigurations) {
+
+    if (file.absolutePath.startsWith(buildDirPath)) return
 
     for (Configuration conf : earConfigurations) {
       if (conf.files.contains(file)) return

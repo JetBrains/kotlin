@@ -12,7 +12,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeExtension;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.impl.AbstractFileType;
 import com.intellij.openapi.util.Comparing;
@@ -92,17 +91,33 @@ public class BraceMatchingUtil {
     int offsetTokenStart = iterator.atEnd() ? -1 : iterator.getStart();
     int preOffsetTokenStart = preOffsetIterator == null || preOffsetIterator.atEnd() ? -1 : preOffsetIterator.getStart();
 
-    if (isAfterRightBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, false)) {
-      return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart());
+    if (editor.getSettings().isBlockCursor()) {
+      if (isBeforeLeftBrace && matchBrace(text, fileType, iterator, true)) {
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart());
+      }
+      else if (isBeforeRightBrace && matchBrace(text, fileType, iterator, false)) {
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart());
+      }
+      else if (isAfterRightBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, false)) {
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart());
+      }
+      else if (isAfterLeftBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, true)) {
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart());
+      }
     }
-    else if (isBeforeLeftBrace && matchBrace(text, fileType, iterator, true)) {
-      return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getEnd());
-    }
-    else if (isAfterLeftBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, true)) {
-      return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getEnd());
-    }
-    else if (isBeforeRightBrace && matchBrace(text, fileType, iterator, false)) {
-      return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart());
+    else {
+      if (isAfterRightBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, false)) {
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart());
+      }
+      else if (isBeforeLeftBrace && matchBrace(text, fileType, iterator, true)) {
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getEnd());
+      }
+      else if (isAfterLeftBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, true)) {
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getEnd());
+      }
+      else if (isBeforeRightBrace && matchBrace(text, fileType, iterator, false)) {
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart());
+      }
     }
     return null;
   }
@@ -449,11 +464,9 @@ public class BraceMatchingUtil {
     return BraceMatcherHolder.ourDefaultBraceMatcher;
   }
 
-  private static final FileTypeExtension<BraceMatcher> ourMatchers = new FileTypeExtension<>(BraceMatcher.EP_NAME.getName());
-
   @Nullable
   private static BraceMatcher getBraceMatcherByFileType(@NotNull FileType fileType) {
-    BraceMatcher matcher = ourMatchers.forFileType(fileType);
+    BraceMatcher matcher = FileTypeBraceMather.getInstance().forFileType(fileType);
     if (matcher != null) return matcher;
 
     if (fileType instanceof AbstractFileType) {

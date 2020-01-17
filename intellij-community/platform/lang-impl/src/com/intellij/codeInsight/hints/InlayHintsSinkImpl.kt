@@ -4,13 +4,13 @@ package com.intellij.codeInsight.hints
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.PresentationListener
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.InlayModel
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
-import com.intellij.util.DocumentUtil
 import gnu.trove.TIntObjectHashMap
 import java.awt.Dimension
 import java.awt.Rectangle
@@ -32,8 +32,10 @@ private class BlockElement(
   presentation: InlayPresentation
 ) : InlayHint(offset, presentation)
 
+private class HintsAtOffset(var inlineElement: InlineElement?, var blockElement: BlockElement?)
+
 class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
-  private val hints = TIntObjectHashMap<InlayHint>()
+  private val hints = TIntObjectHashMap<HintsAtOffset>()
 
   override fun addInlineElement(offset: Int, relatesToPrecedingText: Boolean, presentation: InlayPresentation) {
     addHint(InlineElement(offset, relatesToPrecedingText, presentation))
@@ -48,71 +50,117 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
   }
 
   private fun addHint(hint: InlayHint) {
-    hints.put(hint.offset, hint)
+    var hintsAtOffset = hints[hint.offset]
+    if (hintsAtOffset == null) {
+      hintsAtOffset = HintsAtOffset(null, null)
+      hints.put(hint.offset, hintsAtOffset)
+    }
+    when (hint) {
+      is InlineElement -> {
+        if (hintsAtOffset.inlineElement == null) {
+          hintsAtOffset.inlineElement = hint
+        } else {
+          logAtTheSameOffset(hint)
+        }
+      }
+      is BlockElement -> {
+        if (hintsAtOffset.blockElement == null) {
+          hintsAtOffset.blockElement = hint
+        } else {
+          logAtTheSameOffset(hint)
+        }
+      }
+    }
+  }
+
+  private fun logAtTheSameOffset(hint: InlayHint) {
+    LOG.warn("Hint added to the same offset: ${hint.offset} ${hint.presentation}")
   }
 
 
+  /**
+   * This method called every time, when it is required to update hints even for disabled providers.
+   */
   fun applyToEditor(editor: Editor,
-                    existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-                    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+                    existingHorizontalInlays: MarkList<Inlay<*>>,
+                    existingVerticalInlays: MarkList<Inlay<*>>,
                     isEnabled: Boolean) {
     val inlayModel = editor.inlayModel
     val isBulkChange = existingHorizontalInlays.size + hints.size() > BulkChangeThreshold
-    DocumentUtil.executeInBulk(editor.document, isBulkChange) {
-      updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays, isEnabled)
-      createNewHints(inlayModel)
+    EditorScrollingPositionKeeper.perform(editor, true) {
+      editor.inlayModel.execute(isBulkChange) {
+        updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays, isEnabled)
+        if (isEnabled) {
+          createNewHints(inlayModel)
+        }
+      }
     }
     hints.clear()
   }
 
   private fun createNewHints(inlayModel: InlayModel) {
-    hints.forEachEntry { offset, hint ->
-      val presentation = hint.presentation
-      val presentationRenderer = PresentationRenderer(presentation)
-      val inlay = when (hint) {
-        is InlineElement -> inlayModel.addInlineElement(offset, hint.relatesToPrecedingText, presentationRenderer)
-        is BlockElement -> inlayModel.addBlockElement(
-            offset,
-            hint.relatesToPrecedingText,
-            hint.showAbove,
-            hint.priority,
-            presentationRenderer
-          )
-      } ?: return@forEachEntry true
-      inlay.putUserData(INLAY_KEY, key)
-      presentation.addListener(InlayListener(inlay))
+    hints.forEachEntry { offset, hints ->
+      hints.inlineElement?.let {
+        createNewHint(inlayModel, it, offset)
+      }
+      hints.blockElement?.let {
+        createNewHint(inlayModel, it, offset)
+      }
       true
     }
+  }
+
+  private fun createNewHint(inlayModel: InlayModel, hint: InlayHint, offset: Int) : Inlay<PresentationRenderer>? {
+    val presentation = hint.presentation
+    val presentationRenderer = PresentationRenderer(presentation)
+    val inlay = when (hint) {
+                  is InlineElement -> inlayModel.addInlineElement(offset, hint.relatesToPrecedingText, presentationRenderer)
+                  is BlockElement -> inlayModel.addBlockElement(
+                    offset,
+                    hint.relatesToPrecedingText,
+                    hint.showAbove,
+                    hint.priority,
+                    presentationRenderer
+                  )
+                } ?: return null
+    putSettingsKey(inlay, key)
+    presentation.addListener(InlayListener(inlay))
+    return inlay
   }
 
   class InlayListener(private val inlay: Inlay<PresentationRenderer>) : PresentationListener {
     // TODO be more accurate during invalidation (requires changes in Inlay)
     override fun contentChanged(area: Rectangle) = inlay.repaint()
 
-    override fun sizeChanged(previous: Dimension, current: Dimension) = inlay.updateSize()
+    override fun sizeChanged(previous: Dimension, current: Dimension) = inlay.update()
   }
 
   private fun updateOrDeleteExistingHints(
-    existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+    existingHorizontalInlays: MarkList<Inlay<*>>,
+    existingVerticalInlays: MarkList<Inlay<*>>,
     isEnabled: Boolean
   ) {
     updateOrDeleteExistingHints(existingHorizontalInlays, true, isEnabled)
     updateOrDeleteExistingHints(existingVerticalInlays, false, isEnabled)
   }
 
-  private fun updateOrDeleteExistingHints(existingInlays: List<Inlay<EditorCustomElementRenderer>>, isInline: Boolean, isEnabled: Boolean) {
-    for (inlay in existingInlays) {
-      val inlayKey = inlay.getUserData(INLAY_KEY) as SettingsKey<*>?
-      if (inlayKey != key) continue
+  private fun updateOrDeleteExistingHints(existingInlays: MarkList<Inlay<*>>, isInline: Boolean, isEnabled: Boolean) {
+    existingInlays.iterateNonMarked { index, inlay ->
+      val inlayKey = getSettingsKey(inlay)
+      if (inlayKey != key) return@iterateNonMarked
       val offset = inlay.offset
-      val newHint = hints[offset]
-      if (newHint != null && newHint is InlineElement != isInline) continue
-      if (newHint == null || !isEnabled) {
+      val hint = when (val hintsAtOffset = hints[offset]) {
+        null -> null
+        else -> when {
+          isInline -> hintsAtOffset.inlineElement
+          else -> hintsAtOffset.blockElement
+        }
+      }
+      if (hint == null || !isEnabled) {
         Disposer.dispose(inlay)
       }
       else {
-        val newPresentation = newHint.presentation
+        val newPresentation = hint.presentation
         val renderer = inlay.renderer as PresentationRenderer
         val previousPresentation = renderer.presentation
         @Suppress("UNCHECKED_CAST")
@@ -122,12 +170,18 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
           newPresentation.fireUpdateEvent(previousPresentation.dimension())
         }
         hints.remove(offset)
+        existingInlays.mark(index)
       }
     }
   }
 
   companion object {
-    private val INLAY_KEY: Key<Any?> = Key.create("INLAY_KEY")
+    fun getSettingsKey(inlay: Inlay<*>): SettingsKey<*>? = inlay.getUserData(INLAY_KEY)
+    fun putSettingsKey(inlay: Inlay<*>, settingsKey: SettingsKey<*>) = inlay.putUserData(INLAY_KEY, settingsKey)
+    fun isProvidersInlay(inlay: Inlay<*>): Boolean = getSettingsKey(inlay) != null
+    private val INLAY_KEY: Key<SettingsKey<*>> = Key.create("INLAY_KEY")
     private const val BulkChangeThreshold = 1000
+
+    @JvmField val LOG = logger<InlayHintsSinkImpl<*>>()
   }
 }

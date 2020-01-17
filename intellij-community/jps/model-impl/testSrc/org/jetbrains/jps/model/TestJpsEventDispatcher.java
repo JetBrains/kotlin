@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author nik
- */
 class TestJpsEventDispatcher extends JpsEventDispatcherBase implements JpsEventDispatcher {
   private final List<JpsElement> myAdded = new ArrayList<>();
   private final List<JpsElement> myRemoved = new ArrayList<>();

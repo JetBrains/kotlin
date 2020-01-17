@@ -23,7 +23,7 @@ final class AutomakeCompileContext extends UserDataHolderBase implements Compile
   private final Project myProject;
   private final ProjectCompileScope myScope;
   private final MessagesContainer myMessages;
-  private final EmptyProgressIndicator myIndicator;
+  private final ProgressIndicator myIndicator;
   private final boolean myAnnotationProcessingEnabled;
 
   AutomakeCompileContext(@NotNull Project project) {
@@ -71,8 +71,7 @@ final class AutomakeCompileContext extends UserDataHolderBase implements Compile
   }
 
   @Override
-  @NotNull
-  public CompilerMessage[] getMessages(@NotNull CompilerMessageCategory category) {
+  public CompilerMessage @NotNull [] getMessages(@NotNull CompilerMessageCategory category) {
     return myMessages.getMessages(category).toArray(CompilerMessage.EMPTY_ARRAY);
   }
 

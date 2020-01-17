@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.template.impl;
 
@@ -8,6 +8,7 @@ import com.intellij.openapi.options.SchemeElement;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -73,8 +74,8 @@ public class TemplateImpl extends Template implements SchemeElement {
   @NonNls private static final String SELECTION_END = "SELECTION_END";
   @NonNls public static final String ARG = "ARG";
 
-  public static final Set<String> INTERNAL_VARS_SET = new THashSet<>(Arrays.asList(
-    END, SELECTION, SELECTION_START, SELECTION_END));
+  public static final Set<String> INTERNAL_VARS_SET = ContainerUtil.set(
+    END, SELECTION, SELECTION_START, SELECTION_END);
 
   private boolean isDeactivated;
 
@@ -437,7 +438,17 @@ public class TemplateImpl extends Template implements SchemeElement {
     for (Segment v : mySegments) {
       if (SELECTION.equals(v.name)) return true;
     }
+    return ContainerUtil.exists(getVariables(),
+                                v -> containsSelection(v.getExpression()) || containsSelection(v.getDefaultValueExpression()));
+  }
 
+  private static boolean containsSelection(Expression expression) {
+    if (expression instanceof VariableNode) {
+      return SELECTION.equals(((VariableNode)expression).getName());
+    }
+    if (expression instanceof MacroCallNode) {
+      return ContainerUtil.exists(((MacroCallNode)expression).getParameters(), TemplateImpl::containsSelection);
+    }
     return false;
   }
 
@@ -484,6 +495,12 @@ public class TemplateImpl extends Template implements SchemeElement {
 
   public ArrayList<Variable> getVariables() {
     return new ArrayList<>(myVariables);
+  }
+
+  void dropParsedData() {
+    for (Variable variable : myVariables) {
+      variable.dropParsedData();
+    }
   }
 
   @SuppressWarnings("unused")

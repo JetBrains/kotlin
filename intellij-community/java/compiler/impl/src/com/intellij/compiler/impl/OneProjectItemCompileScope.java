@@ -1,12 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.impl;
 
+import com.intellij.compiler.ModuleSourceSet;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.ExportableUserDataHolderBase;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -17,10 +17,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class OneProjectItemCompileScope extends ExportableUserDataHolderBase implements CompileScope{
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.impl.OneProjectItemCompileScope");
+  private static final Logger LOG = Logger.getInstance(OneProjectItemCompileScope.class);
   private final Project myProject;
   private final VirtualFile myFile;
   private final String myUrl;
@@ -33,8 +35,7 @@ public class OneProjectItemCompileScope extends ExportableUserDataHolderBase imp
   }
 
   @Override
-  @NotNull
-  public VirtualFile[] getFiles(final FileType fileType, final boolean inSourceOnly) {
+  public VirtualFile @NotNull [] getFiles(final FileType fileType, final boolean inSourceOnly) {
     final List<VirtualFile> files = new ArrayList<>(1);
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     final ContentIterator iterator = new CompilerContentIterator(fileType, projectFileIndex, inSourceOnly, files);
@@ -56,14 +57,30 @@ public class OneProjectItemCompileScope extends ExportableUserDataHolderBase imp
   }
 
   @Override
-  @NotNull
-  public Module[] getAffectedModules() {
-    final Module module = ModuleUtilCore.findModuleForFile(myFile, myProject);
-    if (module == null) {
-      LOG.error("Module is null for file " + myFile.getPresentableUrl());
+  public Module @NotNull [] getAffectedModules() {
+    final Collection<ModuleSourceSet> sets = getAffectedSourceSets();
+    if (sets.isEmpty()) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Module is null for file " + myFile.getPresentableUrl());
+      }
       return Module.EMPTY_ARRAY;
     }
-    return new Module[] {module};
+    return new Module[] {sets.iterator().next().getModule()};
   }
 
+  @Override
+  public Collection<ModuleSourceSet> getAffectedSourceSets() {
+    if (myProject.isDefault()) {
+      return Collections.emptyList();
+    }
+    final ProjectFileIndex index = ProjectFileIndex.getInstance(myProject);
+    final Module module = index.getModuleForFile(myFile);
+    if (module == null) {
+      return Collections.emptyList();
+    }
+    return Collections.singleton(new ModuleSourceSet(
+      module,
+      index.isInTestSourceContent(myFile)? ModuleSourceSet.Type.TEST : ModuleSourceSet.Type.PRODUCTION
+    ));
+  }
 }

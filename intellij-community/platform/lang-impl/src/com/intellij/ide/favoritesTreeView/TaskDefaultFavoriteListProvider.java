@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2012 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.ide.dnd.aware.DnDAwareTree;
@@ -128,8 +114,8 @@ public class TaskDefaultFavoriteListProvider extends AbstractFavoritesListProvid
   //        if (parent instanceof ProjectViewNodeWithChildrenList) {
   //          // add through manager
   //          //((ProjectViewNodeWithChildrenList)parent).addChildBefore(noteNode, treeNode);
-  //          final List<AbstractTreeNode> pathToSelected = FavoritesTreeUtil.getLogicalPathToSelected(tree);
-  //          final List<AbstractTreeNode> elements;
+  //          final List<AbstractTreeNode<?>> pathToSelected = FavoritesTreeUtil.getLogicalPathToSelected(tree);
+  //          final List<AbstractTreeNode<?>> elements;
   //          AbstractTreeNode sibling;
   //          if (pathToSelected.isEmpty()) {
   //            elements = pathToSelected;
@@ -141,7 +127,7 @@ public class TaskDefaultFavoriteListProvider extends AbstractFavoritesListProvid
   //          }
   //          favoritesManager.addRoot(CURRENT_TASK, elements, noteNode, sibling);
   //        } else if (parent instanceof FavoritesListNode) {
-  //          favoritesManager.addRoot(CURRENT_TASK, Collections.<AbstractTreeNode>emptyList(), noteNode, treeNode);
+  //          favoritesManager.addRoot(CURRENT_TASK, Collections.<AbstractTreeNode<?>>emptyList(), noteNode, treeNode);
   //        }
   //      }
   //    };
@@ -153,8 +139,8 @@ public class TaskDefaultFavoriteListProvider extends AbstractFavoritesListProvid
   //}
 
   // ! containing self
-  public static List<AbstractTreeNode> getPathToUsualNode(final AbstractTreeNode treeNode) {
-    final List<AbstractTreeNode> result = new ArrayList<>();
+  public static List<AbstractTreeNode<?>> getPathToUsualNode(final AbstractTreeNode treeNode) {
+    final List<AbstractTreeNode<?>> result = new ArrayList<>();
     AbstractTreeNode current = treeNode;
     while (current != null && (!(current instanceof FavoritesRootNode))) {
       result.add(current);
@@ -164,10 +150,10 @@ public class TaskDefaultFavoriteListProvider extends AbstractFavoritesListProvid
     return result;
   }
 
-  public static List<AbstractTreeNode> getPathToUsualNode(final AbstractTreeNode treeNode, final Tree tree) {
+  public static List<AbstractTreeNode<?>> getPathToUsualNode(final AbstractTreeNode treeNode, final Tree tree) {
     final AbstractTreeNode parent = treeNode.getParent();
     if (parent instanceof ProjectViewNodeWithChildrenList) {
-      final List<AbstractTreeNode> pathToSelected = FavoritesTreeUtil.getLogicalPathToSelected(tree);
+      final List<AbstractTreeNode<?>> pathToSelected = FavoritesTreeUtil.getLogicalPathToSelected(tree);
       if (pathToSelected.isEmpty()) {
         return pathToSelected;
       }

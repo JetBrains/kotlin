@@ -79,14 +79,12 @@ public abstract class FileTemplateManager{
    */
   public abstract FileTemplatesScheme getProjectScheme();
 
-  @NotNull
-  public abstract FileTemplate[] getTemplates(@NotNull String category);
+  public abstract FileTemplate @NotNull [] getTemplates(@NotNull String category);
 
   /**
    *  Returns all templates from "Default" category.
    */
-  @NotNull
-  public abstract FileTemplate[] getAllTemplates();
+  public abstract FileTemplate @NotNull [] getAllTemplates();
 
   public abstract FileTemplate getTemplate(@NotNull @NonNls String templateName);
 
@@ -125,22 +123,29 @@ public abstract class FileTemplateManager{
   public abstract FileTemplate getInternalTemplate(@NotNull @NonNls String templateName);
   public abstract FileTemplate findInternalTemplate(@NotNull @NonNls String templateName);
 
-  @NotNull 
-  public abstract FileTemplate[] getInternalTemplates();
+  public abstract FileTemplate @NotNull [] getInternalTemplates();
 
+  /**
+   * @param templateName template name
+   * @return a template by name
+   * @throws IllegalStateException if template is not found
+   */
   @NotNull
   public abstract FileTemplate getJ2eeTemplate(@NotNull @NonNls String templateName);
+
+  /**
+   * @param templateName template name
+   * @return a template by name
+   * @throws IllegalStateException if template is not found
+   */
   @NotNull
   public abstract FileTemplate getCodeTemplate(@NotNull @NonNls String templateName);
 
-  @NotNull 
-  public abstract FileTemplate[] getAllPatterns();
+  public abstract FileTemplate @NotNull [] getAllPatterns();
 
-  @NotNull 
-  public abstract FileTemplate[] getAllCodeTemplates();
+  public abstract FileTemplate @NotNull [] getAllCodeTemplates();
   
-  @NotNull 
-  public abstract FileTemplate[] getAllJ2eeTemplates();
+  public abstract FileTemplate @NotNull [] getAllJ2eeTemplates();
 
   @NotNull
   public abstract String internalTemplateToSubject(@NotNull @NonNls String templateName);

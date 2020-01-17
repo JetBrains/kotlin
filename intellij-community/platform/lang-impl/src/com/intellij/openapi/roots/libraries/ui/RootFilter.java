@@ -25,8 +25,6 @@ import java.util.Collections;
 
 /**
  * Base class for {@link RootDetector}'s implementations which can accept only file selected by user but not its descendants
- *
- * @author nik
  */
 public abstract class RootFilter extends RootDetector {
   public RootFilter(OrderRootType rootType, boolean jarDirectory, final String presentableRootTypeName) {

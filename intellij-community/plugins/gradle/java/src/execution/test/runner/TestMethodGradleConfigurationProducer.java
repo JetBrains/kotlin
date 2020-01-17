@@ -130,7 +130,7 @@ public class TestMethodGradleConfigurationProducer extends GradleTestRunConfigur
                                                    @NotNull ConfigurationContext context,
                                                    @NotNull Runnable performRunnable,
                                                    @NotNull PsiMethod psiMethod,
-                                                   @NotNull PsiClass... classes) {
+                                                   PsiClass @NotNull ... classes) {
     DataContext dataContext = TestTasksChooser.contextWithLocationName(context.getDataContext(), psiMethod.getName());
     getTestTasksChooser().chooseTestTasks(context.getProject(), dataContext, classes, tasks -> {
         ExternalSystemRunConfiguration configuration = (ExternalSystemRunConfiguration)fromContext.getConfiguration();
@@ -149,7 +149,7 @@ public class TestMethodGradleConfigurationProducer extends GradleTestRunConfigur
   private static boolean applyTestMethodConfiguration(@NotNull ExternalSystemRunConfiguration configuration,
                                                       @NotNull ConfigurationContext context,
                                                       @NotNull PsiMethod psiMethod,
-                                                      @NotNull PsiClass... containingClasses) {
+                                                      PsiClass @NotNull ... containingClasses) {
     final ExternalSystemTaskExecutionSettings settings = configuration.getSettings();
     final Function1<PsiClass, String> createFilter = (psiClass) -> createTestFilter(context.getLocation(), psiClass, psiMethod);
     if (!applyTestConfiguration(settings, context.getModule(), containingClasses, createFilter)) return false;

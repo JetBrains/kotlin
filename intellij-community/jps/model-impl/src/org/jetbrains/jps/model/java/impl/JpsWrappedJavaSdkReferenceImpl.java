@@ -30,9 +30,6 @@ import org.jetbrains.jps.model.library.JpsTypedLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.library.sdk.JpsSdkReference;
 
-/**
- * @author nik
- */
 public class JpsWrappedJavaSdkReferenceImpl extends JpsCompositeElementBase<JpsWrappedJavaSdkReferenceImpl> implements JpsSdkReference<JpsDummyElement> {
   private static final JpsElementChildRoleBase<JpsSdkReference<?>> WRAPPER_ROLE = JpsElementChildRoleBase.create("wrapper reference");
   private final JpsJavaSdkTypeWrapper mySdkType;

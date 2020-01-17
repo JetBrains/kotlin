@@ -36,15 +36,15 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 class FindPopupScopeUIImpl implements FindPopupScopeUI {
-  static final ScopeType PROJECT = new ScopeType("Project", FindBundle.message("find.popup.scope.project"), EmptyIcon.ICON_0);
-  static final ScopeType MODULE = new ScopeType("Module", FindBundle.message("find.popup.scope.module"), EmptyIcon.ICON_0);
-  static final ScopeType DIRECTORY = new ScopeType("Directory", FindBundle.message("find.popup.scope.directory"), EmptyIcon.ICON_0);
-  static final ScopeType SCOPE = new ScopeType("Scope", FindBundle.message("find.popup.scope.scope"), EmptyIcon.ICON_0);
+  static final ScopeType PROJECT = new ScopeType("Project", () -> FindBundle.message("find.popup.scope.project"), EmptyIcon.ICON_0);
+  static final ScopeType MODULE = new ScopeType("Module", () -> FindBundle.message("find.popup.scope.module"), EmptyIcon.ICON_0);
+  static final ScopeType DIRECTORY = new ScopeType("Directory", () -> FindBundle.message("find.popup.scope.directory"), EmptyIcon.ICON_0);
+  static final ScopeType SCOPE = new ScopeType("Scope", () -> FindBundle.message("find.popup.scope.scope"), EmptyIcon.ICON_0);
 
   @NotNull private final FindUIHelper myHelper;
   @NotNull private final Project myProject;
   @NotNull private final FindPopupPanel myFindPopupPanel;
-  @NotNull private final Pair<ScopeType, JComponent>[] myComponents;
+  private final Pair<ScopeType, JComponent> @NotNull [] myComponents;
 
   private ComboBox<String> myModuleComboBox;
   private FindPopupDirectoryChooser myDirectoryChooser;
@@ -130,9 +130,8 @@ class FindPopupScopeUIImpl implements FindPopupScopeUI {
     Disposer.register(myFindPopupPanel.getDisposable(), myScopeCombo);
   }
 
-  @NotNull
   @Override
-  public Pair<ScopeType, JComponent>[] getComponents() {
+  public Pair<ScopeType, JComponent> @NotNull [] getComponents() {
     return myComponents;
   }
 

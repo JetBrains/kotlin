@@ -17,6 +17,7 @@
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.ExpressionContext;
 import com.intellij.codeInsight.template.Macro;
@@ -61,5 +62,11 @@ public class MacroCallNode extends Expression {
 
   public Expression[] getParameters() {
     return myParameters.toArray(new Expression[0]);
+  }
+
+  @NotNull
+  @Override
+  public LookupFocusDegree getLookupFocusDegree() {
+    return getMacro().getLookupFocusDegree();
   }
 }

@@ -5,6 +5,7 @@ import org.jetbrains.plugins.gradle.model.MavenRepositoryModel;
 import org.jetbrains.plugins.gradle.model.RepositoriesModel;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,23 @@ public class RepositoriesModelImpl implements RepositoriesModel {
 
   @Override
   public Collection<MavenRepositoryModel> getAll() {
-    return new HashSet<MavenRepositoryModel>(myRepositories);
+    return Collections.unmodifiableSet(myRepositories);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    RepositoriesModelImpl model = (RepositoriesModelImpl)o;
+
+    if (!myRepositories.equals(model.myRepositories)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return myRepositories.hashCode();
   }
 }

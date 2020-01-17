@@ -27,7 +27,10 @@ import java.awt.*;
 
 /**
  * @author Konstantin Bulenkov
+ *
+ * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyNodeRenderer} instead
  */
+@Deprecated
 public final class HierarchyNodeRenderer extends NodeRenderer {
   public HierarchyNodeRenderer() {
     setOpaque(false);

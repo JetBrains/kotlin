@@ -87,7 +87,7 @@ public class LongLineInspection extends LocalInspectionTool {
 
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         int length = element.getTextLength();
         if (element.getTextLength() != 0 && element.getFirstChild() == null && !ignoreFor(element)) {
           int offset = element.getTextOffset();
@@ -120,12 +120,7 @@ public class LongLineInspection extends LocalInspectionTool {
   }
 
   private static boolean ignoreFor(@Nullable PsiElement element) {
-    if (element == null) return false;
-    for (LongLineInspectionPolicy policy : LongLineInspectionPolicy.EP_NAME.getExtensions()) {
-      if (policy.ignoreLongLineFor(element)) {
-        return true;
-      }
-    }
-    return false;
+    return element != null &&
+           LongLineInspectionPolicy.EP_NAME.getExtensionList().stream().anyMatch(policy -> policy.ignoreLongLineFor(element));
   }
 }

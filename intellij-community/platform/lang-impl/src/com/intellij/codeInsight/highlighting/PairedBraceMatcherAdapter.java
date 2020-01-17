@@ -39,9 +39,8 @@ public class PairedBraceMatcherAdapter implements NontrivialBraceMatcher, Paired
     myLanguage = language;
   }
 
-  @NotNull
   @Override
-  public BracePair[] getPairs() {
+  public BracePair @NotNull [] getPairs() {
     return myMatcher.getPairs();
   }
 

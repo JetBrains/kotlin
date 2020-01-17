@@ -2,31 +2,45 @@
 package com.intellij.task.impl;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.internal.statistic.IdeActivity;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectModelBuildableElement;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.task.*;
 import com.intellij.ui.GuiUtils;
-import com.intellij.util.Consumer;
+import com.intellij.util.ExceptionUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import one.util.streamex.StreamEx;
+import com.intellij.util.containers.JBIterable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import static com.intellij.util.containers.ContainerUtil.emptyList;
 import static com.intellij.util.containers.ContainerUtil.map;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.groupingBy;
@@ -34,9 +48,10 @@ import static java.util.stream.Collectors.groupingBy;
 /**
  * @author Vladislav.Soroka
  */
+@SuppressWarnings("deprecation")
 public class ProjectTaskManagerImpl extends ProjectTaskManager {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.task.ProjectTaskManager");
+  private static final Logger LOG = Logger.getInstance(ProjectTaskManager.class);
   private final ProjectTaskRunner myDummyTaskRunner = new DummyTaskRunner();
   private final ProjectTaskListener myEventPublisher;
   private final List<ProjectTaskManagerListener> myListeners = new CopyOnWriteArrayList<>();
@@ -47,45 +62,44 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   }
 
   @Override
-  public void build(@NotNull Module[] modules, @Nullable ProjectTaskNotification callback) {
-    run(createModulesBuildTask(modules, true, true, false), callback);
+  public Promise<Result> build(Module @NotNull [] modules) {
+    return run(createModulesBuildTask(modules, true, true, false));
   }
 
   @Override
-  public void rebuild(@NotNull Module[] modules, @Nullable ProjectTaskNotification callback) {
-    run(createModulesBuildTask(modules, false, false, false), callback);
+  public Promise<Result> rebuild(Module @NotNull [] modules) {
+    return run(createModulesBuildTask(modules, false, false, false));
   }
 
   @Override
-  public void compile(@NotNull VirtualFile[] files, @Nullable ProjectTaskNotification callback) {
-    List<ModuleFilesBuildTask> buildTasks = map(stream(files)
-                                                  .collect(groupingBy(
-                                                    file -> ProjectFileIndex.SERVICE.getInstance(myProject)
-                                                      .getModuleForFile(file, false)))
-                                                  .entrySet(), entry -> new ModuleFilesBuildTaskImpl(entry.getKey(), false,
-                                                                                                     entry.getValue()));
-
-    run(new ProjectTaskList(buildTasks), callback);
+  public Promise<Result> compile(VirtualFile @NotNull [] files) {
+    List<ModuleFilesBuildTask> buildTasks = map(
+      stream(files)
+        .collect(groupingBy(file -> ProjectFileIndex.SERVICE.getInstance(myProject).getModuleForFile(file, false)))
+        .entrySet(),
+      entry -> new ModuleFilesBuildTaskImpl(entry.getKey(), false, entry.getValue())
+    );
+    return run(new ProjectTaskList(buildTasks));
   }
 
   @Override
-  public void build(@NotNull ProjectModelBuildableElement[] buildableElements, @Nullable ProjectTaskNotification callback) {
-    doBuild(buildableElements, callback, true);
+  public Promise<Result> build(ProjectModelBuildableElement @NotNull [] buildableElements) {
+    return doBuild(buildableElements, true);
   }
 
   @Override
-  public void rebuild(@NotNull ProjectModelBuildableElement[] buildableElements, @Nullable ProjectTaskNotification callback) {
-    doBuild(buildableElements, callback, false);
+  public Promise<Result> rebuild(ProjectModelBuildableElement @NotNull [] buildableElements) {
+    return doBuild(buildableElements, false);
   }
 
   @Override
-  public void buildAllModules(@Nullable ProjectTaskNotification callback) {
-    run(createAllModulesBuildTask(true, myProject), callback);
+  public Promise<Result> buildAllModules() {
+    return run(createAllModulesBuildTask(true, myProject));
   }
 
   @Override
-  public void rebuildAllModules(@Nullable ProjectTaskNotification callback) {
-    run(createAllModulesBuildTask(false, myProject), callback);
+  public Promise<Result> rebuildAllModules() {
+    return run(createAllModulesBuildTask(false, myProject));
   }
 
   @Override
@@ -121,20 +135,24 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   }
 
   @Override
-  public void run(@NotNull ProjectTask projectTask, @Nullable ProjectTaskNotification callback) {
-    run(new ProjectTaskContext(), projectTask, callback);
+  public Promise<Result> run(@NotNull ProjectTask projectTask) {
+    return run(new ProjectTaskContext(), projectTask);
   }
 
   @Override
-  public void run(@NotNull ProjectTaskContext context, @NotNull ProjectTask projectTask, @Nullable ProjectTaskNotification callback) {
+  public Promise<Result> run(@NotNull ProjectTaskContext context, @NotNull ProjectTask projectTask) {
+    AsyncPromise<Result> promiseResult = new AsyncPromise<>();
     List<Pair<ProjectTaskRunner, Collection<? extends ProjectTask>>> toRun = new SmartList<>();
 
     Consumer<Collection<? extends ProjectTask>> taskClassifier = tasks -> {
       Map<ProjectTaskRunner, ? extends List<? extends ProjectTask>> toBuild = tasks.stream().collect(
-        groupingBy(aTask -> stream(getTaskRunners())
+        groupingBy(aTask -> stream(ProjectTaskRunner.EP_NAME.getExtensions())
           .filter(runner -> {
             try {
               return runner.canRun(myProject, aTask);
+            }
+            catch (ProcessCanceledException e) {
+              throw e;
             }
             catch (Exception e) {
               LOG.error("Broken project task runner: " + runner.getClass().getName(), e);
@@ -160,6 +178,12 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
         return tasks;
       }
     });
+
+
+    IdeActivity activity = new IdeActivity(myProject, "build").startedWithData(data -> {
+      data.addData("task_runner_class", map(toRun, it -> it.first.getClass().getName()));
+    });
+
     myEventPublisher.started(context);
 
     Runnable runnable = () -> {
@@ -168,25 +192,37 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
           listener.beforeRun(context);
         }
         catch (ExecutionException e) {
-          sendAbortedNotify(new ListenerNotificator(context, callback));
+          sendAbortedEmptyResult(context, new ResultConsumer(promiseResult));
+          activity.finished();
           return;
         }
       }
 
       if (toRun.isEmpty()) {
-        sendSuccessNotify(new ListenerNotificator(context, callback));
+        sendSuccessEmptyResult(context, new ResultConsumer(promiseResult));
+        activity.finished();
         return;
       }
 
-      ProjectTaskResultsAggregator callbacksCollector =
-        new ProjectTaskResultsAggregator(new ListenerNotificator(context, callback), toRun.size());
+      ProjectTaskResultsAggregator resultsCollector =
+        new ProjectTaskResultsAggregator(context, new ResultConsumer(promiseResult), toRun.size(), activity);
       for (Pair<ProjectTaskRunner, Collection<? extends ProjectTask>> pair : toRun) {
-        ProjectTaskRunnerNotification notification = new ProjectTaskRunnerNotification(pair.second, callbacksCollector);
+        Consumer<ProjectTaskRunner.Result> runnerResultConsumer = result -> resultsCollector.add(result, pair.second);
         if (pair.second.isEmpty()) {
-          sendSuccessNotify(notification);
+          runnerResultConsumer.accept(TaskRunnerResults.SUCCESS);
         }
         else {
-          pair.first.run(myProject, context, notification, pair.second);
+          ProjectTaskRunner runner = pair.first;
+          if (context.isCollectionOfGeneratedFilesEnabled() && !runner.isFileGeneratedEventsSupported()) {
+            pair.second.stream()
+              .filter(ModuleBuildTask.class::isInstance)
+              .map(task -> ((ModuleBuildTask)task).getModule())
+              .forEach(module -> context.addDirtyOutputPathsProvider(moduleOutputPathsProvider(module)));
+          }
+          runner
+            .run(myProject, context, pair.second.toArray(EMPTY_TASKS_ARRAY))
+            .onSuccess(runnerResultConsumer)
+            .onError(throwable -> runnerResultConsumer.accept(TaskRunnerResults.ABORTED));
         }
       }
     };
@@ -197,26 +233,49 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     else {
       runnable.run();
     }
+    return promiseResult;
+  }
+
+  @Nullable
+  @ApiStatus.Experimental
+  public static <T> T waitForPromise(@NotNull Promise<T> promise) {
+    while (true) {
+      try {
+        return promise.blockingGet(10, TimeUnit.MILLISECONDS);
+      }
+      catch (TimeoutException ignore) {
+      }
+      catch (java.util.concurrent.ExecutionException e) {
+        ExceptionUtil.rethrow(e);
+      }
+      ProgressManager.checkCanceled();
+    }
+  }
+
+  @NotNull
+  private static Supplier<List<String>> moduleOutputPathsProvider(@NotNull Module module) {
+    return () -> ReadAction.compute(() -> {
+      return JBIterable.of(OrderEnumerator.orderEntries(module).withoutSdk().withoutLibraries().getClassesRoots())
+        .filterMap(file -> file.isDirectory() && !file.getFileSystem().isReadOnly() ? file.getPath() : null).toList();
+    });
   }
 
   public final void addListener(@NotNull ProjectTaskManagerListener listener) {
     myListeners.add(listener);
   }
 
-  private static void sendSuccessNotify(@Nullable ProjectTaskNotification notification) {
-    if (notification != null) {
-      notification.finished(new ProjectTaskResult(false, 0, 0));
-    }
+  private static void sendSuccessEmptyResult(@NotNull ProjectTaskContext context, @NotNull Consumer<Result> resultConsumer) {
+    resultConsumer.accept(new MyResult(context, Collections.emptyMap(), false, false));
   }
 
-  private static void sendAbortedNotify(@Nullable ProjectTaskNotification notification) {
-    if (notification != null) {
-      notification.finished(new ProjectTaskResult(true, 0, 0));
-    }
+  private static void sendAbortedEmptyResult(@NotNull ProjectTaskContext context, @NotNull Consumer<Result> resultConsumer) {
+    resultConsumer.accept(new MyResult(context, Collections.emptyMap(), true, false));
   }
 
   private static void visitTasks(@NotNull Collection<? extends ProjectTask> tasks,
                                  @NotNull Consumer<? super Collection<? extends ProjectTask>> consumer) {
+    if (tasks.isEmpty()) return;
+
     for (ProjectTask child : tasks) {
       Collection<? extends ProjectTask> taskDependencies;
       if (child instanceof AbstractProjectTask) {
@@ -226,32 +285,24 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
         taskDependencies = (ProjectTaskList)child;
       }
       else {
-        taskDependencies = Collections.singleton(child);
+        taskDependencies = emptyList();
       }
 
       visitTasks(taskDependencies, consumer);
     }
-    consumer.consume(tasks);
+    consumer.accept(tasks);
   }
 
-  @NotNull
-  private static ProjectTaskRunner[] getTaskRunners() {
-    return ProjectTaskRunner.EP_NAME.getExtensions();
-  }
-
-  private void doBuild(@NotNull ProjectModelBuildableElement[] buildableElements,
-                       @Nullable ProjectTaskNotification callback,
-                       boolean isIncrementalBuild) {
-    run(createBuildTask(isIncrementalBuild, buildableElements), callback);
+  private Promise<Result> doBuild(ProjectModelBuildableElement @NotNull [] buildableElements, boolean isIncrementalBuild) {
+    return run(createBuildTask(isIncrementalBuild, buildableElements));
   }
 
   private static class DummyTaskRunner extends ProjectTaskRunner {
     @Override
-    public void run(@NotNull Project project,
-                    @NotNull ProjectTaskContext context,
-                    @Nullable ProjectTaskNotification callback,
-                    @NotNull Collection<? extends ProjectTask> tasks) {
-      sendSuccessNotify(callback);
+    public Promise<Result> run(@NotNull Project project,
+                               @NotNull ProjectTaskContext context,
+                               ProjectTask @NotNull ... tasks) {
+      return Promises.resolvedPromise(TaskRunnerResults.SUCCESS);
     }
 
     @Override
@@ -260,112 +311,321 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     }
   }
 
-  private class ListenerNotificator implements ProjectTaskNotification {
-    @Nullable private final ProjectTaskNotification myDelegate;
-    @NotNull private final ProjectTaskContext myContext;
+  private class ResultConsumer implements Consumer<Result> {
+    @NotNull private final AsyncPromise<Result> myPromise;
 
-    private ListenerNotificator(@NotNull ProjectTaskContext context,
-                                @Nullable ProjectTaskNotification delegate) {
-      myContext = context;
-      myDelegate = delegate;
+    private ResultConsumer(@NotNull AsyncPromise<Result> promise) {
+      myPromise = promise;
     }
 
     @Override
-    public void finished(@NotNull ProjectTaskResult executionResult) {
-      if (!executionResult.isAborted() && executionResult.getErrors() == 0) {
+    public void accept(@NotNull Result result) {
+      if (!result.isAborted() && !result.hasErrors()) {
         // do not run after tasks on EDT
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           try {
             for (ProjectTaskManagerListener listener : myListeners) {
-              listener.afterRun(myContext, executionResult);
+              listener.afterRun(result);
             }
-            notify(myContext, executionResult);
+            notify(result);
           }
           catch (ExecutionException e) {
             LOG.debug(e);
-            notify(myContext, new ProjectTaskResult(
-              false, executionResult.getErrors() + 1, executionResult.getWarnings(), executionResult.getTasksState()));
+            notify(new ResultWrapper(result) {
+              @Override
+              public boolean hasErrors() {
+                return true;
+              }
+            });
           }
         });
       }
       else {
-        notify(myContext, executionResult);
+        notify(result);
       }
     }
 
-    private void notify(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
+    private void notify(@NotNull Result result) {
       GuiUtils.invokeLaterIfNeeded(() -> {
         if (!myProject.isDisposed()) {
-          myEventPublisher.finished(context, executionResult);
+          myEventPublisher.finished(result);
         }
-        if (myDelegate != null) {
-          myDelegate.finished(executionResult);
-        }
+        myPromise.setResult(result);
       }, ModalityState.defaultModalityState());
     }
   }
 
-  private static class ProjectTaskRunnerNotification implements ProjectTaskNotification {
-    private final ProjectTaskResultsAggregator myAggregator;
-    private final Collection<? extends ProjectTask> myTasks;
-
-    private ProjectTaskRunnerNotification(@NotNull Collection<? extends ProjectTask> tasks,
-                                          @NotNull ProjectTaskResultsAggregator aggregator) {
-      myTasks = tasks;
-      myAggregator = aggregator;
-    }
-
-    @Override
-    public void finished(@NotNull ProjectTaskResult result) {
-      if (result.getTasksState().isEmpty()) {
-        final boolean aborted = result.isAborted();
-        final int errors = result.getErrors();
-        ProjectTaskState state = new ProjectTaskState() {
-          @Override
-          public boolean isSkipped() {
-            return aborted;
-          }
-
-          @Override
-          public boolean isFailed() {
-            return errors > 0;
-          }
-        };
-        Map<ProjectTask, ProjectTaskState> tasksState = StreamEx.of(myTasks).toMap(Function.identity(), task -> state);
-        result = new ProjectTaskResult(aborted, errors, result.getWarnings(), tasksState);
-      }
-      myAggregator.add(result);
-    }
-  }
-
   private static class ProjectTaskResultsAggregator {
-    private final ProjectTaskNotification myDelegate;
+    private final ProjectTaskContext myContext;
+    private final ResultConsumer myResultConsumer;
     private final AtomicInteger myProgressCounter;
-    private final AtomicInteger myErrorsCounter;
-    private final AtomicInteger myWarningsCounter;
+    private final IdeActivity myActivity;
+    private final AtomicBoolean myErrorsFlag;
     private final AtomicBoolean myAbortedFlag;
     private final Map<ProjectTask, ProjectTaskState> myTasksState = ContainerUtil.newConcurrentMap();
 
-    private ProjectTaskResultsAggregator(@NotNull ProjectTaskNotification delegate, int expectedResults) {
-      myDelegate = delegate;
+    private ProjectTaskResultsAggregator(@NotNull ProjectTaskContext context,
+                                         @NotNull ResultConsumer resultConsumer,
+                                         int expectedResults,
+                                         @NotNull IdeActivity activity) {
+      myContext = context;
+      myResultConsumer = resultConsumer;
       myProgressCounter = new AtomicInteger(expectedResults);
-      myErrorsCounter = new AtomicInteger();
-      myWarningsCounter = new AtomicInteger();
+      myActivity = activity;
+      myErrorsFlag = new AtomicBoolean(false);
       myAbortedFlag = new AtomicBoolean(false);
     }
 
-    public void add(@NotNull ProjectTaskResult executionResult) {
+    public void add(@NotNull ProjectTaskRunner.Result result, @NotNull Collection<? extends ProjectTask> tasks) {
       int inProgress = myProgressCounter.decrementAndGet();
-      int allErrors = myErrorsCounter.addAndGet(executionResult.getErrors());
-      int allWarnings = myWarningsCounter.addAndGet(executionResult.getWarnings());
-      myTasksState.putAll(executionResult.getTasksState());
-      if (executionResult.isAborted()) {
+      ProjectTaskState state = new ProjectTaskState() {
+        @Override
+        public boolean isSkipped() {
+          return result.isAborted();
+        }
+
+        @Override
+        public boolean isFailed() {
+          return result.hasErrors();
+        }
+      };
+      for (ProjectTask task : tasks) {
+        myTasksState.put(task, state);
+      }
+
+      if (result.isAborted()) {
         myAbortedFlag.set(true);
       }
+      if (result.hasErrors()) {
+        myErrorsFlag.set(true);
+      }
       if (inProgress <= 0) {
-        ProjectTaskResult result = new ProjectTaskResult(myAbortedFlag.get(), allErrors, allWarnings, myTasksState);
-        myDelegate.finished(result);
+        try {
+          myResultConsumer.accept(new MyResult(myContext, myTasksState, myAbortedFlag.get(), myErrorsFlag.get()));
+        }
+        finally {
+          myActivity.finished();
+        }
       }
     }
   }
+
+  private static class MyResult implements Result {
+    private final ProjectTaskContext myContext;
+    private final boolean myAborted;
+    private final boolean myErrors;
+    private final Map<ProjectTask, ProjectTaskState> myTasksState;
+
+    private MyResult(@NotNull ProjectTaskContext context,
+                     @NotNull Map<ProjectTask, ProjectTaskState> tasksState,
+                     boolean isAborted,
+                     boolean hasErrors) {
+      myContext = context;
+      myTasksState = tasksState;
+      myAborted = isAborted;
+      myErrors = hasErrors;
+    }
+
+    @NotNull
+    @Override
+    public ProjectTaskContext getContext() {
+      return myContext;
+    }
+
+    @Override
+    public boolean isAborted() {
+      return myAborted;
+    }
+
+    @Override
+    public boolean hasErrors() {
+      return myErrors;
+    }
+
+    @Override
+    public boolean anyTaskMatches(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
+      return myTasksState.entrySet().stream().anyMatch(entry -> predicate.test(entry.getKey(), entry.getValue()));
+    }
+  }
+
+  private static class ResultWrapper implements Result {
+    private final Result myResult;
+
+    private ResultWrapper(Result result) {myResult = result;}
+
+    @NotNull
+    @Override
+    public ProjectTaskContext getContext() {
+      return myResult.getContext();
+    }
+
+    @Override
+    public boolean isAborted() {
+      return myResult.isAborted();
+    }
+
+    @Override
+    public boolean hasErrors() {
+      return myResult.hasErrors();
+    }
+
+    @Override
+    public boolean anyTaskMatches(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
+      return myResult.anyTaskMatches(predicate);
+    }
+  }
+  //<editor-fold desc="Deprecated methods. To be removed in 2020.1">
+
+  /**
+   * @deprecated use {@link #run(ProjectTask)}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void run(@NotNull ProjectTask projectTask, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(run(projectTask), callback);
+  }
+
+  /**
+   * @deprecated use {@link #run(ProjectTaskContext, ProjectTask)}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void run(@NotNull ProjectTaskContext context,
+                  @NotNull ProjectTask projectTask,
+                  @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(run(context, projectTask), callback);
+  }
+
+  /**
+   * @deprecated use {@link #buildAllModules()}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void buildAllModules(@Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(buildAllModules(), callback);
+  }
+
+  /**
+   * @deprecated use {@link #rebuildAllModules()}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void rebuildAllModules(@Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(rebuildAllModules(), callback);
+  }
+
+  /**
+   * @deprecated use {@link #build(Module[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void build(Module @NotNull [] modules, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(build(modules), callback);
+  }
+
+  /**
+   * @deprecated use {@link #rebuild(Module[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void rebuild(Module @NotNull [] modules, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(rebuild(modules), callback);
+  }
+
+  /**
+   * @deprecated use {@link #compile(VirtualFile[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void compile(VirtualFile @NotNull [] files, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(compile(files), callback);
+  }
+
+  /**
+   * @deprecated use {@link #build(ProjectModelBuildableElement[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void build(ProjectModelBuildableElement @NotNull [] buildableElements, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(build(buildableElements), callback);
+  }
+
+  /**
+   * @deprecated use {@link #rebuild(ProjectModelBuildableElement[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void rebuild(ProjectModelBuildableElement @NotNull [] buildableElements, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(rebuild(buildableElements), callback);
+  }
+
+  private static void notifyIfNeeded(@NotNull Promise<Result> promise, @Nullable ProjectTaskNotification callback) {
+    if (callback != null) {
+      promise
+        .onSuccess(
+          result -> callback.finished(result.getContext(), new ProjectTaskResult(result.isAborted(), result.hasErrors() ? 1 : 0, 0)))
+        .onError(throwable -> callback.finished(new ProjectTaskContext(), new ProjectTaskResult(true, 0, 0)));
+    }
+  }
+
+  private static void assertUnsupportedOperation(@Nullable ProjectTaskNotification callback) {
+    if (callback instanceof ProjectTaskNotificationAdapter) {
+      throw new UnsupportedOperationException("Please, provide implementation for non-deprecated methods");
+    }
+  }
+
+  private static class ProjectTaskNotificationAdapter implements ProjectTaskNotification {
+    private final AsyncPromise<Result> myPromise;
+    private final ProjectTaskContext myContext;
+
+    private ProjectTaskNotificationAdapter(@NotNull AsyncPromise<Result> promise, @NotNull ProjectTaskContext context) {
+      myPromise = promise;
+      myContext = context;
+    }
+
+    @Override
+    public void finished(@NotNull ProjectTaskResult executionResult) {
+      myPromise.setResult(new Result() {
+        @NotNull
+        @Override
+        public ProjectTaskContext getContext() {
+          return myContext;
+        }
+
+        @Override
+        public boolean isAborted() {
+          return executionResult.isAborted();
+        }
+
+        @Override
+        public boolean hasErrors() {
+          return executionResult.getErrors() > 0;
+        }
+
+        @Override
+        public boolean anyTaskMatches(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
+          return executionResult.anyMatch(predicate);
+        }
+      });
+    }
+  }
+  //</editor-fold>
 }

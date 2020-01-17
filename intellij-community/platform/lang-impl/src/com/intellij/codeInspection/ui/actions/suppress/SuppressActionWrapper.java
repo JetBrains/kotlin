@@ -45,8 +45,7 @@ public class SuppressActionWrapper extends ActionGroup implements CompactActionG
   }
 
   @Override
-  @NotNull
-  public AnAction[] getChildren(@Nullable final AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable final AnActionEvent e) {
     final InspectionResultsView view = getView(e);
     if (view == null) return AnAction.EMPTY_ARRAY;
     final InspectionToolWrapper wrapper = view.getTree().getSelectedToolWrapper(true);
@@ -113,11 +112,10 @@ public class SuppressActionWrapper extends ActionGroup implements CompactActionG
           text = mySuppressAction.getText();
         }
         e.getPresentation().setText(text);
-        return true;
       } else {
         e.getPresentation().setText(mySuppressAction.getFamilyName());
-        return true;
       }
+      return true;
     }
 
     public boolean isSuppressAll() {

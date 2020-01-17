@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.actions;
 
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -16,12 +16,12 @@ public class LfeActionDisabled extends LfeBaseProxyAction {
   }
 
   @Override
-  protected void updateForLfe(AnActionEvent e, @NotNull EditorManager editorManager) {
+  protected void updateForLfe(AnActionEvent e, @NotNull LargeFileEditor largeFileEditor) {
     e.getPresentation().setEnabled(false);
   }
 
   @Override
-  protected void actionPerformedForLfe(AnActionEvent e, @NotNull EditorManager editorManager) {
+  protected void actionPerformedForLfe(AnActionEvent e, @NotNull LargeFileEditor largeFileEditor) {
     // never called
     logger.warn("Called code, that shouldn't be called. toString()=" + this.toString());
   }

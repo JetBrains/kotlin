@@ -42,7 +42,7 @@ public abstract class ChooseOneOrAllRunnable<T extends PsiElement> implements Ru
     myTitle = title;
   }
 
-  protected abstract void selected(@NotNull T... classes);
+  protected abstract void selected(T @NotNull ... classes);
 
   @Override
   public void run() {

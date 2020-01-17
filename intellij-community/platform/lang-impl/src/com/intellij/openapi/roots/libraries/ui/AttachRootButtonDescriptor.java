@@ -25,7 +25,6 @@ import javax.swing.*;
  * Describes an 'attach' button in the library roots component.
  *
  * @see ChooserBasedAttachRootButtonDescriptor
- * @author nik
  */
 public abstract class AttachRootButtonDescriptor {
   private final OrderRootType myOrderRootType;
@@ -66,8 +65,7 @@ public abstract class AttachRootButtonDescriptor {
     return false;
   }
 
-  @NotNull
-  public VirtualFile[] scanForActualRoots(@NotNull VirtualFile[] rootCandidates, JComponent parent) {
+  public VirtualFile @NotNull [] scanForActualRoots(VirtualFile @NotNull [] rootCandidates, JComponent parent) {
     return rootCandidates;
   }
 

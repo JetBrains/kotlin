@@ -24,8 +24,6 @@ import java.util.Locale;
 /**
  * Allows to specify relative output prefix for Path.
  * Used to support searching for nested form files under source roots with package prefixes.
- *
- * @author nik
  */
 public class PrefixedPath extends Path {
   private String myPrefix;

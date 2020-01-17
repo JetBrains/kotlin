@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.actions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -7,7 +7,7 @@ import com.intellij.codeInspection.ex.GlobalInspectionContextBase;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -15,16 +15,15 @@ import java.util.concurrent.FutureTask;
 
 public class CodeCleanupCodeProcessor extends AbstractLayoutCodeProcessor {
   public static final String COMMAND_NAME = "Cleanup code";
-  public static final String PROGRESS_TEXT = CodeInsightBundle.message("process.cleanup.code");
 
   private SelectionModel mySelectionModel = null;
 
   public CodeCleanupCodeProcessor(@NotNull AbstractLayoutCodeProcessor previousProcessor) {
-    super(previousProcessor, COMMAND_NAME, PROGRESS_TEXT);
+    super(previousProcessor, COMMAND_NAME, getProgressText());
   }
 
   public CodeCleanupCodeProcessor(@NotNull AbstractLayoutCodeProcessor previousProcessor, @NotNull SelectionModel selectionModel) {
-    super(previousProcessor, COMMAND_NAME, PROGRESS_TEXT);
+    super(previousProcessor, COMMAND_NAME, getProgressText());
     mySelectionModel = selectionModel;
   }
 
@@ -48,7 +47,7 @@ public class CodeCleanupCodeProcessor extends AbstractLayoutCodeProcessor {
       return FormatChangedTextUtil.getInstance().getChangedTextRanges(myProject, file);
     }
 
-    return ContainerUtil.newSmartList(file.getTextRange());
+    return new SmartList<>(file.getTextRange());
   }
 
   private static boolean isInRanges(Collection<? extends TextRange> ranges, @NotNull ProblemDescriptor descriptor) {
@@ -59,5 +58,9 @@ public class CodeCleanupCodeProcessor extends AbstractLayoutCodeProcessor {
       }
     }
     return false;
+  }
+
+  public static String getProgressText() {
+    return CodeInsightBundle.message("process.cleanup.code");
   }
 }

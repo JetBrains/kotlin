@@ -35,9 +35,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class ModuleElementTypeBase<E extends ModulePackagingElementBase> extends PackagingElementType<E> {
   public ModuleElementTypeBase(String id, String presentableName) {
     super(id, presentableName);

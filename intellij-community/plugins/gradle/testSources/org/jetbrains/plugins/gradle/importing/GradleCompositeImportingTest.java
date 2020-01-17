@@ -214,7 +214,7 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
                   "  compile 'my.group.lib_2:runtime'\n" +
                   "}");
 
-    if (isGradle40orNewer()) {
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModules("app", "app_main", "app_test",
                     "app-runtime", "app-runtime_main", "app-runtime_test",
                     "lib1", "lib1-runtime", "lib1-runtime_main", "lib1-runtime_test",
@@ -227,7 +227,7 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
                     "lib2", "my.group.lib_2-runtime", "my.group.lib_2-runtime_main", "my.group.lib_2-runtime_test");
     }
 
-    if (isGradle40orNewer()) {
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModuleModuleDepScope("app_main", "app-runtime_main", COMPILE);
       assertModuleModuleDepScope("app_main", "lib1-runtime_main", COMPILE);
       assertModuleModuleDepScope("app_main", "lib2-runtime_main", COMPILE);
@@ -303,8 +303,8 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
 
     String myAppApiModuleName = myTestDir.getName() + "-my-app-api";
     String myAppApiMainModuleName = myTestDir.getName() + "-my-app-api_main";
-    String myUtilsApiMainModuleName = isGradle40orNewer() ? "org.sample-my-utils-api_main" : "org.sample-api_main";
-    if (isGradle40orNewer()) {
+    String myUtilsApiMainModuleName = isGradleNewerOrSameThen("4.0") ? "org.sample-my-utils-api_main" : "org.sample-api_main";
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModules(
         // non-gradle modules
         "api", "api_main", "my-app-api", "my-app-api_main", "my-utils-api", "my-utils-api_main",
@@ -360,7 +360,7 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
   }
 
   @Test
-  @TargetVersions("3.3+")
+  @TargetVersions("4.1+")
   public void testApiDependenciesAreImported() throws Exception {
     createSettingsFile("rootProject.name = \"project-b\"\n" +
                        "includeBuild 'project-a'");
@@ -371,14 +371,14 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
 
     createProjectSubFile("project-a/core/build.gradle",
                          new GradleBuildScriptBuilderEx()
-                           .withKotlinPlugin("1.3.0")
-                           .addRepository(" maven { url 'http://maven.labs.intellij.net/repo1' }")
+                           .withKotlinPlugin("1.3.50")
+                           .addRepository(" maven { url 'https://repo.labs.intellij.net/repo1' }")
                            .addPrefix("apply plugin: 'java-library'").generate());
 
     createProjectSubFile("project-a/ext/build.gradle",
                          new GradleBuildScriptBuilderEx()
-                           .withKotlinPlugin("1.3.0")
-                           .addRepository(" maven { url 'http://maven.labs.intellij.net/repo1' }")
+                           .withKotlinPlugin("1.3.50")
+                           .addRepository(" maven { url 'https://repo.labs.intellij.net/repo1' }")
                            .addPrefix(
                              "apply plugin: 'java-library'",
                              "group = 'myGroup.projectA'",
@@ -515,5 +515,87 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
     assertModules("project",
                   "test-plugin", "test-plugin.main", "test-plugin.test",
                   "consumer", "consumer.library", "consumer.library.main", "consumer.library.test", "consumer.library.integrationTest");
+  }
+
+
+
+  @Test
+  @TargetVersions("3.1+")
+  public void testSubstituteDependencyWithRootProject() throws Exception {
+    createSettingsFile("rootProject.name = \"root-project\"\n" +
+                       "include 'sub-project'\n" +
+                       "includeBuild('included-project') { dependencySubstitution { substitute module('my.grp:myId') with project(':') } }");
+
+
+    createProjectSubFile("sub-project/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .withJavaPlugin()
+                           .addDependency("implementation 'my.grp:myId:1.0'")
+                           .generate());
+
+    createProjectSubFile("included-project/settings.gradle", "rootProject.name = 'myId'");
+    createProjectSubFile("included-project/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .withJavaPlugin()
+                           .group("my.grp")
+                           .version("1.0")
+                           .generate());
+
+    importProject("");
+
+    assertModules("root-project",
+                  "root-project.sub-project", "root-project.sub-project.main", "root-project.sub-project.test",
+                  "myId", "myId.main", "myId.test");
+
+    assertModuleModuleDeps("root-project.sub-project.main", "myId.main");
+  }
+
+  @Test
+  @TargetVersions("3.1+")
+  public void testScopeUpdateForSubstituteDependency() throws Exception {
+    createSettingsFile("rootProject.name = 'pA'\n" +
+                       "include 'pA-1', 'pA-2'\n" +
+                       "includeBuild('pB')\n" +
+                       "includeBuild('pC')");
+
+    createProjectSubFile("pB/settings.gradle");
+    createProjectSubFile("pC/settings.gradle");
+
+    createProjectSubFile("pA-1/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .applyPlugin("'java-library'")
+                           .addDependency("implementation 'group:pC'")
+                           .generate());
+
+    createProjectSubFile("pA-2/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .applyPlugin("'java-library'")
+                           .addDependency("implementation project(':pA-1')")
+                           .addDependency("implementation 'group:pB'")
+                           .generate());
+
+    createProjectSubFile("pB/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .addPostfix("group = 'group'")
+                           .applyPlugin("'java-library'")
+                           .addDependency("api 'group:pC'")
+                           .generate());
+
+    createProjectSubFile("pC/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .addPostfix("group = 'group'")
+                           .applyPlugin("'java-library'")
+                           .generate());
+
+    //enableGradleDebugWithSuspend();
+    importProject("");
+
+    assertModules("pA",
+                  "pA.pA-1", "pA.pA-1.main", "pA.pA-1.test",
+                  "pA.pA-2", "pA.pA-2.main", "pA.pA-2.test",
+                  "pB", "pB.main", "pB.test",
+                  "pC", "pC.main", "pC.test");
+
+    assertModuleModuleDepScope("pA.pA-2.main", "pC.main", COMPILE);
   }
 }

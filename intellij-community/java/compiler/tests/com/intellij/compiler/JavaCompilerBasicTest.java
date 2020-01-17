@@ -2,11 +2,13 @@ package com.intellij.compiler;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.IoTestUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.io.Compressor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.javac.JpsJavacFileManager;
 import org.jetbrains.jps.javac.OutputFileObject;
 import org.jetbrains.jps.javac.ZipFileObject;
@@ -23,9 +25,6 @@ import java.util.Locale;
 
 import static com.intellij.util.io.TestFileSystemItem.fs;
 
-/**
- * @author nik
- */
 public class JavaCompilerBasicTest extends BaseCompilerTestCase {
 
   public void testAddRemoveJavaClass() throws IOException {
@@ -65,27 +64,7 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
       public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
       }
     }, Locale.US, null);
-    final JpsJavacFileManager fileManager = new JpsJavacFileManager(new JpsJavacFileManager.Context() {
-      @Override
-      public boolean isCanceled() {
-        return false;
-      }
-
-      @NotNull
-      @Override
-      public StandardJavaFileManager getStandardFileManager() {
-        return stdFileManager;
-      }
-
-      @Override
-      public void consumeOutputFile(@NotNull OutputFileObject obj) {
-      }
-
-      @Override
-      public void reportMessage(Diagnostic.Kind kind, String message) {
-
-      }
-    }, true, Collections.emptyList());
+    final JpsJavacFileManager fileManager = new JpsJavacFileManager(new DummyContext(stdFileManager), true, Collections.emptyList());
 
     fileManager.setLocation(StandardLocation.CLASS_PATH, Collections.singleton(jarFile));
     fileManager.setLocation(StandardLocation.SOURCE_PATH, Collections.emptyList());
@@ -122,27 +101,7 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
       public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
       }
     }, Locale.US, null);
-    final JpsJavacFileManager fileManager = new JpsJavacFileManager(new JpsJavacFileManager.Context() {
-      @Override
-      public boolean isCanceled() {
-        return false;
-      }
-
-      @NotNull
-      @Override
-      public StandardJavaFileManager getStandardFileManager() {
-        return stdFileManager;
-      }
-
-      @Override
-      public void consumeOutputFile(@NotNull OutputFileObject obj) {
-      }
-
-      @Override
-      public void reportMessage(Diagnostic.Kind kind, String message) {
-
-      }
-    }, true, Collections.emptyList());
+    final JpsJavacFileManager fileManager = new JpsJavacFileManager(new DummyContext(stdFileManager), true, Collections.emptyList());
 
     fileManager.setLocation(StandardLocation.CLASS_PATH, Collections.singleton(jarFile));
     fileManager.setLocation(StandardLocation.SOURCE_PATH, Collections.emptyList());
@@ -186,7 +145,7 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
 
   private static void checkFileObjectsBelongToLocation(JpsJavacFileManager fileManager,
                                                        final JavaFileManager.Location location,
-                                                       Iterable<? extends FileObject> fileObjects) {
+                                                       Iterable<? extends FileObject> fileObjects) throws IOException {
     for (FileObject source : fileObjects) {
       assertTrue(source.getName() + " should belong to " + location.getName(), fileManager.contains(location, source));
     }
@@ -194,6 +153,10 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
 
 
   public void testSymlinksInSources() throws IOException {
+    if (!IoTestUtil.isSymLinkCreationSupported) {
+      System.out.println("Test " + getTestName(false) + " skipped because symlink creation is not supported on this machine");
+      return;
+    }
     final VirtualFile file = createFile("src/A.java", "public class A {}");
     VirtualFile srcRoot = file.getParent();
     final File linkFile = new File(srcRoot.getParent().getPath(), "src-link");
@@ -206,5 +169,38 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
 
     make(module);
     assertOutput(module, fs().file("A.class"));
+  }
+
+  private static final class DummyContext implements JpsJavacFileManager.Context {
+    private final StandardJavaFileManager myStdFileManager;
+
+    DummyContext(StandardJavaFileManager stdFileManager) {
+      myStdFileManager = stdFileManager;
+    }
+
+    @Nullable
+    @Override
+    public String getExplodedAutomaticModuleName(File pathElement) {
+      return null;
+    }
+
+    @Override
+    public boolean isCanceled() {
+      return false;
+    }
+
+    @NotNull
+    @Override
+    public StandardJavaFileManager getStandardFileManager() {
+      return myStdFileManager;
+    }
+
+    @Override
+    public void consumeOutputFile(@NotNull OutputFileObject obj) {
+    }
+
+    @Override
+    public void reportMessage(Diagnostic.Kind kind, String message) {
+    }
   }
 }

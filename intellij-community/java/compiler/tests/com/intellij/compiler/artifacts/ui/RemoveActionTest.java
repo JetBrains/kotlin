@@ -4,9 +4,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.Artifact;
 
-/**
- * @author nik
- */
 public class RemoveActionTest extends ArtifactEditorTestCase {
 
   public void testSimple() {

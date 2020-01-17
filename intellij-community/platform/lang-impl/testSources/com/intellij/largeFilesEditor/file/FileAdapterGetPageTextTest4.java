@@ -4,7 +4,7 @@ package com.intellij.largeFilesEditor.file;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,7 +27,7 @@ public class FileAdapterGetPageTextTest4 {
     try {
       tempFile = FileUtil.createTempFile("test", ".txt");
       byte[] bom = writeBOM ? CharsetToolkit.getPossibleBom(charset) : null;
-      PlatformTestCase.setContentOnDisk(tempFile, bom, fileText, charset);
+      HeavyPlatformTestCase.setContentOnDisk(tempFile, bom, fileText, charset);
       VirtualFile virtualFile = new MockVirtualFile(tempFile);
       assertNotNull(virtualFile);
 

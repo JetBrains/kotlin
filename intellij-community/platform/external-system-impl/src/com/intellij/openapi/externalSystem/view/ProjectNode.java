@@ -1,26 +1,9 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.view;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
-import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
-import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -34,7 +17,7 @@ import java.util.List;
  */
 public class ProjectNode extends ExternalSystemNode<ProjectData> {
   private String myTooltipCache;
-  private boolean singleModuleProject = false;
+  private ModuleNode effectiveRoot = null;
 
   public ProjectNode(ExternalProjectsView externalProjectsView, DataNode<ProjectData> projectDataNode) {
     super(externalProjectsView, null, projectDataNode);
@@ -53,27 +36,25 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
 
   @NotNull
   @Override
-  protected List<? extends ExternalSystemNode> doBuildChildren() {
+  protected List<? extends ExternalSystemNode<?>> doBuildChildren() {
     setIdeGrouping(null);
-    final List<? extends ExternalSystemNode> children = super.doBuildChildren();
-    final List<ExternalSystemNode> visibleChildren = ContainerUtil.filter(children, node -> node.isVisible());
-    if (visibleChildren.size() == 1 && visibleChildren.get(0).getName().equals(getName())) {
-      singleModuleProject = true;
-      final ExternalSystemNode node = visibleChildren.get(0);
-      if (node instanceof ModuleNode) {
-        setIdeGrouping(((ModuleNode)node).getIdeGrouping());
+    final List<? extends ExternalSystemNode<?>> children = super.doBuildChildren();
+    final List<ExternalSystemNode<?>> visibleChildren = ContainerUtil.filter(children, node -> node.isVisible());
+    if (getExternalProjectsView().getGroupModules()) {
+      final List<ExternalSystemNode<?>> topLevelChildren =
+        ContainerUtil.filter(visibleChildren, node -> !(node instanceof ModuleNode) || ((ModuleNode)node).getIdeParentGrouping() == null);
+      if (topLevelChildren.size() == 1) {
+        ExternalSystemNode<?> child = topLevelChildren.get(0);
+        if (child instanceof ModuleNode) {
+          effectiveRoot = (ModuleNode)child;
+          return effectiveRoot.doBuildChildren();
+        }
       }
-      //noinspection unchecked
-      return node.doBuildChildren();
+      return topLevelChildren;
     }
-    else {
-      singleModuleProject = false;
-      return visibleChildren;
-    }
-  }
 
-  public boolean isSingleModuleProject() {
-    return singleModuleProject;
+    effectiveRoot = null;
+    return visibleChildren;
   }
 
   void updateProject() {
@@ -83,17 +64,7 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
 
   @Override
   protected void doUpdate() {
-    String autoImportHint = null;
-    final ProjectData projectData = getData();
-    if (projectData != null) {
-      final AbstractExternalSystemSettings externalSystemSettings =
-        ExternalSystemApiUtil.getSettings(getExternalProjectsView().getProject(), getData().getOwner());
-      final ExternalProjectSettings projectSettings =
-        externalSystemSettings.getLinkedProjectSettings(projectData.getLinkedExternalProjectPath());
-      if (projectSettings != null && projectSettings.isUseAutoImport()) autoImportHint = "auto-import enabled";
-    }
-
-    setNameAndTooltip(getName(), myTooltipCache, autoImportHint);
+    setNameAndTooltip(getName(), myTooltipCache);
   }
 
   private String makeDescription() {
@@ -127,5 +98,9 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
   @NonNls
   protected String getMenuId() {
     return "ExternalSystemView.ProjectMenu";
+  }
+
+  public ModuleNode getEffectiveRoot() {
+    return effectiveRoot;
   }
 }

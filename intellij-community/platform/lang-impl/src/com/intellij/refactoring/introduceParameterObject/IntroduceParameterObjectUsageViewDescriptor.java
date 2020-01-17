@@ -16,8 +16,7 @@ public class IntroduceParameterObjectUsageViewDescriptor extends UsageViewDescri
   }
 
   @Override
-  @NotNull
-  public PsiElement[] getElements() {
+  public PsiElement @NotNull [] getElements() {
     return new PsiElement[]{method};
   }
 

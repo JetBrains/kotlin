@@ -19,6 +19,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.gradle.tooling.model.idea.IdeaProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.model.scala.ScalaCompileOptions;
 import org.jetbrains.plugins.gradle.model.scala.ScalaModel;
@@ -41,10 +42,10 @@ public class ScalaModelBuilderImplTest extends AbstractModelBuilderTest {
 
   @Test
   public void testScalaModel() {
-    DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getIdeaProject().getModules();
+    DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getModel(IdeaProject.class).getModules();
 
-    List<ScalaModel> scalaModels = ContainerUtil.mapNotNull(ideaModules,
-                                                            (Function<IdeaModule, ScalaModel>)module -> allModels.getExtraProject(module, ScalaModel.class));
+    List<ScalaModel> scalaModels = ContainerUtil.mapNotNull(
+      ideaModules, (Function<IdeaModule, ScalaModel>)module -> allModels.getModel(module, ScalaModel.class));
 
     assertEquals(1, scalaModels.size());
     ScalaModel scalaModel = scalaModels.get(0);
@@ -55,7 +56,7 @@ public class ScalaModelBuilderImplTest extends AbstractModelBuilderTest {
   }
 
   @Override
-  protected Set<Class> getModels() {
+  protected Set<Class<?>> getModels() {
     return ContainerUtil.set(ScalaModel.class);
   }
 }

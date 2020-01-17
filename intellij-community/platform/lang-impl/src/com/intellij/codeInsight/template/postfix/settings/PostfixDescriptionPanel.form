@@ -38,21 +38,21 @@
             <border type="none"/>
             <children/>
           </xy>
-          <component id="e4723" class="com.intellij.ui.TitledSeparator">
+          <component id="bb867" class="com.intellij.ui.components.JBLabel" binding="myBeforeLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Before"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="settings.postfix.completion.before"/>
             </properties>
           </component>
-          <component id="967ce" class="com.intellij.ui.TitledSeparator">
+          <component id="c2092" class="com.intellij.ui.components.JBLabel" binding="myAfterLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <alignmentY value="0.2"/>
-              <text value="After"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="settings.postfix.completion.after"/>
             </properties>
           </component>
           <scrollpane id="93a5c" class="com.intellij.ui.components.JBScrollPane">
@@ -71,12 +71,12 @@
               </component>
             </children>
           </scrollpane>
-          <component id="36ea" class="com.intellij.ui.TitledSeparator">
+          <component id="834ac" class="com.intellij.ui.components.JBLabel" binding="myDescriptionLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Description"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="settings.postfix.completion.description"/>
             </properties>
           </component>
         </children>

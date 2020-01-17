@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.ProjectManager
 
-class EditRunConfigurationTemplatesForNewProjectsAction : DumbAwareAction("Run Configuration Templates for New Projects") {
+class EditRunConfigurationTemplatesForNewProjectsAction : DumbAwareAction("Run Configuration Templates for New Projects...") {
   override fun actionPerformed(e: AnActionEvent) {
     val dialog = EditConfigurationsDialog(ProjectManager.getInstance().defaultProject)
     dialog.title = e.presentation.text

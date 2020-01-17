@@ -23,8 +23,9 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.*;
+import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService;
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder;
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderService;
+import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext;
 import org.jetbrains.plugins.gradle.tooling.internal.BuildScriptClasspathModelImpl;
 import org.jetbrains.plugins.gradle.tooling.internal.ClasspathEntryModelImpl;
 import org.jetbrains.plugins.gradle.tooling.util.DependencyTraverser;
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Vladislav.Soroka
  */
-public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService {
+public class ModelBuildScriptClasspathBuilderImpl extends AbstractModelBuilderService {
 
   private static final String CLASSPATH_CONFIGURATION_NAME = "classpath";
   private final Map<String, BuildScriptClasspathModelImpl> cache = new ConcurrentHashMap<String, BuildScriptClasspathModelImpl>();
@@ -51,11 +52,11 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
 
   @Nullable
   @Override
-  public Object buildAll(final String modelName, final Project project) {
+  public Object buildAll(@NotNull final String modelName, @NotNull final Project project, @NotNull ModelBuilderContext context) {
     BuildScriptClasspathModelImpl buildScriptClasspath = cache.get(project.getPath());
     if (buildScriptClasspath != null) return buildScriptClasspath;
 
-    if(mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(project);
+    if (mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(context);
 
     buildScriptClasspath = new BuildScriptClasspathModelImpl();
     final File gradleHomeDir = project.getGradle().getGradleHomeDir();
@@ -74,7 +75,7 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
 
     Project parent = project.getParent();
     if (parent != null) {
-      BuildScriptClasspathModelImpl parentBuildScriptClasspath = (BuildScriptClasspathModelImpl)buildAll(modelName, parent);
+      BuildScriptClasspathModelImpl parentBuildScriptClasspath = (BuildScriptClasspathModelImpl)buildAll(modelName, parent, context);
       if (parentBuildScriptClasspath != null) {
         for (ClasspathEntryModel classpathEntryModel : parentBuildScriptClasspath.getClasspath()) {
           buildScriptClasspath.add(classpathEntryModel);
@@ -84,7 +85,7 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
     Configuration classpathConfiguration = project.getBuildscript().getConfigurations().findByName(CLASSPATH_CONFIGURATION_NAME);
     if (classpathConfiguration == null) return null;
 
-    Collection<ExternalDependency> dependencies = new DependencyResolverImpl(project, false, downloadJavadoc, downloadSources, mySourceSetFinder).resolveDependencies(classpathConfiguration);
+    Collection<ExternalDependency> dependencies = new DependencyResolverImpl(project, downloadJavadoc, downloadSources, mySourceSetFinder).resolveDependencies(classpathConfiguration);
 
     for (ExternalDependency dependency : new DependencyTraverser(dependencies)) {
       if (dependency instanceof ExternalProjectDependency) {
@@ -94,7 +95,7 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
         buildScriptClasspath.add(new ClasspathEntryModelImpl(
           pathSet(projectDependencyArtifacts),
           pathSet(projectDependencyArtifactsSources),
-          new HashSet<String>()
+          Collections.<String>emptySet()
         ));
       }
       else if (dependency instanceof ExternalLibraryDependency) {
@@ -117,8 +118,8 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
         FileCollectionDependency fileCollectionDependency = (FileCollectionDependency)dependency;
         buildScriptClasspath.add(new ClasspathEntryModelImpl(
           pathSet(fileCollectionDependency.getFiles()),
-          new HashSet<String>(),
-          new HashSet<String>()
+          Collections.<String>emptySet(),
+          Collections.<String>emptySet()
         ));
       }
     }
@@ -136,12 +137,15 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
   }
 
   private static Set<String> pathSet(Collection<File> files) {
-    Set<String> set = new HashSet<String>();
+    if (files.isEmpty()) return Collections.emptySet();
+    Set<String> set = new HashSet<String>(files.size());
     for (File file : files) {
       if(file != null) {
         set.add(file.getPath());
       }
     }
+    if (set.isEmpty()) return Collections.emptySet();
+    if (set.size() == 1) return Collections.singleton(set.iterator().next());
     return set;
   }
 

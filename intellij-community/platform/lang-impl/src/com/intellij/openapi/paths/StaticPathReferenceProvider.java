@@ -36,7 +36,7 @@ public class StaticPathReferenceProvider extends PathReferenceProviderBase {
   private boolean myRelativePathsAllowed;
   private final FileType[] mySuitableFileTypes;
 
-  public StaticPathReferenceProvider(@Nullable final FileType[] suitableFileTypes) {
+  public StaticPathReferenceProvider(final FileType @Nullable [] suitableFileTypes) {
     mySuitableFileTypes = suitableFileTypes;
   }
 

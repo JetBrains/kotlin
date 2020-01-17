@@ -11,11 +11,11 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.OptionGroup;
+import com.intellij.util.containers.ContainerUtil;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExportToHTMLDialog extends DialogWrapper {
@@ -41,10 +41,7 @@ public class ExportToHTMLDialog extends DialogWrapper {
     myDirectoryName = directoryName;
     this.myIsSelectedTextEnabled = isSelectedTextEnabled;
     setTitle(CodeEditorBundle.message("export.to.html.title"));
-    myExtensions = new ArrayList<>();
-    for (PrintOption extension : PrintOption.EP_NAME.getExtensionList()) {
-      myExtensions.add(extension.createConfigurable());
-    }
+    myExtensions = ContainerUtil.map(PrintOption.EP_NAME.getExtensionList(), PrintOption::createConfigurable);
     init();
   }
 

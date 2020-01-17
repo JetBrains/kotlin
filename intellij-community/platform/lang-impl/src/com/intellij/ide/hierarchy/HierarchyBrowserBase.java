@@ -35,7 +35,10 @@ import java.util.Set;
 
 /**
  * @author yole
+ *
+ * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBase} instead
  */
+@Deprecated
 public abstract class HierarchyBrowserBase extends SimpleToolWindowPanel implements HierarchyBrowser, Disposable, DataProvider {
   private static final HierarchyNodeDescriptor[] EMPTY_DESCRIPTORS = new HierarchyNodeDescriptor[0];
 
@@ -191,8 +194,7 @@ public abstract class HierarchyBrowserBase extends SimpleToolWindowPanel impleme
     return list.toArray(new HierarchyNodeDescriptor[0]);
   }
 
-  @NotNull
-  protected PsiElement[] getSelectedElements() {
+  protected PsiElement @NotNull [] getSelectedElements() {
     HierarchyNodeDescriptor[] descriptors = getSelectedDescriptors();
     ArrayList<PsiElement> elements = new ArrayList<>();
     for (HierarchyNodeDescriptor descriptor : descriptors) {

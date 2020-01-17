@@ -36,6 +36,7 @@ public abstract class WebModuleTypeBase<T extends ModuleBuilder> extends ModuleT
     return ProjectBundle.message("module.web.description");
   }
 
+  @NotNull
   @Override
   public Icon getNodeIcon(final boolean isOpened) {
     return AllIcons.Nodes.Module;

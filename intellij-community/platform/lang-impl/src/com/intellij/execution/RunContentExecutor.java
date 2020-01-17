@@ -10,6 +10,7 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
@@ -108,17 +109,17 @@ public class RunContentExecutor implements Disposable {
 
     Disposer.register(descriptor, this);
     Disposer.register(descriptor, console);
-    
+
     actions.add(new RerunAction(consolePanel));
     actions.add(new StopAction());
     actions.add(new CloseAction(executor, descriptor, myProject));
 
-    ExecutionManager.getInstance(myProject).getContentManager().showRunContent(executor, descriptor);
+    RunContentManager.getInstance(myProject).showRunContent(executor, descriptor);
 
     if (myActivateToolWindow) {
       activateToolWindow();
     }
-    
+
     return console;
   }
 

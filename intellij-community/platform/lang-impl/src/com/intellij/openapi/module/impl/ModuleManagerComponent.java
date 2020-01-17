@@ -8,7 +8,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
@@ -54,9 +53,10 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
       public void projectComponentsInitialized(@NotNull final Project project) {
         if (project != myProject) return;
 
-        Activity activity = StartUpMeasurer.start(StartUpMeasurer.Phases.LOAD_MODULES);
+        Activity activity = StartUpMeasurer.startMainActivity("module loading");
         loadModules(myModuleModel);
-        activity.end("module count: " + myModuleModel.getModules().length);
+        activity.end();
+        activity.setDescription("module count: " + myModuleModel.getModules().length);
       }
     });
 
@@ -106,6 +106,12 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
 
   @NotNull
   @Override
+  protected ModuleEx createNonPersistentModule(@NotNull String name) {
+    return new ModuleImpl(name, myProject, null);
+  }
+
+  @NotNull
+  @Override
   protected ModuleEx createAndLoadModule(@NotNull String filePath) {
     return createModule(filePath);
   }
@@ -128,7 +134,7 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
   @Override
   protected void fireModulesAdded() {
     for (Module module : myModuleModel.getModules()) {
-      TransactionGuard.getInstance().submitTransactionAndWait(() -> fireModuleAddedInWriteAction((ModuleEx)module));
+      fireModuleAddedInWriteAction((ModuleEx)module);
     }
   }
 

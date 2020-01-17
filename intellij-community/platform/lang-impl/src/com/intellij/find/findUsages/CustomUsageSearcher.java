@@ -28,5 +28,5 @@ import org.jetbrains.annotations.NotNull;
 public abstract class CustomUsageSearcher {
   public static final ExtensionPointName<CustomUsageSearcher> EP_NAME = ExtensionPointName.create("com.intellij.customUsageSearcher");
 
-  public abstract void processElementUsages(@NotNull PsiElement element, @NotNull Processor<Usage> processor, @NotNull FindUsagesOptions options);
+  public abstract void processElementUsages(@NotNull PsiElement element, @NotNull Processor<? super Usage> processor, @NotNull FindUsagesOptions options);
 }

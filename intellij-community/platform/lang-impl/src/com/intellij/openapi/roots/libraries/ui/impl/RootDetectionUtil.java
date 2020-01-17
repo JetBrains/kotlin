@@ -41,11 +41,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class RootDetectionUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.roots.ui.configuration.libraryEditor.RootDetectionUtil");
+  private static final Logger LOG = Logger.getInstance(RootDetectionUtil.class);
 
   private RootDetectionUtil() {
   }
@@ -62,7 +59,7 @@ public class RootDetectionUtil {
   @NotNull
   public static List<OrderRoot> detectRoots(@NotNull final Collection<? extends VirtualFile> rootCandidates, @Nullable Component parentComponent,
                                             @Nullable Project project, @NotNull final LibraryRootsDetector detector,
-                                            @NotNull OrderRootType[] rootTypesAllowedToBeSelectedByUserIfNothingIsDetected) {
+                                            OrderRootType @NotNull [] rootTypesAllowedToBeSelectedByUserIfNothingIsDetected) {
     final List<OrderRoot> result = new ArrayList<>();
     final List<SuggestedChildRootInfo> suggestedRoots = new ArrayList<>();
     new Task.Modal(project, "Scanning for Roots", true) {

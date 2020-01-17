@@ -10,15 +10,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static com.intellij.execution.impl.RunManagerImplKt.PROJECT_RUN_MANAGER_COMPONENT_NAME;
 
-/**
- * @author nik
- */
 public class RunManagerSettingsImpl implements RunManagerSettings {
   @NonNls public static final String RUN_MANAGER_COMPONENT_NAME = "RunManager";
   @NonNls public static final String CONFIGURATION_ELEMENT = "configuration";
@@ -26,20 +25,20 @@ public class RunManagerSettingsImpl implements RunManagerSettings {
   private SettingsXmlFile myProjectFile;
   private final List<SettingsXmlFile> mySharedConfigurationFiles;
 
-  public RunManagerSettingsImpl(@NotNull File workspaceFile, @Nullable File projectFile, @Nullable File[] sharedConfigurationFiles,
+  public RunManagerSettingsImpl(@NotNull Path workspaceFile, @Nullable Path projectFile, File @Nullable [] sharedConfigurationFiles,
                                 ConversionContextImpl context) throws CannotConvertException {
-    if (workspaceFile.exists()) {
+    if (Files.exists(workspaceFile)) {
       myWorkspaceFile = context.getOrCreateFile(workspaceFile);
     }
 
-    if (projectFile != null && projectFile.exists()) {
+    if (projectFile != null && Files.exists(projectFile)) {
       myProjectFile = context.getOrCreateFile(projectFile);
     }
 
     mySharedConfigurationFiles = new ArrayList<>();
     if (sharedConfigurationFiles != null) {
       for (File file : sharedConfigurationFiles) {
-        mySharedConfigurationFiles.add(context.getOrCreateFile(file));
+        mySharedConfigurationFiles.add(context.getOrCreateFile(file.toPath()));
       }
     }
   }
@@ -63,8 +62,8 @@ public class RunManagerSettingsImpl implements RunManagerSettings {
     return result;
   }
 
-  public Collection<File> getAffectedFiles() {
-    final List<File> files = new ArrayList<>();
+  public Collection<Path> getAffectedFiles() {
+    final List<Path> files = new ArrayList<>();
     if (myWorkspaceFile != null) {
       files.add(myWorkspaceFile.getFile());
     }

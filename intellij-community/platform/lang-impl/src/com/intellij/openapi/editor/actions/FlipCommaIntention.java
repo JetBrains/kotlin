@@ -50,7 +50,7 @@ public class FlipCommaIntention implements IntentionAction {
     }
     final PsiElement left = smartAdvance(comma, false);
     final PsiElement right = smartAdvance(comma, true);
-    return left != null && right != null && !left.getText().equals(right.getText());
+    return left != null && right != null && !left.getText().equals(right.getText()) && Flipper.isCanFlip(left, right);
   }
 
   @Override
@@ -97,9 +97,16 @@ public class FlipCommaIntention implements IntentionAction {
     LanguageExtension<Flipper> EXTENSION = new LanguageExtension<>("com.intellij.flipCommaIntention.flipper");
 
     /**
-     * @return true, if elements were flipped; false, if default flip implementation should be used.
+     * @return true, if the elements were flipped; false, if the default flip implementation should be used.
      */
-    boolean flip(PsiElement left, PsiElement right);
+    boolean flip(@NotNull PsiElement left, @NotNull PsiElement right);
+
+    /**
+     * @return false, if the elements should not be flipped; true, if the default flip implementation should be used.
+     */
+    default boolean canFlip(@NotNull PsiElement left, @NotNull PsiElement right) {
+      return true;
+    }
 
     static boolean tryFlip(PsiElement left, PsiElement right) {
       final Language language = left.getLanguage();
@@ -109,6 +116,16 @@ public class FlipCommaIntention implements IntentionAction {
         }
       }
       return false;
+    }
+
+    static boolean isCanFlip(PsiElement left, PsiElement right) {
+      final Language language = left.getLanguage();
+      for (Flipper handler : EXTENSION.allForLanguage(language)) {
+        if (!handler.canFlip(left, right)) {
+          return false;
+        }
+      }
+      return true;
     }
   }
 

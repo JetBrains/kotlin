@@ -140,12 +140,12 @@ public class IntroduceParameterObjectProcessor<M extends PsiNamedElement, P exte
 
   @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new IntroduceParameterObjectUsageViewDescriptor(myMethod);
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usageInfos) {
+  protected void performRefactoring(UsageInfo @NotNull [] usageInfos) {
     final PsiElement aClass = myClassDescriptor.createClass(myMethod, myAccessors);
     if (aClass != null) {
       myClassDescriptor.setExistingClass(aClass);

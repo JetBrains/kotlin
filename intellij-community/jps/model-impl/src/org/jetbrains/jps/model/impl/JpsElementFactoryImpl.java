@@ -33,9 +33,6 @@ import org.jetbrains.jps.model.module.impl.JpsModuleImpl;
 import org.jetbrains.jps.model.module.impl.JpsModuleReferenceImpl;
 import org.jetbrains.jps.model.module.impl.JpsModuleSourceRootImpl;
 
-/**
- * @author nik
- */
 public class JpsElementFactoryImpl extends JpsElementFactory {
   @Override
   public JpsModel createModel() {

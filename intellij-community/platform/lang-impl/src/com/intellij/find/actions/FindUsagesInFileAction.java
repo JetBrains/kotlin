@@ -36,11 +36,6 @@ public class FindUsagesInFileAction extends AnAction implements PossiblyDumbAwar
   }
 
   @Override
-  public boolean startInTransaction() {
-    return !Registry.is("ide.find.in.file.highlight.usages");
-  }
-
-  @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     if (Registry.is("ide.find.in.file.highlight.usages")) {
       ActionManager.getInstance().getAction(ACTION_HIGHLIGHT_USAGES_IN_FILE).actionPerformed(e);

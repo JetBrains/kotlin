@@ -31,7 +31,7 @@ public class FakeConfigurationFactory extends ConfigurationFactory {
   @NotNull
   @Override
   public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-    throw new UnsupportedOperationException("Not Implemented");
+    return new FakeRunConfiguration(project, true);
   }
 }
 

@@ -21,6 +21,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.ModuleConfigurationStateImpl;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -48,7 +49,7 @@ public class PlatformContentEntriesConfigurable implements Configurable {
 
   @Override
   public String getDisplayName() {
-    return "Project Structure";
+    return ProjectBundle.message("configurable.PlatformContentEntriesConfigurable.display.name");
   }
 
   @Override

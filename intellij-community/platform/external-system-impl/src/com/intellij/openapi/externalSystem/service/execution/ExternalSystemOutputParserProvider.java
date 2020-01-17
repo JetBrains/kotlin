@@ -5,7 +5,6 @@ import com.intellij.build.output.BuildOutputParser;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.List;
 /**
  * @author Vladislav.Soroka
  */
-@ApiStatus.Experimental
 public interface ExternalSystemOutputParserProvider {
   ExtensionPointName<ExternalSystemOutputParserProvider> EP_NAME =
     ExtensionPointName.create("com.intellij.externalSystemOutputParserProvider");

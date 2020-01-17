@@ -33,13 +33,6 @@ public abstract class AbstractExternalModuleBuilder<S extends ExternalProjectSet
     myIcon = icon == null ? super.getNodeIcon() : icon;
   }
 
-  @Nullable
-  @Override
-  public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
-    ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project);
-    return super.commitModule(project, model);
-  }
-
   @Override
   public String getBuilderId() {
     return getClass().getName();

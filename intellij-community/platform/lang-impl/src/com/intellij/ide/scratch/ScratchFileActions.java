@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.InternalFileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -29,6 +30,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.*;
 import com.intellij.util.containers.JBIterable;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +57,7 @@ public class ScratchFileActions {
   public static class NewFileAction extends DumbAwareAction {
     private static final Icon ICON = LayeredIcon.create(AllIcons.FileTypes.Text, AllIcons.Actions.Scratch);
 
-    private static final String ACTION_ID = "NewScratchFile";
+    @NonNls private static final String ACTION_ID = "NewScratchFile";
 
     private final NotNullLazyValue<String> myActionText = NotNullLazyValue.createValue(
       () -> NewActionGroup.isActionInNewPopupMenu(this) ? ActionsBundle.actionText(ACTION_ID) : ActionsBundle.message("action.NewScratchFile.text.with.new")
@@ -125,7 +127,7 @@ public class ScratchFileActions {
       context.filePrefix = "buffer";
       context.createOption = ScratchFileService.Option.create_if_missing;
       context.fileCounter = ScratchFileActions::nextBufferIndex;
-      if (context.language == null) context.language = StdLanguages.TEXT;
+      if (context.language == null) context.language = PlainTextLanguage.INSTANCE;
       doCreateNewScratch(project, context);
     }
   }
@@ -152,7 +154,7 @@ public class ScratchFileActions {
     return context;
   }
 
-  static void doCreateNewScratch(@NotNull Project project, @NotNull ScratchFileCreationHelper.Context context) {
+  static PsiFile doCreateNewScratch(@NotNull Project project, @NotNull ScratchFileCreationHelper.Context context) {
     FeatureUsageTracker.getInstance().triggerFeatureUsed("scratch");
     Language language = ObjectUtils.notNull(context.language);
     if (context.fileExtension == null) {
@@ -162,7 +164,7 @@ public class ScratchFileActions {
     ScratchFileCreationHelper.EXTENSION.forLanguage(language).beforeCreate(project, context);
 
     VirtualFile dir = context.ideView != null ? PsiUtilCore.getVirtualFile(ArrayUtil.getFirstElement(context.ideView.getDirectories())) : null;
-    RootType rootType = dir == null ? null : ScratchFileService.getInstance().getRootType(dir);
+    RootType rootType = dir == null ? null : ScratchFileService.findRootType(dir);
     String relativePath = rootType != ScratchRootType.getInstance() ? "" :
                           FileUtil.getRelativePath(ScratchFileService.getInstance().getRootPath(rootType), dir.getPath(), '/');
 
@@ -172,13 +174,14 @@ public class ScratchFileActions {
                                             context.fileExtension);
     VirtualFile file = ScratchRootType.getInstance().createScratchFile(
       project, fileName, language, context.text, context.createOption);
-    if (file == null) return;
+    if (file == null) return null;
 
     PsiNavigationSupport.getInstance().createNavigatable(project, file, context.caretOffset).navigate(true);
     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
     if (context.ideView != null && psiFile != null) {
       context.ideView.selectElement(psiFile);
     }
+    return psiFile;
   }
 
   private static void checkLanguageAndTryToFixText(@NotNull Project project,
@@ -213,7 +216,7 @@ public class ScratchFileActions {
     PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, offset);
     PsiFile file = element != null ? element.getContainingFile() : psiFile;
     Language language = file.getLanguage();
-    if (language == StdLanguages.TEXT && file.getFileType() instanceof InternalFileType) {
+    if (language == PlainTextLanguage.INSTANCE && file.getFileType() instanceof InternalFileType) {
       return StdLanguages.XML;
     }
     return language;

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.impl
 
 import com.intellij.execution.*
@@ -8,9 +8,11 @@ import com.intellij.execution.impl.RunConfigurable.Companion.collectNodesRecursi
 import com.intellij.execution.impl.RunConfigurableNodeKind.*
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
+import com.intellij.ide.dnd.TransferableList
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
@@ -45,6 +47,7 @@ import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.awt.datatransfer.Transferable
 import java.awt.event.KeyEvent
 import java.util.*
 import java.util.function.ToIntFunction
@@ -78,7 +81,7 @@ fun createRunConfigurationConfigurable(project: Project): RunConfigurable {
   }
 }
 
-open class RunConfigurable @JvmOverloads constructor(protected val project: Project, var runDialog: RunDialogBase? = null) : Configurable, Disposable {
+open class RunConfigurable @JvmOverloads constructor(protected val project: Project, var runDialog: RunDialogBase? = null) : Configurable, Disposable, RunConfigurationCreator {
   @Volatile private var isDisposed: Boolean = false
   val root = DefaultMutableTreeNode("Root")
   val treeModel = MyTreeModel(root)
@@ -125,13 +128,45 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
         else -> if (userObject is ConfigurationType) CONFIGURATION_TYPE else UNKNOWN
       }
     }
+
+    fun configurationTypeSorted(project: Project,
+                                showApplicableTypesOnly: Boolean,
+                                allTypes: List<ConfigurationType>): List<ConfigurationType> =
+      getTypesToShow(project, showApplicableTypesOnly, allTypes).sortedWith(kotlin.Comparator { type1, type2 -> compareTypesForUi(type1!!, type2!!) })
+
+    internal fun getTypesToShow(project: Project, showApplicableTypesOnly: Boolean, allTypes: List<ConfigurationType>): List<ConfigurationType> {
+      if (showApplicableTypesOnly) {
+        val applicableTypes = allTypes.filter { configurationType -> configurationType.configurationFactories.any { it.isApplicable(project) } }
+        if (applicableTypes.isNotEmpty() && applicableTypes.size < (allTypes.size - 3)) {
+          return applicableTypes
+        }
+      }
+      return allTypes
+    }
   }
+
+  // https://youtrack.jetbrains.com/issue/TW-61353
+  fun getSelectedConfigurable() = selectedConfigurable
 
   override fun getDisplayName() = ExecutionBundle.message("run.configurable.display.name")
 
   protected fun initTree() {
     tree.isRootVisible = false
     tree.showsRootHandles = true
+    tree.transferHandler = object : TransferHandler() {
+      override fun createTransferable(component: JComponent): Transferable? {
+        val tree = component as? JTree ?: return null
+        val selection = tree.selectionPaths ?: return null
+        if (selection.size <= 1) return null
+        return object : TransferableList<TreePath>(*selection) {
+          override fun toString(path: TreePath): String {
+            return path.lastPathComponent.toString()
+          }
+        }
+      }
+
+      override fun getSourceActions(c: JComponent) = COPY_OR_MOVE
+    }
     TreeUtil.installActions(tree)
     TreeSpeedSearch(tree) { o ->
       val node = o.lastPathComponent as DefaultMutableTreeNode
@@ -187,7 +222,16 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
           showFolderField(node, userObject)
         }
         else if (userObject is ConfigurationFactory) {
-          showTemplateConfigurable(userObject)
+          val parent = node.parent as DefaultMutableTreeNode
+          if (!parent.isRoot) {
+            showTemplateConfigurable(userObject)
+          } else {
+            if (userObject is ConfigurationType) {
+              drawPressAddButtonMessage(userObject as ConfigurationType)
+            } else {
+              drawPressAddButtonMessage(null)
+            }
+          }
         }
         else if (userObject === TEMPLATES_NODE_USER_OBJECT) {
           drawPressAddButtonMessage(null)
@@ -218,12 +262,8 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
   protected open fun addRunConfigurationsToModel(model: DefaultMutableTreeNode) {
   }
 
-  fun selectConfigurableOnShow(option: Boolean): RunConfigurable {
-    if (!option) {
-      return this
-    }
-
-    SwingUtilities.invokeLater {
+  fun selectConfigurableOnShow() {
+    ApplicationManager.getApplication().invokeLater({
       if (isDisposed) {
         return@invokeLater
       }
@@ -239,8 +279,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
         selectedConfigurable = null
       }
       drawPressAddButtonMessage(null)
-    }
-    return this
+    }, ModalityState.stateForComponent(wholePanel!!))
   }
 
   private fun selectConfiguration(configuration: RunConfiguration): Boolean {
@@ -481,6 +520,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
         RunConfigurationSelector.KEY.name -> RunConfigurationSelector { configuration -> selectConfiguration(configuration) }
         TouchbarDataKeys.ACTIONS_KEY.name -> touchbarActions
         CommonDataKeys.PROJECT.name -> project
+        RunConfigurationCreator.KEY.name -> this
         else -> null
       }
     }
@@ -868,7 +908,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
     return configurationConfigurable
   }
 
-  fun createNewConfiguration(factory: ConfigurationFactory): SingleConfigurationConfigurable<RunConfiguration> {
+  override fun createNewConfiguration(factory: ConfigurationFactory): SingleConfigurationConfigurable<RunConfiguration> {
     var typeNode = getConfigurationTypeNode(factory.type)
     if (typeNode == null) {
       typeNode = DefaultMutableTreeNode(factory.type)
@@ -921,30 +961,19 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
 
     private fun showAddPopup(showApplicableTypesOnly: Boolean) {
       val allTypes = ConfigurationType.CONFIGURATION_TYPE_EP.extensionList
-      val configurationTypes: MutableList<ConfigurationType?> = getTypesToShow(showApplicableTypesOnly, allTypes).toMutableList()
-      configurationTypes.sortWith(kotlin.Comparator { type1, type2 -> compareTypesForUi(type1!!, type2!!) })
+      val configurationTypes: MutableList<ConfigurationType?> = configurationTypeSorted(project, showApplicableTypesOnly, allTypes).toMutableList()
       val hiddenCount = allTypes.size - configurationTypes.size
       if (hiddenCount > 0) {
-        configurationTypes.add(null)
+        configurationTypes.add(NewRunConfigurationPopup.HIDDEN_ITEMS_STUB);
       }
 
-      val popup = NewRunConfigurationPopup.createAddPopup(configurationTypes,
+      val popup = NewRunConfigurationPopup.createAddPopup(project, configurationTypes,
                                                           ExecutionBundle.message("show.irrelevant.configurations.action.name",
                                                                                   hiddenCount),
                                                           { factory -> createNewConfiguration(factory) }, selectedConfigurationType,
                                                           { showAddPopup(false) }, true)
       //new TreeSpeedSearch(myTree);
       popup.showUnderneathOf(toolbarDecorator!!.actionsPanel)
-    }
-
-    private fun getTypesToShow(showApplicableTypesOnly: Boolean, allTypes: List<ConfigurationType>): List<ConfigurationType> {
-      if (showApplicableTypesOnly) {
-        val applicableTypes = allTypes.filter { configurationType -> configurationType.configurationFactories.any { it.isApplicable(project) } }
-        if (applicableTypes.size < (allTypes.size - 3)) {
-          return applicableTypes
-        }
-      }
-      return allTypes
     }
   }
 
@@ -1373,8 +1402,17 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
         return false
       }
 
-      val oldNode = tree.getPathForRow(oldIndex).lastPathComponent as DefaultMutableTreeNode
+      val oldPaths = tree.selectionPaths ?: return false
       val newNode = tree.getPathForRow(newIndex).lastPathComponent as DefaultMutableTreeNode
+      for (oldPath in oldPaths) {
+        val oldNode = oldPath.lastPathComponent as DefaultMutableTreeNode
+        if (oldNode === newNode || !canDrop(oldNode, newNode, newIndex, position)) return false
+      }
+      return true
+    }
+
+    fun canDrop(oldNode: DefaultMutableTreeNode, newNode: DefaultMutableTreeNode, newIndex: Int,
+                position: RowsDnDSupport.RefinedDropSupport.Position): Boolean {
       val oldParent = oldNode.parent as DefaultMutableTreeNode
       val newParent = newNode.parent as DefaultMutableTreeNode
       val oldKind = getKind(oldNode)
@@ -1438,60 +1476,64 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
     }
 
     override fun drop(oldIndex: Int, newIndex: Int, position: RowsDnDSupport.RefinedDropSupport.Position) {
-      val oldNode = tree.getPathForRow(oldIndex).lastPathComponent as DefaultMutableTreeNode
+      val oldPaths = tree.selectionPaths ?: return
       val newNode = tree.getPathForRow(newIndex).lastPathComponent as DefaultMutableTreeNode
-      var newParent = newNode.parent as DefaultMutableTreeNode
-      val oldKind = getKind(oldNode)
-      val wasExpanded = tree.isExpanded(TreePath(oldNode.path))
-      // drop in folder
-      if (isDropInto(tree, oldIndex, newIndex)) {
-        removeNodeFromParent(oldNode)
-        var index = newNode.childCount
-        if (oldKind.isConfiguration) {
-          var middleIndex = newNode.childCount
-          for (i in 0 until newNode.childCount) {
-            if (getKind(newNode.getChildAt(i) as DefaultMutableTreeNode) == TEMPORARY_CONFIGURATION) {
-              //index of first temporary configuration in target folder
-              middleIndex = i
-              break
+      val newKind = getKind(newNode)
+      for (oldPath in oldPaths) {
+        val oldNode = oldPath.lastPathComponent as DefaultMutableTreeNode
+        var newParent = newNode.parent as DefaultMutableTreeNode
+        val oldKind = getKind(oldNode)
+        val wasExpanded = tree.isExpanded(TreePath(oldNode.path))
+        // drop in folder
+        if (oldKind.isConfiguration && newKind == FOLDER) {
+          removeNodeFromParent(oldNode)
+          var index = newNode.childCount
+          if (oldKind.isConfiguration) {
+            var middleIndex = newNode.childCount
+            for (i in 0 until newNode.childCount) {
+              if (getKind(newNode.getChildAt(i) as DefaultMutableTreeNode) == TEMPORARY_CONFIGURATION) {
+                //index of first temporary configuration in target folder
+                middleIndex = i
+                break
+              }
             }
-          }
-          if (position != INTO) {
-            if (oldIndex < newIndex) {
-              index = if (oldKind == CONFIGURATION) 0 else middleIndex
+            if (position != INTO) {
+              if (oldIndex < newIndex) {
+                index = if (oldKind == CONFIGURATION) 0 else middleIndex
+              }
+              else {
+                index = if (oldKind == CONFIGURATION) middleIndex else newNode.childCount
+              }
             }
             else {
-              index = if (oldKind == CONFIGURATION) middleIndex else newNode.childCount
+              index = if (oldKind == TEMPORARY_CONFIGURATION) newNode.childCount else middleIndex
             }
           }
-          else {
-            index = if (oldKind == TEMPORARY_CONFIGURATION) newNode.childCount else middleIndex
-          }
-        }
-        insertNodeInto(oldNode, newNode, index)
-        tree.expandPath(TreePath(newNode.path))
-      }
-      else {
-        val type = getType(oldNode)!!
-        removeNodeFromParent(oldNode)
-        var index: Int
-        if (type !== getType(newParent)) {
-          newParent = getConfigurationTypeNode(type)!!
-          index = newParent.childCount
+          insertNodeInto(oldNode, newNode, index)
+          tree.expandPath(TreePath(newNode.path))
         }
         else {
-          index = newParent.getIndex(newNode)
-          if (position == BELOW) {
-            index++
+          val type = getType(oldNode)!!
+          removeNodeFromParent(oldNode)
+          var index: Int
+          if (type !== getType(newParent)) {
+            newParent = getConfigurationTypeNode(type)!!
+            index = newParent.childCount
           }
+          else {
+            index = newParent.getIndex(newNode)
+            if (position == BELOW) {
+              index++
+            }
+          }
+          insertNodeInto(oldNode, newParent, index)
         }
-        insertNodeInto(oldNode, newParent, index)
-      }
 
-      val treePath = TreePath(oldNode.path)
-      tree.selectionPath = treePath
-      if (wasExpanded) {
-        tree.expandPath(treePath)
+        val treePath = TreePath(oldNode.path)
+        tree.selectionPath = treePath
+        if (wasExpanded) {
+          tree.expandPath(treePath)
+        }
       }
     }
 

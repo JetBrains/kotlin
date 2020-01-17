@@ -80,7 +80,7 @@ public class ProblematicWhitespaceInspection extends LocalInspectionTool {
     }
 
     @Override
-    public void visitFile(PsiFile file) {
+    public void visitFile(@NotNull PsiFile file) {
       super.visitFile(file);
       final FileType fileType = file.getFileType();
       if (!(fileType instanceof LanguageFileType)) {

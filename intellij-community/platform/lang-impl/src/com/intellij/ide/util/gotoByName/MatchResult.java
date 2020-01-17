@@ -17,10 +17,10 @@ package com.intellij.ide.util.gotoByName;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MatchResult {
+public class MatchResult implements Comparable<MatchResult> {
   @NotNull
   public final String elementName;
-  private final int matchingDegree;
+  public final int matchingDegree;
   private final boolean startMatch;
 
   public MatchResult(@NotNull String elementName, int matchingDegree, boolean startMatch) {
@@ -29,22 +29,13 @@ public class MatchResult {
     this.startMatch = startMatch;
   }
 
-  public int compareDegrees(@NotNull MatchResult that, boolean preferStartMatches) {
-    boolean start1 = startMatch;
-    boolean start2 = that.startMatch;
-    int startMatchResult = start1 == start2 ? 0 : start1 ? -1 : 1;
-    if (preferStartMatches && startMatchResult != 0) return startMatchResult;
-
-    int degree1 = matchingDegree;
-    int degree2 = that.matchingDegree;
-    if (degree2 < degree1) return -1;
-    if (degree2 > degree1) return 1;
-
-    return -startMatchResult;
+  public int compareDegrees(@NotNull MatchResult that) {
+    return Integer.compare(that.matchingDegree, matchingDegree);
   }
 
-  int compareWith(@NotNull MatchResult that, boolean preferStartMatches) {
-    int result = compareDegrees(that, preferStartMatches);
+  @Override
+  public int compareTo(@NotNull MatchResult that) {
+    int result = compareDegrees(that);
     return result != 0 ? result : elementName.compareToIgnoreCase(that.elementName);
   }
 

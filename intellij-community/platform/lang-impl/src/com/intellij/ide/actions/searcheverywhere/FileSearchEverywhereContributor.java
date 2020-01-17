@@ -2,7 +2,6 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.actions.GotoFileAction;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoFileConfiguration;
@@ -17,12 +16,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.ui.IdeUICustomization;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
@@ -37,10 +34,11 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
   private final GotoFileModel myModelForRenderer;
   private final PersistentSearchEverywhereContributorFilter<FileType> myFilter;
 
-  public FileSearchEverywhereContributor(@Nullable Project project, @Nullable PsiElement context) {
-    super(project, context);
-    myModelForRenderer = project == null ? null : new GotoFileModel(project);
-    myFilter = project == null ? null : createFileTypeFilter(project);
+  public FileSearchEverywhereContributor(@NotNull AnActionEvent event) {
+    super(event);
+    Project project = event.getRequiredData(CommonDataKeys.PROJECT);
+    myModelForRenderer = new GotoFileModel(project);
+    myFilter = createFileTypeFilter(project);
   }
 
   @NotNull
@@ -140,7 +138,7 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
     @NotNull
     @Override
     public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
-      return new FileSearchEverywhereContributor(initEvent.getProject(), GotoActionBase.getPsiContext(initEvent));
+      return new FileSearchEverywhereContributor(initEvent);
     }
   }
 

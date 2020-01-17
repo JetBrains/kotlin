@@ -40,7 +40,7 @@ class GradlePublishingTest extends GradleHighlightingBaseTest implements Resolve
   }
 
   private String getPublishingExtensionFqn() {
-    isGradleOlderThen_4_8() || isGradleNewerOrSameThen_5_0() ? "org.gradle.api.publish.internal.DefaultPublishingExtension"
+    isGradleOlderThen("4.8") || isGradleNewerOrSameThen("5.0") ? "org.gradle.api.publish.internal.DefaultPublishingExtension"
                                                              : "org.gradle.api.publish.internal.DeferredConfigurablePublishingExtension"
   }
 }

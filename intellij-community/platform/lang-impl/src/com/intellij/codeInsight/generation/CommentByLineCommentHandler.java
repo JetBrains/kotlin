@@ -230,9 +230,7 @@ public class CommentByLineCommentHandler extends MultiCaretCodeInsightActionHand
           }
         }
         else {
-          for (int line = block.endLine; line >= block.startLine; line--) {
-            uncommentLine(block, line, block.addSpace);
-          }
+          doUncommenting(block);
         }
       }
 
@@ -279,6 +277,16 @@ public class CommentByLineCommentHandler extends MultiCaretCodeInsightActionHand
         }
       }
     }
+  }
+
+  private static void doUncommenting(Block block) {
+    DocumentUtil.executeInBulk(block.editor.getDocument(),
+                               block.endLine - block.startLine >= Registry.intValue("comment.by.line.bulk.lines.trigger"),
+                               () -> {
+                                 for (int line = block.endLine; line >= block.startLine; line--) {
+                                   uncommentLine(block, line, block.addSpace);
+                                 }
+                               });
   }
 
   private static Commenter getBlockSuitableCommenter(final PsiFile file, int offset, int endOffset) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.openapi.roots.ui.configuration;
 
@@ -133,8 +133,8 @@ public class ContentEntryTreeEditor {
     return myEditHandlers;
   }
 
-  protected TreeCellRenderer getContentEntryCellRenderer() {
-    return new ContentEntryTreeCellRenderer(this, myEditHandlers);
+  protected TreeCellRenderer getContentEntryCellRenderer(@NotNull ContentEntry contentEntry) {
+    return new ContentEntryTreeCellRenderer(this, contentEntry, myEditHandlers);
   }
 
   /**
@@ -181,10 +181,10 @@ public class ContentEntryTreeEditor {
       myFileSystemTree.select(file, null);
     };
 
-    myFileSystemTree = new FileSystemTreeImpl(myProject, myDescriptor, myTree, getContentEntryCellRenderer(), init, null) {
+    myFileSystemTree = new FileSystemTreeImpl(myProject, myDescriptor, myTree, getContentEntryCellRenderer(entry), init, null) {
       @Override
       protected AbstractTreeBuilder createTreeBuilder(JTree tree, DefaultTreeModel treeModel, AbstractTreeStructure treeStructure,
-                                                      Comparator<NodeDescriptor> comparator, FileChooserDescriptor descriptor,
+                                                      Comparator<NodeDescriptor<?>> comparator, FileChooserDescriptor descriptor,
                                                       final Runnable onInitialized) {
         return new MyFileTreeBuilder(tree, treeModel, treeStructure, comparator, descriptor, onInitialized);
       }
@@ -226,6 +226,10 @@ public class ContentEntryTreeEditor {
 
   public void update() {
     if (myFileSystemTree != null) {
+      ContentEntry entry = myContentEntryEditor == null ? null : myContentEntryEditor.getContentEntry();
+      if (entry != null) {
+        myFileSystemTree.getTree().setCellRenderer(getContentEntryCellRenderer(entry));
+      }
       myFileSystemTree.updateTree();
       final DefaultTreeModel model = (DefaultTreeModel)myTree.getModel();
       final int visibleRowCount = TreeUtil.getVisibleRowCount(myTree);
@@ -286,7 +290,7 @@ public class ContentEntryTreeEditor {
     MyFileTreeBuilder(JTree tree,
                       DefaultTreeModel treeModel,
                       AbstractTreeStructure treeStructure,
-                      Comparator<? super NodeDescriptor> comparator,
+                      Comparator<? super NodeDescriptor<?>> comparator,
                       FileChooserDescriptor descriptor,
                       @Nullable Runnable onInitialized) {
       super(tree, treeModel, treeStructure, comparator, descriptor, onInitialized);

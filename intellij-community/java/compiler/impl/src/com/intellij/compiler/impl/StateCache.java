@@ -92,7 +92,7 @@ public abstract class StateCache<T> {
 
 
   private PersistentHashMap<String, T> createMap(final File file) throws IOException {
-    return new PersistentHashMap<>(file, EnumeratorStringDescriptor.INSTANCE, new DataExternalizer<T>() {
+    return new PersistentHashMap<>(file.toPath(), EnumeratorStringDescriptor.INSTANCE, new DataExternalizer<T>() {
       @Override
       public void save(@NotNull final DataOutput out, final T value) throws IOException {
         StateCache.this.write(value, out);

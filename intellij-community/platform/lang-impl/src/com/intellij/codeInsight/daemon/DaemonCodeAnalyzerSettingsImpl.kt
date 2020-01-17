@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon
 
 import com.intellij.codeInspection.ex.ApplicationInspectionProfileManager
@@ -12,7 +12,7 @@ import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.xmlb.XmlSerializer.deserializeInto
 import org.jdom.Element
 
-@State(name = "DaemonCodeAnalyzerSettings", storages = [Storage("editor.codeinsight.xml")])
+@State(name = "DaemonCodeAnalyzerSettings", storages = [Storage("editor.xml"), Storage("editor.codeinsight.xml", deprecated = true)])
 open class DaemonCodeAnalyzerSettingsImpl : DaemonCodeAnalyzerSettings(), PersistentStateComponent<Element>, Cloneable {
   override fun isCodeHighlightingChanged(oldSettings: DaemonCodeAnalyzerSettings): Boolean {
     return !JDOMUtil.areElementsEqual((oldSettings as DaemonCodeAnalyzerSettingsImpl).state, state)
@@ -24,7 +24,6 @@ open class DaemonCodeAnalyzerSettingsImpl : DaemonCodeAnalyzerSettings(), Persis
     settings.myShowAddImportHints = myShowAddImportHints
     settings.SHOW_METHOD_SEPARATORS = SHOW_METHOD_SEPARATORS
     settings.NO_AUTO_IMPORT_PATTERN = NO_AUTO_IMPORT_PATTERN
-    settings.isShowSmallIconsInGutter = isShowSmallIconsInGutter
     return settings
   }
 

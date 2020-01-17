@@ -40,14 +40,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class FrameworkDetectionProcessor {
 
   public static final Set<String> SKIPPED_DIRECTORIES = ContainerUtil.newHashSet("node_modules");
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.FrameworkDetectionProcessor");
+  private static final Logger LOG = Logger.getInstance(FrameworkDetectionProcessor.class);
   private final ProgressIndicator myProgressIndicator;
   private final MultiMap<FileType, FrameworkDetectorData> myDetectorsByFileType;
   private Set<VirtualFile> myProcessedFiles;
@@ -80,7 +77,7 @@ public class FrameworkDetectionProcessor {
 
   private void collectSuitableFiles(@NotNull VirtualFile file) {
     try {
-      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
           // Since this code is invoked from New Project Wizard it's very possible that VFS isn't loaded to memory yet, so we need to do it
@@ -91,7 +88,7 @@ public class FrameworkDetectionProcessor {
       });
       file.refresh(false, true);
 
-      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
           myProgressIndicator.checkCanceled();

@@ -28,9 +28,6 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-/**
- * @author nik
- */
 public class JavaTestSourceRootEditHandler extends JavaSourceRootEditHandlerBase {
   private static final Color TESTS_COLOR = new JBColor(new Color(0x008C2E), new Color(73, 140, 101));
 

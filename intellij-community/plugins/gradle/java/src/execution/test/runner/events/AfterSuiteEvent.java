@@ -17,6 +17,7 @@ package org.jetbrains.plugins.gradle.execution.test.runner.events;
 
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.execution.test.runner.GradleSMTestProxy;
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestsExecutionConsole;
 
 /**
@@ -30,12 +31,19 @@ public class AfterSuiteEvent extends AbstractTestEvent {
   @Override
   public void process(@NotNull TestEventXmlView eventXml) throws TestEventXmlView.XmlParserException {
     final String testId = eventXml.getTestId();
-    final TestEventResult result = TestEventResult.fromValue(eventXml.getTestEventResultType());
+    TestEventResult result = TestEventResult.fromValue(eventXml.getTestEventResultType());
 
     final SMTestProxy testProxy = findTestProxy(testId);
     if (testProxy == null) return;
 
     if (testProxy != getResultsViewer().getTestsRootNode()) {
+      if (testProxy instanceof GradleSMTestProxy) {
+        TestEventResult lastResult = ((GradleSMTestProxy)testProxy).getLastResult();
+        if (lastResult == TestEventResult.FAILURE) {
+          result = TestEventResult.FAILURE;
+        }
+        ((GradleSMTestProxy)testProxy).setLastResult(result);
+      }
       switch (result) {
         case SUCCESS:
           testProxy.setFinished();

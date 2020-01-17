@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.search;
 
-import com.intellij.ide.scratch.ScratchFileService;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -69,6 +69,6 @@ public class NonPhysicalReferenceSearcher extends QueryExecutorBase<PsiReference
       return false;
     }
     return (!file.getViewProvider().isPhysical() && !(file instanceof PsiCodeFragment)) ||
-           ScratchFileService.getInstance().getRootType(file.getVirtualFile()) != null;
+           ScratchUtil.isScratch(file.getVirtualFile());
   }
 }

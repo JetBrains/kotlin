@@ -41,9 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class ArtifactUtil {
   private ArtifactUtil() {
   }

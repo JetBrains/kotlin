@@ -2,7 +2,7 @@
 package com.intellij.ide.extensionResources;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.RootType;
 import com.intellij.ide.scratch.ScratchFileService;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * </p>
  * <p> Bundled resources are updated automatically upon plugin version change. For bundled plugins, application version is used. </p>
  */
-public class ExtensionsRootType extends RootType {
+public final class ExtensionsRootType extends RootType {
   static final Logger LOG = Logger.getInstance(ExtensionsRootType.class);
 
   private static final String EXTENSIONS_PATH = "extensions";
@@ -156,11 +156,11 @@ public class ExtensionsRootType extends RootType {
     PluginId ownerPluginId = getOwner(resourcesDir);
     if (ownerPluginId == null) return null;
 
-    if (PluginManagerCore.CORE_PLUGIN_ID.equals(ownerPluginId.getIdString())) {
+    if (PluginManagerCore.CORE_ID == ownerPluginId) {
       return PlatformUtils.getPlatformPrefix();
     }
 
-    IdeaPluginDescriptor plugin = PluginManager.getPlugin(ownerPluginId);
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(ownerPluginId);
     if (plugin != null) {
       return plugin.getName();
     }
@@ -192,17 +192,33 @@ public class ExtensionsRootType extends RootType {
   @NotNull
   private static List<URL> getBundledResourceUrls(@NotNull PluginId pluginId, @NotNull String path) throws IOException {
     String resourcesPath = EXTENSIONS_PATH + "/" + path;
-    IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
-    if (plugin == null) return ContainerUtil.emptyList();
+    IdeaPluginDescriptorImpl plugin = null;
+    // search in enabled plugins only
+    for (IdeaPluginDescriptorImpl descriptor : PluginManagerCore.getLoadedPlugins(null)) {
+      if (descriptor.getPluginId() == pluginId) {
+        plugin = descriptor;
+        break;
+      }
+    }
+
+    if (plugin == null) {
+      return ContainerUtil.emptyList();
+    }
+
     ClassLoader pluginClassLoader = plugin.getPluginClassLoader();
     final Enumeration<URL> resources = pluginClassLoader.getResources(resourcesPath);
-    if (resources == null) return ContainerUtil.emptyList();
-    if (plugin.getUseIdeaClassLoader()) return ContainerUtil.toList(resources);
+    if (resources == null) {
+      return ContainerUtil.emptyList();
+    }
 
-    final Set<URL> urls = new LinkedHashSet<>(ContainerUtil.toList(resources));
+    if (plugin.getUseIdeaClassLoader()) {
+      return ContainerUtil.toList(resources);
+    }
+
+    Set<URL> urls = new LinkedHashSet<>(ContainerUtil.toList(resources));
     // exclude parent classloader resources from list
-    final List<ClassLoader> dependentPluginClassLoaders = StreamEx.of(plugin.getDependentPluginIds())
-      .map(PluginManager::getPlugin)
+    List<ClassLoader> dependentPluginClassLoaders = StreamEx.of(plugin.getDependentPluginIds())
+      .map(id -> PluginManagerCore.getPlugin(id))
       .nonNull()
       .map(PluginDescriptor::getPluginClassLoader)
       .without(pluginClassLoader)
@@ -215,7 +231,7 @@ public class ExtensionsRootType extends RootType {
   }
 
   private static void extractResources(@NotNull VirtualFile from, @NotNull File to) throws IOException {
-    VfsUtilCore.visitChildrenRecursively(from, new VirtualFileVisitor(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
+    VfsUtilCore.visitChildrenRecursively(from, new VirtualFileVisitor<Void>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
       @NotNull
       @Override
       public Result visitFileEx(@NotNull VirtualFile file) {
@@ -245,7 +261,7 @@ public class ExtensionsRootType extends RootType {
         String oldText = child.exists() ? FileUtil.loadFile(child) : "";
         String newHash = hash(newText);
         String oldHash = hash(oldText);
-        boolean upToDate = oldHash != null && newHash != null && StringUtil.equals(oldHash, newHash);
+        boolean upToDate = StringUtil.equals(oldHash, newHash);
         if (upToDate) return CONTINUE;
         if (child.exists()) {
           renameToBackupCopy(child);
@@ -281,7 +297,7 @@ public class ExtensionsRootType extends RootType {
   private void extractBundledExtensionsIfNeeded(@NotNull PluginId pluginId) throws IOException {
     if (!ApplicationManager.getApplication().isDispatchThread()) return;
 
-    IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId);
     if (plugin == null || !ResourceVersions.getInstance().shouldUpdateResourcesOf(plugin)) return;
 
     extractBundledResources(pluginId, "");

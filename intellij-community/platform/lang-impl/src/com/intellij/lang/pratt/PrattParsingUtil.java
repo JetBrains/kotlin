@@ -27,7 +27,7 @@ public class PrattParsingUtil {
   private PrattParsingUtil() {
   }
 
-  public static void searchFor(PrattBuilder builder, @NotNull PrattTokenType... types) {
+  public static void searchFor(PrattBuilder builder, PrattTokenType @NotNull ... types) {
     searchFor(builder, true, types);
   }
 

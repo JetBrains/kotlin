@@ -31,7 +31,7 @@ abstract class AbstractIndentingBackspaceHandler extends BackspaceHandlerDelegat
   }
 
   @Override
-  public void beforeCharDeleted(char c, PsiFile file, Editor editor) {
+  public void beforeCharDeleted(char c, @NotNull PsiFile file, Editor editor) {
     myEnabled = false;
     if (editor.isColumnMode() || !StringUtil.isWhiteSpace(c)) {
       return;
@@ -45,7 +45,7 @@ abstract class AbstractIndentingBackspaceHandler extends BackspaceHandlerDelegat
   }
 
   @Override
-  public boolean charDeleted(char c, PsiFile file, Editor editor) {
+  public boolean charDeleted(char c, @NotNull PsiFile file, @NotNull Editor editor) {
     if (!myEnabled) {
       return false;
     }

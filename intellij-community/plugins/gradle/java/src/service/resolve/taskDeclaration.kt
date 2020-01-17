@@ -5,7 +5,8 @@ import com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
 import com.intellij.psi.PsiType
 import groovy.lang.Closure
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
-import org.jetbrains.plugins.groovy.lang.GroovyExpressionFilter
+import org.jetbrains.plugins.groovy.lang.GroovyElementFilter
+import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
 import org.jetbrains.plugins.groovy.lang.psi.api.GrFunctionalExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.auxiliary.GrListOrMap
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList
@@ -25,10 +26,10 @@ import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DelegatesToInfo
 import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.GrDelegatesToProvider
 import org.jetbrains.plugins.groovy.lang.typing.GrTypeCalculator
 
-class GradleTaskDeclarationExpressionFilter : GroovyExpressionFilter {
+class GradleTaskDeclarationElementFilter : GroovyElementFilter {
 
-  override fun isFake(expression: GrExpression): Boolean {
-    return isFakeInner(expression) && expression.containingFile.isGradleScript()
+  override fun isFake(element: GroovyPsiElement): Boolean {
+    return isFakeInner(element) && element.containingFile.isGradleScript()
   }
 }
 
@@ -88,13 +89,13 @@ class GradleTaskDeclarationClosureDelegateProvider : GrDelegatesToProvider {
   }
 }
 
-private fun isFakeInner(expression: GrExpression): Boolean {
-  return when (expression) {
-    is GrMethodCall -> isFakeTopTaskCall(expression) ||
-                       isTaskIdCall(expression)
-    is GrReferenceExpression -> isTaskIdExpression(expression) ||
-                                isTaskIdInvoked(expression) ||
-                                isTaskIdInOperator(expression)
+private fun isFakeInner(element: GroovyPsiElement): Boolean {
+  return when (element) {
+    is GrMethodCall -> isFakeTopTaskCall(element) ||
+                       isTaskIdCall(element)
+    is GrReferenceExpression -> isTaskIdExpression(element) ||
+                                isTaskIdInvoked(element) ||
+                                isTaskIdInOperator(element)
     else -> false
   }
 }

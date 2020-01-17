@@ -7,9 +7,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.roots.ui.configuration.artifacts.ArtifactEditorEx;
 
-/**
- * @author nik
- */
 public abstract class ArtifactEditorActionTestCase extends ArtifactEditorTestCase {
 
   protected void assertEnabled() {

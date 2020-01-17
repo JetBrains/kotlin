@@ -70,9 +70,8 @@ public class CompilerConfigurable implements SearchableConfigurable.Parent, Conf
     myCompilerUIConfigurable.disposeUIResources();
   }
 
-  @NotNull
   @Override
-  public Configurable[] getConfigurables() {
+  public Configurable @NotNull [] getConfigurables() {
     if (myKids == null) {
       final CompilerSettingsFactory[] factories = CompilerSettingsFactory.EP_NAME.getExtensions(myProject);
       myKids = ContainerUtil.mapNotNull(factories,

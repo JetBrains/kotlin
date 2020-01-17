@@ -57,10 +57,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHandler {
-  private Project myProject;
   private Editor myEditor;
   private Caret myCaret;
-  private @NotNull PsiFile myFile;
+  private PsiFile myFile;
   private Document myDocument;
   private Commenter myCommenter;
   private CommenterDataHolder mySelfManagedCommenterData;
@@ -69,7 +68,6 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
 
   @Override
   public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull Caret caret, @NotNull PsiFile file) {
-    myProject = project;
     myEditor = editor;
     myCaret = caret;
     myFile = file;
@@ -215,7 +213,7 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
     return true;
   }
 
-  private boolean isInjectedWhiteSpace(@NotNull TextRange range, @NotNull OuterLanguageElement element) {
+  private static boolean isInjectedWhiteSpace(@NotNull TextRange range, @NotNull OuterLanguageElement element) {
     PsiElement psi = element.getContainingFile().getViewProvider().getPsi(element.getLanguage());
     if (psi == null) {
       return false;
@@ -229,7 +227,7 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
     return true;
   }
 
-  private boolean isWhiteSpaceOrComment(@NotNull PsiElement element, @NotNull TextRange range) {
+  private static boolean isWhiteSpaceOrComment(@NotNull PsiElement element, @NotNull TextRange range) {
     final TextRange textRange = element.getTextRange();
     TextRange intersection = range.intersection(textRange);
     if (intersection == null) {

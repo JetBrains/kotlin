@@ -28,8 +28,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NotNullFunction;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,11 +92,15 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
   public Map<OrderRootType, Collection<File>> prepareLibraryFiles(@NotNull LibraryData data) {
     Map<OrderRootType, Collection<File>> result = new HashMap<>();
     for (LibraryPathType pathType: LibraryPathType.values()) {
+      OrderRootType orderRootType = ExternalLibraryPathTypeMapper.getInstance().map(pathType);
+      if (orderRootType == null) {
+        continue;
+      }
       Set<String> paths = data.getPaths(pathType);
       if (paths.isEmpty()) {
         continue;
       }
-      result.put(ExternalLibraryPathTypeMapper.getInstance().map(pathType), ContainerUtil.map(paths, PATH_TO_FILE));
+      result.put(orderRootType, ContainerUtil.map(paths, PATH_TO_FILE));
     }
     return result;
   }
@@ -164,7 +168,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     // and hence orphans will be detected incorrectly
     if (modelsProvider instanceof ProjectStructureUIModifiableModelsProvider) return;
 
-    final List<Library> orphanIdeLibraries = ContainerUtil.newSmartList();
+    final List<Library> orphanIdeLibraries = new SmartList<>();
     final LibraryTable.ModifiableModel librariesModel = modelsProvider.getModifiableProjectLibrariesModel();
     final Map<String, Library> namesToLibs = new HashMap<>();
     final Set<Library> potentialOrphans = new HashSet<>();
@@ -225,7 +229,8 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     ExternalLibraryPathTypeMapper externalLibraryPathTypeMapper = ExternalLibraryPathTypeMapper.getInstance();
     for (LibraryPathType pathType: LibraryPathType.values()) {
       OrderRootType ideType = externalLibraryPathTypeMapper.map(pathType);
-      HashSet<String> toAddPerType = ContainerUtilRt.newHashSet(externalLibrary.getPaths(pathType));
+      if (ideType == null) continue;
+      HashSet<String> toAddPerType = new HashSet<>(externalLibrary.getPaths(pathType));
       toAdd.put(ideType, toAddPerType);
 
       // do not remove attached or manually added sources/javadocs if nothing to add

@@ -1,10 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.ProjectTopics;
 import com.intellij.ide.CopyPasteUtil;
 import com.intellij.ide.projectView.BaseProjectTreeBuilder;
-import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.ProjectViewPsiTreeChangeListener;
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -36,7 +35,8 @@ import javax.swing.tree.DefaultTreeModel;
 /**
  * @author Konstantin Bulenkov
  */
-public class FavoritesViewTreeBuilder extends BaseProjectTreeBuilder {
+public final class FavoritesViewTreeBuilder extends BaseProjectTreeBuilder {
+  public static final String ID = "Favorites";
 
   public FavoritesViewTreeBuilder(@NotNull Project project,
                                   JTree tree,
@@ -46,7 +46,7 @@ public class FavoritesViewTreeBuilder extends BaseProjectTreeBuilder {
           tree,
           treeModel,
           treeStructure,
-          new FavoritesComparator(ProjectView.getInstance(project), FavoritesProjectViewPane.ID));
+          new FavoriteComparator());
     final MessageBusConnection bus = myProject.getMessageBus().connect(this);
     ProjectViewPsiTreeChangeListener psiTreeChangeListener = new ProjectViewPsiTreeChangeListener(myProject) {
       @Override
@@ -147,8 +147,8 @@ public class FavoritesViewTreeBuilder extends BaseProjectTreeBuilder {
     for (int i = 0; i < aRoot.getChildCount(); i++) {
       final DefaultMutableTreeNode child = (DefaultMutableTreeNode)aRoot.getChildAt(i);
       Object userObject = child.getUserObject();
-      if (userObject instanceof FavoritesTreeNodeDescriptor) {
-        if (Comparing.equal(((FavoritesTreeNodeDescriptor)userObject).getElement(), aObject)) {
+      if (userObject instanceof FavoriteTreeNodeDescriptor) {
+        if (Comparing.equal(((FavoriteTreeNodeDescriptor)userObject).getElement(), aObject)) {
           return child;
         }
       }

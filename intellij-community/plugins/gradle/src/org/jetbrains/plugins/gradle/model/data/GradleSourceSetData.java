@@ -24,6 +24,7 @@ public final class GradleSourceSetData extends ModuleData {
     super(id, GradleConstants.SYSTEM_ID, GradleProjectResolverUtil.getDefaultModuleTypeId(),
           externalName, internalName,
           moduleFileDirectoryPath, externalConfigPath);
+    setModuleName(getSourceSetName());
   }
 
   @NotNull

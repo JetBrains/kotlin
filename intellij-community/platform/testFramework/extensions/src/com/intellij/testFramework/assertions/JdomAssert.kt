@@ -8,7 +8,6 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.util.io.readText
 import com.intellij.util.isEmpty
-import com.intellij.util.loadElement
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.internal.Objects
 import org.intellij.lang.annotations.Language
@@ -33,7 +32,7 @@ class JdomAssert(actual: Element?) : AbstractAssert<JdomAssert, Element?>(actual
   fun isEqualTo(file: Path): JdomAssert {
     isNotNull
 
-    val expected = loadElement(file)
+    val expected = JDOMUtil.load(file)
     if (!JDOMUtil.areElementsEqual(actual, expected)) {
       throw FileComparisonFailure(null, StringUtilRt.convertLineSeparators(file.readText()), JDOMUtil.writeElement(actual!!), file.toString())
     }

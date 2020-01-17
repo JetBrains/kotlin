@@ -20,9 +20,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class DebugBuildProcessToggleAction extends ToggleAction {
   @Override
   public boolean isSelected(@NotNull AnActionEvent e) {

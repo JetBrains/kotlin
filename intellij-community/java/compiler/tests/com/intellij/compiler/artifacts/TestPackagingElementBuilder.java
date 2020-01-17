@@ -9,9 +9,6 @@ import com.intellij.packaging.elements.CompositePackagingElement;
 import com.intellij.packaging.elements.PackagingElement;
 import com.intellij.packaging.elements.PackagingElementFactory;
 
-/**
-* @author nik
-*/
 public class TestPackagingElementBuilder {
   private final CompositePackagingElement<?> myElement;
   private final TestPackagingElementBuilder myParent;

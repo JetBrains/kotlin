@@ -43,7 +43,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class PackageFileAction extends AnAction {
-  private static final SyncDateFormat TIME_FORMAT = new SyncDateFormat(new SimpleDateFormat("h:mm:ss a"));
+  private static class Holder {
+    private static final SyncDateFormat TIME_FORMAT = new SyncDateFormat(new SimpleDateFormat("h:mm:ss a"));
+  }
 
   public PackageFileAction() {
     super(CompilerBundle.message("action.name.package.file"), CompilerBundle.message("action.description.package.file"), null);
@@ -106,7 +108,7 @@ public class PackageFileAction extends AnAction {
         if (fileNames.length() != 0) fileNames.append(", ");
         fileNames.append("'").append(file.getName()).append("'");
       }
-      String time = TIME_FORMAT.format(Clock.getTime());
+      String time = Holder.TIME_FORMAT.format(Clock.getTime());
       final String statusText = CompilerBundle.message("status.text.file.has.been.packaged", files.size(), fileNames, time);
       final StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
       if (statusBar != null) {

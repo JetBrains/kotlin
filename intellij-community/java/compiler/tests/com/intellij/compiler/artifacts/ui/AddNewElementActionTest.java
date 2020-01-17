@@ -4,9 +4,6 @@ import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.impl.elements.ProductionModuleOutputElementType;
 import com.intellij.packaging.impl.elements.ProductionModuleSourceElementType;
 
-/**
- * @author nik
- */
 public class AddNewElementActionTest extends ArtifactEditorTestCase {
 
   public void testSimple() {

@@ -2,10 +2,8 @@
 
 package com.intellij.codeInsight.lookup.impl;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.codeInsight.lookup.LookupValueWithUIHint;
-import com.intellij.codeInsight.lookup.RealLookupElementPresentation;
+import com.intellij.codeInsight.lookup.*;
+import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -51,7 +49,7 @@ import static com.intellij.codeInsight.documentation.DocumentationComponent.COLO
  * @author Konstantin Bulenkov
  */
 public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupCellRenderer");
+  private static final Logger LOG = Logger.getInstance(LookupCellRenderer.class);
 
   private Icon myEmptyIcon = EmptyIcon.ICON_0;
   private final Font myNormalFont;
@@ -71,7 +69,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   @Deprecated
   public static final Color SELECTED_FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionForeground", new JBColor(JBColor.WHITE, JBColor.foreground()));
 
-  public static final Color BACKGROUND_COLOR = EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY);
+  public static final Color BACKGROUND_COLOR = new JBColor(() -> EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY));
   private static final Color MATCHED_FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.matchForeground", JBUI.CurrentTheme.Link.linkColor());
   private static final Color SELECTED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionBackground", new JBColor(0xc5dffc, 0x113a5c));
   public static final Color SELECTED_NON_FOCUSED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionInactiveBackground", new JBColor(0xE0E0E0, 0x515457));
@@ -125,7 +123,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       boolean isSelected,
       boolean hasFocus) {
 
-    boolean nonFocusedSelection = isSelected && myLookup.getFocusDegree() == LookupImpl.FocusDegree.SEMI_FOCUSED;
+    boolean nonFocusedSelection = isSelected && myLookup.getLookupFocusDegree() == LookupFocusDegree.SEMI_FOCUSED;
     if (!myLookup.isFocused()) {
       isSelected = false;
     }
@@ -425,6 +423,26 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     return used;
   }
 
+  @NotNull
+  private static Icon removeVisibilityIfNeeded(@Nullable Editor editor, @NotNull Icon icon, @NotNull Icon standard) {
+    if (!Registry.is("ide.completion.show.visibility.icon")) {
+      if (icon instanceof RowIcon) {
+        RowIcon rowIcon = (RowIcon)icon;
+        if (rowIcon.getIconCount() >= 1) {
+          Icon firstIcon = rowIcon.getIcon(0);
+          if (firstIcon != null) {
+            return Registry.is("editor.scale.completion.icons") ?
+                   EditorUtil.scaleIconAccordingEditorFont(firstIcon, editor) : firstIcon;
+          }
+        }
+      }
+      else if (icon.getIconWidth() > standard.getIconWidth() || icon.getIconHeight() > standard.getIconHeight()) {
+        icon = IconUtil.cropIcon(icon, new Rectangle(standard.getIconWidth(), standard.getIconHeight()));
+      }
+    }
+    return icon;
+  }
+
   public static Icon augmentIcon(@Nullable Editor editor, @Nullable Icon icon, @NotNull Icon standard) {
     if (Registry.is("editor.scale.completion.icons")) {
       standard = EditorUtil.scaleIconAccordingEditorFont(standard, editor);
@@ -434,21 +452,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       return standard;
     }
 
-    if (!Registry.is("ide.completion.show.visibility.icon")) {
-      if (icon instanceof RowIcon) {
-        RowIcon rowIcon = (RowIcon)icon;
-        if (rowIcon.getIconCount() >= 1) {
-          Icon firstIcon = rowIcon.getIcon(0);
-          if (firstIcon != null) {
-            icon = Registry.is("editor.scale.completion.icons") ?
-                   EditorUtil.scaleIconAccordingEditorFont(firstIcon, editor) : firstIcon;
-          }
-        }
-      }
-      else if (icon.getIconWidth() > standard.getIconWidth() || icon.getIconHeight() > standard.getIconHeight()) {
-        icon = IconUtil.cropIcon(icon, new Rectangle(standard.getIconWidth(), standard.getIconHeight()));
-      }
-    }
+    icon = removeVisibilityIfNeeded(editor, icon, standard);
 
     if (icon.getIconHeight() < standard.getIconHeight() || icon.getIconWidth() < standard.getIconWidth()) {
       final LayeredIcon layeredIcon = new LayeredIcon(2);
@@ -486,8 +490,12 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
 
   int updateMaximumWidth(final LookupElementPresentation p, LookupElement item) {
-    final Icon icon = p.getIcon();
+    Icon icon = p.getIcon();
     if (icon != null && (icon.getIconWidth() > myEmptyIcon.getIconWidth() || icon.getIconHeight() > myEmptyIcon.getIconHeight())) {
+      if (icon instanceof DeferredIcon) {
+        icon = ((DeferredIcon)icon).getBaseIcon();
+      }
+      icon = removeVisibilityIfNeeded(myLookup.getEditor(), icon, myEmptyIcon);
       myEmptyIcon = EmptyIcon.create(Math.max(icon.getIconWidth(), myEmptyIcon.getIconWidth()),
                                      Math.max(icon.getIconHeight(), myEmptyIcon.getIconHeight()));
 
@@ -505,6 +513,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private static class MySimpleColoredComponent extends SimpleColoredComponent {
     private MySimpleColoredComponent() {
       setFocusBorderAroundIcon(true);
+      UISettings.setupEditorAntialiasing(this);
     }
 
     @Override

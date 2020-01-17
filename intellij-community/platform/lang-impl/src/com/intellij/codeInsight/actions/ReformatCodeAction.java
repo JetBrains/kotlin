@@ -19,7 +19,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.*;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiUtilCore;
@@ -33,7 +32,7 @@ import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
 public class ReformatCodeAction extends AnAction implements DumbAware {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.actions.ReformatCodeAction");
+  private static final Logger LOG = Logger.getInstance(ReformatCodeAction.class);
 
   protected static ReformatFilesOptions myTestOptions;
 
@@ -62,7 +61,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
       dir = file.getContainingDirectory();
       hasSelection = editor.getSelectionModel().hasSelection();
     }
-    else if (containsAtLeastOneFile(files)) {
+    else if (containsOnlyFiles(files)) {
       final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Arrays.asList(files));
       if (!operationStatus.hasReadonlyFiles()) {
         ReformatFilesOptions selectedFlags = getReformatFilesOptions(project, files);
@@ -225,12 +224,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
       return;
 
     final Condition<CharSequence> patternCondition = getFileTypeMaskPattern(fileTypeMask);
-    processor.addFileFilter(new VirtualFileFilter() {
-        @Override
-        public boolean accept(@NotNull VirtualFile file) {
-          return patternCondition.value(file.getNameSequence());
-        }
-      });
+    processor.addFileFilter(file -> patternCondition.value(file.getNameSequence()));
   }
 
   private static Condition<CharSequence> getFileTypeMaskPattern(@Nullable String mask) {
@@ -283,12 +277,9 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
         return true;
       }
     }
-    else if (files!= null && containsAtLeastOneFile(files)) {
+    else if (files!= null && containsOnlyFiles(files)) {
       boolean anyFormatters = false;
       for (VirtualFile virtualFile : files) {
-        if (virtualFile.isDirectory()) {
-          return false;
-        }
         final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
         if (psiFile == null) {
           return false;
@@ -296,6 +287,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
         final FormattingModelBuilder builder = LanguageFormatting.INSTANCE.forContext(psiFile);
         if (builder != null) {
           anyFormatters = true;
+          break;
         }
       }
       if (!anyFormatters) {
@@ -322,7 +314,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
   }
 
   @Nullable
-  private static ReformatFilesOptions getReformatFilesOptions(@NotNull Project project, @NotNull VirtualFile[] files) {
+  private static ReformatFilesOptions getReformatFilesOptions(@NotNull Project project, VirtualFile @NotNull [] files) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return myTestOptions;
     }
@@ -358,7 +350,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
     myTestOptions = options;
   }
 
-  public static boolean containsAtLeastOneFile(final VirtualFile[] files) {
+  public static boolean containsOnlyFiles(final VirtualFile[] files) {
     if (files == null) return false;
     if (files.length < 1) return false;
     for (VirtualFile virtualFile : files) {

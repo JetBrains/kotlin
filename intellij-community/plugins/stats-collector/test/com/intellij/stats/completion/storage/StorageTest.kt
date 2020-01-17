@@ -19,7 +19,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.stats.logger.LineStorage
 import com.intellij.stats.logger.LogFileManager
 import com.intellij.stats.storage.UniqueFilesProvider
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.HeavyPlatformTestCase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -90,7 +90,7 @@ class AsciiMessageStorageTest {
     }
 }
 
-class FileLoggerTest : PlatformTestCase() {
+class FileLoggerTest : HeavyPlatformTestCase() {
     private lateinit var fileLogger: LogFileManager
     private lateinit var filesProvider: UniqueFilesProvider
     private lateinit var tempDirectory: File

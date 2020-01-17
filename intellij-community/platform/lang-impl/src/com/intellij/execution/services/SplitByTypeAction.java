@@ -3,7 +3,6 @@ package com.intellij.execution.services;
 
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -14,21 +13,19 @@ public class SplitByTypeAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     Project project = e.getProject();
-    if (project == null) {
+    if (project == null || !ActionPlaces.isPopupPlace(e.getPlace())) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
 
     ServiceView selectedView = getSelectedView(e);
-    if (selectedView == null || selectedView.getModel().getFilter() != null) {
+    if (selectedView == null) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
 
-    Presentation presentation = e.getPresentation();
-    boolean enabled = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled();
-    presentation.setEnabled(enabled);
-    presentation.setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
+    boolean enabled = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled(selectedView);
+    e.getPresentation().setEnabledAndVisible(enabled);
   }
 
   @Override
@@ -36,6 +33,9 @@ public class SplitByTypeAction extends DumbAwareAction {
     Project project = e.getProject();
     if (project == null) return;
 
-    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).splitByType();
+    ServiceView selectedView = getSelectedView(e);
+    if (selectedView == null) return;
+
+    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).splitByType(selectedView);
   }
 }

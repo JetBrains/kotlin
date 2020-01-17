@@ -3,15 +3,12 @@
 
 package com.intellij.codeInsight
 
-import com.intellij.codeInsight.navigation.GotoDeclarationProvider
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.ApiStatus.Experimental
-import java.util.*
 
 fun findAllTargets(project: Project, editor: Editor, file: PsiFile): Collection<NavigationTarget> {
   val offset = editor.caretModel.offset
@@ -33,14 +30,6 @@ private fun findAllTargetsNoVS(project: Project, editor: Editor, offset: Int, fi
   return emptyList()
 }
 
-private val EP_NAME = ExtensionPointName.create<GotoDeclarationProvider>("com.intellij.gotoDeclaration")
-
 private fun collectAllTargets(project: Project, editor: Editor, file: PsiFile): Collection<NavigationTarget> {
-  val result = LinkedHashSet<NavigationTarget>()
-  for (extension in EP_NAME.extensions) {
-    extension.collectTargets(project, editor, file) {
-      result.add(it)
-    }
-  }
-  return result
+  TODO()
 }

@@ -21,9 +21,6 @@ import com.intellij.util.download.DownloadableFileDescription;
 import com.intellij.util.text.UniqueNameGenerator;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class DownloadableFileDescriptionImpl implements DownloadableFileDescription {
   private final String myFileName;
   private final String myFileExtension;

@@ -33,16 +33,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class FileSetVersionsFetcherBase<FS extends DownloadableFileSetDescription, F extends DownloadableFileDescription> implements DownloadableFileSetVersions<FS> {
   private static final Comparator<DownloadableFileSetDescription> VERSIONS_COMPARATOR =
     (o1, o2) -> -StringUtil.compareVersionNumbers(o1.getVersionString(), o2.getVersionString());
   protected final String myGroupId;
   private final URL[] myLocalUrls;
 
-  public FileSetVersionsFetcherBase(@Nullable String groupId, @NotNull URL[] localUrls) {
+  public FileSetVersionsFetcherBase(@Nullable String groupId, URL @NotNull [] localUrls) {
     myLocalUrls = localUrls;
     myGroupId = groupId;
   }

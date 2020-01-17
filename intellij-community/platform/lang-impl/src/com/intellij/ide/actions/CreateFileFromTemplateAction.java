@@ -29,6 +29,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.IncorrectOperationException;
 import org.apache.velocity.runtime.parser.ParseException;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +42,8 @@ import java.util.Map;
  */
 public abstract class CreateFileFromTemplateAction extends CreateFromTemplateAction<PsiFile> {
 
-  public CreateFileFromTemplateAction(String text, String description, Icon icon) {
+  public CreateFileFromTemplateAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
+                                      @Nls(capitalization = Nls.Capitalization.Sentence) String description, Icon icon) {
     super(text, description, icon);
   }
 
@@ -70,7 +72,7 @@ public abstract class CreateFileFromTemplateAction extends CreateFromTemplateAct
       name = mkdirs.newName;
       dir = mkdirs.directory;
     }
-    
+
     Project project = dir.getProject();
     try {
       PsiFile psiFile = FileTemplateUtil.createFromTemplate(template, name, FileTemplateManager.getInstance(dir.getProject()).getDefaultProperties(), dir)

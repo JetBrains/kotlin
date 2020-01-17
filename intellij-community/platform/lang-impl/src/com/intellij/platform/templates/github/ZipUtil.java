@@ -30,8 +30,7 @@ public class ZipUtil {
 
   public interface ContentProcessor {
     /** Return null to skip the file */
-    @Nullable
-    byte[] processContent(byte[] content, File file) throws IOException;
+    byte @Nullable [] processContent(byte[] content, File file) throws IOException;
   }
 
   public static void unzipWithProgressSynchronously(

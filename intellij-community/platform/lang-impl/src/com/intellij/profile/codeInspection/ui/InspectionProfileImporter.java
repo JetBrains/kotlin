@@ -26,9 +26,8 @@ import org.jetbrains.annotations.Nullable;
 
 //TODO should replace current implementation
 public class InspectionProfileImporter implements SchemeImporter<NewInspectionProfile> {
-  @NotNull
   @Override
-  public String[] getSourceExtensions() {
+  public String @NotNull [] getSourceExtensions() {
     return new String[] {"xml"};
   }
 

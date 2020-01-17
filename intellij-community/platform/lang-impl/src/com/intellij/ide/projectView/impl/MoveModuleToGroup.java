@@ -38,8 +38,7 @@ public class MoveModuleToGroup extends ActionGroup {
   }
 
   @Override
-  @NotNull
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     if (e == null) return EMPTY_ARRAY;
     Project project = getEventProject(e);
     if (project == null) return EMPTY_ARRAY;

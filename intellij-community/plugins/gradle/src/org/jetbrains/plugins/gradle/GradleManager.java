@@ -1,13 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware;
 import com.intellij.openapi.externalSystem.ExternalSystemConfigurableAware;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
@@ -29,7 +25,6 @@ import com.intellij.openapi.externalSystem.service.ui.DefaultExternalSystemUiAwa
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
-import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -42,18 +37,12 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.Function;
-import com.intellij.util.PathUtil;
-import com.intellij.util.PathsList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
 import icons.GradleIcons;
@@ -65,7 +54,6 @@ import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
 import org.jetbrains.plugins.gradle.service.project.GradleAutoImportAware;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver;
-import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension;
 import org.jetbrains.plugins.gradle.service.settings.GradleConfigurable;
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
 import org.jetbrains.plugins.gradle.settings.*;
@@ -76,7 +64,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Predicate;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.findAll;
 import static com.intellij.openapi.util.io.FileUtil.pathsEqual;
@@ -91,46 +78,8 @@ public final class GradleManager
 
   private static final Logger LOG = Logger.getInstance(GradleManager.class);
 
-  @NotNull private final ExternalSystemAutoImportAware myAutoImportDelegate =
-    new CachingExternalSystemAutoImportAware(new GradleAutoImportAware());
-
-  @NotNull private static final NotNullLazyValue<List<GradleProjectResolverExtension>> RESOLVER_EXTENSIONS =
-    new AtomicNotNullLazyValue<List<GradleProjectResolverExtension>>() {
-      @NotNull
-      @Override
-      protected List<GradleProjectResolverExtension> compute() {
-        List<GradleProjectResolverExtension> result = new ArrayList<>();
-
-        // It's possible usecase when 'java' subsystem dependent plugins bundled with the non-java IDE using fat plugin distribution.
-        // This approach can lead to unwanted/incompatible extensions to be loaded.
-        // The workaround extensionsFilter should be removed when the IntelliJ java subsystem will become a regular plugin
-        // or those plugins will be fixed using the optional plugin dependency on 'com.intellij.modules.gradle.java'
-        boolean isJavaIde = ExternalSystemApiUtil.isJavaCompatibleIde();
-        if (!isJavaIde) {
-          ExtensionPoint<GradleProjectResolverExtension> point =
-            Extensions.getRootArea().getExtensionPoint(GradleProjectResolverExtension.EP_NAME);
-          if (point instanceof ExtensionPointImpl) {
-            ((ExtensionPointImpl<GradleProjectResolverExtension>)point).removeUnloadableExtensions();
-          }
-        }
-        Set<String> javaIdeDependentExtensions = ContainerUtil.set(
-          "org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension",
-          "org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension",
-          "org.jetbrains.kotlin.allopen.ide.AllOpenProjectResolverExtension",
-          "org.jetbrains.kotlin.noarg.ide.NoArgProjectResolverExtension",
-          "org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverProjectResolverExtension"
-        );
-        Predicate<GradleProjectResolverExtension> extensionsFilter = ext ->
-          isJavaIde || !javaIdeDependentExtensions.contains(ext.getClass().getName());
-
-        Arrays.stream(GradleProjectResolverExtension.EP_NAME.getExtensions())
-          .filter(extensionsFilter)
-          .forEach(result::add);
-
-        ExternalSystemApiUtil.orderAwareSort(result);
-        return result;
-      }
-    };
+  @NotNull
+  private final ExternalSystemAutoImportAware myAutoImportDelegate = new CachingExternalSystemAutoImportAware(new GradleAutoImportAware());
 
   @NotNull
   @Override
@@ -186,10 +135,6 @@ public final class GradleManager
                                                                    distributionType,
                                                                    settings.getGradleVmOptions(),
                                                                    settings.isOfflineWork());
-      for (GradleProjectResolverExtension extension : RESOLVER_EXTENSIONS.getValue()) {
-        result.addResolverExtensionClass(ClassHolder.from(extension.getClass()));
-      }
-
       final String rootProjectPath = projectLevelSettings != null ? projectLevelSettings.getExternalProjectPath() : projectPath;
       final Sdk gradleJdk = gradleInstallationManager.getGradleJdk(project, rootProjectPath);
       final String javaHome = gradleJdk != null ? gradleJdk.getHomePath() : null;
@@ -256,12 +201,11 @@ public final class GradleManager
 
       if (projectData == null || projectData.getExternalProjectStructure() == null) continue;
 
-      Collection<DataNode<ModuleData>> moduleNodes =
-        ExternalSystemApiUtil.findAll(projectData.getExternalProjectStructure(), ProjectKeys.MODULE);
+      Collection<DataNode<ModuleData>> moduleNodes = findAll(projectData.getExternalProjectStructure(), ProjectKeys.MODULE);
       for (DataNode<ModuleData> moduleNode : moduleNodes) {
         ModuleData moduleData = moduleNode.getData();
         if (moduleData.getArtifacts().isEmpty()) {
-          Collection<DataNode<GradleSourceSetData>> sourceSetNodes = ExternalSystemApiUtil.findAll(moduleNode, GradleSourceSetData.KEY);
+          Collection<DataNode<GradleSourceSetData>> sourceSetNodes = findAll(moduleNode, GradleSourceSetData.KEY);
           for (DataNode<GradleSourceSetData> sourceSetNode : sourceSetNodes) {
             buildParticipant.addModule(sourceSetNode.getData());
           }
@@ -275,23 +219,8 @@ public final class GradleManager
   }
 
   @Override
-  public void enhanceRemoteProcessing(@NotNull SimpleJavaParameters parameters) throws ExecutionException {
-    final Set<String> additionalEntries = new HashSet<>();
-    for (GradleProjectResolverExtension extension : RESOLVER_EXTENSIONS.getValue()) {
-      ContainerUtilRt.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(extension.getClass()));
-      for (Class aClass : extension.getExtraProjectModelClasses()) {
-        ContainerUtilRt.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(aClass));
-      }
-      extension.enhanceRemoteProcessing(parameters);
-    }
-
-    final PathsList classPath = parameters.getClassPath();
-    for (String entry : additionalEntries) {
-      classPath.add(entry);
-    }
-
-    parameters.getVMParametersList().addProperty(
-      ExternalSystemConstants.EXTERNAL_SYSTEM_ID_KEY, GradleConstants.SYSTEM_ID.getId());
+  public void enhanceRemoteProcessing(@NotNull SimpleJavaParameters parameters) {
+    throw new UnsupportedOperationException();
   }
 
   @NotNull
@@ -393,7 +322,7 @@ public final class GradleManager
   @Override
   public void runActivity(@NotNull final Project project) {
     // We want to automatically refresh linked projects on gradle service directory change.
-    MessageBusConnection connection = project.getMessageBus().connect(project);
+    MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(GradleSettings.getInstance(project).getChangesTopic(), new GradleSettingsListenerAdapter() {
 
       @Override
@@ -439,7 +368,7 @@ public final class GradleManager
             DumbService.getInstance(project).suspendIndexingAndRun(title, () -> {
               for (DataNode<ModuleData> moduleDataNode : findAll(projectStructure, ProjectKeys.MODULE)) {
                 moduleDataNode.getData().useExternalCompilerOutput(delegatedBuild);
-                for (DataNode<GradleSourceSetData> sourceSetDataNode : findAll(projectStructure, GradleSourceSetData.KEY)) {
+                for (DataNode<GradleSourceSetData> sourceSetDataNode : findAll(moduleDataNode, GradleSourceSetData.KEY)) {
                   sourceSetDataNode.getData().useExternalCompilerOutput(delegatedBuild);
                 }
               }

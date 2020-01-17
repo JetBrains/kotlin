@@ -18,6 +18,7 @@ package com.intellij.compiler.backwardRefs.view;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.util.indexing.FileBasedIndex;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -39,28 +40,24 @@ public class CompilerReferenceFindUsagesTestInfo {
     myProject = project;
   }
 
-  @NotNull
-  VirtualFile[] getFilesWithKnownOccurrences() {
+  VirtualFile @NotNull [] getFilesWithKnownOccurrences() {
     if (myFileIds == null) throw new IllegalStateException();
-    final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
+    ManagingFS managingFS = ManagingFS.getInstance();
     return IntStream.of(myFileIds.toArray())
-      .mapToObj(id -> fileBasedIndex.findFileById(myProject, id))
+      .mapToObj(managingFS::findFileById)
       .filter(f -> !myDirtyScopeInfo.getDirtyScope().contains(f))
       .toArray(VirtualFile[]::new);
   }
 
-  @NotNull
-  Module[] getDirtyModules() {
+  Module @NotNull [] getDirtyModules() {
     return myDirtyScopeInfo.getDirtyModules();
   }
 
-  @NotNull
-  Module[] getDirtyUnsavedModules() {
+  Module @NotNull [] getDirtyUnsavedModules() {
     return myDirtyScopeInfo.getDirtyUnsavedModules();
   }
 
-  @NotNull
-  VirtualFile[] getExcludedFiles() {
+  VirtualFile @NotNull [] getExcludedFiles() {
     return myDirtyScopeInfo.getExcludedFiles();
   }
 

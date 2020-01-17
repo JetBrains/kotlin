@@ -20,7 +20,7 @@ class MenuOnClickPresentation(
   override fun mouseClicked(event: MouseEvent, translated: Point) {
     super.mouseClicked(event, translated)
     if (SwingUtilities.isRightMouseButton(event) && !SwingUtilities.isLeftMouseButton(event)) {
-      val manager = project.getComponent(ActionManager::class.java)
+      val manager = ActionManager.getInstance()
       val actions = actionsSupplier()
       if (actions.isEmpty()) return
       val popupMenu = manager.createActionPopupMenu("InlayMenu", DefaultActionGroup(actions))

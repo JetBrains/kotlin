@@ -22,7 +22,7 @@ import java.lang.reflect.Method
 /**
  * @author Vladislav.Soroka
  */
-@ApiStatus.Experimental
+@ApiStatus.Internal
 @CompileStatic
 class GradleDaemonServices {
   private static final Logger LOG = Logger.getInstance(GradleDaemonServices.class)
@@ -154,7 +154,7 @@ class GradleDaemonServices {
   }
 
   @CompileStatic(TypeCheckingMode.SKIP)
-  private static Object runAction(ConsumerConnection connection, actionClass, Object arg) {
+  private static Object runAction(ConsumerConnection connection, Class actionClass, Object arg) {
     try {
       def daemonClientFactory = connection.delegate.delegate.connection.daemonClientFactory
       runAction(daemonClientFactory, connection, actionClass, arg)

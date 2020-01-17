@@ -3,11 +3,11 @@ package com.intellij.execution.impl.statistics;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.internal.statistic.IdeActivity;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
 import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
-import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.openapi.project.Project;
@@ -15,15 +15,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RunConfigurationUsageTriggerCollector {
+import static com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollector.newFeatureUsageData;
 
-  public static void trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
-    final String key = RunConfigurationTypeUsagesCollector.toReportedId(factory);
-    if (StringUtil.isNotEmpty(key)) {
-      final FeatureUsageData data = new FeatureUsageData().
-        addProject(project).addExecutor(executor);
-      FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", key, data);
-    }
+public class RunConfigurationUsageTriggerCollector {
+  @NotNull
+  public static IdeActivity trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
+    final ConfigurationType configurationType = factory.getType();
+    return new IdeActivity(project, "run.configuration.exec").startedWithData(data -> {
+      data.addAll(newFeatureUsageData(configurationType, factory).addData("executor", executor.getId()));
+    });
   }
 
   public static class RunConfigurationExecutorUtilValidator extends CustomWhiteListRule {

@@ -23,9 +23,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.fileTypes.FileNameMatcherFactory;
 
-/**
- * @author nik
- */
 public class FileNameMatcherFactoryImpl extends FileNameMatcherFactory {
   @Override
   @NotNull

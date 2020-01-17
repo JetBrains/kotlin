@@ -9,21 +9,20 @@ import java.awt.event.MouseEvent
  */
 class OnHoverPresentation(
   presentation: InlayPresentation,
-  val onHover: (MouseEvent?) -> Unit // When null comes, hover is finished
-) : StaticDelegatePresentation(presentation) {
+  val onHoverListener: PresentationFactory.HoverListener) : StaticDelegatePresentation(presentation) {
   var isInside = false
 
   override fun mouseMoved(event: MouseEvent, translated: Point) {
     super.mouseMoved(event, translated)
     if (!isInside) {
       isInside = true
-      onHover(event)
+      onHoverListener.onHover(event)
     }
   }
 
   override fun mouseExited() {
     super.mouseExited()
     isInside = false
-    onHover(null)
+    onHoverListener.onHoverFinished()
   }
 }

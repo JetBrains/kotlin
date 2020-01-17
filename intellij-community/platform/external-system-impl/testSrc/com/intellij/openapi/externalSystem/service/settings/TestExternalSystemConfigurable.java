@@ -35,7 +35,7 @@ public class TestExternalSystemConfigurable
   @NotNull
   @Override
   protected TestExternalProjectSettings newProjectSettings() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @NotNull

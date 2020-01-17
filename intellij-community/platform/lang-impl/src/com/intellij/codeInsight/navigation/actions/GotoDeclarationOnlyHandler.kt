@@ -9,6 +9,7 @@ import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction.*
 import com.intellij.featureStatistics.FeatureUsageTracker
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
@@ -31,7 +32,8 @@ object GotoDeclarationOnlyHandler : CodeInsightActionHandler {
     try {
       dumbService.isAlternativeResolveEnabled = true
       val offset = editor.caretModel.offset
-      val elements = underModalProgress(project, "Resolving Reference...") {
+      val elements = ActionUtil.underModalProgress(project,
+                                                   "Resolving Reference...") {
         findAllTargetElements(project, editor, offset)
       }
       if (elements.size == 1) {
@@ -46,7 +48,8 @@ object GotoDeclarationOnlyHandler : CodeInsightActionHandler {
         // this means either there is really nowhere to go or weird TargetElementUtil didn't return anything
         val reference = TargetElementUtil.findReference(editor, offset)
         if (reference != null) {
-          val targets = underModalProgress(project, "Resolving Reference...") {
+          val targets = ActionUtil.underModalProgress(project,
+                                                      "Resolving Reference...") {
             TargetElementUtil.getInstance().getTargetCandidates(reference)
           }
           if (targets.isNotEmpty()) {

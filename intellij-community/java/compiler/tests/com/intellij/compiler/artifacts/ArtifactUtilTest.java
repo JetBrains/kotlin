@@ -11,9 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ArtifactUtilTest extends PackagingElementsTestCase {
   public void testProcessElementsWithRelativePath() {
     final Artifact a = addArtifact(root().dir("lib").file(createFile("a.txt")));

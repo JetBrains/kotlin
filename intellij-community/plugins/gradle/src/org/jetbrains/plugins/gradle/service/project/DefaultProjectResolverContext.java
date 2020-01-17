@@ -1,22 +1,12 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
+import com.intellij.build.events.MessageEvent;
+import com.intellij.build.events.impl.BuildIssueEventImpl;
+import com.intellij.build.issue.BuildIssue;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
+import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.UserDataHolderBase;
 import org.gradle.initialization.BuildLayoutParameters;
@@ -25,13 +15,13 @@ import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
 
 import java.io.File;
-import java.util.Collection;
 
 /**
  * @author Vladislav.Soroka
@@ -50,13 +40,15 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable private String myProjectGradleVersion;
   @Nullable private String myBuildSrcGroup;
   @Nullable private BuildEnvironment myBuildEnvironment;
+  @Nullable private final GradleIncrementalResolverPolicy myPolicy;
 
   public DefaultProjectResolverContext(@NotNull final ExternalSystemTaskId externalSystemTaskId,
                                        @NotNull final String projectPath,
                                        @Nullable final GradleExecutionSettings settings,
                                        @NotNull final ExternalSystemTaskNotificationListener listener,
+                                       @Nullable GradleIncrementalResolverPolicy resolverPolicy,
                                        final boolean isPreviewMode) {
-    this(externalSystemTaskId, projectPath, settings, null, listener, isPreviewMode);
+    this(externalSystemTaskId, projectPath, settings, null, listener, resolverPolicy, isPreviewMode);
   }
 
 
@@ -65,12 +57,14 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
                                        @Nullable final GradleExecutionSettings settings,
                                        final ProjectConnection connection,
                                        @NotNull final ExternalSystemTaskNotificationListener listener,
+                                       @Nullable GradleIncrementalResolverPolicy resolverPolicy,
                                        final boolean isPreviewMode) {
     myExternalSystemTaskId = externalSystemTaskId;
     myProjectPath = projectPath;
     mySettings = settings;
     myConnection = connection;
     myListener = listener;
+    myPolicy = resolverPolicy;
     myIsPreviewMode = isPreviewMode;
     myCancellationTokenSource = GradleConnector.newCancellationTokenSource();
   }
@@ -163,19 +157,13 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable
   @Override
   public <T> T getExtraProject(Class<T> modelClazz) {
-    return myModels.getExtraProject((IdeaModule)null, modelClazz);
+    return myModels.getModel(modelClazz);
   }
 
   @Nullable
   @Override
   public <T> T getExtraProject(@Nullable IdeaModule module, Class<T> modelClazz) {
-    return myModels.getExtraProject(module != null ? module.getGradleProject() : null, modelClazz);
-  }
-
-  @NotNull
-  @Override
-  public Collection<String> findModulesWithModel(@NotNull Class modelClazz) {
-    return myModels.findModulesWithModel(modelClazz);
+    return module == null ? myModels.getModel(modelClazz) : myModels.getModel(module, modelClazz);
   }
 
   @Override
@@ -213,6 +201,12 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
     return myBuildSrcGroup;
   }
 
+  @Override
+  public void report(@NotNull MessageEvent.Kind kind, @NotNull BuildIssue buildIssue) {
+    BuildIssueEventImpl buildIssueEvent = new BuildIssueEventImpl(myExternalSystemTaskId, buildIssue, kind);
+    myListener.onStatusChange(new ExternalSystemBuildEvent(myExternalSystemTaskId, buildIssueEvent));
+  }
+
   void setBuildEnvironment(@NotNull BuildEnvironment buildEnvironment) {
     myBuildEnvironment = buildEnvironment;
   }
@@ -220,5 +214,11 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable
   public BuildEnvironment getBuildEnvironment() {
     return myBuildEnvironment;
+  }
+
+  @Nullable
+  @ApiStatus.Experimental
+  public GradleIncrementalResolverPolicy getPolicy() {
+    return myPolicy;
   }
 }

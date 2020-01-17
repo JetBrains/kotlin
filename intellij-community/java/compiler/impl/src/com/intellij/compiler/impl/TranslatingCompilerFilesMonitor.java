@@ -66,7 +66,7 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
       return;
     }
 
-    VfsUtilCore.visitChildrenRecursively(fromFile, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(fromFile, new VirtualFileVisitor<Void>() {
       @NotNull @Override
       public Result visitFileEx(@NotNull VirtualFile file) {
         ProgressManager.checkCanceled();
@@ -110,34 +110,31 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
 
   @Override
   public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    Set<File> filesChanged = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     Set<File> filesDeleted = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     for (VFileEvent event : events) {
       if (event instanceof VFileDeleteEvent || event instanceof VFileMoveEvent) {
-        final VirtualFile file = event.getFile();
-        if (file != null) {
-          collectPaths(file, filesDeleted);
-        }
+        collectPaths(event.getFile(), filesDeleted);
+      }
+      else if (event instanceof VFileContentChangeEvent) {
+        collectPaths(event.getFile(), filesChanged);
       }
     }
     return new ChangeApplier() {
       @Override
       public void afterVfsChange() {
-        after(events, filesDeleted);
+        after(events, filesDeleted, filesChanged);
       }
     };
   }
 
-  private static void after(@NotNull List<? extends VFileEvent> events, Set<File> filesDeleted) {
-    final Set<File> filesChanged = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
+  private static void after(@NotNull List<? extends VFileEvent> events, Set<File> filesDeleted, Set<File> filesChanged) {
     for (VFileEvent event : events) {
       if (event instanceof VFilePropertyChangeEvent) {
         handlePropChange((VFilePropertyChangeEvent)event, filesDeleted, filesChanged);
       }
-      else if (event instanceof VFileMoveEvent || event instanceof VFileCreateEvent || event instanceof VFileContentChangeEvent || event instanceof VFileCopyEvent) {
-        VirtualFile file = event.getFile();
-        if (file != null) {
-          collectPaths(file, filesChanged);
-        }
+      else if (event instanceof VFileMoveEvent || event instanceof VFileCreateEvent || event instanceof VFileCopyEvent) {
+        collectPaths(event.getFile(), filesChanged);
       }
     }
 
@@ -165,7 +162,7 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
         if (parent != null) {
           final String root = parent.getPath() + "/" + oldName;
           if (eventFile.isDirectory()) {
-            VfsUtilCore.visitChildrenRecursively(eventFile, new VirtualFileVisitor() {
+            VfsUtilCore.visitChildrenRecursively(eventFile, new VirtualFileVisitor<Void>() {
               private final StringBuilder filePath = new StringBuilder(root);
 
               @Override
@@ -202,8 +199,8 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
     }
   }
 
-  private static void collectPaths(@NotNull VirtualFile file, @NotNull Collection<? super File> outFiles) {
-    if (!isIgnoredOrUnderIgnoredDirectory(file)) {
+  private static void collectPaths(@Nullable VirtualFile file, @NotNull Collection<? super File> outFiles) {
+    if (file != null && !isIgnoredOrUnderIgnoredDirectory(file)) {
       processRecursively(file, !isInContentOfOpenedProject(file), f -> outFiles.add(new File(f.getPath())));
     }
   }

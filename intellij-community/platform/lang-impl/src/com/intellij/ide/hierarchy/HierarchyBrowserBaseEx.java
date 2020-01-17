@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.hierarchy;
 
 import com.intellij.icons.AllIcons;
@@ -29,6 +29,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.content.Content;
 import com.intellij.ui.popup.HintUpdateSupply;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
@@ -41,6 +42,7 @@ import com.intellij.util.SingleAlarm;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,27 +56,37 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.*;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBaseEx} instead
+ */
+@Deprecated
 public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implements OccurenceNavigator {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.hierarchy.HierarchyBrowserBaseEx");
+  private static final Logger LOG = Logger.getInstance(HierarchyBrowserBaseEx.class);
 
-  public static final String SCOPE_PROJECT = IdeBundle.message("hierarchy.scope.project");
-  public static final String SCOPE_ALL = IdeBundle.message("hierarchy.scope.all");
-  public static final String SCOPE_TEST = IdeBundle.message("hierarchy.scope.test");
-  public static final String SCOPE_CLASS = IdeBundle.message("hierarchy.scope.this.class");
+  /**
+   * Use {code {@link #getScopeProject()}} instead
+   */
+  @Deprecated
+  public static final String SCOPE_PROJECT = "Production";
+
+  /**
+   * Use {code {@link #getScopeAll()}} instead
+   */
+  @Deprecated
+  public static final String SCOPE_ALL = "All";
 
   public static final String HELP_ID = "reference.toolWindows.hierarchy";
 
-  /** @deprecated (to be removed in IDEA 2018) */
-  @Deprecated protected final Hashtable<String, HierarchyTreeBuilder> myBuilders = new Hashtable<>();
-
-  /** @deprecated use {@link #getCurrentViewType()} (to be removed in IDEA 2018) */
+  /** @deprecated use {@link #getCurrentViewType()} */
   @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   protected String myCurrentViewType;
 
   private static class Sheet implements Disposable {
     private AsyncTreeModel myAsyncTreeModel;
     private StructureTreeModel myStructureTreeModel;
-    @NotNull private final String myType;
+    private final @NotNull String myType;
     private final JTree myTree;
     private String myScope;
     private final OccurenceNavigator myOccurenceNavigator;
@@ -117,7 +129,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     for (Map.Entry<String, JTree> entry : type2treeMap.entrySet()) {
       JTree tree = entry.getValue();
       String type = entry.getKey();
-      String scope = state.SCOPE != null ? state.SCOPE : SCOPE_ALL;
+      String scope = state.SCOPE != null ? state.SCOPE : getScopeAll();
 
       OccurenceNavigatorSupport occurenceNavigatorSupport = new OccurenceNavigatorSupport(tree) {
         @Override
@@ -195,7 +207,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   protected abstract HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement);
 
   @Nullable
-  protected abstract Comparator<NodeDescriptor> getComparator();
+  protected abstract Comparator<NodeDescriptor<?>> getComparator();
 
   @NotNull
   protected abstract String getActionPlace();
@@ -267,14 +279,6 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
                 return PsiCopyPasteManager.asFileList(getPsiElements());
               }
             });
-          }
-
-          @Override
-          public void dragDropEnd() {
-          }
-
-          @Override
-          public void dropActionChanged(final int gestureModifiers) {
           }
         }, tree);
       }
@@ -360,9 +364,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
         if (structure == null) {
           return;
         }
-        Comparator<NodeDescriptor> comparator = getComparator();
-        StructureTreeModel myModel = comparator == null ? new StructureTreeModel<>(structure, sheet)
-                                                        : new StructureTreeModel<>(structure, comparator, sheet);
+        StructureTreeModel myModel = new StructureTreeModel<>(structure, getComparator(), sheet);
         AsyncTreeModel atm = new AsyncTreeModel(myModel, sheet);
         tree.setModel(atm);
 
@@ -487,6 +489,15 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   }
 
   @Override
+  public void setContent(Content content) {
+    super.setContent(content);
+    if (content != null) {
+      // stop all background tasks when toolwindow closed
+      Disposer.register(content, this::disposeAllSheets);
+    }
+  }
+
+  @Override
   StructureTreeModel getCurrentBuilder() {
     String viewType = getCurrentViewType();
     if (viewType == null) {
@@ -603,7 +614,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     @Override
     public final void setSelected(@NotNull final AnActionEvent event, final boolean flag) {
       HierarchyBrowserManager.getSettings(myProject).SORT_ALPHABETICALLY = flag;
-      final Comparator<NodeDescriptor> comparator = getComparator();
+      final Comparator<NodeDescriptor<?>> comparator = getComparator();
       myType2Sheet.values().stream().map(s->s.myStructureTreeModel).filter(m-> m != null).forEach(m->m.setComparator(comparator));
     }
 
@@ -702,10 +713,10 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   @NotNull
   private Collection<String> getValidScopeNames() {
     List<String> result = new ArrayList<>();
-    result.add(SCOPE_PROJECT);
-    result.add(SCOPE_TEST);
-    result.add(SCOPE_ALL);
-    result.add(SCOPE_CLASS);
+    result.add(getScopeProject());
+    result.add(getScopeTest());
+    result.add(getScopeAll());
+    result.add(getScopeClass());
 
     final NamedScopesHolder[] holders = NamedScopesHolder.getAllNamedScopeHolders(myProject);
     for (NamedScopesHolder holder : holders) {
@@ -788,9 +799,25 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
       public void actionPerformed(@NotNull AnActionEvent e) {
         EditScopesDialog.showDialog(myProject, null);
         if (!getValidScopeNames().contains(getCurrentScopeType())) {
-          selectScope(SCOPE_ALL);
+          selectScope(getScopeAll());
         }
       }
     }
+  }
+
+  public static String getScopeProject() {
+    return IdeBundle.message("hierarchy.scope.project");
+  }
+
+  public static String getScopeAll() {
+    return IdeBundle.message("hierarchy.scope.all");
+  }
+
+  public static String getScopeTest() {
+    return IdeBundle.message("hierarchy.scope.test");
+  }
+
+  public static String getScopeClass() {
+    return IdeBundle.message("hierarchy.scope.this.class");
   }
 }

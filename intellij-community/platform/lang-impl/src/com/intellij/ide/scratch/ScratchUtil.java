@@ -40,7 +40,7 @@ public class ScratchUtil {
   }
 
   /**
-   * Returns true if a file is in one of scratch roots: scratch, console, etc.
+   * Returns true if a file or a directory is in one of scratch roots: scratch, console, etc.
    * @see RootType
    * @see ScratchFileService
    */

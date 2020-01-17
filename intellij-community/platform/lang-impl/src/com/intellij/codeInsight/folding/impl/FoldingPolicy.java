@@ -1,8 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.folding.impl;
 
 import com.intellij.lang.folding.FoldingBuilder;
+import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.psi.PsiElement;
@@ -11,15 +12,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FoldingPolicy {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.folding.impl.FoldingPolicy");
+  private static final Logger LOG = Logger.getInstance(FoldingPolicy.class);
 
   private static final GenericElementSignatureProvider GENERIC_PROVIDER = new GenericElementSignatureProvider();
 
   private FoldingPolicy() {}
 
-  static boolean isCollapsedByDefault(@NotNull PsiElement element, @NotNull FoldingBuilder foldingBuilder) {
+  static boolean isCollapsedByDefault(@NotNull FoldingDescriptor foldingDescriptor, @NotNull FoldingBuilder foldingBuilder) {
     try {
-      return foldingBuilder.isCollapsedByDefault(element.getNode());
+      return foldingBuilder.isCollapsedByDefault(foldingDescriptor);
     }
     catch (IndexNotReadyException e) {
       LOG.error(e);

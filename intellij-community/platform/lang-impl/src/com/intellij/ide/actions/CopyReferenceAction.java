@@ -53,7 +53,7 @@ public class CopyReferenceAction extends DumbAwareAction {
       enabled = true;
     }
     else {
-      List<PsiElement> elements = getElementsToCopy(editor, dataContext);
+      List<PsiElement> elements = getPsiElements(dataContext, editor);
       enabled = !elements.isEmpty();
       plural = elements.size() > 1;
       paths = elements.stream().allMatch(el -> el instanceof PsiFileSystemItem && getQualifiedNameFromProviders(el) == null);
@@ -67,8 +67,17 @@ public class CopyReferenceAction extends DumbAwareAction {
       e.getPresentation().setVisible(true);
     }
     e.getPresentation().setText(
-      paths ? plural ? "Cop&y Relative Paths" : "Cop&y Relative Path"
-            : plural ? "Cop&y References" : "Cop&y Reference");
+      paths ? plural ? IdeBundle.message("copy.relative.paths") : IdeBundle.message("copy.relative.path")
+            : plural ? IdeBundle.message("copy.references") : IdeBundle.message("copy.reference"));
+
+    if (paths) {
+      e.getPresentation().setEnabledAndVisible(false);
+    }
+  }
+
+  @NotNull
+  protected List<PsiElement> getPsiElements(DataContext dataContext, Editor editor) {
+    return getElementsToCopy(editor, dataContext);
   }
 
   @Override
@@ -76,9 +85,9 @@ public class CopyReferenceAction extends DumbAwareAction {
     DataContext dataContext = e.getDataContext();
     Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    List<PsiElement> elements = getElementsToCopy(editor, dataContext);
+    List<PsiElement> elements = getPsiElements(dataContext, editor);
 
-    String copy = CopyReferenceUtil.doCopy(elements, editor);
+    String copy = getQualifiedName(editor, elements);
     if (copy != null) {
       CopyPasteManager.getInstance().setContents(new CopyReferenceFQNTransferable(copy));
       setStatusBarText(project, IdeBundle.message("message.reference.to.fqn.has.been.copied", copy));
@@ -94,6 +103,10 @@ public class CopyReferenceAction extends DumbAwareAction {
     }
 
     highlight(editor, project, elements);
+  }
+
+  protected String getQualifiedName(Editor editor, List<PsiElement> elements) {
+    return CopyReferenceUtil.doCopy(elements, editor);
   }
 
   public static boolean doCopy(final PsiElement element, final Project project) {

@@ -4,6 +4,7 @@ package com.intellij.codeInsight.actions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.formatting.FormattingProgressTask;
+import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.SelectionModel;
@@ -11,10 +12,8 @@ import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
@@ -27,55 +26,51 @@ import java.util.Collection;
 import java.util.concurrent.FutureTask;
 
 public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
-  
-  public static final String COMMAND_NAME = CodeInsightBundle.message("process.reformat.code");
-  
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.actions.ReformatCodeProcessor");
+  private static final Logger LOG = Logger.getInstance(ReformatCodeProcessor.class);
 
-  private static final String PROGRESS_TEXT = CodeInsightBundle.message("reformat.progress.common.text");
   private final Collection<TextRange> myRanges = new ArrayList<>();
   private SelectionModel mySelectionModel;
 
   public ReformatCodeProcessor(Project project, boolean processChangedTextOnly) {
-    super(project, COMMAND_NAME, PROGRESS_TEXT, processChangedTextOnly);
+    super(project, getCommandName(), getProgressText(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(@NotNull PsiFile file, @NotNull SelectionModel selectionModel) {
-    super(file.getProject(), file, PROGRESS_TEXT, COMMAND_NAME, false);
+    super(file.getProject(), file, getProgressText(), getCommandName(), false);
     mySelectionModel = selectionModel;
   }
 
   public ReformatCodeProcessor(AbstractLayoutCodeProcessor processor, @NotNull SelectionModel selectionModel) {
-    super(processor, COMMAND_NAME, PROGRESS_TEXT);
+    super(processor, getCommandName(), getProgressText());
     mySelectionModel = selectionModel;
   }
 
   public ReformatCodeProcessor(AbstractLayoutCodeProcessor processor, boolean processChangedTextOnly) {
-    super(processor, COMMAND_NAME, PROGRESS_TEXT);
+    super(processor, getCommandName(), getProgressText());
     setProcessChangedTextOnly(processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, Module module, boolean processChangedTextOnly) {
-    super(project, module, COMMAND_NAME, PROGRESS_TEXT, processChangedTextOnly);
+    super(project, module, getCommandName(), getProgressText(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, PsiDirectory directory, boolean includeSubdirs, boolean processChangedTextOnly) {
-    super(project, directory, includeSubdirs, PROGRESS_TEXT, COMMAND_NAME, processChangedTextOnly);
+    super(project, directory, includeSubdirs, getProgressText(), getCommandName(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, PsiFile file, @Nullable TextRange range, boolean processChangedTextOnly) {
-    super(project, file, PROGRESS_TEXT, COMMAND_NAME, processChangedTextOnly);
+    super(project, file, getProgressText(), getCommandName(), processChangedTextOnly);
     if (range != null) {
       myRanges.add(range);
     }
   }
 
   public ReformatCodeProcessor(@NotNull PsiFile file, boolean processChangedTextOnly) {
-    super(file.getProject(), file, PROGRESS_TEXT, COMMAND_NAME, processChangedTextOnly);
+    super(file.getProject(), file, getProgressText(), getCommandName(), processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project, PsiFile[] files, @Nullable Runnable postRunnable, boolean processChangedTextOnly) {
-    this(project, files, COMMAND_NAME, postRunnable, processChangedTextOnly);
+    this(project, files, getCommandName(), postRunnable, processChangedTextOnly);
   }
 
   public ReformatCodeProcessor(Project project,
@@ -84,7 +79,7 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
                                @Nullable Runnable postRunnable,
                                boolean processChangedTextOnly)
   {
-    super(project, files, PROGRESS_TEXT, commandName, postRunnable, processChangedTextOnly);
+    super(project, files, getProgressText(), commandName, postRunnable, processChangedTextOnly);
   }
 
   @Override
@@ -92,12 +87,14 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
   protected FutureTask<Boolean> prepareTask(@NotNull final PsiFile file, final boolean processChangedTextOnly)
     throws IncorrectOperationException
   {
-    assertFileIsValid(file);
     return new FutureTask<>(() -> {
       FormattingProgressTask.FORMATTING_CANCELLED_FLAG.set(false);
       try {
+        PsiFile fileToProcess = ensureValid(file);
+        if (fileToProcess == null) return false;
+
         CharSequence before = null;
-        Document document = PsiDocumentManager.getInstance(myProject).getDocument(file);
+        Document document = PsiDocumentManager.getInstance(myProject).getDocument(fileToProcess);
         if (getInfoCollector() != null) {
           LOG.assertTrue(document != null);
           before = document.getImmutableCharSequence();
@@ -105,15 +102,15 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
 
         EditorScrollingPositionKeeper.perform(document, true, () -> {
           if (processChangedTextOnly) {
-            ChangedRangesInfo info = FormatChangedTextUtil.getInstance().getChangedRangesInfo(file);
+            ChangedRangesInfo info = FormatChangedTextUtil.getInstance().getChangedRangesInfo(fileToProcess);
             if (info != null) {
-              assertFileIsValid(file);
-              CodeStyleManager.getInstance(myProject).reformatTextWithContext(file, info);
+              assertFileIsValid(fileToProcess);
+              CodeStyleManager.getInstance(myProject).reformatTextWithContext(fileToProcess, info);
             }
           }
           else {
-            Collection<TextRange> ranges = getRangesToFormat(file);
-            CodeStyleManager.getInstance(myProject).reformatText(file, ranges);
+            Collection<TextRange> ranges = getRangesToFormat(fileToProcess);
+            CodeStyleManager.getInstance(myProject).reformatText(fileToProcess, ranges);
           }
         });
 
@@ -131,6 +128,20 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
         myRanges.clear();
       }
     });
+  }
+
+  @Nullable
+  private static PsiFile ensureValid(@NotNull PsiFile file) {
+    if (file.isValid()) return file;
+
+    VirtualFile virtualFile = file.getVirtualFile();
+    if (!virtualFile.isValid()) return null;
+
+    FileViewProvider provider = file.getManager().findViewProvider(virtualFile);
+    if (provider == null) return null;
+
+    Language language = file.getLanguage();
+    return provider.hasLanguage(language) ? provider.getPsi(language) : provider.getPsi(provider.getBaseLanguage());
   }
 
   private static void assertFileIsValid(@NotNull PsiFile file) {
@@ -158,5 +169,13 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
     }
     
     return !myRanges.isEmpty() ? myRanges : ContainerUtil.newArrayList(file.getTextRange());
+  }
+
+  private static String getProgressText() {
+    return CodeInsightBundle.message("reformat.progress.common.text");
+  }
+
+  public static String getCommandName() {
+    return CodeInsightBundle.message("process.reformat.code");
   }
 }

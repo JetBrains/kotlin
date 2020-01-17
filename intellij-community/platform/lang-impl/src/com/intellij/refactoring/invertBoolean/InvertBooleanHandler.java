@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InvertBooleanHandler implements RefactoringActionHandler {
   public static final String INVERT_BOOLEAN_HELP_ID = "refactoring.invertBoolean";
-  public static final String REFACTORING_NAME = RefactoringBundle.message("invert.boolean.title");
   private static final Logger LOG = Logger.getInstance(InvertBooleanHandler.class);
 
   @Override
@@ -33,7 +32,7 @@ public class InvertBooleanHandler implements RefactoringActionHandler {
     final InvertBooleanDelegate delegate = findDelegate(element, project, editor);
     if (delegate == null) {
       CommonRefactoringUtil.showErrorHint(project, editor, RefactoringBundle.getCannotRefactorMessage(
-        RefactoringBundle.message("error.wrong.caret.position.method.or.variable.name")), REFACTORING_NAME, INVERT_BOOLEAN_HELP_ID);
+        RefactoringBundle.message("error.wrong.caret.position.method.or.variable.name")), getRefactoringName(), INVERT_BOOLEAN_HELP_ID);
       return;
     }
     final PsiElement namedElement = delegate.adjustElement(element, project, editor);
@@ -52,17 +51,21 @@ public class InvertBooleanHandler implements RefactoringActionHandler {
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     LOG.assertTrue(elements.length == 1);
     final InvertBooleanDelegate delegate = findDelegate(elements[0], project, null);
     if (delegate == null) {
       CommonRefactoringUtil.showErrorHint(project, null, RefactoringBundle.getCannotRefactorMessage(
-        RefactoringBundle.message("error.wrong.caret.position.method.or.variable.name")), REFACTORING_NAME, INVERT_BOOLEAN_HELP_ID);
+        RefactoringBundle.message("error.wrong.caret.position.method.or.variable.name")), getRefactoringName(), INVERT_BOOLEAN_HELP_ID);
       return;
     }
     PsiElement element = delegate.adjustElement(elements[0], project, null);
     if (element != null && PsiElementRenameHandler.canRename(project, null, element)) {
       new InvertBooleanDialog(element).show();
     }
+  }
+
+  public static String getRefactoringName() {
+    return RefactoringBundle.message("invert.boolean.title");
   }
 }

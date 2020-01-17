@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.search.actions;
 
-import com.intellij.largeFilesEditor.search.SearchManager;
+import com.intellij.largeFilesEditor.search.LfeSearchManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ex.CheckboxAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -12,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
 public class ToggleAction extends CheckboxAction implements DumbAware {
   @SuppressWarnings("unused")
   private static final Logger logger = Logger.getInstance(ToggleAction.class);
-  private final SearchManager searchManager;
+  private final LfeSearchManager searchManager;
 
   boolean isSelected = false;
 
-  public ToggleAction(SearchManager searchManager, String name) {
+  public ToggleAction(LfeSearchManager searchManager, String name) {
     super(name);
     this.searchManager = searchManager;
   }

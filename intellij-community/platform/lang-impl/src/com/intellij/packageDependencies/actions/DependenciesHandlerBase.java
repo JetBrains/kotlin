@@ -38,9 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public abstract class DependenciesHandlerBase {
   @NotNull
   protected final Project myProject;

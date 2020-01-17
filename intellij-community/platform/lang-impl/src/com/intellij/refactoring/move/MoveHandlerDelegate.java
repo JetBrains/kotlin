@@ -40,7 +40,7 @@ public abstract class MoveHandlerDelegate {
   }
 
   /**
-   * @deprecated Please overload the method with 'reference' parameter instead
+   * @deprecated Please overload {@link #canMove(PsiElement[], PsiElement, PsiReference)} instead.
    */
   @Deprecated
   public boolean canMove(PsiElement[] elements, @Nullable final PsiElement targetContainer) {
@@ -63,8 +63,7 @@ public abstract class MoveHandlerDelegate {
     return targetContainer;
   }
 
-  @Nullable
-  public PsiElement[] adjustForMove(Project project, PsiElement[] sourceElements, PsiElement targetElement) {
+  public PsiElement @Nullable [] adjustForMove(Project project, PsiElement[] sourceElements, PsiElement targetElement) {
     return sourceElements;
   }
 
@@ -85,7 +84,7 @@ public abstract class MoveHandlerDelegate {
 
   @Nullable
   @Nls(capitalization = Nls.Capitalization.Title)
-  public String getActionName(@NotNull PsiElement[] elements) {
+  public String getActionName(PsiElement @NotNull [] elements) {
     return null;
   }
 

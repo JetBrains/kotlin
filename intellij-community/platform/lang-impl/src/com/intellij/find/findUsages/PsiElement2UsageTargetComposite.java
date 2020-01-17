@@ -30,8 +30,8 @@ import java.util.Set;
 
 class PsiElement2UsageTargetComposite extends PsiElement2UsageTargetAdapter {
   private final UsageInfoToUsageConverter.TargetElementsDescriptor myDescriptor;
-  PsiElement2UsageTargetComposite(@NotNull PsiElement[] primaryElements,
-                                  @NotNull PsiElement[] secondaryElements,
+  PsiElement2UsageTargetComposite(PsiElement @NotNull [] primaryElements,
+                                  PsiElement @NotNull [] secondaryElements,
                                   @NotNull FindUsagesOptions options) {
     super(primaryElements[0], options);
     myDescriptor = new UsageInfoToUsageConverter.TargetElementsDescriptor(primaryElements, secondaryElements);
@@ -53,12 +53,10 @@ class PsiElement2UsageTargetComposite extends PsiElement2UsageTargetAdapter {
     return VfsUtilCore.toVirtualFileArray(files);
   }
 
-  @NotNull
-  public PsiElement[] getPrimaryElements() {
+  public PsiElement @NotNull [] getPrimaryElements() {
     return myDescriptor.getPrimaryElements();
   }
-  @NotNull
-  public PsiElement[] getSecondaryElements() {
+  public PsiElement @NotNull [] getSecondaryElements() {
     return myDescriptor.getAdditionalElements();
   }
 }

@@ -33,9 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author nik
- */
 public class ArtifactImpl extends UserDataHolderBase implements ModifiableArtifact {
   private CompositePackagingElement<?> myRootElement;
   private String myName;

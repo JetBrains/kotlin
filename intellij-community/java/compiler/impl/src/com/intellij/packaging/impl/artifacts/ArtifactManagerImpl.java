@@ -36,12 +36,9 @@ import org.jetbrains.jps.model.serialization.artifact.ArtifactState;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 @State(name = ArtifactManagerImpl.COMPONENT_NAME, storages = @Storage(value = "artifacts", stateSplitter = ArtifactManagerStateSplitter.class))
-public class ArtifactManagerImpl extends ArtifactManager implements PersistentStateComponent<ArtifactManagerState>, Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.artifacts.ArtifactManagerImpl");
+public final class ArtifactManagerImpl extends ArtifactManager implements PersistentStateComponent<ArtifactManagerState>, Disposable {
+  private static final Logger LOG = Logger.getInstance(ArtifactManagerImpl.class);
   @NonNls public static final String COMPONENT_NAME = "ArtifactManager";
   @NonNls public static final String PACKAGING_ELEMENT_NAME = "element";
   @NonNls public static final String TYPE_ID_ATTRIBUTE = "id";
@@ -53,7 +50,7 @@ public class ArtifactManagerImpl extends ArtifactManager implements PersistentSt
   private final SimpleModificationTracker myModificationTracker = new SimpleModificationTracker();
   private final Map<String, LocalFileSystem.WatchRequest> myWatchedOutputs = new HashMap<>();
 
-  public ArtifactManagerImpl(Project project) {
+  public ArtifactManagerImpl(@NotNull Project project) {
     myProject = project;
     myModel = new ArtifactManagerModel();
     myResolvingContext = new DefaultPackagingElementResolvingContext(myProject);
@@ -61,8 +58,7 @@ public class ArtifactManagerImpl extends ArtifactManager implements PersistentSt
   }
 
   @Override
-  @NotNull
-  public Artifact[] getArtifacts() {
+  public Artifact @NotNull [] getArtifacts() {
     return myModel.getArtifacts();
   }
 

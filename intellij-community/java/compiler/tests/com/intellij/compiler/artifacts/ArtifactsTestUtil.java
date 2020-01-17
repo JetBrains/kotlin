@@ -25,9 +25,6 @@ import java.util.jar.Manifest;
 
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
-/**
- * @author nik
- */
 public class ArtifactsTestUtil {
   public static String printToString(PackagingElement element, int level) {
     StringBuilder builder = new StringBuilder(StringUtil.repeatSymbol(' ', level));

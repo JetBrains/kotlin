@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,10 @@ import java.util.Map;
 
 /**
  * @author Maxim.Mossienko
+ * @deprecated customize references in a more direct, reference-specific way
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
 public class CustomizingReferenceProvider extends PsiReferenceProvider implements CustomizableReferenceProvider {
   private final CustomizableReferenceProvider myProvider;
   @Nullable private Map<CustomizationKey, Object> myOptions;
@@ -45,8 +49,7 @@ public class CustomizingReferenceProvider extends PsiReferenceProvider implement
   }
   
   @Override
-  @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull final ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull final ProcessingContext context) {
     myProvider.setOptions(myOptions);
     final PsiReference[] referencesByElement = myProvider.getReferencesByElement(element, context);
     myProvider.setOptions(null);

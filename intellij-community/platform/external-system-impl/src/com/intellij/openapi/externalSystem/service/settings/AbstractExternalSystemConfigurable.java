@@ -11,15 +11,11 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.OnePixelSplitter;
-import com.intellij.ui.SideBorder;
-import com.intellij.ui.TitledSeparator;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
@@ -85,6 +81,11 @@ public abstract class AbstractExternalSystemConfigurable<
       SystemSettings settings = getSettings();
       prepareSystemSettings(settings);
       prepareProjectSettings(settings);
+
+      JComponent component = ScrollPaneFactory.createScrollPane(myComponent, true);
+      component.setSize(myComponent.getPreferredSize());
+      myComponent.setPreferredSize(myComponent.getMinimumSize());
+      return component;
     }
     return myComponent;
   }
@@ -100,7 +101,7 @@ public abstract class AbstractExternalSystemConfigurable<
 
   @SuppressWarnings("unchecked")
   private void prepareProjectSettings(@NotNull SystemSettings s) {
-    List<ProjectSettings> settings = ContainerUtilRt.newArrayList(s.getLinkedProjectsSettings());
+    List<ProjectSettings> settings = new ArrayList<>(s.getLinkedProjectsSettings());
     if (settings.isEmpty()) {
       ExternalSystemUiUtil.fillBottom(myComponent);
       return;

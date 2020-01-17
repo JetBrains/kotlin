@@ -14,5 +14,8 @@
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="ion" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.rt" />
   </component>
 </module>

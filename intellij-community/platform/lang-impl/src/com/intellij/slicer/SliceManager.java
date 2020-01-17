@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.slicer;
 
 import com.intellij.analysis.AnalysisUIOptions;
@@ -45,7 +45,7 @@ public class SliceManager implements PersistentStateComponent<SliceManager.Store
       if (myBackContentManager == null) {
         ToolWindow backToolWindow = ToolWindowManager.getInstance(myProject).registerToolWindow(BACK_TOOLWINDOW_ID, true, ToolWindowAnchor.BOTTOM, myProject);
         myBackContentManager = backToolWindow.getContentManager();
-        new ContentManagerWatcher(backToolWindow, myBackContentManager);
+        ContentManagerWatcher.watchContentManager(backToolWindow, myBackContentManager);
       }
       return myBackContentManager;
     }
@@ -53,7 +53,7 @@ public class SliceManager implements PersistentStateComponent<SliceManager.Store
     if (myForthContentManager == null) {
       ToolWindow forthToolWindow = ToolWindowManager.getInstance(myProject).registerToolWindow(FORTH_TOOLWINDOW_ID, true, ToolWindowAnchor.BOTTOM, myProject);
       myForthContentManager = forthToolWindow.getContentManager();
-      new ContentManagerWatcher(forthToolWindow, myForthContentManager);
+      ContentManagerWatcher.watchContentManager(forthToolWindow, myForthContentManager);
     }
     return myForthContentManager;
   }
@@ -118,7 +118,7 @@ public class SliceManager implements PersistentStateComponent<SliceManager.Store
     }
     String desc = ElementDescriptionUtil.getElementDescription(element, RefactoringDescriptionLocation.WITHOUT_PARENT);
     return "<html><body>" +
-           (prefix == null ? "" : prefix) + StringUtil.first(desc, 100, true)+(suffix == null ? "" : suffix) +
+           (prefix == null ? "" : prefix) + StringUtil.first(desc, 100, true) + (suffix == null ? "" : suffix) +
            "</body></html>";
   }
 

@@ -29,8 +29,8 @@ public final class LargeFileNotificationProvider extends EditorNotifications.Pro
   public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file,
                                                          @NotNull FileEditor fileEditor,
                                                          @NotNull Project project) {
-    if (!(fileEditor instanceof EditorManager)) return null;
-    Editor editor = ((EditorManager)fileEditor).getEditor();
+    if (!(fileEditor instanceof LargeFileEditor)) return null;
+    Editor editor = ((LargeFileEditor)fileEditor).getEditor();
     if (editor.getUserData(HIDDEN_KEY) != null || PropertiesComponent.getInstance().isTrueValue(DISABLE_KEY)) {
       return null;
     }

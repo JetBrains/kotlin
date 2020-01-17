@@ -154,6 +154,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
       }
     };
     allTodosContent.setComponent(myAllTodos);
+    allTodosContent.setPreferredFocusableComponent(myAllTodos.getTree());
     Disposer.register(this, myAllTodos);
     if (toolWindow instanceof ToolWindowEx) {
       DefaultActionGroup group = new DefaultActionGroup() {
@@ -179,6 +180,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
     };
     Disposer.register(this, myCurrentFileTodosPanel);
     currentFileTodosContent.setComponent(myCurrentFileTodosPanel);
+    currentFileTodosContent.setPreferredFocusableComponent(myCurrentFileTodosPanel.getTree());
 
     String tabName = getTabNameForChangeList(ChangeListManager.getInstance(myProject).getDefaultChangeList().getName());
     myChangeListTodosContent = contentFactory.createContent(null, tabName, false);
@@ -192,6 +194,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
     };
     Disposer.register(this, myChangeListTodosPanel);
     myChangeListTodosContent.setComponent(myChangeListTodosPanel);
+    myChangeListTodosContent.setPreferredFocusableComponent(myCurrentFileTodosPanel.getTree());
 
     Content scopeBasedTodoContent = contentFactory.createContent(null, "Scope Based", false);
     myScopeBasedTodosPanel = new ScopeBasedTodosPanel(myProject, state.current, scopeBasedTodoContent);

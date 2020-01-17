@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.gradle.util.GradleVersion;
@@ -28,8 +29,9 @@ import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
  * {@link LibraryDataNodeSubstitutor} provides the facility to replace library dependencies with the related module dependencies
  * based on artifacts and source compilation output mapping
  */
-@ApiStatus.Experimental
+@ApiStatus.Internal
 public class LibraryDataNodeSubstitutor {
+  private @NotNull final ProjectResolverContext resolverContext;
   private @Nullable final File gradleUserHomeDir;
   private @Nullable final File gradleHomeDir;
   private @Nullable final GradleVersion gradleVersion;
@@ -37,12 +39,14 @@ public class LibraryDataNodeSubstitutor {
   private @NotNull final Map<String, Pair<String, ExternalSystemSourceType>> moduleOutputsMap;
   private @NotNull final Map<String, String> artifactsMap;
 
-  public LibraryDataNodeSubstitutor(@Nullable File gradleUserHomeDir,
+  public LibraryDataNodeSubstitutor(@NotNull ProjectResolverContext context,
+                                    @Nullable File gradleUserHomeDir,
                                     @Nullable File gradleHomeDir,
                                     @Nullable GradleVersion gradleVersion,
                                     @NotNull Map<String, Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> sourceSetMap,
                                     @NotNull Map<String, Pair<String, ExternalSystemSourceType>> moduleOutputsMap,
                                     @NotNull Map<String, String> artifactsMap) {
+    resolverContext = context;
     this.gradleUserHomeDir = gradleUserHomeDir;
     this.gradleHomeDir = gradleHomeDir;
     this.gradleVersion = gradleVersion;
@@ -61,7 +65,7 @@ public class LibraryDataNodeSubstitutor {
     if (libraryPaths.isEmpty()) return;
     if (StringUtil.isNotEmpty(libraryData.getExternalName())) {
       if (gradleUserHomeDir != null) {
-        attachSourcesAndJavadocFromGradleCacheIfNeeded(gradleUserHomeDir, libraryData);
+        attachSourcesAndJavadocFromGradleCacheIfNeeded(resolverContext, gradleUserHomeDir, libraryData);
       }
       return;
     }
@@ -184,7 +188,7 @@ public class LibraryDataNodeSubstitutor {
 
     if (libraryDependencyDataNode.getParent() != null) {
       if (libraryPaths.size() > 1) {
-        List<String> toRemove = ContainerUtil.newSmartList();
+        List<String> toRemove = new SmartList<>();
         for (String path : libraryPaths) {
           final File binaryPath = new File(path);
           if (binaryPath.isFile()) {

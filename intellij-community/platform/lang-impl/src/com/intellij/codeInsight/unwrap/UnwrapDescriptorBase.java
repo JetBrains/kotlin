@@ -35,8 +35,7 @@ import java.util.Set;
 public abstract class UnwrapDescriptorBase implements UnwrapDescriptor {
   private Unwrapper[] myUnwrappers;
 
-  @NotNull 
-  public final Unwrapper[] getUnwrappers() {
+  public final Unwrapper @NotNull [] getUnwrappers() {
     if (myUnwrappers == null) {
       myUnwrappers = createUnwrappers();
     }

@@ -61,7 +61,7 @@ public abstract class FileChangeListenerBase implements BulkFileListener {
   }
 
   private void deleteRecursively(VirtualFile f, final VFileEvent event) {
-    VfsUtilCore.visitChildrenRecursively(f, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(f, new VirtualFileVisitor<Void>() {
       @Override
       public boolean visitFile(@NotNull VirtualFile f) {
         if (isRelevant(f.getPath())) deleteFile(f, event);

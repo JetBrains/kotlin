@@ -57,15 +57,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class BuildArtifactAction extends DumbAwareAction {
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Clean artifact");
-
-  public BuildArtifactAction() {
-    super("Build Artifacts...", "Select and build artifacts configured in the project", null);
+  private static class Holder {
+    private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Clean artifact");
   }
+
   @Override
   public void update(@NotNull AnActionEvent e) {
     final Project project = getEventProject(e);
@@ -218,7 +214,7 @@ public class BuildArtifactAction extends DumbAwareAction {
             indicator.checkCanceled();
             File file = pair.getFirst();
             if (!FileUtil.delete(file)) {
-              NOTIFICATION_GROUP.createNotification("Cannot clean '" + pair.getSecond().getName() + "' artifact", "cannot delete '" + file.getAbsolutePath() + "'", NotificationType.ERROR, null).notify(myProject);
+              Holder.NOTIFICATION_GROUP.createNotification("Cannot clean '" + pair.getSecond().getName() + "' artifact", "cannot delete '" + file.getAbsolutePath() + "'", NotificationType.ERROR, null).notify(myProject);
             }
             else {
               deleted.add(file);

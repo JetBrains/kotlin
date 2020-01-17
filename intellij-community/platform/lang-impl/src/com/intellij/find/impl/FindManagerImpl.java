@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.find.impl;
 
 import com.intellij.codeInsight.highlighting.HighlightManager;
@@ -54,12 +53,10 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.ReplacePromptDialog;
 import com.intellij.usages.ChunkExtractor;
-import com.intellij.usages.UsageViewManager;
 import com.intellij.usages.impl.SyntaxHighlighterOverEditorHighlighter;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.IntObjectMap;
 import com.intellij.util.containers.Predicate;
-import com.intellij.util.messages.MessageBus;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.ImmutableCharSequence;
 import com.intellij.util.text.StringSearcher;
@@ -74,8 +71,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FindManagerImpl extends FindManager {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.find.impl.FindManagerImpl");
+public final class FindManagerImpl extends FindManager {
+  private static final Logger LOG = Logger.getInstance(FindManagerImpl.class);
 
   private final FindUsagesManager myFindUsagesManager;
   private boolean isFindWasPerformed;
@@ -88,22 +85,22 @@ public class FindManagerImpl extends FindManager {
   private FindModel myPreviousFindModel;
   private static final FindResultImpl NOT_FOUND_RESULT = new FindResultImpl();
   private final Project myProject;
-  private final MessageBus myBus;
   private static final Key<Boolean> HIGHLIGHTER_WAS_NOT_FOUND_KEY = Key.create("com.intellij.find.impl.FindManagerImpl.HighlighterNotFoundKey");
 
   private FindUIHelper myHelper;
   private static final NotificationGroup GROUP = new NotificationGroup("Find Problems", NotificationDisplayType.STICKY_BALLOON, false);
 
-  public FindManagerImpl(@NotNull Project project, @NotNull FindSettings findSettings, @NotNull UsageViewManager anotherManager, MessageBus bus) {
+  public FindManagerImpl(@NotNull Project project) {
     myProject = project;
-    myBus = bus;
+
+    FindSettings findSettings = FindSettings.getInstance();
     findSettings.initModelBySetings(myFindInProjectModel);
 
     myFindInFileModel.setCaseSensitive(findSettings.isLocalCaseSensitive());
     myFindInFileModel.setWholeWordsOnly(findSettings.isLocalWholeWordsOnly());
     myFindInFileModel.setRegularExpressions(findSettings.isLocalRegularExpressions());
 
-    myFindUsagesManager = new FindUsagesManager(myProject, anotherManager);
+    myFindUsagesManager = new FindUsagesManager(myProject);
     myFindInProjectModel.setMultipleFiles(true);
 
     NotificationsConfigurationImpl.remove("FindInPath");
@@ -254,7 +251,7 @@ public class FindManagerImpl extends FindManager {
   @Override
   public void setFindNextModel(FindModel findNextModel) {
     myFindNextModel = findNextModel;
-    myBus.syncPublisher(FIND_MODEL_TOPIC).findNextModelChanged();
+    myProject.getMessageBus().syncPublisher(FIND_MODEL_TOPIC).findNextModelChanged();
   }
 
   @Override
@@ -433,7 +430,8 @@ public class FindManagerImpl extends FindManager {
       String newStringToFind;
 
       if (findmodel.isRegularExpressions()) {
-        newStringToFind = StringUtil.replace(s, "\n", "\\n\\s*"); // add \\s* for convenience
+        newStringToFind = StringUtil.replace(s, "\\n", "\n"); // temporary convert back escaped symbols
+        newStringToFind = newStringToFind.replaceAll( "\n", "\\\\n\\\\s*"); // add \\s* for convenience
       } else {
         newStringToFind = StringUtil.escapeToRegexp(s);
         newStringToFind = newStringToFind.replaceAll("\\\\n\\s*", "\\\\n\\\\s*");
@@ -448,7 +446,7 @@ public class FindManagerImpl extends FindManager {
 
   @NotNull
   private FindResult doFindString(@NotNull CharSequence text,
-                                         @Nullable char[] textArray,
+                                         char @Nullable [] textArray,
                                          int offset,
                                          @NotNull FindModel findmodel,
                                          @Nullable VirtualFile file) {
@@ -560,23 +558,6 @@ public class FindManagerImpl extends FindManager {
 
           for (Language relevantLanguage : relevantLanguages) {
             tokensOfInterest = addTokenTypesForLanguage(model, relevantLanguage, tokensOfInterest);
-          }
-
-          if (model.isInStringLiteralsOnly()) {
-            // TODO: xml does not have string literals defined so we add XmlAttributeValue element type as convenience
-            final Lexer xmlLexer = getHighlighter(null, Language.findLanguageByID("XML")).getHighlightingLexer();
-            final String marker = "xxx";
-            xmlLexer.start("<a href=\"" + marker + "\" />");
-
-            while (!marker.equals(xmlLexer.getTokenText())) {
-              xmlLexer.advance();
-              if (xmlLexer.getTokenType() == null) break;
-            }
-
-            IElementType convenienceXmlAttrType = xmlLexer.getTokenType();
-            if (convenienceXmlAttrType != null) {
-              tokensOfInterest = TokenSet.orSet(tokensOfInterest, TokenSet.create(convenienceXmlAttrType));
-            }
           }
         }
         else {
@@ -914,7 +895,7 @@ public class FindManagerImpl extends FindManager {
   }
 
   @Override
-  public void showSettingsAndFindUsages(@NotNull NavigationItem[] targets) {
+  public void showSettingsAndFindUsages(NavigationItem @NotNull [] targets) {
     FindUsagesManager.showSettingsAndFindUsages(targets);
   }
 
@@ -938,11 +919,13 @@ public class FindManagerImpl extends FindManager {
   private static boolean tryToFindNextUsageViaEditorSearchComponent(Editor editor, SearchResults.Direction forwardOrBackward) {
     EditorSearchSession search = EditorSearchSession.get(editor);
     if (search != null && search.hasMatches()) {
-      if (forwardOrBackward == SearchResults.Direction.UP) {
-        search.searchBackward();
-      }
-      else {
-        search.searchForward();
+      if (!search.isSearchInProgress()) {
+        if (forwardOrBackward == SearchResults.Direction.UP) {
+          search.searchBackward();
+        }
+        else {
+          search.searchForward();
+        }
       }
       return true;
     }

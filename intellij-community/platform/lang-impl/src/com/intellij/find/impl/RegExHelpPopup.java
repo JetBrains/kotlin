@@ -16,8 +16,8 @@
 package com.intellij.find.impl;
 
 import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.find.FindUtil;
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.actions.ActionsCollector;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
@@ -343,14 +343,18 @@ public class RegExHelpPopup extends JPanel {
     add(myScrollPane, BorderLayout.CENTER);
   }
 
-  @NotNull
   public static LinkLabel createRegExLink(@NotNull String title, @Nullable Component owner, @Nullable Logger logger) {
+    return createRegExLink(title, owner, logger, null);
+  }
+
+  @NotNull
+  public static LinkLabel createRegExLink(@NotNull String title, @Nullable Component owner, @Nullable Logger logger, @Nullable String place) {
     Runnable action = createRegExLinkRunnable(owner);
     return new LinkLabel<>(title, null, new LinkListener<Object>() {
 
       @Override
       public void linkSelected(LinkLabel aSource, Object aLinkData) {
-        ActionsCollector.getInstance().record("regexp.help", RegExHelpPopup.class);
+        FindUtil.triggerRegexHelpClicked(place);
         action.run();
       }
     });

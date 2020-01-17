@@ -8,9 +8,6 @@ import com.intellij.packaging.artifacts.Artifact;
 
 import java.io.IOException;
 
-/**
- * @author nik
- */
 public class UpdateArtifactsAfterRenameTest extends PackagingElementsTestCase {
   public void testRenameFile() {
     final VirtualFile file = createFile("a.txt");

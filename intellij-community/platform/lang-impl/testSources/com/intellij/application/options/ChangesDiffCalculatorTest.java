@@ -60,7 +60,7 @@ public class ChangesDiffCalculatorTest extends LightPlatformTestCase {
            new TextRange(3, 6));
   }
 
-  private static void doTest(@NotNull String before, @NotNull String current, @NotNull TextRange... expectedRanges) {
+  private static void doTest(@NotNull String before, @NotNull String current, TextRange @NotNull ... expectedRanges) {
     DocumentImpl beforeDocument = new DocumentImpl(before);
     DocumentImpl currentDocument = new DocumentImpl(current);
 

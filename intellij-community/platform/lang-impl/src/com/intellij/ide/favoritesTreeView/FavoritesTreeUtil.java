@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2012 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.ide.dnd.aware.DnDAwareTree;
@@ -28,27 +14,26 @@ import java.util.Collections;
 import java.util.List;
 
 public class FavoritesTreeUtil {
-  @NotNull
-  public static FavoritesTreeNodeDescriptor[] getSelectedNodeDescriptors(final DnDAwareTree tree) {
+  public static FavoriteTreeNodeDescriptor @NotNull [] getSelectedNodeDescriptors(final DnDAwareTree tree) {
     TreePath[] path = tree.getSelectionPaths();
     if (path == null) {
-      return FavoritesTreeNodeDescriptor.EMPTY_ARRAY;
+      return FavoriteTreeNodeDescriptor.EMPTY_ARRAY;
     }
-    ArrayList<FavoritesTreeNodeDescriptor> result = new ArrayList<>();
+    ArrayList<FavoriteTreeNodeDescriptor> result = new ArrayList<>();
     for (TreePath treePath : path) {
       DefaultMutableTreeNode lastPathNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
       Object userObject = lastPathNode.getUserObject();
-      if (!(userObject instanceof FavoritesTreeNodeDescriptor)) {
+      if (!(userObject instanceof FavoriteTreeNodeDescriptor)) {
         continue;
       }
-      FavoritesTreeNodeDescriptor treeNodeDescriptor = (FavoritesTreeNodeDescriptor)userObject;
+      FavoriteTreeNodeDescriptor treeNodeDescriptor = (FavoriteTreeNodeDescriptor)userObject;
       result.add(treeNodeDescriptor);
     }
-    return result.toArray(FavoritesTreeNodeDescriptor.EMPTY_ARRAY);
+    return result.toArray(FavoriteTreeNodeDescriptor.EMPTY_ARRAY);
   }
 
-  public static List<AbstractTreeNode> getLogicalPathToSelected(final Tree tree) {
-    final List<AbstractTreeNode> result = new ArrayList<>();
+  public static List<AbstractTreeNode<?>> getLogicalPathToSelected(final Tree tree) {
+    final List<AbstractTreeNode<?>> result = new ArrayList<>();
     final TreePath selectionPath = tree.getSelectionPath();
     return getLogicalPathTo(result, selectionPath);
   }
@@ -58,8 +43,8 @@ public class FavoritesTreeUtil {
     final Object component = selectionPath.getLastPathComponent();
     if (component instanceof DefaultMutableTreeNode) {
       final Object uo = ((DefaultMutableTreeNode)component).getUserObject();
-      if (uo instanceof FavoritesTreeNodeDescriptor) {
-        AbstractTreeNode treeNode = ((FavoritesTreeNodeDescriptor)uo).getElement();
+      if (uo instanceof FavoriteTreeNodeDescriptor) {
+        AbstractTreeNode treeNode = ((FavoriteTreeNodeDescriptor)uo).getElement();
         while ((!(treeNode instanceof FavoritesListNode)) && treeNode != null) {
 //          final int idx = getIndex(treeNode.getParent().getChildren(), treeNode);
 //          if (idx == -1) return null;
@@ -73,7 +58,7 @@ public class FavoritesTreeUtil {
     return Collections.emptyList();
   }
 
-  /*private static int getIndex(Collection<AbstractTreeNode> children, AbstractTreeNode node) {
+  /*private static int getIndex(Collection<AbstractTreeNode<?>> children, AbstractTreeNode node) {
     int idx = 0;
     for (AbstractTreeNode child : children) {
       if (child == node) {
@@ -85,12 +70,12 @@ public class FavoritesTreeUtil {
     return -1;
   }*/
 
-  public static List<AbstractTreeNode> getLogicalPathTo(List<AbstractTreeNode> result, TreePath selectionPath) {
+  public static List<AbstractTreeNode<?>> getLogicalPathTo(List<AbstractTreeNode<?>> result, TreePath selectionPath) {
     final Object component = selectionPath.getLastPathComponent();
     if (component instanceof DefaultMutableTreeNode) {
       final Object uo = ((DefaultMutableTreeNode)component).getUserObject();
-      if (uo instanceof FavoritesTreeNodeDescriptor) {
-        AbstractTreeNode treeNode = ((FavoritesTreeNodeDescriptor)uo).getElement();
+      if (uo instanceof FavoriteTreeNodeDescriptor) {
+        AbstractTreeNode treeNode = ((FavoriteTreeNodeDescriptor)uo).getElement();
         while ((!(treeNode instanceof FavoritesListNode)) && treeNode != null) {
           result.add(treeNode);
           treeNode = treeNode.getParent();
@@ -103,7 +88,7 @@ public class FavoritesTreeUtil {
   }
 
   @Nullable
-  public static FavoritesListNode extractParentList(FavoritesTreeNodeDescriptor descriptor) {
+  public static FavoritesListNode extractParentList(FavoriteTreeNodeDescriptor descriptor) {
     AbstractTreeNode current = descriptor.getElement();
     while (current != null) {
       if (current instanceof FavoritesListNode) {
@@ -114,7 +99,7 @@ public class FavoritesTreeUtil {
     return null;
   }
 
-  static FavoritesListProvider getProvider(@NotNull FavoritesManager manager, @NotNull FavoritesTreeNodeDescriptor descriptor) {
+  static FavoritesListProvider getProvider(@NotNull FavoritesManager manager, @NotNull FavoriteTreeNodeDescriptor descriptor) {
     AbstractTreeNode treeNode = descriptor.getElement();
     while (treeNode != null && (!(treeNode instanceof FavoritesListNode))) {
       treeNode = treeNode.getParent();

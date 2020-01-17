@@ -19,6 +19,7 @@ package com.intellij.refactoring;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.usageView.UsageInfo;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -26,6 +27,6 @@ import com.intellij.usageView.UsageInfo;
 public interface RefactoringHelper<T> {
   ExtensionPointName<RefactoringHelper> EP_NAME = ExtensionPointName.create("com.intellij.refactoring.helper");
 
-  T prepareOperation(UsageInfo[] usages);
-  void performOperation(final Project project, T operationData);
+  T prepareOperation(UsageInfo @NotNull [] usages);
+  void performOperation(@NotNull Project project, T operationData);
 }

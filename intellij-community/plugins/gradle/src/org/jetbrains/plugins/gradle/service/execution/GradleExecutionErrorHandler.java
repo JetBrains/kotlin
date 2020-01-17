@@ -42,8 +42,8 @@ public class GradleExecutionErrorHandler {
     UNSUPPORTED_GRADLE_VERSION_ERROR_PATTERN = Pattern.compile("Gradle version .* is required.*");
     DOWNLOAD_GRADLE_DISTIBUTION_ERROR_PATTERN = Pattern.compile("The specified Gradle distribution .* does not exist.");
     MISSING_METHOD_PATTERN = Pattern.compile("org.gradle.api.internal.MissingMethodException: Could not find method (.*?) .*");
-    ERROR_LOCATION_IN_FILE_PATTERN = Pattern.compile("Build file '(.*)' line: ([\\d]+)");
-    ERROR_IN_FILE_PATTERN = Pattern.compile("Build file '(.*)'");
+    ERROR_LOCATION_IN_FILE_PATTERN = Pattern.compile("(?:Build|Settings) file '(.*)' line: ([\\d]+)");
+    ERROR_IN_FILE_PATTERN = Pattern.compile("(?:Build|Settings) file '(.*)'");
   }
 
   private final Throwable myOriginError;
@@ -137,7 +137,7 @@ public class GradleExecutionErrorHandler {
   @NotNull
   public static ExternalSystemException createUserFriendlyError(@NotNull String msg,
                                                                 @Nullable String location,
-                                                                @NotNull String... quickFixes) {
+                                                                String @NotNull ... quickFixes) {
     String newMsg = msg;
     if (!newMsg.isEmpty() && Character.isLowerCase(newMsg.charAt(0))) {
       // Message starts with lower case letter. Sentences should start with uppercase.

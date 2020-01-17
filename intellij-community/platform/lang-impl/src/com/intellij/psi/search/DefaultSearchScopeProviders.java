@@ -4,6 +4,7 @@ package com.intellij.psi.search;
 import com.intellij.ide.favoritesTreeView.FavoritesManager;
 import com.intellij.ide.projectView.impl.AbstractUrl;
 import com.intellij.ide.util.treeView.WeighedItem;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -38,7 +39,7 @@ public class DefaultSearchScopeProviders {
 
     @NotNull
     @Override
-    public List<SearchScope> getSearchScopes(@NotNull Project project) {
+    public List<SearchScope> getSearchScopes(@NotNull Project project, @NotNull DataContext dataContext) {
       FavoritesManager favoritesManager = FavoritesManager.getInstance(project);
       if (favoritesManager == null) return Collections.emptyList();
       List<SearchScope> result = new ArrayList<>();
@@ -80,7 +81,7 @@ public class DefaultSearchScopeProviders {
 
     @NotNull
     @Override
-    public List<SearchScope> getSearchScopes(@NotNull Project project) {
+    public List<SearchScope> getSearchScopes(@NotNull Project project, @NotNull DataContext dataContext) {
       List<SearchScope> result = new ArrayList<>();
       List<NamedScope> changeLists = ChangeListsScopesProvider.getInstance(project).getFilteredScopes();
       if (!changeLists.isEmpty()) {
@@ -100,7 +101,7 @@ public class DefaultSearchScopeProviders {
 
     @NotNull
     @Override
-    public List<SearchScope> getSearchScopes(@NotNull Project project) {
+    public List<SearchScope> getSearchScopes(@NotNull Project project, @NotNull DataContext dataContext) {
       List<SearchScope> result = new ArrayList<>();
       NamedScopesHolder[] holders = NamedScopesHolder.getAllNamedScopeHolders(project);
       for (NamedScopesHolder holder : holders) {

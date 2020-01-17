@@ -373,15 +373,13 @@ public class DaemonsUi implements Disposable {
       return myTable.getTableView();
     }
 
-    @NotNull
     @Override
-    protected Action[] createActions() {
+    protected Action @NotNull [] createActions() {
       return new Action[]{myStopAllAction, myStopSelectedAction, myCloseAction};
     }
 
-    @NotNull
     @Override
-    protected Action[] createLeftSideActions() {
+    protected Action @NotNull [] createLeftSideActions() {
       return new Action[]{myRefreshAction};
     }
 

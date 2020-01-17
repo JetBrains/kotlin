@@ -8,6 +8,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,9 +21,6 @@ import java.util.Set;
 
 import static com.intellij.util.ObjectUtils.notNull;
 
-/**
- * @author nik
- */
 public class JavaSdkUtil {
   @NotNull
   public static List<File> getJdkClassesRoots(@NotNull File home, boolean isJre) {
@@ -55,7 +53,7 @@ public class JavaSdkUtil {
     }
 
     FileFilter jarFileFilter = FileFilters.filesWithExtension("jar");
-    Set<String> pathFilter = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY);
+    Set<String> pathFilter = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
     List<File> rootFiles = new ArrayList<>();
     if (Registry.is("project.structure.add.tools.jar.to.new.jdk")) {
       File toolsJar = new File(home, "lib/tools.jar");

@@ -21,8 +21,8 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.ui.paint.LinePainter2D;
 import com.intellij.util.containers.IntArrayList;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,22 +69,22 @@ class TextPainter extends BasePainter {
   private final Color myMethodSeparatorColor;
   private boolean myPerformActualDrawing;
   private long myDocumentStamp = -1;
-  
+
   private final String myPrintDate;
   private final String myPrintTime;
 
   @NonNls private static final String DEFAULT_MEASURE_HEIGHT_TEXT = "A";
   @NonNls private static final String DEFAULT_MEASURE_WIDTH_TEXT = "w";
-  
+
   @NonNls private static final String HEADER_TOKEN_PAGE = "PAGE";
   @NonNls private static final String HEADER_TOKEN_TOTALPAGES = "TOTALPAGES";
   @NonNls private static final String HEADER_TOKEN_FILE = "FILE";
   @NonNls private static final String HEADER_TOKEN_FILENAME = "FILENAME";
   @NonNls private static final String HEADER_TOKEN_DATE = "DATE";
   @NonNls private static final String HEADER_TOKEN_TIME = "TIME";
-  
+
   @NonNls private static final String DATE_FORMAT = "yyyy-MM-dd";
-  @NonNls private static final String TIME_FORMAT = "HH:mm:ss";    
+  @NonNls private static final String TIME_FORMAT = "HH:mm:ss";
 
   TextPainter(@NotNull DocumentEx editorDocument,
                      EditorHighlighter highlighter,
@@ -180,7 +180,7 @@ class TextPainter extends BasePainter {
 
     if (myNumberOfPages < 0) {
       myProgress.setText(CodeEditorBundle.message("print.file.calculating.number.of.pages.progress"));
-      
+
       if (!calculateNumberOfPages(g2d, pageFormat)) {
         return NO_SUCH_PAGE;
       }
@@ -205,7 +205,7 @@ class TextPainter extends BasePainter {
       return PAGE_EXISTS;
     }
   }
-  
+
   private boolean printPageInReadAction(final Graphics2D g2d, final PageFormat pageFormat, final String progressMessageKey) {
     return ReadAction.compute(() -> {
       if (!isValidRange(myRangeToPrint)) {
@@ -259,7 +259,7 @@ class TextPainter extends BasePainter {
     assert isValidRange(range);
     int startOffset = range.getStartOffset();
     int endOffset = range.getEndOffset();
-    
+
     myOffset = startOffset;
     mySegmentEnd = endOffset;
     myLineNumber = myDocument.getLineNumber(myOffset) + 1;
@@ -397,7 +397,7 @@ class TextPainter extends BasePainter {
           if (markerColor != null) {
             Color save = g.getColor();
             setForegroundColor(g, markerColor);
-            UIUtil.drawLine(g, 0, (int)lineY, (int)clip.getWidth(), (int)lineY);
+            LinePainter2D.paint((Graphics2D)g, 0, (int)lineY, (int)clip.getWidth(), (int)lineY);
             setForegroundColor(g, save);
           }
         }
@@ -603,9 +603,9 @@ class TextPainter extends BasePainter {
     g.setFont(savedFont);
   }
 
-  private boolean drawString(Graphics2D g, char[] text, int end, boolean lineStart, Point2D position, Rectangle2D clip, 
+  private boolean drawString(Graphics2D g, char[] text, int end, boolean lineStart, Point2D position, Rectangle2D clip,
                              Color backColor, Color underscoredColor) {
-    boolean toContinue = true; 
+    boolean toContinue = true;
     if (end >= mySegmentEnd) {
       end = mySegmentEnd;
       toContinue = false;
@@ -613,7 +613,7 @@ class TextPainter extends BasePainter {
     if (myOffset >= end) return toContinue;
     boolean isInClip = (getLineHeight(g) + position.getY() >= clip.getY()) && (position.getY() <= clip.getY() + clip.getHeight());
     if (!isInClip) return toContinue;
-    
+
     if (myPrintSettings.WRAP) {
       double w = getTextSegmentWidth(text, myOffset, end - myOffset, position.getX(), g);
       if (position.getX() + w > clip.getWidth()) {
@@ -672,7 +672,7 @@ class TextPainter extends BasePainter {
       Color savedColor = g.getColor();
       setForegroundColor(g, underscoredColor);
       double w = getTextSegmentWidth(text, myOffset, length, position.getX(), g);
-      UIUtil.drawLine(g, (int)position.getX(), (int)y + 1, (int)(xStart + w), (int)(y + 1));
+      LinePainter2D.paint((Graphics2D)g, (int)position.getX(), (int)y + 1, (int)(xStart + w), (int)(y + 1));
       g.setColor(savedColor);
     }
     position.setLocation(x, position.getY());

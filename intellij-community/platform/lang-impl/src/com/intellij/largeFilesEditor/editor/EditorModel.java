@@ -13,7 +13,6 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.impl.softwrap.mapping.SoftWrapApplianceManager;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
@@ -387,20 +386,45 @@ public class EditorModel {
   private void updateSearchResultsHighlighting() {
     clearHighlightedSearchResults();
 
-    List<TextRange> searchResults = dataProvider.getAllSearchResultsInDocument(documentOfPagesModel.getDocument());
-    if (searchResults != null && !searchResults.isEmpty()) {
+    List<TextRange> highlightRanges = getAllSearchResultsRangesInDocument();
+
+    if (!highlightRanges.isEmpty()) {
       HighlightManager highlightManager = HighlightManager.getInstance(dataProvider.getProject());
       TextAttributes textAttributes = EditorColorsManager.getInstance().getGlobalScheme()
         .getAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
 
-      for (TextRange searchResult : searchResults) {
+      for (TextRange range : highlightRanges) {
         highlightManager.addRangeHighlight(
           editor,
-          searchResult.getStartOffset(),
-          searchResult.getEndOffset(),
+          range.getStartOffset(),
+          range.getEndOffset(),
           textAttributes, true, pageRangeHighlighters);
       }
     }
+  }
+
+  private List<TextRange> getAllSearchResultsRangesInDocument() {
+    List<TextRange> searchResultsRanges = new ArrayList<>();
+    for (int i = 0; i < documentOfPagesModel.getPagesList().size(); i++) {
+      Page page = documentOfPagesModel.getPagesList().get(i);
+      List<SearchResult> searchResults = dataProvider.getSearchResultsInPage(page);
+      if (searchResults != null) {
+        for (SearchResult result : searchResults) {
+          int from = documentOfPagesModel.getSymbolOffsetToStartOfPage(
+            documentOfPagesModel.getIndexOfPageByPageNumber(result.startPosition.pageNumber))
+                     + result.startPosition.symbolOffsetInPage;
+          int to = documentOfPagesModel.getSymbolOffsetToStartOfPage(
+            documentOfPagesModel.getIndexOfPageByPageNumber(result.endPostion.pageNumber))
+                   + result.endPostion.symbolOffsetInPage;
+          if (from < 0) from = 0;
+          if (to > documentOfPagesModel.getDocument().getTextLength()) to = documentOfPagesModel.getDocument().getTextLength();
+          if (from < to) {
+            searchResultsRanges.add(new TextRange(from, to));
+          }
+        }
+      }
+    }
+    return searchResultsRanges;
   }
 
   private void clearHighlightedSearchResults() {
@@ -907,8 +931,6 @@ public class EditorModel {
                + " 'editor' is not instance of EditorEx. Can't set proper context menu group id.");
     }
 
-    // restrict using old soft-wrapping logic for this editor, because it (old logic) can cause unlimited loading of file into document
-    editor.putUserData(SoftWrapApplianceManager.IGNORE_OLD_SOFT_WRAP_LOGIC_REGISTRY_OPTION, new Object());
     // don't show PositionPanel for this editor, because it still can't work properly with the editor
     editor.putUserData(PositionPanel.DISABLE_FOR_EDITOR, new Object());
 
@@ -993,6 +1015,6 @@ public class EditorModel {
 
     void requestReadPage(long pageNumber, ReadingPageResultHandler readingPageResultHandler);
 
-    List<TextRange> getAllSearchResultsInDocument(Document document);
+    List<SearchResult> getSearchResultsInPage(Page page);
   }
 }

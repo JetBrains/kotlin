@@ -60,9 +60,8 @@ public class CustomFoldingSurroundDescriptor implements SurroundDescriptor {
     SURROUNDERS = surrounderList.toArray(new CustomFoldingRegionSurrounder[0]);
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
+  public PsiElement @NotNull [] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     if (startOffset >= endOffset) return PsiElement.EMPTY_ARRAY;
     Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(file.getLanguage());
     if (commenter == null || commenter.getLineCommentPrefix() == null && 
@@ -88,8 +87,7 @@ public class CustomFoldingSurroundDescriptor implements SurroundDescriptor {
     return PsiElement.EMPTY_ARRAY;
   }
 
-  @NotNull
-  private static PsiElement[] adjustRange(@NotNull PsiElement start, @NotNull PsiElement end) {
+  private static PsiElement @NotNull [] adjustRange(@NotNull PsiElement start, @NotNull PsiElement end) {
     PsiElement newStart = lowerStartElementIfNeeded(start, end);
     PsiElement newEnd = lowerEndElementIfNeeded(start, end);
     if (newStart == null || newEnd == null) {
@@ -236,9 +234,8 @@ public class CustomFoldingSurroundDescriptor implements SurroundDescriptor {
     return lineFeedFound;
   }
 
-  @NotNull
   @Override
-  public Surrounder[] getSurrounders() {
+  public Surrounder @NotNull [] getSurrounders() {
     return SURROUNDERS;
   }
 
@@ -261,7 +258,7 @@ public class CustomFoldingSurroundDescriptor implements SurroundDescriptor {
     }
 
     @Override
-    public boolean isApplicable(@NotNull PsiElement[] elements) {
+    public boolean isApplicable(PsiElement @NotNull [] elements) {
       if (elements.length == 0) return false;
       if (elements[0].getContainingFile() instanceof PsiCodeFragment) {
         return false;
@@ -273,7 +270,7 @@ public class CustomFoldingSurroundDescriptor implements SurroundDescriptor {
     }
 
     @Override
-    public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements)
+    public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements)
       throws IncorrectOperationException {
       if (elements.length == 0) return null;
       PsiElement firstElement = elements[0];

@@ -16,7 +16,6 @@
 package org.jetbrains.jps.model;
 
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.jps.model.java.*;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
@@ -24,9 +23,6 @@ import org.jetbrains.jps.model.module.*;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsModuleTest extends JpsModelTestCase {
   public void testAddSourceRoot() {
     final JpsModule module = myProject.addModule("m", JpsJavaModuleType.INSTANCE);
@@ -38,7 +34,7 @@ public class JpsModuleTest extends JpsModelTestCase {
 
     final JpsModuleSourceRoot root = assertOneElement(module.getSourceRoots());
     assertEquals("file://url", root.getUrl());
-    assertSameElements(ContainerUtilRt.newArrayList(module.getSourceRoots(JavaSourceRootType.SOURCE)), root);
+    assertSameElements(ContainerUtil.newArrayList(module.getSourceRoots(JavaSourceRootType.SOURCE)), root);
     assertEmpty(ContainerUtil.newArrayList(module.getSourceRoots(JavaSourceRootType.TEST_SOURCE)));
     JpsTypedModuleSourceRoot<JavaSourceRootProperties> typedRoot = root.asTyped(JavaSourceRootType.SOURCE);
     assertNotNull(typedRoot);

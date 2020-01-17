@@ -28,7 +28,7 @@ import javax.swing.*;
 import java.util.*;
 
 public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.RedundantSuppressInspection");
+  private static final Logger LOG = Logger.getInstance(RedundantSuppressInspection.class);
   public static final String SHORT_NAME = "RedundantSuppression";
   public boolean IGNORE_ALL;
   private BidirectionalMap<String, QuickFix> myQuickFixes;
@@ -37,12 +37,6 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
   @NotNull
   public String getGroupDisplayName() {
     return GroupNames.DECLARATION_REDUNDANCY;
-  }
-
-  @Override
-  @NotNull
-  public String getDisplayName() {
-    return InspectionsBundle.message("inspection.redundant.suppression.name");
   }
 
   @Override
@@ -70,7 +64,6 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
                         @NotNull ProblemsHolder problemsHolder,
                         @NotNull GlobalInspectionContext globalContext,
                         @NotNull ProblemDescriptionsProcessor problemDescriptionsProcessor) {
-    if (!((GlobalInspectionContextBase)globalContext).isToCheckFile(file, this)) return;
     InspectionSuppressor extension = LanguageInspectionSuppressors.INSTANCE.forLanguage(file.getLanguage());
     if (!(extension instanceof RedundantSuppressionDetector)) return;
     final CommonProblemDescriptor[] descriptors = checkElement(file, (RedundantSuppressionDetector)extension, manager);
@@ -93,14 +86,13 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     }
   }
 
-  @NotNull
-  public ProblemDescriptor[] checkElement(@NotNull final PsiFile psiElement,
-                                          RedundantSuppressionDetector extension,
-                                          @NotNull final InspectionManager manager) {
+  public ProblemDescriptor @NotNull [] checkElement(@NotNull final PsiFile psiElement,
+                                                    RedundantSuppressionDetector extension,
+                                                    @NotNull final InspectionManager manager) {
     final Map<PsiElement, Collection<String>> suppressedScopes = new THashMap<>();
     psiElement.accept(new PsiRecursiveElementWalkingVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         super.visitElement(element);
         collectSuppressions(element, suppressedScopes, IGNORE_ALL, extension);
       }
@@ -108,17 +100,17 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
 
     if (suppressedScopes.values().isEmpty()) return ProblemDescriptor.EMPTY_ARRAY;
     // have to visit all file from scratch since inspections can be written in any pervasive way including checkFile() overriding
-    Map<InspectionToolWrapper, String> suppressedTools = new THashMap<>();
-    InspectionToolWrapper[] toolWrappers = getInspectionTools(psiElement, manager);
+    Map<InspectionToolWrapper<?, ?>, String> suppressedTools = new THashMap<>();
+    InspectionToolWrapper<?, ?>[] toolWrappers = getInspectionTools(psiElement, manager);
     for (Collection<String> ids : suppressedScopes.values()) {
       for (Iterator<String> iterator = ids.iterator(); iterator.hasNext(); ) {
         String suppressId = iterator.next().trim();
-        List<InspectionToolWrapper> reportingWrappers = findReportingTools(toolWrappers, suppressId);
+        List<InspectionToolWrapper<?, ?>> reportingWrappers = findReportingTools(toolWrappers, suppressId);
         if (reportingWrappers.isEmpty()) {
           iterator.remove();
         }
         else {
-          for (InspectionToolWrapper toolWrapper : reportingWrappers) {
+          for (InspectionToolWrapper<?, ?> toolWrapper : reportingWrappers) {
             suppressedTools.put(toolWrapper, suppressId);
           }
         }
@@ -135,7 +127,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     final List<ProblemDescriptor> result;
     try {
       result = new ArrayList<>();
-      for (InspectionToolWrapper toolWrapper : suppressedTools.keySet()) {
+      for (InspectionToolWrapper<?, ?> toolWrapper : suppressedTools.keySet()) {
         String toolId = suppressedTools.get(toolWrapper);
         toolWrapper.initialize(globalContext);
         final Collection<CommonProblemDescriptor> descriptors;
@@ -203,10 +195,10 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     return result.toArray(ProblemDescriptor.EMPTY_ARRAY);
   }
 
-  private static List<InspectionToolWrapper> findReportingTools(InspectionToolWrapper[] toolWrappers, String suppressedId) {
-    List<InspectionToolWrapper> wrappers = Collections.emptyList();
+  private static List<InspectionToolWrapper<?, ?>> findReportingTools(InspectionToolWrapper<?, ?>[] toolWrappers, String suppressedId) {
+    List<InspectionToolWrapper<?, ?>> wrappers = Collections.emptyList();
     String mergedToolName = InspectionElementsMerger.getMergedToolName(suppressedId);
-    for (InspectionToolWrapper toolWrapper : toolWrappers) {
+    for (InspectionToolWrapper<?, ?> toolWrapper : toolWrappers) {
       String toolWrapperShortName = toolWrapper.getShortName();
       String alternativeID = toolWrapper.getTool().getAlternativeID();
       if (toolWrapper instanceof LocalInspectionToolWrapper &&
@@ -274,8 +266,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
            ? ((RedundantSuppressionDetector)suppressor).createRemoveRedundantSuppressionFix(toolAndLang[0]) : null;
   }
 
-  @NotNull
-  protected InspectionToolWrapper[] getInspectionTools(PsiElement psiElement, @NotNull InspectionManager manager) {
+  protected InspectionToolWrapper<?,?> @NotNull [] getInspectionTools(PsiElement psiElement, @NotNull InspectionManager manager) {
     String currentProfileName = ((InspectionManagerBase)manager).getCurrentProfile();
     InspectionProjectProfileManager profileManager = InspectionProjectProfileManager.getInstance(manager.getProject());
     InspectionProfileImpl usedProfile = profileManager.getProfile(currentProfileName, false);
@@ -330,20 +321,13 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
       return SHORT_NAME;
     }
 
-    @Nls
-    @NotNull
-    @Override
-    public String getDisplayName() {
-      return RedundantSuppressInspection.this.getDisplayName();
-    }
-
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
       return new PsiElementVisitor() {
 
         @Override
-        public void visitElement(PsiElement element) {
+        public void visitElement(@NotNull PsiElement element) {
           super.visitElement(element);
           HashMap<PsiElement, Collection<String>> scopes = new HashMap<>();
           boolean suppressAll = collectSuppressions(element, scopes, IGNORE_ALL, mySuppressor);

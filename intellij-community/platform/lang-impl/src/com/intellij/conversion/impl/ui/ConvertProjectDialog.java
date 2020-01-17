@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.conversion.impl.ui;
 
@@ -36,23 +22,21 @@ import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class ConvertProjectDialog extends DialogWrapper {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.conversion.impl.ui.ConvertProjectDialog");
+  private static final Logger LOG = Logger.getInstance(ConvertProjectDialog.class);
   private JPanel myMainPanel;
   private JTextPane myTextPane;
   private boolean myConverted;
   private final ConversionContextImpl myContext;
   private final List<? extends ConversionRunner> myConversionRunners;
   private final File myBackupDir;
-  private final Set<File> myAffectedFiles;
+  private final Set<Path> myAffectedFiles;
   private boolean myNonExistingFilesMessageShown;
 
   public ConvertProjectDialog(ConversionContextImpl context, final List<? extends ConversionRunner> conversionRunners) {
@@ -103,7 +87,7 @@ public class ConvertProjectDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
-    final List<File> nonexistentFiles = myContext.getNonExistingModuleFiles();
+    final List<Path> nonexistentFiles = myContext.getNonExistingModuleFiles();
     if (!nonexistentFiles.isEmpty() && !myNonExistingFilesMessageShown) {
       final String filesString = getFilesString(nonexistentFiles);
       final String message = IdeBundle.message("message.text.files.do.not.exist", filesString);
@@ -141,16 +125,16 @@ public class ConvertProjectDialog extends DialogWrapper {
     }
   }
 
-  private static String getFilesString(List<? extends File> files) {
+  private static String getFilesString(List<? extends Path> files) {
     StringBuilder buffer = new StringBuilder();
-    for (File file : files) {
-      buffer.append(file.getAbsolutePath()).append("<br>");
+    for (Path file : files) {
+      buffer.append(file.toAbsolutePath().toString()).append("<br>");
     }
     return buffer.toString();
   }
 
-  private boolean checkReadOnlyFiles() throws IOException {
-    List<File> files = getReadOnlyFiles();
+  private boolean checkReadOnlyFiles() {
+    List<Path> files = getReadOnlyFiles();
     if (!files.isEmpty()) {
       final String message = IdeBundle.message("message.text.unlock.read.only.files",
                                                ApplicationNamesInfo.getInstance().getFullProductName(),
@@ -170,13 +154,13 @@ public class ConvertProjectDialog extends DialogWrapper {
     return true;
   }
 
-  private List<File> getReadOnlyFiles() {
+  private List<Path> getReadOnlyFiles() {
     return ConversionRunner.getReadOnlyFiles(myAffectedFiles);
   }
 
-  private static void unlockFiles(final List<? extends File> files) throws IOException {
-    for (File file : files) {
-      FileUtil.setReadOnlyAttribute(file.getAbsolutePath(), false);
+  private static void unlockFiles(final List<? extends Path> files) {
+    for (Path file : files) {
+      FileUtil.setReadOnlyAttribute(file.toAbsolutePath().toString(), false);
     }
   }
 

@@ -5,6 +5,7 @@ import com.intellij.execution.*;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Key;
@@ -13,6 +14,7 @@ import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.SmartList;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.ThreeStateCheckBox;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import gnu.trove.THashSet;
@@ -33,6 +35,8 @@ import java.util.*;
 
 
 public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extends DialogWrapper {
+
+  private final static Object TEMPLATE_ROOT = new Object();
   private final Project myProject;
   private DefaultMutableTreeNode myRoot;
 
@@ -93,7 +97,7 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
       }
     });
 
-    expacndChecked(tree);
+    expandChecked(tree);
 
     JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(tree);
     scrollPane.setPreferredSize(JBUI.size(400, 400));
@@ -101,7 +105,7 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
     return panel;
   }
 
-  private static void expacndChecked(Tree tree) {
+  private static void expandChecked(Tree tree) {
     TreeNode root = (TreeNode)tree.getModel().getRoot();
     Enumeration factories = root.children();
     ArrayList<TreeNode[]> toExpand = new ArrayList<>();
@@ -110,7 +114,7 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
       Enumeration configurations = factoryNode.children();
       while (configurations.hasMoreElements()) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)configurations.nextElement();
-        ConfigurationDescriptor config = (ConfigurationDescriptor)node.getUserObject();
+        Descriptor config = (Descriptor)node.getUserObject();
         if (config.isChecked()) {
           toExpand.add(factoryNode.getPath());
           break;
@@ -125,6 +129,17 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
   private static void toggleNode(JTree tree, DefaultMutableTreeNode node) {
     Descriptor descriptor = (Descriptor)node.getUserObject();
     descriptor.setChecked(!descriptor.isChecked());
+    if (descriptor instanceof GroupConfigurationDescriptor) {
+      TreeUtil.treeNodeTraverser(node).forEach(child -> {
+        ((Descriptor)((DefaultMutableTreeNode)child).getUserObject()).setChecked(descriptor.isChecked());
+      });
+    }
+    else if (descriptor instanceof ConfigurationDescriptor) {
+      DefaultMutableTreeNode parent = (DefaultMutableTreeNode)node.getParent();
+      GroupConfigurationDescriptor groupConfigurationDescriptor = (GroupConfigurationDescriptor)parent.getUserObject();
+      ThreeStateCheckBox.State state = getStateFromChildren(parent);
+      groupConfigurationDescriptor.setChecked(state == ThreeStateCheckBox.State.SELECTED);
+    }
     tree.repaint();
   }
 
@@ -135,7 +150,9 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
     for (Map.Entry<ConfigurationType, Map<String, List<RunnerAndConfigurationSettings>>> entry : runManager.getConfigurationsGroupedByTypeAndFolder(false).entrySet()) {
       ConfigurationType type = entry.getKey();
       final Icon icon = type.getIcon();
-      DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(new ConfigurationTypeDescriptor(type, icon, isConfigurationAssigned(type)));
+      boolean selectedAll = true;
+      GroupConfigurationDescriptor groupConfigurationDescriptor = new GroupConfigurationDescriptor(type, icon);
+      DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(groupConfigurationDescriptor);
       root.add(typeNode);
       final Set<String> addedNames = new THashSet<>();
       for (List<RunnerAndConfigurationSettings> list : entry.getValue().values()) {
@@ -145,11 +162,26 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
             // add only the first configuration if more than one has the same name
             continue;
           }
-          typeNode.add(new DefaultMutableTreeNode(new ConfigurationDescriptor(configuration.getConfiguration(), isConfigurationAssigned(configuration.getConfiguration()))));
+          boolean assigned = isConfigurationAssigned(configuration.getConfiguration());
+          selectedAll = selectedAll && assigned;
+          typeNode.add(new DefaultMutableTreeNode(new ConfigurationDescriptor(configuration.getConfiguration(), assigned)));
         }
+        groupConfigurationDescriptor.setChecked(selectedAll);
       }
     }
+    buildTemplatesNode(root, runManager);
     return root;
+  }
+
+  private void buildTemplatesNode(DefaultMutableTreeNode root, RunManagerImpl manager) {
+    DefaultMutableTreeNode node = new DefaultMutableTreeNode(TEMPLATE_ROOT);
+    root.add(node);
+    for (ConfigurationType type : ConfigurationType.CONFIGURATION_TYPE_EP.getExtensionList()) {
+      final Icon icon = type.getIcon();
+      DefaultMutableTreeNode typeNode =
+        new DefaultMutableTreeNode(new ConfigurationTypeDescriptor(type, icon, isConfigurationAssigned(type)));
+      node.add(typeNode);
+    }
   }
 
   private boolean isConfigurationAssigned(ConfigurationType type) {
@@ -174,7 +206,11 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
     final RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(myProject);
     for (Enumeration nodes = myRoot.depthFirstEnumeration(); nodes.hasMoreElements(); ) {
       final DefaultMutableTreeNode node = (DefaultMutableTreeNode)nodes.nextElement();
-      final Descriptor descriptor = (Descriptor)node.getUserObject();
+      Object object = node.getUserObject();
+      if (!(object instanceof Descriptor)) {
+        continue;
+      }
+      final Descriptor descriptor = (Descriptor)object;
       final boolean isChecked = descriptor.isChecked();
 
       if (descriptor instanceof ConfigurationTypeDescriptor) {
@@ -260,6 +296,24 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
     }
   }
 
+  private static final class GroupConfigurationDescriptor extends Descriptor {
+    private final ConfigurationType myConfigurationType;
+    private final Icon myIcon;
+
+    private GroupConfigurationDescriptor(ConfigurationType type, Icon icon) {
+      myConfigurationType = type;
+      myIcon = icon;
+    }
+
+    private ConfigurationType getConfigurationType() {
+      return myConfigurationType;
+    }
+
+    private Icon getIcon() {
+      return myIcon;
+    }
+  }
+
   private static final class ConfigurationDescriptor extends Descriptor {
     private final RunConfiguration myConfiguration;
 
@@ -281,14 +335,30 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
     }
   }
 
+  private static ThreeStateCheckBox.State getStateFromChildren(DefaultMutableTreeNode node) {
+    boolean allEnabled = true;
+    boolean anyEnabled = false;
+    Enumeration<?> children = node.children();
+    while (children.hasMoreElements()) {
+      if (anyEnabled && !allEnabled) return ThreeStateCheckBox.State.DONT_CARE;
+      DefaultMutableTreeNode child = (DefaultMutableTreeNode)children.nextElement();
+      ConfigurationDescriptor descriptor = (ConfigurationDescriptor)child.getUserObject();
+
+      allEnabled = allEnabled && descriptor.isChecked();
+      anyEnabled = anyEnabled || descriptor.isChecked();
+    }
+    if (allEnabled) return ThreeStateCheckBox.State.SELECTED;
+    if (anyEnabled) return ThreeStateCheckBox.State.DONT_CARE;
+    return ThreeStateCheckBox.State.NOT_SELECTED;
+  }
 
   private static final class MyTreeCellRenderer extends JPanel implements TreeCellRenderer {
     private final JLabel myLabel;
-    public final JCheckBox myCheckbox;
+    public final ThreeStateCheckBox myCheckbox;
 
     MyTreeCellRenderer() {
       super(new BorderLayout());
-      myCheckbox = new JCheckBox();
+      myCheckbox = new ThreeStateCheckBox();
       myLabel = new JLabel();
       add(myCheckbox, BorderLayout.WEST);
       add(myLabel, BorderLayout.CENTER);
@@ -303,16 +373,24 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
                                                   int row,
                                                   boolean hasFocus) {
       DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-      Descriptor descriptor = (Descriptor)node.getUserObject();
-
-      myCheckbox.setSelected(descriptor.isChecked());
-
+      Object object = node.getUserObject();
       myCheckbox.setBackground(UIUtil.getTreeBackground());
       setBackground(UIUtil.getTreeBackground(selected, true));
       Color foreground = UIUtil.getTreeForeground(selected, true);
       setForeground(foreground);
       myCheckbox.setForeground(foreground);
       myLabel.setForeground(foreground);
+
+      if (object == TEMPLATE_ROOT) {
+        myCheckbox.setVisible(false);
+        myLabel.setIcon(AllIcons.General.Settings);
+        myLabel.setText(ExecutionBundle.message("run.configuration.edit.default.configuration.settings.text"));
+        return this;
+      }
+      Descriptor descriptor = (Descriptor)object;
+
+      myCheckbox.setVisible(true);
+      myCheckbox.setSelected(descriptor.isChecked());
       myCheckbox.setEnabled(true);
 
       if (descriptor instanceof ConfigurationTypeDescriptor) {
@@ -321,26 +399,21 @@ public abstract class BaseExecuteBeforeRunDialog<T extends BeforeRunTask> extend
         myLabel.setText(configurationTypeDescriptor.getConfigurationType().getDisplayName());
         myLabel.setIcon(configurationTypeDescriptor.getIcon());
       }
+      else if (descriptor instanceof GroupConfigurationDescriptor) {
+        GroupConfigurationDescriptor groupConfigurationDescriptor = (GroupConfigurationDescriptor)descriptor;
+        myLabel.setIcon(groupConfigurationDescriptor.getIcon());
+        myLabel.setText(groupConfigurationDescriptor.getConfigurationType().getDisplayName());
+        myLabel.setFont(tree.getFont());
+        myCheckbox.setState(getStateFromChildren(node));
+      }
       else if (descriptor instanceof ConfigurationDescriptor) {
         ConfigurationDescriptor configurationTypeDescriptor = (ConfigurationDescriptor)descriptor;
         myLabel.setFont(tree.getFont());
         myLabel.setText(configurationTypeDescriptor.getName());
         myLabel.setIcon(null);
 
-        if (((ConfigurationTypeDescriptor)((DefaultMutableTreeNode)node.getParent()).getUserObject()).isChecked()) {
-          Color foregrnd = tree.getForeground();
-          Color backgrnd = tree.getBackground();
-          if (foregrnd == null) foregrnd = Color.black;
-          if (backgrnd == null) backgrnd = Color.white;
-
-          int red = (foregrnd.getRed() + backgrnd.getRed()) / 2;
-          int green = (foregrnd.getGreen() + backgrnd.getGreen()) / 2;
-          int blue = (foregrnd.getBlue() + backgrnd.getBlue()) / 2;
-          Color halftone = new Color(red, green, blue);
-          setForeground(halftone);
-          myCheckbox.setForeground(halftone);
-          myLabel.setForeground(halftone);
-          myCheckbox.setEnabled(false);
+        if (((GroupConfigurationDescriptor)((DefaultMutableTreeNode)node.getParent()).getUserObject()).isChecked()) {
+          myCheckbox.setSelected(true);
         }
       }
 

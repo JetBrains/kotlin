@@ -1,29 +1,16 @@
-/*
- * Copyright 2000-2012 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection;
 
+import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.application.ApplicationStarter;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Roman.Chernyatchik
- */
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public abstract class AbstractInspectionToolStarter implements ApplicationStarter {
   protected InspectionApplication myApplication;
@@ -32,10 +19,10 @@ public abstract class AbstractInspectionToolStarter implements ApplicationStarte
   protected abstract AbstractInspectionCmdlineOptions createCmdlineOptions();
 
   @Override
-  public void premain(String[] args) {
+  public void premain(@NotNull List<String> args) {
     myOptions = createCmdlineOptions();
     try {
-      Args.parse(myOptions, args);
+      Args.parse(myOptions, ArrayUtilRt.toStringArray(args));
     }
     catch (Exception e) {
       printHelpAndExit(args, myOptions);
@@ -80,13 +67,17 @@ public abstract class AbstractInspectionToolStarter implements ApplicationStarte
   }
 
   @Override
-  public void main(String[] args) {
+  public void main(String @NotNull [] args) {
     myOptions.beforeStartup();
+
+    IdeaForkJoinWorkerThreadFactory.setupForkJoinCommonPool(true);
+    InspectionApplication.LOG.info("CPU cores: " + Runtime.getRuntime().availableProcessors() + "; ForkJoinPool.commonPool: " + ForkJoinPool.commonPool() + "; factory: " + ForkJoinPool.commonPool().getFactory());
+
     myApplication.startup();
   }
 
-  private static void initApplication(@NotNull final InspectionApplication application,
-                                      @NotNull final InspectionToolCmdlineOptions opts) {
+  private static void initApplication(@NotNull InspectionApplication application,
+                                      @NotNull InspectionToolCmdlineOptions opts) {
     opts.initApplication(application);
   }
 
@@ -94,17 +85,16 @@ public abstract class AbstractInspectionToolStarter implements ApplicationStarte
     return opts.getVerboseLevelProperty() > 0;
   }
 
-  protected void printArgs(String[] args, StringBuilder buff) {
-    if (args.length < 2) {
+  protected void printArgs(@NotNull List<String> args, @NotNull StringBuilder buff) {
+    if (args.size() < 2) {
       buff.append(" no arguments");
     }
     else {
-      final String argString = ParametersList.join(ContainerUtil.newArrayList(args, 1, args.length));
-      buff.append(argString);
+      buff.append(ParametersList.join(args.subList(1, args.size())));
     }
   }
 
-  protected void printHelpAndExit(final String[] args, final InspectionToolCmdlineOptions opts) {
+  protected void printHelpAndExit(@NotNull List<String> args, final InspectionToolCmdlineOptions opts) {
     final StringBuilder buff = new StringBuilder();
     buff.append("\n");
     buff.append("Invalid options or syntax:");

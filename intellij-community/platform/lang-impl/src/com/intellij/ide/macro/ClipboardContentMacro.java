@@ -18,19 +18,19 @@ package com.intellij.ide.macro;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.ide.CopyPasteManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.datatransfer.DataFlavor;
 
-/**
- * @author nik
- */
 public class ClipboardContentMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "ClipboardContent";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.clipboard.content");
@@ -38,7 +38,7 @@ public class ClipboardContentMacro extends Macro {
 
   @Nullable
   @Override
-  public String expand(DataContext dataContext) throws ExecutionCancelledException {
+  public String expand(@NotNull DataContext dataContext) throws ExecutionCancelledException {
     return CopyPasteManager.getInstance().getContents(DataFlavor.stringFlavor);
   }
 }

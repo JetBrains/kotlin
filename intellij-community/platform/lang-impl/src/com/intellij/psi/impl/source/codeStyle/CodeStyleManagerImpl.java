@@ -11,7 +11,6 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -26,10 +25,11 @@ import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.impl.source.SourceTreeToPsiMap;
+import com.intellij.psi.impl.source.codeStyle.lineIndent.FormatterBasedIndentAdjuster;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor;
 import com.intellij.psi.impl.source.tree.TreeElement;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.util.CharTable;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ThrowableRunnable;
@@ -163,25 +163,26 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   public void reformatTextWithContext(@NotNull PsiFile file,
                                       @NotNull ChangedRangesInfo info) throws IncorrectOperationException
   {
-    FormatTextRanges formatRanges = new FormatTextRanges(info);
-    reformatText(file, formatRanges, null, true);
+    FormatTextRanges formatRanges = new FormatTextRanges(info, ChangedRangesUtil.processChangedRanges(file, info));
+    formatRanges.setExtendToContext(true);
+    reformatText(file, formatRanges, null);
   }
+
+
 
   public void reformatText(@NotNull PsiFile file, @NotNull Collection<? extends TextRange> ranges, @Nullable Editor editor) throws IncorrectOperationException {
     FormatTextRanges formatRanges = new FormatTextRanges();
     ranges.forEach((range) -> formatRanges.add(range, true));
-    reformatText(file, formatRanges, editor, false);
+    reformatText(file, formatRanges, editor);
   }
 
   private void reformatText(@NotNull PsiFile file,
                             @NotNull FormatTextRanges ranges,
-                            @Nullable Editor editor,
-                            boolean reformatContext) throws IncorrectOperationException
+                            @Nullable Editor editor) throws IncorrectOperationException
   {
     if (ranges.isEmpty()) {
       return;
     }
-    boolean isFullReformat = ranges.isFullReformat(file);
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
 
@@ -196,7 +197,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     LOG.assertTrue(file.isValid(), "File name: " + file.getName() + " , class: " + file.getClass().getSimpleName());
 
     if (editor == null) {
-      editor = PsiUtilBase.findEditor(file);
+      editor = PsiEditorUtil.findEditor(file);
     }
 
     CaretPositionKeeper caretKeeper = null;
@@ -213,16 +214,11 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
                  ? null  // do nothing, delegate the external formatting activity to post-processor
                  : () -> {
                    final CodeFormatterFacade codeFormatter = new CodeFormatterFacade(getSettings(file), file.getLanguage());
-                   codeFormatter.setReformatContext(reformatContext);
                    codeFormatter.processText(file, ranges, true);
                  });
 
     if (caretKeeper != null) {
       caretKeeper.restoreCaretPosition();
-    }
-    if (editor instanceof EditorEx && isFullReformat) {
-      //TODO<rv> Move to another place
-      //CodeStyleSettingsManager.getInstance(myProject).fireCodeStyleSettingsChanged(file);
     }
   }
 
@@ -731,13 +727,13 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   }
 
   private static class RangeFormatInfo{
-    private final SmartPsiElementPointer startPointer;
-    private final SmartPsiElementPointer endPointer;
-    private final boolean                fromStart;
-    private final boolean                toEnd;
+    private final SmartPsiElementPointer<?> startPointer;
+    private final SmartPsiElementPointer<?> endPointer;
+    private final boolean                   fromStart;
+    private final boolean                   toEnd;
 
-    RangeFormatInfo(@Nullable SmartPsiElementPointer startPointer,
-                    @Nullable SmartPsiElementPointer endPointer,
+    RangeFormatInfo(@Nullable SmartPsiElementPointer<?> startPointer,
+                    @Nullable SmartPsiElementPointer<?> endPointer,
                     boolean fromStart,
                     boolean toEnd)
     {
@@ -772,7 +768,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       int caretOffset = getCaretOffset();
       int lineStartOffset = getLineStartOffsetByTotalOffset(caretOffset);
       int lineEndOffset = getLineEndOffsetByTotalOffset(caretOffset);
-      boolean shouldFixCaretPosition = rangeHasWhiteSpaceSymbolsOnly(myDocument.getCharsSequence(), lineStartOffset, lineEndOffset);
+      boolean shouldFixCaretPosition = CharArrayUtil.isEmptyOrSpaces(myDocument.getCharsSequence(), lineStartOffset, lineEndOffset);
 
       if (shouldFixCaretPosition) {
         initRestoreInfo(caretOffset);
@@ -845,15 +841,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       myDocument.replaceString(lineToInsertStartOffset, caretLineOffset, myCaretIndentToRestore);
     }
 
-    private static boolean rangeHasWhiteSpaceSymbolsOnly(CharSequence text, int lineStartOffset, int lineEndOffset) {
-      for (int i = lineStartOffset; i < lineEndOffset; i++) {
-        char c = text.charAt(i);
-        if (c != ' ' && c != '\t' && c != '\n') {
-          return false;
-        }
-      }
-      return true;
-    }
 
     private boolean isVirtualSpaceEnabled() {
       return myEditor.getSettings().isVirtualSpace();
@@ -878,7 +865,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     private boolean lineContainsWhiteSpaceSymbolsOnly(int lineNumber) {
       int startOffset = myDocument.getLineStartOffset(lineNumber);
       int endOffset = myDocument.getLineEndOffset(lineNumber);
-      return rangeHasWhiteSpaceSymbolsOnly(myDocument.getCharsSequence(), startOffset, endOffset);
+      return CharArrayUtil.isEmptyOrSpaces(myDocument.getCharsSequence(), startOffset, endOffset);
     }
 
     private int getCurrentCaretLine() {
@@ -949,5 +936,10 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       return settingsProvider.getDocCommentSettings(CodeStyle.getSettings(file));
     }
     return DocCommentSettings.DEFAULTS;
+  }
+
+  @Override
+  public void scheduleIndentAdjustment(@NotNull Document document, int offset) {
+    FormatterBasedIndentAdjuster.scheduleIndentAdjustment(myProject, document, offset);
   }
 }

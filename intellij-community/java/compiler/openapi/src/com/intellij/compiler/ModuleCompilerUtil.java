@@ -14,6 +14,7 @@ import com.intellij.util.Chunk;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.graph.*;
 import com.intellij.util.modules.CircularModuleDependenciesDetector;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
@@ -24,16 +25,15 @@ import java.util.*;
  * @author dsl
  */
 public final class ModuleCompilerUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.ModuleCompilerUtil");
+  private static final Logger LOG = Logger.getInstance(ModuleCompilerUtil.class);
   private ModuleCompilerUtil() { }
 
-  @NotNull
-  public static Module[] getDependencies(Module module) {
+  public static Module @NotNull [] getDependencies(Module module) {
     return ModuleRootManager.getInstance(module).getDependencies();
   }
 
   @NotNull
-  private static Graph<Module> createModuleGraph(@NotNull Module[] modules) {
+  private static Graph<Module> createModuleGraph(Module @NotNull [] modules) {
     return GraphGenerator.generate(CachingSemiGraph.cache(new InboundSemiGraph<Module>() {
       @NotNull
       @Override
@@ -90,6 +90,7 @@ public final class ModuleCompilerUtil {
    * @deprecated Use {@link CircularModuleDependenciesDetector#addingDependencyFormsCircularity(Module, Module)} instead.
    *             To be removed in IDEA 2018.2.
    */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2018.2")
   @Deprecated
   public static Couple<Module> addingDependencyFormsCircularity(@NotNull Module currentModule, @NotNull Module toDependOn) {
     return CircularModuleDependenciesDetector.addingDependencyFormsCircularity(currentModule, toDependOn);

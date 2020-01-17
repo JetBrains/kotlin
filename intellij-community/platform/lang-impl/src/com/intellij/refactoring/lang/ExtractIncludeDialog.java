@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.lang;
 
 import com.intellij.ide.util.DirectoryUtil;
@@ -21,7 +21,6 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -32,8 +31,6 @@ import java.io.File;
  * @author ven
  */
 public class ExtractIncludeDialog extends DialogWrapper {
-  private static final String REFACTORING_NAME = RefactoringBundle.message("extractIncludeFile.name");
-
   private final PsiDirectory myCurrentDirectory;
   protected final String myExtension;
 
@@ -45,7 +42,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
     super(true);
     myCurrentDirectory = currentDirectory;
     myExtension = extension;
-    setTitle(REFACTORING_NAME);
+    setTitle(getRefactoringName());
     init();
   }
 
@@ -149,7 +146,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
           myTargetDirectory = webPath == null ? null : targetDirectory;
         }
         catch (IncorrectOperationException e) {
-          CommonRefactoringUtil.showErrorMessage(REFACTORING_NAME, e.getMessage(), null, project);
+          CommonRefactoringUtil.showErrorMessage(getRefactoringName(), e.getMessage(), null, project);
         }
       };
       ApplicationManager.getApplication().runWriteAction(action);
@@ -158,18 +155,17 @@ public class ExtractIncludeDialog extends DialogWrapper {
     super.doOKAction();
   }
 
-  @ApiStatus.ScheduledForRemoval(inVersion = "2019.1")
-  protected String getHelpTopic() {
-    return ExtractIncludeFileBase.HELP_ID;
-  }
-
   @Override
   protected String getHelpId() {
-    return getHelpTopic();
+    return ExtractIncludeFileBase.HELP_ID;
   }
 
   protected void hideTargetDirectory() {
     myTargetDirectoryField.setVisible(false);
     myTargetDirLabel.setVisible(false);
+  }
+
+  private static String getRefactoringName() {
+    return RefactoringBundle.message("extractIncludeFile.name");
   }
 }

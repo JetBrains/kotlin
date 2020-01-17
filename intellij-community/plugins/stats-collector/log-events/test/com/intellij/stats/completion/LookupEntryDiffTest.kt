@@ -9,14 +9,17 @@ class LookupEntryDiffTest {
     private companion object {
         const val ID = 1
         const val LENGTH = 5
-        val NO_RELEVANCE_INFO = LookupEntryInfo(ID, LENGTH, null)
-        val NO_RELEVANCE_INFO_COPY = LookupEntryInfo(ID, LENGTH, null)
-        val EMPTY_RELEVANCE_INFO = LookupEntryInfo(ID, LENGTH, emptyMap())
-        val SINGLE_RELEVANCE_ITEM_INFO = LookupEntryInfo(ID, LENGTH, mapOf("factor1" to "value1"))
-        val SINGLE_RELEVANCE_ITEM_CHANGED_INFO = LookupEntryInfo(ID, LENGTH, mapOf("factor1" to "value2"))
-        val SINGLE_RELEVANCE_WITH_NULL_ITEM_INFO = LookupEntryInfo(ID, LENGTH, mapOf("factor1" to null))
-        val TWO_RELEVANCE_INTO = LookupEntryInfo(ID, LENGTH, mapOf("factor1" to "value1", "factor2" to "value2"))
-        val TWO_RELEVANCE_INTO_COPY = LookupEntryInfo(ID, LENGTH, mapOf("factor1" to "value1", "factor2" to "value2"))
+        const val HASH = 0
+        val NO_RELEVANCE_INFO = entryInfo(null)
+        val NO_RELEVANCE_INFO_COPY = entryInfo(null)
+        val EMPTY_RELEVANCE_INFO = entryInfo(emptyMap())
+        val SINGLE_RELEVANCE_ITEM_INFO = entryInfo(mapOf("factor1" to "value1"))
+        val SINGLE_RELEVANCE_ITEM_CHANGED_INFO = entryInfo(mapOf("factor1" to "value2"))
+        val SINGLE_RELEVANCE_WITH_NULL_ITEM_INFO = entryInfo(mapOf("factor1" to null))
+        val TWO_RELEVANCE_INTO = entryInfo(mapOf("factor1" to "value1", "factor2" to "value2"))
+        val TWO_RELEVANCE_INTO_COPY = entryInfo(mapOf("factor1" to "value1", "factor2" to "value2"))
+
+        private fun entryInfo(relevance: Map<String, String?>?): LookupEntryInfo = LookupEntryInfo(ID, LENGTH, HASH, relevance)
 
         private fun LookupEntryInfo.compareWithDifferent(newInfo: LookupEntryInfo): LookupEntryDiff {
             val diff = calculateDiff(newInfo)

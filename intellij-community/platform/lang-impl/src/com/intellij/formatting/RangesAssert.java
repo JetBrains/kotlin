@@ -9,12 +9,13 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.formatter.FormattingDocumentModelImpl;
 import com.intellij.psi.impl.DebugUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 class RangesAssert {
   private static final Logger LOG = Logger.getInstance(RangesAssert.class);
-  
+
   public void assertInvalidRanges(final int startOffset, final int newEndOffset, FormattingDocumentModel model, String message) {
     final StringBuilder buffer = new StringBuilder();
 
@@ -23,7 +24,7 @@ class RangesAssert {
 
     final StringBuilder messageBuffer =  new StringBuilder();
     messageBuffer.append(message);
-    Class problematicLanguageClass;
+    Class<?> problematicLanguageClass;
     if (model instanceof FormattingDocumentModelImpl) {
       Language language = ((FormattingDocumentModelImpl)model).getFile().getLanguage();
       messageBuffer.append(" in #").append(language.getDisplayName());
@@ -35,9 +36,9 @@ class RangesAssert {
 
     messageBuffer.append(" #formatter");
     messageBuffer.append("\nRange: [").append(startOffset).append(",").append(newEndOffset).append("], ")
-                 .append("text fragment: [").append(minOffset).append(",").append(maxOffset).append("] - '")
-                 .append(model.getText(new TextRange(minOffset, maxOffset))).append("'\n");
+                 .append("text fragment: [").append(minOffset).append(",").append(maxOffset).append("]\n");
 
+    buffer.append("Fragment text: '").append(model.getText(new TextRange(minOffset, maxOffset))).append("'\n");
     buffer.append("File text:(").append(model.getTextLength()).append(")\n'");
     buffer.append(model.getText(new TextRange(0, model.getTextLength())).toString());
     buffer.append("'\n");
@@ -58,4 +59,28 @@ class RangesAssert {
     Throwable t = problematicLanguageClass != null ? PluginException.createByClass("", null, problematicLanguageClass) : null;
     LOG.error(messageBuffer.toString(), t, AttachmentFactory.createContext(buffer));
   }
+
+  public boolean checkChildRange(@NotNull TextRange parentRange, @NotNull TextRange childRange, @NotNull FormattingDocumentModel model) {
+    if (childRange.getStartOffset() < parentRange.getStartOffset()) {
+      assertInvalidRanges(
+        childRange.getStartOffset(),
+        parentRange.getStartOffset(),
+        model,
+        "child block start is less than parent block start"
+      );
+      return false;
+    }
+
+    if (childRange.getEndOffset() > parentRange.getEndOffset()) {
+      assertInvalidRanges(
+        childRange.getStartOffset(),
+        parentRange.getStartOffset(),
+        model,
+        "child block end is after parent block end"
+      );
+      return false;
+    }
+    return true;
+  }
+
 }

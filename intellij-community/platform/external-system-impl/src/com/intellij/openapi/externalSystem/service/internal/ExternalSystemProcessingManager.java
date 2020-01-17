@@ -1,7 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.internal;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.task.*;
@@ -25,10 +26,8 @@ import java.util.concurrent.TimeUnit;
  * Provides external system tasks monitoring and management facilities.
  * <p/>
  * Thread-safe.
- *
- * @author Denis Zhdanov
  */
-public class ExternalSystemProcessingManager implements ExternalSystemTaskNotificationListener, Disposable {
+public final class ExternalSystemProcessingManager implements ExternalSystemTaskNotificationListener, Disposable {
 
   /**
    * We receive information about the tasks being enqueued to the slave processes which work directly with external systems here.
@@ -49,19 +48,19 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
   @NotNull private final ConcurrentMap<ExternalSystemTaskId, ExternalSystemTask> myTasksDetails = ContainerUtil.newConcurrentMap();
   @NotNull private final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD,this);
 
-  @NotNull private final ExternalSystemFacadeManager               myFacadeManager;
+  @NotNull private final ExternalSystemFacadeManager myFacadeManager;
   @NotNull private final ExternalSystemProgressNotificationManager myProgressNotificationManager;
 
-  public ExternalSystemProcessingManager(@NotNull ExternalSystemFacadeManager facadeManager,
-                                         @NotNull ExternalSystemProgressNotificationManager notificationManager)
-  {
-    myFacadeManager = facadeManager;
-    myProgressNotificationManager = notificationManager;
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
+  public ExternalSystemProcessingManager() {
+    Application app = ApplicationManager.getApplication();
+
+    myFacadeManager = app.getService(ExternalSystemFacadeManager.class);
+    myProgressNotificationManager = app.getService(ExternalSystemProgressNotificationManager.class);
+    if (app.isUnitTestMode()) {
       return;
     }
 
-    notificationManager.addNotificationListener(this);
+    myProgressNotificationManager.addNotificationListener(this);
   }
 
   @Override
@@ -107,7 +106,7 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
 
   @NotNull
   public List<ExternalSystemTask> findTasksOfState(@NotNull ProjectSystemId projectSystemId,
-                                                   @NotNull final ExternalSystemTaskState... taskStates) {
+                                                   ExternalSystemTaskState @NotNull ... taskStates) {
     List<ExternalSystemTask> result = new SmartList<>();
     for (ExternalSystemTask task : myTasksDetails.values()) {
       if (task instanceof AbstractExternalSystemTask) {
@@ -130,14 +129,9 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
   }
 
   @Override
-  public void onQueued(@NotNull ExternalSystemTaskId id, String workingDir) {
-    onStart(id, workingDir);
-  }
-
-  @Override
   public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
     myTasksInProgress.put(id, System.currentTimeMillis() + TOO_LONG_EXECUTION_MS);
-    if (myAlarm.getActiveRequestCount() <= 0) {
+    if (myAlarm.isEmpty()) {
       myAlarm.addRequest(() -> update(), TOO_LONG_EXECUTION_MS);
     }
   }

@@ -8,7 +8,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
 import org.gradle.tooling.ProjectConnection;
@@ -99,7 +99,7 @@ public class GradleBuildSrcProjectsResolver {
       }
     }
 
-    List<String> jvmOptions = ContainerUtil.newSmartList();
+    List<String> jvmOptions = new SmartList<>();
     // the BuildEnvironment jvm arguments of the main build should be used for the 'buildSrc' import
     // to avoid spawning of the second gradle daemon
     BuildEnvironment mainBuildEnvironment = myResolverContext.getModels().getBuildEnvironment();
@@ -142,7 +142,7 @@ public class GradleBuildSrcProjectsResolver {
 
       final String buildSrcProjectPath = buildPath + "/buildSrc";
       DefaultProjectResolverContext buildSrcResolverCtx =
-        new DefaultProjectResolverContext(mySyncTaskId, buildSrcProjectPath, buildSrcProjectSettings, myListener, false);
+        new DefaultProjectResolverContext(mySyncTaskId, buildSrcProjectPath, buildSrcProjectSettings, myListener, myResolverContext.getPolicy(), false);
       myResolverContext.copyUserDataTo(buildSrcResolverCtx);
       String buildName = buildNames.get(buildPath);
 
@@ -167,6 +167,11 @@ public class GradleBuildSrcProjectsResolver {
     final String projectPath = buildSrcResolverCtx.getProjectPath();
     File projectPathFile = new File(projectPath);
     if (!projectPathFile.isDirectory()) {
+      return;
+    }
+
+    if (includedModulesPaths.containsKey(projectPath)) {
+      // `buildSrc` has been already included into the main build (prohibited since 6.0, https://docs.gradle.org/current/userguide/upgrading_version_5.html#buildsrc_is_now_reserved_as_a_project_and_subproject_build_name)
       return;
     }
 
@@ -258,15 +263,18 @@ public class GradleBuildSrcProjectsResolver {
 
       if (!buildSrcRuntimeSourcesPaths.isEmpty() || !buildSrcRuntimeClassesPaths.isEmpty()) {
         buildClasspathNodes.forEach(classpathNode -> {
-          BuildScriptClasspathData data = classpathNode.getData();
-          List<BuildScriptClasspathData.ClasspathEntry> classpathEntries = new ArrayList<>(data.getClasspathEntries());
-          classpathEntries.add(new BuildScriptClasspathData.ClasspathEntry(
+          BuildScriptClasspathData copyFrom = classpathNode.getData();
+
+          List<BuildScriptClasspathData.ClasspathEntry> classpathEntries = new ArrayList<>(copyFrom.getClasspathEntries().size() + 1);
+          classpathEntries.addAll(copyFrom.getClasspathEntries());
+          classpathEntries.add(BuildScriptClasspathData.ClasspathEntry.create(
             new THashSet<>(buildSrcRuntimeClassesPaths),
             new THashSet<>(buildSrcRuntimeSourcesPaths),
             Collections.emptySet()
           ));
+
           BuildScriptClasspathData buildScriptClasspathData = new BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries);
-          buildScriptClasspathData.setGradleHomeDir(data.getGradleHomeDir());
+          buildScriptClasspathData.setGradleHomeDir(copyFrom.getGradleHomeDir());
 
           DataNode<?> parent = classpathNode.getParent();
           assert parent != null;

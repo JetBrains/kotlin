@@ -3,7 +3,6 @@
 package com.intellij.openapi.fileEditor.impl;
 
 import com.intellij.ide.PowerSaveMode;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -15,10 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.ProblemListener;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -82,18 +78,6 @@ public final class PsiAwareFileEditorManagerImpl extends FileEditorManagerImpl {
     }
     tooltipText.append(super.getFileTooltipText(file));
     return tooltipText.toString();
-  }
-
-  @Override
-  protected Editor getOpenedEditor(@NotNull final Editor editor, final boolean focusEditor) {
-    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(getProject());
-    Document document = editor.getDocument();
-    PsiFile psiFile = documentManager.getPsiFile(document);
-    if (!focusEditor || documentManager.isUncommited(document)) {
-      return editor;
-    }
-
-    return InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, psiFile);
   }
 
   private final class MyProblemListener implements ProblemListener {

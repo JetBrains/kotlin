@@ -22,9 +22,6 @@ import org.jetbrains.jps.model.java.JpsProductionModuleOutputPackagingElement;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleReference;
 
-/**
- * @author nik
- */
 public class JpsProductionModuleOutputPackagingElementImpl extends JpsModuleOutputPackagingElementBase<JpsProductionModuleOutputPackagingElementImpl>
   implements JpsProductionModuleOutputPackagingElement {
   public JpsProductionModuleOutputPackagingElementImpl(JpsModuleReference moduleReference) {

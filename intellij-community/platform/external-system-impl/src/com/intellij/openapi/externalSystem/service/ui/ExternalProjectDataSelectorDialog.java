@@ -39,6 +39,7 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.util.BooleanValueHolder;
 import com.intellij.util.CachedValueImpl;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.JBUI;
@@ -550,7 +551,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
     }
 
     private void warnAboutMissedDependencies(boolean checked) {
-      List<DataNode<Identifiable>> selectedModules = ContainerUtil.newSmartList();
+      List<DataNode<Identifiable>> selectedModules = new SmartList<>();
       for (DataNode node : TreeUtil.collectSelectedObjectsOfType(myTree, DataNode.class)) {
         if (myDependencyAwareDataKeys.contains(node.getKey())) {
           //noinspection unchecked

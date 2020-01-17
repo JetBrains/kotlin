@@ -2,7 +2,6 @@ package org.jetbrains.plugins.gradle.remote.impl;
 
 import com.intellij.openapi.externalSystem.model.project.LibraryData;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.openapi.externalSystem.model.project.LibraryPathType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,8 +9,6 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Denis Zhdanov

@@ -34,9 +34,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class FacetErrorPanel {
   private final JPanel myMainPanel;
   private JPanel myButtonPanel;

@@ -62,7 +62,7 @@ public abstract class HighlightUsagesHandlerBase<T extends PsiElement> {
     });
   }
 
-  protected void performHighlighting() {
+  private void performHighlighting() {
     boolean clearHighlights = HighlightUsagesHandler.isClearHighlights(myEditor);
     EditorColorsManager manager = EditorColorsManager.getInstance();
     TextAttributes attributes = manager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
@@ -72,9 +72,9 @@ public abstract class HighlightUsagesHandlerBase<T extends PsiElement> {
     HighlightUsagesHandler.highlightRanges(HighlightManager.getInstance(myEditor.getProject()),
                                            myEditor, writeAttributes, clearHighlights, myWriteUsages);
     if (!clearHighlights) {
-      WindowManager.getInstance().getStatusBar(myEditor.getProject()).setInfo(myStatusText);
+      WindowManager.getInstance().getStatusBar(myFile.getProject()).setInfo(myStatusText);
 
-      HighlightHandlerBase.setupFindModel(myEditor.getProject()); // enable f3 navigation
+      HighlightHandlerBase.setupFindModel(myFile.getProject()); // enable f3 navigation
     }
     if (myHintText != null) {
       HintManager.getInstance().showInformationHint(myEditor, myHintText);

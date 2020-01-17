@@ -2,9 +2,9 @@
 package com.intellij.codeInsight.highlighting;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
@@ -33,8 +33,8 @@ public class HyperlinkAnnotator implements Annotator {
           holder.getCurrentAnnotationSession().putUserData(messageKey, message);
         }
         TextRange range = reference.getRangeInElement().shiftRight(element.getTextRange().getStartOffset());
-        Annotation annotation = holder.createInfoAnnotation(range, message);
-        annotation.setTextAttributes(CodeInsightColors.INACTIVE_HYPERLINK_ATTRIBUTES);
+        holder.newAnnotation(HighlightSeverity.INFORMATION, message).range(range)
+        .textAttributes(CodeInsightColors.INACTIVE_HYPERLINK_ATTRIBUTES).create();
       }
     }
   }

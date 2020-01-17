@@ -52,7 +52,7 @@ import java.util.List;
 // TODO this should eventually replace PackageUtil from intellij.java.impl
 public class PlatformPackageUtil {
 
-  private static final Logger LOG = Logger.getInstance("com.intellij.ide.util.PlatformPackageUtil");
+  private static final Logger LOG = Logger.getInstance(PlatformPackageUtil.class);
 
   @Nullable
   private static String findLongestExistingPackage(Project project, String packageName, GlobalSearchScope scope) {
@@ -210,7 +210,7 @@ public class PlatformPackageUtil {
       );
 
       ProjectSettingsService
-        .getInstance(module.getProject()).showModuleConfigurationDialog(module.getName(), CommonContentEntriesEditor.NAME);
+        .getInstance(module.getProject()).showModuleConfigurationDialog(module.getName(), CommonContentEntriesEditor.getName());
 
       sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
       if (sourceRoots.length == 0) {

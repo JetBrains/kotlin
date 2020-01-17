@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.todo.nodes;
 
@@ -40,24 +40,22 @@ public final class TodoFileNode extends PsiFileNode {
   }
 
   @Override
-  public Collection<AbstractTreeNode> getChildrenImpl() {
+  public Collection<AbstractTreeNode<?>> getChildrenImpl() {
     try {
       if (!mySingleFileMode) {
-        return createGeneralList();
-      } else {
-        return createListForSingleFile();
-
+        return (Collection<AbstractTreeNode<?>>)createGeneralList();
       }
+      return (Collection<AbstractTreeNode<?>>)createListForSingleFile();
     }
     catch (IndexNotReadyException e) {
       return Collections.emptyList();
     }
   }
 
-  private Collection<AbstractTreeNode> createListForSingleFile() {
+  private Collection<? extends AbstractTreeNode<?>> createListForSingleFile() {
     PsiFile psiFile = getValue();
     TodoItem[] items= findAllTodos(psiFile, myBuilder.getTodoTreeStructure().getSearchHelper());
-    ArrayList<AbstractTreeNode> children= new ArrayList<>(items.length);
+    List<TodoItemNode> children= new ArrayList<>(items.length);
     Document document = PsiDocumentManager.getInstance(getProject()).getDocument(psiFile);
     if (document != null) {
       for (TodoItem todoItem : items) {
@@ -75,7 +73,7 @@ public final class TodoFileNode extends PsiFileNode {
         }
       }
     }
-    Collections.sort(children, SmartTodoItemPointerComparator.ourInstance);
+    children.sort(SmartTodoItemPointerComparator.ourInstance);
     return children;
   }
 
@@ -84,7 +82,7 @@ public final class TodoFileNode extends PsiFileNode {
 
     psiFile.accept(new PsiRecursiveElementWalkingVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof PsiLanguageInjectionHost) {
           InjectedLanguageManager.getInstance(psiFile.getProject()).enumerate(element, (injectedPsi, places) -> {
             if (places.size() == 1) {
@@ -107,8 +105,8 @@ public final class TodoFileNode extends PsiFileNode {
     return todoItems.toArray(new TodoItem[0]);
   }
 
-  private Collection<AbstractTreeNode> createGeneralList() {
-    ArrayList<AbstractTreeNode> children = new ArrayList<>();
+  private Collection<? extends AbstractTreeNode<?>> createGeneralList() {
+    List<TodoItemNode> children = new ArrayList<>();
 
     PsiFile psiFile = getValue();
     final TodoItem[] items = findAllTodos(psiFile, myBuilder.getTodoTreeStructure().getSearchHelper());
@@ -129,7 +127,7 @@ public final class TodoFileNode extends PsiFileNode {
         }
       }
     }
-    Collections.sort(children, SmartTodoItemPointerComparator.ourInstance);
+    children.sort(SmartTodoItemPointerComparator.ourInstance);
     return children;
   }
 

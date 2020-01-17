@@ -10,6 +10,7 @@ import com.intellij.diagnostic.AttachmentFactory;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandEvent;
@@ -36,6 +37,7 @@ import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.fileEditor.impl.text.AsyncEditorLoader;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -100,7 +102,7 @@ public class TemplateState implements Disposable {
     myEditorDocumentListener = new DocumentListener() {
       @Override
       public void beforeDocumentChange(@NotNull DocumentEvent e) {
-        if (CommandProcessor.getInstance().getCurrentCommand() != null) {
+        if (CommandProcessor.getInstance().getCurrentCommand() != null && !UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
           myDocumentChanged = true;
         }
       }
@@ -136,13 +138,15 @@ public class TemplateState implements Disposable {
 
       @Override
       public void commandStarted(@NotNull CommandEvent event) {
-        myDocumentChangesTerminateTemplate = isCaretOutsideCurrentSegment(event.getCommandName());
-        started = true;
+        if (!UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
+          myDocumentChangesTerminateTemplate = isCaretOutsideCurrentSegment(event.getCommandName());
+          started = true;
+        }
       }
 
       @Override
       public void beforeCommandFinished(@NotNull CommandEvent event) {
-        if (started && !isDisposed()) {
+        if (started && !isDisposed() && !UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
           Runnable runnable = () -> afterChangedUpdate();
           final LookupImpl lookup = myEditor != null ? (LookupImpl)LookupManager.getActiveLookup(myEditor) : null;
           if (lookup != null) {
@@ -390,7 +394,7 @@ public class TemplateState implements Disposable {
     myTemplateRange.setGreedyToLeft(true);
     myTemplateRange.setGreedyToRight(true);
 
-    LiveTemplateRunLogger.log(template, file.getLanguage());
+    LiveTemplateRunLogger.log(myProject, template, file.getLanguage());
 
     processAllExpressions(myTemplate);
   }
@@ -597,7 +601,8 @@ public class TemplateState implements Disposable {
             assert lookupItem != null : expressionNode;
           }
 
-          AsyncEditorLoader.performWhenLoaded(myEditor, () -> runLookup(lookupItems, expressionNode.getAdvertisingText()));
+          AsyncEditorLoader.performWhenLoaded(myEditor, () ->
+            runLookup(lookupItems, expressionNode.getAdvertisingText(), expressionNode.getLookupFocusDegree()));
         }
       }
       else {
@@ -655,7 +660,9 @@ public class TemplateState implements Disposable {
     return myTemplate.getExpressionAt(myCurrentVariableNumber);
   }
 
-  private void runLookup(final List<TemplateExpressionLookupElement> lookupItems, @Nullable String advertisingText) {
+  private void runLookup(final List<TemplateExpressionLookupElement> lookupItems,
+                         @Nullable String advertisingText,
+                         @NotNull LookupFocusDegree lookupFocusDegree) {
     if (isDisposed()) return;
 
     final LookupManager lookupManager = LookupManager.getInstance(myProject);
@@ -670,6 +677,13 @@ public class TemplateState implements Disposable {
     if (advertisingText != null) {
       lookup.addAdvertisement(advertisingText, null);
     }
+    else {
+      ActionManager am = ActionManager.getInstance();
+      String enterShortcut = KeymapUtil.getFirstKeyboardShortcutText(am.getAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM));
+      String tabShortcut = KeymapUtil.getFirstKeyboardShortcutText(am.getAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE));
+      lookup.addAdvertisement("Press " + enterShortcut + " or " + tabShortcut + " to replace", null);
+    }
+    lookup.setLookupFocusDegree(lookupFocusDegree);
     lookup.refreshUi(true, true);
     ourLookupShown = true;
     lookup.addLookupListener(new LookupListener() {

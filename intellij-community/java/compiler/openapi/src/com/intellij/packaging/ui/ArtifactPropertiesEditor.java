@@ -18,9 +18,6 @@ package com.intellij.packaging.ui;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public abstract class ArtifactPropertiesEditor implements UnnamedConfigurable {
   public static final String VALIDATION_TAB = "Validation";
   public static final String POST_PROCESSING_TAB = "Post-processing";

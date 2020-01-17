@@ -27,7 +27,7 @@ public class ConvertToCamelCaseMacro extends MacroBase {
 
   @Nullable
   @Override
-  protected Result calculateResult(@NotNull Expression[] params, ExpressionContext context, boolean quick) {
+  protected Result calculateResult(Expression @NotNull [] params, ExpressionContext context, boolean quick) {
     final String text = getTextResult(params, context, true);
     return text != null ? convertString(text) : null;
   }
@@ -50,8 +50,7 @@ public class ConvertToCamelCaseMacro extends MacroBase {
     return new TextResult("");
   }
 
-  @NotNull
-  protected String[] splitWords(String text) {
+  protected String @NotNull [] splitWords(String text) {
     return NameUtilCore.nameToWords(text);
   }
 
@@ -60,9 +59,8 @@ public class ConvertToCamelCaseMacro extends MacroBase {
       super("underscoresToCamelCase", CodeInsightBundle.message("macro.undescoresToCamelCase.string"));
     }
 
-    @NotNull
     @Override
-    protected String[] splitWords(String text) {
+    protected String @NotNull [] splitWords(String text) {
       return text.split("_");
     }
   }

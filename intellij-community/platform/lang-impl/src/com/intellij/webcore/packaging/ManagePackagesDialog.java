@@ -20,6 +20,7 @@ import com.intellij.util.CatchingConsumer;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.PlatformColors;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.UiNotifyConnector;
@@ -228,6 +229,7 @@ public class ManagePackagesDialog extends DialogWrapper {
           myController.installPackage(repoPackage, version, false, extraOptions, listener, myInstallToUser.isSelected());
           myInstallButton.setEnabled(false);
         }
+        PackageManagementUsageCollector.triggerInstallPerformed(myProject, myController);
       }
     });
   }
@@ -486,8 +488,7 @@ public class ManagePackagesDialog extends DialogWrapper {
   }
 
   @Override
-  @NotNull
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[0];
   }
 
@@ -517,7 +518,7 @@ public class ManagePackagesDialog extends DialogWrapper {
         RepoPackage repoPackage = (RepoPackage) value;
         String name = repoPackage.getName();
         if (myCurrentlyInstalling.contains(name)) {
-          final String colorCode = UIUtil.isUnderDarcula() ? "589df6" : "0000FF";
+          final String colorCode = StartupUiUtil.isUnderDarcula() ? "589df6" : "0000FF";
           name = "<html><body>" + repoPackage.getName() + " <font color=\"#" + colorCode + "\">(installing)</font></body></html>";
         }
         myNameLabel.setText(name);
@@ -530,7 +531,7 @@ public class ManagePackagesDialog extends DialogWrapper {
 
       final Color bg;
       if (isSelected) {
-        bg = UIUtil.getListSelectionBackground();
+        bg = UIUtil.getListSelectionBackground(true);
       }
       else {
         bg = index % 2 == 1 ? UIUtil.getListBackground() : UIUtil.getDecoratedRowColor();

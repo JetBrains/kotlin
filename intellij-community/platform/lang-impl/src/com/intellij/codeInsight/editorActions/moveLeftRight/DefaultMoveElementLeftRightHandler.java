@@ -7,9 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DefaultMoveElementLeftRightHandler extends MoveElementLeftRightHandler {
 
-  @NotNull
   @Override
-  public PsiElement[] getMovableSubElements(@NotNull PsiElement element) {
+  public PsiElement @NotNull [] getMovableSubElements(@NotNull PsiElement element) {
     if (element instanceof PsiListLikeElement) {
       return ((PsiListLikeElement)element).getComponents().toArray(PsiElement.EMPTY_ARRAY);
     }

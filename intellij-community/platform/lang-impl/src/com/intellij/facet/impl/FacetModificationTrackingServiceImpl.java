@@ -32,11 +32,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author nik
- */
 public class FacetModificationTrackingServiceImpl extends FacetModificationTrackingService {
-  private final ConcurrentMap<Facet, Pair<SimpleModificationTracker, EventDispatcher<ModificationTrackerListener>>> myModificationsTrackers =
+  private final ConcurrentMap<Facet<?>, Pair<SimpleModificationTracker, EventDispatcher<ModificationTrackerListener>>> myModificationsTrackers =
     ContainerUtil.newConcurrentMap();
 
   public FacetModificationTrackingServiceImpl(final Module module) {
@@ -45,11 +42,11 @@ public class FacetModificationTrackingServiceImpl extends FacetModificationTrack
 
   @Override
   @NotNull
-  public ModificationTracker getFacetModificationTracker(@NotNull final Facet facet) {
+  public ModificationTracker getFacetModificationTracker(@NotNull final Facet<?> facet) {
     return getFacetInfo(facet).first;
   }
 
-  private Pair<SimpleModificationTracker, EventDispatcher<ModificationTrackerListener>> getFacetInfo(final Facet facet) {
+  private Pair<SimpleModificationTracker, EventDispatcher<ModificationTrackerListener>> getFacetInfo(final Facet<?> facet) {
     Pair<SimpleModificationTracker, EventDispatcher<ModificationTrackerListener>> pair = myModificationsTrackers.get(facet);
     if (pair != null) return pair;
 
@@ -58,7 +55,7 @@ public class FacetModificationTrackingServiceImpl extends FacetModificationTrack
   }
 
   @Override
-  public void incFacetModificationTracker(@NotNull final Facet facet) {
+  public void incFacetModificationTracker(@NotNull final Facet<?> facet) {
     final Pair<SimpleModificationTracker, EventDispatcher<ModificationTrackerListener>> pair = getFacetInfo(facet);
     pair.first.incModificationCount();
     //noinspection unchecked
@@ -66,12 +63,12 @@ public class FacetModificationTrackingServiceImpl extends FacetModificationTrack
   }
 
   @Override
-  public <T extends Facet> void addModificationTrackerListener(final T facet, final ModificationTrackerListener<? super T> listener, final Disposable parent) {
+  public <T extends Facet<?>> void addModificationTrackerListener(final T facet, final ModificationTrackerListener<? super T> listener, final Disposable parent) {
     getFacetInfo(facet).second.addListener(listener, parent);
   }
 
   @Override
-  public void removeModificationTrackerListener(final Facet facet, final ModificationTrackerListener<?> listener) {
+  public void removeModificationTrackerListener(final Facet<?> facet, final ModificationTrackerListener<?> listener) {
     getFacetInfo(facet).second.removeListener(listener);
   }
 

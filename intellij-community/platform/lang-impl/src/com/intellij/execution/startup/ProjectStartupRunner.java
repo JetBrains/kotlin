@@ -1,15 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.startup;
 
-import com.intellij.concurrency.JobScheduler;
 import com.intellij.execution.*;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.ide.startup.StartupManagerEx;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.startup.StartupManager;
@@ -20,18 +17,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-/**
- * @author Irina.Chernushina on 8/19/2015.
- */
-public class ProjectStartupRunner implements StartupActivity, DumbAware {
-  public static final int DELAY_MILLIS = 200;
-
+final class ProjectStartupRunner implements StartupActivity.DumbAware {
   @Override
-  public void runActivity(@NotNull final Project project) {
-    final ProjectStartupTaskManager projectStartupTaskManager = ProjectStartupTaskManager.getInstance(project);
-    if (projectStartupTaskManager.isEmpty()) return;
+  public void runActivity(@NotNull Project project) {
+    ProjectStartupTaskManager projectStartupTaskManager = ProjectStartupTaskManager.getInstance(project);
+    if (projectStartupTaskManager.isEmpty()) {
+      return;
+    }
 
     project.getMessageBus().connect().subscribe(RunManagerListener.TOPIC, new RunManagerListener() {
       @Override
@@ -52,18 +45,8 @@ public class ProjectStartupRunner implements StartupActivity, DumbAware {
         projectStartupTaskManager.checkOnChange(settings);
       }
     });
-    scheduleRunActivities(project);
-  }
 
-  private static void scheduleRunActivities(@NotNull Project project) {
-    JobScheduler.getScheduler().schedule(() -> {
-      if (!((StartupManagerEx)StartupManager.getInstance(project)).postStartupActivityPassed()) {
-        scheduleRunActivities(project);
-      }
-      else {
-        runActivities(project);
-      }
-    }, DELAY_MILLIS, TimeUnit.MILLISECONDS);
+    StartupManager.getInstance(project).runAfterOpened(() -> runActivities(project));
   }
 
   private static void runActivities(final Project project) {
@@ -78,7 +61,7 @@ public class ProjectStartupRunner implements StartupActivity, DumbAware {
       final Executor executor = DefaultRunExecutor.getRunExecutorInstance();
       for (final RunnerAndConfigurationSettings configuration : configurations) {
         if (! canBeRun(configuration)) {
-          showNotification(project, "Run Configuration '" + configuration.getName() + "' can not be started with 'Run' action.", MessageType.ERROR);
+          showNotification(project, "Run Configuration '" + configuration.getName() + "' can not be started with 'Run' action.");
           return;
         }
 
@@ -86,15 +69,15 @@ public class ProjectStartupRunner implements StartupActivity, DumbAware {
           alarm.addRequest(new MyExecutor(executor, configuration, alarm), pause);
         }
         catch (ExecutionException e) {
-          showNotification(project, e.getMessage(), MessageType.ERROR);
+          showNotification(project, e.getMessage());
         }
         pause = MyExecutor.PAUSE;
       }
     }, project.getDisposed());
   }
 
-  private static void showNotification(Project project, String text, MessageType type) {
-    ProjectStartupTaskManager.NOTIFICATION_GROUP.createNotification(ProjectStartupTaskManager.PREFIX + " " + text, type).notify(project);
+  private static void showNotification(Project project, String text) {
+    ProjectStartupTaskManager.NOTIFICATION_GROUP.createNotification(ProjectStartupTaskManager.PREFIX + " " + text, MessageType.ERROR).notify(project);
   }
 
   private static class MyExecutor implements Runnable {
@@ -117,9 +100,9 @@ public class ProjectStartupRunner implements StartupActivity, DumbAware {
 
     @Override
     public void run() {
-      if (ExecutorRegistry.getInstance().isStarting(myEnvironment)) {
+      if (ExecutionManager.getInstance(myProject).isStarting(myEnvironment)) {
         if (myCnt <= 0) {
-          showNotification(myProject, "'" + myName + "' not started after " + ATTEMPTS + " attempts.", MessageType.ERROR);
+          showNotification(myProject, "'" + myName + "' not started after " + ATTEMPTS + " attempts.");
           return;
         }
         --myCnt;

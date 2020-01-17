@@ -2,17 +2,12 @@
 package com.intellij.ide.ui.search;
 
 import com.intellij.application.options.OptionsContainingConfigurable;
-import com.intellij.ide.SearchTopHitProvider;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.impl.AllFileTemplatesConfigurable;
 import com.intellij.ide.fileTemplates.impl.BundledFileTemplate;
-import com.intellij.ide.plugins.AvailablePluginsManagerMain;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
-import com.intellij.ide.plugins.PluginManagerConfigurableProxy;
-import com.intellij.ide.ui.ConfigurableOptionsTopHitProvider;
-import com.intellij.openapi.Disposable;
+import com.intellij.ide.plugins.*;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -26,19 +21,17 @@ import com.intellij.openapi.keymap.impl.ui.KeymapPanel;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.URLUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +52,6 @@ public class TraverseUIStarter implements ApplicationStarter {
   private static final String ID = "id";
   private static final String CONFIGURABLE_NAME = "configurable_name";
   private static final String OPTION = "option";
-  private static final String OPTION_TOP_HIT = "option_top_hit";
   private static final String NAME = "name";
   private static final String PATH = "path";
   private static final String HIT = "hit";
@@ -75,13 +67,13 @@ public class TraverseUIStarter implements ApplicationStarter {
   }
 
   @Override
-  public void premain(String[] args) {
-    OUTPUT_PATH = args[1];
-    SPLIT_BY_RESOURCE_PATH = args.length > 2 && Boolean.valueOf(args[2]);
+  public void premain(@NotNull List<String> args) {
+    OUTPUT_PATH = args.get(1);
+    SPLIT_BY_RESOURCE_PATH = args.size() > 2 && Boolean.valueOf(args.get(2));
   }
 
   @Override
-  public void main(String[] args) {
+  public void main(String @NotNull [] args) {
     System.out.println("Starting searchable options index builder");
     try {
       startup(OUTPUT_PATH, SPLIT_BY_RESOURCE_PATH);
@@ -96,22 +88,12 @@ public class TraverseUIStarter implements ApplicationStarter {
 
   public static void startup(@NotNull final String outputPath, final boolean splitByResourcePath) throws IOException {
     Map<SearchableConfigurable, Set<OptionDescription>> options = new LinkedHashMap<>();
-    MultiMap<String, OptionDescription> optionsTopHit = MultiMap.createLinkedSet();
     try {
       for (TraverseUIHelper extension : TraverseUIHelper.helperExtensionPoint.getExtensionList()) {
         extension.beforeStart();
       }
 
-      Project project = ProjectManager.getInstance().getDefaultProject();
-      SearchUtil.processProjectConfigurables(project, options);
-
-      for (final SearchTopHitProvider provider : SearchTopHitProvider.EP_NAME.getIterable()) {
-        if (provider instanceof ConfigurableOptionsTopHitProvider) {
-          for (OptionDescription option : ((ConfigurableOptionsTopHitProvider)provider).getOptions(project)) {
-            optionsTopHit.putValue(option.getConfigurableId(), option);
-          }
-        }
-      }
+      SearchUtil.processProjectConfigurables(ProjectManager.getInstance().getDefaultProject(), options);
 
       for (TraverseUIHelper extension : TraverseUIHelper.helperExtensionPoint.getExtensionList()) {
         extension.afterTraversal(options);
@@ -141,9 +123,10 @@ public class TraverseUIStarter implements ApplicationStarter {
         else if (configurable instanceof OptionsContainingConfigurable) {
           processOptionsContainingConfigurable((OptionsContainingConfigurable)configurable, configurableElement);
         }
-        else if (configurable instanceof PluginManagerConfigurableProxy) {
-          for (OptionDescription description : wordsToOptionDescriptors(Collections.singleton(AvailablePluginsManagerMain.MANAGE_REPOSITORIES))) {
-            append(null, AvailablePluginsManagerMain.MANAGE_REPOSITORIES, description.getOption(), configurableElement);
+        else if (configurable instanceof PluginManagerConfigurable) {
+          for (OptionDescription description : wordsToOptionDescriptors(Collections.singleton(
+            IdeBundle.message("plugin.manager.repositories")))) {
+            append(null, IdeBundle.message("plugin.manager.repositories"), description.getOption(), configurableElement);
           }
         }
         else if (configurable instanceof AllFileTemplatesConfigurable) {
@@ -154,7 +137,6 @@ public class TraverseUIStarter implements ApplicationStarter {
           }
         }
 
-        writeOptionsTopHit(optionsTopHit.get(configurable.getId()), configurableElement);
         final String module = splitByResourcePath ? getModuleByClass(configurable.getOriginalClass()) : "";
         addElement(roots, configurableElement, module);
       }
@@ -177,11 +159,6 @@ public class TraverseUIStarter implements ApplicationStarter {
     finally {
       for (SearchableConfigurable configurable : options.keySet()) {
         configurable.disposeUIResources();
-      }
-      for (OptionDescription option : optionsTopHit.values()) {
-        if (option instanceof Disposable) {
-          Disposer.dispose((Disposable)option);
-        }
       }
     }
   }
@@ -241,16 +218,24 @@ public class TraverseUIStarter implements ApplicationStarter {
   private static void processOptionsContainingConfigurable(OptionsContainingConfigurable configurable, Element configurableElement) {
     Set<String> optionsPath = configurable.processListOptions();
     Set<OptionDescription> result = wordsToOptionDescriptors(optionsPath);
+    Map<String,Set<String>> optionsWithPaths = configurable.processListOptionsWithPaths();
+    for (String path : optionsWithPaths.keySet()) {
+      result.addAll(wordsToOptionDescriptors(optionsWithPaths.get(path), path));
+    }
     writeOptions(configurableElement, result);
   }
 
   private static Set<OptionDescription> wordsToOptionDescriptors(@NotNull Set<String> optionsPath) {
+    return wordsToOptionDescriptors(optionsPath, null);
+  }
+
+  private static Set<OptionDescription> wordsToOptionDescriptors(@NotNull Set<String> optionsPath, @Nullable String path) {
     SearchableOptionsRegistrar registrar = SearchableOptionsRegistrar.getInstance();
     Set<OptionDescription> result = new TreeSet<>();
     for (String opt : optionsPath) {
       for (String word : registrar.getProcessedWordsWithoutStemming(opt)) {
         if (word != null) {
-          result.add(new OptionDescription(word, opt, null));
+          result.add(new OptionDescription(word, opt, path));
         }
       }
     }
@@ -309,7 +294,7 @@ public class TraverseUIStarter implements ApplicationStarter {
     final ActionManager actionManager = ActionManager.getInstance();
     final PluginId id = actionToPluginId.get(actionManager.getId(rootAction));
     if (id != null) {
-      final IdeaPluginDescriptor plugin = PluginManager.getPlugin(id);
+      final IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);
       if (plugin != null && !plugin.getName().equals("IDEA CORE")) {
         return PathUtil.getFileName(plugin.getPath().getPath());
       }
@@ -335,18 +320,6 @@ public class TraverseUIStarter implements ApplicationStarter {
       optionElement.setAttribute(PATH, path);
     }
     optionElement.setAttribute(HIT, hit);
-    configurableElement.addContent(optionElement);
-  }
-
-  private static void writeOptionsTopHit(@NotNull final Collection<OptionDescription> options, @NotNull final Element configurableElement) {
-    for (final OptionDescription option : options) {
-      appendTopHit(option.getOption(), configurableElement);
-    }
-  }
-
-  private static void appendTopHit(@NotNull final String name, @NotNull final Element configurableElement) {
-    Element optionElement = new Element(OPTION_TOP_HIT);
-    optionElement.setAttribute(NAME, StringUtil.escapeStringCharacters(name));
     configurableElement.addContent(optionElement);
   }
 }

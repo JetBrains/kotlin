@@ -18,7 +18,6 @@ import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsManager;
 import com.intellij.psi.codeStyle.arrangement.std.CompositeArrangementSettingsToken;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +35,7 @@ import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Se
  */
 public class ArrangementSectionRuleManager {
   private static final Set<ArrangementSettingsToken> MUTEXES = ContainerUtil.newHashSet(START_SECTION, END_SECTION);
-  private static final Set<ArrangementSettingsToken> TOKENS = ContainerUtilRt.newHashSet(START_SECTION, END_SECTION, TEXT);
+  private static final Set<ArrangementSettingsToken> TOKENS = ContainerUtil.newHashSet(START_SECTION, END_SECTION, TEXT);
 
   private final Commenter myCommenter;
 

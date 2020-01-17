@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public interface ModulePackagingElement {
   @Nullable
   String getModuleName();

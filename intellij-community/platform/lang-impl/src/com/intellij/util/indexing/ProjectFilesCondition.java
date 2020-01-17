@@ -25,13 +25,12 @@ class ProjectFilesCondition implements Condition<VirtualFile> {
   private final VirtualFile myRestrictedTo;
   private final GlobalSearchScope myFilter;
   private int myFilesFromOtherProjects;
-  private final FileBasedIndexImpl.ProjectIndexableFilesFilter myIndexableFilesFilter;
+  private final ProjectIndexableFilesFilter myIndexableFilesFilter;
 
-  ProjectFilesCondition(FileBasedIndexImpl.ProjectIndexableFilesFilter indexableFilesFilter,
-                               GlobalSearchScope filter,
-                               VirtualFile restrictedTo,
-                               boolean includeFilesFromOtherProjects
-                               ) {
+  ProjectFilesCondition(ProjectIndexableFilesFilter indexableFilesFilter,
+                        GlobalSearchScope filter,
+                        VirtualFile restrictedTo,
+                        boolean includeFilesFromOtherProjects) {
     myRestrictedTo = restrictedTo;
     myFilter = filter;
     myIndexableFilesFilter = indexableFilesFilter;
@@ -49,8 +48,7 @@ class ProjectFilesCondition implements Condition<VirtualFile> {
       return true;
     }
 
-    if (fileId < 0 && file instanceof DeletedVirtualFileStub) {
-      //file = ((FileBasedIndexImpl.MyLightVirtualFile)file).getOriginalFile();
+    if (file instanceof DeletedVirtualFileStub) {
       return true;
     }
     if (FileBasedIndexImpl.belongsToScope(file, myRestrictedTo, myFilter)) return true;

@@ -34,6 +34,10 @@ public class LineMarkerSettingsImpl extends LineMarkerSettings implements Persis
     providers.put(descriptor.getId(), selected);
   }
 
+  public void resetEnabled(@NotNull GutterIconDescriptor descriptor) {
+    providers.remove(descriptor.getId());
+  }
+
   @MapAnnotation
   public Map<String, Boolean> providers = new HashMap<>();
 

@@ -24,10 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.task.ModuleBuildTask;
-import com.intellij.task.ProjectTaskContext;
-import com.intellij.task.ProjectTaskManager;
-import com.intellij.task.ProjectTaskResult;
+import com.intellij.task.*;
 import com.intellij.task.impl.ProjectTaskManagerImpl;
 import com.intellij.task.impl.ProjectTaskManagerListener;
 import com.intellij.task.impl.ProjectTaskScope;
@@ -69,8 +66,8 @@ public class ExternalSystemTaskActivator {
       }
 
       @Override
-      public void afterRun(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult result) throws ExecutionException {
-        if (!doExecuteBuildPhaseTriggers(false, context)) {
+      public void afterRun(@NotNull ProjectTaskManager.Result result) throws ExecutionException {
+        if (!doExecuteBuildPhaseTriggers(false, result.getContext())) {
           throw new ExecutionException("After build triggering task failed");
         }
       }
@@ -117,29 +114,29 @@ public class ExternalSystemTaskActivator {
 
     boolean result = true;
     if (myBefore) {
-      if (!modulesToBuild.isEmpty()) {
-        result = runTasks(modulesToBuild, Phase.BEFORE_COMPILE);
+      if (!modulesToRebuild.isEmpty()) {
+        result = runTasks(modulesToRebuild, Phase.BEFORE_REBUILD);
       }
-      if (result && !modulesToRebuild.isEmpty()) {
-        result = runTasks(modulesToRebuild, Phase.BEFORE_COMPILE, Phase.BEFORE_REBUILD);
+      if (result && !modulesToBuild.isEmpty()) {
+        result = runTasks(modulesToBuild, Phase.BEFORE_COMPILE);
       }
     }
     else {
-      if (!modulesToBuild.isEmpty()) {
-        result = runTasks(modulesToBuild, Phase.AFTER_COMPILE);
+      if (!modulesToRebuild.isEmpty()) {
+        result = runTasks(modulesToRebuild, Phase.AFTER_REBUILD);
       }
-      if (result && !modulesToRebuild.isEmpty()) {
-        result = runTasks(modulesToRebuild, Phase.AFTER_COMPILE, Phase.AFTER_REBUILD);
+      if (result && !modulesToBuild.isEmpty()) {
+        result = runTasks(modulesToBuild, Phase.AFTER_COMPILE);
       }
     }
     return result;
   }
 
-  public boolean runTasks(@NotNull String modulePath, @NotNull Phase... phases) {
+  public boolean runTasks(@NotNull String modulePath, Phase @NotNull ... phases) {
     return runTasks(Collections.singleton(modulePath), phases);
   }
 
-  public boolean runTasks(@NotNull Collection<String> modules, @NotNull Phase... phases) {
+  public boolean runTasks(@NotNull Collection<String> modules, Phase @NotNull ... phases) {
     final ExternalProjectsStateProvider stateProvider =
       ExternalProjectsManagerImpl.getInstance(myProject).getStateProvider();
 
@@ -164,7 +161,7 @@ public class ExternalSystemTaskActivator {
       for (Phase phase : phases) {
         List<String> activationTasks = activation.state.getTasks(phase);
         if (hashPath || (phase.isSyncPhase() && !activationTasks.isEmpty() &&  isShareSameRootPath(modules, activation))) {
-          ContainerUtil.addAll(tasks, activationTasks);
+          tasks.addAll(activationTasks);
         }
       }
 
@@ -200,7 +197,7 @@ public class ExternalSystemTaskActivator {
       }
 
       if (ExternalProjectsManager.getInstance(myProject).isIgnored(activation.systemId, activation.projectPath)) {
-        continue;
+          continue;
       }
 
       ExternalSystemTaskExecutionSettings executionSettings = new ExternalSystemTaskExecutionSettings();

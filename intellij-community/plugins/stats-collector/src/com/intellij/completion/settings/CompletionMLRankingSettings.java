@@ -6,16 +6,22 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.PlatformUtils;
+import com.jetbrains.completion.ranker.WeakModelProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @State(name = "CompletionMLRankingSettings", storages = @Storage("completionMLRanking.xml"))
 public class CompletionMLRankingSettings implements PersistentStateComponent<CompletionMLRankingSettings.State> {
-  private static final Collection<String> ENABLE_RANKING_BY_DEFAULT = Collections.singletonList("kotlin");
+  private static final Logger LOG = Logger.getInstance(CompletionMLRankingSettings.class);
+
+  private static final Collection<String> ENABLED_BY_DEFAULT = WeakModelProvider.enabledByDefault();
   private final State myState = new State();
 
   @NotNull
@@ -27,6 +33,10 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
     return myState.rankingEnabled;
   }
 
+  public boolean isShowDiffEnabled() {
+    return myState.rankingEnabled && myState.showDiff;
+  }
+
   void setRankingEnabled(boolean value) {
     myState.rankingEnabled = value;
   }
@@ -36,17 +46,23 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
   }
 
   public boolean isLanguageEnabled(@NotNull String languageName) {
-    return myState.enabledLanguages.contains(StringUtil.toLowerCase(languageName));
+    return myState.language2state.getOrDefault(languageName, ENABLED_BY_DEFAULT.contains(languageName));
   }
 
   public void setLanguageEnabled(@NotNull String languageName, boolean isEnabled) {
-    String lowerCase = StringUtil.toLowerCase(languageName);
-    if (isEnabled) {
-      myState.enabledLanguages.add(lowerCase);
+    boolean defaultValue = ENABLED_BY_DEFAULT.contains(languageName);
+    if (defaultValue == isEnabled) {
+      myState.language2state.remove(languageName);
     }
     else {
-      myState.enabledLanguages.remove(lowerCase);
+      myState.language2state.put(languageName, isEnabled);
     }
+
+    logCompletionState(languageName, isEnabled);
+  }
+
+  public void setShowDiffEnabled(boolean isEnabled) {
+    myState.showDiff = isEnabled;
   }
 
   @Nullable
@@ -58,13 +74,20 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
   @Override
   public void loadState(@NotNull State state) {
     myState.rankingEnabled = state.rankingEnabled;
-    myState.enabledLanguages.clear();
-    myState.enabledLanguages.addAll(state.enabledLanguages);
+    myState.showDiff = state.showDiff;
+    state.language2state.forEach((lang, enabled) -> setLanguageEnabled(lang, enabled));
+  }
+
+  private void logCompletionState(@NotNull String languageName, boolean isEnabled) {
+    final boolean enabled = myState.rankingEnabled && isEnabled;
+    final boolean showDiff = enabled && myState.showDiff;
+    LOG.info("ML Completion " + (enabled ? "enabled" : "disabled") + " ,show diff " + (showDiff ? "on" : "off") + " for: " + languageName);
   }
 
   public static class State {
-    public boolean rankingEnabled = false;
-
-    public Set<String> enabledLanguages = new HashSet<>(ENABLE_RANKING_BY_DEFAULT);
+    public boolean rankingEnabled = !ENABLED_BY_DEFAULT.isEmpty();
+    public boolean showDiff = false;
+    // this map stores only different compare to default values to have ability to enable/disable models from build to build
+    public Map<String, Boolean> language2state = new HashMap<>();
   }
 }

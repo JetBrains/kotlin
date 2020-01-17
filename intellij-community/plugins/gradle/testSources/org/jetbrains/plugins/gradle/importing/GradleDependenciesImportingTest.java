@@ -14,6 +14,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.gradle.util.GradleVersion;
@@ -41,11 +42,14 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
   @Override
   protected void importProject(@NonNls @Language("Groovy") String config) throws IOException {
-    config += "\nallprojects {\n" +
-              "  if(convention.findPlugin(JavaPluginConvention)) {\n" +
-              "    sourceSets.each { SourceSet sourceSet ->\n" +
-              "      tasks.create(name: 'print'+ sourceSet.name.capitalize() +'CompileDependencies') {\n" +
-              "        doLast { println sourceSet.compileClasspath.files.collect {it.name}.join(' ') }\n" +
+    config += "\n" +
+              "allprojects {\n" +
+              "  afterEvaluate {\n" +
+              "    if(convention.findPlugin(JavaPluginConvention)) {\n" +
+              "      sourceSets.each { SourceSet sourceSet ->\n" +
+              "        tasks.create(name: 'print'+ sourceSet.name.capitalize() +'CompileDependencies') {\n" +
+              "          doLast { println sourceSet.compileClasspath.files.collect {it.name}.join(' ') }\n" +
+              "        }\n" +
               "      }\n" +
               "    }\n" +
               "  }\n" +
@@ -194,7 +198,7 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertModuleLibDepScope("project.project2.main", "Gradle: junit:junit:4.11", DependencyScope.RUNTIME);
 
     if (GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("2.5")) >= 0) {
-      boolean gradleOlderThen_3_4 = isGradleOlderThen_3_4();
+      boolean gradleOlderThen_3_4 = isGradleOlderThen("3.4");
       importProjectUsingSingeModulePerGradleProject();
       assertModules("project", "project.project1", "project.project2");
       assertMergedModuleCompileModuleDepScope("project.project2", "project.project1");
@@ -299,6 +303,17 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     final VirtualFile depTestsJar = createProjectJarSubFile("lib/dep/dep/1.0/dep-1.0-tests.jar");
     final VirtualFile depNonJar = createProjectSubFile("lib/dep/dep/1.0/dep-1.0.someExt");
 
+    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom","" +
+                                                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                                       "<project\n" +
+                                                       "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
+                                                       "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                                                       "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
+                                                       "  <groupId>dep</groupId>\n" +
+                                                       "  <artifactId>dep</artifactId>\n" +
+                                                       "  <version>1.0</version>\n" +
+                                                       "\n" +
+                                                       "</project>\n");
     importProject(
       "allprojects {\n" +
       "  apply plugin: 'java'\n" +
@@ -350,7 +365,7 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertModuleLibDepScope("project", "Gradle: dep:dep:1.0:tests", DependencyScope.TEST);
 
     assertModuleLibDep("project", "Gradle: dep:dep:1.0:someExt", depNonJar.getUrl());
-    if (isGradleOlderThen_3_4()) {
+    if (isGradleOlderThen("3.4")) {
       assertModuleLibDepScope("project", "Gradle: dep:dep:1.0:someExt", DependencyScope.RUNTIME);
     }
     else {
@@ -425,6 +440,17 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
   @Test
   public void testProjectWithUnresolvedDependency() throws Exception {
     final VirtualFile depJar = createProjectJarSubFile("lib/dep/dep/1.0/dep-1.0.jar");
+    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom","" +
+                                                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                                       "<project\n" +
+                                                       "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
+                                                       "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                                                       "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
+                                                       "  <groupId>dep</groupId>\n" +
+                                                       "  <artifactId>dep</artifactId>\n" +
+                                                       "  <version>1.0</version>\n" +
+                                                       "\n" +
+                                                       "</project>\n");
     importProject(
       "apply plugin: 'java'\n" +
       "\n" +
@@ -460,10 +486,10 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     assertModuleLibDep("project", depName, depJar.getUrl());
     assertMergedModuleCompileLibDepScope("project", depName);
-    assertMergedModuleCompileLibDepScope("project", "Gradle: unresolvable-lib-0.1:1");
+    assertMergedModuleCompileLibDepScope("project", "Gradle: some:unresolvable-lib:0.1");
 
-    unresolvableDep = getModuleLibDeps("project", "Gradle: unresolvable-lib-0.1:1");
-    if (isGradleOlderThen_3_4() || isGradleNewerThen_4_5()) {
+    unresolvableDep = getModuleLibDeps("project", "Gradle: some:unresolvable-lib:0.1");
+    if (isGradleOlderThen("3.4") || isGradleNewerThen("4.5")) {
       assertEquals(1, unresolvableDep.size());
       unresolvableEntry = unresolvableDep.iterator().next();
       assertTrue(unresolvableEntry.isModuleLevel());
@@ -585,7 +611,8 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertModuleLibDep("project.projectA.main", depName, classesPath);
     assertModuleLibDepScope("project.projectA.main", depName, DependencyScope.RUNTIME);
     assertModuleLibDep("project.projectB.main", depName, classesPath);
-    assertModuleLibDepScope("project.projectB.main", depName, DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.projectB.main", depName,
+                            isNewDependencyResolutionApplicable() ? DependencyScope.RUNTIME : DependencyScope.COMPILE);
     assertModuleLibDep("project.projectC.main", depName, classesPath);
     assertModuleLibDepScope("project.projectC.main", depName, DependencyScope.RUNTIME);
   }
@@ -637,14 +664,16 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertModuleLibDepScope("project.projectA.main", depNameA, DependencyScope.RUNTIME);
 
     assertModuleLibDep("project.projectB.main", depNameA, classesPathA);
-    assertModuleLibDepScope("project.projectB.main", depNameA, DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.projectB.main", depNameA,
+                            isNewDependencyResolutionApplicable() ? DependencyScope.RUNTIME : DependencyScope.COMPILE);
     assertModuleLibDep("project.projectB.main", depNameB, classesPathB);
     assertModuleLibDepScope("project.projectB.main", depNameB, DependencyScope.RUNTIME);
 
     assertModuleLibDep("project.projectC.main", depNameA, classesPathA);
     assertModuleLibDepScope("project.projectC.main", depNameA, DependencyScope.RUNTIME);
     assertModuleLibDep("project.projectC.main", depNameB, classesPathB);
-    assertModuleLibDepScope("project.projectC.main", depNameB, DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.projectC.main", depNameB,
+                            isNewDependencyResolutionApplicable() ? DependencyScope.RUNTIME : DependencyScope.COMPILE);
   }
 
   @Test
@@ -738,8 +767,10 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     assertModuleModuleDepScope("project.project-tests.main", "project.project1.main", DependencyScope.COMPILE);
     assertModuleModuleDepScope("project.project-tests.main", "project.project2.main", DependencyScope.RUNTIME);
-    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.0", DependencyScope.COMPILE);
-    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1", DependencyScope.RUNTIME);
+    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.0",
+                            isNewDependencyResolutionApplicable() ? DependencyScope.PROVIDED : DependencyScope.COMPILE);
+    assertModuleLibDepScope("project.project-tests.main", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1",
+                            DependencyScope.RUNTIME);
 
     createProjectSubDirs("project1", "project2", "project-tests");
     assertCompileClasspathOrdering("project.project-tests.main");
@@ -748,7 +779,7 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     assertMergedModuleCompileModuleDepScope("project.project-tests", "project.project1");
 
-    boolean gradleOlderThen_3_4 = isGradleOlderThen_3_4();
+    boolean gradleOlderThen_3_4 = isGradleOlderThen("3.4");
     if (gradleOlderThen_3_4) {
       assertModuleModuleDepScope("project.project-tests", "project.project2", DependencyScope.RUNTIME);
     }
@@ -756,7 +787,7 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
       assertModuleModuleDepScope("project.project-tests", "project.project2", DependencyScope.RUNTIME, DependencyScope.TEST);
     }
     if (GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("2.0")) > 0) {
-      if (isGradleNewerThen_4_5()) {
+      if (isGradleNewerThen("4.5")) {
         assertModuleLibDepScope("project.project-tests", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.0",
                                 ar(DependencyScope.PROVIDED));
         assertModuleLibDepScope("project.project-tests", "Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1",
@@ -805,10 +836,10 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     importProjectUsingSingeModulePerGradleProject();
     assertModules("project", "project.project1", "project.project2");
-    if (isGradleNewerThen_4_5()) {
+    if (isGradleNewerThen("4.5")) {
       assertModuleModuleDepScope("project.project2", "project.project1");
     }
-    else if (isGradleOlderThen_3_4()) {
+    else if (isGradleOlderThen("3.4")) {
       assertModuleModuleDepScope("project.project2", "project.project1", DependencyScope.COMPILE);
     }
     else {
@@ -1235,10 +1266,10 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     importProjectUsingSingeModulePerGradleProject();
     assertModules("project");
 
-    if (isGradleNewerThen_4_5()) {
+    if (isGradleNewerThen("4.5")) {
       assertModuleLibDepScope("project", "Gradle: org.hamcrest:hamcrest-core:1.3", DependencyScope.COMPILE);
     }
-    else if (isGradleOlderThen_3_4()) {
+    else if (isGradleOlderThen("3.4")) {
       assertModuleLibDepScope("project", "Gradle: org.hamcrest:hamcrest-core:1.3", DependencyScope.PROVIDED, DependencyScope.RUNTIME);
     }
     else {
@@ -1354,10 +1385,10 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     assertMergedModuleCompileLibDepScope("project", "Gradle: junit:junit:4.11");
 
-    if (isGradleOlderThen_3_4()) {
+    if (isGradleOlderThen("3.4")) {
       assertModuleLibDepScope("project", "Gradle: org.hamcrest:hamcrest-core:1.3", DependencyScope.PROVIDED, DependencyScope.RUNTIME);
     }
-    else if (isGradleNewerThen_4_5()) {
+    else if (isGradleNewerThen("4.5")) {
       assertModuleLibDepScope("project", "Gradle: org.hamcrest:hamcrest-core:1.3", DependencyScope.COMPILE);
     }
     else {
@@ -1525,15 +1556,139 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
   public void testAnnotationProcessorDependencies() throws Exception {
     importProject(
       "apply plugin: 'java'\n" +
-    "\n" +
-    "dependencies {\n" +
-    "    compileOnly 'org.projectlombok:lombok:1.16.2'\n" +
-    "    testCompileOnly 'org.projectlombok:lombok:1.16.2'\n" +
-    "    annotationProcessor 'org.projectlombok:lombok:1.16.2'\n" +
-    "}\n");
+      "\n" +
+      "dependencies {\n" +
+      "    compileOnly 'org.projectlombok:lombok:1.16.2'\n" +
+      "    testCompileOnly 'org.projectlombok:lombok:1.16.2'\n" +
+      "    annotationProcessor 'org.projectlombok:lombok:1.16.2'\n" +
+      "}\n");
 
     final String depName = "Gradle: org.projectlombok:lombok:1.16.2";
     assertModuleLibDepScope("project.main", depName, DependencyScope.PROVIDED);
+  }
 
+  @Test // https://youtrack.jetbrains.com/issue/IDEA-223152
+  @TargetVersions("5.3+")
+  public void testTransformedProjectDependency() throws Exception {
+    createSettingsFile("include 'lib-1'\n" +
+                       "include 'lib-2'\n");
+
+    importProject(
+      "import java.nio.file.Files\n" +
+      "import java.util.zip.ZipEntry\n" +
+      "import java.util.zip.ZipException\n" +
+      "import java.util.zip.ZipFile\n" +
+      "import org.gradle.api.artifacts.transform.TransformParameters\n" +
+      "\n" +
+      "abstract class Unzip implements TransformAction<TransformParameters.None> {\n" +
+      "    @InputArtifact\n" +
+      "    abstract Provider<FileSystemLocation> getInputArtifact()\n" +
+      "\n" +
+      "    @Override\n" +
+      "    void transform(TransformOutputs outputs) {\n" +
+      "        def input = inputArtifact.get().asFile\n" +
+      "        def unzipDir = outputs.dir(input.name)\n" +
+      "        unzipTo(input, unzipDir)\n" +
+      "    }\n" +
+      "\n" +
+      "    private static void unzipTo(File zipFile, File unzipDir) {\n" +
+      "        new ZipFile(zipFile).withCloseable { zip ->\n" +
+      "            def outputDirectoryCanonicalPath = unzipDir.canonicalPath\n" +
+      "            for (entry in zip.entries()) {\n" +
+      "                unzipEntryTo(unzipDir, outputDirectoryCanonicalPath, zip, entry)\n" +
+      "            }\n" +
+      "        }\n" +
+      "    }\n" +
+      "\n" +
+      "    private static unzipEntryTo(File outputDirectory, String outputDirectoryCanonicalPath, ZipFile zip, ZipEntry entry) {\n" +
+      "        def output = new File(outputDirectory, entry.name)\n" +
+      "        if (!output.canonicalPath.startsWith(outputDirectoryCanonicalPath)) {\n" +
+      "            throw new ZipException(\"Zip entry '${entry.name}' is outside of the output directory\")\n" +
+      "        }\n" +
+      "        if (entry.isDirectory()) {\n" +
+      "            output.mkdirs()\n" +
+      "        } else {\n" +
+      "            output.parentFile.mkdirs()\n" +
+      "            zip.getInputStream(entry).withCloseable { Files.copy(it, output.toPath()) }\n" +
+      "        }\n" +
+      "    }\n" +
+      "}\n" +
+      "\n" +
+      "allprojects {\n" +
+      "    apply plugin: 'java'\n" +
+      "\n" +
+      "    repositories {\n" +
+      "        jcenter()\n" +
+      "    }\n" +
+      "}\n" +
+      "\n" +
+      "def processed = Attribute.of('processed', Boolean)\n" +
+      "def artifactType = Attribute.of('artifactType', String)\n" +
+      "\n" +
+      "\n" +
+      "dependencies {\n" +
+      "    attributesSchema {\n" +
+      "        attribute(processed)\n" +
+      "    }\n" +
+      "\n" +
+      "    artifactTypes.getByName(\"jar\") {\n" +
+      "        attributes.attribute(processed, false);\n" +
+      "    }\n" +
+      "\n" +
+      "    registerTransform(Unzip) {\n" +
+      "        from.attribute(artifactType, 'jar').attribute(processed, false)\n" +
+      "        to.attribute(artifactType, 'java-classes-directory').attribute(processed, true)\n" +
+      "    }\n" +
+      "\n" +
+      "    implementation project(':lib-1')\n" +
+      "    implementation project(':lib-2')\n" +
+      "}\n" +
+      "\n" +
+      "\n" +
+      "configurations.all {\n" +
+      "    afterEvaluate {\n" +
+      "        if (canBeResolved) {\n" +
+      "            attributes.attribute(processed, true)\n" +
+      "        }\n" +
+      "    }\n" +
+      "}"
+    );
+
+    assertModules("project", "project.main", "project.test",
+                  "project.lib-1", "project.lib-1.main", "project.lib-1.test",
+                  "project.lib-2", "project.lib-2.main", "project.lib-2.test");
+
+    assertModuleModuleDepScope("project.test", "project.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-1.test", "project.lib-1.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-2.test", "project.lib-2.main", DependencyScope.COMPILE);
+
+    assertModuleModuleDeps("project.main", "project.lib-1.main", "project.lib-2.main");
+
+    runBuildTask();
+    importProject();
+
+    assertModules("project", "project.main", "project.test",
+                  "project.lib-1", "project.lib-1.main", "project.lib-1.test",
+                  "project.lib-2", "project.lib-2.main", "project.lib-2.test");
+
+    assertModuleModuleDepScope("project.test", "project.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-1.test", "project.lib-1.main", DependencyScope.COMPILE);
+    assertModuleModuleDepScope("project.lib-2.test", "project.lib-2.main", DependencyScope.COMPILE);
+
+    assertModuleModuleDeps("project.main", ArrayUtil.EMPTY_STRING_ARRAY);
+
+    assertModuleLibDeps((actual, expected) -> {
+      return actual.contains("build/.transforms/") && new File(actual).getName().equals(new File(expected).getName());
+    }, "project.main", "lib-1.jar", "lib-2.jar");
+  }
+
+
+  private void runBuildTask() {
+    ExternalSystemTaskExecutionSettings settings = new ExternalSystemTaskExecutionSettings();
+    settings.setExternalProjectPath(getProjectPath());
+    settings.setTaskNames(Collections.singletonList("build"));
+    settings.setExternalSystemIdString(GradleConstants.SYSTEM_ID.getId());
+    ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, myProject, GradleConstants.SYSTEM_ID, null,
+                               ProgressExecutionMode.NO_PROGRESS_SYNC);
   }
 }

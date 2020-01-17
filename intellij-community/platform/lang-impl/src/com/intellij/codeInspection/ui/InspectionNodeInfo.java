@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel;
-import com.intellij.profile.codeInspection.ui.inspectionsTree.InspectionsConfigTreeTable;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
@@ -72,7 +71,7 @@ public class InspectionNodeInfo extends JPanel {
     String descriptionText = toolWrapper.loadDescription();
     if (descriptionText == null) {
       InspectionEP extension = toolWrapper.getExtension();
-      LOG.error(new PluginException("Inspection #" + toolWrapper.getShortName() + " has no description", extension != null ? extension.getPluginId() : null));
+      LOG.error(new PluginException("Inspection #" + toolWrapper.getShortName() + " has no description", extension != null ? extension.getPluginDescriptor().getPluginId() : null));
     }
     final String toolDescription =
       stripUIRefsFromInspectionDescription(StringUtil.notNullize(descriptionText));
@@ -92,7 +91,7 @@ public class InspectionNodeInfo extends JPanel {
       new ClickListener() {
         @Override
         public boolean onClick(@NotNull MouseEvent event, int clickCount) {
-          InspectionsConfigTreeTable.setToolEnabled(!enabled, currentProfile, toolWrapper.getShortName(), project);
+          InspectionProfileImpl.setToolEnabled(!enabled, currentProfile, toolWrapper.getShortName(), project);
           tree.getContext().getView().profileChanged();
           return true;
         }

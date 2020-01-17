@@ -19,9 +19,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class OrderRoot {
   private final VirtualFile myFile;
   private final OrderRootType myType;

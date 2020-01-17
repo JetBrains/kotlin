@@ -52,24 +52,6 @@ public interface ExternalProject extends Model, Serializable {
   @NotNull
   Map<String, ? extends ExternalTask> getTasks();
 
-  //@NotNull
-  //Map<String, ExternalConfiguration> getConfigurations();
-
-  //@NotNull
-  //List<ExternalRepository> getRepositories();
-
-  @NotNull
-  Map<String, ? extends ExternalPlugin> getPlugins();
-
-  //@NotNull
-  //ExternalProjectBuild getBuild();
-
-  @NotNull
-  Map<String, ?> getProperties();
-
-  @Nullable
-  Object getProperty(String name);
-
   @NotNull
   Map<String, ? extends ExternalSourceSet> getSourceSets();
 

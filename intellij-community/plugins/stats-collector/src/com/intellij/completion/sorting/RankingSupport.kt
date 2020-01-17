@@ -1,39 +1,75 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.completion.sorting
 
+import com.intellij.completion.settings.CompletionMLRankingSettings
+import com.intellij.internal.ml.completion.RankingModelProvider
 import com.intellij.lang.Language
-import com.jetbrains.completion.feature.impl.FeatureTransformer
-import com.jetbrains.completion.ranker.JavaCompletionRanker
-import com.jetbrains.completion.ranker.KotlinCompletionRanker
-import com.jetbrains.completion.ranker.LanguageCompletionRanker
-import com.jetbrains.completion.ranker.PythonCompletionRanker
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.util.Disposer
+import com.intellij.stats.experiment.EmulatedExperiment
+import com.intellij.stats.experiment.WebServiceStatus
+import com.jetbrains.completion.ranker.WeakModelProvider
+import org.jetbrains.annotations.TestOnly
 
 
 object RankingSupport {
-  private val rankers: Map<String, LanguageRanker> = mapOf(
-    "java" to LanguageRanker(JavaCompletionRanker()),
-    "kotlin" to LanguageRanker(KotlinCompletionRanker()),
-    "python" to LanguageRanker(PythonCompletionRanker())
-  )
+  private val LOG = logger<RankingSupport>()
+  private var enabledInTests: Boolean = false
 
-  fun getRanker(language: Language?): LanguageRanker? {
-    if (language == null) return null
-    return rankers[language.key()]
+  fun getRankingModel(language: Language): RankingModelWrapper? {
+    val provider = findProviderSafe(language)
+    return if (provider != null && shouldSortByML(language, provider)) tryGetModel(provider) else null
   }
 
-  private fun Language.key(): String = displayName.toLowerCase()
+  fun availableLanguages(): List<String> {
+    val registeredLanguages = Language.getRegisteredLanguages()
+    return WeakModelProvider.availableProviders()
+      .filter { provider ->
+        registeredLanguages.any {
+          provider.isLanguageSupported(it)
+        }
+      }.map { it.displayNameInSettings }.distinct().sorted().toList()
+  }
 
-  class LanguageRanker(private val ranker: LanguageCompletionRanker) {
-    private val transformer: FeatureTransformer = ranker.modelMetadata.createTransformer()
+  private fun findProviderSafe(language: Language): RankingModelProvider? {
+    try {
+      return WeakModelProvider.findProvider(language)
+    }
+    catch (e: IllegalStateException) {
+      LOG.error(e)
+      return null
+    }
+  }
 
-    fun rank(relevance: Map<String, Any>, userFactors: Map<String, Any?>): Double {
-      return ranker.rank(transformer.featureArray(relevance, userFactors))
+  private fun tryGetModel(provider: RankingModelProvider): RankingModelWrapper? {
+    try {
+      return LanguageRankingModel(provider.model)
+    }
+    catch (e: Exception) {
+      LOG.error("Could not create ranking model '${provider.displayNameInSettings}'", e)
+      return null
+    }
+  }
+
+  private fun shouldSortByML(language: Language, provider: RankingModelProvider): Boolean {
+    val application = ApplicationManager.getApplication()
+    val webServiceStatus = WebServiceStatus.getInstance()
+    if (application.isUnitTestMode) return enabledInTests
+    val settings = CompletionMLRankingSettings.getInstance()
+    if (application.isEAP && webServiceStatus.isExperimentOnCurrentIDE() && settings.isCompletionLogsSendAllowed) {
+      // AB experiment
+      return EmulatedExperiment.shouldRank(language, webServiceStatus.experimentVersion())
     }
 
-    fun unknownFeatures(features: Set<String>): List<String> = ranker.modelMetadata.unknownFeatures(features)
+    return settings.isRankingEnabled && settings.isLanguageEnabled(provider.displayNameInSettings)
+  }
 
-    fun version(): String? {
-      return ranker.modelMetadata.version
-    }
+  @TestOnly
+  fun enableInTests(parentDisposable: Disposable) {
+    enabledInTests = true
+    Disposer.register(parentDisposable, Disposable { enabledInTests = false })
   }
 }

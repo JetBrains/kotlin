@@ -33,7 +33,7 @@ public class CapitalizeMacro extends MacroBase {
   }
 
   @Override
-  protected Result calculateResult(@NotNull Expression[] params, ExpressionContext context, boolean quick) {
+  protected Result calculateResult(Expression @NotNull [] params, ExpressionContext context, boolean quick) {
     String text = getTextResult(params, context);
     if (text != null) {
       if (text.length() > 0) {

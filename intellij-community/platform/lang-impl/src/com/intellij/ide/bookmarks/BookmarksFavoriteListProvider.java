@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.bookmarks;
 
 import com.intellij.ide.IdeBundle;
@@ -26,7 +26,7 @@ public class BookmarksFavoriteListProvider extends AbstractFavoritesListProvider
   public BookmarksFavoriteListProvider(Project project) {
     super(project, "Bookmarks");
 
-    project.getMessageBus().connect(project).subscribe(BookmarksListener.TOPIC, this);
+    project.getMessageBus().connect().subscribe(BookmarksListener.TOPIC, this);
     updateChildren();
   }
 
@@ -54,11 +54,11 @@ public class BookmarksFavoriteListProvider extends AbstractFavoritesListProvider
     if (myProject.isDisposed()) return;
     myChildren.clear();
     List<Bookmark> bookmarks = BookmarkManager.getInstance(myProject).getValidBookmarks();
-    for (final Bookmark bookmark : bookmarks) {
+    for (Bookmark bookmark : bookmarks) {
       AbstractTreeNode<Bookmark> child = new AbstractTreeNode<Bookmark>(myProject, bookmark) {
         @NotNull
         @Override
-        public Collection<? extends AbstractTreeNode> getChildren() {
+        public Collection<? extends AbstractTreeNode<Bookmark>> getChildren() {
           return Collections.emptyList();
         }
 
@@ -141,7 +141,8 @@ public class BookmarksFavoriteListProvider extends AbstractFavoritesListProvider
         break;
       case REMOVE:
         for (Object toRemove : selectedObjects) {
-          Bookmark bookmark = (Bookmark)((AbstractTreeNode)toRemove).getValue();
+          @SuppressWarnings("unchecked")
+          Bookmark bookmark = ((AbstractTreeNode<Bookmark>)toRemove).getValue();
           BookmarkManager.getInstance(project).removeBookmark(bookmark);
         }
         break;

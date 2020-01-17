@@ -5,6 +5,7 @@ package com.intellij.ide.projectView.impl;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.util.treeView.AbstractTreeStructureBase;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,11 +20,12 @@ public abstract class ProjectAbstractTreeStructureBase extends AbstractTreeStruc
   @Override
   public List<TreeStructureProvider> getProviders() {
     if (myProviders == null) {
-      myProviders = TreeStructureProvider.EP.getExtensions(myProject);
+      return TreeStructureProvider.EP.getExtensions(myProject);
     }
     return myProviders;
   }
 
+  @TestOnly
   public void setProviders(TreeStructureProvider... treeStructureProviders) {
     myProviders = treeStructureProviders == null ? null : Arrays.asList(treeStructureProviders);
   }

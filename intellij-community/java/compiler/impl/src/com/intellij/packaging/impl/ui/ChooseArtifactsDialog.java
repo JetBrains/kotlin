@@ -22,9 +22,6 @@ import com.intellij.packaging.artifacts.Artifact;
 import javax.swing.*;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ChooseArtifactsDialog extends ChooseElementsDialog<Artifact> {
 
   public ChooseArtifactsDialog(Project project, List<? extends Artifact> items, String title, String description) {

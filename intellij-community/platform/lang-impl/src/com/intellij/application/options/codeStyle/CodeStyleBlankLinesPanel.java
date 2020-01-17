@@ -43,7 +43,7 @@ import java.util.*;
 
 public class CodeStyleBlankLinesPanel extends CustomizableLanguageCodeStylePanel {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.application.options.codeStyle.CodeStyleBlankLinesPanel");
+  private static final Logger LOG = Logger.getInstance(CodeStyleBlankLinesPanel.class);
 
   private final List<IntOption> myOptions = new ArrayList<>();
   private final Set<String> myAllowedOptions = new HashSet<>();

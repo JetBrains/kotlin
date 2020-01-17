@@ -73,20 +73,18 @@ public class PathReferenceManagerImpl extends PathReferenceManager {
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(@NotNull final PsiElement psiElement,
-                                         final boolean soft,
-                                         boolean endingSlashNotAllowed,
-                                         final boolean relativePathsAllowed, PathReferenceProvider... additionalProviders) {
+  public PsiReference @NotNull [] createReferences(@NotNull final PsiElement psiElement,
+                                                   final boolean soft,
+                                                   boolean endingSlashNotAllowed,
+                                                   final boolean relativePathsAllowed, PathReferenceProvider... additionalProviders) {
     return createReferences(psiElement, soft, endingSlashNotAllowed, relativePathsAllowed, null, additionalProviders);
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(@NotNull final PsiElement psiElement,
-                                         final boolean soft,
-                                         boolean endingSlashNotAllowed,
-                                         final boolean relativePathsAllowed, FileType[] suitableFileTypes, PathReferenceProvider... additionalProviders) {
+  public PsiReference @NotNull [] createReferences(@NotNull final PsiElement psiElement,
+                                                   final boolean soft,
+                                                   boolean endingSlashNotAllowed,
+                                                   final boolean relativePathsAllowed, FileType[] suitableFileTypes, PathReferenceProvider... additionalProviders) {
 
     List<PsiReference> mergedReferences = new ArrayList<>();
     processProvider(psiElement, myGlobalPathsProvider, mergedReferences, soft);
@@ -109,8 +107,7 @@ public class PathReferenceManagerImpl extends PathReferenceManager {
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createCustomReferences(@NotNull PsiElement psiElement, boolean soft, PathReferenceProvider... providers) {
+  public PsiReference @NotNull [] createCustomReferences(@NotNull PsiElement psiElement, boolean soft, PathReferenceProvider... providers) {
     List<PsiReference> references = new ArrayList<>();
     for (PathReferenceProvider provider : providers) {
       boolean processed = processProvider(psiElement, provider, references, soft);
@@ -122,8 +119,7 @@ public class PathReferenceManagerImpl extends PathReferenceManager {
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(@NotNull PsiElement psiElement, final boolean soft, PathReferenceProvider... additionalProviders) {
+  public PsiReference @NotNull [] createReferences(@NotNull PsiElement psiElement, final boolean soft, PathReferenceProvider... additionalProviders) {
     return createReferences(psiElement, soft, false, true, null, additionalProviders);
   }
 

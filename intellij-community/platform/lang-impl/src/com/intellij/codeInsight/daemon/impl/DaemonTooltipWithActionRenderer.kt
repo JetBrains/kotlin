@@ -8,10 +8,11 @@ import com.intellij.codeInsight.daemon.impl.tooltips.TooltipActionProvider.isSho
 import com.intellij.codeInsight.daemon.impl.tooltips.TooltipActionProvider.setShowActions
 import com.intellij.codeInsight.hint.HintManagerImpl
 import com.intellij.codeInsight.hint.LineTooltipRenderer
+import com.intellij.codeInsight.hint.TooltipGroup
 import com.intellij.icons.AllIcons
 import com.intellij.ide.TooltipEvent
-import com.intellij.ide.actions.ActionsCollector
 import com.intellij.ide.ui.UISettings
+import com.intellij.internal.statistic.service.fus.collectors.TooltipActionsLogger
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionMenuItem
@@ -22,6 +23,7 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.GraphicsConfig
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.*
@@ -32,7 +34,6 @@ import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
-import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.KeyStroke
@@ -88,37 +89,56 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     return textToProcess.replace(extendMessage, "")
   }
 
+  override fun createHint(editor: Editor,
+                          p: Point,
+                          alignToRight: Boolean,
+                          group: TooltipGroup,
+                          hintHint: HintHint,
+                          newLayout: Boolean,
+                          highlightActions: Boolean,
+                          limitWidthToScreen: Boolean,
+                          tooltipReloader: TooltipReloader?): LightweightHint {
+    return super.createHint(editor, p, alignToRight, group, hintHint, newLayout,
+                            highlightActions || !(isShowActions() && tooltipAction != null && hintHint.isAwtTooltip),
+                            limitWidthToScreen, tooltipReloader)
+  }
+
   override fun fillPanel(editor: Editor,
                          grid: JPanel,
                          hint: LightweightHint,
                          hintHint: HintHint,
-                         actions: ArrayList<AnAction>,
-                         tooltipReloader: TooltipReloader) {
-    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader)
+                         actions: MutableList<in AnAction>,
+                         tooltipReloader: TooltipReloader,
+                         newLayout: Boolean,
+                         highlightActions: Boolean) {
+    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader, newLayout, highlightActions)
     val hasMore = LineTooltipRenderer.isActiveHtml(myText!!)
     if (tooltipAction == null && !hasMore) return
 
-    val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore)
+    val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore, newLayout)
 
     val settingsConstraints = GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                                                 JBUI.insets(4, 7, 4, 4), 0, 0)
+                                                 JBUI.insets(if (newLayout) 7 else 4, 7, if (newLayout) 0 else 4, if (newLayout) 2 else 4),
+                                                 0, 0)
     grid.add(settingsComponent, settingsConstraints)
 
     if (isShowActions()) {
-      addActionsRow(hintHint, hint, editor, actions, grid)
+      addActionsRow(hintHint, hint, editor, actions, grid, newLayout, highlightActions)
     }
   }
 
   private fun addActionsRow(hintHint: HintHint,
                             hint: LightweightHint,
                             editor: Editor,
-                            actions: ArrayList<AnAction>,
-                            grid: JComponent) {
+                            actions: MutableList<in AnAction>,
+                            grid: JComponent,
+                            newLayout: Boolean,
+                            highlightActions: Boolean) {
     if (tooltipAction == null || !hintHint.isAwtTooltip) return
 
 
     val buttons = JPanel(GridBagLayout())
-    val wrapper = createActionPanelWithBackground(hint, grid)
+    val wrapper = createActionPanelWithBackground(highlightActions)
     wrapper.add(buttons, BorderLayout.WEST)
 
     buttons.border = JBUI.Borders.empty()
@@ -136,16 +156,22 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
       .fillCellHorizontally()
       .anchor(GridBagConstraints.WEST)
 
-    buttons.add(createActionLabel(tooltipAction.text, runFixAction, hintHint.textBackground), gridBag.next().insets(5, 8, 5, 4))
-    buttons.add(createKeymapHint(shortcutRunActionText), gridBag.next().insets(0, 4, 0, 12))
+    val topInset = 5
+    val bottomInset = if (newLayout) (if (highlightActions) 4 else 10) else 5
+    buttons.add(createActionLabel(tooltipAction.text, runFixAction, hintHint.textBackground),
+                gridBag.next().insets(topInset, if (newLayout) 10 else 8, bottomInset, 4))
+    buttons.add(createKeymapHint(shortcutRunActionText),
+                gridBag.next().insets(if (newLayout) topInset else 0, 4, if (newLayout) bottomInset else 0, 12))
 
     val showAllFixes = { _: InputEvent? ->
       hint.hide()
       tooltipAction.showAllActions(editor)
     }
 
-    buttons.add(createActionLabel("More actions...", showAllFixes, hintHint.textBackground), gridBag.next().insets(5, 12, 5, 4))
-    buttons.add(createKeymapHint(shortcutShowAllActionsText), gridBag.next().fillCellHorizontally().insets(0, 4, 0, 20))
+    buttons.add(createActionLabel("More actions...", showAllFixes, hintHint.textBackground),
+                gridBag.next().insets(topInset, 12, bottomInset, 4))
+    buttons.add(createKeymapHint(shortcutShowAllActionsText),
+                gridBag.next().fillCellHorizontally().insets(if (newLayout) topInset else 0, 4, if (newLayout) bottomInset else 0, 20))
 
     actions.add(object : AnAction() {
       override fun actionPerformed(e: AnActionEvent) {
@@ -173,26 +199,30 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     grid.add(wrapper, buttonsConstraints)
   }
 
-  private fun createActionPanelWithBackground(hint: LightweightHint,
-                                              grid: JComponent): JPanel {
-    val wrapper: JPanel = object : JPanel(BorderLayout()) {
+  private fun createActionPanelWithBackground(highlight : Boolean): JPanel {
+    val wrapper: JPanel = if (highlight) object : JPanel(BorderLayout()) {
       override fun paint(g: Graphics?) {
         g!!.color = UIUtil.getToolTipActionBackground()
-        val graphics2D = g as Graphics2D
-        val cfg = GraphicsConfig(g)
-        cfg.setAntialiasing(true)
+        if (JBPopupFactory.getInstance().getParentBalloonFor(this) == null) {
+          g.fillRect(0, 0, width, height)
+        }
+        else {
+          val graphics2D = g as Graphics2D
+          val cfg = GraphicsConfig(g)
+          cfg.setAntialiasing(true)
 
-        graphics2D.fill(RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height / 2).toDouble(), 0.0, 0.0))
+          graphics2D.fill(RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height / 2).toDouble(), 0.0, 0.0))
 
-        val arc = BalloonImpl.ARC.get().toDouble()
-        val double = RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height - 1).toDouble(), arc, arc)
+          val arc = BalloonImpl.ARC.get().toDouble()
+          val double = RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height - 1).toDouble(), arc, arc)
 
-        graphics2D.fill(double)
+          graphics2D.fill(double)
 
-        cfg.restore()
+          cfg.restore()
+        }
         super.paint(g)
       }
-    }
+    } else JPanel(BorderLayout())
 
     wrapper.isOpaque = false
     wrapper.border = JBUI.Borders.empty()
@@ -257,7 +287,8 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
 
   private fun createSettingsComponent(hintHint: HintHint,
                                       reloader: TooltipReloader,
-                                      hasMore: Boolean): JComponent {
+                                      hasMore: Boolean,
+                                      newLayout: Boolean): JComponent {
     val presentation = Presentation()
     presentation.icon = AllIcons.Actions.More
     presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
@@ -266,8 +297,8 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     val docAction = ShowDocAction(reloader, hasMore)
     actions.add(docAction)
     val actionGroup = SettingsActionGroup(actions)
-
-    val settingsButton = ActionButton(actionGroup, presentation, ActionPlaces.UNKNOWN, Dimension(18, 18))
+    val buttonSize = if (newLayout) 20 else 18
+    val settingsButton = ActionButton(actionGroup, presentation, ActionPlaces.UNKNOWN, Dimension(buttonSize, buttonSize))
     settingsButton.setNoIconsInPopup(true)
     settingsButton.border = JBUI.Borders.empty()
     settingsButton.isOpaque = false
@@ -310,7 +341,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-      ActionsCollector.getInstance().record("tooltip.actions.show.description.gear", e.inputEvent, this::class.java)
+      TooltipActionsLogger.logShowDescription(e.project, "gear", e.inputEvent, e.place)
       reloader.reload(state)
     }
 

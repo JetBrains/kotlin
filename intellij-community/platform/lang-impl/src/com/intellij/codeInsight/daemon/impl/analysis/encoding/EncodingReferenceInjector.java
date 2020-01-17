@@ -26,9 +26,8 @@ import org.jetbrains.annotations.NotNull;
  * @author peter
  */
 public class EncodingReferenceInjector extends ReferenceInjector {
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull PsiElement element, @NotNull ProcessingContext context, @NotNull TextRange range) {
+  public PsiReference @NotNull [] getReferences(@NotNull PsiElement element, @NotNull ProcessingContext context, @NotNull TextRange range) {
     return new PsiReference[]{new EncodingReference(element, range.substring(element.getText()), range)};
   }
 

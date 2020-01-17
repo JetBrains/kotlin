@@ -8,11 +8,14 @@ import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleTypeId
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.impl.storage.ClasspathStorage
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.project.isDirectoryBased
 import com.intellij.testFramework.*
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.io.parentSystemIndependentPath
@@ -20,6 +23,8 @@ import com.intellij.util.io.readText
 import com.intellij.util.io.systemIndependentPath
 import gnu.trove.TObjectIntHashMap
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.SoftAssertions
+import org.assertj.core.internal.bytebuddy.utility.RandomString
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
@@ -163,6 +168,57 @@ class ModuleStoreTest {
     assertThat(nameToCount.get("p")).isEqualTo(1)
     assertThat(nameToCount.get("m1")).isEqualTo(1)
     assertThat(nameToCount.get("m1")).isEqualTo(1)
+  }
+
+  @Test
+  fun `non-persistent module`() = runBlocking<Unit> {
+    val iprFileContent = """
+      |<?xml version="1.0" encoding="UTF-8"?>
+      |<project version="4">
+      |</project>""".trimMargin()
+
+    val projectCreator: suspend (VirtualFile) -> Path = {
+      it.writeChild("misc.xml", iprFileContent)
+      Paths.get(it.path)
+    }
+
+    loadAndUseProjectInLoadComponentStateMode(tempDirManager, projectCreator) { project ->
+      // Creating a persistent module to make non-empty valid modules.xml
+      runWriteAction {
+        ModuleManager.getInstance(project).newModule(
+          tempDirManager.newPath().resolve("persistent.iml").systemIndependentPath,
+          ModuleTypeId.JAVA_MODULE)
+      }
+      project.stateStore.save()
+
+      assertThat(project.isDirectoryBased).isTrue()
+      val modulesFilePath = Paths.get(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "modules.xml")
+      val modulesFileAtStart = modulesFilePath.readText()
+
+      val moduleName = "tmp-module-${RandomString.make()}"
+      val contentRoot = tempDirManager.newVirtualDirectory("content-root-${RandomString.make()}")
+
+      val module = runWriteAction {
+        ModuleManager.getInstance(project).newNonPersistentModule(moduleName, ModuleTypeId.JAVA_MODULE)
+      }
+
+      SoftAssertions.assertSoftly {
+        it.assertThat(module.moduleFilePath).isEmpty()
+        it.assertThat(module.isLoaded).isTrue
+        it.assertThat(module.moduleFile).isNull()
+        it.assertThat(module.name).isEqualTo(moduleName)
+      }
+
+      ModuleRootModificationUtil.addContentRoot(module, contentRoot)
+      project.stateStore.save()
+
+      val modulesFileAtEnd = modulesFilePath.readText()
+
+      SoftAssertions.assertSoftly {
+        it.assertThat(modulesFileAtEnd).isEqualTo(modulesFileAtStart)
+        it.assertThat(ProjectRootManager.getInstance(project).contentRootUrls).contains("file://${contentRoot.path}")
+      }
+    }
   }
 }
 

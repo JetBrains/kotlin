@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,9 +27,10 @@ import java.util.Map;
  * @author Eugene.Kudelevsky
  */
 public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnAction implements WriteActionAware {
-  protected static final Logger LOG = Logger.getInstance("#com.intellij.ide.actions.CreateFromTemplateAction");
+  protected static final Logger LOG = Logger.getInstance(CreateFromTemplateAction.class);
 
-  public CreateFromTemplateAction(String text, String description, Icon icon) {
+  public CreateFromTemplateAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
+                                  @Nls(capitalization = Nls.Capitalization.Sentence) String description, Icon icon) {
     super(text, description, icon);
   }
 

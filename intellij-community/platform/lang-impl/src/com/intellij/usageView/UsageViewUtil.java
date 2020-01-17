@@ -45,7 +45,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class UsageViewUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.usageView.UsageViewUtil");
+  private static final Logger LOG = Logger.getInstance(UsageViewUtil.class);
 
   private UsageViewUtil() { }
 
@@ -71,14 +71,14 @@ public class UsageViewUtil {
     return ElementDescriptionUtil.getElementDescription(psiElement, UsageViewTypeLocation.INSTANCE);
   }
 
-  private static boolean hasNonCodeUsages(@NotNull UsageInfo[] usages) {
+  private static boolean hasNonCodeUsages(UsageInfo @NotNull [] usages) {
     for (UsageInfo usage : usages) {
       if (usage.isNonCodeUsage) return true;
     }
     return false;
   }
 
-  private static boolean hasUsagesInGeneratedCode(@NotNull UsageInfo[] usages, @NotNull Project project) {
+  private static boolean hasUsagesInGeneratedCode(UsageInfo @NotNull [] usages, @NotNull Project project) {
     for (UsageInfo usage : usages) {
       VirtualFile file = usage.getVirtualFile();
       if (file != null && GeneratedSourcesFilter.isGeneratedSourceByAnyFilter(file, project)) {
@@ -88,15 +88,14 @@ public class UsageViewUtil {
     return false;
   }
 
-  public static boolean hasReadOnlyUsages(@NotNull UsageInfo[] usages) {
+  public static boolean hasReadOnlyUsages(UsageInfo @NotNull [] usages) {
     for (UsageInfo usage : usages) {
       if (!usage.isWritable()) return true;
     }
     return false;
   }
 
-  @NotNull
-  public static UsageInfo[] removeDuplicatedUsages(@NotNull UsageInfo[] usages) {
+  public static UsageInfo @NotNull [] removeDuplicatedUsages(UsageInfo @NotNull [] usages) {
     Set<UsageInfo> set = new LinkedHashSet<>(Arrays.asList(usages));
 
     // Replace duplicates of move rename usage infos in injections from non code usages of master files
@@ -143,14 +142,12 @@ public class UsageViewUtil {
     return set.toArray(UsageInfo.EMPTY_ARRAY);
   }
 
-  @NotNull
-  public static UsageInfo[] toUsageInfoArray(@NotNull final Collection<? extends UsageInfo> collection) {
+  public static UsageInfo @NotNull [] toUsageInfoArray(@NotNull final Collection<? extends UsageInfo> collection) {
     final int size = collection.size();
     return size == 0 ? UsageInfo.EMPTY_ARRAY : collection.toArray(new UsageInfo[size]);
   }
 
-  @NotNull
-  public static PsiElement[] toElements(@NotNull UsageInfo[] usageInfos) {
+  public static PsiElement @NotNull [] toElements(UsageInfo @NotNull [] usageInfos) {
     return ContainerUtil.map2Array(usageInfos, PsiElement.class, UsageInfo::getElement);
   }
 
@@ -177,7 +174,7 @@ public class UsageViewUtil {
     return usageInfos;
   }
 
-  public static boolean reportNonRegularUsages(@NotNull UsageInfo[] usages, @NotNull Project project) {
+  public static boolean reportNonRegularUsages(UsageInfo @NotNull [] usages, @NotNull Project project) {
     boolean inGeneratedCode = hasUsagesInGeneratedCode(usages, project);
     if (hasNonCodeUsages(usages) || inGeneratedCode) {
       StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);

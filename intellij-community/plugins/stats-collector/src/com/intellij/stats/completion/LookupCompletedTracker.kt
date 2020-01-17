@@ -3,8 +3,6 @@
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupEvent
-import com.intellij.codeInsight.lookup.LookupListener
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
@@ -12,30 +10,21 @@ import com.intellij.stats.personalization.UserFactorStorage
 /**
  * @author Vitaliy.Bibaev
  */
-class LookupCompletedTracker : LookupListener {
-    override fun lookupCanceled(event: LookupEvent) {
-        val lookup = event.lookup as? LookupImpl ?: return
-        val element = lookup.currentItem
-        if (element != null && isSelectedByTyping(lookup, element)) {
-            processTypedSelect(lookup)
-        } else {
-            UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
-                updater.fireLookupCancelled()
-            }
+class LookupCompletedTracker : LookupFinishListener() {
+    override fun cancelled(lookup: LookupImpl, canceledExplicitly: Boolean) {
+        UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
+            updater.fireLookupCancelled()
         }
     }
 
-    override fun itemSelected(event: LookupEvent) {
-        val lookup = event.lookup as? LookupImpl ?: return
-        val element = event.item ?: return
-        processExplicitSelect(lookup, element)
+    override fun typedSelect(lookup: LookupImpl,
+                             element: LookupElement) {
+        UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
+            updater.fireTypedSelectPerformed()
+        }
     }
 
-    private fun isSelectedByTyping(lookup: LookupImpl, element: LookupElement): Boolean =
-            element.lookupString == lookup.itemPattern(element)
-
-
-    private fun processExplicitSelect(lookup: LookupImpl, element: LookupElement) {
+    override fun explicitSelect(lookup: LookupImpl, element: LookupElement) {
         UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
             updater.fireExplicitCompletionPerformed()
         }
@@ -58,12 +47,6 @@ class LookupCompletedTracker : LookupListener {
             UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.MNEMONICS_USAGE) { updater ->
                 updater.fireCompletionFinished(isMnemonicsUsed)
             }
-        }
-    }
-
-    private fun processTypedSelect(lookup: LookupImpl) {
-        UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
-            updater.fireTypedSelectPerformed()
         }
     }
 }

@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
@@ -9,9 +8,8 @@ import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.execution.ui.actions.CloseAction;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.script.IdeConsoleScriptBindings;
 import com.intellij.ide.script.IdeScriptEngine;
@@ -21,6 +19,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
@@ -62,7 +61,7 @@ import java.util.List;
 /**
  * @author gregsh
  */
-public class RunIdeConsoleAction extends DumbAwareAction {
+public final class RunIdeConsoleAction extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(RunIdeConsoleAction.class);
 
   private static final String DEFAULT_FILE_NAME = "ide-scripting";
@@ -100,9 +99,8 @@ public class RunIdeConsoleAction extends DumbAwareAction {
       if (StringUtil.toLowerCase(lang).equals(lang)) lang = StringUtil.capitalize(lang);
       if (StringUtil.toLowerCase(eng).equals(eng)) eng = StringUtil.capitalize(eng);
       String name = lang + " (" + eng + ")";
-      IdeaPluginDescriptor plugin = engineInfo.pluginId == null ? null : PluginManager.getPlugin(engineInfo.pluginId);
-      String description = lang + " (engine: " + eng +
-                           (plugin == null ? "" : ", plugin: " + plugin.getName()) + ")";
+      PluginDescriptor plugin = engineInfo.plugin;
+      String description = lang + " (engine: " + eng + (plugin == null ? "" : ", plugin: " + plugin.getName()) + ")";
       return new DumbAwareAction(name, description, null) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e1) {
@@ -244,14 +242,14 @@ public class RunIdeConsoleAction extends DumbAwareAction {
   private static void selectContent(RunContentDescriptor descriptor) {
     Executor executor = DefaultRunExecutor.getRunExecutorInstance();
     ConsoleViewImpl consoleView = ObjectUtils.assertNotNull((ConsoleViewImpl)descriptor.getExecutionConsole());
-    ExecutionManager.getInstance(consoleView.getProject()).getContentManager().toFrontRunContent(executor, descriptor);
+    RunContentManager.getInstance(consoleView.getProject()).toFrontRunContent(executor, descriptor);
   }
 
   @NotNull
   private static RunContentDescriptor getConsoleView(@NotNull Project project,
                                                      @NotNull VirtualFile file,
                                                      @NotNull IdeScriptEngineManager.EngineInfo engineInfo) {
-    for (RunContentDescriptor existing : ExecutionManager.getInstance(project).getContentManager().getAllDescriptors()) {
+    for (RunContentDescriptor existing : RunContentManager.getInstance(project).getAllDescriptors()) {
       Content content = existing.getAttachedContent();
       if (content == null) continue;
       Trinity<IdeScriptEngine, IdeScriptEngineManager.EngineInfo, VirtualFile> data = content.getUserData(SCRIPT_ENGINE_KEY);
@@ -279,7 +277,7 @@ public class RunIdeConsoleAction extends DumbAwareAction {
     Executor executor = DefaultRunExecutor.getRunExecutorInstance();
     toolbarActions.addAll(consoleView.createConsoleActions());
     toolbarActions.add(new CloseAction(executor, descriptor, project));
-    ExecutionManager.getInstance(project).getContentManager().showRunContent(executor, descriptor);
+    RunContentManager.getInstance(project).showRunContent(executor, descriptor);
 
     return descriptor;
   }

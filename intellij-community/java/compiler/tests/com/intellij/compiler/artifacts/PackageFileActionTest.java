@@ -8,9 +8,6 @@ import com.intellij.packaging.impl.ui.actions.PackageFileWorker;
 
 import java.io.IOException;
 
-/**
- * @author nik
- */
 public class PackageFileActionTest extends ArtifactCompilerTestCase {
   public void testCopyFile() throws Exception {
     final VirtualFile file1 = createFile("a.txt", "text");

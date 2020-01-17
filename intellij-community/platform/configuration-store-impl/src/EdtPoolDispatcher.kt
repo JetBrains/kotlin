@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
-import com.intellij.application.coroutineExceptionHandler
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.runAndLogException
@@ -14,9 +13,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Only for configuration store usages.
  */
-internal val storeEdtCoroutineContext: CoroutineContext by lazy {
-  EdtPoolDispatcher() + coroutineExceptionHandler
-}
+internal val storeEdtCoroutineDispatcher: CoroutineDispatcher get() = EdtPoolDispatcher
 
 internal class EdtPoolDispatcherManager {
   private val queue = ArrayDeque<Runnable>()
@@ -74,7 +71,7 @@ internal class EdtPoolDispatcherManager {
   }
 }
 
-private class EdtPoolDispatcher : CoroutineDispatcher() {
+private object EdtPoolDispatcher : CoroutineDispatcher() {
   private val edtPoolDispatcherManager: EdtPoolDispatcherManager
     get() = (SaveAndSyncHandler.getInstance() as BaseSaveAndSyncHandler).edtPoolDispatcherManager
 

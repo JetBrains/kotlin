@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -28,19 +27,19 @@ class MockVirtualFile extends VirtualFile {
   @NotNull
   @Override
   public String getName() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @NotNull
   @Override
   public VirtualFileSystem getFileSystem() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @NotNull
   @Override
   public String getPath() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -65,18 +64,17 @@ class MockVirtualFile extends VirtualFile {
 
   @Override
   public VirtualFile[] getChildren() {
-    return new VirtualFile[0];
+    return VirtualFile.EMPTY_ARRAY;
   }
 
   @NotNull
   @Override
-  public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) throws IOException {
-    return null;
+  public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) {
+    throw new UnsupportedOperationException();
   }
 
-  @NotNull
   @Override
-  public byte[] contentsToByteArray() throws IOException {
+  public byte @NotNull [] contentsToByteArray() {
     return new byte[0];
   }
 
@@ -96,7 +94,7 @@ class MockVirtualFile extends VirtualFile {
   }
 
   @Override
-  public InputStream getInputStream() throws IOException {
+  public InputStream getInputStream() {
     return null;
   }
 }

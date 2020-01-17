@@ -31,7 +31,7 @@ import java.util.List;
 
 @VisibleForTesting
 public class MacroParser {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.template.impl.MacroParser");
+  private static final Logger LOG = Logger.getInstance(MacroParser.class);
   
   @NotNull
   public static Expression parse(@Nullable String expression) {

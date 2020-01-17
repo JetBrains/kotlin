@@ -29,8 +29,7 @@ public class MoveMultipleElementsViewDescriptor implements UsageViewDescriptor {
   private String myProcessedElementsHeader;
   private final String myCodeReferencesText;
 
-  public MoveMultipleElementsViewDescriptor(PsiElement[] psiElements,
-                                            String targetName) {
+  public MoveMultipleElementsViewDescriptor(PsiElement @NotNull [] psiElements, @NotNull String targetName) {
     myPsiElements = psiElements;
     if (psiElements.length == 1) {
       myProcessedElementsHeader = StringUtil.capitalize(
@@ -49,8 +48,7 @@ public class MoveMultipleElementsViewDescriptor implements UsageViewDescriptor {
   }
 
   @Override
-  @NotNull
-  public PsiElement[] getElements() {
+  public PsiElement @NotNull [] getElements() {
     return myPsiElements;
   }
 

@@ -4,6 +4,7 @@ package com.intellij.configurationStore
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.components.PathMacroSubstitutor
 import com.intellij.openapi.components.RoamingType
+import com.intellij.openapi.components.StateStorage
 import com.intellij.openapi.components.impl.stores.FileStorageCoreUtil
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.runAndLogException
@@ -12,14 +13,16 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.openapi.vfs.LargeFileWriteRequestor
 import com.intellij.openapi.vfs.SafeWriteRequestor
-import com.intellij.openapi.vfs.safeOutputStream
 import com.intellij.util.LineSeparator
 import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.io.delete
+import com.intellij.util.io.outputStream
+import com.intellij.util.io.safeOutputStream
 import gnu.trove.THashMap
 import org.jdom.Attribute
 import org.jdom.Element
+import org.jetbrains.annotations.ApiStatus
 import java.io.FileNotFoundException
 import java.io.OutputStream
 import java.io.Writer
@@ -112,7 +115,7 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
   abstract class XmlElementStorageSaveSession<T : XmlElementStorage>(private val originalStates: StateMap, protected val storage: T) : SaveSessionBase() {
     private var copiedStates: MutableMap<String, Any>? = null
 
-    private var newLiveStates: MutableMap<String, Element>? = THashMap<String, Element>()
+    private var newLiveStates: MutableMap<String, Element>? = THashMap()
 
     protected open fun isSaveAllowed() = !storage.checkIsSavingDisabled()
 
@@ -252,7 +255,7 @@ internal class XmlDataWriter(private val rootElementName: String?,
       }
 
       if (elements.isEmpty()) {
-        // see note in save() why elements here can be an empty list
+        // see note in the save() why elements here can be an empty list
         writer.append(" />")
         return
       }
@@ -297,7 +300,7 @@ private fun save(states: StateMap, newLiveStates: Map<String, Element>): Mutable
     val elementAttributes = element.attributes
     var nameAttribute = element.getAttribute(FileStorageCoreUtil.NAME)
     @Suppress("SuspiciousEqualsCombination")
-    if (nameAttribute != null && nameAttribute === elementAttributes.get(0) && componentName == nameAttribute.value) {
+    if (nameAttribute != null && nameAttribute === elementAttributes[0] && componentName == nameAttribute.value) {
       // all is OK
     }
     else {
@@ -307,7 +310,7 @@ private fun save(states: StateMap, newLiveStates: Map<String, Element>): Mutable
       }
       else {
         nameAttribute.value = componentName
-        if (elementAttributes.get(0) != nameAttribute) {
+        if (elementAttributes[0] != nameAttribute) {
           elementAttributes.remove(nameAttribute)
           elementAttributes.add(0, nameAttribute)
         }
@@ -336,7 +339,7 @@ internal fun Element.normalizeRootName(): Element {
   }
   else {
     if (parent != null) {
-      LOG.warn("State element must not have parent: ${JDOMUtil.writeElement(this)}")
+      LOG.warn("State element must not have a parent: ${JDOMUtil.writeElement(this)}")
       detach()
     }
     name = FileStorageCoreUtil.COMPONENT
@@ -393,18 +396,19 @@ interface DataWriterFilter {
 }
 
 interface DataWriter {
-  // LineSeparator cannot be used because custom (with indent) line separator can be used
+  // LineSeparator cannot be used because custom (with an indent) line separator can be used
   fun write(output: OutputStream, lineSeparator: String = LineSeparator.LF.separatorString, filter: DataWriterFilter? = null)
 
   fun hasData(filter: DataWriterFilter): Boolean
 }
 
-internal fun DataWriter?.writeTo(file: Path, lineSeparator: String = LineSeparator.LF.separatorString) {
+internal fun DataWriter?.writeTo(file: Path, requestor: Any?, lineSeparator: String = LineSeparator.LF.separatorString) {
   if (this == null) {
     file.delete()
   }
   else {
-    file.safeOutputStream(null).use {
+    val safe = SafeWriteRequestor.shouldUseSafeWrite(requestor)
+    (if (safe) file.safeOutputStream() else file.outputStream()).use {
       write(it, lineSeparator)
     }
   }
@@ -437,4 +441,9 @@ internal fun createDataWriterForElement(element: Element, storageFilePathForDebu
       }
     }
   }
+}
+
+@ApiStatus.Internal
+interface ExternalStorageWithInternalPart {
+  val internalStorage: StateStorage
 }

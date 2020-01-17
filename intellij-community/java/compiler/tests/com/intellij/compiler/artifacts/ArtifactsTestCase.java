@@ -46,9 +46,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author nik
- */
 public abstract class ArtifactsTestCase extends JavaProjectTestCase {
   protected boolean mySetupModule;
 

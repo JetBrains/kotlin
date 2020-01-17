@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui.layout.impl;
 
 import com.intellij.openapi.Disposable;
@@ -6,13 +6,14 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.SideBorder;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.tabs.*;
-import com.intellij.ui.tabs.newImpl.SingleHeightTabs;
-import com.intellij.ui.tabs.newImpl.TabLabel;
-import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
-import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
-import com.intellij.util.ui.JBUI;
+import com.intellij.ui.tabs.JBTabPainter;
+import com.intellij.ui.tabs.JBTabsBorder;
+import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.impl.*;
+import com.intellij.ui.tabs.impl.singleRow.ScrollableSingleRowLayout;
+import com.intellij.ui.tabs.impl.singleRow.SingleRowLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,19 +26,25 @@ import java.util.Map;
  */
 public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   public static JBRunnerTabsBase create(@Nullable Project project, @NotNull Disposable parentDisposable) {
-    IdeFocusManager focusManager = project != null ? IdeFocusManager.getInstance(project) : null;
-    return JBTabsFactory.getUseNewTabs()
-           ? new JBRunnerTabs(project, ActionManager.getInstance(), focusManager, parentDisposable)
-           : new JBRunnerTabsOld(project, ActionManager.getInstance(), focusManager, parentDisposable);
+    return new JBRunnerTabs(project, parentDisposable);
   }
 
   @Override
-  protected JBTabPainter createTabPainter() {
-    return JBTabPainter.getDEBUGGER();
+  protected TabPainterAdapter createTabPainterAdapter() {
+    return new DefaultTabPainterAdapter(JBTabPainter.getDEBUGGER());
   }
 
+  public JBRunnerTabs(@Nullable Project project, @NotNull Disposable parent) {
+    super(project, parent);
+  }
+
+  /**
+   * @deprecated Use {@link #JBRunnerTabs(Project, Disposable)}
+   */
+  @SuppressWarnings("unused")
+  @Deprecated
   public JBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
-    super(project, actionManager, focusManager, parent);
+    super(project, parent);
   }
 
   @Override
@@ -47,22 +54,7 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
 
   @Override
   protected JBTabsBorder createTabBorder() {
-    return new JBTabsBorder(this) {
-      @NotNull
-      @Override
-      public Insets getEffectiveBorder() {
-        return new Insets(getBorderThickness(), getBorderThickness(), 0, 0);
-      }
-
-      @Override
-      public void paintBorder(@NotNull Component c, @NotNull Graphics g, int x, int y, int width, int height) {
-        if (isEmptyVisible()) return;
-        getTabPainter().paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y), new Point(x, y + height));
-        getTabPainter()
-          .paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y + myHeaderFitSize.height),
-                           new Point(x + width, y + myHeaderFitSize.height));
-      }
-    };
+    return new JBRunnerTabsBorder(this);
   }
 
   @Override
@@ -88,7 +80,7 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   @Override
   public Rectangle layout(JComponent c, Rectangle bounds) {
     if (c instanceof Toolbar) {
-      bounds.height -= 5;
+      bounds.height -= getSeparatorWidth();
       return super.layout(c, bounds);
     }
     return super.layout(c, bounds);
@@ -108,8 +100,9 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
     }
   }
 
+  @NotNull
   @Override
-  protected TabLabel createTabLabel(TabInfo info) {
+  protected TabLabel createTabLabel(@NotNull TabInfo info) {
     return new SingleHeightLabel(this, info) {
       @Override
       public void setTabActions(ActionGroup group) {
@@ -124,4 +117,34 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
 
   }
 
+  class JBRunnerTabsBorder extends JBTabsBorder {
+    private int mySideMask = SideBorder.LEFT;
+
+    JBRunnerTabsBorder(@NotNull JBTabsImpl tabs) {
+      super(tabs);
+    }
+
+    @NotNull
+    @Override
+    public Insets getEffectiveBorder() {
+      //noinspection UseDPIAwareInsets
+      return new Insets(getBorderThickness(), (mySideMask & SideBorder.LEFT) != 0 ? getBorderThickness() : 0, 0, 0);
+    }
+
+    @Override
+    public void paintBorder(@NotNull Component c, @NotNull Graphics g, int x, int y, int width, int height) {
+      if (isEmptyVisible()) return;
+
+      if ((mySideMask & SideBorder.LEFT) != 0) {
+        getTabPainter().paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y), new Point(x, y + height));
+      }
+      getTabPainter()
+        .paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y + myHeaderFitSize.height),
+                         new Point(x + width, y + myHeaderFitSize.height));
+    }
+
+    void setSideMask(@SideBorder.SideMask int mask) {
+      mySideMask = mask;
+    }
+  }
 }

@@ -3,23 +3,27 @@ package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.ROOT_CONFIG
 import com.intellij.openapi.application.Application
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.appSystemDir
 import com.intellij.openapi.components.*
 import com.intellij.openapi.components.impl.stores.FileStorageCoreUtil
 import com.intellij.openapi.diagnostic.runAndLogException
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.NamedJDOMExternalizable
 import com.intellij.util.io.systemIndependentPath
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.jps.model.serialization.JpsGlobalLoader
 
-private class ApplicationPathMacroManager : PathMacroManager(null)
+internal class ApplicationPathMacroManager : PathMacroManager(null)
 
 const val APP_CONFIG = "\$APP_CONFIG$"
 
-class ApplicationStoreImpl(private val application: Application, pathMacroManager: PathMacroManager? = null) : ComponentStoreWithExtraComponents() {
-  override val storageManager = ApplicationStorageManager(application, pathMacroManager)
+class ApplicationStoreImpl : ComponentStoreWithExtraComponents() {
+  private val application = ApplicationManager.getApplication()
+
+  override val storageManager = ApplicationStorageManager(application, PathMacroManager.getInstance(ApplicationManager.getApplication()))
 
   // number of app components require some state, so, we load default state in test mode
   override val loadPolicy: StateLoadPolicy
@@ -33,18 +37,22 @@ class ApplicationStoreImpl(private val application: Application, pathMacroManage
   }
 
   override suspend fun doSave(result: SaveResult, forceSavingAllSettings: Boolean) {
-    val saveSessionManager = saveSettingsSavingComponentsAndCommitComponents(result, forceSavingAllSettings)
+    val saveSessionManager = createSaveSessionProducerManager()
+    saveSettingsSavingComponentsAndCommitComponents(result, forceSavingAllSettings, saveSessionManager)
     // todo can we store default project in parallel to regular saving? for now only flush on disk is async, but not component committing
     coroutineScope {
       launch {
         saveSessionManager.save().appendTo(result)
       }
-      launch {
-        // here, because no Project (and so, ProjectStoreImpl) on Welcome Screen
-        val r = serviceIfCreated<DefaultProjectExportableAndSaveTrigger>()?.save(forceSavingAllSettings) ?: return@launch
-        // ignore
-        r.isChanged = false
-        r.appendTo(result)
+
+      if (ProjectManagerEx.getInstanceEx().isDefaultProjectInitialized) {
+        launch {
+          // here, because no Project (and so, ProjectStoreImpl) on Welcome Screen
+          val r = service<DefaultProjectExportableAndSaveTrigger>().save(forceSavingAllSettings)
+          // ignore
+          r.isChanged = false
+          r.appendTo(result)
+        }
       }
     }
   }
@@ -85,7 +93,7 @@ class ApplicationStorageManager(application: Application?, pathMacroManager: Pat
     // IDEA-144052 When "Settings repository" is enabled changes in 'Path Variables' aren't saved to default path.macros.xml file causing errors in build process
     if (storage.fileSpec == "path.macros.xml" || storage.fileSpec == "applicationLibraries.xml") {
       LOG.runAndLogException {
-        writer.writeTo(storage.file)
+        writer.writeTo(storage.file, null)
       }
     }
   }

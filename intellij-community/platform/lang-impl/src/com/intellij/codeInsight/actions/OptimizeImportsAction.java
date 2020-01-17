@@ -17,13 +17,13 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.util.Arrays;
 
 public class OptimizeImportsAction extends AnAction {
@@ -58,7 +58,7 @@ public class OptimizeImportsAction extends AnAction {
       if (file == null) return;
       dir = file.getContainingDirectory();
     }
-    else if (files != null && ReformatCodeAction.containsAtLeastOneFile(files)) {
+    else if (files != null && ReformatCodeAction.containsOnlyFiles(files)) {
       final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(
         Arrays.asList(files));
       if (!operationStatus.hasReadonlyFiles()) {
@@ -129,7 +129,7 @@ public class OptimizeImportsAction extends AnAction {
     }
     else{
       final OptimizeImportsProcessor optimizer = new OptimizeImportsProcessor(project, file);
-      if (editor != null && EditorSettingsExternalizable.getInstance().getOptions().SHOW_NOTIFICATION_AFTER_OPTIMIZE_IMPORTS_ACTION) {
+      if (editor != null && EditorSettingsExternalizable.getInstance().isShowNotificationAfterOptimizeImports()) {
         optimizer.setCollectInfo(true);
         optimizer.setPostRunnable(() -> {
           LayoutCodeInfoCollector collector = optimizer.getInfoCollector();
@@ -147,7 +147,7 @@ public class OptimizeImportsAction extends AnAction {
   }
 
   @Override
-  public void update(@NotNull AnActionEvent event){
+  public void update(@NotNull AnActionEvent event) {
     if (!LanguageImportStatements.INSTANCE.hasAnyExtensions()) {
       event.getPresentation().setVisible(false);
       return;
@@ -179,7 +179,7 @@ public class OptimizeImportsAction extends AnAction {
         return false;
       }
     }
-    else if (files != null && ReformatCodeAction.containsAtLeastOneFile(files)) {
+    else if (files != null && ReformatCodeAction.containsOnlyFiles(files)) {
       boolean anyHasOptimizeImports = false;
       for (VirtualFile virtualFile : files) {
         PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
@@ -188,6 +188,7 @@ public class OptimizeImportsAction extends AnAction {
         }
         if (isOptimizeImportsAvailable(file)) {
           anyHasOptimizeImports = true;
+          break;
         }
       }
       if (!anyHasOptimizeImports) {
@@ -271,7 +272,7 @@ public class OptimizeImportsAction extends AnAction {
 
       myOnlyVcsCheckBox.setEnabled(myContextHasChanges);
       myOnlyVcsCheckBox.setSelected(myContextHasChanges && lastRunVcsChangedTextEnabled);
-      myOnlyVcsCheckBox.setBorder(new EmptyBorder(0, 10 , 0, 0));
+      myOnlyVcsCheckBox.setBorder(JBUI.Borders.emptyLeft(10));
       panel.add(myOnlyVcsCheckBox);
       return panel;
     }

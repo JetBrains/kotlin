@@ -23,6 +23,11 @@ public class SelectAllAction extends OccurrenceAction {
   }
 
   @Override
+  protected boolean availableForSelection() {
+    return true;
+  }
+
+  @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     EditorSearchSession search = e.getRequiredData(EditorSearchSession.SESSION_KEY);
     search.selectAllOccurrences();

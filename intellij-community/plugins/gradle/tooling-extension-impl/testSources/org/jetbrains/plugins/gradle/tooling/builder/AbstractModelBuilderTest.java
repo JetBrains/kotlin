@@ -15,13 +15,18 @@
  */
 package org.jetbrains.plugins.gradle.tooling.builder;
 
+import com.amazon.ion.IonType;
+import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.lang.JavaVersion;
+import gnu.trove.THash;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
 import org.gradle.internal.impldep.com.google.common.collect.Multimap;
 import org.gradle.tooling.BuildActionExecuter;
@@ -30,11 +35,17 @@ import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.internal.consumer.DefaultGradleConnector;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.gradle.tooling.model.idea.IdeaProject;
 import org.gradle.util.GradleVersion;
+import org.hamcrest.CustomMatcher;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.model.*;
+import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel;
+import org.jetbrains.plugins.gradle.model.ClassSetImportModelProvider;
+import org.jetbrains.plugins.gradle.model.ClasspathEntryModel;
+import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
 import org.jetbrains.plugins.gradle.tooling.VersionMatcherRule;
+import org.jetbrains.plugins.gradle.tooling.internal.init.Init;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.junit.After;
 import org.junit.Before;
@@ -53,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.util.containers.ContainerUtil.set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeThat;
@@ -68,7 +80,8 @@ public abstract class AbstractModelBuilderTest {
     {"2.6"}, /*{"2.7"}, {"2.8"}, {"2.9"}, {"2.10"}, {"2.11"}, {"2.12"}, {"2.13"}, */{"2.14.1"},
     {"3.0"}, /*{"3.1"}, {"3.2"}, {"3.3"}, {"3.4"},*/ {"3.5"},
     {"4.0"}, /*{"4.1"}, {"4.2"}, {"4.3"}, {"4.4"}, {"4.5.1"}, {"4.6"}, {"4.7"}, {"4.8"}, {"4.9"},*/ {"4.10.3"},
-    {"5.0"}, /*{"5.1"}, {"5.3.1"},*/ {"5.4"}
+    {"5.0"}, /*{"5.1"}, {"5.2"}, {"5.3.1"}, {"5.4.1"}, {"5.5.1"},*/ {"5.6.2"},
+    {"6.0"}, {"6.0.1"}
   };
   public static final String BASE_GRADLE_VERSION = String.valueOf(SUPPORTED_GRADLE_VERSIONS[SUPPORTED_GRADLE_VERSIONS.length - 1][0]);
 
@@ -97,6 +110,7 @@ public abstract class AbstractModelBuilderTest {
   @Before
   public void setUp() throws Exception {
     assumeThat(gradleVersion, versionMatcherRule.getMatcher());
+    assumeGradleCompatibleWithJava(gradleVersion);
 
     ensureTempDirCreated();
 
@@ -148,11 +162,9 @@ public abstract class AbstractModelBuilderTest {
     ProjectConnection connection = connector.connect();
 
     try {
-      boolean isGradleProjectDirSupported = _gradleVersion.compareTo(GradleVersion.version("2.4")) >= 0;
-      boolean isCompositeBuildsSupported = isGradleProjectDirSupported && _gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
-      final ProjectImportAction projectImportAction = new ProjectImportAction(false, isGradleProjectDirSupported,
-                                                                              isCompositeBuildsSupported);
-      projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(getModels()));
+      boolean isCompositeBuildsSupported = _gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
+      final ProjectImportAction projectImportAction = new ProjectImportAction(false, isCompositeBuildsSupported, false);
+      projectImportAction.addProjectImportModelProvider(new ClassSetImportModelProvider(getModels(), set(IdeaProject.class)));
       BuildActionExecuter<ProjectImportAction.AllModels> buildActionExecutor = connection.action(projectImportAction);
       File initScript = GradleExecutionHelper.generateInitScript(false, getToolingExtensionClasses());
       assertNotNull(initScript);
@@ -167,16 +179,37 @@ public abstract class AbstractModelBuilderTest {
     }
   }
 
+  public static void assumeGradleCompatibleWithJava(@NotNull String gradleVersion) {
+    if (GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.8")) < 0) {
+      Properties properties = System.getProperties();
+      String javaVersionString = properties.getProperty("java.runtime.version", properties.getProperty("java.version", "unknown"));
+      JavaVersion javaVersion = JavaVersion.tryParse(javaVersionString);
+      assumeThat(javaVersion.feature, new CustomMatcher<Integer>("Java version older than 9") {
+        @Override
+        public boolean matches(Object item) {
+          return item instanceof Integer && ((Integer)item).compareTo(9) < 0;
+        }
+      });
+    }
+  }
+
   @NotNull
-  private Set<Class> getToolingExtensionClasses() {
-    final Set<Class> classes = ContainerUtil.set(
-      ExternalProject.class,
+  private Set<Class<?>> getToolingExtensionClasses() {
+    final Set<Class<?>> classes = set(
+      // external-system-rt.jar
+      ExternalSystemSourceType.class,
       // gradle-tooling-extension-api jar
       ProjectImportAction.class,
       // gradle-tooling-extension-impl jar
-      ModelBuildScriptClasspathBuilderImpl.class,
+      Init.class,
       Multimap.class,
-      ShortTypeHandling.class
+      ShortTypeHandling.class,
+      // trove4j jar
+      THash.class,
+      // ion-java jar
+      IonType.class,
+      // util-rt jat
+      SystemInfoRt.class // !!! do not replace it with SystemInfo.class from util module
     );
 
     ContainerUtil.addAllNotNull(classes, doGetToolingExtensionClasses());
@@ -184,7 +217,7 @@ public abstract class AbstractModelBuilderTest {
   }
 
   @NotNull
-  protected Set<Class> doGetToolingExtensionClasses() {
+  protected Set<Class<?>> doGetToolingExtensionClasses() {
     return Collections.emptySet();
   }
 
@@ -195,15 +228,15 @@ public abstract class AbstractModelBuilderTest {
     }
   }
 
-  protected abstract Set<Class> getModels();
+  protected abstract Set<Class<?>> getModels();
 
 
   protected <T> Map<String, T> getModulesMap(final Class<T> aClass) {
-    final DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getIdeaProject().getModules();
+    final DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getModel(IdeaProject.class).getModules();
 
     final String filterKey = "to_filter";
     final Map<String, T> map = ContainerUtil.map2Map(ideaModules, (Function<IdeaModule, Pair<String, T>>)module -> {
-      final T value = allModels.getExtraProject(module, aClass);
+      final T value = allModels.getModel(module, aClass);
       final String key = value != null ? module.getGradleProject().getPath() : filterKey;
       return Pair.create(key, value);
     });

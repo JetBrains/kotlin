@@ -45,10 +45,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 class FileEncodingConfigurable extends PerFileConfigurableBase<Charset> {
@@ -74,17 +72,13 @@ class FileEncodingConfigurable extends PerFileConfigurableBase<Charset> {
     if (item != null) {
       switch (item) {
         case ALWAYS:
-          myExplanationLabel.setHtmlText(
-            "<html>" + I + " will add <a>UTF-8 BOM</a> to every created file in UTF-8 encoding</html>");
+          myExplanationLabel.setHtmlText(IdeBundle.message("file.encoding.option.warning.always", I));
           break;
         case NEVER:
-          myExplanationLabel.setHtmlText(
-            "<html>" + I + " will NOT add <a>UTF-8 BOM</a> to every created file in UTF-8 encoding</html>");
+          myExplanationLabel.setHtmlText(IdeBundle.message("file.encoding.option.warning.never", I));
           break;
         case WINDOWS_ONLY:
-          myExplanationLabel.setHtmlText("<html>" +
-                                         I +
-                                         " will add <a>UTF-8 BOM</a> to every created UTF-8 file only when it's running under Windows.</html>");
+          myExplanationLabel.setHtmlText(IdeBundle.message("file.encoding.option.warning.windows.only", I));
           break;
       }
     }
@@ -110,8 +104,8 @@ class FileEncodingConfigurable extends PerFileConfigurableBase<Charset> {
   @Override
   protected <S> Object getParameter(@NotNull Key<S> key) {
     if (key == DESCRIPTION) return IdeBundle.message("encodings.dialog.caption", ApplicationNamesInfo.getInstance().getFullProductName());
-    if (key == MAPPING_TITLE) return "Encoding";
-    if (key == TARGET_TITLE) return "Path";
+    if (key == MAPPING_TITLE) return IdeBundle.message("file.encoding.option.encoding.column");
+    if (key == TARGET_TITLE) return IdeBundle.message("file.encoding.option.path.column");
     if (key == OVERRIDE_QUESTION) return null;
     if (key == OVERRIDE_TITLE) return null;
     if (key == EMPTY_TEXT) return IdeBundle.message("file.encodings.not.configured");
@@ -202,10 +196,10 @@ class FileEncodingConfigurable extends PerFileConfigurableBase<Charset> {
     EncodingManager app = EncodingManager.getInstance();
     EncodingProjectManagerImpl prj = (EncodingProjectManagerImpl)EncodingProjectManager.getInstance(myProject);
     return Arrays.asList(
-      Trinity.create("Global Encoding",
+      Trinity.create(IdeBundle.message("file.encoding.option.global.encoding"),
                      () -> app.getDefaultCharsetName().isEmpty() ? null : app.getDefaultCharset(),
                      o -> app.setDefaultCharsetName(getCharsetName(o))),
-      Trinity.create("Project Encoding",
+      Trinity.create(IdeBundle.message("file.encoding.option.project.encoding"),
                      prj::getConfiguredDefaultCharset,
                      o -> prj.setDefaultCharsetName(getCharsetName(o))));
   }
@@ -263,7 +257,7 @@ class FileEncodingConfigurable extends PerFileConfigurableBase<Charset> {
       @NotNull
       @Override
       public Map<VirtualFile, Charset> getMappings() {
-        return prjManager.getAllMappings();
+        return new HashMap<>(prjManager.getAllMappings());
       }
 
       @Override

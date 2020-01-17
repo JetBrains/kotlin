@@ -23,7 +23,7 @@ public abstract class FixableUsagesRefactoringProcessor extends BaseRefactoringP
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usageInfos) {
+  protected void performRefactoring(UsageInfo @NotNull [] usageInfos) {
     CommonRefactoringUtil.sortDepthFirstRightLeftOrder(usageInfos);
     for (UsageInfo usageInfo : usageInfos) {
       if (usageInfo instanceof FixableUsageInfo) {
@@ -39,8 +39,7 @@ public abstract class FixableUsagesRefactoringProcessor extends BaseRefactoringP
 
 
   @Override
-  @NotNull
-  protected final UsageInfo[] findUsages() {
+  protected final UsageInfo @NotNull [] findUsages() {
     final List<FixableUsageInfo> usages = Collections.synchronizedList(new ArrayList<>());
     findUsages(usages);
     final int numUsages = usages.size();

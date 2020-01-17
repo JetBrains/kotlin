@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -25,11 +24,9 @@ public abstract class PrevNextOccurrenceAction extends DumbAwareAction implement
   @Override
   public final void update(@NotNull AnActionEvent e) {
     SearchSession search = e.getData(SearchSession.KEY);
-    boolean invokedByShortcut = e.isFromActionToolbar();
-    e.getPresentation().setEnabled(search != null && (invokedByShortcut || search.hasMatches()));
+    e.getPresentation().setEnabled(search != null && !search.isSearchInProgress() && search.hasMatches());
   }
 
-  @Nullable
   @Override
   public final ShortcutSet getShortcut(@NotNull DataContext context) {
     SearchSession search = SearchSession.KEY.getData(context);

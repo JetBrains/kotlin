@@ -40,8 +40,7 @@ public interface CompilerReferenceServiceEx extends CompilerReferenceService {
 
   int getNameId(@NotNull String name) throws ReferenceIndexUnavailableException;
 
-  @NotNull
-  CompilerRef.CompilerClassHierarchyElementDef[] getDirectInheritors(CompilerRef.CompilerClassHierarchyElementDef baseClass)
+  CompilerRef.CompilerClassHierarchyElementDef @NotNull [] getDirectInheritors(CompilerRef.CompilerClassHierarchyElementDef baseClass)
     throws ReferenceIndexUnavailableException;
 
   int getInheritorCount(CompilerRef.CompilerClassHierarchyElementDef baseClass) throws ReferenceIndexUnavailableException;

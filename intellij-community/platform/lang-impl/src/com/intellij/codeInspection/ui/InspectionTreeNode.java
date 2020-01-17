@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ui;
 
@@ -18,9 +18,6 @@ import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import java.util.*;
 
-/**
- * @author max
- */
 public abstract class InspectionTreeNode implements TreeNode {
   private static final Interner<LevelAndCount[]> LEVEL_AND_COUNT_INTERNER = new WeakInterner<>(new TObjectHashingStrategy<LevelAndCount[]>() {
     @Override
@@ -35,8 +32,8 @@ public abstract class InspectionTreeNode implements TreeNode {
   });
 
   protected final ProblemLevels myProblemLevels = new ProblemLevels();
-  @NotNull
-  final Children myChildren = new Children();
+  @Nullable
+  volatile Children myChildren;
   final InspectionTreeNode myParent;
 
   protected InspectionTreeNode(InspectionTreeNode parent) {
@@ -52,8 +49,7 @@ public abstract class InspectionTreeNode implements TreeNode {
     return null;
   }
 
-  @NotNull
-  LevelAndCount[] getProblemLevels() {
+  LevelAndCount @NotNull [] getProblemLevels() {
     if (!isProblemCountCacheValid()) {
       dropProblemCountCaches();
     }
@@ -141,7 +137,8 @@ public abstract class InspectionTreeNode implements TreeNode {
 
   @NotNull
   public List<? extends InspectionTreeNode> getChildren() {
-    return ContainerUtil.immutableList(myChildren.myChildren);
+    Children children = myChildren;
+    return children == null ? Collections.emptyList() : ContainerUtil.immutableList(children.myChildren);
   }
 
   @Override
@@ -198,8 +195,7 @@ public abstract class InspectionTreeNode implements TreeNode {
   class ProblemLevels {
     private volatile LevelAndCount[] myLevels;
 
-    @NotNull
-    private LevelAndCount[] compute() {
+    private LevelAndCount @NotNull [] compute() {
       TObjectIntHashMap<HighlightDisplayLevel> counter = new TObjectIntHashMap<>();
       visitProblemSeverities(counter);
       LevelAndCount[] arr = new LevelAndCount[counter.size()];
@@ -213,8 +209,7 @@ public abstract class InspectionTreeNode implements TreeNode {
       return doesNeedInternProblemLevels() ? LEVEL_AND_COUNT_INTERNER.intern(arr) : arr;
     }
 
-    @NotNull
-    public LevelAndCount[] getValue() {
+    public LevelAndCount @NotNull [] getValue() {
       LevelAndCount[] result = myLevels;
       if (result == null) {
         myLevels = result = compute();

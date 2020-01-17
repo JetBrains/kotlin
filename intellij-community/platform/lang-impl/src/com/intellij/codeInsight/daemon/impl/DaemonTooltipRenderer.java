@@ -60,7 +60,9 @@ class DaemonTooltipRenderer extends LineTooltipRenderer {
             .append("<p>")
             .append("<span style=\"color:")
             .append(ColorUtil.toHex(getDescriptionTitleColor()))
-            .append("\">Inspection info:</span>")
+            .append("\">")
+            .append(TooltipLinkHandlerEP.getDescriptionTitle(ref, editor))
+            .append(":</span>")
             .append(description)
             .append(UIUtil.BORDER_LINE);
         }
@@ -108,7 +110,7 @@ class DaemonTooltipRenderer extends LineTooltipRenderer {
 
   @NotNull
   @Override
-  protected LineTooltipRenderer createRenderer(@Nullable String text, final int width) {
+  public LineTooltipRenderer createRenderer(@Nullable String text, final int width) {
     return new DaemonTooltipRenderer(text, width, getEqualityObjects());
   }
 }

@@ -58,9 +58,8 @@ public abstract class CompilerReferenceReader<Index extends CompilerReferenceInd
 
   public abstract int getOccurrenceCount(@NotNull CompilerRef element);
 
-  @Nullable("return null if the class hierarchy contains ambiguous qualified names")
-  public abstract CompilerRef.CompilerClassHierarchyElementDef[] getHierarchy(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement,
-                                                                              boolean checkBaseClassAmbiguity,
-                                                                              boolean includeAnonymous,
-                                                                              int interruptNumber);
+  public abstract CompilerRef.CompilerClassHierarchyElementDef @Nullable("return null if the class hierarchy contains ambiguous qualified names") [] getHierarchy(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement,
+                                                                                                                                                                  boolean checkBaseClassAmbiguity,
+                                                                                                                                                                  boolean includeAnonymous,
+                                                                                                                                                                  int interruptNumber);
 }

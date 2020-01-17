@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -19,11 +20,14 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.TextBrowseFolderListener;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
@@ -43,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -65,7 +70,6 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   protected static final Key<String> EMPTY_TEXT = KeyWithDefaultValue.create("EMPTY_TEXT", "New Mapping $addShortcut");
   protected static final Key<String> OVERRIDE_QUESTION = Key.create("OVERRIDE_QUESTION");
   protected static final Key<String> OVERRIDE_TITLE = Key.create("OVERRIDE_TITLE");
-  protected static final Key<String> CLEAR_TEXT = KeyWithDefaultValue.create("CLEAR_TEXT", "<Clear>");
   protected static final Key<String> NULL_TEXT = KeyWithDefaultValue.create("NULL_TEXT", "<None>");
   protected static final Key<Boolean> ADD_PROJECT_MAPPING = KeyWithDefaultValue.create("ADD_PROJECT_MAPPING", Boolean.TRUE);
   protected static final Key<Boolean> ONLY_DIRECTORIES = KeyWithDefaultValue.create("ONLY_DIRECTORIES", Boolean.FALSE);
@@ -245,7 +249,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
     Set<Object> set = myModel.data.stream().map(o -> o.first).collect(Collectors.toSet());
     for (VirtualFile file : chosen) {
       if (!set.add(file)) continue;
-      myModel.data.add(Pair.create(file, null));
+      myModel.data.add(Pair.create(file, getNewMapping(file)));
     }
     myModel.fireTableDataChanged();
     TIntArrayList rowList = new TIntArrayList();
@@ -274,7 +278,16 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   }
 
   private void doEditAction(@NotNull AnActionButton button) {
-    TableUtil.editCellAt(myTable, myTable.getSelectedRow(), 1);
+    TableUtil.editCellAt(myTable, myTable.getSelectedRow(), 0);
+    TextFieldWithBrowseButton panel = ObjectUtils.tryCast(myTable.getEditorComponent(), TextFieldWithBrowseButton.class);
+    if (panel != null) {
+      //noinspection SSBasedInspection
+      SwingUtilities.invokeLater(() -> {
+        if (myTable.getEditorComponent() == panel) {
+          panel.getButton().doClick();
+        }
+      });
+    }
   }
 
   @Nullable
@@ -475,6 +488,38 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
         }
       }
     });
+    myTable.getColumnModel().getColumn(0).setCellEditor(new AbstractTableCellEditor() {
+      VirtualFile startValue;
+      String newPath;
+
+      @Override
+      public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        int modelRow = myTable.convertRowIndexToModel(row);
+        Pair<Object, T> pair = myModel.data.get(modelRow);
+        Object target = pair.first;
+        if (!(target instanceof VirtualFile)) return null;
+        startValue = (VirtualFile)target;
+        newPath = null;
+
+        TextFieldWithBrowseButton panel = new TextFieldWithBrowseButton();
+        panel.setText(startValue.getPath());
+        panel.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+          @Override
+          protected void textChanged(@NotNull DocumentEvent e) {
+            newPath = panel.getTextField().getText();
+          }
+        });
+        panel.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleLocalFileDescriptor()));
+        return panel;
+      }
+
+      @Override
+      public Object getCellEditorValue() {
+        if (newPath == null || newPath.equals(startValue.getPath())) return startValue;
+        VirtualFile newFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(this.newPath);
+        return ObjectUtils.notNull(newFile, startValue);
+      }
+    });
     myTable.getColumnModel().getColumn(1).setCellEditor(new AbstractTableCellEditor() {
       T editorValue;
 
@@ -645,14 +690,14 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   @NotNull
   protected final AnAction createValueAction(@Nullable Object target, @NotNull Value<T> value) {
     return new ComboBoxAction() {
-      void updateText() {
+      void updateText(Presentation p) {
         String text = renderValue(value.get(), StringUtil.notNullize(getNullValueText(target)));
-        getTemplatePresentation().setText(StringUtil.shortenTextWithEllipsis(text, 40, 0));
+        p.setText(StringUtil.shortenTextWithEllipsis(text, 40, 0));
       }
 
       @Override
       public void update(@NotNull AnActionEvent e) {
-        updateText();
+        updateText(getTemplatePresentation());
       }
 
       @NotNull
@@ -668,7 +713,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
           protected JBPopup createPopup(Runnable onDispose) {
             JBPopup popup = createValueEditorPopup(target, value.get(), onDispose, getDataContext(), o -> {
               value.set(o);
-              updateText();
+              updateText(presentation);
             }, value::commit);
             popup.setMinimumSize(new Dimension(getMinWidth(), getMinHeight()));
             return popup;
@@ -716,7 +761,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
 
   @Nullable
   protected String getClearValueText(@Nullable Object target) {
-    return target == null ? getNullValueText(null) : param(CLEAR_TEXT);
+    return target == null ? getNullValueText(null) : null;
   }
 
   @Nullable
@@ -776,7 +821,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-      return columnIndex > 0;
+      return true;
     }
 
     @Override
@@ -802,8 +847,14 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
       Pair<Object, T> pair = data.get(rowIndex);
-      if (Comparing.equal(aValue, pair.second)) return;
-      data.set(rowIndex, Pair.create(pair.first, (T)aValue));
+      if (columnIndex == 1) {
+        if (Comparing.equal(aValue, pair.second)) return;
+        data.set(rowIndex, Pair.create(pair.first, (T)aValue));
+      }
+      else {
+        if (Comparing.equal(aValue, pair.first)) return;
+        data.set(rowIndex, Pair.create(aValue, pair.second));
+      }
       fireTableRowsUpdated(rowIndex, rowIndex);
     }
 

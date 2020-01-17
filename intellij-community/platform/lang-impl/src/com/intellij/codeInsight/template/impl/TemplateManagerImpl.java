@@ -28,7 +28,6 @@ import com.intellij.testFramework.TestModeFlags;
 import com.intellij.util.PairProcessor;
 import com.intellij.util.containers.ConcurrentFactoryMap;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -37,7 +36,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
 public class TemplateManagerImpl extends TemplateManager implements Disposable {
-  // called a lot of times on save/load, so, better to use ExtensionPoint instead of name
   static final NotNullLazyValue<ExtensionPoint<TemplateContextType>> TEMPLATE_CONTEXT_EP =
     NotNullLazyValue.createValue(() -> TemplateContextType.EP_NAME.getPoint(null));
 
@@ -47,9 +45,9 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   private static final Key<TemplateState> TEMPLATE_STATE_KEY = Key.create("TEMPLATE_STATE_KEY");
   private final TemplateManagerListener myEventPublisher;
 
-  public TemplateManagerImpl(@NotNull Project project, @NotNull MessageBus messageBus) {
+  public TemplateManagerImpl(@NotNull Project project) {
     myProject = project;
-    myEventPublisher = messageBus.syncPublisher(TEMPLATE_STARTED_TOPIC);
+    myEventPublisher = project.getMessageBus().syncPublisher(TEMPLATE_STARTED_TOPIC);
     EditorFactoryListener myEditorFactoryListener = new EditorFactoryListener() {
       @Override
       public void editorReleased(@NotNull EditorFactoryEvent event) {
@@ -64,19 +62,17 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
       }
     };
     EditorFactory.getInstance().addEditorFactoryListener(myEditorFactoryListener, myProject);
+
+    TemplateContextType.EP_NAME.addExtensionPointListener(
+      () -> {
+        for (TemplateContextType type : getAllContextTypes()) {
+          type.clearCachedBaseContextType();
+        }
+      }, this);
   }
 
   @Override
   public void dispose() {
-  }
-
-  /**
-   * @deprecated use {@link #setTemplateTesting(Disposable)}
-   */
-  @TestOnly
-  @Deprecated
-  public static void setTemplateTesting(Project project, Disposable parentDisposable) {
-    setTemplateTesting(parentDisposable);
   }
 
   @TestOnly
@@ -85,12 +81,12 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   }
 
   @Override
-  public Template createTemplate(@NotNull String key, String group) {
+  public Template createTemplate(@NotNull String key, @NotNull String group) {
     return new TemplateImpl(key, group);
   }
 
   @Override
-  public Template createTemplate(@NotNull String key, String group, String text) {
+  public Template createTemplate(@NotNull String key, @NotNull String group, String text) {
     return new TemplateImpl(key, text, group);
   }
 

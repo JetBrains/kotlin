@@ -36,7 +36,7 @@
                 </constraints>
                 <properties>
                   <margin top="2" left="2" bottom="2" right="2"/>
-                  <text value="Sort suggestions alphabetically"/>
+                  <text resource-bundle="messages/ApplicationBundle" key="completion.option.sort.suggestions.alphabetically"/>
                 </properties>
               </component>
               <component id="51007" class="javax.swing.JLabel" binding="myAutoInsertLabel">
@@ -109,7 +109,7 @@
                   <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Insert selected suggestion by pressing space, dot, or other context-dependent keys"/>
+                  <text resource-bundle="messages/ApplicationBundle" key="completion.option.insert.selected.suggestion"/>
                 </properties>
               </component>
               <grid id="ab3d3" layout-manager="GridBagLayout">
@@ -125,7 +125,7 @@
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <text value="Match case:   "/>
+                      <text resource-bundle="messages/ApplicationBundle" key="completion.option.match.case"/>
                     </properties>
                   </component>
                   <component id="2b836" class="com.intellij.ui.components.JBRadioButton" binding="myFirstLetterOnly">
@@ -135,7 +135,7 @@
                     </constraints>
                     <properties>
                       <selected value="true"/>
-                      <text value="First letter only  "/>
+                      <text resource-bundle="messages/ApplicationBundle" key="completion.option.first.letter.only"/>
                     </properties>
                   </component>
                   <component id="b71b7" class="com.intellij.ui.components.JBRadioButton" binding="myAllLetters">
@@ -144,7 +144,7 @@
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <text value="All letters"/>
+                      <text resource-bundle="messages/ApplicationBundle" key="completion.option.all.letters"/>
                     </properties>
                   </component>
                 </children>

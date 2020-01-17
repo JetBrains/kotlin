@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.ide.actions.searcheverywhere.ClassSearchEverywhereContributor.pathToAnonymousClass;
+
 public class ChooseByNamePopup extends ChooseByNameBase implements ChooseByNamePopupComponent, Disposable {
   public static final Key<ChooseByNamePopup> CHOOSE_BY_NAME_POPUP_IN_PROJECT_KEY = new Key<>("ChooseByNamePopup");
   public static final Key<String> CURRENT_SEARCH_PATTERN = new Key<>("ChooseByNamePattern");
@@ -326,7 +328,7 @@ public class ChooseByNamePopup extends ChooseByNameBase implements ChooseByNameP
                                                                                 "(\\d+)?(?:\\W(\\d+)?)?" + // line + column
                                                                                 "[)\\]]?" // possible closing paren/brace
   );
-  public static final Pattern patternToDetectAnonymousClasses = Pattern.compile("([\\.\\w]+)((\\$[\\d]+)*(\\$)?)");
+  public static final Pattern patternToDetectAnonymousClasses = Pattern.compile("([.\\w]+)((\\$[\\d]+)*(\\$)?)");
   private static final Pattern patternToDetectMembers = Pattern.compile("(.+)(#)(.*)");
   private static final Pattern patternToDetectSignatures = Pattern.compile("(.+#.*)\\(.*\\)");
 
@@ -397,19 +399,8 @@ public class ChooseByNamePopup extends ChooseByNameBase implements ChooseByNameP
 
   @Nullable
   public String getPathToAnonymous() {
-    final Matcher matcher = patternToDetectAnonymousClasses.matcher(getTrimmedText());
-    if (matcher.matches()) {
-      String path = matcher.group(2);
-      if (path != null) {
-        path = path.trim();
-        if (path.endsWith("$") && path.length() >= 2) {
-          path = path.substring(0, path.length() - 2);
-        }
-        if (!path.isEmpty()) return path;
-      }
-    }
-
-    return null;
+    Matcher matcher = patternToDetectAnonymousClasses.matcher(getTrimmedText());
+    return pathToAnonymousClass(matcher);
   }
 
   public int getColumnPosition() {

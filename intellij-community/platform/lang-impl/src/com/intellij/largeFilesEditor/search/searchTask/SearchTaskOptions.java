@@ -12,7 +12,6 @@ public class SearchTaskOptions implements Cloneable {
 
   public String stringToFind;
 
-  public boolean onlyOnePageSearch = false;
   public boolean loopedPhase = false;
 
   public long leftBoundPageNumber = NO_LIMIT;
@@ -24,6 +23,7 @@ public class SearchTaskOptions implements Cloneable {
 
   public boolean caseSensitive = false;
   public boolean wholeWords = false;
+  public boolean regularExpression = false;
 
   public int contextOneSideLength = 0;
   public int criticalAmountOfSearchResults = DEFAULT_CRITICAL_AMOUNT_OF_SEARCH_RESULTS;
@@ -31,11 +31,6 @@ public class SearchTaskOptions implements Cloneable {
 
   public SearchTaskOptions setStringToFind(String stringToFind) {
     this.stringToFind = stringToFind;
-    return this;
-  }
-
-  public SearchTaskOptions setOnlyOnePageSearch(boolean onlyOnePageSearch) {
-    this.onlyOnePageSearch = onlyOnePageSearch;
     return this;
   }
 
@@ -55,6 +50,11 @@ public class SearchTaskOptions implements Cloneable {
 
   public SearchTaskOptions setWholeWords(boolean wholeWords) {
     this.wholeWords = wholeWords;
+    return this;
+  }
+
+  public SearchTaskOptions setRegularExpression(boolean regularExpression) {
+    this.regularExpression = regularExpression;
     return this;
   }
 
@@ -109,6 +109,7 @@ public class SearchTaskOptions implements Cloneable {
     findModel.setStringToFind(stringToFind);
     findModel.setCaseSensitive(caseSensitive);
     findModel.setWholeWordsOnly(wholeWords);
+    findModel.setRegularExpressions(regularExpression);
     return findModel;
   }
 }

@@ -3,7 +3,6 @@ package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
@@ -36,7 +35,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
   }
 
   public void init() {
-    ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(KeymapManagerListener.TOPIC, new KeymapManagerListener() {
+    myProject.getMessageBus().connect(this).subscribe(KeymapManagerListener.TOPIC, new KeymapManagerListener() {
       @Override
       public void activeKeymapChanged(Keymap keymap) {
         fireShortcutsUpdated();
@@ -57,7 +56,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
     if (projectPath != null) {
       String portablePath = FileUtil.toSystemIndependentName(projectPath);
       File file = new File(portablePath);
-      result.append(file.isFile() && file.getParentFile() != null ? file.getParentFile().getName() : file.getName());
+      result.append(file.getParentFile() != null ? file.getParentFile().getName() : file.getName());
       result.append(Integer.toHexString(portablePath.hashCode()));
 
       if (taskName != null) result.append(taskName);
@@ -81,8 +80,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
     return activeKeymap.getShortcuts(actionId).length > 0;
   }
 
-  @NotNull
-  private Shortcut[] getShortcuts(@Nullable String projectPath, @Nullable String taskName) {
+  private Shortcut @NotNull [] getShortcuts(@Nullable String projectPath, @Nullable String taskName) {
     String actionId = getActionId(projectPath, taskName);
     Keymap activeKeymap = KeymapManager.getInstance().getActiveKeymap();
     return activeKeymap.getShortcuts(actionId);

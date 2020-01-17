@@ -4,10 +4,12 @@ package org.jetbrains.plugins.gradle.issue.quickfix
 import com.intellij.build.SyncViewManager
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.ide.actions.ShowLogAction
+import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.externalSystem.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.IN_BACKGROUND_ASYNC
@@ -28,7 +30,6 @@ import org.gradle.util.GradleVersion
 import org.gradle.wrapper.WrapperExecutor
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleWrapperSettingsOpenQuickFix.Companion.showWrapperPropertiesFile
-import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -50,7 +51,7 @@ class GradleVersionQuickFix(private val projectPath: String,
 
   override val id: String = "fix_gradle_version_in_wrapper"
 
-  override fun runQuickFix(project: Project): CompletableFuture<*> {
+  override fun runQuickFix(project: Project, dataProvider: DataProvider): CompletableFuture<*> {
     return updateOrCreateWrapper()
       .exceptionally {
         LOG.warn(it)
@@ -60,7 +61,7 @@ class GradleVersionQuickFix(private val projectPath: String,
           .apply {
             isBalloonNotification = true
             balloonGroup = "Gradle Import"
-            setListener("#open_log") { _, _ -> ShowFilePathAction.openFile(File(PathManager.getLogPath(), "idea.log")) }
+            setListener("#open_log") { _, _ -> RevealFileAction.openFile(File(PathManager.getLogPath(), "idea.log")) }
           }
         ExternalSystemNotificationManager.getInstance(project).showNotification(GradleConstants.SYSTEM_ID, notification)
         throw it
@@ -74,7 +75,7 @@ class GradleVersionQuickFix(private val projectPath: String,
         when {
           requestImport -> {
             TimeoutUtil.sleep(500) // todo remove when multiple-build view will be integrated into the BuildTreeConsoleView
-            return@thenComposeAsync requestImport(project, projectPath)
+            return@thenComposeAsync requestImport(project, projectPath, GradleConstants.SYSTEM_ID)
           }
           else -> return@thenComposeAsync completedFuture(null)
         }

@@ -36,12 +36,6 @@ public abstract class FormatterEx implements Formatter {
                               CommonCodeStyleSettings.IndentOptions indentOptions,
                               FormatTextRanges affectedRanges) throws IncorrectOperationException;
 
-  public abstract void format(final FormattingModel model,
-                              final CodeStyleSettings settings,
-                              final CommonCodeStyleSettings.IndentOptions indentOptions,
-                              final FormatTextRanges affectedRanges,
-                              final boolean formatContextAroundRanges) throws IncorrectOperationException;
-
   public abstract int adjustLineIndent(final FormattingModel psiBasedFormattingModel,
                                        final CodeStyleSettings settings,
                                        final CommonCodeStyleSettings.IndentOptions indentOptions,

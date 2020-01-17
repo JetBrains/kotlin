@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DetectedLibraryRoot {
   private final VirtualFile myFile;
   private final List<LibraryRootType> myTypes;

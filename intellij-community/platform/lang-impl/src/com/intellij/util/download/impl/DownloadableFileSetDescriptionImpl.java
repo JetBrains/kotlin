@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DownloadableFileSetDescriptionImpl<F extends DownloadableFileDescription> implements DownloadableFileSetDescription {
   protected final List<F> myFiles;
   protected final String myVersionString;

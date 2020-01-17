@@ -21,7 +21,7 @@ final class PlatformProjectConfigurator implements DirectoryProjectConfigurator 
   private static final Logger LOG = Logger.getInstance(PlatformProjectConfigurator.class);
 
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean newProject) {
     final ModuleManager moduleManager = ModuleManager.getInstance(project);
     final Module[] modules = moduleManager.getModules();
     if (modules.length != 0) {

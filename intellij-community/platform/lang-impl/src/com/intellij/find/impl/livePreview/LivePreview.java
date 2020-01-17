@@ -13,6 +13,8 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsListener;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
@@ -38,7 +40,7 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.List;
 
-public class LivePreview implements SearchResults.SearchResultsListener, SelectionListener, DocumentListener {
+public class LivePreview implements SearchResults.SearchResultsListener, SelectionListener, DocumentListener, EditorColorsListener {
   private static final Key<RangeHighlighter> IN_SELECTION_KEY = Key.create("LivePreview.IN_SELECTION_KEY");
   private static final String EMPTY_STRING_DISPLAY_TEXT = "<Empty string>";
 
@@ -157,11 +159,7 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
   private void clearUnusedHighlighters() {
     myHighlighters.removeIf(h -> {
       if (h.getUserData(MARKER_USED) == null) {
-        removeHighlighter(h);
-        RangeHighlighter additionalHighlighter = h.getUserData(IN_SELECTION_KEY);
-        if (additionalHighlighter != null) {
-          removeHighlighter(additionalHighlighter);
-        }
+        removeHighlighterWithDependent(h);
         return true;
       }
       else {
@@ -169,6 +167,14 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
         return false;
       }
     });
+  }
+
+  private void removeHighlighterWithDependent(@NotNull RangeHighlighter highlighter) {
+    removeHighlighter(highlighter);
+    RangeHighlighter additionalHighlighter = highlighter.getUserData(IN_SELECTION_KEY);
+    if (additionalHighlighter != null) {
+      removeHighlighter(additionalHighlighter);
+    }
   }
 
   @Override
@@ -206,6 +212,7 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
     searchResultsUpdated(searchResults);
     searchResults.addListener(this);
     EditorUtil.addBulkSelectionListener(mySearchResults.getEditor(), this, myDisposable);
+    ApplicationManager.getApplication().getMessageBus().connect(myDisposable).subscribe(EditorColorsManager.TOPIC, this);
   }
 
   public Delegate getDelegate() {
@@ -216,12 +223,17 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
     myDelegate = delegate;
   }
 
+  @Override
+  public void globalSchemeChange(@Nullable EditorColorsScheme scheme) {
+    highlightUsages();
+    updateCursorHighlighting();
+  }
 
   public void dispose() {
     hideBalloon();
 
     for (RangeHighlighter h : myHighlighters) {
-      removeHighlighter(h);
+      removeHighlighterWithDependent(h);
     }
     myHighlighters.clear();
 

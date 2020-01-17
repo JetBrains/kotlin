@@ -19,7 +19,6 @@ import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-@ApiStatus.Experimental
 public interface ExcludedEntriesListener {
   Topic<ExcludedEntriesListener> TOPIC = Topic.create("Compiler's excluded entries modification notification", ExcludedEntriesListener.class);
 

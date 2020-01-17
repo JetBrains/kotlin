@@ -32,9 +32,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GradleConsoleFilterProvider implements ConsoleFilterProvider {
-  @NotNull
   @Override
-  public Filter[] getDefaultFilters(@NotNull Project project) {
+  public Filter @NotNull [] getDefaultFilters(@NotNull Project project) {
     return new Filter[]{
       new GradleConsoleFilter(project),
       new RegexpFilter(project, RegexpFilter.FILE_PATH_MACROS + ":" + RegexpFilter.LINE_MACROS) {
@@ -43,7 +42,7 @@ public class GradleConsoleFilterProvider implements ConsoleFilterProvider {
 
         @Override
         public Result applyFilter(@NotNull String line, int entireLength) {
-          if (line == null || !FileUtil.isAbsolutePlatformIndependent(line)) return null;
+          if (!FileUtil.isAbsolutePlatformIndependent(line)) return null;
           if (Boolean.FALSE.equals(myIsGradleProject.getValue())) return null;
           Result result = super.applyFilter(line, entireLength);
           if (result == null) return null;

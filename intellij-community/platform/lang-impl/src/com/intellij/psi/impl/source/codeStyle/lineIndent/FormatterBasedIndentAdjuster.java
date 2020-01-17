@@ -3,14 +3,23 @@ package com.intellij.psi.impl.source.codeStyle.lineIndent;
 
 import com.intellij.formatting.FormattingMode;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.FormattingModeAwareIndentAdjuster;
+import com.intellij.psi.text.BlockSupport;
+import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.text.CharArrayUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+@ApiStatus.Internal
 public class FormatterBasedIndentAdjuster  {
 
   private final static int MAX_SYNCHRONOUS_ADJUSTMENT_DOC_SIZE = 100000;
@@ -18,46 +27,71 @@ public class FormatterBasedIndentAdjuster  {
   private FormatterBasedIndentAdjuster() {
   }
 
-  public static void scheduleIndentAdjustment(@NotNull Project myProject,
-                                              @NotNull Document myDocument,
-                                              int myOffset) {
-    IndentAdjusterRunnable fixer = new IndentAdjusterRunnable(myProject, myDocument, myOffset);
-    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(myProject);
-    if (isSynchronousAdjustment(myDocument)) {
-      documentManager.commitDocument(myDocument);
+  public static void scheduleIndentAdjustment(@NotNull Project project,
+                                              @NotNull Document document,
+                                              int offset) {
+    PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(document);
+    if (file != null) {
+      IndentAdjusterRunnable fixer = new IndentAdjusterRunnable(project, document, file, offset);
+      PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+      if (isSynchronousAdjustment(document, file)) {
+        documentManager.commitDocument(document);
+      }
       fixer.run();
-    }
-    else {
-      documentManager.performLaterWhenAllCommitted(fixer);
     }
   }
 
-  private static boolean isSynchronousAdjustment(@NotNull Document document) {
-    return ApplicationManager.getApplication().isUnitTestMode() || document.getTextLength() <= MAX_SYNCHRONOUS_ADJUSTMENT_DOC_SIZE;
+  private static boolean isSynchronousAdjustment(@NotNull Document document, @NotNull PsiFile file) {
+    return ApplicationManager.getApplication().isUnitTestMode() ||
+           document.getTextLength() <= MAX_SYNCHRONOUS_ADJUSTMENT_DOC_SIZE && !BlockSupport.isTooDeep(file);
   }
 
   public static class IndentAdjusterRunnable implements Runnable {
     private final Project myProject;
     private final int myLine;
     private final Document myDocument;
+    private final PsiFile myFile;
 
-    public IndentAdjusterRunnable(Project project, Document document, int offset) {
+    public IndentAdjusterRunnable(@NotNull Project project,
+                                  @NotNull Document document,
+                                  @NotNull PsiFile file,
+                                  int offset) {
       myProject = project;
       myDocument = document;
       myLine = myDocument.getLineNumber(offset);
+      myFile = file;
     }
 
     @Override
     public void run() {
       int lineStart = myDocument.getLineStartOffset(myLine);
-      CommandProcessor.getInstance().runUndoTransparentAction(() ->
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(myProject);
-          if (codeStyleManager instanceof FormattingModeAwareIndentAdjuster) {
-            ((FormattingModeAwareIndentAdjuster)codeStyleManager).adjustLineIndent(myDocument, lineStart, FormattingMode.ADJUST_INDENT_ON_ENTER);
-          }
-        }));
+      int indentEnd = CharArrayUtil.shiftForward(myDocument.getCharsSequence(), lineStart, " \t");
+      RangeMarker indentMarker = myDocument.createRangeMarker(lineStart, indentEnd);
+      CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(myProject);
+      if (isSynchronousAdjustment(myDocument, myFile)) {
+        updateIndent(indentMarker,
+                     codeStyleManager.getLineIndent(myFile, lineStart, FormattingMode.ADJUST_INDENT_ON_ENTER));
+      }
+      else {
+        ReadAction
+          .nonBlocking(() -> codeStyleManager.getLineIndent(myFile, lineStart, FormattingMode.ADJUST_INDENT_ON_ENTER))
+          .withDocumentsCommitted(myProject)
+          .finishOnUiThread(ModalityState.NON_MODAL, indentString -> updateIndent(indentMarker, indentString))
+          .submit(AppExecutorUtil.getAppExecutorService());
+      }
     }
+
+    private void updateIndent(@NotNull RangeMarker indentMarker, @Nullable String newIndent) {
+      if (newIndent != null) {
+        CommandProcessor.getInstance().runUndoTransparentAction(
+          () ->
+            ApplicationManager.getApplication().runWriteAction(() -> {
+              myDocument.replaceString(indentMarker.getStartOffset(), indentMarker.getEndOffset(), newIndent);
+              indentMarker.dispose();
+            }));
+      }
+    }
+
   }
 
 }

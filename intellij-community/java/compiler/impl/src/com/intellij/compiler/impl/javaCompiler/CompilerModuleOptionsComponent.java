@@ -3,6 +3,7 @@ package com.intellij.compiler.impl.javaCompiler;
 
 import com.intellij.compiler.options.ModuleOptionsTableModel;
 import com.intellij.compiler.options.ModuleTableCellRenderer;
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.InsertPathAction;
 import com.intellij.ui.TableSpeedSearch;
@@ -32,14 +33,14 @@ public class CompilerModuleOptionsComponent extends JPanel {
 
     myTable = new JBTable(new ModuleOptionsTableModel());
     myTable.setRowHeight(JBUIScale.scale(22));
-    myTable.getEmptyText().setText("Additional compilation options will be the same for all modules");
+    myTable.getEmptyText().setText(CompilerBundle.message("settings.additional.compilation.options"));
 
     TableColumn moduleColumn = myTable.getColumnModel().getColumn(0);
-    moduleColumn.setHeaderValue("Module");
+    moduleColumn.setHeaderValue(CompilerBundle.message("settings.override.module.column"));
     moduleColumn.setCellRenderer(new ModuleTableCellRenderer());
 
     TableColumn optionsColumn = myTable.getColumnModel().getColumn(1);
-    String columnTitle = "Compilation options";
+    String columnTitle = CompilerBundle.message("settings.override.compilation.options.column");
     optionsColumn.setHeaderValue(columnTitle);
     int width = myTable.getFontMetrics(myTable.getFont()).stringWidth(columnTitle) + 10;
     optionsColumn.setPreferredWidth(width);
@@ -56,7 +57,7 @@ public class CompilerModuleOptionsComponent extends JPanel {
       .setRemoveAction(b -> removeSelectedModules())
       .createPanel();
     table.setPreferredSize(new Dimension(myTable.getWidth(), 150));
-    JLabel header = new JLabel("Override compiler parameters per-module:");
+    JLabel header = new JLabel(CompilerBundle.message("settings.override.compiler.parameters.per.module"));
 
     add(header, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.insets(5, 5, 0, 0), 0, 0));
     add(table, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, JBUI.insets(5, 5, 0, 0), 0, 0));

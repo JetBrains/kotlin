@@ -1,10 +1,10 @@
-import org.gradle.util.*
+import org.gradle.util.GradleVersion
 
 String[] ijTestIncludes = ${TEST_NAME_INCLUDES}
-boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10"))>=0
+boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10")) >= 0
 boolean skipExecution
 
-gradle.addBuildListener(new BuildListener() {
+gradle.addBuildListener(new BuildAdapter() {
   void	buildFinished(BuildResult result) {
     if(result.failure?.message?.startsWith("Task 'cleanTest' not found in") || result.failure?.message?.startsWith("Task 'test' not found in")) {
       IJTestEventLogger.logConfigurationError(
@@ -16,10 +16,6 @@ gradle.addBuildListener(new BuildListener() {
       )
     }
   }
-  void	buildStarted(Gradle gradle){}
-  void	projectsEvaluated(Gradle gradle){}
-  void	projectsLoaded(Gradle gradle){}
-  void	settingsEvaluated(Settings settings){}
 })
 
 for (incl in ijTestIncludes) {
@@ -33,15 +29,22 @@ for (incl in ijTestIncludes) {
   }
 }
 
+Class abstractTestTaskClass = null
+try {
+  abstractTestTaskClass = Class.forName("org.gradle.api.tasks.testing.AbstractTestTask")
+} catch (ClassNotFoundException ex) {
+ // ignore, class not available
+}
+
 gradle.taskGraph.beforeTask { Task task ->
   task.onlyIf { !skipExecution }
 
-  if (task instanceof Test) {
+  if (task instanceof Test || (abstractTestTaskClass != null && abstractTestTaskClass.isAssignableFrom(task.class))) {
     try {
       if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
-        task.filter {
-          ijTestIncludes.each(){ includeTestsMatching "${it}" }
-        }
+        def filter = task.getFilter()
+        filter.setIncludePatterns(new String[0])
+        ijTestIncludes.each(){ filter.includeTestsMatching "${it}" }
       }
     }
     catch (all) {

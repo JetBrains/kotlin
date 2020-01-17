@@ -22,9 +22,6 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 
 import java.util.Map;
 
-/**
- * @author nik
- */
 public class JpsEncodingConfigurationServiceImpl extends JpsEncodingConfigurationService {
   private static final JpsElementChildRoleBase<JpsSimpleElement<String>> ENCODING_ROLE = JpsElementChildRoleBase.create("encoding");
 

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.view;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
@@ -8,7 +9,6 @@ import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
-import icons.ExternalSystemIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @author Vladislav.Soroka
  */
 @Order(ExternalSystemNode.BUILTIN_TASKS_DATA_NODE_ORDER)
-public class TasksNode extends ExternalSystemNode {
+public class TasksNode extends ExternalSystemNode<Object> {
 
   private final MultiMap<String, TaskNode> myTasksMap = new MultiMap<>();
 
@@ -41,7 +41,7 @@ public class TasksNode extends ExternalSystemNode {
   @Override
   protected void update(@NotNull PresentationData presentation) {
     super.update(presentation);
-    presentation.setIcon(ExternalSystemIcons.TaskGroup);
+    presentation.setIcon(AllIcons.Nodes.ConfigFolder);
   }
 
   @Override
@@ -54,21 +54,20 @@ public class TasksNode extends ExternalSystemNode {
     return super.isVisible() && hasChildren();
   }
 
-  @SuppressWarnings("unchecked")
   @NotNull
   @Override
-  protected List<? extends ExternalSystemNode> doBuildChildren() {
+  protected List<? extends ExternalSystemNode<?>> doBuildChildren() {
     final List<ExternalSystemNode<?>> result = new ArrayList<>();
     final boolean isGroup = getExternalProjectsView().getGroupTasks();
     if (isGroup) {
       for (Map.Entry<String, Collection<TaskNode>> collectionEntry : myTasksMap.entrySet()) {
         final String group = ObjectUtils.notNull(collectionEntry.getKey(), "other");
-        final ExternalSystemNode tasksGroupNode = new ExternalSystemNode(getExternalProjectsView(), null, null) {
+        final ExternalSystemNode<?> tasksGroupNode = new ExternalSystemNode<Object>(getExternalProjectsView(), null, null) {
 
           @Override
           protected void update(@NotNull PresentationData presentation) {
             super.update(presentation);
-            presentation.setIcon(ExternalSystemIcons.TaskGroup);
+            presentation.setIcon(AllIcons.Nodes.ConfigFolder);
           }
 
           @Override

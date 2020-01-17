@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
 import com.intellij.execution.configurations.RunConfiguration;
@@ -38,6 +38,9 @@ public abstract class RunManagerEx extends RunManager {
 
   public abstract void setBeforeRunTasks(@NotNull RunConfiguration configuration, @NotNull List<BeforeRunTask> tasks);
 
+  /**
+   * @deprecated use {@link #setBeforeRunTasks(RunConfiguration, List)}
+   */
   @Deprecated
   public final void setBeforeRunTasks(@NotNull RunConfiguration configuration, @NotNull List<BeforeRunTask> tasks, @SuppressWarnings("unused") boolean addEnabledTemplateTasksIfAbsent) {
     setBeforeRunTasks(configuration, tasks);
@@ -53,6 +56,7 @@ public abstract class RunManagerEx extends RunManager {
     return getConfigurationIcon(settings, false);
   }
 
+  @NotNull
   public abstract Icon getConfigurationIcon(@NotNull RunnerAndConfigurationSettings settings, boolean withLiveIndicator);
 
   /**
@@ -72,7 +76,7 @@ public abstract class RunManagerEx extends RunManager {
   }
 
   @SafeVarargs
-  public static void disableTasks(Project project, RunConfiguration settings, @NotNull Key<? extends BeforeRunTask>... keys) {
+  public static void disableTasks(Project project, RunConfiguration settings, Key<? extends BeforeRunTask> @NotNull ... keys) {
     for (Key<? extends BeforeRunTask> key : keys) {
       List<? extends BeforeRunTask> tasks = getInstanceEx(project).getBeforeRunTasks(settings, key);
       for (BeforeRunTask task : tasks) {
@@ -82,7 +86,7 @@ public abstract class RunManagerEx extends RunManager {
   }
 
   @SafeVarargs
-  public static int getTasksCount(Project project, RunConfiguration settings, @NotNull Key<? extends BeforeRunTask>... keys) {
+  public static int getTasksCount(Project project, RunConfiguration settings, Key<? extends BeforeRunTask> @NotNull ... keys) {
     return Arrays.stream(keys).mapToInt(key -> getInstanceEx(project).getBeforeRunTasks(settings, key).size()).sum();
   }
 }

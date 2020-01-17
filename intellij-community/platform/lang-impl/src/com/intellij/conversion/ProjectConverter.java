@@ -25,8 +25,6 @@ import java.util.Collections;
 /**
  * Override some of 'create*Converter' methods to perform conversion. If none of these methods suits the needs,
  * override {@link #isConversionNeeded()}, {@link #getAdditionalAffectedFiles()} and one of '*processingFinished' methods
- *
- * @author nik
  */
 public abstract class ProjectConverter {
 

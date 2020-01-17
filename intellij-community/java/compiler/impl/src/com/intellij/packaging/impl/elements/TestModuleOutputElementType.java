@@ -27,9 +27,6 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class TestModuleOutputElementType extends ModuleOutputElementTypeBase<TestModuleOutputPackagingElement> {
   public static final TestModuleOutputElementType ELEMENT_TYPE = new TestModuleOutputElementType();
 

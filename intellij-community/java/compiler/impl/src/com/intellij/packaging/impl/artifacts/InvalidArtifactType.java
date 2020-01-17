@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class InvalidArtifactType extends ArtifactType {
 
   public static InvalidArtifactType getInstance() {

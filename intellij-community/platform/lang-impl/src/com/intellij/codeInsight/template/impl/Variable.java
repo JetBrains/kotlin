@@ -90,6 +90,15 @@ public class Variable implements Cloneable {
     return myDefaultValueExpression;
   }
 
+  void dropParsedData() {
+    if (myExpressionString != null) {
+      myExpression = null;
+    }
+    if (myDefaultValueString != null) {
+      myDefaultValueExpression = null;
+    }
+  }
+
   @NotNull
   public String getName() {
     return myName;

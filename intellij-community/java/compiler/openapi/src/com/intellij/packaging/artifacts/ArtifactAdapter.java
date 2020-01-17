@@ -17,9 +17,6 @@ package com.intellij.packaging.artifacts;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ArtifactAdapter implements ArtifactListener {
   @Override
   public void artifactAdded(@NotNull Artifact artifact) {

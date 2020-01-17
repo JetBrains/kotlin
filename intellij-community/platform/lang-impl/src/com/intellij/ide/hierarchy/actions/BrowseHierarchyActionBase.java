@@ -32,9 +32,12 @@ import java.util.List;
 
 /**
  * @author yole
+ *
+ * Use {@link com.intellij.ide.hierarchy.newAPI.actions.BrowseHierarchyActionBase} instead
  */
+@Deprecated
 public abstract class BrowseHierarchyActionBase extends AnAction {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase");
+  private static final Logger LOG = Logger.getInstance(BrowseHierarchyActionBase.class);
   private final LanguageExtension<HierarchyProvider> myExtension;
 
   protected BrowseHierarchyActionBase(@NotNull LanguageExtension<HierarchyProvider> extension) {

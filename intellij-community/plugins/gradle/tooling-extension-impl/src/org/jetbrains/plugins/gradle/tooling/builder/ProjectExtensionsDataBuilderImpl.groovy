@@ -11,6 +11,8 @@ import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 
+import java.lang.reflect.Method
+
 /**
  * @author Vladislav.Soroka
  */
@@ -43,7 +45,7 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
     extensions.extraProperties.properties.each { name, value ->
       if(name == 'extraModelBuilder' || name.contains('.')) return
       String typeFqn = getType(value)
-      result.gradleProperties.add(new DefaultGradleProperty(name, typeFqn, value.toString()))
+      result.gradleProperties.add(new DefaultGradleProperty(name, typeFqn))
     }
 
     for (it in extensions.findAll()) {
@@ -51,8 +53,6 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
       List<String> keyList =
         GradleVersion.current() >= GradleVersion.version("4.5")
           ? extension.extensionsSchema.collect { it["name"] as String }
-          : is35_OrBetter
-          ? extension.schema.keySet().asList() as List<String>
           : extractKeysViaReflection(extension)
 
       for (name in keyList) {
@@ -66,11 +66,27 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
     return result
   }
 
-  private List<String> extractKeysViaReflection(ExtensionContainer convention) {
-    def m = convention.class.getMethod("getAsMap")
-    return (m.invoke(convention) as Map<String, Object>).keySet().asList() as List<String>
+  private static List<String> extractKeysViaReflection(ExtensionContainer convention) {
+    List<String> methods = ["getSchema", "getAsMap"]
+    Method m = null
+    for (def name : methods) {
+      try {
+        m = convention.class.getMethod(name)
+      } catch (NoSuchMethodException ignored) {
+      }
+      if (m != null) {
+        break;
+      }
+    }
+
+    if (m != null) {
+      return (m.invoke(convention) as Map<String, Object>).keySet().asList() as List<String>
+    } else {
+      return Collections.emptyList();
+    }
   }
 
+  @NotNull
   @Override
   ErrorMessageBuilder getErrorMessageBuilder(@NotNull Project project, @NotNull Exception e) {
     return ErrorMessageBuilder.create(

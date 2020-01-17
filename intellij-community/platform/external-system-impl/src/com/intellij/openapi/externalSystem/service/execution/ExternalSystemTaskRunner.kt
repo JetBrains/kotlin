@@ -43,7 +43,7 @@ class ExternalSystemTaskRunner : GenericProgramRunner<RunnerSettings>() {
 
   @Throws(ExecutionException::class)
   override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
-    if (state !is ExternalSystemRunConfiguration.MyRunnableState && state !is HistoryTestRunnableState) {
+    if (state !is ExternalSystemRunnableState && state !is HistoryTestRunnableState) {
       return null
     }
 
@@ -54,7 +54,7 @@ class ExternalSystemTaskRunner : GenericProgramRunner<RunnerSettings>() {
       return runContentDescriptor
     }
 
-    (state as ExternalSystemRunConfiguration.MyRunnableState).setContentDescriptor(runContentDescriptor)
+    (state as ExternalSystemRunnableState).setContentDescriptor(runContentDescriptor)
     if (executionResult.executionConsole is BuildView) {
       return runContentDescriptor
     }

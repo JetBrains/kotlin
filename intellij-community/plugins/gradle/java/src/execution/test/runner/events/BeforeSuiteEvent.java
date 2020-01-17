@@ -6,9 +6,10 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.execution.test.runner.GradleConsoleProperties;
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleSMTestProxy;
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestsExecutionConsole;
+
+import java.util.Objects;
 
 import static com.intellij.util.io.URLUtil.SCHEME_SEPARATOR;
 
@@ -36,12 +37,28 @@ public class BeforeSuiteEvent extends AbstractTestEvent {
         registerTestProxy(testId, parentTest);
       }
       else {
+        boolean combineTestsOfTheSameSuite = !showInternalTestNodes();
+        String sameSuiteId = name + fqClassName;
+        if (combineTestsOfTheSameSuite) {
+          SMTestProxy testProxy = findTestProxy(sameSuiteId);
+          if (testProxy instanceof GradleSMTestProxy && Objects.equals(testProxy.getParent(), parentTest)) {
+            registerTestProxy(testId, testProxy);
+            if (!testProxy.isInProgress()) {
+              testProxy.setStarted();
+            }
+            return;
+          }
+        }
+
         String locationUrl = findLocationUrl(null, fqClassName);
         final GradleSMTestProxy testProxy = new GradleSMTestProxy(name, true, locationUrl, null);
         testProxy.setLocator(getExecutionConsole().getUrlProvider());
         testProxy.setParentId(parentTestId);
         testProxy.setStarted();
         registerTestProxy(testId, testProxy);
+        if (combineTestsOfTheSameSuite) {
+          registerTestProxy(sameSuiteId, testProxy);
+        }
       }
     }
   }
@@ -56,7 +73,7 @@ public class BeforeSuiteEvent extends AbstractTestEvent {
 
   private boolean isHiddenTestNode(String name, SMTestProxy parentTest) {
     return parentTest != null &&
-           !GradleConsoleProperties.SHOW_INTERNAL_TEST_NODES.value(getProperties()) &&
+           !showInternalTestNodes() &&
            StringUtil.startsWith(name, "Gradle Test Executor");
   }
 }

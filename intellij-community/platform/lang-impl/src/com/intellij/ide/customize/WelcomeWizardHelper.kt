@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ide.customize
 
 import com.intellij.application.options.CodeStyle
@@ -9,14 +8,13 @@ import com.intellij.ide.projectView.impl.ProjectViewSharedSettings
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.UISettings
 import com.intellij.lang.Language
-import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.util.registry.Registry
 
-class WelcomeWizardHelper : BaseComponent {
-  override fun initComponent() {
+internal class WelcomeWizardHelper {
+  init {
     //Project View settings
     WelcomeWizardUtil.getAutoScrollToSource()?.let {
-        ProjectViewSharedSettings.instance.autoscrollToSource = it
+      ProjectViewSharedSettings.instance.autoscrollToSource = it
     }
     WelcomeWizardUtil.getManualOrder()?.let {
       ProjectViewSharedSettings.instance.manualOrder = it

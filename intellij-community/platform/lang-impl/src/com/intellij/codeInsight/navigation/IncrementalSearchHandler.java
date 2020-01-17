@@ -48,7 +48,7 @@ import java.util.regex.PatternSyntaxException;
 public class IncrementalSearchHandler {
   private static final Key<PerEditorSearchData> SEARCH_DATA_IN_EDITOR_VIEW_KEY = Key.create("IncrementalSearchHandler.SEARCH_DATA_IN_EDITOR_VIEW_KEY");
   private static final Key<PerHintSearchData> SEARCH_DATA_IN_HINT_KEY = Key.create("IncrementalSearchHandler.SEARCH_DATA_IN_HINT_KEY");
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.navigation.IncrementalSearchHandler");
+  private static final Logger LOG = Logger.getInstance(IncrementalSearchHandler.class);
 
   private static boolean ourActionsRegistered = false;
 
@@ -80,7 +80,7 @@ public class IncrementalSearchHandler {
     if (!ourActionsRegistered) {
       EditorActionManager actionManager = EditorActionManager.getInstance();
 
-      TypedAction typedAction = actionManager.getTypedAction();
+      TypedAction typedAction = TypedAction.getInstance();
       typedAction.setupRawHandler(new MyTypedHandler(typedAction.getRawHandler()));
 
       actionManager.setActionHandler(IdeActions.ACTION_EDITOR_BACKSPACE, new BackSpaceHandler(actionManager.getActionHandler(IdeActions.ACTION_EDITOR_BACKSPACE)));
@@ -424,9 +424,9 @@ public class IncrementalSearchHandler {
     }
 
     @Override
-    public boolean isEnabled(Editor editor, DataContext dataContext) {
+    public boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
       PerEditorSearchData data = editor.getUserData(SEARCH_DATA_IN_EDITOR_VIEW_KEY);
-      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, dataContext);
+      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, caret, dataContext);
     }
   }
 
@@ -457,9 +457,9 @@ public class IncrementalSearchHandler {
     }
 
     @Override
-    public boolean isEnabled(Editor editor, DataContext dataContext) {
+    public boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
       PerEditorSearchData data = editor.getUserData(SEARCH_DATA_IN_EDITOR_VIEW_KEY);
-      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, dataContext);
+      return data != null && data.hint != null || myOriginalHandler.isEnabled(editor, caret, dataContext);
     }
   }
 }

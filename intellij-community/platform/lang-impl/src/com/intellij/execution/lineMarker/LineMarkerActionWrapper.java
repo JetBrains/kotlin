@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Arrays;
 
 /**
@@ -36,9 +37,8 @@ public class LineMarkerActionWrapper extends ActionGroup implements PriorityActi
     copyFrom(origin);
   }
 
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     // This is quickfix for IDEA-208231
     // See com.intellij.codeInsight.daemon.impl.GutterIntentionMenuContributor.addActions(AnAction, List<? super IntentionActionDescriptor>, GutterIconRenderer, AtomicInteger, DataContext)`
     if (myOrigin instanceof ExecutorAction) {
@@ -82,7 +82,12 @@ public class LineMarkerActionWrapper extends ActionGroup implements PriorityActi
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    myOrigin.update(wrapEvent(e));
+    AnActionEvent wrapped = wrapEvent(e);
+    myOrigin.update(wrapped);
+    Icon icon = wrapped.getPresentation().getIcon();
+    if (icon != null) {
+      getTemplatePresentation().setIcon(icon);
+    }
   }
 
   @NotNull

@@ -17,18 +17,25 @@ package com.intellij.formatting;
 
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.TextRangeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public class FormatTextRanges implements FormattingRangesInfo {
-  private final List<TextRange> myInsertedRanges;
-  private final FormatRangesStorage myStorage = new FormatRangesStorage();
+  private final List<TextRange>       myInsertedRanges;
+  private final List<FormatTextRange> myRanges         = new ArrayList<>();
+  private final List<TextRange>       myExtendedRanges = new ArrayList<>();
+  private final List<TextRange>       myDisabledRanges = new ArrayList<>();
+
+  private boolean myExtendToContext;
 
   public FormatTextRanges() {
     myInsertedRanges = null;
@@ -39,24 +46,27 @@ public class FormatTextRanges implements FormattingRangesInfo {
     add(range, processHeadingWhitespace);
   }
 
-  public FormatTextRanges(@NotNull ChangedRangesInfo changedRangesInfo) {
-    List<TextRange> optimized = optimizedChangedRanges(changedRangesInfo.allChangedRanges);
-    optimized.forEach((range) -> add(range, true));
+  public FormatTextRanges(@NotNull ChangedRangesInfo changedRangesInfo, @NotNull List<TextRange> contextRanges) {
     myInsertedRanges = changedRangesInfo.insertedRanges;
+    boolean processHeadingWhitespace = false;
+    for (TextRange range : contextRanges) {
+      add(range, processHeadingWhitespace);
+      processHeadingWhitespace = true;
+    }
   }
 
   public void add(TextRange range, boolean processHeadingWhitespace) {
-    myStorage.add(range, processHeadingWhitespace);
+    myRanges.add(new FormatTextRange(range, processHeadingWhitespace));
   }
 
   @Override
   public boolean isWhitespaceReadOnly(final @NotNull TextRange range) {
-    return myStorage.isWhiteSpaceReadOnly(range);  
+    return myRanges.stream().allMatch(formatTextRange -> formatTextRange.isWhitespaceReadOnly(range));
   }
   
   @Override
   public boolean isReadOnly(@NotNull TextRange range) {
-    return myStorage.isReadOnly(range);
+    return myRanges.stream().allMatch(formatTextRange -> formatTextRange.isReadOnly(range));
   }
 
   @Override
@@ -71,12 +81,12 @@ public class FormatTextRanges implements FormattingRangesInfo {
   }
   
   public List<FormatTextRange> getRanges() {
-    return myStorage.getRanges();
+    return myRanges;
   }
 
   public FormatTextRanges ensureNonEmpty() {
     FormatTextRanges result = new FormatTextRanges();
-    for (FormatTextRange range : myStorage.getRanges()) {
+    for (FormatTextRange range : myRanges) {
       if (range.isProcessHeadingWhitespace()) {
         result.add(range.getNonEmptyTextRange(), true);
       }
@@ -88,47 +98,53 @@ public class FormatTextRanges implements FormattingRangesInfo {
   }
 
   public boolean isEmpty() {
-    return myStorage.isEmpty();
+    return myRanges.isEmpty();
   }
 
   public boolean isFullReformat(PsiFile file) {
-    List<FormatTextRange> ranges = myStorage.getRanges();
-    return ranges.size() == 1 && file.getTextRange().equals(ranges.get(0).getTextRange());
+    return myRanges.size() == 1 && file.getTextRange().equals(myRanges.get(0).getTextRange());
   }
 
   public List<TextRange> getTextRanges() {
-    return ContainerUtil.map(myStorage
-                               .getRanges(), FormatTextRange::getTextRange);
+    List<TextRange> ranges = ContainerUtil.map(myRanges, FormatTextRange::getTextRange);
+    ranges.sort(Segment.BY_START_OFFSET_THEN_END_OFFSET);
+    return ranges;
+  }
+
+  public void setExtendedRanges(@NotNull List<TextRange> extendedRanges) {
+    myExtendedRanges.addAll(extendedRanges);
   }
   
-  public List<TextRange> getExtendedFormattingRanges() {
-    return ContainerUtil.map(myStorage
-                               .getRanges(), (range) -> {
-      TextRange textRange = range.getTextRange();
-      return new UnfairTextRange(textRange.getStartOffset() - 500, textRange.getEndOffset() + 500);
-    });
+  public List<TextRange> getExtendedRanges() {
+    return myExtendedRanges.isEmpty() ? getTextRanges() : myExtendedRanges;
   }
 
-  private static List<TextRange> optimizedChangedRanges(@NotNull List<TextRange> allChangedRanges) {
-    if (allChangedRanges.isEmpty()) return allChangedRanges;
-    List<TextRange> sorted = ContainerUtil.sorted(allChangedRanges, Segment.BY_START_OFFSET_THEN_END_OFFSET);
 
-    List<TextRange> result = ContainerUtil.newSmartList();
-
-    TextRange prev = sorted.get(0);
-    for (TextRange next : sorted) {
-      if (next.getStartOffset() <= prev.getEndOffset() + 5) {
-        int newEndOffset = Math.max(prev.getEndOffset(), next.getEndOffset());
-        prev = new TextRange(prev.getStartOffset(), newEndOffset);
-      }
-      else {
-        result.add(prev);
-        prev = next;
-      }
-    }
-    result.add(prev);
-
-    return result;
+  /**
+   * @return A range containing all ranges or null if no ranges.
+   */
+  @Nullable
+  public TextRange getBoundRange() {
+    List<TextRange> ranges = getTextRanges();
+    return ranges.size() > 0 ?
+           new TextRange(ranges.get(0).getStartOffset(), ranges.get(ranges.size() - 1).getEndOffset()) :
+           null;
   }
-  
+
+  public boolean isExtendToContext() {
+    return myExtendToContext;
+  }
+
+  public void setExtendToContext(boolean extendToContext) {
+    myExtendToContext = extendToContext;
+  }
+
+  public void setDisabledRanges(@NotNull Collection<TextRange> disabledRanges) {
+    myDisabledRanges.clear();
+    myDisabledRanges.addAll(ContainerUtil.sorted(disabledRanges, Segment.BY_START_OFFSET_THEN_END_OFFSET));
+  }
+
+  public boolean isInDisabledRange(@NotNull TextRange textRange) {
+    return TextRangeUtil.intersectsOneOf(textRange, myDisabledRanges);
+  }
 }

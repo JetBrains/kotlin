@@ -12,8 +12,11 @@ import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractModuleDataService.MODULE_KEY
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
-import com.intellij.openapi.externalSystem.util.*
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
+import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.ApiStatus
@@ -80,7 +83,7 @@ class ConfigurationDataService : AbstractProjectDataService<ConfigurationData, V
           LOG.debug("Importing project configuration: " + data.jsonString)
         }
 
-        if (!ExternalSystemApiUtil.isOneToOneMapping(project, projectDataNode.data)) {
+        if (!ExternalSystemApiUtil.isOneToOneMapping(project, projectDataNode.data, ModuleManager.getInstance(project).modules)) {
           LOG.warn(
             "This external project are not the only project in the current IDE workspace, " +
             "found project level configuration can override the configuration came from other external projects.")

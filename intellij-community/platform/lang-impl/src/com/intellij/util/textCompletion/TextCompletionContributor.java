@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static com.intellij.codeInsight.AutoPopupController.ALWAYS_AUTO_POPUP;
-
 /**
  * @author sergey.evdokimov
  */

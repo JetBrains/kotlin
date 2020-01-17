@@ -1,20 +1,7 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.tools;
 
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
@@ -31,19 +18,20 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class BaseToolManager<T extends Tool> {
-  @Nullable private final ActionManagerEx myActionManager;
   private final SchemeManager<ToolsGroup<T>> mySchemeManager;
 
-  public BaseToolManager(@Nullable ActionManagerEx actionManagerEx, @NotNull SchemeManagerFactory factory, @NotNull String schemePath, @NotNull String presentableName) {
-    myActionManager = actionManagerEx;
-
+  public BaseToolManager(@NotNull SchemeManagerFactory factory, @NotNull String schemePath, @NotNull String presentableName) {
     //noinspection AbstractMethodCallInConstructor
     mySchemeManager = factory.create(schemePath, createProcessor(), presentableName);
     mySchemeManager.loadSchemes();
-    registerActions();
   }
 
   protected abstract SchemeProcessor<ToolsGroup<T>, ToolsGroup<T>> createProcessor();
+
+  @Nullable
+  protected ActionManagerEx getActionManager() {
+    return ActionManagerEx.getInstanceEx();
+  }
 
   @Nullable
   public static String convertString(String s) {
@@ -82,17 +70,17 @@ public abstract class BaseToolManager<T extends Tool> {
     return mySchemeManager.getAllSchemes();
   }
 
-  public void setTools(@NotNull List<? extends ToolsGroup<T>> tools) {
+  public void setTools(@NotNull List<ToolsGroup<T>> tools) {
     mySchemeManager.setSchemes(tools);
-    registerActions();
+    registerActions(getActionManager());
   }
 
-  void registerActions() {
-    if (myActionManager == null) {
+  protected final void registerActions(@Nullable ActionManager actionManager) {
+    if (actionManager == null) {
       return;
     }
 
-    unregisterActions();
+    unregisterActions(actionManager);
 
     // register
     // to prevent exception if 2 or more targets have the same name
@@ -100,7 +88,7 @@ public abstract class BaseToolManager<T extends Tool> {
     for (T tool : getTools()) {
       String actionId = tool.getActionId();
       if (registeredIds.add(actionId)) {
-        myActionManager.registerAction(actionId, createToolAction(tool));
+        actionManager.registerAction(actionId, createToolAction(tool));
       }
     }
   }
@@ -112,13 +100,13 @@ public abstract class BaseToolManager<T extends Tool> {
 
   protected abstract String getActionIdPrefix();
 
-  private void unregisterActions() {
-    // unregister Tool actions
-    if (myActionManager == null) {
+  private void unregisterActions(@Nullable ActionManager actionManager) {
+    if (actionManager == null) {
       return;
     }
-    for (String oldId : myActionManager.getActionIds(getActionIdPrefix())) {
-      myActionManager.unregisterAction(oldId);
+
+    for (String oldId : actionManager.getActionIds(getActionIdPrefix())) {
+      actionManager.unregisterAction(oldId);
     }
   }
 }

@@ -15,8 +15,5 @@
  */
 package com.intellij.execution.runners;
 
-/**
- * @author nik
- */
 public interface RunConfigurationWithSuppressedDefaultRunAction {
 }

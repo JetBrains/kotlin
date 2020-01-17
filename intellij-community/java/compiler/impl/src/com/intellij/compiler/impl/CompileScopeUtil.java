@@ -15,6 +15,7 @@
  */
 package com.intellij.compiler.impl;
 
+import com.intellij.compiler.ModuleSourceSet;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Key;
@@ -29,10 +30,8 @@ import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.jps.incremental.artifacts.ArtifactBuildTargetType;
 
 import java.util.*;
+import java.util.function.Function;
 
-/**
- * @author nik
- */
 public class CompileScopeUtil {
   private static final Key<List<TargetTypeBuildScope>> BASE_SCOPE_FOR_EXTERNAL_BUILD = Key.create("SCOPE_FOR_EXTERNAL_BUILD");
 
@@ -65,6 +64,47 @@ public class CompileScopeUtil {
         }
         scopes.add(builder.build());
       }
+    }
+  }
+
+  public static void addScopesForSourceSets(Collection<? extends ModuleSourceSet> sets, Collection<String> unloadedModules, List<? super TargetTypeBuildScope> scopes, boolean forceBuild) {
+    if (sets.isEmpty() && unloadedModules.isEmpty()) {
+      return;
+    }
+    final Map<BuildTargetType<?>, Set<String>> targetsByType = new HashMap<>();
+    final Function<BuildTargetType<?>, Set<String>> idsOf = targetType -> {
+      Set<String> ids = targetsByType.get(targetType);
+      if (ids == null) {
+        ids = new HashSet<>();
+        targetsByType.put(targetType, ids);
+      }
+      return ids;
+    };
+    for (ModuleSourceSet set : sets) {
+      final BuildTargetType<?> targetType = toTargetType(set);
+      assert targetType != null;
+      idsOf.apply(targetType).add(set.getModule().getName());
+    }
+    if (!unloadedModules.isEmpty()) {
+      for (JavaModuleBuildTargetType targetType : JavaModuleBuildTargetType.ALL_TYPES) {
+        idsOf.apply(targetType).addAll(unloadedModules);
+      }
+    }
+
+    for (Map.Entry<BuildTargetType<?>, Set<String>> entry : targetsByType.entrySet()) {
+      TargetTypeBuildScope.Builder builder = TargetTypeBuildScope.newBuilder().setTypeId(entry.getKey().getTypeId()).setForceBuild(forceBuild);
+      for (String targetId : entry.getValue()) {
+        builder.addTargetId(targetId);
+      }
+      scopes.add(builder.build());
+    }
+  }
+
+  private static BuildTargetType<?> toTargetType(ModuleSourceSet set) {
+    switch (set.getType()) {
+      case TEST: return JavaModuleBuildTargetType.TEST;
+      case PRODUCTION: return JavaModuleBuildTargetType.PRODUCTION;
+      default: return null;
     }
   }
 
@@ -116,7 +156,7 @@ public class CompileScopeUtil {
   }
 
   public static boolean allProjectModulesAffected(CompileContextImpl compileContext) {
-    final Set<Module> allModules = new HashSet<>(Arrays.asList(compileContext.getProjectCompileScope().getAffectedModules()));
+    final Set<Module> allModules = ContainerUtil.set(compileContext.getProjectCompileScope().getAffectedModules());
     allModules.removeAll(Arrays.asList(compileContext.getCompileScope().getAffectedModules()));
     return allModules.isEmpty();
   }

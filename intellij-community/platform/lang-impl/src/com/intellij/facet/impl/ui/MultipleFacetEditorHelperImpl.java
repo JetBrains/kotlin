@@ -3,6 +3,7 @@ package com.intellij.facet.impl.ui;
 
 import com.intellij.facet.ui.FacetEditor;
 import com.intellij.facet.ui.MultipleFacetEditorHelper;
+import com.intellij.facet.ui.MultipleFacetSettingsEditor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.NotNullFunction;
@@ -18,15 +19,12 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class MultipleFacetEditorHelperImpl implements MultipleFacetEditorHelper {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.facet.ui.MultipleFacetSettingsEditor");
+  private static final Logger LOG = Logger.getInstance(MultipleFacetSettingsEditor.class);
   private final List<AbstractBinding> myBindings = new ArrayList<>();
 
   @Override
-  public void bind(@NotNull ThreeStateCheckBox common, @NotNull FacetEditor[] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JCheckBox> fun) {
+  public void bind(@NotNull ThreeStateCheckBox common, FacetEditor @NotNull [] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JCheckBox> fun) {
     List<JCheckBox> checkBoxesList = new ArrayList<>();
     for (FacetEditor editor : editors) {
       checkBoxesList.add(fun.fun(editor));
@@ -37,7 +35,7 @@ public class MultipleFacetEditorHelperImpl implements MultipleFacetEditorHelper 
   }
 
   @Override
-  public void bind(@NotNull JTextField common, @NotNull FacetEditor[] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JTextField> fun) {
+  public void bind(@NotNull JTextField common, FacetEditor @NotNull [] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JTextField> fun) {
     List<JTextField> componentsList = new ArrayList<>();
     for (FacetEditor editor : editors) {
       componentsList.add(fun.fun(editor));
@@ -48,7 +46,7 @@ public class MultipleFacetEditorHelperImpl implements MultipleFacetEditorHelper 
   }
 
   @Override
-  public void bind(@NotNull JComboBox common, @NotNull FacetEditor[] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JComboBox> fun) {
+  public void bind(@NotNull JComboBox common, FacetEditor @NotNull [] editors, @NotNull NotNullFunction<? super FacetEditor, ? extends JComboBox> fun) {
     List<JComboBox> componentsList = new ArrayList<>();
     for (FacetEditor editor : editors) {
       componentsList.add(fun.fun(editor));

@@ -1,20 +1,20 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard.actions;
 
 import com.intellij.execution.*;
+import com.intellij.execution.compound.CompoundRunConfiguration;
+import com.intellij.execution.compound.SettingsAndEffectiveTarget;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.dashboard.RunDashboardManager;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
-import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunContentManagerImpl;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.content.Content;
@@ -22,13 +22,14 @@ import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.List;
 
 import static com.intellij.execution.dashboard.actions.RunDashboardActionUtils.getLeafTargets;
 
 /**
  * @author konstantin.aleev
  */
-public abstract class ExecutorAction extends AnAction {
+public abstract class ExecutorAction extends DumbAwareAction {
   protected ExecutorAction() {
   }
 
@@ -44,59 +45,54 @@ public abstract class ExecutorAction extends AnAction {
       return;
     }
     JBIterable<RunDashboardRunConfigurationNode> targetNodes = getLeafTargets(e);
-    if (RunDashboardManager.getInstance(project).isShowConfigurations()) {
-      boolean running = targetNodes.filter(node -> {
-        Content content = node.getContent();
-        return content != null && !RunContentManagerImpl.isTerminated(content);
-      }).isNotEmpty();
-      update(e, running);
-      e.getPresentation().setEnabled(targetNodes.filter(this::canRun).isNotEmpty());
-    }
-    else {
-      Content content = RunDashboardManager.getInstance(project).getDashboardContentManager().getSelectedContent();
-      update(e, content != null && !RunContentManagerImpl.isTerminated(content));
-      e.getPresentation().setEnabled(content != null);
-    }
+    boolean running = targetNodes.filter(node -> {
+      Content content = node.getContent();
+      return content != null && !RunContentManagerImpl.isTerminated(content);
+    }).isNotEmpty();
+    update(e, running);
+    e.getPresentation().setEnabled(targetNodes.filter(this::canRun).isNotEmpty());
   }
 
   private boolean canRun(@NotNull RunDashboardRunConfigurationNode node) {
-    final String executorId = getExecutor().getId();
-    final RunnerAndConfigurationSettings configurationSettings = node.getConfigurationSettings();
-    final ProgramRunner runner = ProgramRunnerUtil.getRunner(executorId, configurationSettings);
-    final ExecutionTarget target = ExecutionTargetManager.getActiveTarget(node.getProject());
-
-    RunConfiguration configuration = configurationSettings.getConfiguration();
-    return isValid(node) &&
-           runner != null &&
-           runner.canRun(executorId, configuration) &&
-           ExecutionTargetManager.canRun(configuration, target) &&
-           !isStarting(node.getProject(), configurationSettings, executorId, runner.getRunnerId());
+    Project project = node.getProject();
+    return canRun(node.getConfigurationSettings(),
+                  ExecutionTargetManager.getActiveTarget(project),
+                  DumbService.isDumb(project));
   }
 
-  private static boolean isStarting(Project project, RunnerAndConfigurationSettings configurationSettings, String executorId, String runnerId) {
-    ExecutorRegistry executorRegistry = ExecutorRegistry.getInstance();
-    if (executorRegistry.isStarting(project, executorId, runnerId)) {
+  private boolean canRun(RunnerAndConfigurationSettings settings, ExecutionTarget target, boolean isDumb) {
+    if (isDumb && !settings.getType().isDumbAware()) return false;
+
+    String executorId = getExecutor().getId();
+    RunConfiguration configuration = settings.getConfiguration();
+    Project project = configuration.getProject();
+    if (configuration instanceof CompoundRunConfiguration) {
+      if (ExecutionTargetManager.getInstance(project).getTargetsFor(configuration).isEmpty()) return false;
+
+      List<SettingsAndEffectiveTarget> subConfigurations =
+        ((CompoundRunConfiguration)configuration).getConfigurationsWithEffectiveRunTargets();
+      if (subConfigurations.isEmpty()) return false;
+
+      RunManager runManager = RunManager.getInstance(project);
+      for (SettingsAndEffectiveTarget subConfiguration : subConfigurations) {
+        RunnerAndConfigurationSettings subSettings = runManager.findSettings(subConfiguration.getConfiguration());
+        if (subSettings == null || !canRun(subSettings, subConfiguration.getTarget(), isDumb)) {
+          return false;
+        }
+      }
       return true;
     }
 
-    if (configurationSettings.getConfiguration().isAllowRunningInParallel()) {
-      return false;
-    }
+    if (!isValid(settings)) return false;
 
-    for (Executor executor : executorRegistry.getRegisteredExecutors()) {
-      if (executor.getId().equals(executorId)) continue;
-
-      ProgramRunner runner = ProgramRunnerUtil.getRunner(executor.getId(), configurationSettings);
-      if (runner == null) continue;
-
-      if (executorRegistry.isStarting(project, executor.getId(), runner.getRunnerId())) return true;
-    }
-    return false;
+    ProgramRunner<?> runner = ProgramRunner.getRunner(executorId, configuration);
+    return runner != null && ExecutionTargetManager.canRun(configuration, target) &&
+          !ExecutionManager.getInstance(project).isStarting(executorId, runner.getRunnerId());
   }
 
-  private static boolean isValid(RunDashboardRunConfigurationNode node) {
+  private static boolean isValid(RunnerAndConfigurationSettings settings) {
     try {
-      node.getConfigurationSettings().checkSettings(null);
+      settings.checkSettings(null);
       return true;
     }
     catch (IndexNotReadyException ex) {
@@ -114,41 +110,36 @@ public abstract class ExecutorAction extends AnAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     if (project == null) return;
-    if (RunDashboardManager.getInstance(project).isShowConfigurations()) {
-      for (RunDashboardRunConfigurationNode node : getLeafTargets(e)) {
-        doActionPerformed(node);
-      }
-    }
-    else {
-      Content content = RunDashboardManager.getInstance(project).getDashboardContentManager().getSelectedContent();
-      if (content != null) {
-        RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
-        JComponent component = content.getComponent();
-        if (component == null) {
-          return;
-        }
-        ExecutionEnvironment environment = LangDataKeys.EXECUTION_ENVIRONMENT.getData(DataManager.getInstance().getDataContext(component));
-        if (environment == null) {
-          return;
-        }
-        ExecutionManager.getInstance(project).restartRunProfile(project,
-                                                                getExecutor(),
-                                                                ExecutionTargetManager.getActiveTarget(project),
-                                                                environment.getRunnerAndConfigurationSettings(),
-                                                                descriptor == null ? null : descriptor.getProcessHandler());
-      }
+
+    for (RunDashboardRunConfigurationNode node : getLeafTargets(e)) {
+      doActionPerformed(node);
     }
   }
 
   private void doActionPerformed(RunDashboardRunConfigurationNode node) {
     if (!canRun(node)) return;
 
-    RunContentDescriptor descriptor = node.getDescriptor();
-    ExecutionManager.getInstance(node.getProject()).restartRunProfile(node.getProject(),
-                                                                      getExecutor(),
-                                                                      ExecutionTargetManager.getActiveTarget(node.getProject()),
-                                                                      node.getConfigurationSettings(),
-                                                                      descriptor == null ? null : descriptor.getProcessHandler());
+    run(node.getConfigurationSettings(), ExecutionTargetManager.getActiveTarget(node.getProject()), node.getDescriptor());
+  }
+
+  private void run(RunnerAndConfigurationSettings settings, ExecutionTarget target, RunContentDescriptor descriptor) {
+    RunConfiguration configuration = settings.getConfiguration();
+    Project project = configuration.getProject();
+    if (configuration instanceof CompoundRunConfiguration) {
+      RunManager runManager = RunManager.getInstance(project);
+      List<SettingsAndEffectiveTarget> subConfigurations =
+        ((CompoundRunConfiguration)configuration).getConfigurationsWithEffectiveRunTargets();
+      for (SettingsAndEffectiveTarget subConfiguration : subConfigurations) {
+        RunnerAndConfigurationSettings subSettings = runManager.findSettings(subConfiguration.getConfiguration());
+        if (subSettings != null) {
+          run(subSettings, subConfiguration.getTarget(), null);
+        }
+      }
+    }
+    else {
+      ProcessHandler processHandler = descriptor == null ? null : descriptor.getProcessHandler();
+      ExecutionManager.getInstance(project).restartRunProfile(project, getExecutor(), target, settings, processHandler);
+    }
   }
 
   protected abstract Executor getExecutor();

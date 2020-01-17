@@ -18,15 +18,10 @@ package com.intellij.facet.impl.invalid;
 import com.intellij.facet.impl.ui.MultipleFacetEditorHelperImpl;
 import com.intellij.facet.ui.FacetEditor;
 import com.intellij.facet.ui.MultipleFacetSettingsEditor;
-import com.intellij.util.NotNullFunction;
 import com.intellij.util.ui.ThreeStateCheckBox;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * @author nik
- */
 public class MultipleInvalidFacetEditor extends MultipleFacetSettingsEditor {
   private final MultipleFacetEditorHelperImpl myHelper;
   private JPanel myMainPanel;

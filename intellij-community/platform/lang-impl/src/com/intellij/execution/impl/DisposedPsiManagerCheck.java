@@ -22,7 +22,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DisposedPsiManagerCheck {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.execution.impl.DisposedPsiManagerCheck");
+  private static final Logger LOG = Logger.getInstance(DisposedPsiManagerCheck.class);
   private final Throwable myAllocationPlace;
   private final Project myProject;
 

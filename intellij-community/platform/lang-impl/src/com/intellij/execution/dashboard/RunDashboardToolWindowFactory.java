@@ -15,30 +15,13 @@
  */
 package com.intellij.execution.dashboard;
 
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.services.ServiceViewToolWindowFactory;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
- * @author konstantin.aleev
+ * @deprecated Use {@link com.intellij.execution.services.ServiceViewToolWindowFactory} instead.
  */
-public class RunDashboardToolWindowFactory implements ToolWindowFactory, Condition<Project>, DumbAware {
-  @Override
-  public boolean value(Project project) {
-    return !Registry.is("ide.service.view");
-  }
-
-  @Override
-  public boolean shouldBeAvailable(@NotNull Project project) {
-    return !Registry.is("ide.service.view") && RunDashboardManager.getInstance(project).isToolWindowAvailable();
-  }
-
-  @Override
-  public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-    RunDashboardManager.getInstance(project).createToolWindowContent(toolWindow);
-  }
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
+@Deprecated
+public class RunDashboardToolWindowFactory extends ServiceViewToolWindowFactory {
 }

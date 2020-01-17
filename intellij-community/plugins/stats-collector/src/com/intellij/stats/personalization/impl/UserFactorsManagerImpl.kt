@@ -17,7 +17,6 @@
 package com.intellij.stats.personalization.impl
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.stats.personalization.UserFactor
 import com.intellij.stats.personalization.UserFactorsManager
@@ -25,7 +24,7 @@ import com.intellij.stats.personalization.UserFactorsManager
 /**
  * @author Vitaliy.Bibaev
  */
-class UserFactorsManagerImpl : UserFactorsManager, ProjectComponent {
+class UserFactorsManagerImpl : UserFactorsManager {
     private companion object {
         val LOG = Logger.getInstance(UserFactorsManagerImpl::class.java)
     }

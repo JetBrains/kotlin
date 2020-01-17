@@ -15,6 +15,8 @@ import java.util.Map;
   storages = @Storage(value = "runner.layout.xml", roamingType = RoamingType.DISABLED)
 )
 public class RunnerLayoutSettings implements PersistentStateComponent<Element> {
+  public static final String NOT_PERSISTENT_ID = "not_persistent_id";
+
   public static RunnerLayoutSettings getInstance() {
     return ServiceManager.getService(RunnerLayoutSettings.class);
   }
@@ -22,6 +24,8 @@ public class RunnerLayoutSettings implements PersistentStateComponent<Element> {
   private final Map<String, RunnerLayout> myRunnerId2Settings = new LinkedHashMap<>();
 
   public RunnerLayout getLayout(@NotNull String id) {
+    if (id == NOT_PERSISTENT_ID) return new RunnerLayout();
+
     RunnerLayout layout = myRunnerId2Settings.get(id);
     if (layout == null) {
       layout = new RunnerLayout();

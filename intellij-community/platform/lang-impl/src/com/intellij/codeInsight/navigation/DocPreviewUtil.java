@@ -5,7 +5,6 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtilRt;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,7 +112,7 @@ public class DocPreviewUtil {
 
     // Apply links info to the header template.
     List<TextRange> modifiedRanges = new ArrayList<>();
-    List<String> sortedReplacements = ContainerUtilRt.newArrayList(links.keySet());
+    List<String> sortedReplacements = new ArrayList<>(links.keySet());
     Collections.sort(sortedReplacements, REPLACEMENTS_COMPARATOR);
     StringBuilder buffer = new StringBuilder(header);
     replace(buffer, "\n", "<br/>", modifiedRanges);
@@ -160,8 +159,12 @@ public class DocPreviewUtil {
   private static void replace(@NotNull StringBuilder text,
                               @NotNull String replaceFrom,
                               @NotNull String replaceTo,
-                              @NotNull List<TextRange> readOnlyChanges)
-  {
+                              @NotNull List<TextRange> readOnlyChanges) {
+
+    if (replaceFrom.isEmpty()) {
+      return;
+    }
+
     for (int i = text.indexOf(replaceFrom); i >= 0; i = text.indexOf(replaceFrom, i + 1)) {
       int end = i + replaceFrom.length();
       if (intersects(readOnlyChanges, i, end)) {

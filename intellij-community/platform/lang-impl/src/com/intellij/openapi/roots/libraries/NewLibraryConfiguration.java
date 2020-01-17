@@ -19,9 +19,6 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
-* @author nik
-*/
 public abstract class NewLibraryConfiguration {
   private final String myDefaultLibraryName;
   private final LibraryType<?> myLibraryType;

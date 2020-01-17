@@ -54,7 +54,7 @@ import java.util.Set;
  * @author rvishnyakov
  */
 public abstract class CustomizableLanguageCodeStylePanel extends CodeStyleAbstractPanel implements CodeStyleSettingsCustomizable {
-  private static final Logger LOG = Logger.getInstance("com.intellij.application.options.codeStyle.MultilanguageCodeStyleAbstractPanel");
+  private static final Logger LOG = Logger.getInstance(CustomizableLanguageCodeStylePanel.class);
 
   protected CustomizableLanguageCodeStylePanel(CodeStyleSettings settings) {
     super(settings);

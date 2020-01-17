@@ -25,6 +25,7 @@ import com.intellij.ui.components.panels.Wrapper;
 import com.intellij.ui.mac.TouchbarDataKeys;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
+import com.intellij.util.BooleanFunction;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
@@ -329,6 +330,12 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
                                                  }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, SystemInfo.isMac
                                                                                               ? META_DOWN_MASK : CTRL_DOWN_MASK),
                                                  JComponent.WHEN_FOCUSED);
+    // make sure Enter is consumed by search text field, even if 'next occurrence' action is disabled
+    // this is needed to e.g. avoid triggering a default button in containing dialog (see IDEA-128057)
+    mySearchTextComponent.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {}
+    }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), WHEN_FOCUSED);
 
     new VariantsCompletionAction(mySearchTextComponent); // It registers a shortcut set automatically on construction
   }
@@ -429,9 +436,13 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     final MyTextComponentWrapper wrapper = search ? mySearchFieldWrapper : myReplaceFieldWrapper;
 
     final JTextArea textComponent;
-      SearchTextArea textArea = new SearchTextArea(search);
-      textComponent = textArea.getTextArea();
-      textComponent.setRows(isMultiline() ? 2 : 1);
+    SearchTextArea textArea = new SearchTextArea(search);
+    textComponent = textArea.getTextArea();
+    textComponent.setRows(isMultiline() ? 2 : 1);
+    textComponent.setColumns(32);
+    // Display empty text only when focused
+    textComponent.putClientProperty(
+      "StatusVisibleFunction", (BooleanFunction<JTextComponent>)(c -> c.getText().isEmpty() && c.isFocusOwner()));
 
     wrapper.setContent(textArea);
 
@@ -538,13 +549,13 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     toolbar.setForceMinimumSize(true);
     toolbar.setReservePlaceAutoPopupIcon(false);
     toolbar.setSecondaryButtonPopupStateModifier(mySearchToolbar1PopupStateModifier);
+    toolbar.setSecondaryActionsTooltip(FindBundle.message("find.popup.show.filter.popup"));
+    toolbar.setSecondaryActionsIcon(AllIcons.General.Filter);
+
     KeyboardShortcut keyboardShortcut = ActionManager.getInstance().getKeyboardShortcut("ShowFilterPopup");
     if (keyboardShortcut != null) {
-      toolbar.setSecondaryActionsTooltip(FindBundle.message("find.popup.show.filter.popup") + " (" + KeymapUtil.getShortcutText(keyboardShortcut) + ")");
-    } else {
-      toolbar.setSecondaryActionsTooltip(FindBundle.message("find.popup.show.filter.popup"));
+      toolbar.setSecondaryActionsShortcut(KeymapUtil.getShortcutText(keyboardShortcut));
     }
-    toolbar.setSecondaryActionsIcon(AllIcons.General.Filter);
 
     new ShowMoreOptions(toolbar, mySearchFieldWrapper);
     return toolbar;
@@ -629,25 +640,25 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     }
 
     @NotNull
-    public Builder addSearchFieldActions(@NotNull AnAction... actions) {
+    public Builder addSearchFieldActions(AnAction @NotNull ... actions) {
       mySearchFieldActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addReplaceFieldActions(@NotNull AnAction... actions) {
+    public Builder addReplaceFieldActions(AnAction @NotNull ... actions) {
       myReplaceFieldActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addPrimarySearchActions(@NotNull AnAction... actions) {
+    public Builder addPrimarySearchActions(AnAction @NotNull ... actions) {
       mySearchActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addSecondarySearchActions(@NotNull AnAction... actions) {
+    public Builder addSecondarySearchActions(AnAction @NotNull ... actions) {
       for (AnAction action : actions) {
         mySearchActions.addAction(action).setAsSecondary(true);
       }
@@ -661,19 +672,19 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     }
 
     @NotNull
-    public Builder addExtraSearchActions(@NotNull AnAction... actions) {
+    public Builder addExtraSearchActions(AnAction @NotNull ... actions) {
       myExtraSearchActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addPrimaryReplaceActions(@NotNull AnAction... actions) {
+    public Builder addPrimaryReplaceActions(AnAction @NotNull ... actions) {
       myReplaceActions.addAll(actions);
       return this;
     }
 
     @NotNull
-    public Builder addExtraReplaceAction(@NotNull AnAction... actions) {
+    public Builder addExtraReplaceAction(AnAction @NotNull ... actions) {
       myExtraReplaceActions.addAll(actions);
       return this;
     }

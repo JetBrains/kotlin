@@ -25,9 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public abstract class CompilerEncodingService {
   public static CompilerEncodingService getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, CompilerEncodingService.class);

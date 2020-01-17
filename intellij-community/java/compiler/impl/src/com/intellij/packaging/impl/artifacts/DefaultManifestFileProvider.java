@@ -26,9 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
-* @author nik
-*/
 public class DefaultManifestFileProvider implements ManifestFileProvider {
   private final PackagingElementResolvingContext myContext;
 

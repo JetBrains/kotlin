@@ -33,7 +33,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class LookupManagerImpl extends LookupManager {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupManagerImpl");
+  private static final Logger LOG = Logger.getInstance(LookupManagerImpl.class);
   private final Project myProject;
   private LookupImpl myActiveLookup = null;
   private Editor myActiveLookupEditor = null;
@@ -96,7 +96,7 @@ public class LookupManagerImpl extends LookupManager {
 
   @Override
   public LookupEx showLookup(@NotNull final Editor editor,
-                           @NotNull LookupElement[] items,
+                           LookupElement @NotNull [] items,
                            @NotNull final String prefix,
                            @NotNull final LookupArranger arranger) {
     for (LookupElement item : items) {
@@ -110,7 +110,7 @@ public class LookupManagerImpl extends LookupManager {
   @NotNull
   @Override
   public LookupImpl createLookup(@NotNull final Editor editor,
-                                 @NotNull LookupElement[] items,
+                                 LookupElement @NotNull [] items,
                                  @NotNull final String prefix,
                                  @NotNull final LookupArranger arranger) {
     hideActiveLookup();

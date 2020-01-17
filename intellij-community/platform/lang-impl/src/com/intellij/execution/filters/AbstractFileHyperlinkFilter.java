@@ -23,7 +23,7 @@ public abstract class AbstractFileHyperlinkFilter implements Filter {
   private static final Logger LOG = Logger.getInstance(AbstractFileHyperlinkFilter.class);
 
   private final Project myProject;
-  private final ProjectFileIndex myFileIndex;
+  private ProjectFileIndex myFileIndex;
   private final VirtualFile myBaseDir;
 
   public AbstractFileHyperlinkFilter(@NotNull Project project, @Nullable String baseDir) {
@@ -32,7 +32,6 @@ public abstract class AbstractFileHyperlinkFilter implements Filter {
 
   public AbstractFileHyperlinkFilter(@NotNull Project project, @Nullable VirtualFile baseDir) {
     myProject = project;
-    myFileIndex = ProjectFileIndex.getInstance(project);
     myBaseDir = baseDir;
   }
 
@@ -106,7 +105,18 @@ public abstract class AbstractFileHyperlinkFilter implements Filter {
   }
 
   private boolean isGrayedHyperlink(@NotNull VirtualFile file) {
-    return !myFileIndex.isInContent(file) || myFileIndex.isInLibrary(file);
+    ProjectFileIndex fileIndex = getFileIndex();
+    return !fileIndex.isInContent(file) || fileIndex.isInLibrary(file);
+  }
+
+  @NotNull
+  private ProjectFileIndex getFileIndex() {
+    ProjectFileIndex fileIndex = myFileIndex;
+    if (fileIndex == null) {
+      fileIndex = ProjectFileIndex.getInstance(myProject);
+      myFileIndex = fileIndex;
+    }
+    return fileIndex;
   }
 
   @NotNull

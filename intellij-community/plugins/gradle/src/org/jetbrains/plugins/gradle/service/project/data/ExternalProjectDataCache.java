@@ -1,21 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project.data;
 
-import com.intellij.concurrency.ConcurrentCollectionFactory;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.externalSystem.model.ProjectSystemId;
+import com.intellij.openapi.externalSystem.model.*;
+import com.intellij.openapi.externalSystem.model.project.ProjectData;
+import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ConcurrentFactoryMap;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.text.FilePathHashingStrategy;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.model.DefaultExternalProject;
 import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
@@ -30,17 +25,16 @@ import java.util.Map;
  * @author Vladislav.Soroka
  */
 public class ExternalProjectDataCache {
-  private static final Logger LOG = Logger.getInstance(ExternalProjectDataCache.class);
+  @ApiStatus.Internal
+  @NotNull public static final Key<ExternalProject> KEY = Key.create(ExternalProject.class, ProjectKeys.TASK.getProcessingWeight() + 1);
+  private final Project myProject;
 
   public static ExternalProjectDataCache getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, ExternalProjectDataCache.class);
   }
 
-  @NotNull private final Map<String, ExternalProject> myExternalRootProjects;
-
-  public ExternalProjectDataCache() {
-    myExternalRootProjects = ConcurrentFactoryMap.create(key-> new ExternalProjectSerializer().load(GradleConstants.SYSTEM_ID, new File(key)),
-                                                         () -> ConcurrentCollectionFactory.createMap(FilePathHashingStrategy.create()));
+  public ExternalProjectDataCache(@NotNull Project project) {
+    myProject = project;
   }
 
   /**
@@ -58,27 +52,14 @@ public class ExternalProjectDataCache {
 
   @Nullable
   public ExternalProject getRootExternalProject(@NotNull String externalProjectPath) {
-    ExternalProject externalProject = myExternalRootProjects.get(externalProjectPath);
-    if (externalProject == null && LOG.isDebugEnabled()) {
-      LOG.debug("Can not find data for project at: " + externalProjectPath);
-      LOG.debug("Existing imported projects paths: " + ContainerUtil.map(
-        myExternalRootProjects.entrySet(),
-        (Function<Map.Entry<String, ExternalProject>, Object>)entry -> {
-          //noinspection ConstantConditions
-          if (!(entry.getValue() instanceof ExternalProject)) return null;
-          return Pair.create(entry.getKey(), entry.getValue().getProjectDir());
-        }));
-    }
-    return externalProject;
-  }
-
-  public void saveExternalProject(@NotNull ExternalProject externalProject) {
-    DefaultExternalProject value = new DefaultExternalProject(externalProject);
-    new ExternalProjectSerializer().save(value);
-    myExternalRootProjects.put(
-      ExternalSystemApiUtil.toCanonicalPath(externalProject.getProjectDir().getAbsolutePath()),
-      value
-    );
+    ExternalProjectInfo projectData =
+      ProjectDataManager.getInstance().getExternalProjectData(myProject, GradleConstants.SYSTEM_ID, externalProjectPath);
+    if (projectData == null) return null;
+    DataNode<ProjectData> projectStructure = projectData.getExternalProjectStructure();
+    if (projectStructure == null) return null;
+    DataNode<ExternalProject> projectDataNode = ExternalSystemApiUtil.find(projectStructure, KEY);
+    if (projectDataNode == null) return null;
+    return projectDataNode.getData();
   }
 
   @NotNull

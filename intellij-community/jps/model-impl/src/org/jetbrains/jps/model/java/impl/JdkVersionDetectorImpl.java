@@ -25,11 +25,8 @@ import java.util.concurrent.Future;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-/**
- * @author nik
- */
 public class JdkVersionDetectorImpl extends JdkVersionDetector {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.projectRoots.impl.SdkVersionUtil");
+  private static final Logger LOG = Logger.getInstance(JdkVersionDetectorImpl.class);
 
   @Nullable
   @Override

@@ -1,43 +1,44 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.editor;
 
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.project.Project;
+import com.intellij.ide.ui.OptionsSearchTopHitProvider;
+import com.intellij.ide.ui.search.OptionDescription;
+import com.intellij.openapi.application.ApplicationBundle;
+import com.intellij.openapi.options.BeanConfigurable;
+import com.intellij.openapi.options.ConfigurableWithOptionDescriptors;
+import com.intellij.openapi.options.UnnamedConfigurable;
+import com.intellij.openapi.options.ex.ConfigurableWrapper;
+import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-/**
- * @author Sergey.Malenkov
- */
-public class CodeFoldingOptionsTopHitProvider extends EditorOptionsTopHitProviderBase.NoPrefix {
-  private int myCount;
-
+final class CodeFoldingOptionsTopHitProvider implements OptionsSearchTopHitProvider.ApplicationLevelProvider {
+  @NotNull
   @Override
-  protected Configurable getConfigurable(Project project) {
-    myCount = 0;
-    return new CodeFoldingConfigurable();
+  public String getId() {
+    return CodeFoldingConfigurable.ID;
   }
 
+  @NotNull
   @Override
-  protected String getOptionName(JCheckBox checkbox) {
-    String name = super.getOptionName(checkbox);
-    if (name != null && 0 < myCount++) {
-      name = "Collapse by default: " + name;
-    }
-    return name;
+  public Collection<OptionDescription> getOptions() {
+    String byDefault = ApplicationBundle.message("label.fold.by.default");
+    List<OptionDescription> result = new ArrayList<>();
+    CodeFoldingOptionsProviderEP.EP_NAME.forEachExtensionSafe(ep -> {
+      CodeFoldingOptionsProvider wrapper = ConfigurableWrapper.wrapConfigurable(ep);
+      UnnamedConfigurable configurable =
+        wrapper instanceof ConfigurableWrapper ? ((ConfigurableWrapper)wrapper).getConfigurable() : wrapper;
+      if (!(configurable instanceof ConfigurableWithOptionDescriptors)) {
+        return;
+      }
+
+      String title = configurable instanceof BeanConfigurable ? ((BeanConfigurable<?>)configurable).getTitle() : null;
+      String prefix = title == null ? byDefault + " " : StringUtil.trimEnd(byDefault, ':') + " in " + title + ": ";
+      result.addAll(((ConfigurableWithOptionDescriptors)configurable).getOptionDescriptors(CodeFoldingConfigurable.ID, s -> prefix + s));
+    });
+    return result;
   }
 }

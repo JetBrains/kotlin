@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.findUsages;
 
 import com.intellij.ide.DataManager;
@@ -20,7 +6,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
@@ -32,6 +17,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,13 +56,11 @@ public abstract class FindUsagesHandler {
     return myPsiElement.getProject();
   }
 
-  @NotNull
-  public PsiElement[] getPrimaryElements() {
+  public PsiElement @NotNull [] getPrimaryElements() {
     return new PsiElement[]{myPsiElement};
   }
 
-  @NotNull
-  public PsiElement[] getSecondaryElements() {
+  public PsiElement @NotNull [] getSecondaryElements() {
     return PsiElement.EMPTY_ARRAY;
   }
 
@@ -106,13 +90,12 @@ public abstract class FindUsagesHandler {
   }
 
   public boolean processElementUsages(@NotNull final PsiElement element,
-                                      @NotNull final Processor<UsageInfo> processor,
+                                      @NotNull final Processor<? super UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
     final ReadActionProcessor<PsiReference> refProcessor = new ReadActionProcessor<PsiReference>() {
       @Override
       public boolean processInReadAction(final PsiReference ref) {
-        TextRange rangeInElement = ref.getRangeInElement();
-        return processor.process(new UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false));
+        return processor.process(new UsageInfo(ref));
       }
     };
 
@@ -122,7 +105,7 @@ public abstract class FindUsagesHandler {
 
     if (options.isUsages) {
       boolean success =
-        ReferencesSearch.search(new ReferencesSearch.SearchParameters(element, scope, false, options.fastTrack)).forEach(refProcessor);
+        ReferencesSearch.search(createSearchParameters(element, scope, options)).forEach(refProcessor);
       if (!success) return false;
     }
 
@@ -138,7 +121,7 @@ public abstract class FindUsagesHandler {
   }
 
   public boolean processUsagesInText(@NotNull final PsiElement element,
-                                     @NotNull Processor<UsageInfo> processor,
+                                     @NotNull Processor<? super UsageInfo> processor,
                                      @NotNull GlobalSearchScope searchScope) {
     Collection<String> stringToSearch = ReadAction.compute(() -> getStringsToSearch(element));
     if (stringToSearch == null) return true;
@@ -158,16 +141,45 @@ public abstract class FindUsagesHandler {
     return isSearchForTextOccurencesAvailable(psiElement, isSingleFile);
   }
 
-  /** @deprecated use/override {@link #isSearchForTextOccurrencesAvailable(PsiElement, boolean)} instead (to be removed in IDEA 18) */
+  /** @deprecated use/override {@link #isSearchForTextOccurrencesAvailable(PsiElement, boolean)} instead */
   @Deprecated
-  @SuppressWarnings("SpellCheckingInspection")
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
+  @SuppressWarnings({"SpellCheckingInspection", "DeprecatedIsStillUsed", "unused"})
   protected boolean isSearchForTextOccurencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile) {
     return false;
   }
 
   @NotNull
   public Collection<PsiReference> findReferencesToHighlight(@NotNull PsiElement target, @NotNull SearchScope searchScope) {
-    return ReferencesSearch.search(target, searchScope, false).findAll();
+    return ReferencesSearch.search(createSearchParameters(target, searchScope, null)).findAll();
+  }
+
+  /**
+   *  Returns the parameters for references search of specified PSI element.
+   *  `findUsagesOptions` parameter is null for a call from highlighting pass
+   *  and not null for a call from `Find Usages` action.
+   *
+   *  The default implementation suggests transferring `findUsagesOptions.fastTrack`
+   *  value to search parameters.
+   *
+   *  Based on return value the language `referencesSearch`-extensions can add references
+   *  from declarations and pre-declarations to reference search result,
+   *  that is forbidden by default.
+   *
+   * @param target the specified PSI element
+   * @param searchScope the scope to search in
+   * @param findUsagesOptions the options to search
+   */
+  @NotNull
+  protected ReferencesSearch.SearchParameters createSearchParameters(@NotNull PsiElement target,
+                                                                     @NotNull SearchScope searchScope,
+                                                                     @Nullable FindUsagesOptions findUsagesOptions) {
+    return new ReferencesSearch.SearchParameters(target,
+                                                 searchScope,
+                                                 false,
+                                                 findUsagesOptions == null
+                                                 ? null
+                                                 : findUsagesOptions.fastTrack);
   }
 
   private static class NullFindUsagesHandler extends FindUsagesHandler {
@@ -181,15 +193,13 @@ public abstract class FindUsagesHandler {
       throw new IncorrectOperationException();
     }
 
-    @NotNull
     @Override
-    public PsiElement[] getPrimaryElements() {
+    public PsiElement @NotNull [] getPrimaryElements() {
       throw new IncorrectOperationException();
     }
 
-    @NotNull
     @Override
-    public PsiElement[] getSecondaryElements() {
+    public PsiElement @NotNull [] getSecondaryElements() {
       throw new IncorrectOperationException();
     }
 
@@ -213,14 +223,14 @@ public abstract class FindUsagesHandler {
 
     @Override
     public boolean processElementUsages(@NotNull PsiElement element,
-                                        @NotNull Processor<UsageInfo> processor,
+                                        @NotNull Processor<? super UsageInfo> processor,
                                         @NotNull FindUsagesOptions options) {
       throw new IncorrectOperationException();
     }
 
     @Override
     public boolean processUsagesInText(@NotNull PsiElement element,
-                                       @NotNull Processor<UsageInfo> processor,
+                                       @NotNull Processor<? super UsageInfo> processor,
                                        @NotNull GlobalSearchScope searchScope) {
       throw new IncorrectOperationException();
     }

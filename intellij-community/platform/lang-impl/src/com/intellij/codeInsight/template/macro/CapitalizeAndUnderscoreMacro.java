@@ -33,7 +33,7 @@ public class CapitalizeAndUnderscoreMacro extends MacroBase {
   }
 
   @Override
-  protected Result calculateResult(@NotNull Expression[] params, ExpressionContext context, boolean quick) {
+  protected Result calculateResult(Expression @NotNull [] params, ExpressionContext context, boolean quick) {
     String text = getTextResult(params, context, true);
     return text != null ? new TextResult(!text.isEmpty() ? NameUtil.capitalizeAndUnderscore(text) : "") : null;
   }

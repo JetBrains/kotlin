@@ -42,14 +42,18 @@ import java.util.Map;
 
 public class TrigramIndex extends ScalarIndexExtension<Integer> implements CustomInputsIndexFileBasedIndexExtension<Integer>,
                                                                            DocumentChangeDependentIndex {
-  public static final boolean ENABLED = SystemProperties.getBooleanProperty("idea.internal.trigramindex.enabled", true);
+  /**
+   * @deprecated not used anymore, always enabled
+   */
+  @Deprecated
+  public static final boolean ENABLED = true;
 
   public static final ID<Integer,Void> INDEX_ID = ID.create("Trigram.Index");
 
   private static final FileBasedIndex.InputFilter INPUT_FILTER = file -> isIndexable(file.getFileType());
 
   public static boolean isIndexable(FileType fileType) {
-    return ENABLED && !fileType.isBinary();
+    return !fileType.isBinary();
   }
 
   @NotNull
@@ -92,7 +96,7 @@ public class TrigramIndex extends ScalarIndexExtension<Integer> implements Custo
 
   @Override
   public int getVersion() {
-    return ENABLED ? 3 + (IdIndex.ourSnapshotMappingsEnabled ? 0xFF:0) : 1;
+    return 3 + (FileBasedIndex.ourSnapshotMappingsEnabled ? 0xFF : 0);
   }
 
   @Override

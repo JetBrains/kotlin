@@ -48,6 +48,12 @@ class ServiceSingleView extends ServiceView {
   }
 
   @Override
+  Promise<Void> expand(@NotNull Object service, @NotNull Class<?> contributorClass) {
+    ServiceViewItem item = myRef.get();
+    return item == null || !item.getValue().equals(service) ? Promises.rejectedPromise("Service not found") : Promises.resolvedPromise();
+  }
+
+  @Override
   void onViewSelected() {
     showContent();
   }
@@ -69,6 +75,10 @@ class ServiceSingleView extends ServiceView {
   }
 
   @Override
+  void jumpToServices() {
+  }
+
+  @Override
   public void dispose() {
     getModel().removeModelListener(myListener);
   }
@@ -87,7 +97,7 @@ class ServiceSingleView extends ServiceView {
           myUi.setDetailsComponent(descriptor.getContentComponent());
         }
       }
-    }, myProject.getDisposed());
+    }, getProject().getDisposed());
   }
 
   private void showContent() {
@@ -104,7 +114,7 @@ class ServiceSingleView extends ServiceView {
   }
 
   @Override
-  List<Object> getChildrenSafe(@NotNull Object value) {
+  List<Object> getChildrenSafe(@NotNull List<Object> valueSubPath) {
     return Collections.emptyList();
   }
 }

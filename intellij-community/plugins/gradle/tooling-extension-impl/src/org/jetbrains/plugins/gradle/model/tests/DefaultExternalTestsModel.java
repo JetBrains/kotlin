@@ -3,23 +3,12 @@ package org.jetbrains.plugins.gradle.model.tests;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class DefaultExternalTestsModel implements ExternalTestsModel {
-
   @NotNull
   private List<ExternalTestSourceMapping> sourceTestMappings = Collections.emptyList();
-
-  public DefaultExternalTestsModel() {}
-
-  public DefaultExternalTestsModel(ExternalTestsModel model) {
-    sourceTestMappings = new ArrayList<ExternalTestSourceMapping>();
-    for (ExternalTestSourceMapping sourceMapping : model.getTestSourceMappings()) {
-      sourceTestMappings.add(new DefaultExternalTestSourceMapping(sourceMapping));
-    }
-  }
 
   @Override
   @NotNull
@@ -29,5 +18,19 @@ public class DefaultExternalTestsModel implements ExternalTestsModel {
 
   public void setSourceTestMappings(@NotNull List<ExternalTestSourceMapping> sourceTestMappings) {
     this.sourceTestMappings = sourceTestMappings;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    DefaultExternalTestsModel model = (DefaultExternalTestsModel)o;
+    if (!sourceTestMappings.equals(model.sourceTestMappings)) return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return sourceTestMappings.hashCode();
   }
 }

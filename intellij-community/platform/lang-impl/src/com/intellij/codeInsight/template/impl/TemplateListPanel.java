@@ -4,6 +4,7 @@ package com.intellij.codeInsight.template.impl;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.dnd.*;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.openapi.Disposable;
@@ -47,9 +48,17 @@ public class TemplateListPanel extends JPanel implements Disposable {
   private static final String TEMPLATE_SETTINGS = "TemplateSettings";
   private static final TemplateImpl MOCK_TEMPLATE = new TemplateImpl("mockTemplate-xxx", "mockTemplateGroup-yyy");
   public static final String ABBREVIATION = "<abbreviation>";
-  public static final Comparator<TemplateImpl> TEMPLATE_COMPARATOR = (o1, o2) -> {
-    int compareKey = o1.getKey().compareToIgnoreCase(o2.getKey());
-    return compareKey != 0 ? compareKey : o1.getGroupName().compareToIgnoreCase(o2.getGroupName());
+  public static final Comparator<TemplateImpl> TEMPLATE_COMPARATOR = new Comparator<TemplateImpl>() {
+    @Override
+    public int compare(TemplateImpl o1, TemplateImpl o2) {
+      int compareKey = compareCaseInsensitively(o1.getKey(), o2.getKey());
+      return compareKey != 0 ? compareKey : compareCaseInsensitively(o1.getGroupName(), o2.getGroupName());
+    }
+
+    private int compareCaseInsensitively(String s1, String s2) {
+      int result = s1.compareToIgnoreCase(s2);
+      return result != 0 ? result : s1.compareTo(s2);
+    }
   };
 
   static {
@@ -65,7 +74,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
   private final Alarm myAlarm = new Alarm();
   private boolean myUpdateNeeded = false;
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.template.impl.TemplateListPanel");
+  private static final Logger LOG = Logger.getInstance(TemplateListPanel.class);
 
   private final Map<TemplateImpl, Map<TemplateOptionalProcessor, Boolean>> myTemplateOptions = ContainerUtil.newIdentityHashMap();
   private final Map<TemplateImpl, TemplateContext> myTemplateContext = ContainerUtil.newIdentityHashMap();
@@ -548,7 +557,9 @@ public class TemplateListPanel extends JPanel implements Disposable {
   private void showEmptyCard() {
     int[] rows = myTree.getSelectionRows();
     boolean multiSelection = rows != null && rows.length > 1;
-    myEmptyCardLabel.setText(multiSelection ? "Multiple live templates are selected" : "No live templates are selected");
+    myEmptyCardLabel.setText(multiSelection
+                             ? CodeInsightBundle.message("templates.list.multiple.live.templates.are.selected")
+                             : CodeInsightBundle.message("templates.list.no.live.templates.are.selected"));
     ((CardLayout) myDetailsPanel.getLayout()).show(myDetailsPanel, NO_SELECTION);
   }
 
@@ -604,13 +615,13 @@ public class TemplateListPanel extends JPanel implements Disposable {
 
   private void addTemplateOrGroup(AnActionButton button) {
     DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new DumbAwareAction("Live Template") {
+    group.add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.live.template")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         addTemplate();
       }
     });
-    group.add(new DumbAwareAction("Template Group...") {
+    group.add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.template.group")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         String newName = Messages
@@ -634,7 +645,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
   }
 
   private void installPopup() {
-    final DumbAwareAction rename = new DumbAwareAction("Rename") {
+    final DumbAwareAction rename = new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.rename")) {
 
       @Override
       public void update(@NotNull AnActionEvent e) {
@@ -674,7 +685,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
             }
           }
           addSeparator();
-          add(new DumbAwareAction("New group...") {
+          add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.new.group")) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
               String newName = Messages.showInputDialog(myTree, "Enter the new group name:", "Move to a New Group", null, "", new TemplateGroupInputValidator(null));
@@ -687,7 +698,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
       }
     };
 
-    final DumbAwareAction changeContext = new DumbAwareAction("Change context...") {
+    final DumbAwareAction changeContext = new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.change.context")) {
 
       @Override
       public void update(@NotNull AnActionEvent e) {

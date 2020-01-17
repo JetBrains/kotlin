@@ -28,9 +28,6 @@ import org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage.Parame
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class ArtifactBuildTargetScopeProvider extends BuildTargetScopeProvider {
   @NotNull
   @Override

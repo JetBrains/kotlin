@@ -27,9 +27,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class FileCopyPresentation extends PackagingElementPresentation {
   private final String mySourcePath;
   private final String myOutputFileName;

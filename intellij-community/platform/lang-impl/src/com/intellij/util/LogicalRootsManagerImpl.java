@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.util;
 
@@ -26,8 +26,8 @@ public class LogicalRootsManagerImpl extends LogicalRootsManager {
   private final ModuleManager myModuleManager;
   private final Project myProject;
 
-  public LogicalRootsManagerImpl(final ModuleManager moduleManager, final Project project) {
-    myModuleManager = moduleManager;
+  public LogicalRootsManagerImpl(Project project) {
+    myModuleManager = ModuleManager.getInstance(project);
     myProject = project;
 
     registerLogicalRootProvider(LogicalRootType.SOURCE_ROOT,

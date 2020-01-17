@@ -6,23 +6,21 @@ import com.intellij.codeInsight.intention.AbstractEmptyIntentionAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.IntentionActionDelegate
 import com.intellij.codeInsight.intention.impl.CachedIntentions
-import com.intellij.codeInsight.intention.impl.IntentionActionWithTextCaching
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
-import com.intellij.ide.actions.ActionsCollector
+import com.intellij.internal.statistic.service.fus.collectors.TooltipActionsLogger
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.TooltipAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.xml.util.XmlStringUtil
-import org.jetbrains.annotations.NotNull
 import java.awt.event.InputEvent
 import java.util.*
 
 class DaemonTooltipActionProvider : TooltipActionProvider {
   override fun getTooltipAction(info: HighlightInfo, editor: Editor, psiFile: PsiFile): TooltipAction? {
     val intention = extractMostPriorityFixFromHighlightInfo(info, editor, psiFile) ?: return null
-    return wrapIntentionToTooltipAction(intention, info)
+    return wrapIntentionToTooltipAction(intention, info, editor)
   }
 
 }
@@ -34,9 +32,9 @@ class DaemonTooltipAction(private val myFixText: String, private val myActualOff
   }
 
   override fun execute(editor: Editor, inputEvent: InputEvent?) {
-    ActionsCollector.getInstance().record("tooltip.actions.execute", inputEvent, this::class.java)
-
     val project = editor.project ?: return
+
+    TooltipActionsLogger.logExecute(project, inputEvent)
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return
     val intentions = ShowIntentionsPass.getAvailableFixes(editor, psiFile, -1, myActualOffset)
 
@@ -52,10 +50,10 @@ class DaemonTooltipAction(private val myFixText: String, private val myActualOff
   }
 
   override fun showAllActions(editor: Editor) {
-    ActionsCollector.getInstance().record("tooltip.actions.show.all", this::class.java)
-
     editor.caretModel.moveToOffset(myActualOffset)
     val project = editor.project ?: return
+
+    TooltipActionsLogger.logShowAll(project)
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return
     ShowIntentionActionsHandler().invoke(project, editor, psiFile)
   }
@@ -101,10 +99,7 @@ fun getFirstAvailableAction(psiFile: PsiFile,
   if (allActions.isEmpty()) return null
 
   allActions.forEach {
-    var action = it.action
-    if (action is IntentionActionDelegate) {
-      action = action.delegate
-    }
+    val action = IntentionActionDelegate.unwrap(it.action)
 
     if (action !is AbstractEmptyIntentionAction && action.isAvailable(project, editor, psiFile)) {
       val text = it.text
@@ -117,12 +112,15 @@ fun getFirstAvailableAction(psiFile: PsiFile,
   return null
 }
 
-fun wrapIntentionToTooltipAction(intention: IntentionAction, info: HighlightInfo): TooltipAction {
-  val pair = info.quickFixActionRanges?.find { it.first?.action == intention }
-  val offset = pair?.second?.startOffset ?: info.actualStartOffset
-
+fun wrapIntentionToTooltipAction(intention: IntentionAction,
+                                 info: HighlightInfo,
+                                 editor: Editor): TooltipAction {
+  val editorOffset = editor.caretModel.offset
+  if ((info.actualStartOffset .. info.actualEndOffset).contains(editorOffset)) {
+    //try to avoid caret movements
+    return DaemonTooltipAction(intention.text, editorOffset)
+  }
+  val pair = info.quickFixActionMarkers?.find { it.first?.action == intention }
+  val offset = if (pair?.second?.isValid == true) pair.second.startOffset else info.actualStartOffset
   return DaemonTooltipAction(intention.text, offset)
 }
-
-
-

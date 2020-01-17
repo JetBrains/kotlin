@@ -46,7 +46,7 @@ public class SuppressActionSequentialTask implements SequentialTask {
   @NotNull private final InspectionToolWrapper myWrapper;
   private int myCount = 0;
 
-  public SuppressActionSequentialTask(@NotNull SuppressableInspectionTreeNode[] nodesToSuppress,
+  public SuppressActionSequentialTask(SuppressableInspectionTreeNode @NotNull [] nodesToSuppress,
                                       @NotNull SuppressIntentionAction suppressAction,
                                       @NotNull InspectionToolWrapper wrapper) {
     myNodesToSuppress = nodesToSuppress;
@@ -75,10 +75,6 @@ public class SuppressActionSequentialTask implements SequentialTask {
   @Override
   public boolean isDone() {
     return myCount > myNodesToSuppress.length - 1;
-  }
-
-  @Override
-  public void stop() {
   }
 
   @Override

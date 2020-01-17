@@ -6,6 +6,7 @@ import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
+import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
@@ -25,7 +26,7 @@ class OpenFileQuickFix(private val path: Path, private val search: String?) : Bu
   override val id: String
     get() = path.toString()
 
-  override fun runQuickFix(project: Project): CompletableFuture<*> {
+  override fun runQuickFix(project: Project, dataProvider: DataProvider): CompletableFuture<*> {
     val future = CompletableFuture<Any>()
     ApplicationManager.getApplication().invokeLater {
       try {

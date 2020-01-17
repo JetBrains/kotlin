@@ -14,12 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class LibraryVersionsFetcher extends FileSetVersionsFetcherBase<FrameworkLibraryVersion, DownloadableLibraryFileDescription> implements DownloadableLibraryDescription {
 
-  public LibraryVersionsFetcher(@NotNull String groupId, @NotNull URL[] localUrls) {
+  public LibraryVersionsFetcher(@NotNull String groupId, URL @NotNull [] localUrls) {
     super(groupId, localUrls);
   }
 

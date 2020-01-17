@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.macro;
 
 import com.intellij.ide.DataManager;
@@ -13,6 +12,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ConvertingIterator;
 import com.intellij.util.containers.Convertor;
 import gnu.trove.THashMap;
@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public final class MacroManager {
-  private final Map<String, Macro> myMacrosMap = new LinkedHashMap<>();
+  private final List<Macro> predefinedMacros = new ArrayList<>();
 
   private static final Pattern MACRO_PATTERN = Pattern.compile("\\$.+\\$");
 
@@ -86,27 +86,23 @@ public final class MacroManager {
       registerMacro(new FileRelativeDirMacro2());
       registerMacro(new FileRelativePathMacro2());
     }
-    for (Macro macro : Macro.EP_NAME.getExtensionList()) {
-      registerMacro(macro);
-    }
   }
 
-  private void registerMacro(Macro macro) {
-    myMacrosMap.put(macro.getName(), macro);
-  }
-
-  public Collection<Macro> getMacros() {
-    return myMacrosMap.values();
+  private void registerMacro(@NotNull Macro macro) {
+    predefinedMacros.add(macro);
   }
 
   @NotNull
-  public Set<String> getMacroNames() {
-    return myMacrosMap.keySet();
+  public Collection<Macro> getMacros() {
+    return ContainerUtil.concat(predefinedMacros, Macro.EP_NAME.getExtensionList());
   }
 
   public void cacheMacrosPreview(DataContext dataContext) {
     dataContext = getCorrectContext(dataContext);
-    for (Macro macro : getMacros()) {
+    for (Macro macro : predefinedMacros) {
+      macro.cachePreview(dataContext);
+    }
+    for (Macro macro : Macro.EP_NAME.getExtensionList()) {
       macro.cachePreview(dataContext);
     }
   }
@@ -178,7 +174,10 @@ public final class MacroManager {
                                        DataContext dataContext,
                                        Iterator<? extends Macro> macros,
                                        @Nullable String defaultExpandValue) throws ExecutionCancelledException {
-    if (str == null) return null;
+    if (str == null) {
+      return null;
+    }
+
     while (macros.hasNext()) {
       Macro macro = macros.next();
       if (macro instanceof SecondQueueExpandMacro && firstQueueExpand) continue;
@@ -190,7 +189,7 @@ public final class MacroManager {
              index = str.indexOf(name, index)) {
           String expanded = macro.expand(dataContext);
           //if (dataContext instanceof DataManagerImpl.MyDataContext) {
-          //  // hack: macro.expand() can cause UI events such as showing dialogs ('Prompt' macro) which may 'invalidate' the datacontext
+          //  // hack: macro.expand() can cause UI events such as showing dialogs ('Prompt' macro) which may 'invalidate' the dataContext
           //  // since we know exactly that context is valid, we need to update its event count
           //  ((DataManagerImpl.MyDataContext)dataContext).setEventCount(IdeEventQueue.getInstance().getEventCount());
           //}
@@ -199,18 +198,19 @@ public final class MacroManager {
             return null;
           }
           str = str.substring(0, index) + expanded + str.substring(index + name.length());
+          //noinspection AssignmentToForLoopParameter
           index += expanded.length();
         }
       }
-      else if(str.contains(macroNameWithParamStart)) {
+      else if (str.contains(macroNameWithParamStart)) {
         String macroNameWithParamEnd = ")$";
         Map<String, String> toReplace = null;
         int i = str.indexOf(macroNameWithParamStart);
         while (i != -1) {
           int j = str.indexOf(macroNameWithParamEnd, i + macroNameWithParamStart.length());
-          if(j > i) {
+          if (j > i) {
             String param = str.substring(i + macroNameWithParamStart.length(), j);
-            if(toReplace == null) toReplace = new THashMap<>();
+            if (toReplace == null) toReplace = new THashMap<>();
             String expanded = macro.expand(dataContext, param);
             expanded = expanded == null ? defaultExpandValue : expanded;
             if (expanded == null) {
@@ -218,11 +218,12 @@ public final class MacroManager {
             }
             toReplace.put(macroNameWithParamStart + param + macroNameWithParamEnd, expanded);
             i = j + macroNameWithParamEnd.length();
-          } else {
+          }
+          else {
             break;
           }
         }
-        if(toReplace !=null) {
+        if (toReplace != null) {
           for (Map.Entry<String, String> entry : toReplace.entrySet()) {
             str = StringUtil.replace(str, entry.getKey(), entry.getValue());
           }

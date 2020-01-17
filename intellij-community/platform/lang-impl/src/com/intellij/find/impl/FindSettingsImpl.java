@@ -33,7 +33,6 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
   @NonNls private static final String FIND_ORIGIN_ENTIRE_SCOPE = "entire_scope";
   @NonNls private static final String FIND_SCOPE_GLOBAL = "global";
   @NonNls private static final String FIND_SCOPE_SELECTED = "selected";
-  private static final String DEFAULT_SEARCH_SCOPE = FindBundle.message("find.scope.all.project.classes");
 
   public FindSettingsImpl() {
     Set<String> extensions = JBIterable.from(IdeLanguageCustomization.getInstance().getPrimaryIdeLanguages())
@@ -89,7 +88,7 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
   @SuppressWarnings("WeakerAccess") public boolean WITH_SUBDIRECTORIES = true;
   @SuppressWarnings("WeakerAccess") public boolean SHOW_RESULTS_IN_SEPARATE_VIEW;
 
-  @SuppressWarnings("WeakerAccess") public String SEARCH_SCOPE = DEFAULT_SEARCH_SCOPE;
+  @SuppressWarnings("WeakerAccess") public String SEARCH_SCOPE = getDefaultSearchScope();
   @SuppressWarnings("WeakerAccess") public String FILE_MASK;
 
   @Property(surroundWithTag = false)
@@ -271,21 +270,18 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
     FindRecents.getInstance().addStringToReplace(s);
   }
 
-  @NotNull
   @Override
-  public String[] getRecentFindStrings(){
+  public String @NotNull [] getRecentFindStrings(){
     return FindRecents.getInstance().getRecentFindStrings();
   }
 
-  @NotNull
   @Override
-  public String[] getRecentReplaceStrings(){
+  public String @NotNull [] getRecentReplaceStrings(){
     return FindRecents.getInstance().getRecentReplaceStrings();
   }
 
-  @NotNull
   @Override
-  public String[] getRecentFileMasks() {
+  public String @NotNull [] getRecentFileMasks() {
     return ArrayUtilRt.toStringArray(recentFileMasks);
   }
 
@@ -378,5 +374,9 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
     public static FindRecents getInstance() {
       return ServiceManager.getService(FindRecents.class);
     }
+  }
+
+  private static String getDefaultSearchScope() {
+    return FindBundle.message("find.scope.all.project.classes");
   }
 }

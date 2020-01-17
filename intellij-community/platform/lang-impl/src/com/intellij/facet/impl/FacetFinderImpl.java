@@ -35,11 +35,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class FacetFinderImpl extends FacetFinder {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.facet.impl.FacetFinderImpl");
+  private static final Logger LOG = Logger.getInstance(FacetFinderImpl.class);
   private final Map<FacetTypeId, AllFacetsOfTypeModificationTracker> myAllFacetTrackers = new HashMap<>();
   private final Map<FacetTypeId, CachedValue<Map<VirtualFile, List<Facet>>>> myCachedMaps =
     new HashMap<>();
@@ -54,7 +51,7 @@ public class FacetFinderImpl extends FacetFinder {
   }
 
   @Override
-  public <F extends Facet> ModificationTracker getAllFacetsOfTypeModificationTracker(FacetTypeId<F> type) {
+  public <F extends Facet<?>> ModificationTracker getAllFacetsOfTypeModificationTracker(FacetTypeId<F> type) {
     AllFacetsOfTypeModificationTracker tracker = myAllFacetTrackers.get(type);
     if (tracker == null) {
       tracker = new AllFacetsOfTypeModificationTracker<>(myProject, type);
@@ -64,7 +61,7 @@ public class FacetFinderImpl extends FacetFinder {
     return tracker;
   }
 
-  private <F extends Facet & FacetRootsProvider> Map<VirtualFile, List<Facet>> getRootToFacetsMap(final FacetTypeId<F> type) {
+  private <F extends Facet<?> & FacetRootsProvider> Map<VirtualFile, List<Facet>> getRootToFacetsMap(final FacetTypeId<F> type) {
     CachedValue<Map<VirtualFile, List<Facet>>> cachedValue = myCachedMaps.get(type);
     if (cachedValue == null) {
       cachedValue = myCachedValuesManager.createCachedValue(() -> {
@@ -100,18 +97,19 @@ public class FacetFinderImpl extends FacetFinder {
 
   @Override
   @Nullable
-  public <F extends Facet & FacetRootsProvider> F findFacet(VirtualFile file, FacetTypeId<F> type) {
+  public <F extends Facet<?> & FacetRootsProvider> F findFacet(VirtualFile file, FacetTypeId<F> type) {
     final List<F> list = findFacets(file, type);
     return list.size() > 0 ? list.get(0) : null;
   }
 
   @Override
   @NotNull
-  public <F extends Facet & FacetRootsProvider> List<F> findFacets(VirtualFile file, FacetTypeId<F> type) {
+  public <F extends Facet<?> & FacetRootsProvider> List<F> findFacets(VirtualFile file, FacetTypeId<F> type) {
     final Map<VirtualFile, List<Facet>> map = getRootToFacetsMap(type);
     if (!map.isEmpty()) {
       while (file != null) {
-        final List<F> list = (List<F>)((List)map.get(file));
+        @SuppressWarnings("unchecked")
+        List<F> list = (List<F>)((List)map.get(file));
         if (list != null) {
           return list;
         }

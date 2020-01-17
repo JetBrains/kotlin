@@ -6,10 +6,11 @@ import com.intellij.find.impl.FindResultImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.BulkAwareDocumentListener;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.event.SelectionEvent;
 import com.intellij.openapi.editor.event.SelectionListener;
@@ -62,9 +63,9 @@ public class LivePreviewController implements LivePreview.Delegate, FindUtil.Rep
   }
 
 
-  private final DocumentListener myDocumentListener = new DocumentListener() {
+  private final DocumentListener myDocumentListener = new BulkAwareDocumentListener.Simple() {
     @Override
-    public void documentChanged(@NotNull final DocumentEvent e) {
+    public void afterDocumentChange(@NotNull final Document document) {
       if (!myTrackingDocument) {
         myChanged = true;
         return;
@@ -114,11 +115,11 @@ public class LivePreviewController implements LivePreview.Delegate, FindUtil.Rep
     myLivePreviewAlarm.cancelAllRequests();
     final FindModel copy = new FindModel();
     copy.copyFrom(findModel);
-
+    mySearchResults.setUpdating(true);
+    if (myComponent != null) {
+      myComponent.getComponent().updateActions();
+    }
     Runnable request = () -> {
-      if (myDisposed) return;
-      Project project = mySearchResults.getProject();
-      if (project != null && project.isDisposed()) return;
       mySearchResults.updateThreadSafe(copy, allowedToChangedEditorSelection, null, stamp)
         .doWhenRejected(() -> updateInBackground(findModel, allowedToChangedEditorSelection));
     };

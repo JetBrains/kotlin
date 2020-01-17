@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.hierarchy;
 
 import com.intellij.icons.AllIcons;
@@ -12,6 +12,10 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserManager} instead
+ */
+@Deprecated
 @State(name = "HierarchyBrowserManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public final class HierarchyBrowserManager implements PersistentStateComponent<HierarchyBrowserManager.State> {
   public static class State {
@@ -31,7 +35,7 @@ public final class HierarchyBrowserManager implements PersistentStateComponent<H
 
     myContentManager = toolWindow.getContentManager();
     toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowHierarchy);
-    new ContentManagerWatcher(toolWindow, myContentManager);
+    ContentManagerWatcher.watchContentManager(toolWindow, myContentManager);
   }
 
   public final ContentManager getContentManager() {

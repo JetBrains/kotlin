@@ -19,9 +19,6 @@ import com.intellij.openapi.util.Comparing;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.artifact.elements.JpsExtractedDirectoryPackagingElement;
 
-/**
- * @author nik
- */
 public class JpsExtractedDirectoryPackagingElementImpl extends JpsFileCopyPackagingElementBase<JpsExtractedDirectoryPackagingElementImpl>
   implements JpsExtractedDirectoryPackagingElement {
   private String myPathInJar;

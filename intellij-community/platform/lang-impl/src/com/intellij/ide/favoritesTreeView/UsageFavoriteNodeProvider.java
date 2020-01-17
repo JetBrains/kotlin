@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.favoritesTreeView;
 
 import com.intellij.ide.projectView.ViewSettings;
@@ -46,7 +32,7 @@ import java.util.*;
 public class UsageFavoriteNodeProvider extends FavoriteNodeProvider {
   private static final Map<String, TreeSet<WorkingSetSerializable>> ourSerializables = new HashMap<>();
   private static final Comparator<VirtualFile> VIRTUAL_FILE_COMPARATOR = Comparator.comparing(VirtualFile::getPath);
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.favoritesTreeView.UsageFavoriteNodeProvider");
+  private static final Logger LOG = Logger.getInstance(UsageFavoriteNodeProvider.class);
 
   static {
     final TreeSet<WorkingSetSerializable> usageSet = createSet();
@@ -73,7 +59,7 @@ public class UsageFavoriteNodeProvider extends FavoriteNodeProvider {
   }
 
   @Override
-  public Collection<AbstractTreeNode> getFavoriteNodes(DataContext context, @NotNull ViewSettings viewSettings) {
+  public Collection<AbstractTreeNode<?>> getFavoriteNodes(DataContext context, @NotNull ViewSettings viewSettings) {
     final Project project = CommonDataKeys.PROJECT.getData(context);
     if (project == null) {
       return null;
@@ -99,7 +85,7 @@ public class UsageFavoriteNodeProvider extends FavoriteNodeProvider {
 
       final TreeSet<VirtualFile> keys = new TreeSet<>(VIRTUAL_FILE_COMPARATOR);
       keys.addAll(map.keySet());
-      final List<AbstractTreeNode> result = new SmartList<>();
+      final List<AbstractTreeNode<?>> result = new SmartList<>();
       for (VirtualFile key : keys) {
         final FileGroupingProjectNode grouping = new FileGroupingProjectNode(project, new File(key.getPath()), viewSettings);
         result.add(grouping);

@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.event.MouseEvent;
 
-/**
- * @author nik
- */
 public interface HyperlinkWithPopupMenuInfo extends HyperlinkInfo {
   @Nullable
   ActionGroup getPopupMenuGroup(@NotNull MouseEvent event);

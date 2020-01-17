@@ -64,15 +64,13 @@ public class ArchivedTemplatesFactory extends ProjectTemplatesFactory {
     return Paths.get(getCustomTemplatesPath(), name + ".zip");
   }
 
-  @NotNull
   @Override
-  public String[] getGroups() {
+  public String @NotNull [] getGroups() {
     return new String[]{CUSTOM_GROUP};
   }
 
-  @NotNull
   @Override
-  public ProjectTemplate[] createTemplates(@Nullable String group, WizardContext context) {
+  public ProjectTemplate @NotNull [] createTemplates(@Nullable String group, WizardContext context) {
     // myGroups contains only not-null keys
     if (!CUSTOM_GROUP.equals(group)) {
       return ProjectTemplate.EMPTY_ARRAY;

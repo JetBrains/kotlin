@@ -37,8 +37,6 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.containers.hash.HashMap;
-import com.intellij.util.containers.hash.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,12 +46,11 @@ import java.util.*;
  * @author Maxim.Medvedev
  */
 public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.changeSignature.ChangeSignatureProcessorBase");
+  private static final Logger LOG = Logger.getInstance(ChangeSignatureProcessorBase.class);
   protected static final String REFACTORING_ID = "refactoring.changeSignature";
 
   protected final ChangeInfo myChangeInfo;
   protected final PsiManager myManager;
-
 
   protected ChangeSignatureProcessorBase(Project project, ChangeInfo changeInfo) {
     super(project);
@@ -61,15 +58,8 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
     myManager = PsiManager.getInstance(project);
   }
 
-  protected ChangeSignatureProcessorBase(Project project, @Nullable Runnable prepareSuccessfulCallback, ChangeInfo changeInfo) {
-    super(project, prepareSuccessfulCallback);
-    myChangeInfo = changeInfo;
-    myManager = PsiManager.getInstance(project);
-  }
-
   @Override
-  @NotNull
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     return findUsages(myChangeInfo);
   }
 
@@ -80,15 +70,14 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
       final MultiMap<PsiElement, String> conflicts = usageProcessor.findConflicts(changeInfo, refUsages);
       for (PsiElement key : conflicts.keySet()) {
         Collection<String> collection = conflictDescriptions.get(key);
-        if (collection.isEmpty()) collection = new java.util.HashSet<>();
+        if (collection.isEmpty()) collection = new HashSet<>();
         collection.addAll(conflicts.get(key));
         conflictDescriptions.put(key, collection);
       }
     }
   }
 
-  @NotNull
-  public static UsageInfo[] findUsages(ChangeInfo changeInfo) {
+  public static UsageInfo @NotNull [] findUsages(ChangeInfo changeInfo) {
     List<UsageInfo> infos = new ArrayList<>();
     final ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
     for (ChangeSignatureUsageProcessor processor : processors) {
@@ -127,7 +116,7 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
 
 
   @Override
-  protected boolean isPreviewUsages(@NotNull UsageInfo[] usages) {
+  protected boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
     for (ChangeSignatureUsageProcessor processor : ChangeSignatureUsageProcessor.EP_NAME.getExtensions()) {
       if (processor.shouldPreviewUsages(myChangeInfo, usages)) return true;
     }
@@ -150,14 +139,14 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
 
   @Nullable
   @Override
-  protected RefactoringEventData getAfterData(@NotNull UsageInfo[] usages) {
+  protected RefactoringEventData getAfterData(UsageInfo @NotNull [] usages) {
     RefactoringEventData data = new RefactoringEventData();
     data.addElement(getChangeInfo().getMethod());
     return data;
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usages) {
+  protected void performRefactoring(UsageInfo @NotNull [] usages) {
     RefactoringTransaction transaction = getTransaction();
     final ChangeInfo changeInfo = myChangeInfo;
     final RefactoringElementListener elementListener = transaction == null ? null : transaction.getElementListener(changeInfo.getMethod());
@@ -190,7 +179,7 @@ public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProces
     }
   }
 
-  public static void doChangeSignature(ChangeInfo changeInfo, @NotNull UsageInfo[] usages) {
+  public static void doChangeSignature(ChangeInfo changeInfo, UsageInfo @NotNull [] usages) {
     final ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
 
     final ResolveSnapshotProvider resolveSnapshotProvider = changeInfo.isParameterNamesChanged() ?

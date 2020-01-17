@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileReferenceContextUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.move.FileReferenceContextUtil");
+  private static final Logger LOG = Logger.getInstance(FileReferenceContextUtil.class);
   private static final Key<Pair<PsiFileSystemItem, Integer>> REF_FILE_SYSTEM_ITEM_KEY = Key.create("REF_FILE_SYSTEM_ITEM_KEY");
 
   private FileReferenceContextUtil() {
@@ -44,7 +44,7 @@ public class FileReferenceContextUtil {
     if (element == null || element instanceof PsiCompiledElement || isBinary(element)) return map;
     element.accept(new PsiRecursiveElementWalkingVisitor(true) {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof PsiLanguageInjectionHost && element.isValid()) {
           InjectedLanguageManager.getInstance(element.getProject())
             .enumerate(element, (injectedPsi, places) -> encodeFileReferences(injectedPsi));
@@ -87,7 +87,7 @@ public class FileReferenceContextUtil {
     if (element == null || element instanceof PsiCompiledElement || isBinary(element)) return;
     element.accept(new PsiRecursiveElementVisitor(true) {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         Pair<PsiFileSystemItem, Integer> pair = element.getCopyableUserData(REF_FILE_SYSTEM_ITEM_KEY);
         final PsiFileSystemItem item = pair != null ? pair.first : null;
         element.putCopyableUserData(REF_FILE_SYSTEM_ITEM_KEY, null);
@@ -108,7 +108,7 @@ public class FileReferenceContextUtil {
     if (element == null || element instanceof PsiCompiledElement || isBinary(element)) return;
     element.accept(new PsiRecursiveElementVisitor(true) {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (!range.intersects(element.getTextRange())) return;
         String text = element.getText();
         PsiFileSystemItem item = map.get(text);

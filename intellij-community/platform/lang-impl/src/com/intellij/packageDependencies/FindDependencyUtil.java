@@ -17,9 +17,9 @@
 package com.intellij.packageDependencies;
 
 import com.intellij.analysis.AnalysisScopeBundle;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -37,7 +37,7 @@ public class FindDependencyUtil {
     int totalCount = searchIn.size();
     int count = 0;
 
-    nextFile: for (final PsiFile psiFile : searchIn) {
+    for (final PsiFile psiFile : searchIn) {
       count = updateIndicator(indicator, totalCount, count, psiFile);
 
       if (!psiFile.isValid()) continue;
@@ -53,7 +53,7 @@ public class FindDependencyUtil {
         }
         precomputedDeps = new HashSet<>(depsByFile);
         precomputedDeps.retainAll(searchFor);
-        if (precomputedDeps.isEmpty()) continue nextFile;
+        if (precomputedDeps.isEmpty()) continue;
       }
       else {
         precomputedDeps = Collections.unmodifiableSet(searchFor);
@@ -94,26 +94,23 @@ public class FindDependencyUtil {
   }
 
   private static void analyzeFileDependencies(PsiFile psiFile, final Set<? extends PsiFile> searchFor, final List<? super UsageInfo> result) {
-    DependenciesBuilder.analyzeFileDependencies(psiFile, new DependenciesBuilder.DependencyProcessor() {
-      @Override
-      public void process(PsiElement place, PsiElement dependency) {
-        PsiFile dependencyFile = dependency.getContainingFile();
-        if (dependencyFile != null) {
-          final PsiElement navigationElement = dependencyFile.getNavigationElement();
-          if (navigationElement instanceof PsiFile) {
-            dependencyFile = (PsiFile)navigationElement;
-          }
+    DependenciesBuilder.analyzeFileDependencies(psiFile, (place, dependency) -> {
+      PsiFile dependencyFile = dependency.getContainingFile();
+      if (dependencyFile != null) {
+        final PsiElement navigationElement = dependencyFile.getNavigationElement();
+        if (navigationElement instanceof PsiFile) {
+          dependencyFile = (PsiFile)navigationElement;
         }
-        if (searchFor.contains(dependencyFile)) {
-          result.add(new UsageInfo(place));
-        }
+      }
+      if (searchFor.contains(dependencyFile)) {
+        result.add(new UsageInfo(place));
       }
     });
   }
 
   private static int updateIndicator(final ProgressIndicator indicator, final int totalCount, int count, final PsiFile psiFile) {
     if (indicator != null) {
-      if (indicator.isCanceled()) throw new ProcessCanceledException();
+      ProgressIndicatorUtils.checkCancelledEvenWithPCEDisabled(indicator);
       indicator.setFraction(((double)++count) / totalCount);
       final VirtualFile virtualFile = psiFile.getVirtualFile();
       if (virtualFile != null) {

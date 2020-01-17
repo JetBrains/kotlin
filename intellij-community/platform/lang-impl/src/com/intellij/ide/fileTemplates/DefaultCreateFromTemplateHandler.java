@@ -73,7 +73,7 @@ public class DefaultCreateFromTemplateHandler implements CreateFromTemplateHandl
   }
 
   @Override
-  public boolean canCreate(@NotNull final PsiDirectory[] dirs) {
+  public boolean canCreate(final PsiDirectory @NotNull [] dirs) {
     return true;
   }
 

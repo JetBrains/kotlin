@@ -16,13 +16,12 @@
 package com.intellij.packaging.ui;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public abstract class PackagingSourceItemFilter {
   public static final ExtensionPointName<PackagingSourceItemFilter> EP_NAME = ExtensionPointName.create("com.intellij.packaging.sourceItemFilter");
 
+  @Contract(pure = true)
   public abstract boolean isAvailable(@NotNull PackagingSourceItem item, @NotNull ArtifactEditorContext context);
 }

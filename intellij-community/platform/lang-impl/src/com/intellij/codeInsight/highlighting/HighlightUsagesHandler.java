@@ -57,7 +57,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
       return;
     }
 
-    final HighlightUsagesHandlerBase handler = createCustomHandler(editor, file);
+    final HighlightUsagesHandlerBase<?> handler = createCustomHandler(editor, file);
     if (handler != null) {
       final String featureId = handler.getFeatureId();
 
@@ -83,8 +83,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     });
   }
 
-  @Nullable
-  private static UsageTarget[] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
+  private static UsageTarget @Nullable [] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
     UsageTarget[] usageTargets = UsageTargetUtil.findUsageTargets(editor, file);
 
     if (usageTargets == null) {
@@ -149,9 +148,8 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
   public static <T extends PsiElement> HighlightUsagesHandlerBase<T> createCustomHandler(@NotNull Editor editor, @NotNull PsiFile file,
                                                                                          @NotNull ProperTextRange visibleRange) {
     for (HighlightUsagesHandlerFactory factory : HighlightUsagesHandlerFactory.EP_NAME.getExtensionList()) {
-      final HighlightUsagesHandlerBase handler = factory.createHighlightUsagesHandler(editor, file, visibleRange);
+      HighlightUsagesHandlerBase<T> handler = factory.createHighlightUsagesHandler(editor, file, visibleRange);
       if (handler != null) {
-        //noinspection unchecked
         return handler;
       }
     }
@@ -305,7 +303,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     return null;
   }
 
-  public static void doHighlightElements(@NotNull Editor editor, @NotNull PsiElement[] elements, @NotNull TextAttributes attributes, boolean clearHighlights) {
+  public static void doHighlightElements(@NotNull Editor editor, PsiElement @NotNull [] elements, @NotNull TextAttributes attributes, boolean clearHighlights) {
     HighlightManager highlightManager = HighlightManager.getInstance(editor.getProject());
     List<TextRange> textRanges = new ArrayList<>(elements.length);
     for (PsiElement element : elements) {

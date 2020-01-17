@@ -7,7 +7,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsDummyElement;
-import org.jetbrains.jps.model.JpsElementContainer;
 import org.jetbrains.jps.model.JpsGlobal;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.java.*;
@@ -33,9 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsJavaExtensionServiceImpl extends JpsJavaExtensionService {
   @NotNull
   @Override
@@ -142,20 +138,17 @@ public class JpsJavaExtensionServiceImpl extends JpsJavaExtensionService {
     return sdk;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public JpsJavaCompilerConfiguration getCompilerConfiguration(@NotNull JpsProject project) {
-    return project.getContainer().getChild(JpsJavaCompilerConfigurationImpl.ROLE);
+    return project.getContainer().getOrSetChild(JpsJavaCompilerConfigurationImpl.ROLE);
   }
 
+  @Deprecated
   @NotNull
   @Override
   public JpsJavaCompilerConfiguration getOrCreateCompilerConfiguration(@NotNull JpsProject project) {
-    JpsJavaCompilerConfiguration configuration = getCompilerConfiguration(project);
-    if (configuration == null) {
-      configuration = project.getContainer().setChild(JpsJavaCompilerConfigurationImpl.ROLE, new JpsJavaCompilerConfigurationImpl());
-    }
-    return configuration;
+    return getCompilerConfiguration(project);
   }
 
   @Nullable
@@ -236,11 +229,6 @@ public class JpsJavaExtensionServiceImpl extends JpsJavaExtensionService {
   @NotNull
   @Override
   public JavaModuleIndex getJavaModuleIndex(@NotNull JpsProject project) {
-    JpsElementContainer container = project.getContainer();
-    JavaModuleIndex index = container.getChild(JavaModuleIndexRole.INSTANCE);
-    if (index == null) {
-      index = container.setChild(JavaModuleIndexRole.INSTANCE, getOrCreateCompilerConfiguration(project).getCompilerExcludes());
-    }
-    return index;
+    return project.getContainer().getOrSetChild(JavaModuleIndexRole.INSTANCE, () -> getCompilerConfiguration(project).getCompilerExcludes());
   }
 }

@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class CompositePackagingElementType<E extends CompositePackagingElement<?>> extends PackagingElementType<E> {
   protected CompositePackagingElementType(@NotNull @NonNls String id, @NotNull String presentableName) {
     super(id, presentableName);

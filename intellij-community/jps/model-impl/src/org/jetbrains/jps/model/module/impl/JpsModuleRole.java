@@ -23,9 +23,6 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleListener;
 
-/**
- * @author nik
- */
 public class JpsModuleRole extends JpsElementChildRoleBase<JpsModule> {
   private static final JpsElementChildRole<JpsModule> INSTANCE = new JpsModuleRole();
   public static final JpsElementCollectionRole<JpsModule> MODULE_COLLECTION_ROLE = JpsElementCollectionRole.create(INSTANCE);

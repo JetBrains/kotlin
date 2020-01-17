@@ -18,6 +18,7 @@ package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.ide.projectView.impl.ModuleGroup;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -110,7 +111,20 @@ public class ProjectSettingsService {
   public void showModuleConfigurationDialog(@Nullable String moduleToSelect, @Nullable String editorNameToSelect) {
   }
 
+  /**
+   * @deprecated Please use {@link SdkPopupFactory} instead.
+   *
+   * Many usages of that API are too bogus and do duplicate similar code all other the place.
+   * It is not even possible to filter unneeded SDK types or SDK instances in the dialog.
+   *
+   * This method is no longer supported and behaves a bit broken: the first call returns {@code null},
+   * the second call may return a chosen SDK from the first call (only once). This is the way to
+   * avoid breaking the older code scenarios.
+   */
+  @Nullable
+  @Deprecated
   public Sdk chooseAndSetSdk() {
+    Logger.getInstance(getClass()).warn("Call to the deprecated ProjectSettingsService#chooseAndSetSdk method. Please use new API instead");
     return null;
   }
 }

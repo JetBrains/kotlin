@@ -29,7 +29,7 @@ public class PatternBasedFileHyperlinkRawDataFinder implements FileHyperlinkRawD
 
   private final PatternHyperlinkFormat[] myLinkFormats;
 
-  public PatternBasedFileHyperlinkRawDataFinder(@NotNull PatternHyperlinkFormat[] linkFormats) {
+  public PatternBasedFileHyperlinkRawDataFinder(PatternHyperlinkFormat @NotNull [] linkFormats) {
     myLinkFormats = linkFormats;
   }
 

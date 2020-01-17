@@ -15,6 +15,8 @@
  */
 package com.intellij.openapi.roots.impl.libraries;
 
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.roots.libraries.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,12 +30,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author nik
- */
-public class LibraryDetectionManagerImpl extends LibraryDetectionManager {
+public class LibraryDetectionManagerImpl extends LibraryDetectionManager implements Disposable {
   private final Map<List<? extends VirtualFile>, List<Pair<LibraryKind, LibraryProperties>>> myCache = Collections.synchronizedMap(new HashMap<>());
-  
+
+  public LibraryDetectionManagerImpl() {
+    ExtensionPointChangeListener listener = () -> myCache.clear();
+    LibraryType.EP_NAME.addExtensionPointListener(listener, this);
+    LibraryPresentationProvider.EP_NAME.addExtensionPointListener(listener, this);
+  }
+
   @Override
   public boolean processProperties(@NotNull List<? extends VirtualFile> files, @NotNull LibraryPropertiesProcessor processor) {
     for (Pair<LibraryKind, LibraryProperties> pair : getOrComputeKinds(files)) {
@@ -80,5 +85,9 @@ public class LibraryDetectionManagerImpl extends LibraryDetectionManager {
       }
     }
     return result;
+  }
+
+  @Override
+  public void dispose() {
   }
 }

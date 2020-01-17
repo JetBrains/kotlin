@@ -68,8 +68,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 public class InspectionResultsView extends JPanel implements Disposable, DataProvider, OccurenceNavigator {
   private static final Logger LOG = Logger.getInstance(InspectionResultsView.class);
@@ -102,7 +103,7 @@ public class InspectionResultsView extends JPanel implements Disposable, DataPro
   private final Alarm myLoadingProgressPreviewAlarm = new Alarm(this);
   private final InspectionViewSuppressActionHolder mySuppressActionHolder = new InspectionViewSuppressActionHolder();
 
-  private final ExecutorService myTreeUpdater = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Inspection-View-Tree-Updater");
+  private final Executor myTreeUpdater = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Inspection-View-Tree-Updater");
   private volatile boolean myUpdating;
 
   public InspectionResultsView(@NotNull GlobalInspectionContextImpl globalInspectionContext,
@@ -789,12 +790,14 @@ public class InspectionResultsView extends JPanel implements Disposable, DataPro
   }
 
   private void updateTree(@NotNull Runnable action) {
-    myTreeUpdater.submit(() -> ProgressManager.getInstance().runProcess(action, new EmptyProgressIndicator()));
+    myTreeUpdater.execute(() -> ProgressManager.getInstance().runProcess(action, new EmptyProgressIndicator()));
   }
 
 
   @TestOnly
   public void dispatchTreeUpdate() throws ExecutionException, InterruptedException {
-    myTreeUpdater.submit(EmptyRunnable.getInstance()).get();
+    CountDownLatch latch = new CountDownLatch(1);
+    myTreeUpdater.execute(()-> latch.countDown());
+    latch.await();
   }
 }

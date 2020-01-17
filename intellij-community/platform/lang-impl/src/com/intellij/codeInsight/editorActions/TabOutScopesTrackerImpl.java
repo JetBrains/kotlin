@@ -12,7 +12,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.editor.ex.DocumentBulkUpdateListener;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +71,7 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
     return tracker.getCaretShiftForScopeEndingAt(offset, removeScope);
   }
 
-  private static class Tracker extends DocumentBulkUpdateListener.Adapter implements DocumentListener {
+  private static class Tracker implements DocumentListener {
     private static final Key<Tracker> TRACKER = Key.create("tab.out.scope.tracker");
     private static final Key<List<RangeMarker>> TRACKED_SCOPES = Key.create("tab.out.scopes");
 
@@ -90,7 +89,6 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
       myEditor = editor;
       Disposable editorDisposable = editor.getDisposable();
       myEditor.getDocument().addDocumentListener(this, editorDisposable);
-      ApplicationManager.getApplication().getMessageBus().connect(editorDisposable).subscribe(DocumentBulkUpdateListener.TOPIC, this);
     }
 
     private List<RangeMarker> getCurrentScopes(boolean create) {
@@ -143,7 +141,7 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
     }
 
     @Override
-    public void updateStarted(@NotNull Document doc) {
+    public void bulkUpdateStarting(@NotNull Document document) {
       for (Caret caret : myEditor.getCaretModel().getAllCarets()) {
         caret.putUserData(TRACKED_SCOPES, null);
       }

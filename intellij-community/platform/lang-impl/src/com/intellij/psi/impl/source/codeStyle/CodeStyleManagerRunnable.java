@@ -37,9 +37,6 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 abstract class CodeStyleManagerRunnable<T> {
   protected CodeStyleSettings mySettings;
   protected CommonCodeStyleSettings.IndentOptions myIndentOptions;
@@ -102,7 +99,7 @@ abstract class CodeStyleManagerRunnable<T> {
       FormattingMode currentMode = myCodeStyleManager.getCurrentFormattingMode();
       myCodeStyleManager.setCurrentFormattingMode(myMode);
       try {
-        myModel = buildModel(builder, file, document);
+        myModel = buildModel(builder, file, range != null ? range : file.getTextRange(), document);
         T result = doPerform(offset, range);
         if (result != null) {
           return result;
@@ -116,8 +113,11 @@ abstract class CodeStyleManagerRunnable<T> {
   }
 
   @NotNull
-  private FormattingModel buildModel(@NotNull FormattingModelBuilder builder, @NotNull PsiFile file, @Nullable Document document) {
-    FormattingModel model = CoreFormatterUtil.buildModel(builder, file, mySettings, myMode);
+  private FormattingModel buildModel(@NotNull FormattingModelBuilder builder,
+                                     @NotNull PsiFile file,
+                                     @NotNull TextRange range,
+                                     @Nullable Document document) {
+    FormattingModel model = CoreFormatterUtil.buildModel(builder, file, range, mySettings, myMode);
     if (document != null && useDocumentBaseFormattingModel()) {
       model = new DocumentBasedFormattingModel(model, document, myCodeStyleManager.getProject(), mySettings,
                                                file.getFileType(), file);

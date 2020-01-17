@@ -23,9 +23,6 @@ import com.intellij.packaging.artifacts.ArtifactModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public interface PackagingElementResolvingContext {
   @NotNull
   Project getProject();

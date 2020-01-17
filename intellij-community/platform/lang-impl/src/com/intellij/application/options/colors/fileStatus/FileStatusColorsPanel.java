@@ -37,7 +37,7 @@ public class FileStatusColorsPanel {
   private JLabel myCustomizedLabel;
   private final FileStatusColorsTableModel myModel;
 
-  public FileStatusColorsPanel(@NotNull FileStatus[] fileStatuses) {
+  public FileStatusColorsPanel(FileStatus @NotNull [] fileStatuses) {
     myModel = new FileStatusColorsTableModel(fileStatuses, getCurrentScheme());
     myFileStatusColorsTable.setModel(
       myModel);

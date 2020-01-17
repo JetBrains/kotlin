@@ -4,6 +4,7 @@ package com.intellij.execution.services;
 import com.intellij.execution.services.ServiceModel.ServiceNode;
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.navigationToolbar.NavBarModel;
+import com.intellij.ide.navigationToolbar.NavBarModelExtension;
 import com.intellij.ide.navigationToolbar.NavBarModelListener;
 import com.intellij.ide.navigationToolbar.NavBarPanel;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -86,7 +87,7 @@ class ServiceViewNavBarPanel extends NavBarPanel {
     }
 
     @Override
-    protected void updateModel(PsiElement psiElement) {
+    protected void updateModel(PsiElement psiElement, NavBarModelExtension ownerExtension) {
     }
 
     @Override
@@ -94,7 +95,7 @@ class ServiceViewNavBarPanel extends NavBarPanel {
       List<Object> path = new ArrayList<>();
       if (object instanceof ServiceViewItem) {
         ServiceViewItem item = (ServiceViewItem)object;
-        List<? extends ServiceViewItem> roots = myViewModel.getRoots();
+        List<? extends ServiceViewItem> roots = myViewModel.getVisibleRoots();
 
         do {
           path.add(item);
@@ -115,13 +116,13 @@ class ServiceViewNavBarPanel extends NavBarPanel {
     @Override
     protected List<Object> getChildren(Object object) {
       if (object == myRoot) {
-        return new ArrayList<>(myViewModel.getRoots());
+        return new ArrayList<>(myViewModel.getVisibleRoots());
       }
       if (object instanceof ServiceViewItem) {
         if (object instanceof ServiceNode) {
           ServiceNode service = (ServiceNode)object;
           if (service.getProvidingContributor() != null && !service.isChildrenInitialized()) {
-            myViewModel.getInvoker().runOrInvokeLater(() -> {
+            myViewModel.getInvoker().invoke(() -> {
               service.getChildren(); // initialize children on background thread
             });
             return Collections.emptyList();

@@ -3,14 +3,13 @@ package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.util.Function;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,21 +32,13 @@ public abstract class RunAnythingGroup {
    * {@link #myTitleIndex} is an index of group title in the main list.
    * -1 means that group has zero elements and thus has no showing title
    */
-  private volatile int myTitleIndex = -1;
+  volatile int myTitleIndex = -1;
 
   /**
    * @return Current group title in the main list.
    */
   @NotNull
   public abstract String getTitle();
-
-  /**
-   * @return Group icon to be presented to the left of the group separator rule
-   */
-  @Nullable
-  public Icon getIcon() {
-    return null;
-  }
 
   /**
    * @return Current group maximum number of items to be shown.
@@ -59,24 +50,22 @@ public abstract class RunAnythingGroup {
   /**
    * @return Current group maximum number of items to be insert by click on 'load more..'.
    */
-  protected int getMaxItemsToInsert() {
+  public int getMaxItemsToInsert() {
     return 5;
   }
 
   /**
    * Gets current group items to add into the main list.
    *
-   * @param dataContext
-   * @param model               needed to avoid adding duplicates into the list
-   * @param pattern             input search string
-   * @param isInsertionMode     if true gets {@link #getMaxItemsToInsert()} group items, else limits to {@link #getMaxInitialItems()}
-   * @param cancellationChecker checks 'load more' calculation process to be cancelled
+   * @param dataContext needed to fetch project/module
+   * @param model       needed to avoid adding duplicates into the list
+   * @param pattern     input search string
+   * @param itemsToInsert number of items to insert
    */
   public abstract SearchResult getItems(@NotNull DataContext dataContext,
-                                        @NotNull DefaultListModel model,
+                                        @NotNull List<RunAnythingItem> model,
                                         @NotNull String pattern,
-                                        boolean isInsertionMode,
-                                        @NotNull Runnable cancellationChecker);
+                                        int itemsToInsert);
 
   /**
    * Resets current group 'load more..' {@link #myMoreIndex} index.
@@ -110,7 +99,7 @@ public abstract class RunAnythingGroup {
    */
   @Nullable
   public static RunAnythingGroup findGroup(@NotNull Collection<? extends RunAnythingGroup> groups, int titleIndex) {
-    return groups.stream().filter(runAnythingGroup -> titleIndex == ((RunAnythingGroup)runAnythingGroup).myTitleIndex).findFirst().orElse(null);
+    return groups.stream().filter(runAnythingGroup -> titleIndex == runAnythingGroup.myTitleIndex).findFirst().orElse(null);
   }
 
   /**
@@ -136,9 +125,9 @@ public abstract class RunAnythingGroup {
    * Shifts {@link #myTitleIndex} starting from {@code baseIndex} to {@code shift}.
    */
   private static void shiftTitleIndex(@NotNull Collection<? extends RunAnythingGroup> groups, int baseIndex, int shift) {
-    ((Collection<RunAnythingGroup>)groups).stream()
-          .filter(runAnythingGroup -> runAnythingGroup.myTitleIndex != -1 && runAnythingGroup.myTitleIndex > baseIndex)
-          .forEach(runAnythingGroup -> runAnythingGroup.myTitleIndex += shift);
+    groups.stream()
+      .filter(runAnythingGroup -> runAnythingGroup.myTitleIndex != -1 && runAnythingGroup.myTitleIndex > baseIndex)
+      .forEach(runAnythingGroup -> runAnythingGroup.myTitleIndex += shift);
   }
 
   /**
@@ -152,7 +141,7 @@ public abstract class RunAnythingGroup {
    * Clears {@link #myTitleIndex} of all groups.
    */
   private static void clearTitleIndex(@NotNull Collection<? extends RunAnythingGroup> groups) {
-    groups.forEach(runAnythingGroup -> ((RunAnythingGroup)runAnythingGroup).myTitleIndex = -1);
+    groups.forEach(runAnythingGroup -> runAnythingGroup.myTitleIndex = -1);
   }
 
   /**
@@ -176,6 +165,14 @@ public abstract class RunAnythingGroup {
   @Nullable
   public static RunAnythingGroup findGroupByMoreIndex(@NotNull Collection<? extends RunAnythingGroup> groups, int moreIndex) {
     return groups.stream().filter(runAnythingGroup -> moreIndex == runAnythingGroup.myMoreIndex).findFirst().orElse(null);
+  }
+
+  /**
+   * Finds group matched by {@link #myTitleIndex}.
+   */
+  @Nullable
+  public static RunAnythingGroup findGroupByTitleIndex(@NotNull Collection<? extends RunAnythingGroup> groups, int titleIndex) {
+    return groups.stream().filter(runAnythingGroup -> titleIndex == runAnythingGroup.myTitleIndex).findFirst().orElse(null);
   }
 
   /**
@@ -204,26 +201,20 @@ public abstract class RunAnythingGroup {
   /**
    * Adds current group matched items into the list.
    *
-   * @param dataContext
-   * @param model               needed to avoid adding duplicates into the list
-   * @param pattern             input search string
-   * @param cancellationChecker runnable that should throw a {@code ProcessCancelledException} if 'load more' process was cancelled
+   * @param dataContext needed to fetch project/module
+   * @param model       needed to avoid adding duplicates into the list
+   * @param pattern     input search string
    */
   public final synchronized void collectItems(@NotNull DataContext dataContext,
-                                              @NotNull DefaultListModel model,
-                                              @NotNull String pattern,
-                                              @NotNull Runnable cancellationChecker) {
-    SearchResult result = getItems(dataContext, model, pattern, false, cancellationChecker);
+                                              @NotNull List<RunAnythingItem> model,
+                                              @NotNull String pattern) {
+    SearchResult result = getItems(dataContext, model, pattern, getMaxInitialItems());
 
-    cancellationChecker.run();
+    ProgressManager.checkCanceled();
     if (!result.isEmpty()) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        cancellationChecker.run();
-
-        myTitleIndex = model.size();
-        result.forEach(model::addElement);
-        myMoreIndex = result.myNeedMore ? model.getSize() - 1 : -1;
-      });
+      myTitleIndex = model.size();
+      model.addAll(result);
+      myMoreIndex = result.myNeedMore ? model.size() - 1 : -1;
     }
   }
 

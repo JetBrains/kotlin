@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.ArrayList;
 
-/**
- * @author nik
- */
 public class ManifestFileConfiguration {
   private final boolean myWritable;
   private List<String> myClasspath = new ArrayList<>();

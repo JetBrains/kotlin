@@ -48,6 +48,7 @@ class IntelliJSettingsBuilder implements ModelBuilderService {
     return null
   }
 
+  @NotNull
   @Override
   ErrorMessageBuilder getErrorMessageBuilder(@NotNull Project project, @NotNull Exception e) {
     return ErrorMessageBuilder

@@ -17,26 +17,17 @@
 package com.intellij.refactoring.actions;
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
-import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.RefactoringBundle;
 import org.jetbrains.annotations.NotNull;
 
-public class IntroduceFunctionalVariableAction extends BasePlatformRefactoringAction {
-  public static final String REFACTORING_NAME = RefactoringBundle.message("introduce.functional.variable.title");
-
-  @Override
-  protected boolean isAvailableInEditorOnly() {
-    return true;
-  }
-
-  @Override
-  protected boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
-    return false;
-  }
-
+public class IntroduceFunctionalVariableAction extends IntroduceActionBase {
   @Override
   protected RefactoringActionHandler getRefactoringHandler(@NotNull RefactoringSupportProvider provider) {
     return provider.getIntroduceFunctionalVariableHandler();
+  }
+
+  public static String getRefactoringName() {
+    return RefactoringBundle.message("introduce.functional.variable.title");
   }
 }

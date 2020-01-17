@@ -5,35 +5,46 @@ import com.intellij.application.options.codeStyle.CodeStyleBlankLinesPanel;
 import com.intellij.application.options.codeStyle.CodeStyleSchemesModel;
 import com.intellij.application.options.codeStyle.CodeStyleSpacesPanel;
 import com.intellij.application.options.codeStyle.WrappingAndBracesPanel;
+import com.intellij.ide.DataManager;
 import com.intellij.lang.Language;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
-import com.intellij.util.containers.hash.HashSet;
+import com.intellij.ui.TitledSeparator;
+import com.intellij.util.EventDispatcher;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.JBTreeTraverser;
+import com.intellij.util.containers.TreeTraversal;
+import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.GraphicsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Rustam Vishnyakov
@@ -47,12 +58,41 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   private final PredefinedCodeStyle[] myPredefinedCodeStyles;
   private JPopupMenu myCopyFromMenu;
   @Nullable private TabChangeListener myListener;
+  private final EventDispatcher<PredefinedCodeStyleListener> myPredefinedCodeStyleEventDispatcher = EventDispatcher.create(PredefinedCodeStyleListener.class);
 
   private Ref<LanguageCodeStyleSettingsProvider> myProviderRef;
 
   protected TabbedLanguageCodeStylePanel(@Nullable Language language, CodeStyleSettings currentSettings, CodeStyleSettings settings) {
     super(language, currentSettings, settings);
     myPredefinedCodeStyles = getPredefinedStyles();
+    CodeStyleSettingsProvider.EXTENSION_POINT_NAME.addExtensionPointListener(
+      new ExtensionPointListener<CodeStyleSettingsProvider>() {
+        @Override
+        public void extensionAdded(@NotNull CodeStyleSettingsProvider extension,
+                                   @NotNull PluginDescriptor pluginDescriptor) {
+          if (!extension.hasSettingsPage() && getDefaultLanguage() == extension.getLanguage()) {
+            createTab(extension);
+          }
+        }
+
+        @Override
+        public void extensionRemoved(@NotNull CodeStyleSettingsProvider extension,
+                                     @NotNull PluginDescriptor pluginDescriptor) {
+          if (!extension.hasSettingsPage() && getDefaultLanguage() == extension.getLanguage()) {
+            final String tabTitle = extension.getConfigurableDisplayName();
+            for (int i = 0; i < myTabbedPane.getTabCount(); i ++) {
+              if (myTabbedPane.getTitleAt(i).equals(tabTitle)) {
+                myTabbedPane.removeTabAt(i);
+                myTabs.stream().filter(
+                  panel -> panel.getTabTitle().equals(tabTitle)
+                ).findFirst().ifPresent(panel -> myTabs.remove(panel));
+                return;
+              }
+            }
+          }
+        }
+      }, this
+    );
   }
 
   /**
@@ -125,7 +165,32 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
 
   public void showSetFrom(Component component) {
     initCopyFromMenu();
-    myCopyFromMenu.show(component, 0, component.getHeight());
+    DefaultActionGroup group = new DefaultActionGroup();
+    JBTreeTraverser<Component> traverser = JBTreeTraverser.<Component>of(
+      o -> o instanceof JMenu ? new Component[] { new TitledSeparator(((JMenu)o).getText()), ((JMenu)o).getPopupMenu()} :
+           o instanceof JPopupMenu ? ((JPopupMenu)o).getComponents() : null)
+        .withRoot(myCopyFromMenu);
+    for (Component c : traverser.traverse(TreeTraversal.LEAVES_DFS)) {
+      if (c instanceof JSeparator) {
+        group.addSeparator();
+      }
+      else if (c instanceof TitledSeparator) {
+        group.addSeparator(((TitledSeparator)c).getText());
+      }
+      else if (c instanceof JMenuItem) {
+        group.add(new DumbAwareAction(((JMenuItem)c).getText(), "", ObjectUtils.notNull(((JMenuItem)c).getIcon(), EmptyIcon.ICON_16)) {
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            ((JMenuItem)c).doClick();
+          }
+        });
+      }
+    }
+    int maxRows = group.getChildrenCount() > 17 ? 15 : -1;
+    DataContext dataContext = DataManager.getInstance().getDataContext(component);
+    JBPopupFactory.getInstance().createActionGroupPopup(
+      null, group, dataContext, JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false, null, maxRows, null, "popup@TabbedLanguageCodeStylePanel")
+    .showUnderneathOf(component);
   }
 
   private void initCopyFromMenu() {
@@ -262,30 +327,36 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   public void setupCopyFromMenu(JPopupMenu copyMenu) {
     super.setupCopyFromMenu(copyMenu);
     if (myPredefinedCodeStyles.length > 0) {
-      JMenu langs = new JMenu(ApplicationBundle.message("code.style.set.from.menu.language")) {
-        @Override
-        public void paint(Graphics g) {
-          GraphicsUtil.setupAntialiasing(g);
-          super.paint(g);
-        }
-      };
-      copyMenu.add(langs);
-      fillLanguages(langs);
-      JMenu predefined = new JMenu(ApplicationBundle.message("code.style.set.from.menu.predefined.style")) {
-        @Override
-        public void paint(Graphics g) {
-          GraphicsUtil.setupAntialiasing(g);
-          super.paint(g);
-        }
-      };
-      copyMenu.add(predefined);
-      fillPredefined(predefined);
+      fillPredefinedStylesAndLanguages(copyMenu);
     }
     else {
       fillLanguages(copyMenu);
     }
   }
 
+  private void fillPredefinedStylesAndLanguages(JPopupMenu copyMenu) {
+    fillPredefinedStyles(copyMenu);
+    LanguageCodeStyleSettingsProvider provider = getProvider();
+    int n = 0;
+    if (provider != null) n = provider.getApplicableLanguages().size();
+    if (n > 0) {
+      copyMenu.addSeparator();
+      if (n <= 15) {
+        fillLanguages(copyMenu);
+      }
+      else {
+        JMenu langs = new JMenu(ApplicationBundle.message("code.style.set.from.menu.language")) {
+          @Override
+          public void paint(Graphics g) {
+            GraphicsUtil.setupAntialiasing(g);
+            super.paint(g);
+          }
+        };
+        copyMenu.add(langs);
+        fillLanguages(langs);
+      }
+    }
+  }
 
   private void fillLanguages(JComponent parentMenu) {
     List<Language> languages = getProvider() != null ? getProvider().getApplicableLanguages() : Collections.emptyList();
@@ -299,7 +370,7 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
     }
   }
 
-  private void fillPredefined(JMenuItem parentMenu) {
+  private void fillPredefinedStyles(JComponent parentMenu) {
     for (final PredefinedCodeStyle predefinedCodeStyle : myPredefinedCodeStyles) {
       JMenuItem predefinedItem = new JBMenuItem(predefinedCodeStyle.getName());
       parentMenu.add(predefinedItem);
@@ -307,12 +378,16 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
     }
   }
 
+  protected void addPredefinedCodeStyleListener(@NotNull PredefinedCodeStyleListener listener) {
+    myPredefinedCodeStyleEventDispatcher.addListener(listener, this);
+  }
+
   private PredefinedCodeStyle[] getPredefinedStyles() {
     final Language language = getDefaultLanguage();
     final List<PredefinedCodeStyle> result = new ArrayList<>();
 
     for (PredefinedCodeStyle codeStyle : PredefinedCodeStyle.EP_NAME.getExtensions()) {
-      if (codeStyle.getLanguage().equals(language)) {
+      if (language != null && codeStyle.isApplicableToLanguage(language)) {
         result.add(codeStyle);
       }
     }
@@ -340,6 +415,7 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
     for (PredefinedCodeStyle style : myPredefinedCodeStyles) {
       if (style.getName().equals(styleName)) {
         applyPredefinedSettings(style);
+        myPredefinedCodeStyleEventDispatcher.getMulticaster().styleApplied(style);
       }
     }
   }
@@ -481,12 +557,23 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
 
   @NotNull
   @Override
-  public Set<String> processListOptions() {
-    final Set<String> result = new HashSet<>();
-    for (CodeStyleAbstractPanel tab : myTabs) {
-      result.addAll(tab.processListOptions());
-    }
-    return result;
+  public OptionsContainingConfigurable getOptionIndexer() {
+    return new OptionsContainingConfigurable() {
+      @NotNull
+      @Override
+      public Set<String> processListOptions() {
+        return Collections.emptySet();
+      }
+
+      @Override
+      public Map<String, Set<String>> processListOptionsWithPaths() {
+        final Map<String,Set<String>> result = new HashMap<>();
+        for (CodeStyleAbstractPanel tab : myTabs) {
+          result.put(tab.getTabTitle(), tab.processListOptions());
+        }
+        return result;
+      }
+    };
   }
 
   //========================================================================================================================================
@@ -618,5 +705,12 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
 
   public void changeTab(@NotNull String tabTitle) {
     myTabbedPane.setSelectedTitle(tabTitle);
+  }
+
+  @Override
+  public void highlightOptions(@NotNull String searchString) {
+    for (CodeStyleAbstractPanel tab : myTabs) {
+      tab.highlightOptions(searchString);
+    }
   }
 }

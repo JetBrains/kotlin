@@ -11,9 +11,7 @@ import com.intellij.compiler.chainsSearch.context.ChainCompletionContext;
 import com.intellij.compiler.server.BuildManagerListener;
 import com.intellij.compiler.server.CustomBuilderMessageHandler;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.compiler.CompilationStatusListener;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompilerTopics;
+import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
@@ -71,12 +69,13 @@ public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<B
           compilationFinished(compileContext);
         }
 
-        private void compilationFinished(CompileContext context) {
-          if (context.getProject() == myProject) {
+        private void compilationFinished(@NotNull CompileContext context) {
+          if (!(context instanceof DummyCompileContext) && context.getProject() == myProject) {
             Runnable compilationFinished = () -> {
               final Module[] compilationModules = ReadAction.compute(() -> {
                 if (myProject.isDisposed()) return null;
-                return context.getCompileScope().getAffectedModules();
+                CompileScope scope = context.getCompileScope();
+                return scope == null ? null : scope.getAffectedModules();
               });
               if (compilationModules == null) return;
               openReaderIfNeeded(IndexOpenReason.COMPILATION_FINISHED);
@@ -258,9 +257,8 @@ public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<B
     }
   }
 
-  @NotNull
   @Override
-  public CompilerRef.CompilerClassHierarchyElementDef[] getDirectInheritors(@NotNull CompilerRef.CompilerClassHierarchyElementDef baseClass) throws ReferenceIndexUnavailableException {
+  public CompilerRef.CompilerClassHierarchyElementDef @NotNull [] getDirectInheritors(@NotNull CompilerRef.CompilerClassHierarchyElementDef baseClass) throws ReferenceIndexUnavailableException {
     try {
       if (!myReadDataLock.tryLock()) return CompilerRef.CompilerClassHierarchyElementDef.EMPTY_ARRAY;
       try {

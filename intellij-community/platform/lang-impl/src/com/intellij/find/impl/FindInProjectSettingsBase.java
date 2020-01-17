@@ -76,13 +76,11 @@ public class FindInProjectSettingsBase implements PersistentStateComponent<FindI
     addRecentStringToList(s, replaceStrings);
   }
 
-  @NotNull
-  public String[] getRecentFindStrings(){
+  public String @NotNull [] getRecentFindStrings(){
     return ArrayUtilRt.toStringArray(findStrings);
   }
 
-  @NotNull
-  public String[] getRecentReplaceStrings(){
+  public String @NotNull [] getRecentReplaceStrings(){
     return ArrayUtilRt.toStringArray(replaceStrings);
   }
 

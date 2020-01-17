@@ -40,7 +40,7 @@ public class RenameElementAction extends BaseRefactoringAction {
   }
 
   @Override
-  public boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  public boolean isEnabledOnElements(PsiElement @NotNull [] elements) {
     if (elements.length != 1) return false;
 
     PsiElement element = elements[0];

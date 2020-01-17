@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.runners;
 
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunContentManager;
 import com.intellij.openapi.Disposable;
@@ -59,7 +58,7 @@ public class RerunTestsAction extends DumbAwareAction implements AnAction.Transp
       else {
         Project project = e.getProject();
         if (project != null) {
-          RunContentManager runContentManager = ExecutionManager.getInstance(project).getContentManager();
+          RunContentManager runContentManager = RunContentManager.getInstance(project);
           // check if the descriptor belongs to the current project
           if (runContentManager.getToolWindowByDescriptor(descriptor) != null) {
             ExecutionUtil.restart(descriptor);

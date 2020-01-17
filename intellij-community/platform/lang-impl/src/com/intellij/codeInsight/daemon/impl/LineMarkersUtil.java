@@ -33,11 +33,11 @@ class LineMarkersUtil {
                                     @NotNull Document document,
                                     @NotNull Segment bounds,
                                     int group, // -1 for all
-                                    @NotNull Processor<? super LineMarkerInfo> processor) {
+                                    @NotNull Processor<? super LineMarkerInfo<?>> processor) {
     MarkupModelEx markupModel = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
     return markupModel.processRangeHighlightersOverlappingWith(bounds.getStartOffset(), bounds.getEndOffset(),
          highlighter -> {
-           LineMarkerInfo info = getLineMarkerInfo(highlighter);
+           LineMarkerInfo<?> info = getLineMarkerInfo(highlighter);
            return info == null || group != -1 && info.updatePass != group || processor.process(info);
          }
     );
@@ -58,12 +58,12 @@ class LineMarkersUtil {
     });
 
     if (LOG.isDebugEnabled()) {
-      List<LineMarkerInfo> oldMarkers = DaemonCodeAnalyzerImpl.getLineMarkers(document, project);
+      List<LineMarkerInfo<?>> oldMarkers = DaemonCodeAnalyzerImpl.getLineMarkers(document, project);
       LOG.debug("LineMarkersUtil.setLineMarkersToEditor(markers: "+markers+", group: " + group+
                 "); oldMarkers: "+oldMarkers+"; reused: "+toReuse.forAllInGarbageBin().size());
     }
 
-    for (final LineMarkerInfo info : markers) {
+    for (final LineMarkerInfo<?> info : markers) {
       PsiElement element = info.getElement();
       if (element == null) {
         continue;
@@ -84,10 +84,10 @@ class LineMarkersUtil {
   }
 
   @NotNull
-  private static RangeHighlighter createOrReuseLineMarker(@NotNull LineMarkerInfo info,
+  private static RangeHighlighter createOrReuseLineMarker(@NotNull LineMarkerInfo<?> info,
                                                           @NotNull MarkupModelEx markupModel,
                                                           @Nullable HighlightersRecycler toReuse) {
-    LineMarkerInfo.LineMarkerGutterIconRenderer newRenderer = (LineMarkerInfo.LineMarkerGutterIconRenderer)info.createGutterRenderer();
+    LineMarkerInfo.LineMarkerGutterIconRenderer<?> newRenderer = (LineMarkerInfo.LineMarkerGutterIconRenderer<?>)info.createGutterRenderer();
 
     RangeHighlighter highlighter = toReuse == null ? null : toReuse.pickupHighlighterFromGarbageBin(info.startOffset, info.endOffset, HighlighterLayer.ADDITIONAL_SYNTAX);
     boolean newHighlighter = false;
@@ -113,7 +113,7 @@ class LineMarkersUtil {
     if (!newHighlighter) {
       highlighter.putUserData(LINE_MARKER_INFO, info);
 
-      LineMarkerInfo.LineMarkerGutterIconRenderer oldRenderer = highlighter.getGutterIconRenderer() instanceof LineMarkerInfo.LineMarkerGutterIconRenderer ? (LineMarkerInfo.LineMarkerGutterIconRenderer)highlighter.getGutterIconRenderer() : null;
+      LineMarkerInfo.LineMarkerGutterIconRenderer<?> oldRenderer = highlighter.getGutterIconRenderer() instanceof LineMarkerInfo.LineMarkerGutterIconRenderer ? (LineMarkerInfo.LineMarkerGutterIconRenderer<?>)highlighter.getGutterIconRenderer() : null;
       boolean rendererChanged = newRenderer == null || !newRenderer.equals(oldRenderer);
       boolean lineSeparatorColorChanged = !Comparing.equal(highlighter.getLineSeparatorColor(), info.separatorColor);
       boolean lineSeparatorPlacementChanged = !Comparing.equal(highlighter.getLineSeparatorPlacement(), info.separatorPlacement);
@@ -138,11 +138,11 @@ class LineMarkersUtil {
 
   static void addLineMarkerToEditorIncrementally(@NotNull Project project,
                                                  @NotNull Document document,
-                                                 @NotNull LineMarkerInfo marker) {
+                                                 @NotNull LineMarkerInfo<?> marker) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     MarkupModelEx markupModel = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
-    LineMarkerInfo[] markerInTheWay = {null};
+    LineMarkerInfo<?>[] markerInTheWay = {null};
     boolean allIsClear = markupModel.processRangeHighlightersOverlappingWith(marker.startOffset, marker.endOffset,
             highlighter -> (markerInTheWay[0] = getLineMarkerInfo(highlighter)) == null);
     if (allIsClear) {
@@ -153,9 +153,9 @@ class LineMarkersUtil {
     }
   }
 
-  private static LineMarkerInfo getLineMarkerInfo(@NotNull RangeHighlighter highlighter) {
+  private static LineMarkerInfo<?> getLineMarkerInfo(@NotNull RangeHighlighter highlighter) {
     return highlighter.getUserData(LINE_MARKER_INFO);
   }
 
-  private static final Key<LineMarkerInfo> LINE_MARKER_INFO = Key.create("LINE_MARKER_INFO");
+  private static final Key<LineMarkerInfo<?>> LINE_MARKER_INFO = Key.create("LINE_MARKER_INFO");
 }

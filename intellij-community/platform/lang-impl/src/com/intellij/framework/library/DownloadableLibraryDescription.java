@@ -17,8 +17,5 @@ package com.intellij.framework.library;
 
 import com.intellij.util.download.DownloadableFileSetVersions;
 
-/**
- * @author nik
- */
 public interface DownloadableLibraryDescription extends DownloadableFileSetVersions<FrameworkLibraryVersion> {
 }

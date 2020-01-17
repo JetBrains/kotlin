@@ -22,7 +22,7 @@ import java.util.Set;
 
 
 public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.intention.impl.config.BeforeAfterActionMetaData");
+  private static final Logger LOG = Logger.getInstance(BeforeAfterActionMetaData.class);
 
   protected static final TextDescriptor[] EMPTY_EXAMPLE = new TextDescriptor[0];
   protected static final TextDescriptor EMPTY_DESCRIPTION = new PlainTextDescriptor("", "");
@@ -43,8 +43,8 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
   }
 
   public BeforeAfterActionMetaData(@NotNull TextDescriptor description,
-                                   @NotNull TextDescriptor[] exampleUsagesBefore,
-                                   @NotNull TextDescriptor[] exampleUsagesAfter) {
+                                   TextDescriptor @NotNull [] exampleUsagesBefore,
+                                   TextDescriptor @NotNull [] exampleUsagesAfter) {
     myLoader = null;
     myDescriptionDirectoryName = null;
 
@@ -53,8 +53,7 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
     myDescription = description;
   }
 
-  @NotNull
-  private TextDescriptor[] retrieveURLs(@NotNull String prefix, @NotNull String suffix) {
+  private TextDescriptor @NotNull [] retrieveURLs(@NotNull String prefix, @NotNull String suffix) {
     Set<TextDescriptor> urls = new LinkedHashSet<>();
     final FileType[] fileTypes = FileTypeManager.getInstance().getRegisteredFileTypes();
     for (FileType fileType : fileTypes) {
@@ -95,14 +94,9 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
         cause = e;
         children = null;
       }
-      LOG.error("URLs not found for available file types and prefix: '" +
-                prefix +
-                "', suffix: '" +
-                suffix +
-                "';" +
-                " in directory: '" +
-                descriptionDirectory +
-                "'" +
+      LOG.error("URLs not found for available file types and prefix: '" + prefix
+                + "', suffix: '" + suffix + "';" +
+                " in directory: '" + descriptionDirectory + "'" +
                 (children == null ? "" : "; directory contents: " + Arrays.asList(children)), cause);
       return EMPTY_EXAMPLE;
     }
@@ -110,8 +104,7 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
   }
 
   @Override
-  @NotNull
-  public TextDescriptor[] getExampleUsagesBefore() {
+  public TextDescriptor @NotNull [] getExampleUsagesBefore() {
     if (myExampleUsagesBefore == null) {
       myExampleUsagesBefore = retrieveURLs(BEFORE_TEMPLATE_PREFIX, EXAMPLE_USAGE_URL_SUFFIX);
     }
@@ -119,8 +112,7 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
   }
 
   @Override
-  @NotNull
-  public TextDescriptor[] getExampleUsagesAfter() {
+  public TextDescriptor @NotNull [] getExampleUsagesAfter() {
     if (myExampleUsagesAfter == null) {
       myExampleUsagesAfter = retrieveURLs(AFTER_TEMPLATE_PREFIX, EXAMPLE_USAGE_URL_SUFFIX);
     }

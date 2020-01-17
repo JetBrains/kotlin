@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.CopyPasteUtil;
@@ -50,7 +50,7 @@ class AsyncProjectViewSupport {
                           @NotNull Project project,
                           @NotNull JTree tree,
                           @NotNull AbstractTreeStructure structure,
-                          @NotNull Comparator<NodeDescriptor> comparator) {
+                          @NotNull Comparator<NodeDescriptor<?>> comparator) {
     myStructureTreeModel = new StructureTreeModel<>(structure, comparator, parent);
     myAsyncTreeModel = new AsyncTreeModel(myStructureTreeModel, parent);
     myAsyncTreeModel.setRootImmediately(myStructureTreeModel.getRootImmediately());
@@ -70,7 +70,7 @@ class AsyncProjectViewSupport {
           }
           List<VirtualFile> roots = collector.get();
           LOG.debug("found ", roots.size(), " roots in ", System.currentTimeMillis() - time, "ms");
-          myStructureTreeModel.getInvoker().runOrInvokeLater(() -> roots.forEach(root -> updateByFile(root, true)));
+          myStructureTreeModel.getInvoker().invoke(() -> roots.forEach(root -> updateByFile(root, true)));
         }
       }
     };
@@ -150,7 +150,7 @@ class AsyncProjectViewSupport {
     });
   }
 
-  public void setComparator(@NotNull Comparator<? super NodeDescriptor> comparator) {
+  public void setComparator(@NotNull Comparator<? super NodeDescriptor<?>> comparator) {
     myStructureTreeModel.setComparator(comparator);
   }
 

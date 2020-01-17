@@ -22,9 +22,6 @@ import org.jetbrains.jps.model.library.JpsLibraryRoot;
 import org.jetbrains.jps.model.library.JpsLibraryRootListener;
 import org.jetbrains.jps.model.library.JpsOrderRootType;
 
-/**
- * @author nik
- */
 public class JpsLibraryRootRole extends JpsElementChildRoleBase<JpsLibraryRoot> {
   private final JpsOrderRootType myRootType;
 

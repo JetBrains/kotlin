@@ -3,17 +3,11 @@ package com.intellij.openapi.externalSystem.service.project.manage
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.model.ProjectKeys.CONTENT_ROOT
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
-import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 
-class ReprocessContentRootDataActivity : StartupActivity, DumbAware {
+class ReprocessContentRootDataActivity : StartupActivity.Background {
   private val LOG = Logger.getInstance(ReprocessContentRootDataActivity::class.java)
 
   override fun runActivity(project: Project) {
@@ -24,39 +18,8 @@ class ReprocessContentRootDataActivity : StartupActivity, DumbAware {
       LOG.info("Ignored reprocess of content root data service for new projects")
       return
     }
-    val dataManager = ProjectDataManager.getInstance()
-    val service = ContentRootDataService()
 
-    val externalProjectsManager = ExternalProjectsManagerImpl.getInstance(project)
-    externalProjectsManager.init()
-    externalProjectsManager.runWhenInitialized {
-      val haveModulesToProcess = ModuleManager.getInstance(project).modules.isNotEmpty()
-      if (!haveModulesToProcess) {
-        return@runWhenInitialized
-      }
-
-      val modifiableModelsProvider = lazy { IdeModifiableModelsProviderImpl(project) }
-
-      try {
-        ExternalSystemApiUtil.getAllManagers()
-          .flatMap { dataManager.getExternalProjectsData(project, it.getSystemId()) }
-          .mapNotNull { it.externalProjectStructure }
-          .map { ExternalSystemApiUtil.findAllRecursively(it, CONTENT_ROOT) }
-          .forEach {
-            service.importData(it, null, project, modifiableModelsProvider.value)
-          }
-      }
-      finally {
-        if (modifiableModelsProvider.isInitialized()) {
-          ExternalSystemApiUtil.doWriteAction {
-            if (!project.isDisposed) {
-              modifiableModelsProvider.value.commit()
-            } else {
-              modifiableModelsProvider.value.dispose()
-            }
-          }
-        }
-      }
-    }
+    val instance = SourceFolderManager.getInstance(project) as SourceFolderManagerImpl
+    instance.rescanAndUpdateSourceFolders()
   }
 }

@@ -23,9 +23,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ArchiveElementPresentation extends PackagingElementPresentation {
   private final ArchivePackagingElement myElement;
 

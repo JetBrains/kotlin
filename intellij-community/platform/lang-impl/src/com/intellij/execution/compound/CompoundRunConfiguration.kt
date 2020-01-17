@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.compound
 
 import com.intellij.execution.*
@@ -13,6 +13,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Condition
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XCollection
@@ -173,20 +174,20 @@ class CompoundRunConfiguration @JvmOverloads constructor(name: String? = null,
       return false
     }
 
-    return ExecutionManagerImpl.getInstance(project).getRunningDescriptors { s ->
+    return ExecutionManagerImpl.getInstance(project).getRunningDescriptors(Condition { s ->
       val manager = RunManagerImpl.getInstanceImpl(project)
       for ((configuration, _) in sortedConfigurationsWithTargets) {
         if (configuration is CompoundRunConfiguration && configuration.hasRunningSingletons()) {
-          return@getRunningDescriptors true
+          return@Condition true
         }
 
         val settings = manager.findSettings(configuration)
         if (settings != null && !settings.configuration.isAllowRunningInParallel && configuration == s.configuration) {
-          return@getRunningDescriptors true
+          return@Condition true
         }
       }
       false
-    }.isNotEmpty()
+    }).isNotEmpty()
   }
 }
 

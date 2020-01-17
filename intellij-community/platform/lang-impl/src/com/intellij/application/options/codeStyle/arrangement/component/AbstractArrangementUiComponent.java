@@ -76,7 +76,7 @@ public abstract class AbstractArrangementUiComponent implements ArrangementUiCom
 
   private boolean myEnabled = true;
 
-  protected AbstractArrangementUiComponent(@NotNull ArrangementSettingsToken ... availableTokens) {
+  protected AbstractArrangementUiComponent(ArrangementSettingsToken @NotNull ... availableTokens) {
     myAvailableTokens.addAll(Arrays.asList(availableTokens));
   }
 

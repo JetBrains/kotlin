@@ -42,7 +42,7 @@ public interface CreateFromTemplateHandler {
                                 @NotNull String templateText,
                                 @NotNull Map<String, Object> props) throws IncorrectOperationException;
 
-  boolean canCreate(@NotNull PsiDirectory[] dirs);
+  boolean canCreate(PsiDirectory @NotNull [] dirs);
 
   boolean isNameRequired();
 

@@ -20,18 +20,15 @@ import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
 public class FilenameIndexImpl extends ScalarIndexExtension<String> {
-  @NonNls static final ID<String, Void> NAME = FilenameIndex.NAME;
-
   @NotNull
   @Override
   public ID<String,Void> getName() {
-    return NAME;
+    return FilenameIndex.NAME;
   }
 
   @NotNull

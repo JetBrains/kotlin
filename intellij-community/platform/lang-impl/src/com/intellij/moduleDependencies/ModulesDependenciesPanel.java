@@ -86,7 +86,7 @@ public class ModulesDependenciesPanel extends JPanel implements Disposable {
   private Graph<Module> myModuleGraph;
   private final Map<Module, Boolean> myCycleMap = new HashMap<>();
 
-  public ModulesDependenciesPanel(@NotNull Project project, @Nullable Module[] modules) {
+  public ModulesDependenciesPanel(@NotNull Project project, Module @Nullable [] modules) {
     super(new BorderLayout());
 
     myProject = project;
@@ -238,7 +238,7 @@ public class ModulesDependenciesPanel extends JPanel implements Disposable {
   private JComponent createNorthPanel() {
     DefaultActionGroup group = new DefaultActionGroup();
 
-    group.add(new AnAction(CommonBundle.message("action.close"), null, AllIcons.Actions.Cancel) {
+    group.add(new AnAction(() -> CommonBundle.message("action.close"), AllIcons.Actions.Cancel) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         DependenciesAnalyzeManager.getInstance(myProject).closeContent(myContent);

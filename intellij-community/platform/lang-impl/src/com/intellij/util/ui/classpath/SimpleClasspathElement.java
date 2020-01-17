@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @author nik
- */
 public interface SimpleClasspathElement {
 
   String getPresentableName();

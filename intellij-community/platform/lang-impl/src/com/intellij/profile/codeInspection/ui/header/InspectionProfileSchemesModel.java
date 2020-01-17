@@ -13,7 +13,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public abstract class InspectionProfileSchemesModel implements SchemesModel<InspectionProfileModifiableModel> {
   private static final Logger LOG = Logger.getInstance(InspectionProfileSchemesModel.class);
@@ -92,12 +91,7 @@ public abstract class InspectionProfileSchemesModel implements SchemesModel<Insp
   }
 
   private void removeProfile(@NotNull InspectionProfileImpl profile) {
-    for (SingleInspectionProfilePanel panel : myProfilePanels) {
-      if (panel.getProfile().equals(profile)) {
-        myProfilePanels.remove(panel);
-        break;
-      }
-    }
+    myProfilePanels.removeIf(panel -> panel.getProfile().equals(profile));
   }
 
   void updatePanel(@NotNull InspectionProfileSchemesPanel panel) {

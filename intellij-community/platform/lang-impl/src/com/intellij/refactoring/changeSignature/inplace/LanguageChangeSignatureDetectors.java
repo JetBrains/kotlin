@@ -24,5 +24,4 @@ public class LanguageChangeSignatureDetectors extends LanguageExtension<Language
   LanguageChangeSignatureDetectors() {
     super("com.intellij.changeSignatureDetector");
   }
-
 }

@@ -114,7 +114,7 @@ public class NavBarUpdateQueue extends MergingUpdateQueue {
       if (!wnd.isActive()) {
         IdeFrame frame = ComponentUtil.getParentOfType((Class<? extends IdeFrame>)IdeFrame.class, (Component)myPanel);
         if (frame != null) {
-          focus = IdeFocusManager.getInstance(project).getLastFocusedFor(frame);
+          focus = IdeFocusManager.getInstance(project).getLastFocusedFor((Window)frame);
         }
       }
       else {
@@ -254,6 +254,10 @@ public class NavBarUpdateQueue extends MergingUpdateQueue {
         done.setDone();
       }
     });
+  }
+
+  boolean isUpdating() {
+    return myModelUpdating.get();
   }
 
   private abstract class AfterModelUpdate extends Update {

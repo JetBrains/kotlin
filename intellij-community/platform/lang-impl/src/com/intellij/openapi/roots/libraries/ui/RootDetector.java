@@ -28,8 +28,7 @@ import java.util.Collection;
  *
  * @see RootFilter
  * @see DescendentBasedRootFilter
- * @author nik
-*/
+ */
 public abstract class RootDetector {
   private final OrderRootType myRootType;
   private final boolean myJarDirectory;

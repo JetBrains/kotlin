@@ -35,7 +35,6 @@ import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.TextFieldCompletionProvider;
 import com.intellij.util.TextFieldCompletionProviderDumbAware;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -46,10 +45,8 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Denis Zhdanov
@@ -136,7 +133,7 @@ public class ExternalProjectPathField extends ComponentWithBrowseButton<External
     assert manager != null;
     AbstractExternalSystemLocalSettings<?> settings = manager.getLocalSettingsProvider().fun(project);
     Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> projects = settings.getAvailableProjects();
-    List<ExternalProjectPojo> rootProjects = ContainerUtilRt.newArrayList(projects.keySet());
+    List<ExternalProjectPojo> rootProjects = new ArrayList<>(projects.keySet());
     ContainerUtil.sort(rootProjects);
     for (ExternalProjectPojo rootProject : rootProjects) {
       model.ensureSubProjectsStructure(rootProject, projects.get(rootProject));

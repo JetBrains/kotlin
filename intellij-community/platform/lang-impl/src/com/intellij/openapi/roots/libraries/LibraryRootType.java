@@ -18,9 +18,6 @@ package com.intellij.openapi.roots.libraries;
 import com.intellij.openapi.roots.OrderRootType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class LibraryRootType {
   private final OrderRootType myType;
   private final boolean myJarDirectory;

@@ -24,6 +24,7 @@ import org.jetbrains.annotations.TestOnly
 class CompletionValidationState(event: CompletionStartedEvent) : LogEventVisitor() {
     private var currentPosition = event.currentPosition
     private var completionList = event.completionListIds
+    private var bucket: String = event.bucket
     private var currentId = getSafeCurrentId(completionList, currentPosition)
 
     private var idToFactorNames = event.newCompletionListItems
@@ -44,11 +45,11 @@ class CompletionValidationState(event: CompletionStartedEvent) : LogEventVisitor
             idToFactorNames[it.id] = factorNames.toMutableSet()
         }
 
-        if (nextEvent.completionListIds.isNotEmpty()) {
-            completionList = nextEvent.completionListIds
-        }
+        completionList = nextEvent.completionListIds
 
         updateFactors(nextEvent.itemsDiff)
+        updateValid(nextEvent.bucket == bucket,
+                    "All events inside a session should have the same bucket. But ${bucket} != ${nextEvent.bucket}")
 
         currentId = getSafeCurrentId(completionList, currentPosition)
     }
@@ -178,6 +179,7 @@ class CompletionValidationState(event: CompletionStartedEvent) : LogEventVisitor
     }
 
     override fun visit(event: TypedSelectEvent) {
+        updateState(event)
         val id = event.selectedId
         updateValid(completionList[currentPosition] == id,
                 "Element selected by typing is not the same id")

@@ -1,9 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.invertBoolean;
 
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
-import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.RefactoringBundle;
@@ -36,7 +35,7 @@ public class InvertBooleanDialog extends RefactoringDialog {
                                                      typeString,
                                                      DescriptiveNameUtil.getDescriptiveName(myElement)));
 
-    setTitle(InvertBooleanHandler.REFACTORING_NAME);
+    setTitle(InvertBooleanHandler.getRefactoringName());
     init();
   }
 
@@ -48,9 +47,8 @@ public class InvertBooleanDialog extends RefactoringDialog {
   @Override
   protected void doAction() {
     final String name = myNameField.getText().trim();
-    final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(myElement.getLanguage());
-    if (namesValidator != null && !namesValidator.isIdentifier(name, myProject)) {
-      CommonRefactoringUtil.showErrorMessage(InvertBooleanHandler.REFACTORING_NAME,
+    if (!LanguageNamesValidation.isIdentifier(myElement.getLanguage(), name, myProject)) {
+      CommonRefactoringUtil.showErrorMessage(InvertBooleanHandler.getRefactoringName(),
                                              RefactoringBundle.message("please.enter.a.valid.name.for.inverted.element",
                                                                        UsageViewUtil.getType(myElement)),
                                              getHelpId(), myProject);

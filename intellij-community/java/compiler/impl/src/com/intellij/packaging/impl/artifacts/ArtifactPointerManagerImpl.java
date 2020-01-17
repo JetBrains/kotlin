@@ -23,9 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author nik
- */
 public class ArtifactPointerManagerImpl extends ArtifactPointerManager {
   private final Map<String, ArtifactPointerImpl> myUnresolvedPointers = new HashMap<>();
   private final Map<Artifact, ArtifactPointerImpl> myPointers = new HashMap<>();

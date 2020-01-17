@@ -18,6 +18,8 @@ package com.intellij.completion.tracker
 import com.intellij.codeInsight.completion.LightFixtureCompletionTestCase
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.PrefixChangeListener
+import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.assertj.core.api.Assertions
 
 
@@ -84,5 +86,18 @@ class PrefixChangeListenerTest: LightFixtureCompletionTestCase() {
     Assertions.assertThat(beforeChange).isEqualTo(lastLookupState)
   }
 
+}
 
+internal fun setupCompletionContext(fixture: JavaCodeInsightTestFixture) {
+  fixture.addClass("""
+interface XRunnable {
+  void man();
+  void run();
+  void cat();
+  void runnable();
+  void rus();
+}
+""")
+
+  fixture.configureByText(JavaFileType.INSTANCE, "class T { void r() { XRunnable x; x.<caret> } }")
 }

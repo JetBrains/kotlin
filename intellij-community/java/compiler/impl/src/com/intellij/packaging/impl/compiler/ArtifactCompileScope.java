@@ -28,14 +28,12 @@ import com.intellij.packaging.elements.PackagingElementResolvingContext;
 import com.intellij.packaging.impl.artifacts.ArtifactUtil;
 import com.intellij.packaging.impl.elements.ArtifactElementType;
 import com.intellij.packaging.impl.elements.ProductionModuleOutputElementType;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public class ArtifactCompileScope {
   private static final Key<Boolean> FORCE_ARTIFACT_BUILD = Key.create("force_artifact_build");
   private static final Key<Artifact[]> ARTIFACTS_KEY = Key.create("artifacts");
@@ -89,7 +87,7 @@ public class ArtifactCompileScope {
     }
 
     Set<Artifact> artifacts = new HashSet<>();
-    final Set<Module> modules = new HashSet<>(Arrays.asList(compileScope.getAffectedModules()));
+    final Set<Module> modules = ContainerUtil.set(compileScope.getAffectedModules());
     final List<Module> allModules = Arrays.asList(ModuleManager.getInstance(project).getModules());
     for (Artifact artifact : artifactManager.getArtifacts()) {
       if (artifact.isBuildOnMake()) {
@@ -104,8 +102,7 @@ public class ArtifactCompileScope {
     return result;
   }
 
-  @Nullable
-  public static Artifact[] getArtifacts(CompileScope compileScope) {
+  public static Artifact @Nullable [] getArtifacts(CompileScope compileScope) {
     return compileScope.getUserData(ARTIFACTS_KEY);
   }
 

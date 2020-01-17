@@ -23,9 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-/**
- * @author nik
- */
 public class JarArtifactFromModulesDialog extends DialogWrapper {
   private JPanel myMainPanel;
   private TextFieldWithBrowseButton myMainClassField;
@@ -106,8 +103,7 @@ public class JarArtifactFromModulesDialog extends DialogWrapper {
     return (Module)myModuleComboBox.getSelectedItem();
   }
 
-  @NotNull
-  public Module[] getSelectedModules() {
+  public Module @NotNull [] getSelectedModules() {
     final Module module = getSelectedModule();
     if (module != null) {
       return new Module[]{module};

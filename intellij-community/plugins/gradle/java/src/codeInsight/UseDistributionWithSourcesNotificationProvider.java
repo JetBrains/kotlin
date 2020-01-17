@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.codeInsight;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -82,9 +83,9 @@ public final class UseDistributionWithSourcesNotificationProvider extends Editor
         panel.createActionLabel(GradleBundle.message("gradle.notifications.apply.suggestion"), () -> {
           updateDefaultWrapperConfiguration(rootProjectPath);
           EditorNotifications.getInstance(module.getProject()).updateAllNotifications();
-          ExternalSystemUtil.refreshProject(
-            module.getProject(), GradleConstants.SYSTEM_ID, settings.getExternalProjectPath(), false,
-            ProgressExecutionMode.START_IN_FOREGROUND_ASYNC);
+          ExternalSystemUtil.refreshProject(settings.getExternalProjectPath(),
+                                            new ImportSpecBuilder(module.getProject(), GradleConstants.SYSTEM_ID)
+                                              .use(ProgressExecutionMode.START_IN_FOREGROUND_ASYNC));
         });
         return panel;
       }

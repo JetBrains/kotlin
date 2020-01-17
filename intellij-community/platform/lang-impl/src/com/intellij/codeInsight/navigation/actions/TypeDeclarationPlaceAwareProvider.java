@@ -21,6 +21,5 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface TypeDeclarationPlaceAwareProvider extends TypeDeclarationProvider {
-  @Nullable
-  PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol, Editor editor, int offset);
+  PsiElement @Nullable [] getSymbolTypeDeclarations(@NotNull PsiElement symbol, Editor editor, int offset);
 }

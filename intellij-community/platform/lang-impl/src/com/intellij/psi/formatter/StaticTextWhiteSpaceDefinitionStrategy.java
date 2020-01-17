@@ -29,7 +29,7 @@ public class StaticTextWhiteSpaceDefinitionStrategy extends AbstractWhiteSpaceFo
 
   private final Set<CharSequence> myWhiteSpaces = new HashSet<>();
 
-  public StaticTextWhiteSpaceDefinitionStrategy(@NotNull CharSequence ... whiteSpaces) {
+  public StaticTextWhiteSpaceDefinitionStrategy(CharSequence @NotNull ... whiteSpaces) {
     myWhiteSpaces.addAll(Arrays.asList(whiteSpaces));
   }
 

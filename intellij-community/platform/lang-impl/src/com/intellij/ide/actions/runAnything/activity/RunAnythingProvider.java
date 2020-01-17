@@ -1,15 +1,19 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.activity;
 
+import com.intellij.ide.actions.runAnything.RunAnythingContext;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.util.text.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Introduction
@@ -44,6 +48,11 @@ import java.util.Collection;
  */
 public interface RunAnythingProvider<V> {
   ExtensionPointName<RunAnythingProvider> EP_NAME = ExtensionPointName.create("com.intellij.runAnything.executionProvider");
+  /**
+   * Use it to retrieve command executing context, e.g. project base directory, module or custom working directory
+   * that'd been chosen by the "Choose context" dropdown
+   */
+  DataKey<RunAnythingContext> EXECUTING_CONTEXT = DataKey.create("EXECUTING_CONTEXT");
 
   /**
    * Finds matching value by input {@code pattern}.
@@ -132,12 +141,23 @@ public interface RunAnythingProvider<V> {
   String getCompletionGroupTitle();
 
   /**
-   * Returns help/completion group icon.
+   * Returns group matcher for filtering group elements. Remain {@code null} to use default matcher
+   * @param dataContext use it to fetch project, module, working directory
+   * @param pattern to build matcher
    */
   @Nullable
-  default Icon getHelpIcon() {
-    return null;
-  }
+  Matcher getMatcher(@NotNull DataContext dataContext, @NotNull String pattern);
+
+  /**
+   * Provides context types that can be chosen as execution contexts:
+   * - project, {@link RunAnythingContext.ProjectContext}
+   * - module, {@link RunAnythingContext.ModuleContext}
+   * - working directory, {@link RunAnythingContext.RecentDirectoryContext}
+   * <p>
+   * The first context will be chosen as default context.
+   */
+  @NotNull
+  List<RunAnythingContext> getExecutionContexts(@NotNull DataContext dataContext);
 
   /**
    * Finds provider that matches {@code pattern}

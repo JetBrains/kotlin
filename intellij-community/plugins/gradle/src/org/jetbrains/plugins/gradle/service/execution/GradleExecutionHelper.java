@@ -17,17 +17,24 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.lang.JavaVersion;
+import org.gradle.initialization.BuildCancellationToken;
 import org.gradle.initialization.BuildLayoutParameters;
+import org.gradle.internal.classpath.ClassPath;
+import org.gradle.internal.classpath.DefaultClassPath;
+import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.internal.nativeintegration.services.NativeServices;
 import org.gradle.process.internal.JvmOptions;
 import org.gradle.tooling.*;
 import org.gradle.tooling.events.OperationType;
 import org.gradle.tooling.internal.consumer.DefaultGradleConnector;
+import org.gradle.tooling.internal.consumer.Distribution;
+import org.gradle.tooling.internal.protocol.InternalBuildProgressListener;
 import org.gradle.tooling.model.BuildIdentifier;
 import org.gradle.tooling.model.UnsupportedMethodException;
 import org.gradle.tooling.model.build.BuildEnvironment;
@@ -40,6 +47,7 @@ import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
 import org.jetbrains.plugins.gradle.tooling.internal.init.Init;
+import org.jetbrains.plugins.gradle.tooling.loader.rt.MarkerRt;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.gradle.util.GradleEnvironment;
 import org.jetbrains.plugins.gradle.util.GradleUtil;
@@ -48,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -145,7 +154,6 @@ public class GradleExecutionHelper {
         if (!settings.getArguments().contains("--debug")){
           settings.withArgument("--info");
         }
-        settings.withArgument("--stacktrace");
       }
     }
 
@@ -264,10 +272,9 @@ public class GradleExecutionHelper {
       catch (Exception ignore) {
       }
     }
-    String javaVersionProperty = null;
     ProjectConnection connection = getConnection(projectDir, settings);
     try {
-      javaVersionProperty = setJavaVersionSystemPropertyIfNeeded(connection, taskId, listener, cancellationTokenSource);
+      workaroundJavaVersionIssueIfNeeded(connection, taskId, listener, cancellationTokenSource);
       return f.fun(connection);
     }
     catch (ExternalSystemException e) {
@@ -284,10 +291,6 @@ public class GradleExecutionHelper {
       if (userDir != null) {
         // restore original user.dir property
         System.setProperty("user.dir", userDir);
-      }
-      if (javaVersionProperty != null) {
-        // restore original java.version property
-        System.setProperty("java.version", javaVersionProperty);
       }
       try {
         connection.close();
@@ -508,7 +511,7 @@ public class GradleExecutionHelper {
   }
 
   @Nullable
-  public static File generateInitScript(boolean isBuildSrcProject, @NotNull Set<Class> toolingExtensionClasses) {
+  public static File generateInitScript(boolean isBuildSrcProject, @NotNull Set<Class<?>> toolingExtensionClasses) {
     InputStream stream = Init.class.getResourceAsStream("/org/jetbrains/plugins/gradle/tooling/internal/init/init.gradle");
     try {
       if (stream == null) {
@@ -570,14 +573,6 @@ public class GradleExecutionHelper {
     }
   }
 
-  @Deprecated // use the method with the cancellationTokenSource provided
-  @Nullable
-  public static GradleVersion getGradleVersion(@NotNull ProjectConnection connection,
-                                               @NotNull ExternalSystemTaskId taskId,
-                                               @NotNull ExternalSystemTaskNotificationListener listener) {
-    return getGradleVersion(connection, taskId, listener, null);
-  }
-
   @Nullable
   public static GradleVersion getGradleVersion(@NotNull ProjectConnection connection,
                                                @NotNull ExternalSystemTaskId taskId,
@@ -590,14 +585,6 @@ public class GradleExecutionHelper {
       gradleVersion = GradleVersion.version(buildEnvironment.getGradle().getGradleVersion());
     }
     return gradleVersion;
-  }
-
-  @Deprecated // use the method with the cancellationTokenSource provided
-  @Nullable
-  public static BuildEnvironment getBuildEnvironment(@NotNull ProjectConnection connection,
-                                                     @NotNull ExternalSystemTaskId taskId,
-                                                     @NotNull ExternalSystemTaskNotificationListener listener) {
-    return getBuildEnvironment(connection, taskId, listener, null);
   }
 
   @Nullable
@@ -712,7 +699,7 @@ public class GradleExecutionHelper {
   }
 
   @NotNull
-  public static String getToolingExtensionsJarPaths(@NotNull Set<Class> toolingExtensionClasses) {
+  public static String getToolingExtensionsJarPaths(@NotNull Set<Class<?>> toolingExtensionClasses) {
     final Set<String> jarPaths = ContainerUtil.map2SetNotNull(toolingExtensionClasses, aClass -> {
       String path = PathManager.getJarPathForClass(aClass);
       if (path != null) {
@@ -739,39 +726,6 @@ public class GradleExecutionHelper {
 
   /* deprecated methods to be removed in future version */
 
-  /**
-   * @deprecated {@link #getModelBuilder(Class, ExternalSystemTaskId, GradleExecutionSettings, ProjectConnection, ExternalSystemTaskNotificationListener)}
-   */
-  @Deprecated
-  @NotNull
-  public <T> ModelBuilder<T> getModelBuilder(@NotNull Class<T> modelType,
-                                             @NotNull final ExternalSystemTaskId id,
-                                             @Nullable GradleExecutionSettings settings,
-                                             @NotNull ProjectConnection connection,
-                                             @NotNull ExternalSystemTaskNotificationListener listener,
-                                             @NotNull List<String> extraJvmArgs) {
-    ModelBuilder<T> result = connection.model(modelType);
-    prepare(result, id, settings, listener, extraJvmArgs, new ArrayList<>(), connection);
-    return result;
-  }
-
-
-  /**
-   * @deprecated {@link #getBuildLauncher(ExternalSystemTaskId, ProjectConnection, GradleExecutionSettings, ExternalSystemTaskNotificationListener)}
-   */
-  @Deprecated
-  @NotNull
-  public BuildLauncher getBuildLauncher(@NotNull final ExternalSystemTaskId id,
-                                        @NotNull ProjectConnection connection,
-                                        @Nullable GradleExecutionSettings settings,
-                                        @NotNull ExternalSystemTaskNotificationListener listener,
-                                        @NotNull final List<String> vmOptions,
-                                        @NotNull final List<String> commandLineArgs) {
-    BuildLauncher result = connection.newBuild();
-    prepare(result, id, settings, listener, vmOptions, commandLineArgs, connection);
-    return result;
-  }
-
   @NotNull
   static List<String> obfuscatePasswordParameters(@NotNull List<String> commandLineArguments) {
     List<String> replaced = new ArrayList<>(commandLineArguments.size());
@@ -791,75 +745,86 @@ public class GradleExecutionHelper {
     return replaced;
   }
 
-  /**
-   * @deprecated to be removed in future version
-   */
-  @Deprecated
-  public static void prepare(@NotNull LongRunningOperation operation,
-                             @NotNull final ExternalSystemTaskId id,
-                             @Nullable GradleExecutionSettings settings,
-                             @NotNull final ExternalSystemTaskNotificationListener listener,
-                             @NotNull List<String> extraJvmArgs,
-                             @NotNull ProjectConnection connection) {
-    if (settings == null) return;
-    settings.withVmOptions(extraJvmArgs);
-    prepare(operation, id, settings, listener, connection, new OutputWrapper(listener, id, true), new OutputWrapper(listener, id, false));
-  }
-
-  /**
-   * @deprecated use {@link #prepare(LongRunningOperation, ExternalSystemTaskId, GradleExecutionSettings, ExternalSystemTaskNotificationListener, ProjectConnection)}
-   */
-  @Deprecated
-  public static void prepare(@NotNull LongRunningOperation operation,
-                             @NotNull final ExternalSystemTaskId id,
-                             @Nullable GradleExecutionSettings settings,
-                             @NotNull final ExternalSystemTaskNotificationListener listener,
-                             @NotNull List<String> extraJvmArgs,
-                             @NotNull List<String> commandLineArgs,
-                             @NotNull ProjectConnection connection) {
-    if (settings == null) return;
-    settings.withArguments(commandLineArgs).withVmOptions(extraJvmArgs);
-    prepare(operation, id, settings, listener, connection, new OutputWrapper(listener, id, true), new OutputWrapper(listener, id, false));
-  }
-
-  /**
-   * @deprecated use {@link #prepare(LongRunningOperation, ExternalSystemTaskId, GradleExecutionSettings, ExternalSystemTaskNotificationListener, ProjectConnection, OutputStream, OutputStream)}
-   */
-  @Deprecated
-  public static void prepare(@NotNull LongRunningOperation operation,
-                             @NotNull final ExternalSystemTaskId id,
-                             @NotNull GradleExecutionSettings settings,
-                             @NotNull final ExternalSystemTaskNotificationListener listener,
-                             @NotNull List<String> extraJvmArgs,
-                             @NotNull List<String> commandLineArgs,
-                             @NotNull ProjectConnection connection,
-                             @NotNull final OutputStream standardOutput,
-                             @NotNull final OutputStream standardError) {
-    settings.withArguments(commandLineArgs).withVmOptions(extraJvmArgs);
-    prepare(operation, id, settings, listener, connection, standardOutput, standardError);
-  }
-
   private static String getIdeaVersion() {
     ApplicationInfoEx appInfo = ApplicationInfoImpl.getShadowInstance();
     return appInfo.getMajorVersion() + "." + appInfo.getMinorVersion();
   }
 
+  private static final Set<String> REPORTED_JAVA11_ISSUE = ContainerUtil.newConcurrentSet();
+
   // workaround for https://github.com/gradle/gradle/issues/8431
-  // TODO should be removed when the issue will be fixed in the Gradle tooling api side
-  private static final boolean ADJUST_JAVA_VERSION = !Boolean.getBoolean("idea.gradle.disable.java.version.workaround");
-  @Nullable
-  private static String setJavaVersionSystemPropertyIfNeeded(@NotNull ProjectConnection connection,
-                                                             @Nullable ExternalSystemTaskId taskId,
-                                                             @Nullable ExternalSystemTaskNotificationListener listener,
-                                                             @Nullable CancellationTokenSource cancellationTokenSource) {
-    if (ADJUST_JAVA_VERSION && taskId != null && listener != null && JavaVersion.current().feature > 8) {
-      BuildEnvironment environment = getBuildEnvironment(connection, taskId, listener, cancellationTokenSource);
-      String gradleVersion = environment != null ? environment.getGradle().getGradleVersion() : null;
-      if (gradleVersion == null || GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.7")) < 0) {
-        return System.setProperty("java.version", "1.8");
+  // TODO should be removed when the issue will be fixed at the Gradle tooling api side
+  private static void workaroundJavaVersionIssueIfNeeded(@NotNull ProjectConnection connection,
+                                                         @Nullable ExternalSystemTaskId taskId,
+                                                         @Nullable ExternalSystemTaskNotificationListener listener,
+                                                         @Nullable CancellationTokenSource cancellationTokenSource) {
+    String buildRoot = null;
+    if (Registry.is("gradle.java11.issue.workaround", true) &&
+        taskId != null &&
+        listener != null &&
+        JavaVersion.current().feature > 8) {
+      try {
+        BuildEnvironment environment = getBuildEnvironment(connection, taskId, listener, cancellationTokenSource);
+        if (environment != null) {
+          try {
+            buildRoot = environment.getBuildIdentifier().getRootDir().getPath();
+          }
+          catch (Exception ignore) {
+          }
+        }
+        String gradleVersion = environment != null ? environment.getGradle().getGradleVersion() : null;
+        if (gradleVersion == null || GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.7")) < 0) {
+          Object conn = ReflectionUtil.getField(connection.getClass(), connection, null, "connection");
+          Object actionExecutor = ReflectionUtil.getField(Objects.requireNonNull(conn).getClass(), conn, null, "actionExecutor");
+          Object actionExecutorDelegate =
+            ReflectionUtil.getField(Objects.requireNonNull(actionExecutor).getClass(), actionExecutor, null, "delegate");
+          Object delegateActionExecutor = ReflectionUtil
+            .getField(Objects.requireNonNull(actionExecutorDelegate).getClass(), actionExecutorDelegate, null, "actionExecutor");
+          Object delegateActionExecutorDelegate =
+            ReflectionUtil.getField(Objects.requireNonNull(delegateActionExecutor).getClass(), delegateActionExecutor, null, "delegate");
+          Field distributionField =
+            ReflectionUtil.getDeclaredField(Objects.requireNonNull(delegateActionExecutorDelegate).getClass(), "distribution");
+          Objects.requireNonNull(distributionField).set(delegateActionExecutorDelegate, new DistributionWrapper(
+            (Distribution)distributionField.get(delegateActionExecutorDelegate)));
+        }
+      }
+      catch (Throwable t) {
+        String buildId = taskId.getIdeProjectId() + StringUtil.notNullize(buildRoot);
+        if (REPORTED_JAVA11_ISSUE.add(buildId)) {
+          LOG.error(t);
+        }
+        else {
+          LOG.debug(t);
+        }
       }
     }
-    return null;
   }
 
+  /**
+   * workaround for https://github.com/gradle/gradle/issues/8431
+   * TODO should be removed when the issue will be fixed at the Gradle tooling api side
+   */
+  static private class DistributionWrapper implements Distribution {
+    private final Distribution myDistribution;
+    private final File myRtJarFile;
+
+    private DistributionWrapper(Distribution distribution) {
+      myDistribution = distribution;
+      myRtJarFile = new File(Objects.requireNonNull(PathUtil.getCanonicalPath(PathManager.getJarPathForClass(MarkerRt.class))));
+    }
+
+    @Override
+    public String getDisplayName() {
+      return myDistribution.getDisplayName();
+    }
+
+    @Override
+    public ClassPath getToolingImplementationClasspath(ProgressLoggerFactory factory,
+                                                       InternalBuildProgressListener listener,
+                                                       File file,
+                                                       BuildCancellationToken token) {
+      ClassPath classpath = myDistribution.getToolingImplementationClasspath(factory, listener, file, token);
+      return DefaultClassPath.of(myRtJarFile).plus(classpath);
+    }
+  }
 }

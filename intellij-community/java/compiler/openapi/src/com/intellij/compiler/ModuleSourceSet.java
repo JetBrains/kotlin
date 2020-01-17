@@ -22,9 +22,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
-* @author nik
-*/
 public class ModuleSourceSet {
   public enum Type { PRODUCTION, TEST }
 

@@ -15,15 +15,15 @@ import static com.intellij.ui.tree.TreePathUtil.toTreeNodes;
  * @author yole
  */
 public interface DropTargetNode {
-  boolean canDrop(@NotNull TreeNode[] sourceNodes);
+  boolean canDrop(TreeNode @NotNull [] sourceNodes);
 
-  default boolean canDrop(@NotNull TreePath[] sources) {
+  default boolean canDrop(TreePath @NotNull [] sources) {
     return canDrop(toTreeNodes(sources));
   }
 
-  void drop(@NotNull TreeNode[] sourceNodes, @NotNull DataContext dataContext);
+  void drop(TreeNode @NotNull [] sourceNodes, @NotNull DataContext dataContext);
 
-  default void drop(@NotNull TreePath[] sources, @NotNull DataContext dataContext) {
+  default void drop(TreePath @NotNull [] sources, @NotNull DataContext dataContext) {
     drop(toTreeNodes(sources), dataContext);
   }
 

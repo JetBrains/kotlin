@@ -23,9 +23,6 @@ import org.jetbrains.jps.model.module.JpsModule;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class JpsJavaExtensionTest extends JpsJavaModelTestCase {
   public void testModule() {
     final JpsModule module = addModule();

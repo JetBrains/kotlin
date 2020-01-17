@@ -1,0 +1,58 @@
+View root() {
+  rooot() {
+    Tasks() {
+      build setup() {
+        init()
+        wrapper()
+      }
+      help() {
+        buildEnvironment()
+        components()
+        dependencies()
+        dependencyInsight()
+        dependentComponents()
+        help()
+        model()
+        projects()
+        properties()
+        tasks()
+      }
+    }
+    buildSrc() {
+      Dependencies() {
+        compileClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
+        }
+        runtimeClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
+        }
+        testCompileClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
+        }
+        testRuntimeClasspath() {
+          Gradle API files()
+          groovy-all-1.0-2.5.4.jar()
+        }
+      }
+    }
+    child1() {
+      Tasks() {
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+      }
+    }
+  }
+}

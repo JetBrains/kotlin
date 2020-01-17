@@ -34,9 +34,6 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DetectedFrameworksComponent {
   private JPanel myMainPanel;
   private final DetectedFrameworksTree myTree;

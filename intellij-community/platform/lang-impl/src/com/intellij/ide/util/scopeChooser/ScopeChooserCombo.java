@@ -28,6 +28,7 @@ import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,8 +80,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
 
     NamedScopesHolder.ScopeListener scopeListener = () -> {
       SearchScope selectedScope = getSelectedScope();
-      rebuildModel();
-      selectItem(selectedScope);
+      rebuildModelAndSelectScopeOnSuccess(selectedScope);
     };
     myScopeFilter = scopeFilter;
     NamedScopeManager.getInstance(project).addScopeListener(scopeListener, this);
@@ -92,9 +92,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     combo.setRenderer(createDefaultRenderer());
     combo.setSwingPopup(false);
 
-    rebuildModel();
-
-    selectItem(selection);
+    rebuildModelAndSelectScopeOnSuccess(selection);
   }
 
   @NotNull
@@ -140,17 +138,10 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     if (myBrowseListener != null) myBrowseListener.onBeforeBrowseStarted();
     EditScopesDialog dlg = EditScopesDialog.showDialog(myProject, selection);
     if (dlg.isOK()){
-      rebuildModel();
       NamedScope namedScope = dlg.getSelectedScope();
-      if (namedScope != null) {
-        selectItem(namedScope.getName());
-      }
+      rebuildModelAndSelectScopeOnSuccess(namedScope == null ? null : namedScope.getName());
     }
     if (myBrowseListener != null) myBrowseListener.onAfterBrowseFinished();
-  }
-
-  private void rebuildModel() {
-    getComboBox().setModel(createModel());
   }
 
   public static boolean processScopes(@NotNull Project project,
@@ -180,7 +171,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     };
     for (SearchScopeProvider each : SearchScopeProvider.EP_NAME.getExtensions()) {
       if (StringUtil.isEmpty(each.getDisplayName())) continue;
-      List<SearchScope> scopes = each.getSearchScopes(project);
+      List<SearchScope> scopes = each.getSearchScopes(project, dataContext);
       if (scopes.isEmpty()) continue;
       if (!processor.process(new ScopeSeparator(each.getDisplayName()))) return false;
       for (SearchScope scope : ContainerUtil.sorted(scopes, comparator)) {
@@ -190,17 +181,19 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     return true;
   }
 
-  @NotNull
-  private DefaultComboBoxModel<ScopeDescriptor> createModel() {
+  private void rebuildModelAndSelectScopeOnSuccess(@Nullable Object selection) {
     DefaultComboBoxModel<ScopeDescriptor> model = new DefaultComboBoxModel<>();
-    DataContext dataContext = DataManager.getInstance().getDataContext(this);
-    processScopes(myProject, dataContext, myOptions, descriptor -> {
-      if (myScopeFilter == null || myScopeFilter.value(descriptor)) {
-        model.addElement(descriptor);
-      }
-      return true;
+    Promise<DataContext> promise = DataManager.getInstance().getDataContextFromFocusAsync();
+    promise.onSuccess(c -> {
+      processScopes(myProject, c, myOptions, descriptor -> {
+        if (myScopeFilter == null || myScopeFilter.value(descriptor)) {
+          model.addElement(descriptor);
+        }
+        return true;
+      });
+      getComboBox().setModel(model);
+      selectItem(selection);
     });
-    return model;
   }
 
   @Override
@@ -255,7 +248,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     final TitledSeparator separator = new TitledSeparator();
 
     @Override
-    public void customize(JList<? extends ScopeDescriptor> list, ScopeDescriptor value, int index, boolean selected, boolean hasFocus) {
+    public void customize(@NotNull JList<? extends ScopeDescriptor> list, ScopeDescriptor value, int index, boolean selected, boolean hasFocus) {
       if (value == null) return;
       setIcon(value.getIcon());
       setText(value.getDisplayName());

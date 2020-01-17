@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author nik
- */
 public class PackagingElementPath {
   public static final PackagingElementPath EMPTY = new PackagingElementPath(null, null);
   private final PackagingElementPath myParentPath;

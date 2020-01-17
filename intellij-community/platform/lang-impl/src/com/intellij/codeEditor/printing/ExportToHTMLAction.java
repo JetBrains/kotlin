@@ -18,7 +18,6 @@ package com.intellij.codeEditor.printing;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -32,12 +31,8 @@ public class ExportToHTMLAction extends AnAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     DataContext dataContext = e.getDataContext();
-    Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    if (project == null) {
-      return;
-    }
     try {
-      ExportToHTMLManager.executeExport(dataContext);
+      new ExportToHTMLManager().executeExport(dataContext);
     }
     catch (FileNotFoundException ex) {
       JOptionPane.showMessageDialog(null, CodeEditorBundle.message("file.not.found", ex.getMessage()),
@@ -46,17 +41,21 @@ public class ExportToHTMLAction extends AnAction {
   }
 
   @Override
-  public void update(@NotNull AnActionEvent event){
+  public void update(@NotNull AnActionEvent event) {
     Presentation presentation = event.getPresentation();
     DataContext dataContext = event.getDataContext();
-    PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if(psiElement instanceof PsiDirectory) {
-      presentation.setEnabled(true);
-      return;
-    }
-    PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
-    presentation.setEnabled(psiFile != null && psiFile.getContainingDirectory() != null);
-    presentation.setVisible(psiFile != null);
-  }
 
+    PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
+    if (psiFile != null) {
+      presentation.setEnabled(psiFile.getContainingDirectory() != null);
+      presentation.setVisible(true);
+    }
+    else {
+      // psiFile is null => for the major of case it is NOT an editor context => no parsing => no freeze
+      PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+      if (psiElement instanceof PsiDirectory) {
+        presentation.setEnabledAndVisible(true);
+      }
+    }
+  }
 }

@@ -4,13 +4,18 @@ package com.intellij.openapi.externalSystem.service.execution
 import com.intellij.build.BuildEventDispatcher
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
+import com.intellij.build.events.FinishBuildEvent
 import com.intellij.build.output.BuildOutputInstantReaderImpl
 import com.intellij.build.output.BuildOutputParser
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.util.SmartList
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.ApiStatus
 import java.io.Closeable
+import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 /**
  * @author Vladislav.Soroka
@@ -21,12 +26,12 @@ class ExternalSystemEventDispatcher(taskId: ExternalSystemTaskId,
                                     appendOutputToMainConsole: Boolean) : BuildEventDispatcher {
   constructor(taskId: ExternalSystemTaskId, progressListener: BuildProgressListener?) : this(taskId, progressListener, true)
 
-  private var outputMessageDispatcher: ExternalSystemOutputMessageDispatcher? = null
+  private lateinit var outputMessageDispatcher: ExternalSystemOutputMessageDispatcher
   private var isStdOut: Boolean = true
 
   override fun setStdOut(stdOut: Boolean) {
     this.isStdOut = stdOut
-    outputMessageDispatcher?.stdOut = stdOut
+    outputMessageDispatcher.stdOut = stdOut
   }
 
   init {
@@ -53,26 +58,30 @@ class ExternalSystemEventDispatcher(taskId: ExternalSystemTaskId,
   }
 
   override fun onEvent(buildId: Any, event: BuildEvent) {
-    outputMessageDispatcher?.onEvent(buildId, event)
+    outputMessageDispatcher.onEvent(buildId, event)
+  }
+
+  override fun invokeOnCompletion(consumer: Consumer<Throwable?>) {
+    outputMessageDispatcher.invokeOnCompletion(consumer)
   }
 
   override fun append(csq: CharSequence): BuildEventDispatcher? {
-    outputMessageDispatcher?.append(csq)
+    outputMessageDispatcher.append(csq)
     return this
   }
 
   override fun append(csq: CharSequence, start: Int, end: Int): BuildEventDispatcher? {
-    outputMessageDispatcher?.append(csq, start, end)
+    outputMessageDispatcher.append(csq, start, end)
     return this
   }
 
   override fun append(c: Char): BuildEventDispatcher? {
-    outputMessageDispatcher?.append(c)
+    outputMessageDispatcher.append(c)
     return this
   }
 
   override fun close() {
-    outputMessageDispatcher?.close()
+    outputMessageDispatcher.close()
   }
 
   companion object {
@@ -80,13 +89,16 @@ class ExternalSystemEventDispatcher(taskId: ExternalSystemTaskId,
   }
 }
 
-private class DefaultOutputMessageDispatcher(buildId: Any,
-                                             private val buildProgressListener: BuildProgressListener,
-                                             parsers: List<BuildOutputParser>) :
-  BuildOutputInstantReaderImpl(buildId, buildId, buildProgressListener, parsers), ExternalSystemOutputMessageDispatcher {
-  override var stdOut: Boolean = true
+private class DefaultOutputMessageDispatcher(buildProgressListener: BuildProgressListener, val outputReader: BuildOutputInstantReaderImpl) :
+  AbstractOutputMessageDispatcher(buildProgressListener), Appendable by outputReader {
 
-  override fun onEvent(buildId: Any, event: BuildEvent) = buildProgressListener.onEvent(buildId, event)
+  constructor(buildId: Any, buildProgressListener: BuildProgressListener, parsers: List<BuildOutputParser>) :
+    this(buildProgressListener, BuildOutputInstantReaderImpl(buildId, buildId, buildProgressListener, parsers))
+
+  override var stdOut = true
+  override fun closeAndGetFuture(): CompletableFuture<Unit> {
+    return outputReader.closeAndGetFuture()
+  }
 }
 
 interface ExternalSystemOutputDispatcherFactory {
@@ -99,4 +111,43 @@ interface ExternalSystemOutputDispatcherFactory {
 
 interface ExternalSystemOutputMessageDispatcher : Closeable, Appendable, BuildProgressListener {
   var stdOut: Boolean
+  fun invokeOnCompletion(handler: Consumer<Throwable?>)
+}
+
+@ApiStatus.Experimental
+abstract class AbstractOutputMessageDispatcher(private val buildProgressListener: BuildProgressListener) : ExternalSystemOutputMessageDispatcher {
+  private val onCompletionHandlers = ContainerUtil.createConcurrentList<Consumer<Throwable?>>()
+  @Volatile
+  private var isClosed: Boolean = false
+
+  override fun onEvent(buildId: Any, event: BuildEvent) =
+    when (event) {
+      is FinishBuildEvent -> invokeOnCompletion(Consumer { buildProgressListener.onEvent(buildId, event) })
+      else -> buildProgressListener.onEvent(buildId, event)
+    }
+
+  override fun invokeOnCompletion(handler: Consumer<Throwable?>) {
+    if (isClosed) {
+      LOG.warn("Attempt to add completion handler for closed output dispatcher, the handler will be ignored",
+               if (LOG.isDebugEnabled) Throwable() else null)
+    }
+    else {
+      onCompletionHandlers.add(handler)
+    }
+  }
+
+  protected abstract fun closeAndGetFuture(): CompletableFuture<*>
+
+  final override fun close() {
+    val future = closeAndGetFuture()
+    isClosed = true
+    for (handler in onCompletionHandlers.asReversed()) {
+      future.whenComplete { _, u -> handler.accept(u) }
+    }
+    onCompletionHandlers.clear()
+  }
+
+  companion object {
+    private val LOG = logger<AbstractOutputMessageDispatcher>()
+  }
 }

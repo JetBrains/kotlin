@@ -1,11 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore;
 
-import com.intellij.util.io.DigestUtil;
-
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -17,6 +16,8 @@ public final class Ksuid {
   private static final int PAYLOAD_LENGTH = 16;
   private static final int MAX_ENCODED_LENGTH = 27;
 
+  private static final SecureRandom random = new SecureRandom();
+
   public static String generate() {
     ByteBuffer byteBuffer = ByteBuffer.allocate(TIMESTAMP_LENGTH + PAYLOAD_LENGTH);
 
@@ -25,7 +26,7 @@ public final class Ksuid {
     byteBuffer.putInt(timestamp);
 
     byte[] bytes = new byte[PAYLOAD_LENGTH];
-    DigestUtil.INSTANCE.getRandom().nextBytes(bytes);
+    random.nextBytes(bytes);
     byteBuffer.put(bytes);
 
     String uid = new String(Base62.encode(byteBuffer.array()), StandardCharsets.UTF_8);

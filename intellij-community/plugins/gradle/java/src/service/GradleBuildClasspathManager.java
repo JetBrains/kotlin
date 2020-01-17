@@ -35,6 +35,7 @@ public class GradleBuildClasspathManager {
   private final AtomicReference<Map<String/*module path*/, List<VirtualFile> /*module build classpath*/>> myClasspathMap
     = new AtomicReference<>(new HashMap<>());
 
+  @NotNull
   private final Map<String, PackageDirectoryCache> myClassFinderCache = ConcurrentFactoryMap
     .createMap(path -> PackageDirectoryCache.createCache(getModuleClasspathEntries(path)));
 
@@ -56,10 +57,12 @@ public class GradleBuildClasspathManager {
     Map<String/*module path*/, List<VirtualFile> /*module build classpath*/> map = new HashMap<>();
 
     final JarFileSystem jarFileSystem = JarFileSystem.getInstance();
+    final Map<String, VirtualFile> localVFCache = new HashMap<>();
+
     for (final ExternalProjectBuildClasspathPojo projectBuildClasspathPojo : localSettings.getProjectBuildClasspath().values()) {
       final List<VirtualFile> projectBuildClasspath = new ArrayList<>();
       for (String path : projectBuildClasspathPojo.getProjectBuildClasspath()) {
-        final VirtualFile virtualFile = ExternalSystemUtil.findLocalFileByPath(path);
+        final VirtualFile virtualFile = localVFCache.computeIfAbsent(path, it -> ExternalSystemUtil.findLocalFileByPath(it)) ;
         ContainerUtil.addIfNotNull(projectBuildClasspath,
                                    virtualFile == null || virtualFile.isDirectory()
                                    ? virtualFile
@@ -69,7 +72,7 @@ public class GradleBuildClasspathManager {
       for (final ExternalModuleBuildClasspathPojo moduleBuildClasspathPojo : projectBuildClasspathPojo.getModulesBuildClasspath().values()) {
         final List<VirtualFile> moduleBuildClasspath = new ArrayList<>(projectBuildClasspath);
             for (String path : moduleBuildClasspathPojo.getEntries()) {
-              final VirtualFile virtualFile = ExternalSystemUtil.findLocalFileByPath(path);
+              final VirtualFile virtualFile = localVFCache.computeIfAbsent(path, it -> ExternalSystemUtil.findLocalFileByPath(it)) ;
               ContainerUtil.addIfNotNull(moduleBuildClasspath,
                                          virtualFile == null || virtualFile.isDirectory()
                                          ? virtualFile
@@ -90,6 +93,7 @@ public class GradleBuildClasspathManager {
     myClassFinderCache.clear();
   }
 
+  @NotNull
   public Map<String, PackageDirectoryCache> getClassFinderCache() {
     return myClassFinderCache;
   }

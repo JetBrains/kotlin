@@ -17,16 +17,10 @@
 package com.intellij.conversion;
 
 import org.jdom.Element;
-import org.jdom.Document;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-
-/**
- * @author nik
- */
 public interface ComponentManagerSettings extends XmlBasedSettings {
 
   @Nullable

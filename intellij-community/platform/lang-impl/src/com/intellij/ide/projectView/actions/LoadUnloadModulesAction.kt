@@ -3,22 +3,26 @@ package com.intellij.ide.projectView.actions
 
 import com.intellij.ide.actions.OpenModuleSettingsAction
 import com.intellij.ide.projectView.impl.ProjectRootsUtil
+import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.roots.ui.configuration.ConfigureUnloadedModulesDialog
 
-/**
- * @author nik
- */
 class LoadUnloadModulesAction : DumbAwareAction("Load/Unload Modules...") {
   override fun update(e: AnActionEvent) {
-    val project = e.project
-    val canLoadUnload = project != null && ModuleManager.getInstance(project).let {
-      it.modules.size > 1 || it.unloadedModuleDescriptions.isNotEmpty()
-    }
-    e.presentation.isEnabledAndVisible = (!e.isFromContextMenu || OpenModuleSettingsAction.isModuleInContext(e)) && canLoadUnload
+    e.presentation.isEnabledAndVisible = isEnabled(e)
+  }
+
+  private fun isEnabled(e: AnActionEvent): Boolean {
+    val project = e.project ?: return false
+    val moduleManager = ModuleManager.getInstance(project)
+    if (moduleManager.modules.size <= 1 && moduleManager.unloadedModuleDescriptions.isEmpty()) return false
+
+    val file = e.getData(LangDataKeys.VIRTUAL_FILE)
+    return !ActionPlaces.isPopupPlace(e.place) || OpenModuleSettingsAction.isModuleInContext(e)
+           || file != null && ProjectRootsUtil.findUnloadedModuleByContentRoot(file, project) != null
   }
 
   override fun actionPerformed(e: AnActionEvent) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author max
@@ -32,7 +32,6 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedFileViewProvider;
 import com.intellij.util.FunctionUtil;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
@@ -45,7 +44,7 @@ import javax.swing.*;
 import java.util.*;
 
 public class LineMarkersPass extends TextEditorHighlightingPass {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.daemon.impl.LineMarkersPass");
+  private static final Logger LOG = Logger.getInstance(LineMarkersPass.class);
 
   private volatile List<LineMarkerInfo<PsiElement>> myMarkers = Collections.emptyList();
 
@@ -145,7 +144,7 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
 
   @NotNull
   public static List<LineMarkerProvider> getMarkerProviders(@NotNull Language language, @NotNull final Project project) {
-    List<LineMarkerProvider> forLanguage = LineMarkerProviders.INSTANCE.allForLanguageOrAny(language);
+    List<LineMarkerProvider> forLanguage = LineMarkerProviders.getInstance().allForLanguageOrAny(language);
     List<LineMarkerProvider> providers = DumbService.getInstance(project).filterByDumbAwareness(forLanguage);
     final LineMarkerSettings settings = LineMarkerSettings.getSettings();
     return ContainerUtil.filter(providers, provider -> !(provider instanceof LineMarkerProviderDescriptor)
@@ -217,8 +216,8 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
                                                   @NotNull final PsiFile containingFile,
                                                   @NotNull Set<? super PsiFile> visitedInjectedFiles,
                                                   @NotNull final PairConsumer<? super PsiElement, ? super LineMarkerInfo<PsiElement>> consumer) {
-    if (containingFile.getViewProvider() instanceof InjectedFileViewProvider) return;
     final InjectedLanguageManager manager = InjectedLanguageManager.getInstance(containingFile.getProject());
+    if (manager.isInjectedFragment(containingFile)) return;
 
     InjectedLanguageManager.getInstance(containingFile.getProject()).enumerateEx(element, containingFile, false, (injectedPsi, places) -> {
       if (!visitedInjectedFiles.add(injectedPsi)) return; // there may be several concatenated literals making the one injected file

@@ -32,7 +32,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.ui.tabs.JBTabs;
-import com.intellij.ui.tabs.newImpl.TabLabel;
+import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.Alarm;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.LocalTimeCounter;
@@ -60,7 +60,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
 
   private static final long TIME_TO_HIGHLIGHT_PREVIEW_CHANGES_IN_MILLIS = TimeUnit.SECONDS.toMillis(3);
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.application.options.CodeStyleXmlPanel");
+  private static final Logger LOG = Logger.getInstance(CodeStyleAbstractPanel.class);
 
   private final List<TextRange>       myPreviewRangesToHighlight = new ArrayList<>();
 
@@ -585,8 +585,19 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
     return Collections.emptySet();
   }
 
+  @NotNull
+  public OptionsContainingConfigurable getOptionIndexer() {
+    return new OptionsContainingConfigurable() {
+      @NotNull
+      @Override
+      public Set<String> processListOptions() {
+        return CodeStyleAbstractPanel.this.processListOptions();
+      }
+    };
+  }
+
   public final void applyPredefinedSettings(@NotNull PredefinedCodeStyle codeStyle) {
-    codeStyle.apply(mySettings);
+    codeStyle.apply(mySettings, myDefaultLanguage);
     ((CodeStyleSchemesModel.ModelSettings) mySettings).doWithLockedSettings(()->resetImpl(mySettings));
     if (myModel != null) {
       myModel.fireAfterCurrentSettingsChanged();
@@ -645,6 +656,9 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
         }
       }
     }
+  }
+
+  public void highlightOptions(@NotNull String searchString) {
   }
 
   @Nullable

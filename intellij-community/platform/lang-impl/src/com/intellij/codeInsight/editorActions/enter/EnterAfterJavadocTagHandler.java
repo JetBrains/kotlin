@@ -76,7 +76,7 @@ public class EnterAfterJavadocTagHandler extends EnterHandlerDelegateAdapter {
       restoreCaret = true;
     }
       
-    originalHandler.execute(editor, dataContext);
+    originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
     Project project = editor.getProject();
     if (indentInsideJavadoc != null &&
         project != null &&

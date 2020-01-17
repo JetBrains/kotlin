@@ -2,18 +2,14 @@
 package com.intellij.execution.lineMarker
 
 import com.intellij.execution.Executor
-import com.intellij.execution.ExecutorRegistry
-import com.intellij.execution.actions.*
+import com.intellij.execution.actions.BaseRunConfigurationAction
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.configurations.LocatableConfiguration
-import com.intellij.execution.impl.RunManagerImpl
-import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.util.Key
-import com.intellij.util.containers.mapSmart
-import com.intellij.util.containers.mapSmartNotNull
 
 private val LOG = logger<ExecutorAction>()
 private val CONFIGURATION_CACHE = Key.create<List<ConfigurationFromContext>>("ConfigurationFromContext")
@@ -38,11 +34,19 @@ class ExecutorAction private constructor(val origin: AnAction,
     @JvmOverloads
     fun getActionList(order: Int = 0): List<AnAction> {
       val actionManager = ActionManager.getInstance()
-      return ExecutorRegistry.getInstance().registeredExecutors
-        .mapNotNull { executor ->
-          val action = actionManager.getAction(executor.contextActionId) ?: return@mapNotNull null
-          ExecutorAction(action, executor, order)
+      val createAction = actionManager.getAction("CreateRunConfiguration")
+      val extensions = Executor.EXECUTOR_EXTENSION_NAME.extensionList
+      val result = ArrayList<AnAction>(extensions.size + (if (createAction == null) 0 else 1))
+      extensions
+        .mapNotNullTo(result) { executor ->
+          actionManager.getAction(executor.contextActionId)?.let {
+            ExecutorAction(it, executor, order)
+          }
         }
+      if (createAction != null) {
+        result.add(createAction)
+      }
+      return result
     }
 
     private fun getConfigurations(dataContext: DataContext): List<ConfigurationFromContext> {
@@ -56,19 +60,7 @@ class ExecutorAction private constructor(val origin: AnAction,
 
     private fun computeConfigurations(dataContext: DataContext): List<ConfigurationFromContext> {
       val originalContext = ConfigurationContext.getFromContext(dataContext)
-      val location = originalContext.location ?: return emptyList()
-
-      val alternativeLocations = MultipleRunLocationsProvider.findAlternativeLocations(location)?.alternativeLocations
-      val contexts = alternativeLocations?.mapSmart { ConfigurationContext.createEmptyContextForLocation(it) } ?: listOf(originalContext)
-      return contexts.flatMap { context ->
-        RunConfigurationProducer.getProducers(context.project).mapSmartNotNull {
-          LOG.runAndLogException {
-            val configuration = it.createLightConfiguration(context) ?: return@mapSmartNotNull null
-            val settings = RunnerAndConfigurationSettingsImpl(RunManagerImpl.getInstanceImpl(context.project), configuration, false)
-            ConfigurationFromContextImpl(it, settings, context.psiLocation)
-          }
-        }
-      }
+      return originalContext.configurationsFromContext ?: return emptyList()
     }
   }
 
@@ -87,7 +79,7 @@ class ExecutorAction private constructor(val origin: AnAction,
 
   override fun canBePerformed(context: DataContext) = origin !is ActionGroup || origin.canBePerformed(context)
 
-  override fun getChildren(e: AnActionEvent?) = (origin as? ActionGroup)?.getChildren(e) ?: AnAction.EMPTY_ARRAY
+  override fun getChildren(e: AnActionEvent?): Array<AnAction> = (origin as? ActionGroup)?.getChildren(e) ?: AnAction.EMPTY_ARRAY
 
   override fun isDumbAware() = origin.isDumbAware
 
@@ -103,15 +95,17 @@ class ExecutorAction private constructor(val origin: AnAction,
       return null
     }
 
-    val configuration = list.getOrNull(if (order < list.size) order else 0)?.configuration as LocatableConfiguration
+    val configuration = list.get(if (order < list.size) order else 0).configuration as LocatableConfiguration
     return executor.getStartActionText(BaseRunConfigurationAction.suggestRunActionName(configuration))
   }
 
   override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other?.javaClass != javaClass) return false
-
-    other as ExecutorAction
+    if (this === other) {
+      return true
+    }
+    if (other !is ExecutorAction) {
+      return false
+    }
 
     if (origin != other.origin) return false
     if (executor != other.executor) return false

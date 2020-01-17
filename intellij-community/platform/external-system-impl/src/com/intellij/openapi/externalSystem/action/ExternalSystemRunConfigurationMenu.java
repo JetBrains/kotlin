@@ -1,7 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.action;
 
-import com.intellij.execution.*;
+import com.intellij.execution.Executor;
+import com.intellij.execution.ProgramRunnerUtil;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.ExecutorGroup;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -23,7 +26,7 @@ import java.util.List;
 /**
  * @author Vladislav.Soroka
  */
-public class ExternalSystemRunConfigurationMenu extends DefaultActionGroup implements DumbAware {
+public final class ExternalSystemRunConfigurationMenu extends DefaultActionGroup implements DumbAware {
   @Override
   public void update(@NotNull AnActionEvent e) {
     for (AnAction action : getChildActionsOrStubs()) {
@@ -32,10 +35,12 @@ public class ExternalSystemRunConfigurationMenu extends DefaultActionGroup imple
       }
     }
 
-    final Project project = e.getProject();
+    Project project = e.getProject();
 
-    final List<ExternalSystemNode> selectedNodes = e.getData(ExternalSystemDataKeys.SELECTED_NODES);
-    if (selectedNodes == null || selectedNodes.size() != 1 || !(selectedNodes.get(0) instanceof RunConfigurationNode)) return;
+    List<ExternalSystemNode> selectedNodes = e.getData(ExternalSystemDataKeys.SELECTED_NODES);
+    if (selectedNodes == null || selectedNodes.size() != 1 || !(selectedNodes.get(0) instanceof RunConfigurationNode)) {
+      return;
+    }
 
     RunConfigurationNode runConfigurationNode = (RunConfigurationNode)selectedNodes.get(0);
     final RunnerAndConfigurationSettings settings = runConfigurationNode.getSettings();
@@ -44,7 +49,7 @@ public class ExternalSystemRunConfigurationMenu extends DefaultActionGroup imple
 
     ProjectSystemId projectSystemId = e.getData(ExternalSystemDataKeys.EXTERNAL_SYSTEM_ID);
     @SuppressWarnings("DuplicatedCode") final List<Executor> executors = new ArrayList<>();
-    for (final Executor executor: ExecutorRegistry.getInstance().getRegisteredExecutors()) {
+    for (final Executor executor: Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
       if (executor instanceof ExecutorGroup) {
         executors.addAll(((ExecutorGroup<?>)executor).childExecutors());
       }
@@ -54,8 +59,10 @@ public class ExternalSystemRunConfigurationMenu extends DefaultActionGroup imple
     }
     for (int i = executors.size(); --i >= 0; ) {
       Executor executor = executors.get(i);
-      if(!executor.isApplicable(project)) continue;
-      final ProgramRunner runner = ProgramRunner.getRunner(executor.getId(), settings.getConfiguration());
+      if (!executor.isApplicable(project)) {
+        continue;
+      }
+      ProgramRunner<?> runner = ProgramRunner.getRunner(executor.getId(), settings.getConfiguration());
       AnAction action = new ExecuteExternalSystemRunConfigurationAction(executor, runner != null, project, projectSystemId, settings);
       addAction(action, Constraints.FIRST);
     }

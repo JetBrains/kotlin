@@ -10,7 +10,7 @@ public class SearchResult {
   public final Position startPosition;
   public final Position endPostion;
   public final String contextPrefix;
-  public final String stringToFind;
+  public final String foundString;
   public final String contextPostfix;
 
   public SearchResult(long startPageNumber,
@@ -18,12 +18,12 @@ public class SearchResult {
                       long endPageNumber,
                       int endOffsetInPage,
                       String contextPrefix,
-                      String stringToFind,
+                      String foundString,
                       String contextPostfix) {
     startPosition = new Position(startPageNumber, startOffsetInPage);
     endPostion = new Position(endPageNumber, endOffsetInPage);
     this.contextPrefix = contextPrefix == null ? "" : contextPrefix;
-    this.stringToFind = stringToFind == null ? "" : stringToFind;
+    this.foundString = foundString == null ? "" : foundString;
     this.contextPostfix = contextPostfix == null ? "" : contextPostfix;
   }
 
@@ -32,7 +32,7 @@ public class SearchResult {
     return String.format("p%ds%d-p%ds%d: pref{%s},orig{%s},post{%s}",
                          startPosition.pageNumber, startPosition.symbolOffsetInPage,
                          endPostion.pageNumber, endPostion.symbolOffsetInPage,
-                         contextPrefix, stringToFind, contextPostfix);
+                         contextPrefix, foundString, contextPostfix);
   }
 
   @Override
@@ -46,7 +46,7 @@ public class SearchResult {
       if (startPosition.equals(targetResult.startPosition)
           && endPostion.equals(targetResult.endPostion)
           && contextPrefix.equals(targetResult.contextPrefix)
-          && stringToFind.equals(targetResult.stringToFind)
+          && foundString.equals(targetResult.foundString)
           && contextPostfix.equals(targetResult.contextPostfix)) {
         return true;
       }

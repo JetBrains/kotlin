@@ -132,14 +132,14 @@ public class ArrangementListRowDecorator extends JPanel implements ArrangementUi
 
   public void setBeingEdited(boolean beingEdited) {
     if (myBeingEdited && !beingEdited) {
-      myEditButton.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, false);
+      Toggleable.setSelected(myEditButton.getPresentation(), false);
     }
     if (!beingEdited && !myUnderMouse) {
       myEditButton.setVisible(false);
     }
     if (beingEdited && !myBeingEdited) {
       myEditButton.setVisible(true);
-      myEditButton.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, true);
+      Toggleable.setSelected(myEditButton.getPresentation(), true);
     }
     myBeingEdited = beingEdited;
   }
@@ -190,8 +190,8 @@ public class ArrangementListRowDecorator extends JPanel implements ArrangementUi
     Rectangle bounds = getButtonScreenBounds();
     if (!myBeingEdited && bounds != null) {
       boolean selected = bounds.contains(event.getLocationOnScreen());
-      boolean wasSelected = myEditButton.getPresentation().getClientProperty(Toggleable.SELECTED_PROPERTY) == Boolean.TRUE;
-      myEditButton.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, selected);
+      boolean wasSelected = Toggleable.isSelected(myEditButton.getPresentation());
+      Toggleable.setSelected(myEditButton.getPresentation(), selected);
       if (selected ^ wasSelected) {
         return myScreenBounds;
       }

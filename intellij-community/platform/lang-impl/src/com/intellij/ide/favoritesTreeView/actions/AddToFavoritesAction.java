@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.favoritesTreeView.actions;
 
@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class AddToFavoritesAction extends AnAction implements DumbAware {
-  private static final Logger LOG = Logger.getInstance("com.intellij.ide.favoritesTreeView.actions.AddToFavoritesAction");
+  private static final Logger LOG = Logger.getInstance(AddToFavoritesAction.class);
 
   private final String myFavoritesListName;
 
@@ -42,10 +42,9 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    final DataContext dataContext = e.getDataContext();
+    DataContext dataContext = e.getDataContext();
 
-    Collection<AbstractTreeNode> nodesToAdd = getNodesToAdd(dataContext, true);
-
+    Collection<AbstractTreeNode<?>> nodesToAdd = getNodesToAdd(dataContext, true);
     if (!nodesToAdd.isEmpty()) {
       Project project = e.getProject();
       FavoritesManager.getInstance(project).addRoots(myFavoritesListName, nodesToAdd);
@@ -53,16 +52,16 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
   }
 
   @NotNull
-  public static Collection<AbstractTreeNode> getNodesToAdd(final DataContext dataContext, final boolean inProjectView) {
+  public static Collection<AbstractTreeNode<?>> getNodesToAdd(final DataContext dataContext, final boolean inProjectView) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
 
     if (project == null) return Collections.emptyList();
 
     Module moduleContext = LangDataKeys.MODULE_CONTEXT.getData(dataContext);
 
-    Collection<AbstractTreeNode> nodesToAdd = null;
+    Collection<AbstractTreeNode<?>> nodesToAdd = null;
     for (FavoriteNodeProvider provider : FavoriteNodeProvider.EP_NAME.getExtensions(project)) {
-      Collection<AbstractTreeNode> nodes = provider.getFavoriteNodes(dataContext, ViewSettings.DEFAULT);
+      Collection<AbstractTreeNode<?>> nodes = provider.getFavoriteNodes(dataContext, ViewSettings.DEFAULT);
       if (nodes != null && !nodes.isEmpty()) {
         nodesToAdd = nodes;
         break;
@@ -100,7 +99,7 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
                                   e.getPlace().equals(ActionPlaces.STRUCTURE_VIEW_POPUP) ||
                                   e.getPlace().equals(ActionPlaces.PROJECT_VIEW_POPUP);
     //com.intellij.openapi.actionSystem.ActionPlaces.USAGE_VIEW_TOOLBAR
-    Collection<AbstractTreeNode> nodes = getNodesToAdd(dataContext, inProjectView);
+    Collection<AbstractTreeNode<?>> nodes = getNodesToAdd(dataContext, inProjectView);
     if (listName != null && !nodes.isEmpty()) {
       return FavoritesManager.getInstance(e.getProject()).canAddRoots(listName, nodes);
     }
@@ -126,13 +125,13 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
 
   public static
   @NotNull
-  Collection<AbstractTreeNode> createNodes(Project project,
+  Collection<AbstractTreeNode<?>> createNodes(Project project,
                                            Module moduleContext,
                                            Object object,
                                            boolean inProjectView,
                                            @NotNull ViewSettings favoritesConfig) {
     if (project == null) return Collections.emptyList();
-    ArrayList<AbstractTreeNode> result = new ArrayList<>();
+    ArrayList<AbstractTreeNode<?>> result = new ArrayList<>();
     for (FavoriteNodeProvider provider : FavoriteNodeProvider.EP_NAME.getExtensions(project)) {
       final AbstractTreeNode treeNode = provider.createNode(project, object, favoritesConfig);
       if (treeNode != null) {
@@ -229,10 +228,10 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
 
   private static void addPsiElementNode(PsiElement psiElement,
                                         final Project project,
-                                        final ArrayList<? super AbstractTreeNode> result,
+                                        final ArrayList<? super AbstractTreeNode<?>> result,
                                         @NotNull ViewSettings favoritesConfig) {
 
-    Class<? extends AbstractTreeNode> klass = getPsiElementNodeClass(psiElement);
+    Class<? extends AbstractTreeNode<?>> klass = getPsiElementNodeClass(psiElement);
     if (klass == null) {
       psiElement = PsiTreeUtil.getParentOfType(psiElement, PsiFile.class);
       if (psiElement != null) {
@@ -252,8 +251,8 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
   }
 
 
-  private static Class<? extends AbstractTreeNode> getPsiElementNodeClass(PsiElement psiElement) {
-    Class<? extends AbstractTreeNode> klass = null;
+  private static Class<? extends AbstractTreeNode<?>> getPsiElementNodeClass(PsiElement psiElement) {
+    Class<? extends AbstractTreeNode<?>> klass = null;
     if (psiElement instanceof PsiFile) {
       klass = PsiFileNode.class;
     }

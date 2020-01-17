@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.PomTargetPsiElement;
@@ -113,8 +114,7 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
   public void dispose() {
   }
 
-  @NotNull
-  static PsiElement[] filterElements(@NotNull final PsiElement[] targetElements) {
+  static PsiElement @NotNull [] filterElements(final PsiElement @NotNull [] targetElements) {
     final Set<PsiElement> unique = new LinkedHashSet<>(Arrays.asList(targetElements));
     for (final PsiElement elt : targetElements) {
       ApplicationManager.getApplication().runReadAction(() -> {
@@ -159,18 +159,16 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
     };
   }
 
-  @NotNull
-  static PsiElement[] getSelfAndImplementations(Editor editor,
-                                                @NotNull PsiElement element,
-                                                @NotNull ImplementationSearcher handler) {
+  static PsiElement @NotNull [] getSelfAndImplementations(Editor editor,
+                                                          @NotNull PsiElement element,
+                                                          @NotNull ImplementationSearcher handler) {
     return getSelfAndImplementations(editor, element, handler, !(element instanceof PomTargetPsiElement));
   }
 
-  @NotNull
-  public static PsiElement[] getSelfAndImplementations(Editor editor,
-                                                        @NotNull PsiElement element,
-                                                        @NotNull ImplementationSearcher handler,
-                                                final boolean includeSelfAlways) {
+  public static PsiElement @NotNull [] getSelfAndImplementations(Editor editor,
+                                                                 @NotNull PsiElement element,
+                                                                 @NotNull ImplementationSearcher handler,
+                                                                 final boolean includeSelfAlways) {
     final PsiElement[] handlerImplementations = handler.searchImplementations(element, editor, includeSelfAlways, true);
     if (handlerImplementations.length > 0) return handlerImplementations;
 
@@ -195,7 +193,7 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
   @NotNull
   @Override
   public List<ImplementationViewElement> searchImplementationsInBackground(@NotNull ProgressIndicator indicator,
-                                                                           @NotNull final Processor<? super PsiElement> processor) {
+                                                                           @NotNull final Processor<? super ImplementationViewElement> processor) {
     final ImplementationSearcher.BackgroundableImplementationSearcher implementationSearcher =
       new ImplementationSearcher.BackgroundableImplementationSearcher() {
         @Override
@@ -205,7 +203,7 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
 
         @Override
         protected void processElement(PsiElement element) {
-          if (!processor.process(element)) {
+          if (!processor.process(new PsiImplementationViewElement(element))) {
             indicator.cancel();
           }
           indicator.checkCanceled();
@@ -247,32 +245,15 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
 
   @Nullable
   public static PsiImplementationViewSession create(@NotNull DataContext dataContext,
-                                                     Project project,
-                                                     boolean searchDeep,
-                                                     boolean alwaysIncludeSelf) {
+                                                    @NotNull Project project,
+                                                    boolean searchDeep,
+                                                    boolean alwaysIncludeSelf) {
     PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
     Editor editor = getEditor(dataContext);
-
-    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    element = getElement(project, file, editor, element);
-
-    if (element == null && file == null) return null;
-    PsiFile containingFile = element != null ? element.getContainingFile() : file;
-    if (containingFile == null || !containingFile.getViewProvider().isPhysical()) return null;
-
-
-    PsiReference ref = null;
-    if (editor != null) {
-      ref = TargetElementUtil.findReference(editor, editor.getCaretModel().getOffset());
-      if (element == null && ref != null) {
-        element = TargetElementUtil.getInstance().adjustReference(ref);
-      }
-    }
-
-    //check attached sources if any
-    if (element instanceof PsiCompiledElement) {
-      element = element.getNavigationElement();
-    }
+    Pair<PsiElement, PsiReference> pair = getElementAndReference(dataContext, project, file, editor);
+    if (pair == null) return null;
+    PsiElement element = pair.first;
+    PsiReference ref = pair.second;
 
     String text = "";
     PsiElement[] impls = PsiElement.EMPTY_ARRAY;
@@ -310,16 +291,50 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
                                             searchDeep, alwaysIncludeSelf);
   }
 
-  public static PsiElement getElement(@NotNull Project project, PsiFile file, Editor editor, PsiElement element) {
-    if (element == null && editor != null) {
-      element = TargetElementUtil.findTargetElement(editor, TargetElementUtil.getInstance().getAllAccepted());
-      final PsiElement adjustedElement =
-        TargetElementUtil.getInstance().adjustElement(editor, TargetElementUtil.getInstance().getAllAccepted(), element, null);
-      if (adjustedElement != null) {
-        element = adjustedElement;
+  @Nullable
+  public static Pair<PsiElement, PsiReference> getElementAndReference(@NotNull DataContext dataContext,
+                                                                      @NotNull Project project,
+                                                                      @Nullable PsiFile file,
+                                                                      @Nullable Editor editor) {
+    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+    element = getElement(project, file, editor, element);
+
+    if (element == null && file == null) return null;
+    PsiFile containingFile = element != null ? element.getContainingFile() : file;
+    if (containingFile == null || !containingFile.getViewProvider().isPhysical()) return null;
+
+
+    PsiReference ref = null;
+    if (editor != null) {
+      ref = TargetElementUtil.findReference(editor, editor.getCaretModel().getOffset());
+      if (element == null && ref != null) {
+        element = TargetElementUtil.getInstance().adjustReference(ref);
       }
-      else if (file != null) {
-        element = DocumentationManager.getInstance(project).getElementFromLookup(editor, file);
+    }
+
+    //check attached sources if any
+    if (element instanceof PsiCompiledElement) {
+      element = element.getNavigationElement();
+    }
+    return Pair.pair(element, ref);
+  }
+
+  public static PsiElement getElement(@NotNull Project project, PsiFile file, Editor editor, PsiElement element) {
+    if (editor != null) {
+      if (element == null) {
+        element = TargetElementUtil.findTargetElement(editor, TargetElementUtil.getInstance().getAllAccepted());
+        final PsiElement adjustedElement =
+          TargetElementUtil.getInstance().adjustElement(editor, TargetElementUtil.getInstance().getAllAccepted(), element, null);
+        if (adjustedElement != null) {
+          element = adjustedElement;
+        }
+        else if (file != null) {
+          element = DocumentationManager.getInstance(project).getElementFromLookup(editor, file);
+        }
+      } else {
+        final PsiElement adjustedElement =
+          TargetElementUtil.getInstance().adjustElement(editor, TargetElementUtil.getInstance().getAllAccepted(), element, null);
+        if (adjustedElement != null) return adjustedElement;
       }
     }
     return element;

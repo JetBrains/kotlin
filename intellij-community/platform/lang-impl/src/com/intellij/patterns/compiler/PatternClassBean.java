@@ -16,13 +16,11 @@
 
 package com.intellij.patterns.compiler;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.AbstractExtensionPointBean;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 
 public class PatternClassBean extends AbstractExtensionPointBean {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.pattern.compiler.PatternClassBean");
   @Attribute("className")
   public String className;
   @Attribute("alias")
@@ -39,13 +37,7 @@ public class PatternClassBean extends AbstractExtensionPointBean {
   }
 
   public Class getPatternClass() {
-    try {
-      return findClass(className);
-    }
-    catch (ClassNotFoundException e) {
-      LOG.error(e);
-    }
-    return null;
+    return findClassNoExceptions(className);
   }
 
 }

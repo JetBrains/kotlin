@@ -19,9 +19,6 @@ import com.intellij.openapi.roots.ProjectModelExternalSource;
 import com.intellij.packaging.elements.PackagingElementFactory;
 import org.jetbrains.jps.model.serialization.artifact.ArtifactState;
 
-/**
- * @author nik
- */
 public class InvalidArtifact extends ArtifactImpl {
   private final ArtifactState myState;
   private final String myErrorMessage;

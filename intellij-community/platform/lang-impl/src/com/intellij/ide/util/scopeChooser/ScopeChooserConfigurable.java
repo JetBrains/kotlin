@@ -265,7 +265,7 @@ public class ScopeChooserConfigurable extends MasterDetailsComponent implements 
   protected
   @Nullable
   String getEmptySelectionString() {
-    return "Select a scope to view or edit its details here";
+    return IdeBundle.message("scope.chooser.select.scope.text");
   }
 
   private String createUniqueName() {
@@ -349,8 +349,7 @@ public class ScopeChooserConfigurable extends MasterDetailsComponent implements 
     }
 
     @Override
-    @NotNull
-    public AnAction[] getChildren(@Nullable AnActionEvent e) {
+    public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
       if (myChildren == null) {
         myChildren = new AnAction[2];
         myChildren[0] = new DumbAwareAction(IdeBundle.message("add.local.scope.action.text"), IdeBundle.message("add.local.scope.action.text"),

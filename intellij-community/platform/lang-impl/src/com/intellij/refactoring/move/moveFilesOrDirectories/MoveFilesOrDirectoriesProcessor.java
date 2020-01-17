@@ -50,7 +50,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor");
+  private static final Logger LOG = Logger.getInstance(MoveFilesOrDirectoriesProcessor.class);
 
   protected final PsiElement[] myElementsToMove;
   protected final boolean mySearchForReferences;
@@ -90,19 +90,18 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
 
   @Override
   @NotNull
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new MoveFilesOrDirectoriesViewDescriptor(myElementsToMove, myNewParent);
   }
 
   @Override
-  @NotNull
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     ArrayList<UsageInfo> result = new ArrayList<>();
     for (int i = 0; i < myElementsToMove.length; i++) {
       PsiElement element = myElementsToMove[i];
       if (mySearchForReferences) {
         for (PsiReference reference : ReferencesSearch.search(element, GlobalSearchScope.projectScope(myProject))) {
-          result.add(new MyUsageInfo(reference.getElement(), i, reference));
+          result.add(new MyUsageInfo(reference, i));
         }
       }
       findElementUsages(result, element);
@@ -131,7 +130,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void refreshElements(@NotNull PsiElement[] elements) {
+  protected void refreshElements(PsiElement @NotNull [] elements) {
     LOG.assertTrue(elements.length == myElementsToMove.length);
     System.arraycopy(elements, 0, myElementsToMove, 0, elements.length);
   }
@@ -144,7 +143,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usages) {
+  protected void performRefactoring(UsageInfo @NotNull [] usages) {
     // If files are being moved then I need to collect some information to delete these
     // files from CVS. I need to know all common parents of the moved files and relative
     // paths.
@@ -155,11 +154,20 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
 
       Map<PsiFile, FileASTNode> movedFiles = new LinkedHashMap<>();
       final Map<PsiElement, PsiElement> oldToNewMap = new HashMap<>();
+      if (mySearchForReferences) {
+        for (final PsiElement element : myElementsToMove) {
+          if (element instanceof PsiDirectory) {
+            encodeDirectoryFiles(element, movedFiles);
+          }
+          else if (element instanceof PsiFile) {
+            FileReferenceContextUtil.encodeFileReferences(element);
+          }
+        }
+      }
       for (final PsiElement element : myElementsToMove) {
         final RefactoringElementListener elementListener = getTransaction().getElementListener(element);
 
         if (element instanceof PsiDirectory) {
-          if (mySearchForReferences) encodeDirectoryFiles(element, movedFiles);
           MoveFilesOrDirectoriesUtil.doMoveDirectory((PsiDirectory)element, myNewParent);
           for (PsiElement psiElement : element.getChildren()) {
             processDirectoryFiles(movedFiles, oldToNewMap, psiElement);
@@ -168,7 +176,6 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
         else if (element instanceof PsiFile) {
           final PsiFile movedFile = (PsiFile)element;
           FileASTNode node = movedFile.getNode();
-          if (mySearchForReferences) FileReferenceContextUtil.encodeFileReferences(element);
           MoveFileHandler.forElement(movedFile).prepareMovedFile(movedFile, myNewParent, oldToNewMap);
 
           PsiFile moving = myNewParent.findFile(movedFile.getName());
@@ -239,7 +246,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
 
   @Nullable
   @Override
-  protected RefactoringEventData getAfterData(@NotNull UsageInfo[] usages) {
+  protected RefactoringEventData getAfterData(UsageInfo @NotNull [] usages) {
     RefactoringEventData data = new RefactoringEventData();
     data.addElement(myNewParent);
     return data;
@@ -319,8 +326,8 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     int myIndex;
     PsiReference myReference;
 
-    MyUsageInfo(PsiElement element, final int index, PsiReference reference) {
-      super(element);
+    MyUsageInfo(@NotNull PsiReference reference, int index) {
+      super(reference);
       myIndex = index;
       myReference = reference;
     }

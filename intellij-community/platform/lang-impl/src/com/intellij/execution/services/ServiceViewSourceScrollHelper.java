@@ -3,34 +3,55 @@ package com.intellij.execution.services;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.AutoScrollFromSourceHandler;
 import com.intellij.ui.AutoScrollToSourceHandler;
+import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 class ServiceViewSourceScrollHelper {
   private static final String AUTO_SCROLL_TO_SOURCE_PROPERTY = "service.view.auto.scroll.to.source";
   private static final String AUTO_SCROLL_FROM_SOURCE_PROPERTY = "service.view.auto.scroll.from.source";
 
-  static AutoScrollToSourceHandler installAutoScrollSupport(@NotNull Project project, @NotNull ToolWindowEx toolWindow) {
-    AutoScrollToSourceHandler toSourceHandler = new ServiceViewAutoScrollToSourceHandler(project);
+  @NotNull
+  static AutoScrollToSourceHandler createAutoScrollToSourceHandler(@NotNull Project project) {
+    return new ServiceViewAutoScrollToSourceHandler(project);
+  }
+
+  static void installAutoScrollSupport(@NotNull Project project, @NotNull ToolWindowEx toolWindow,
+                                                            @NotNull AutoScrollToSourceHandler toSourceHandler) {
     ServiceViewAutoScrollFromSourceHandler fromSourceHandler = new ServiceViewAutoScrollFromSourceHandler(project, toolWindow);
     fromSourceHandler.install();
-    toolWindow.setAdditionalGearActions(new DefaultActionGroup(toSourceHandler.createToggleAction(),
-                                                               fromSourceHandler.createToggleAction()));
+    DefaultActionGroup additionalGearActions = new DefaultActionGroup(toSourceHandler.createToggleAction(),
+                                                                      fromSourceHandler.createToggleAction(),
+                                                                      Separator.getInstance());
+    List<AnAction> additionalProviderActions = ServiceViewActionProvider.getInstance().getAdditionalGearActions();
+    for (AnAction action : additionalProviderActions) {
+      additionalGearActions.add(action);
+    }
+    toolWindow.setAdditionalGearActions(additionalGearActions);
     toolWindow.setTitleActions(new ScrollFromEditorAction(fromSourceHandler));
-    return toSourceHandler;
   }
 
   private static boolean isAutoScrollFromSourceEnabled(@NotNull Project project) {
-    return PropertiesComponent.getInstance(project).getBoolean(AUTO_SCROLL_FROM_SOURCE_PROPERTY);
+    return PropertiesComponent.getInstance(project).getBoolean(AUTO_SCROLL_FROM_SOURCE_PROPERTY, PlatformUtils.isDataGrip());
   }
 
   private static class ServiceViewAutoScrollToSourceHandler extends AutoScrollToSourceHandler {
@@ -71,23 +92,12 @@ class ServiceViewSourceScrollHelper {
       select(editor);
     }
 
-    private boolean select(@NotNull FileEditor editor) {
-      for (ServiceViewContributor extension : ServiceModel.getContributors()) {
-        if (!(extension instanceof ServiceViewFileEditorContributor)) continue;
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)extension, extension.getClass())) return true;
+    private Promise<Void> select(@NotNull FileEditor editor) {
+      VirtualFile virtualFile = FileEditorManagerEx.getInstanceEx(myProject).getFile(editor);
+      if (virtualFile == null) {
+        return Promises.rejectedPromise("Virtual file is null");
       }
-      return false;
-    }
-
-    private boolean selectContributorNode(@NotNull FileEditor editor, @NotNull ServiceViewFileEditorContributor extension,
-                                          @NotNull Class<?> contributorClass) {
-      Object service = extension.findService(myProject, editor);
-      if (service == null) return false;
-      if (service instanceof ServiceViewFileEditorContributor) {
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)service, contributorClass)) return true;
-      }
-      ServiceViewManager.getInstance(myProject).select(service, contributorClass, true, true);
-      return true;
+      return ((ServiceViewManagerImpl)ServiceViewManager.getInstance(myProject)).select(virtualFile);
     }
   }
 
@@ -95,7 +105,7 @@ class ServiceViewSourceScrollHelper {
     private final ServiceViewAutoScrollFromSourceHandler myScrollFromHandler;
 
     ScrollFromEditorAction(ServiceViewAutoScrollFromSourceHandler scrollFromHandler) {
-      super("Scroll from Source", "Select node open in the active editor", AllIcons.General.Locate);
+      super("Select Opened Service", "Select the service open in the active editor", AllIcons.General.Locate);
       myScrollFromHandler = scrollFromHandler;
     }
 
@@ -113,12 +123,17 @@ class ServiceViewSourceScrollHelper {
     public void actionPerformed(@NotNull AnActionEvent e) {
       Project project = e.getProject();
       if (project == null) return;
+
       FileEditorManager manager = FileEditorManager.getInstance(project);
       FileEditor[] editors = manager.getSelectedEditors();
-      if (editors.length == 0) return;
-      for (FileEditor editor : editors) {
-        if (myScrollFromHandler.select(editor)) return;
-      }
+      select(Arrays.asList(editors).iterator());
+    }
+
+    private void select(Iterator<FileEditor> editors) {
+      if (!editors.hasNext()) return;
+
+      FileEditor editor = editors.next();
+      myScrollFromHandler.select(editor).onError(r -> select(editors));
     }
   }
 }

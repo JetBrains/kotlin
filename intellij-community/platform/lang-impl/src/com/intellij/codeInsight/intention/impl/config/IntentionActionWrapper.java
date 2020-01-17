@@ -4,11 +4,11 @@ package com.intellij.codeInsight.intention.impl.config;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionBean;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
-import com.intellij.diagnostic.PluginException;
 import com.intellij.openapi.actionSystem.ShortcutProvider;
 import com.intellij.openapi.actionSystem.ShortcutSet;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -18,17 +18,12 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class IntentionActionWrapper implements IntentionAction, ShortcutProvider, IntentionActionDelegate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.intention.impl.config.IntentionActionWrapper");
-
-  private IntentionAction myDelegate;
-  private final String[] myCategories;
+public final class IntentionActionWrapper implements IntentionAction, ShortcutProvider, IntentionActionDelegate, PossiblyDumbAware {
   private final IntentionActionBean myExtension;
   private String myFullFamilyName;
 
-  IntentionActionWrapper(@NotNull IntentionActionBean extension, String[] categories) {
+  IntentionActionWrapper(@NotNull IntentionActionBean extension) {
     myExtension = extension;
-    myCategories = categories;
   }
 
   @NotNull
@@ -78,25 +73,24 @@ public class IntentionActionWrapper implements IntentionAction, ShortcutProvider
   public String getFullFamilyName(){
     String result = myFullFamilyName;
     if (result == null) {
+      String[] myCategories = myExtension.getCategories();
       myFullFamilyName = result = myCategories != null ? StringUtil.join(myCategories, "/") + "/" + getFamilyName() : getFamilyName();
     }
     return result;
   }
 
-  @NotNull
   @Override
-  public synchronized IntentionAction getDelegate() {
-    if (myDelegate == null) {
-      try {
-        myDelegate = myExtension.instantiate();
-      }
-      catch (PluginException e) {
-        LOG.error(e);
-      }
-    }
-    return myDelegate;
+  public boolean isDumbAware() {
+    return DumbService.isDumbAware(getDelegate());
   }
 
+  @NotNull
+  @Override
+  public IntentionAction getDelegate() {
+    return myExtension.getInstance();
+  }
+
+  @NotNull
   public String getImplementationClassName() {
     return myExtension.className;
   }

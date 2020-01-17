@@ -539,23 +539,6 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
     }
   }
 
- /* private final class GroupByFilesAction extends ToggleAction {
-    private GroupByFilesAction() {
-      super(IdeBundle.message("action.show.file.structure"),
-            IdeBundle.message("action.description.show.file.structure"), IconLoader.getIcon("/objectBrowser/showGlobalInspections.png"));
-    }
-
-    public boolean isSelected(final AnActionEvent e) {
-      return mySettings.SCOPE_TYPE;
-    }
-
-    public void setSelected(final AnActionEvent e, final boolean state) {
-      mySettings.SCOPE_TYPE = state;
-      mySettings.copyToApplicationDependencySettings();
-      rebuild();
-    }
-  }*/
-
   private final class ShowModulesAction extends ToggleAction {
     ShowModulesAction() {
       super(AnalysisScopeBundle.message("action.show.modules"), AnalysisScopeBundle.message("action.show.modules.description"),
@@ -1020,15 +1003,15 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
   }
 
   public static class DependencyPanelSettings {
-    public boolean UI_FLATTEN_PACKAGES = true;
-    public boolean UI_SHOW_FILES = false;
-    public boolean UI_SHOW_MODULES = true;
-    public boolean UI_SHOW_MODULE_GROUPS = true;
-    public boolean UI_FILTER_LEGALS = false;
-    public boolean UI_GROUP_BY_SCOPE_TYPE = true;
+    public boolean UI_FLATTEN_PACKAGES;
+    public boolean UI_SHOW_FILES;
+    public boolean UI_SHOW_MODULES;
+    public boolean UI_SHOW_MODULE_GROUPS;
+    public boolean UI_FILTER_LEGALS;
+    public boolean UI_GROUP_BY_SCOPE_TYPE;
     public String SCOPE_TYPE;
-    public boolean UI_COMPACT_EMPTY_MIDDLE_PACKAGES = true;
-    public boolean UI_FILTER_OUT_OF_CYCLE_PACKAGES = true;
+    public boolean UI_COMPACT_EMPTY_MIDDLE_PACKAGES;
+    public boolean UI_FILTER_OUT_OF_CYCLE_PACKAGES;
 
     public DependencyPanelSettings() {
       final DependencyUISettings settings = DependencyUISettings.getInstance();

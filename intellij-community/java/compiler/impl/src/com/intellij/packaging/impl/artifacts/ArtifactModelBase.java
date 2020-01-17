@@ -24,9 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author nik
- */
 public abstract class ArtifactModelBase implements ArtifactModel {
   private Map<String, Artifact> myArtifactsMap;
   private Artifact[] myArtifactsArray;
@@ -35,8 +32,7 @@ public abstract class ArtifactModelBase implements ArtifactModel {
   protected abstract List<? extends Artifact> getArtifactsList();
 
   @Override
-  @NotNull
-  public Artifact[] getArtifacts() {
+  public Artifact @NotNull [] getArtifacts() {
     if (myArtifactsArray == null) {
       final List<? extends Artifact> validArtifacts = ContainerUtil.findAll(getArtifactsList(), VALID_ARTIFACT_CONDITION);
       myArtifactsArray = validArtifacts.toArray(new Artifact[0]);

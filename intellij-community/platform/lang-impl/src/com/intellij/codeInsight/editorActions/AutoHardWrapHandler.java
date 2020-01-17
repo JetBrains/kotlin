@@ -187,7 +187,9 @@ public class AutoHardWrapHandler {
     DataManager.getInstance().saveInDataContext(dataContext, AUTO_WRAP_LINE_IN_PROGRESS_KEY, true);
     document.addDocumentListener(listener);
     try {
-      EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER).execute(editor, dataContext);
+      EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER).execute(editor,
+                                                                                                 editor.getCaretModel().getCurrentCaret(),
+                                                                                                 dataContext);
     }
     finally {
       DataManager.getInstance().saveInDataContext(dataContext, AUTO_WRAP_LINE_IN_PROGRESS_KEY, null);

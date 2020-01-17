@@ -17,6 +17,7 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.rmi.RemoteProcessSupport;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -45,7 +46,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import kotlin.Unit;
 import kotlin.reflect.full.NoSuchPropertyException;
 import org.jetbrains.annotations.NotNull;
@@ -59,11 +59,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author Denis Zhdanov
- */
-public class RemoteExternalSystemCommunicationManager implements ExternalSystemCommunicationManager, Disposable {
-
+public final class RemoteExternalSystemCommunicationManager implements ExternalSystemCommunicationManager, Disposable {
   private static final Logger LOG = Logger.getInstance(RemoteExternalSystemCommunicationManager.class);
 
   private static final String MAIN_CLASS_NAME = RemoteExternalSystemFacadeImpl.class.getName();
@@ -76,8 +72,8 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
   @NotNull private final ExternalSystemProgressNotificationManagerImpl                    myProgressManager;
   @NotNull private final RemoteProcessSupport<Object, RemoteExternalSystemFacade, String> mySupport;
 
-  public RemoteExternalSystemCommunicationManager(@NotNull ExternalSystemProgressNotificationManager notificationManager) {
-    myProgressManager = (ExternalSystemProgressNotificationManagerImpl)notificationManager;
+  public RemoteExternalSystemCommunicationManager() {
+    myProgressManager = (ExternalSystemProgressNotificationManagerImpl)ApplicationManager.getApplication().getService(ExternalSystemProgressNotificationManager.class);
     mySupport = new RemoteProcessSupport<Object, RemoteExternalSystemFacade, String>(RemoteExternalSystemFacade.class) {
       @Override
       protected void fireModificationCountChanged() {
@@ -140,7 +136,7 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExternalSystemException.class));
         ExternalSystemApiUtil.addBundle(params.getClassPath(), "messages.CommonBundle", CommonBundle.class);
         // com.intellij.openapi.externalSystem.model.FSTSerializer dependencies
-        ContainerUtilRt.addIfNotNull(classPath, PathUtil.getJarPathForClass(ObjectSerializer.class));
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ObjectSerializer.class));
 
         params.getClassPath().addAll(classPath);
 
@@ -174,7 +170,7 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
 
       @Override
       @NotNull
-      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
         ProcessHandler processHandler = startProcess();
         return new DefaultExecutionResult(processHandler);
       }
@@ -224,8 +220,14 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
     else {
       facade.applyProgressManager(exported);
     }
-    return facade;
+    return wrapResolverDeserialization(facade);
   }
+
+  @NotNull
+  private static RemoteExternalSystemFacade wrapResolverDeserialization(@NotNull RemoteExternalSystemFacade facade) {
+    return new ResolverDeserializationWrapper(facade);
+  }
+
 
   @Override
   public void release(@NotNull String id, @NotNull ProjectSystemId externalSystemId) {

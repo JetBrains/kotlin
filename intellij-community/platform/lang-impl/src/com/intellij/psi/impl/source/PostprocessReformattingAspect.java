@@ -52,7 +52,7 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.*;
 
 public class PostprocessReformattingAspect implements PomModelAspect {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.source.PostprocessReformattingAspect");
+  private static final Logger LOG = Logger.getInstance(PostprocessReformattingAspect.class);
   private final Project myProject;
   private final PsiManager myPsiManager;
   private final TreeAspect myTreeAspect;
@@ -521,6 +521,7 @@ public class PostprocessReformattingAspect implements PomModelAspect {
     List<PostponedAction> result = new ArrayList<>();
     if (!freeFormattingActions.isEmpty()) {
       FormatTextRanges ranges = new FormatTextRanges();
+      ranges.setExtendToContext(true);
       for (PostprocessFormattingTask action : freeFormattingActions) {
         TextRange range = TextRange.create(action);
         ranges.add(range, action instanceof ReformatWithHeadingWhitespaceTask);
@@ -650,7 +651,7 @@ public class PostprocessReformattingAspect implements PomModelAspect {
 
   private static void adjustIndentationInRange(@NotNull PsiFile file,
                                                @NotNull Document document,
-                                               @NotNull TextRange[] indents,
+                                               TextRange @NotNull [] indents,
                                                final int indentAdjustment) {
     final CharSequence charsSequence = document.getCharsSequence();
     for (final TextRange indent : indents) {
@@ -775,12 +776,12 @@ public class PostprocessReformattingAspect implements PomModelAspect {
     public void execute(@NotNull FileViewProvider viewProvider) {
       final PsiFile file = viewProvider.getPsi(viewProvider.getBaseLanguage());
       final FormatTextRanges textRanges = myRanges.ensureNonEmpty();
+      textRanges.setExtendToContext(true);
       if (ExternalFormatProcessor.useExternalFormatter(file)) {
         CodeStyleManagerImpl.formatRanges(file, myRanges, null);
       }
       else {
         final CodeFormatterFacade codeFormatter = getFormatterFacade(viewProvider);
-        codeFormatter.setReformatContext(true);
         codeFormatter.processText(file, textRanges, false);
       }
     }

@@ -30,11 +30,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class PackagingElementFactoryImpl extends PackagingElementFactory {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.elements.PackagingElementFactoryImpl");
+  private static final Logger LOG = Logger.getInstance(PackagingElementFactoryImpl.class);
   public static final PackagingElementType<DirectoryPackagingElement> DIRECTORY_ELEMENT_TYPE = new DirectoryElementType();
   public static final PackagingElementType<ArchivePackagingElement> ARCHIVE_ELEMENT_TYPE = new ArchiveElementType();
   public static final PackagingElementType<FileCopyPackagingElement> FILE_COPY_ELEMENT_TYPE = new FileCopyElementType();
@@ -50,9 +47,8 @@ public class PackagingElementFactoryImpl extends PackagingElementFactory {
       ArtifactElementType.ARTIFACT_ELEMENT_TYPE, FILE_COPY_ELEMENT_TYPE, DIRECTORY_COPY_ELEMENT_TYPE, EXTRACTED_DIRECTORY_ELEMENT_TYPE
   };
 
-  @NotNull
   @Override
-  public PackagingElementType<?>[] getNonCompositeElementTypes() {
+  public PackagingElementType<?> @NotNull [] getNonCompositeElementTypes() {
     final List<PackagingElementType> elementTypes = new ArrayList<>();
     for (PackagingElementType elementType : getAllElementTypes()) {
       if (!(elementType instanceof CompositePackagingElementType)) {
@@ -63,8 +59,7 @@ public class PackagingElementFactoryImpl extends PackagingElementFactory {
   }
 
   @Override
-  @NotNull
-  public ComplexPackagingElementType<?>[] getComplexElementTypes() {
+  public ComplexPackagingElementType<?> @NotNull [] getComplexElementTypes() {
     List<ComplexPackagingElementType<?>> types = new ArrayList<>();
     for (PackagingElementType type : getAllElementTypes()) {
       if (type instanceof ComplexPackagingElementType) {
@@ -74,9 +69,8 @@ public class PackagingElementFactoryImpl extends PackagingElementFactory {
     return types.toArray(new ComplexPackagingElementType[0]);
   }
 
-  @NotNull
   @Override
-  public CompositePackagingElementType<?>[] getCompositeElementTypes() {
+  public CompositePackagingElementType<?> @NotNull [] getCompositeElementTypes() {
     final List<CompositePackagingElementType> elementTypes = new ArrayList<>();
     for (PackagingElementType elementType : getAllElementTypes()) {
       if (elementType instanceof CompositePackagingElementType) {
@@ -99,9 +93,8 @@ public class PackagingElementFactoryImpl extends PackagingElementFactory {
     return null;
   }
 
-  @NotNull
   @Override
-  public PackagingElementType[] getAllElementTypes() {
+  public PackagingElementType @NotNull [] getAllElementTypes() {
     final PackagingElementType[] types = PackagingElementType.EP_NAME.getExtensions();
     return ArrayUtil.mergeArrays(STANDARD_TYPES, types);
   }

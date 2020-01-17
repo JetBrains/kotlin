@@ -99,7 +99,7 @@ class SmartPointerListModel<T> extends AbstractListModel<T> implements ModelDiff
   }
 
   boolean contains(T elem) {
-    return getItems().indexOf(elem) >= 0;
+    return getItems().contains(elem);
   }
 
   List<T> getItems() {

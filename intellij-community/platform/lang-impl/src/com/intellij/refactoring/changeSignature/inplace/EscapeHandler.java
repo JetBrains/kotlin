@@ -16,9 +16,11 @@
 package com.intellij.refactoring.changeSignature.inplace;
 
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EscapeHandler extends EditorActionHandler {
   private final EditorActionHandler myOriginalHandler;
@@ -28,24 +30,24 @@ public class EscapeHandler extends EditorActionHandler {
   }
 
   @Override
-  public void execute(@NotNull Editor editor, DataContext dataContext) {
+  public void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
     InplaceChangeSignature currentRefactoring = InplaceChangeSignature.getCurrentRefactoring(editor);
     if (currentRefactoring != null) {
       currentRefactoring.cancel();
       return;
     }
 
-    if (myOriginalHandler.isEnabled(editor, dataContext)) {
-      myOriginalHandler.execute(editor, dataContext);
+    if (myOriginalHandler.isEnabled(editor, caret, dataContext)) {
+      myOriginalHandler.execute(editor, caret, dataContext);
     }
   }
 
   @Override
-  public boolean isEnabled(Editor editor, DataContext dataContext) {
+  public boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
     InplaceChangeSignature currentRefactoring = InplaceChangeSignature.getCurrentRefactoring(editor);
     if (currentRefactoring != null) {
       return true;
     }
-    return myOriginalHandler.isEnabled(editor, dataContext);
+    return myOriginalHandler.isEnabled(editor, caret, dataContext);
   }
 }

@@ -73,10 +73,11 @@ internal class ExternalSystemStreamProviderFactory(private val project: Project)
     if (component !is ProjectModelElement) {
       return null
     }
+    val externalStorageOnly = stateSpec.externalStorageOnly
 
     // Keep in mind - this call will require storage for module because module option values are used.
     // We cannot just check that module name exists in the nameToData - new external system module will be not in the nameToData because not yet saved.
-    if (operation == StateStorageOperation.WRITE && component.externalSource == null) {
+    if (operation == StateStorageOperation.WRITE && component.externalSource == null && !externalStorageOnly) {
       return null
     }
 
@@ -92,7 +93,7 @@ internal class ExternalSystemStreamProviderFactory(private val project: Project)
       annotation = getOrCreateExternalStorageSpec(StoragePathMacros.MODULE_FILE)
     }
 
-    if (stateSpec.externalStorageOnly) {
+    if (externalStorageOnly) {
       return listOf(annotation)
     }
 

@@ -37,12 +37,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
 
   protected abstract boolean isAvailableInEditorOnly();
 
-  protected abstract boolean isEnabledOnElements(@NotNull PsiElement[] elements);
-
-  @Override
-  public boolean startInTransaction() {
-    return true;
-  }
+  protected abstract boolean isEnabledOnElements(PsiElement @NotNull [] elements);
 
   protected boolean isAvailableOnElementInEditorAndFile(@NotNull PsiElement element,
                                                         @NotNull Editor editor,
@@ -92,10 +87,13 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     DataContext dataContext = e.getDataContext();
     Project project = e.getProject();
     if (project == null) return;
-    PsiDocumentManager.getInstance(project).commitAllDocuments();
+    int eventCount = IdeEventQueue.getInstance().getEventCount();
+    if (!PsiDocumentManager.getInstance(project).commitAllDocumentsUnderProgress()) {
+      return;
+    }
+    IdeEventQueue.getInstance().setEventCount(eventCount);
     final Editor editor = e.getData(CommonDataKeys.EDITOR);
     final PsiElement[] elements = getPsiElementArray(dataContext);
-    int eventCount = IdeEventQueue.getInstance().getEventCount();
 
     RefactoringActionHandler handler;
     try {
@@ -276,8 +274,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     return true;
   }
 
-  @NotNull
-  public static PsiElement[] getPsiElementArray(DataContext dataContext) {
+  public static PsiElement @NotNull [] getPsiElementArray(@NotNull DataContext dataContext) {
     PsiElement[] psiElements = LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext);
     if (psiElements == null || psiElements.length == 0) {
       PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);

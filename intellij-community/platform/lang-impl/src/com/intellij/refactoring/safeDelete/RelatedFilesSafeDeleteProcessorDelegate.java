@@ -86,7 +86,7 @@ public class RelatedFilesSafeDeleteProcessorDelegate implements SafeDeleteProces
 
   @Override
   public NonCodeUsageSearchInfo findUsages(@NotNull PsiElement element,
-                                           @NotNull PsiElement[] allElementsToDelete,
+                                           PsiElement @NotNull [] allElementsToDelete,
                                            @NotNull List<UsageInfo> result) {
     return null;
   }
@@ -98,7 +98,7 @@ public class RelatedFilesSafeDeleteProcessorDelegate implements SafeDeleteProces
   }
 
   @Override
-  public Collection<String> findConflicts(@NotNull PsiElement element, @NotNull PsiElement[] allElementsToDelete) {
+  public Collection<String> findConflicts(@NotNull PsiElement element, PsiElement @NotNull [] allElementsToDelete) {
     return Collections.emptyList();
   }
 

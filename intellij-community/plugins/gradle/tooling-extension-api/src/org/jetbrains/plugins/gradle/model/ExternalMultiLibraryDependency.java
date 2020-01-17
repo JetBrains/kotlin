@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Vladislav.Soroka

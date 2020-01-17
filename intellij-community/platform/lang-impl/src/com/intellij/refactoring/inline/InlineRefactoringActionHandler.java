@@ -24,11 +24,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class InlineRefactoringActionHandler implements RefactoringActionHandler {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.inline.InlineHandler");
-  private static final String REFACTORING_NAME = RefactoringBundle.message("inline.title");
+  private static final Logger LOG = Logger.getInstance(InlineRefactoringActionHandler.class);
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     LOG.assertTrue(elements.length == 1);
     if (dataContext == null) {
       dataContext = DataManager.getInstance().getDataContext();
@@ -63,7 +62,7 @@ public class InlineRefactoringActionHandler implements RefactoringActionHandler 
       if (invokeInliner(editor, element)) return;
 
       String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("error.wrong.caret.position.method.or.local.name"));
-      CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, null);
+      CommonRefactoringUtil.showErrorHint(project, editor, message, getRefactoringName(), null);
     }
   }
 
@@ -75,5 +74,9 @@ public class InlineRefactoringActionHandler implements RefactoringActionHandler 
       }
     }
     return false;
+  }
+
+  private static String getRefactoringName() {
+    return RefactoringBundle.message("inline.title");
   }
 }

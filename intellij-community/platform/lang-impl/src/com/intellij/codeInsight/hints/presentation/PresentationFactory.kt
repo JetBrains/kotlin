@@ -28,7 +28,7 @@ import java.awt.event.MouseEvent
 import java.awt.font.FontRenderContext
 import java.util.*
 import javax.swing.Icon
-import javax.swing.UIManager
+import kotlin.math.max
 
 class PresentationFactory(private val editor: EditorImpl) {
   /**
@@ -42,12 +42,10 @@ class PresentationFactory(private val editor: EditorImpl) {
     val ascent = editor.ascent
     val descent = editor.descent
     val height = editor.lineHeight
-    val textWithoutBox = InsetPresentation(EffectInlayPresentation(
-      TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline) {
+    val textWithoutBox = InsetPresentation(
+      TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline, height, ascent, descent) {
         plainFont
-      },
-      plainFont, height, ascent, descent
-    ), top = 1, down = 1)
+      }, top = 1, down = 1)
     return withInlayAttributes(textWithoutBox)
   }
 
@@ -58,11 +56,17 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun text(text: String): InlayPresentation {
     val font = editor.colorsScheme.getFont(EditorFontType.PLAIN)
     val width = editor.contentComponent.getFontMetrics(font).stringWidth(text)
+    val ascent = editor.ascent
+    val descent = editor.descent
+    val height = editor.lineHeight
     return withInlayAttributes(TextInlayPresentation(
       width,
-      editor.lineHeight,
+      height,
       text,
-      editor.ascent
+      ascent,
+      height,
+      ascent,
+      descent
     ) { font })
   }
 
@@ -72,15 +76,18 @@ class PresentationFactory(private val editor: EditorImpl) {
    */
   @Contract(pure = true)
   fun roundWithBackground(base: InlayPresentation): InlayPresentation {
-    val rounding = rounding(8, 8, withInlayAttributes(BackgroundPresentation(
+    val rounding = withInlayAttributes(RoundWithBackgroundPresentation(
       InsetPresentation(
         base,
         left = 7,
         right = 7,
         top = 0,
         down = 0
-      )
-    )))
+
+      ),
+      8,
+      8
+    ))
     val offsetFromTop = getFontData(editor).offsetFromTop(editor)
     return InsetPresentation(rounding, top = offsetFromTop)
   }
@@ -91,7 +98,21 @@ class PresentationFactory(private val editor: EditorImpl) {
   @Contract(pure = true)
   fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
     tooltip.isEmpty() -> base
-    else -> onHover(base, tooltipHandler(tooltip))
+    else -> {
+      var hint: LightweightHint? = null
+      onHover(base, object : HoverListener {
+        override fun onHover(event: MouseEvent) {
+          if (hint?.isVisible != true) {
+            hint = showTooltip(editor, event, tooltip)
+          }
+        }
+
+        override fun onHoverFinished() {
+          hint?.hide()
+          hint = null
+        }
+      })
+    }
   }
 
   @Contract(pure = true)
@@ -101,6 +122,11 @@ class PresentationFactory(private val editor: EditorImpl) {
         it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
       }
     }), onClick = unwrapAction)
+  }
+
+  @Contract(pure = true)
+  fun inset(base: InlayPresentation, left: Int = 0, right: Int = 0, top: Int = 0, down: Int = 0): InsetPresentation {
+    return InsetPresentation(base, left, right, top, down)
   }
 
   /**
@@ -113,20 +139,20 @@ class PresentationFactory(private val editor: EditorImpl) {
     collapsed: InlayPresentation,
     expanded: () -> InlayPresentation,
     suffix: InlayPresentation,
-    startWithPlaceholder: Boolean = true
-  ) : InlayPresentation {
+    startWithPlaceholder: Boolean = true): InlayPresentation {
     val (matchingPrefix, matchingSuffix) = matchingBraces(prefix, suffix)
     val prefixExposed = EventExposingPresentation(matchingPrefix)
     val suffixExposed = EventExposingPresentation(matchingSuffix)
     var presentationToChange: BiStatePresentation? = null
+
     val content = BiStatePresentation(first = {
       onClick(collapsed, MouseButton.Left,
-              onClick = { m, p ->
-        presentationToChange?.flipState()
-      })
+              onClick = { _, _ ->
+                presentationToChange?.flipState()
+              })
     }, second = { expanded() }, initialState = startWithPlaceholder)
     presentationToChange = content
-    val listener = object: InputHandler {
+    val listener = object : InputHandler {
       override fun mouseClicked(event: MouseEvent, translated: Point) {
         content.flipState()
       }
@@ -136,18 +162,20 @@ class PresentationFactory(private val editor: EditorImpl) {
     return seq(prefixExposed, content, suffixExposed)
   }
 
+  private fun flipState() {
+    TODO("not implemented")
+  }
+
   @Contract(pure = true)
-  fun matchingBraces(left: InlayPresentation, right: InlayPresentation) : Pair<InlayPresentation, InlayPresentation> {
+  fun matchingBraces(left: InlayPresentation, right: InlayPresentation): Pair<InlayPresentation, InlayPresentation> {
     val (leftMatching, rightMatching) = matching(listOf(left, right))
     return leftMatching to rightMatching
   }
 
   @Contract(pure = true)
-  fun matching(presentations: List<InlayPresentation>) : List<InlayPresentation> {
-    return synchronousOnHover(presentations) { presentation ->
-      attributes(presentation) { base ->
-        base.with(attributesOf(CodeInsightColors.MATCHED_BRACE_ATTRIBUTES))
-      }
+  fun matching(presentations: List<InlayPresentation>): List<InlayPresentation> = synchronousOnHover(presentations) { presentation ->
+    attributes(presentation) { base ->
+      base.with(attributesOf(CodeInsightColors.MATCHED_BRACE_ATTRIBUTES))
     }
   }
 
@@ -156,30 +184,38 @@ class PresentationFactory(private val editor: EditorImpl) {
    * This presentation is stateless.
    */
   @Contract(pure = true)
-  fun synchronousOnHover(presentations: List<InlayPresentation>, decorator: (InlayPresentation) -> InlayPresentation) : List<InlayPresentation> {
+  fun synchronousOnHover(presentations: List<InlayPresentation>,
+                         decorator: (InlayPresentation) -> InlayPresentation): List<InlayPresentation> {
     val forwardings = presentations.map { DynamicDelegatePresentation(it) }
     return forwardings.map {
-      onHover(it) { event ->
-        if (event != null) {
+      onHover(it, object : HoverListener {
+        override fun onHover(event: MouseEvent) {
           for ((index, forwarding) in forwardings.withIndex()) {
             forwarding.delegate = decorator(presentations[index])
           }
-        } else {
+        }
+
+        override fun onHoverFinished() {
           for ((index, forwarding) in forwardings.withIndex()) {
             forwarding.delegate = presentations[index]
           }
         }
-      }
+      })
     }
+  }
+
+
+  interface HoverListener {
+    fun onHover(event: MouseEvent)
+    fun onHoverFinished()
   }
 
   /**
    * @see OnHoverPresentation
    */
   @Contract(pure = true)
-  fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit): InlayPresentation {
-    return OnHoverPresentation(base, onHover)
-  }
+  fun onHover(base: InlayPresentation, onHoverListener: HoverListener): InlayPresentation =
+    OnHoverPresentation(base, onHoverListener)
 
   /**
    * @see OnClickPresentation
@@ -210,10 +246,10 @@ class PresentationFactory(private val editor: EditorImpl) {
    */
   @Contract(pure = true)
   fun changeOnHover(
-    default: InlayPresentation,
+    base: InlayPresentation,
     onHover: () -> InlayPresentation,
     onHoverPredicate: (MouseEvent) -> Boolean = { true }
-  ): InlayPresentation = ChangeOnHoverPresentation(default, onHover, onHoverPredicate)
+  ): InlayPresentation = ChangeOnHoverPresentation(base, onHover, onHoverPredicate)
 
   @Contract(pure = true)
   fun reference(base: InlayPresentation, onClickAction: () -> Unit): InlayPresentation {
@@ -229,13 +265,12 @@ class PresentationFactory(private val editor: EditorImpl) {
       onClick(withRefAttributes, EnumSet.of(MouseButton.Left, MouseButton.Middle)) { _, _ ->
         onClickAction()
       }
-    }) { isControlDown(it) }
+    }, { isControlDown(it) })
   }
 
   @Contract(pure = true)
-  fun psiSingleReference(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
-    return reference(base) { navigateInternal(resolve) }
-  }
+  fun psiSingleReference(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation =
+    reference(base) { navigateInternal(resolve) }
 
   @Contract(pure = true)
   fun seq(vararg presentations: InlayPresentation): InlayPresentation {
@@ -246,13 +281,25 @@ class PresentationFactory(private val editor: EditorImpl) {
     }
   }
 
-  @Contract(pure = true)
-  fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
-    RoundPresentation(presentation, arcWidth, arcHeight)
-
-  private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes): AttributesTransformerPresentation {
-    return AttributesTransformerPresentation(base, transformer)
+  fun join(presentations: List<InlayPresentation>, separator: () -> InlayPresentation): InlayPresentation {
+    val seq = mutableListOf<InlayPresentation>()
+    var first = true
+    for (presentation in presentations) {
+      if (!first) {
+        seq.add(separator())
+      }
+      seq.add(presentation)
+      first = false
+    }
+    return SequencePresentation(seq)
   }
+
+  @Contract(pure = true)
+  fun rounding(arcWidth: Int, arcHeight: Int, base: InlayPresentation): InlayPresentation =
+    RoundPresentation(base, arcWidth, arcHeight)
+
+  private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes): AttributesTransformerPresentation =
+    AttributesTransformerPresentation(base, transformer)
 
   private fun withInlayAttributes(base: InlayPresentation): InlayPresentation {
     return AttributesTransformerPresentation(base) {
@@ -290,36 +337,17 @@ class PresentationFactory(private val editor: EditorImpl) {
     return hint
   }
 
-  private fun tooltipHandler(tooltip: String): (MouseEvent?) -> Unit {
-    var hint: LightweightHint? = null
-    return { event ->
-      when (event) {
-        null -> {
-          hint?.hide()
-          hint = null
-        }
-        else -> {
-          if (hint?.isVisible != true) {
-            hint = showTooltip(editor, event, tooltip)
-          }
-        }
-      }
-    }
-  }
-
   private fun locationAt(e: MouseEvent, component: Component): Point {
     val pointOnScreen = component.locationOnScreen
     return Point(e.xOnScreen - pointOnScreen.x, e.yOnScreen - pointOnScreen.y)
   }
 
-  private fun attributesOf(key: TextAttributesKey?) = editor.colorsScheme.getAttributes(key) ?: TextAttributes()
+  private fun attributesOf(key: TextAttributesKey) = editor.colorsScheme.getAttributes(key) ?: TextAttributes()
 
   private fun navigateInternal(resolve: () -> PsiElement?) {
     val target = resolve()
-    if (target != null) {
-      if (target is Navigatable) {
-        CommandProcessor.getInstance().executeCommand(target.project, { target.navigate(true) }, null, null)
-      }
+    if (target is Navigatable) {
+      CommandProcessor.getInstance().executeCommand(target.project, { target.navigate(true) }, null, null)
     }
   }
 
@@ -364,8 +392,8 @@ class PresentationFactory(private val editor: EditorImpl) {
   }
 
   private fun getFontData(editor: Editor): FontData {
-    val familyName = UIManager.getFont("Label.font").family
-    val size = Math.max(1, editor.colorsScheme.editorFontSize - 1)
+    val familyName = UIUtil.getLabelFont().family
+    val size = max(1, editor.colorsScheme.editorFontSize - 1)
     var metrics = editor.getUserData(FONT_DATA)
     if (metrics != null && !metrics.isActual(editor, familyName, size)) {
       metrics = null

@@ -1,11 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.CaretModel
 import com.intellij.openapi.editor.Editor
 import com.intellij.stats.storage.FilePathProvider
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.HeavyPlatformTestCase
+import com.intellij.testFramework.replaceService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -17,7 +19,7 @@ import java.nio.file.StandardWatchEventKinds
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class FileLoggerTest : PlatformTestCase() {
+class FileLoggerTest : HeavyPlatformTestCase() {
   private lateinit var dir: File
   private lateinit var logFile: File
 
@@ -53,7 +55,10 @@ class FileLoggerTest : PlatformTestCase() {
       `when`(installationId()).thenReturn(UUID.randomUUID().toString())
     }
 
-    val loggerProvider = CompletionFileLoggerProvider(pathProvider, uidProvider)
+    ApplicationManager.getApplication().replaceService(FilePathProvider::class.java, pathProvider, testRootDisposable)
+    ApplicationManager.getApplication().replaceService(InstallationIdProvider::class.java, uidProvider, testRootDisposable)
+
+    val loggerProvider = CompletionFileLoggerProvider()
 
     val logger = loggerProvider.newCompletionLogger()
 
@@ -71,9 +76,9 @@ class FileLoggerTest : PlatformTestCase() {
     val watchService = FileSystems.getDefault().newWatchService()
     val key = dir.toPath().register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY)
 
-    logger.completionStarted(lookup, true, 2, System.currentTimeMillis(), 0)
+    logger.completionStarted(lookup, true, 2, System.currentTimeMillis())
 
-    logger.completionCancelled(System.currentTimeMillis())
+    logger.completionCancelled(Fixtures.performance, System.currentTimeMillis())
     loggerProvider.dispose()
 
     var attemps = 0

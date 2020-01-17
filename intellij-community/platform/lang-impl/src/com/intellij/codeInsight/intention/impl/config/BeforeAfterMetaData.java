@@ -5,11 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 public interface BeforeAfterMetaData {
 
-  @NotNull
-  TextDescriptor[] getExampleUsagesBefore();
+  TextDescriptor @NotNull [] getExampleUsagesBefore();
   
-  @NotNull
-  TextDescriptor[] getExampleUsagesAfter();
+  TextDescriptor @NotNull [] getExampleUsagesAfter();
   
   @NotNull
   TextDescriptor getDescription();

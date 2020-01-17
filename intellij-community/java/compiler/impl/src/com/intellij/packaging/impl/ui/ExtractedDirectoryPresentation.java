@@ -26,9 +26,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class ExtractedDirectoryPresentation extends PackagingElementPresentation {
   private final String myJarPath;
   private final String myPathInJar;

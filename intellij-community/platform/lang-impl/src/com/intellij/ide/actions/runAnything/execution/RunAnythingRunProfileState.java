@@ -1,8 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.execution;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunProfile;
@@ -14,6 +13,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.runAnything.RunAnythingUtil;
 import com.intellij.ide.actions.runAnything.handlers.RunAnythingCommandHandler;
@@ -54,7 +54,20 @@ public class RunAnythingRunProfileState extends CommandLineState {
       @Override
       protected void notifyProcessTerminated(int exitCode) {
         print(IdeBundle.message("run.anything.console.process.finished", exitCode), ConsoleViewContentType.SYSTEM_OUTPUT);
+        printCustomCommandOutput();
+
         super.notifyProcessTerminated(exitCode);
+      }
+
+      private void printCustomCommandOutput() {
+        RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(originalCommand);
+        if (handler != null) {
+          String customOutput = handler.getProcessTerminatedCustomOutput();
+          if (customOutput != null) {
+            print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+            print(customOutput, ConsoleViewContentType.SYSTEM_OUTPUT);
+          }
+        }
       }
 
       @Override
@@ -70,10 +83,8 @@ public class RunAnythingRunProfileState extends CommandLineState {
 
       @Nullable
       private ConsoleView getConsoleView() {
-        RunContentDescriptor contentDescriptor =
-          ExecutionManager.getInstance(getEnvironment().getProject())
-                          .getContentManager()
-                          .findContentDescriptor(getEnvironment().getExecutor(), this);
+        RunContentDescriptor contentDescriptor = RunContentManager.getInstance(getEnvironment().getProject())
+          .findContentDescriptor(getEnvironment().getExecutor(), this);
 
         ConsoleView console = null;
         if (contentDescriptor != null && contentDescriptor.getExecutionConsole() instanceof ConsoleView) {

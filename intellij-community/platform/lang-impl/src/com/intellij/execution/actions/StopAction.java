@@ -1,13 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.actions;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.KillableProcess;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -235,19 +235,19 @@ public class StopAction extends DumbAwareAction implements AnAction.TransparentU
     else {
       // main menu toolbar
       final Project project = CommonDataKeys.PROJECT.getData(dataContext);
-      return project == null ? null : ExecutionManager.getInstance(project).getContentManager().getSelectedContent();
+      return project == null ? null : RunContentManager.getInstance(project).getSelectedContent();
     }
   }
 
   @NotNull
-  private static List<RunContentDescriptor> getActiveStoppableDescriptors(final DataContext dataContext) {
-    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    final List<RunContentDescriptor> runningProcesses = project == null ? Collections.emptyList() : ExecutionManagerImpl.getAllDescriptors(project);
+  private static List<RunContentDescriptor> getActiveStoppableDescriptors(@NotNull DataContext dataContext) {
+    Project project = CommonDataKeys.PROJECT.getData(dataContext);
+    List<RunContentDescriptor> runningProcesses = project == null ? Collections.emptyList() : ExecutionManagerImpl.getAllDescriptors(project);
     if (runningProcesses.isEmpty()) {
       return Collections.emptyList();
     }
 
-    final List<RunContentDescriptor> activeDescriptors = new SmartList<>();
+    List<RunContentDescriptor> activeDescriptors = new SmartList<>();
     for (RunContentDescriptor descriptor : runningProcesses) {
       if (canBeStopped(descriptor)) {
         activeDescriptors.add(descriptor);
@@ -264,7 +264,7 @@ public class StopAction extends DumbAwareAction implements AnAction.TransparentU
   }
 
   private static void _showStopRunningBar(@NotNull List<? extends RunContentDescriptor> stoppableDescriptors) {
-    if (!TouchBarsManager.isTouchBarAvailable())
+    if (!TouchBarsManager.isTouchBarEnabled())
       return;
 
     List<Pair<RunContentDescriptor, Runnable>> descriptors = new ArrayList<>(stoppableDescriptors.size());

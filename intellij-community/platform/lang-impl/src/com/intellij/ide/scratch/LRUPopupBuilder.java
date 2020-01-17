@@ -164,7 +164,7 @@ public abstract class LRUPopupBuilder<T> {
     List<T> extra = myExtraItems.toList();
     if (myItemsIterable != null) {
       for (T t : myItemsIterable) {
-        (ids.indexOf(getStorageId(t)) != -1 ? lru : items).add(t);
+        (ids.contains(getStorageId(t)) ? lru : items).add(t);
       }
     }
     if (myComparator != null) {
@@ -243,8 +243,7 @@ public abstract class LRUPopupBuilder<T> {
     return popup;
   }
 
-  @NotNull
-  private String[] restoreLRUItems() {
+  private String @NotNull [] restoreLRUItems() {
     return ObjectUtils.notNull(myPropertiesComponent.getValues(getLRUKey()), ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
@@ -270,7 +269,7 @@ public abstract class LRUPopupBuilder<T> {
 
   private static void changeLanguageWithUndo(@NotNull Project project,
                                              @NotNull Language t,
-                                             @NotNull VirtualFile[] sortedFiles,
+                                             VirtualFile @NotNull [] sortedFiles,
                                              @NotNull PerFileMappings<Language> mappings) throws UnexpectedUndoException {
     ReadonlyStatusHandler.OperationStatus status = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Arrays.asList(sortedFiles));
     if (status.hasReadonlyFiles()) return;

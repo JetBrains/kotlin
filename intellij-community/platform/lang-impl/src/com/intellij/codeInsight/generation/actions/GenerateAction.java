@@ -15,6 +15,8 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class GenerateAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
@@ -103,24 +105,20 @@ public class GenerateAction extends DumbAwareAction {
       return true;
     }
 
-    @NotNull
     @Override
-    public AnAction[] getChildren(@Nullable AnActionEvent e) {
+    public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
       return new AnAction[] {myEditTemplateAction};
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      final Project project = getEventProject(e);
-      assert project != null;
-      final DumbService dumbService = DumbService.getInstance(project);
-      try {
-        dumbService.setAlternativeResolveEnabled(true);
-        myAction.actionPerformed(e);
-      }
-      finally {
-        dumbService.setAlternativeResolveEnabled(false);
-      }
+      DumbService.getInstance(Objects.requireNonNull(getEventProject(e)))
+        .withAlternativeResolveEnabled(() -> myAction.actionPerformed(e));
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      myAction.update(e);
     }
   }
 }

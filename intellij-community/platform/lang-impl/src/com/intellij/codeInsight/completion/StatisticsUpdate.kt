@@ -17,6 +17,7 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.statistics.StatisticsInfo
+import com.intellij.psi.statistics.StatisticsManager
 import com.intellij.util.Alarm
 
 /**
@@ -134,7 +135,7 @@ class StatisticsUpdate
     @JvmStatic
     fun applyLastCompletionStatisticsUpdate() {
       ourPendingUpdate?.let {
-        it.myInfo.incUseCount()
+        StatisticsManager.getInstance().incUseCount(it.myInfo)
         (FeatureUsageTracker.getInstance() as FeatureUsageTrackerImpl).completionStatistics.registerInvocation(it.mySpared)
       }
       cancelLastCompletionStatisticsUpdate()

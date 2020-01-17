@@ -10,9 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Map;
 
-/**
- * @author nik
- */
 class SuggestedChildRootInfo {
   private final VirtualFile myRootCandidate;
   private final DetectedLibraryRoot myDetectedRoot;
@@ -54,8 +51,7 @@ class SuggestedChildRootInfo {
     }
   }
 
-  @NotNull
-  public String[] getRootTypeNames() {
+  public String @NotNull [] getRootTypeNames() {
     final String[] types = ArrayUtilRt.toStringArray(myRootTypeNames.values());
     Arrays.sort(types, String.CASE_INSENSITIVE_ORDER);
     return types;

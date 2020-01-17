@@ -20,8 +20,7 @@ public abstract class FileIndexCompileScope extends ExportableUserDataHolderBase
   protected abstract FileIndex[] getFileIndices();
 
   @Override
-  @NotNull
-  public VirtualFile[] getFiles(final FileType fileType, final boolean inSourceOnly) {
+  public VirtualFile @NotNull [] getFiles(final FileType fileType, final boolean inSourceOnly) {
     final List<VirtualFile> files = new ArrayList<>();
     final FileIndex[] fileIndices = getFileIndices();
     for (final FileIndex fileIndex : fileIndices) {

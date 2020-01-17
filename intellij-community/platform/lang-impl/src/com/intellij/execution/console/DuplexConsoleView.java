@@ -1,11 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
-import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> extends JPanel implements ConsoleView, 
+public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> extends JPanel implements ConsoleView,
                                                                                                        ObservableConsoleView,
                                                                                                        DataProvider {
   private final static String PRIMARY_CONSOLE_PANEL = "PRIMARY_CONSOLE_PANEL";
@@ -200,11 +200,10 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
   }
 
 
-  @NotNull
   @Override
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     List<AnAction> actions = Lists.newArrayList();
-    actions.addAll(mergeConsoleActions(Arrays.asList(myPrimaryConsoleView.createConsoleActions()), 
+    actions.addAll(mergeConsoleActions(Arrays.asList(myPrimaryConsoleView.createConsoleActions()),
                                        Arrays.asList(mySecondaryConsoleView.createConsoleActions())));
     actions.add(mySwitchConsoleAction);
 
@@ -220,6 +219,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
     myPrimaryConsoleView.allowHeavyFilters();
   }
 
+  @NotNull
   @Override
   public JComponent getComponent() {
     return this;
@@ -265,7 +265,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
   public void setDisableSwitchConsoleActionOnProcessEnd(boolean disableSwitchConsoleActionOnProcessEnd) {
     myDisableSwitchConsoleActionOnProcessEnd = disableSwitchConsoleActionOnProcessEnd;
   }
-  
+
   @NotNull
   private List<AnAction> mergeConsoleActions(@NotNull List<? extends AnAction> actions1, @NotNull Collection<? extends AnAction> actions2) {
     return ContainerUtil.map(actions1, action1 -> {
@@ -278,7 +278,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       else if (action2 instanceof ScrollToTheEndToolbarAction) {
         return new MergedToggleAction(((ToggleAction)action1), (ToggleAction)action2);
       }
-      else if (action2 instanceof ConsoleViewImpl.ClearAllAction) {
+      else if (action2 instanceof ClearConsoleAction) {
         return new MergedAction(action1, action2);
       }
       else {
@@ -299,7 +299,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       DuplexConsoleView.this.getComponent().revalidate();
     }
   }
-  
+
   private class SwitchDuplexConsoleViewAction extends ToggleAction implements DumbAware {
 
     SwitchDuplexConsoleViewAction() {
@@ -331,12 +331,12 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       }
       else {
         enableConsole(true);
-        presentation.putClientProperty(SELECTED_PROPERTY, false);
+        Toggleable.setSelected(presentation, false);
         presentation.setEnabled(false);
       }
     }
   }
-  
+
   private static class MergedToggleAction extends ToggleAction implements DumbAware {
     @NotNull
     private final ToggleAction myAction1;
@@ -379,5 +379,5 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       myAction2.actionPerformed(e);
     }
   }
-  
+
 }

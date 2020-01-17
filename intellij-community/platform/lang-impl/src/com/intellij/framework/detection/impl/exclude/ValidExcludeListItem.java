@@ -21,9 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-/**
-* @author nik
-*/
 class ValidExcludeListItem extends ExcludeListItem {
   private final VirtualFile myFile;
   private final FrameworkType myFrameworkType;

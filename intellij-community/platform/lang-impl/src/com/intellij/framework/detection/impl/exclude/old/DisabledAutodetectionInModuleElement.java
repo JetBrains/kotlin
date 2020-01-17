@@ -13,9 +13,6 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author nik
- */
 @Tag("module")
 public class DisabledAutodetectionInModuleElement {
   public static final Comparator<DisabledAutodetectionInModuleElement> COMPARATOR =

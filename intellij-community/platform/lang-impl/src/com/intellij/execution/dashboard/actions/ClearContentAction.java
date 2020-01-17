@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard.actions;
 
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.execution.ui.RunContentManagerImpl;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -40,6 +40,6 @@ public class ClearContentAction extends DumbAwareAction {
     Executor executor = RunContentManagerImpl.getExecutorByContent(content);
     if (executor == null) return;
 
-    ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, descriptor);
+    RunContentManager.getInstance(project).removeRunContent(executor, descriptor);
   }
 }

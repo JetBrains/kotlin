@@ -22,9 +22,6 @@ import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class LibraryTypeServiceImpl extends LibraryTypeService {
   private static final String DEFAULT_LIBRARY_NAME = "Unnamed";
 
@@ -58,7 +55,7 @@ public class LibraryTypeServiceImpl extends LibraryTypeService {
   }
 
   @NotNull
-  public static String suggestLibraryName(@NotNull VirtualFile[] classesRoots) {
+  public static String suggestLibraryName(VirtualFile @NotNull [] classesRoots) {
     if (classesRoots.length >= 1) {
       return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(classesRoots[0].getPath()));
     }

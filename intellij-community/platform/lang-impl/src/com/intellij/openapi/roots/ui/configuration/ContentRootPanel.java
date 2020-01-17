@@ -17,6 +17,7 @@ import com.intellij.ui.DarculaColors;
 import com.intellij.ui.Gray;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.paint.LinePainter2D;
 import com.intellij.ui.roots.FilePathClipper;
 import com.intellij.ui.roots.IconActionComponent;
 import com.intellij.ui.roots.ResizingWrapper;
@@ -24,6 +25,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,10 +49,10 @@ import java.util.Map;
 public abstract class ContentRootPanel extends JPanel {
   private static final Color EXCLUDED_COLOR = new JBColor(new Color(0x992E00), DarculaColors.RED);
   private static final Color SELECTED_HEADER_COLOR = new JBColor(
-    () -> UIUtil.isUnderDarcula() ? UIUtil.getPanelBackground().darker() : new Color(0xDEF2FF));
+    () -> StartupUiUtil.isUnderDarcula() ? UIUtil.getPanelBackground().darker() : new Color(0xDEF2FF));
   private static final Color HEADER_COLOR = new JBColor(new Color(0xF5F5F5), Gray._82);
   private static final Color SELECTED_CONTENT_COLOR = new Color(0xF0F9FF);
-  private static final Color CONTENT_COLOR = new JBColor(() -> UIUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : Gray._255);
+  private static final Color CONTENT_COLOR = new JBColor(() -> StartupUiUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : Gray._255);
   private static final Color UNSELECTED_TEXT_COLOR = Gray._51;
 
   protected final ActionCallback myCallback;
@@ -268,8 +270,8 @@ public abstract class ContentRootPanel extends JPanel {
   public void setSelected(boolean selected) {
     if (selected) {
       myHeader.setBackground(SELECTED_HEADER_COLOR);
-      setBackground(UIUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : SELECTED_CONTENT_COLOR);
-      myBottom.setBackground(UIUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : SELECTED_HEADER_COLOR);
+      setBackground(StartupUiUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : SELECTED_CONTENT_COLOR);
+      myBottom.setBackground(StartupUiUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : SELECTED_HEADER_COLOR);
       for (final JComponent component : myComponentToForegroundMap.keySet()) {
         component.setForeground(myComponentToForegroundMap.get(component));
       }
@@ -277,7 +279,7 @@ public abstract class ContentRootPanel extends JPanel {
     else {
       myHeader.setBackground(HEADER_COLOR);
       setBackground(CONTENT_COLOR);
-      myBottom.setBackground(UIUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : HEADER_COLOR);
+      myBottom.setBackground(StartupUiUtil.isUnderDarcula() ? UIUtil.getPanelBackground() : HEADER_COLOR);
       for (final JComponent component : myComponentToForegroundMap.keySet()) {
         component.setForeground(UNSELECTED_TEXT_COLOR);
       }
@@ -319,14 +321,14 @@ public abstract class ContentRootPanel extends JPanel {
       }
       */
       final Stroke saved = g.getStroke();
-      if (!SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
+      if (!SystemInfo.isMac && !StartupUiUtil.isUnderDarcula()) {
         g.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, DASH, y1 % 2));
       }
 
-      if (UIUtil.isUnderDarcula()) {
+      if (StartupUiUtil.isUnderDarcula()) {
         UIUtil.drawDottedLine(g, x1, y1, x2, y2, null, g.getColor());
       } else {
-        UIUtil.drawLine(g, x1, y1, x2, y2);
+        LinePainter2D.paint((Graphics2D)g, x1, y1, x2, y2);
       }
 
       g.setStroke(saved);

@@ -1,13 +1,16 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.findUsages;
 
 import com.intellij.find.FindBundle;
 import com.intellij.find.FindSettings;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PredefinedSearchScopeProvider;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SeparatorFactory;
 import com.intellij.ui.SimpleColoredComponent;
@@ -57,14 +60,16 @@ public abstract class AbstractFindUsagesDialog extends DialogWrapper {
     myIsShowInNewTabVisible = !isSingleFile;
     mySearchForTextOccurrencesAvailable = searchForTextOccurrencesAvailable;
     mySearchInLibrariesAvailable = searchInLibrariesAvailable;
+    if (myFindUsagesOptions instanceof PersistentFindUsagesOptions) {
+      ((PersistentFindUsagesOptions)myFindUsagesOptions).setDefaults(myProject);
+    }
 
     setOKButtonText(FindBundle.message("find.dialog.find.button"));
     setTitle(FindBundle.message(isSingleFile ? "find.usages.in.file.dialog.title" : "find.usages.dialog.title"));
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{getOKAction(), getCancelAction(), getHelpAction()};
   }
 
@@ -119,6 +124,9 @@ public abstract class AbstractFindUsagesDialog extends DialogWrapper {
   @NotNull
   public final FindUsagesOptions calcFindUsagesOptions() {
     calcFindUsagesOptions(myFindUsagesOptions);
+    if (myFindUsagesOptions instanceof PersistentFindUsagesOptions) {
+      ((PersistentFindUsagesOptions)myFindUsagesOptions).storeDefaults(myProject);
+    }
     return myFindUsagesOptions;
   }
 
@@ -227,7 +235,7 @@ public abstract class AbstractFindUsagesDialog extends DialogWrapper {
 
   protected void addUsagesOptions(JPanel optionsPanel) {
     if (mySearchForTextOccurrencesAvailable) {
-      myCbToSearchForTextOccurrences = addCheckboxToPanel(FindBundle.message("find.options.search.for.text.occurences.checkbox"),
+      myCbToSearchForTextOccurrences = addCheckboxToPanel(FindBundle.message("find.options.search.for.text.occurrences.checkbox"),
                                                          myFindUsagesOptions.isSearchForTextOccurrences, optionsPanel, false);
 
     }
@@ -274,5 +282,9 @@ public abstract class AbstractFindUsagesDialog extends DialogWrapper {
     return getPreferredFocusedControl();
   }
 
-
+  protected final void addScopeData(FeatureUsageData data, SearchScope scope) {
+    if (PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(myProject, null, true, true, false, false, true).contains(scope)) {
+      data.addData("searchScope", scope.getDisplayName());
+    }
+  }
 }

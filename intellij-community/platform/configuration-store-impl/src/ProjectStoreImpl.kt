@@ -19,12 +19,15 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtilRt
 import com.intellij.util.SmartList
-import com.intellij.util.containers.computeIfAny
-import com.intellij.util.io.*
+import com.intellij.util.io.delete
+import com.intellij.util.io.isDirectory
+import com.intellij.util.io.systemIndependentPath
+import com.intellij.util.io.write
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.CalledInAny
+import org.jetbrains.jps.util.JpsPathUtil
 import java.nio.file.AccessDeniedException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -45,7 +48,7 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(PathMacroManager.getInstance(project)), project)
 
   override fun setPath(path: String) {
-    setPath(path, true, null)
+    setPath(Paths.get(path), true, null)
   }
 
   override fun getProjectName(): String {
@@ -53,18 +56,18 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
       return PathUtilRt.getFileName(projectFilePath).removeSuffix(ProjectFileType.DOT_DEFAULT_EXTENSION)
     }
 
-    val baseDir = projectBasePath
-    val nameFile = nameFile
-    if (nameFile.exists()) {
-      LOG.runAndLogException { readProjectNameFile(nameFile) }?.let {
-        lastSavedProjectName = it
-        return it
-      }
+    val projectDir = nameFile.parent
+    val storedName = JpsPathUtil.readProjectName(projectDir)
+    if (storedName != null) {
+      lastSavedProjectName = storedName
+      return storedName
     }
 
-    return ProjectNameProvider.EP_NAME.extensionList.computeIfAny {
-      LOG.runAndLogException { it.getDefaultName(project) }
-    } ?: PathUtilRt.getFileName(baseDir).replace(":", "")
+    val computedName = ProjectNameProvider.EP_NAME.iterable.asSequence()
+      .map { LOG.runAndLogException { it.getDefaultName(project) } }
+      .find { it != null }
+
+    return computedName ?: JpsPathUtil.getDefaultProjectName(projectDir)
   }
 
   private suspend fun saveProjectName() {
@@ -109,10 +112,12 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
       launch {
         // save modules before project
         val errors = SmartList<Throwable>()
-        val moduleSaveSessions = saveModules(errors, forceSavingAllSettings)
+        val saveSessionManager = createSaveSessionProducerManager()
+        val moduleSaveSessions = saveModules(errors, forceSavingAllSettings, saveSessionManager)
         result.addErrors(errors)
 
-        (saveSettingsSavingComponentsAndCommitComponents(result, forceSavingAllSettings) as ProjectSaveSessionProducerManager)
+        saveSettingsSavingComponentsAndCommitComponents(result, forceSavingAllSettings, saveSessionManager)
+        saveSessionManager
           .saveWithAdditionalSaveSessions(moduleSaveSessions)
           .appendTo(result)
       }
@@ -131,11 +136,13 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
     }
   }
 
-  protected open suspend fun saveModules(errors: MutableList<Throwable>, isForceSavingAllSettings: Boolean): List<SaveSession> {
+  protected open suspend fun saveModules(errors: MutableList<Throwable>,
+                                         isForceSavingAllSettings: Boolean,
+                                         projectSaveSessionManager: SaveSessionProducerManager): List<SaveSession> {
     return emptyList()
   }
 
-  final override fun createSaveSessionProducerManager() = ProjectSaveSessionProducerManager(project)
+  override fun createSaveSessionProducerManager() = ProjectSaveSessionProducerManager(project)
 
   final override fun commitObsoleteComponents(session: SaveSessionProducerManager, isProjectLevel: Boolean) {
     if (isDirectoryBased) {
@@ -146,7 +153,9 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
 
 @ApiStatus.Internal
 open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(project) {
-  override suspend fun saveModules(errors: MutableList<Throwable>, isForceSavingAllSettings: Boolean): List<SaveSession> {
+  override suspend fun saveModules(errors: MutableList<Throwable>,
+                                   isForceSavingAllSettings: Boolean,
+                                   projectSaveSessionManager: SaveSessionProducerManager): List<SaveSession> {
     val modules = ModuleManager.getInstance(project)?.modules ?: Module.EMPTY_ARRAY
     if (modules.isEmpty()) {
       return emptyList()
@@ -154,15 +163,23 @@ open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(proj
 
     return withEdtContext {
       // do no create with capacity because very rarely a lot of modules will be modified
-      val saveSessions: MutableList<SaveSession> = SmartList<SaveSession>()
+      val saveSessions: MutableList<SaveSession> = SmartList()
       // commit components
       for (module in modules) {
-        val moduleStore = ModuleServiceManager.getService(module, IComponentStore::class.java) as ComponentStoreImpl
+        val moduleStore = ModuleServiceManager.getService(module, IComponentStore::class.java) as? ComponentStoreImpl ?: continue
         // collectSaveSessions is very cheap, so, do it in EDT
-        moduleStore.doCreateSaveSessionManagerAndCommitComponents(isForceSavingAllSettings, errors).collectSaveSessions(saveSessions)
+        val saveManager = moduleStore.createSaveSessionProducerManager()
+        commitModuleComponents(moduleStore, saveManager, projectSaveSessionManager, isForceSavingAllSettings, errors)
+        saveManager.collectSaveSessions(saveSessions)
       }
       saveSessions
     }
+  }
+
+  protected open fun commitModuleComponents(moduleStore: ComponentStoreImpl, moduleSaveSessionManager: SaveSessionProducerManager,
+                                            projectSaveSessionManager: SaveSessionProducerManager, isForceSavingAllSettings: Boolean,
+                                            errors: MutableList<Throwable>) {
+    moduleStore.commitComponents(isForceSavingAllSettings, moduleSaveSessionManager, errors)
   }
 }
 

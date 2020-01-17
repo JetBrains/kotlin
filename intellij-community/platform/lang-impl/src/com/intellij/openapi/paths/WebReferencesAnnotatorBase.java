@@ -3,7 +3,7 @@ package com.intellij.openapi.paths;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @author Eugene.Kudelevsky
  */
 public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebReferencesAnnotatorBase.MyInfo[], WebReferencesAnnotatorBase.MyInfo[]> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.paths.WebReferencesAnnotatorBase");
+  private static final Logger LOG = Logger.getInstance(WebReferencesAnnotatorBase.class);
 
   private final Map<String, MyFetchCacheEntry> myFetchCache = new HashMap<>();
   private final Object myFetchCacheLock = new Object();
@@ -35,8 +35,7 @@ public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebRe
 
   protected static final WebReference[] EMPTY_ARRAY = new WebReference[0];
 
-  @NotNull
-  protected abstract WebReference[] collectWebReferences(@NotNull PsiFile file);
+  protected abstract WebReference @NotNull [] collectWebReferences(@NotNull PsiFile file);
 
   @Nullable
   protected static WebReference lookForWebReference(@NotNull PsiElement element) {
@@ -117,24 +116,12 @@ public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebRe
                                                 start + info.myRangeInElement.getEndOffset());
           final String message = getErrorMessage(info.myUrl);
 
-          final Annotation annotation;
-
-          if (displayLevel == HighlightDisplayLevel.ERROR) {
-            annotation = holder.createErrorAnnotation(range, message);
-          }
-          else if (displayLevel == HighlightDisplayLevel.WARNING) {
-            annotation = holder.createWarningAnnotation(range, message);
-          }
-          else if (displayLevel == HighlightDisplayLevel.WEAK_WARNING) {
-            annotation = holder.createInfoAnnotation(range, message);
-          }
-          else {
-            annotation = holder.createWarningAnnotation(range, message);
-          }
+          AnnotationBuilder builder = holder.newAnnotation(displayLevel.getSeverity(), message).range(range);
 
           for (IntentionAction action : getQuickFixes()) {
-            annotation.registerFix(action);
+            builder = builder.withFix(action);
           }
+          builder.create();
         }
       }
     }
@@ -143,8 +130,7 @@ public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebRe
   @NotNull
   protected abstract String getErrorMessage(@NotNull String url);
 
-  @NotNull
-  protected IntentionAction[] getQuickFixes() {
+  protected IntentionAction @NotNull [] getQuickFixes() {
     return IntentionAction.EMPTY_ARRAY;
   }
   

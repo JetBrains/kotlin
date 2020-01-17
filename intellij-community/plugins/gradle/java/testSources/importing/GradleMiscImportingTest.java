@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -11,16 +12,23 @@ import com.intellij.openapi.roots.LanguageLevelModuleExtensionImpl;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.TestModuleProperties;
 import com.intellij.pom.java.LanguageLevel;
+import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.model.ExternalProject;
+import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
+import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * @author Vladislav.Soroka
  */
+@SuppressWarnings("GrUnresolvedAccess") // ignore unresolved code for injected Groovy Gradle DSL
 public class GradleMiscImportingTest extends GradleImportingTestCase {
 
   /**
@@ -122,8 +130,8 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     );
 
     assertModules("project", "project.main", "project.test");
-    assertTrue(getSdkForModule("project.main") == myJdk);
-    assertTrue(getSdkForModule("project.test") == myJdk);
+    assertSame(getSdkForModule("project.main"), myJdk);
+    assertSame(getSdkForModule("project.test"), myJdk);
   }
 
   @Test
@@ -133,11 +141,134 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     );
     assertModules("project", "project.main", "project.test");
 
-    edt(() -> ModuleManager.getInstance(myProject).setUnloadedModules(Arrays.asList("project.main")));
+    edt(() -> ModuleManager.getInstance(myProject).setUnloadedModules(Collections.singletonList("project.main")));
     assertModules("project", "project.test");
 
     importProject();
     assertModules("project", "project.test");
+  }
+
+  @Test
+  public void testESLinkedProjectIds() throws Exception {
+    // main build
+    createSettingsFile("rootProject.name = 'multiproject'\n" +
+                       "include ':app'\n" +
+                       "include ':util'\n" +
+                       "includeBuild 'included-build'");
+    createProjectSubFile("build.gradle", "allprojects { apply plugin: 'java' }");
+
+    // main buildSrc
+    createProjectSubFile("buildSrc/settings.gradle", "include ':buildSrcSubProject'\n" +
+                                                     "include ':util'");
+    createProjectSubFile("buildSrc/build.gradle", "allprojects { apply plugin: 'java' }");
+
+    // included build with buildSrc
+    createProjectSubFile("included-build/settings.gradle", "rootProject.name = 'inc-build'\n" +
+                                                           "include ':util'");
+    createProjectSubFile("included-build/buildSrc/settings.gradle", "include ':util'");
+
+    importProject();
+    assertModules(
+      "multiproject",
+      "multiproject.main",
+      "multiproject.test",
+
+      "multiproject.buildSrc",
+      "multiproject.buildSrc.main",
+      "multiproject.buildSrc.test",
+
+      "multiproject.buildSrc.buildSrcSubProject",
+      "multiproject.buildSrc.buildSrcSubProject.main",
+      "multiproject.buildSrc.buildSrcSubProject.test",
+
+      "multiproject.buildSrc.util",
+      "multiproject.buildSrc.util.main",
+      "multiproject.buildSrc.util.test",
+
+      "multiproject.app",
+      "multiproject.app.main",
+      "multiproject.app.test",
+
+      "multiproject.util",
+      "multiproject.util.main",
+      "multiproject.util.test",
+
+      "inc-build",
+      "inc-build.util",
+
+      "inc-build.buildSrc",
+      "inc-build.buildSrc.util",
+      "inc-build.buildSrc.main",
+      "inc-build.buildSrc.test"
+    );
+
+    assertExternalProjectId("multiproject", "multiproject");
+    assertExternalProjectId("multiproject.main", "multiproject:main");
+    assertExternalProjectId("multiproject.test", "multiproject:test");
+
+    assertExternalProjectId("multiproject.buildSrc", "multiproject:buildSrc");
+    assertExternalProjectId("multiproject.buildSrc.main", "multiproject:buildSrc:main");
+    assertExternalProjectId("multiproject.buildSrc.test", "multiproject:buildSrc:test");
+
+    assertExternalProjectId("multiproject.buildSrc.buildSrcSubProject", "multiproject:buildSrc:buildSrcSubProject");
+    assertExternalProjectId("multiproject.buildSrc.buildSrcSubProject.main", "multiproject:buildSrc:buildSrcSubProject:main");
+    assertExternalProjectId("multiproject.buildSrc.buildSrcSubProject.test", "multiproject:buildSrc:buildSrcSubProject:test");
+
+    assertExternalProjectId("multiproject.buildSrc.util", "multiproject:buildSrc:util");
+    assertExternalProjectId("multiproject.buildSrc.util.main", "multiproject:buildSrc:util:main");
+    assertExternalProjectId("multiproject.buildSrc.util.test", "multiproject:buildSrc:util:test");
+
+    assertExternalProjectId("multiproject.app", ":app");
+    assertExternalProjectId("multiproject.app.main", ":app:main");
+    assertExternalProjectId("multiproject.app.test", ":app:test");
+
+    assertExternalProjectId("multiproject.util", ":util");
+    assertExternalProjectId("multiproject.util.main", ":util:main");
+    assertExternalProjectId("multiproject.util.test", ":util:test");
+
+    assertExternalProjectId("inc-build", "inc-build");
+    assertExternalProjectId("inc-build.util", "inc-build:util");
+
+    assertExternalProjectId("inc-build.buildSrc", "inc-build:buildSrc");
+    assertExternalProjectId("inc-build.buildSrc.util", "inc-build:buildSrc:util");
+    assertExternalProjectId("inc-build.buildSrc.main", "inc-build:buildSrc:main");
+    assertExternalProjectId("inc-build.buildSrc.test", "inc-build:buildSrc:test");
+
+    Map<String, ExternalProject> projectMap = getExternalProjectsMap();
+    assertExternalProjectIds(projectMap, "multiproject", "multiproject:main", "multiproject:test");
+    assertExternalProjectIds(projectMap, ":app", ":app:main", ":app:test");
+    assertExternalProjectIds(projectMap, ":util", ":util:main", ":util:test");
+    assertExternalProjectIds(projectMap, "inc-build", ArrayUtilRt.EMPTY_STRING_ARRAY);
+    assertExternalProjectIds(projectMap, "inc-build:util", ArrayUtilRt.EMPTY_STRING_ARRAY);
+
+    // Note, currently ExternalProject models are not exposed for "buildSrc" projects
+  }
+
+  private static void assertExternalProjectIds(Map<String, ExternalProject> projectMap, String projectId, String... sourceSetModulesIds) {
+    ExternalProject externalProject = projectMap.get(projectId);
+    assertEquals(projectId, externalProject.getId());
+    List<String> actualSourceSetModulesIds = ContainerUtil.map(
+      externalProject.getSourceSets().values(), sourceSet -> GradleProjectResolverUtil.getModuleId(externalProject, sourceSet));
+    assertSameElements(actualSourceSetModulesIds, sourceSetModulesIds);
+  }
+
+  @NotNull
+  private Map<String, ExternalProject> getExternalProjectsMap() {
+    ExternalProject rootExternalProject = ExternalProjectDataCache.getInstance(myProject).getRootExternalProject(getProjectPath());
+    final Map<String, ExternalProject> externalProjectMap = new THashMap<>();
+    if (rootExternalProject == null) return externalProjectMap;
+    ArrayDeque<ExternalProject> queue = new ArrayDeque<>();
+    queue.add(rootExternalProject);
+    ExternalProject externalProject;
+    while ((externalProject = queue.pollFirst()) != null) {
+      queue.addAll(externalProject.getChildProjects().values());
+      externalProjectMap.put(externalProject.getId(), externalProject);
+    }
+    return externalProjectMap;
+  }
+
+  private void assertExternalProjectId(String moduleName, String expectedId) {
+    assertEquals(expectedId, ExternalSystemApiUtil.getExternalProjectId(getModule(moduleName)));
   }
 
   private LanguageLevel getLanguageLevelForModule(final String moduleName) {

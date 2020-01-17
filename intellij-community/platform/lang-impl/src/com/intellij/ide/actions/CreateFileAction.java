@@ -4,8 +4,12 @@ package com.intellij.ide.actions;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
+import com.intellij.ide.ui.newItemPopup.NewItemSimplePopupPanel;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -14,6 +18,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -30,6 +35,7 @@ import javax.swing.*;
 import java.io.File;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.function.Consumer;
 
 public class CreateFileAction extends CreateElementActionBase implements DumbAware {
 
@@ -49,27 +55,56 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
   }
 
   @Override
-  @NotNull
-  protected PsiElement[] invokeDialog(final Project project, PsiDirectory directory) {
+  protected PsiElement @NotNull [] invokeDialog(final Project project, PsiDirectory directory) {
+    return PsiElement.EMPTY_ARRAY;
+  }
+
+  @Override
+  protected void invokeDialog(Project project, PsiDirectory directory, Consumer<PsiElement[]> elementsConsumer) {
     MyInputValidator validator = new MyValidator(project, directory);
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       try {
-        return validator.create("test");
+        elementsConsumer.accept(validator.create("test"));
       }
       catch (Exception e) {
         throw new RuntimeException(e);
       }
     }
     else {
-      Messages.showInputDialog(project, IdeBundle.message("prompt.enter.new.file.name"),
-                               IdeBundle.message("title.new.file"), null, null, validator);
-      return validator.getCreatedElements();
+      if (Experiments.getInstance().isFeatureEnabled("show.create.new.element.in.popup")) {
+        createLightWeightPopup(validator, elementsConsumer).showCenteredInCurrentWindow(project);
+      }
+      else {
+        Messages.showInputDialog(project, IdeBundle.message("prompt.enter.new.file.name"),
+                                 IdeBundle.message("title.new.file"), null, null, validator);
+        elementsConsumer.accept(validator.getCreatedElements());
+      }
     }
   }
 
+  private JBPopup createLightWeightPopup(MyInputValidator validator, Consumer<PsiElement[]> consumer) {
+    NewItemSimplePopupPanel contentPanel = new NewItemSimplePopupPanel();
+    JTextField nameField = contentPanel.getTextField();
+    JBPopup popup = NewItemPopupUtil.createNewItemPopup(IdeBundle.message("title.new.file"), contentPanel, nameField);
+    contentPanel.setApplyAction(event -> {
+      String name = nameField.getText();
+      if (validator.checkInput(name) && validator.canClose(name)) {
+        popup.closeOk(event);
+        consumer.accept(validator.getCreatedElements());
+      }
+      else {
+        String errorMessage = validator instanceof InputValidatorEx
+                              ? ((InputValidatorEx)validator).getErrorText(name)
+                              : LangBundle.message("incorrect.name");
+        contentPanel.setError(errorMessage);
+      }
+    });
+
+    return popup;
+  }
+
   @Override
-  @NotNull
-  protected PsiElement[] create(@NotNull String newName, PsiDirectory directory) throws Exception {
+  protected PsiElement @NotNull [] create(@NotNull String newName, PsiDirectory directory) throws Exception {
     MkDirs mkdirs = new MkDirs(newName, directory);
     return new PsiElement[]{WriteAction.compute(() -> mkdirs.directory.createFile(getFileName(mkdirs.newName)))};
   }

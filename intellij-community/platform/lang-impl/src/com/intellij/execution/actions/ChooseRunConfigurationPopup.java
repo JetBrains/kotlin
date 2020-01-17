@@ -576,9 +576,9 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
 
       boolean isFirst = true;
       final List<Executor> allExecutors = new ArrayList<>();
-      for (final Executor executor: ExecutorRegistry.getInstance().getRegisteredExecutors()) {
+      for (Executor executor: Executor.EXECUTOR_EXTENSION_NAME.getExtensionList()) {
         if (executor instanceof ExecutorGroup) {
-          allExecutors.addAll(((ExecutorGroup)executor).childExecutors());
+          allExecutors.addAll(((ExecutorGroup<?>)executor).childExecutors());
         }
         else {
           allExecutors.add(executor);

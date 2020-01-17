@@ -20,9 +20,6 @@ import org.jetbrains.jps.service.JpsServiceManager;
 
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public abstract class JpsPluginManager {
   @NotNull
   public static JpsPluginManager getInstance() {

@@ -3,67 +3,102 @@ package com.intellij.build.output
 
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
-import com.intellij.openapi.diagnostic.Logger
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.future.future
+import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.util.ConcurrencyUtil.underThreadNameRunnable
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.annotations.TestOnly
 import java.io.Closeable
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author Vladislav.Soroka
  */
-open class BuildOutputInstantReaderImpl(private val buildId: Any,
-                                        private val parentEventId: Any,
-                                        buildProgressListener: BuildProgressListener,
-                                        parsers: List<BuildOutputParser>) : BuildOutputInstantReader, Closeable, Appendable {
-  private val readJob: Job
-  private val appendParentJob: Job = Job()
-  private val outputLinesChannel = Channel<String>()
-
+open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
+  private val buildId: Any,
+  private val parentEventId: Any,
+  buildProgressListener: BuildProgressListener,
+  parsers: List<BuildOutputParser>,
+  private val pushBackBufferSize: Int = 50,
+  channelBufferCapacity: Int = 64
+) : BuildOutputInstantReader, Closeable, Appendable {
+  private val channel = LinkedBlockingQueue<String>(channelBufferCapacity)
   private val readLinesBuffer = LinkedList<String>()
   private var readLinesBufferPosition = -1
-  private val appendedLineProcessor: LineProcessor
+  private val state = AtomicReference(State.Idle)
+  @Volatile
+  private var useActiveReading = true
+  private var readFinishedFuture = CompletableFuture<Unit>()
 
-  init {
-    readJob = createReadJob(buildProgressListener, parsers)
-    val appendScope = CoroutineScope(Dispatchers.Default + appendParentJob)
-    appendedLineProcessor = MyLineProcessor(readJob, appendScope, outputLinesChannel)
-  }
+  private val readerRunnable = underThreadNameRunnable(
+    "Reader thread for BuildOutputInstantReaderImpl@${System.identityHashCode(parentEventId)}") {
+    require(!readFinishedFuture.isDone) { "Can't read from closed stream" }
 
-  private fun createReadJob(buildProgressListener: BuildProgressListener,
-                            parsers: List<BuildOutputParser>): Job {
-    val thisReader: BuildOutputInstantReader = this
-    return CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
-      var lastMessage: BuildEvent? = null
-      val messageConsumer = { event: BuildEvent ->
-        //do not add duplicates, e.g. sometimes same messages can be added both to stdout and stderr
-        if (event != lastMessage) {
-          buildProgressListener.onEvent(buildId, event)
-        }
-        lastMessage = event
+    var lastMessage: BuildEvent? = null
+    val messageConsumer = { event: BuildEvent ->
+      //do not add duplicates, e.g. sometimes same messages can be added both to stdout and stderr
+      if (event != lastMessage) {
+        buildProgressListener.onEvent(buildId, event)
       }
+      lastMessage = event
+    }
 
+    try {
       while (true) {
-        val line = thisReader.readLine() ?: break
+        val line = doReadLine(useActiveReading) ?: break
         if (line.isBlank()) continue
-
         for (parser in parsers) {
-          val readerWrapper = BuildOutputInstantReaderWrapper(thisReader)
-          if (parser.parse(line, readerWrapper, messageConsumer)) break
+          val readerWrapper = BuildOutputInstantReaderWrapper(this)
+          try {
+            if (parser.parse(line, readerWrapper, messageConsumer)) break
+          }
+          catch (e: Exception) {
+            when {
+              LOG.isDebugEnabled -> LOG.warn("Build output parser error", e)
+              else -> LOG.warn("Build output parser error: ${e.message}")
+            }
+          }
           readerWrapper.pushBackReadLines()
         }
       }
     }
+    catch (ex: Throwable) {
+      when {
+        LOG.isDebugEnabled -> LOG.warn("Build output reading error", ex)
+        else -> LOG.warn("Build output reading error: ${ex.message}")
+      }
+    }
+    finally {
+      if (!state.compareAndSet(State.Running, State.Idle)) {
+        readFinishedFuture.complete(Unit)
+      }
+    }
   }
 
-  override fun getParentEventId(): Any {
-    return parentEventId
+  private val appendedLineProcessor = object : LineProcessor() {
+    override fun process(line: String) {
+      require(state.get() != State.Closed) { "Can't append to closed stream" }
+      try {
+        while (state.get() != State.Closed) {
+          if (state.compareAndSet(State.Idle, State.Running)) {
+            ProcessIOExecutorService.INSTANCE.submit(readerRunnable)
+          }
+          if (channel.offer(line, 100, TimeUnit.MILLISECONDS)) {
+            break
+          }
+        }
+      }
+      catch (e: InterruptedException) {
+        throw IOException(e)
+      }
+    }
   }
+
+  override fun getParentEventId() = parentEventId
 
   override fun append(csq: CharSequence): BuildOutputInstantReaderImpl {
     appendedLineProcessor.append(csq)
@@ -84,39 +119,33 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
     closeAndGetFuture()
   }
 
-  fun closeAndGetFuture(): CompletableFuture<Unit> {
-    appendedLineProcessor.close()
-    outputLinesChannel.close()
-    return CoroutineScope(Dispatchers.Default).future {
-      appendParentJob.children.forEach { it.join() }
-      appendParentJob.cancelAndJoin()
-      readJob.cancelAndJoin()
+  open fun closeAndGetFuture(): CompletableFuture<Unit> {
+    if (state.get() == State.Closed) return readFinishedFuture
+    if (state.compareAndSet(State.Idle, State.Closed)) {
+      readFinishedFuture.complete(Unit)
     }
+    else {
+      state.set(State.Closed)
+    }
+    return readFinishedFuture
   }
 
-  override fun readLine(): String? {
-    if (readLinesBufferPosition < -1) {
-      LOG.error("Wrong buffered output lines index")
-      readLinesBufferPosition = -1
-    }
+  override fun readLine(): String? = doReadLine()
 
-    if (readLinesBuffer.size > readLinesBufferPosition + 1) {
-      readLinesBufferPosition++
-      return readLinesBuffer[readLinesBufferPosition]
+  private fun doReadLine(waitIfNotClosed: Boolean = true): String? {
+    if (readLinesBufferPosition >= 0) {
+      return readLinesBuffer[readLinesBufferPosition].also { readLinesBufferPosition-- }
     }
-    val line = runBlocking {
-      try {
-        outputLinesChannel.receive()
-      }
-      catch (e: ClosedReceiveChannelException) {
-        null
-      }
-    } ?: return null
-    readLinesBuffer.addLast(line)
-    readLinesBufferPosition++
-    if (readLinesBuffer.size > getMaxLinesBufferSize()) {
-      readLinesBuffer.removeFirst()
-      readLinesBufferPosition--
+    var line: String?
+    while (true) {
+      line = channel.poll(100, TimeUnit.MILLISECONDS)
+      if (line != null || state.get() == State.Closed) break
+      if (!waitIfNotClosed) return null
+    }
+    if (line == null) return line
+    readLinesBuffer.addFirst(line)
+    if (readLinesBuffer.size > pushBackBufferSize) {
+      readLinesBuffer.removeLast()
     }
     return line
   }
@@ -124,27 +153,15 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
   override fun pushBack() = pushBack(1)
 
   override fun pushBack(numberOfLines: Int) {
-    readLinesBufferPosition -= numberOfLines
-  }
-
-  override fun getCurrentLine(): String? {
-    return if (readLinesBufferPosition >= 0 && readLinesBuffer.size > readLinesBufferPosition) readLinesBuffer[readLinesBufferPosition] else null
-  }
-
-  private class MyLineProcessor(private val job: Job,
-                                private val scope: CoroutineScope,
-                                private val channel: Channel<String>) : LineProcessor() {
-    @ExperimentalCoroutinesApi
-    override fun process(line: String) {
-      if (job.isCompleted) {
-        LOG.warn("Build output reader closed")
-        return
-      }
-      if (!job.isActive) {
-        job.start()
-      }
-      scope.launch(start = CoroutineStart.UNDISPATCHED) { channel.send(line) }
+    readLinesBufferPosition += numberOfLines
+    if (readLinesBufferPosition >= pushBackBufferSize) {
+      readLinesBufferPosition = pushBackBufferSize - 1
     }
+  }
+
+  @ApiStatus.Experimental
+  fun disableActiveReading() {
+    useActiveReading = false
   }
 
   private class BuildOutputInstantReaderWrapper(private val reader: BuildOutputInstantReader) : BuildOutputInstantReader {
@@ -172,15 +189,11 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
         linesRead = 0
       }
     }
-
-    override fun getCurrentLine(): String? = reader.currentLine
   }
 
   companion object {
-    private val LOG = Logger.getInstance("#com.intellij.build.output.BuildOutputInstantReader")
-    @ApiStatus.Experimental
-    @TestOnly
-    fun getMaxLinesBufferSize() = 50
+    private val LOG = logger<BuildOutputInstantReader>()
+    private enum class State { Idle, Running, Closed }
   }
 }
 
@@ -207,8 +220,6 @@ class BuildOutputCollector(private val reader: BuildOutputInstantReader) : Build
     repeat(numberOfLines) { readLines.pollLast() ?: return@repeat }
 
   }
-
-  override fun getCurrentLine(): String = reader.currentLine
 
   fun getOutput(): String = readLines.joinToString(separator = "\n")
 }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Generates a replacement string for search/replace operation using regular expressions.
@@ -31,7 +32,7 @@ import java.util.regex.Matcher;
  * Instances of this class are not safe for use by multiple concurrent threads, just as {@link Matcher} instances are.
  */
 public class RegExReplacementBuilder {
-  @NotNull private final Matcher myMatcher;
+  @NotNull private final MatchGroupContainer myMatcher;
 
   private String myTemplate;
   private int myCursor;
@@ -39,7 +40,53 @@ public class RegExReplacementBuilder {
   private List<CaseConversionRegion> myConversionRegions;
 
   public RegExReplacementBuilder(@NotNull Matcher matcher) {
-    myMatcher = matcher;
+    myMatcher = new MatchGroupContainer() {
+      @Override
+      public String group(String name) {
+        return matcher.group(name);
+      }
+
+      @Override
+      public String group(int num) {
+        return matcher.group(num);
+      }
+
+      @Override
+      public int groupCount() {
+        return matcher.groupCount();
+      }
+    };
+  }
+  
+  private RegExReplacementBuilder(@NotNull Pattern pattern) {
+    myMatcher = new MatchGroupContainer() {
+      @Override
+      public String group(String name) {
+        return "";
+      }
+
+      @Override
+      public String group(int group) {
+        if (group < 0 || group > groupCount())
+          throw new IllegalArgumentException("No group " + group);
+        return "";
+      }
+
+      @Override
+      public int groupCount() {
+        return pattern.matcher("").groupCount();
+      }
+    };
+  }
+
+  /**
+   * Validates the replacement template. This doesn't check currently whether group names actually exist.
+   * @param pattern current pattern
+   * @param template replacement template
+   * @throws IllegalArgumentException if template is malformed
+   */
+  public static void validate(Pattern pattern, String template) throws IllegalArgumentException {
+    new RegExReplacementBuilder(pattern).createReplacement(template);
   }
 
   /**
@@ -235,5 +282,11 @@ public class RegExReplacementBuilder {
       this.end = end;
       this.toUpperCase = toUpperCase;
     }
+  }
+  
+  interface MatchGroupContainer {
+    String group(String name);
+    String group(int num);
+    int groupCount();
   }
 }

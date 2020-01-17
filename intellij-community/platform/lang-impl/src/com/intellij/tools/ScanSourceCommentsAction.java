@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ScanSourceCommentsAction extends AnAction {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.tools.ScanSourceCommentsAction");
+  private static final Logger LOG = Logger.getInstance(ScanSourceCommentsAction.class);
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
@@ -104,7 +104,7 @@ public class ScanSourceCommentsAction extends AnAction {
         for (PsiFile root : psiFile.getViewProvider().getAllFiles()) {
           root.accept(new PsiRecursiveElementWalkingVisitor() {
             @Override
-            public void visitComment(PsiComment comment) {
+            public void visitComment(@NotNull PsiComment comment) {
               commentFound(vFile, comment.getText());
             }
           });

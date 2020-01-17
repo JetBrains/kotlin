@@ -22,7 +22,7 @@ public class ModuleListCellRenderer extends SimpleListCellRenderer<Module> {
   }
 
   @Override
-  public void customize(JList<? extends Module> list, Module value, int index, boolean selected, boolean hasFocus) {
+  public void customize(@NotNull JList<? extends Module> list, Module value, int index, boolean selected, boolean hasFocus) {
     if (value == null) {
       setText(myEmptySelectionText);
     }

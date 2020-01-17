@@ -47,7 +47,7 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class EnterAfterUnmatchedBraceHandler extends EnterHandlerDelegateAdapter {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.enter.EnterAfterUnmatchedBraceHandler");
+  private static final Logger LOG = Logger.getInstance(EnterAfterUnmatchedBraceHandler.class);
 
   @Override
   public Result preprocessEnter(@NotNull final PsiFile file,
@@ -348,8 +348,6 @@ public class EnterAfterUnmatchedBraceHandler extends EnterHandlerDelegateAdapter
 
     iterator = highlighter.createIterator(0);
     int lBracesBeforeOffset = 0;
-    int lBracesAfterOffset = 0;
-    int rBracesBeforeOffset = 0;
     int rBracesAfterOffset = 0;
     for (; !iterator.atEnd(); iterator.advance()) {
       IElementType tokenType = iterator.getTokenType();
@@ -364,19 +362,26 @@ public class EnterAfterUnmatchedBraceHandler extends EnterHandlerDelegateAdapter
           lBracesBeforeOffset++;
         }
         else {
-          lBracesAfterOffset++;
+          rBracesAfterOffset--;
         }
       }
       else if (braceMatcher.isRBraceToken(iterator, chars, fileType)) {
         if (beforeOffset) {
-          rBracesBeforeOffset++;
+          // If there are more right braces then left - code before is invalid but let's not break the code after.
+          if (lBracesBeforeOffset > 0) {
+            lBracesBeforeOffset--;
+          }
         }
         else {
           rBracesAfterOffset++;
+          if (rBracesAfterOffset == lBracesBeforeOffset) {
+            // Do not calculate further. We've completed all scopes before cursor.
+            return 0;
+          }
         }
       }
     }
 
-    return lBracesBeforeOffset - rBracesBeforeOffset - (rBracesAfterOffset - lBracesAfterOffset);
+    return lBracesBeforeOffset - rBracesAfterOffset;
   }
 }

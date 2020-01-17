@@ -15,9 +15,14 @@
  */
 package com.intellij.openapi.externalSystem.service.settings;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * @author Vladislav.Soroka
+ * @deprecated Useless class
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
 public class ExternalSystemSettingsControlCustomizer {
 
   private boolean hideUseAutoImportBox;
@@ -27,13 +32,11 @@ public class ExternalSystemSettingsControlCustomizer {
   public ExternalSystemSettingsControlCustomizer() {
   }
 
-  @Deprecated
   public ExternalSystemSettingsControlCustomizer(boolean hideUseAutoImportBox,
                                                  boolean hideCreateEmptyContentRootDirectoriesBox) {
     this(hideUseAutoImportBox);
   }
 
-  @Deprecated
   public ExternalSystemSettingsControlCustomizer(boolean hideUseAutoImportBox,
                                                  boolean hideCreateEmptyContentRootDirectoriesBox,
                                                  boolean hideModulesGroupingOptionPanel) {
@@ -41,19 +44,20 @@ public class ExternalSystemSettingsControlCustomizer {
   }
 
   public ExternalSystemSettingsControlCustomizer(boolean hideUseAutoImportBox) {
-    this.hideUseAutoImportBox = hideUseAutoImportBox;
   }
 
-  public boolean isUseAutoImportBoxHidden() {
-    return hideUseAutoImportBox;
-  }
-
+  /**
+   * @deprecated see {@link com.intellij.openapi.externalSystem.settings.ExternalProjectSettings#setUseAutoImport} for details
+   */
   @Deprecated
+  public boolean isUseAutoImportBoxHidden() {
+    return true;
+  }
+
   public boolean isCreateEmptyContentRootDirectoriesBoxHidden() {
     return false;
   }
 
-  @Deprecated
   public boolean isModulesGroupingOptionPanelHidden() {
     return false;
   }

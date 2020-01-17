@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class LightPsiFileImpl extends PsiElementBase implements PsiFileEx {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.source.LightPsiFileImpl");
+  private static final Logger LOG = Logger.getInstance(LightPsiFileImpl.class);
   private PsiFile myOriginalFile = null;
   private boolean myExplicitlySetAsValid = false;
   private boolean myInvalidated = false;
@@ -158,8 +158,7 @@ public abstract class LightPsiFileImpl extends PsiElementBase implements PsiFile
   }
 
   @Override
-  @NotNull
-  public PsiFile[] getPsiRoots() {
+  public PsiFile @NotNull [] getPsiRoots() {
     return new PsiFile[]{this};
   }
 
@@ -215,8 +214,7 @@ public abstract class LightPsiFileImpl extends PsiElementBase implements PsiFile
   }
 
   @Override
-  @NotNull
-  public synchronized PsiReference[] getReferences() {
+  public synchronized PsiReference @NotNull [] getReferences() {
     return SharedPsiElementImplUtil.getReferences(this);
   }
 
@@ -236,8 +234,7 @@ public abstract class LightPsiFileImpl extends PsiElementBase implements PsiFile
   }
 
   @Override
-  @NotNull
-  public char[] textToCharArray() {
+  public char @NotNull [] textToCharArray() {
     return CharArrayUtil.fromSequence(getViewProvider().getContents());
   }
 
@@ -256,8 +253,7 @@ public abstract class LightPsiFileImpl extends PsiElementBase implements PsiFile
   }
 
   @Override
-  @NotNull
-  public abstract PsiElement[] getChildren();
+  public abstract PsiElement @NotNull [] getChildren();
 
   @Override
   public PsiElement getFirstChild() {

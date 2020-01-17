@@ -26,15 +26,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-/**
- * @author nik
- */
 public class DefaultFacetsProvider implements FacetsProvider {
   public static final FacetsProvider INSTANCE = new DefaultFacetsProvider();
 
   @Override
-  @NotNull
-  public Facet[] getAllFacets(Module module) {
+  public Facet @NotNull [] getAllFacets(Module module) {
     return FacetManager.getInstance(module).getAllFacets();
   }
 

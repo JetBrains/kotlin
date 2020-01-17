@@ -3,17 +3,19 @@ package com.intellij.openapi.externalSystem.service.internal;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
+import com.intellij.openapi.externalSystem.importing.ImportSpec;
+import com.intellij.openapi.externalSystem.importing.ImportSpecImpl;
+import com.intellij.openapi.externalSystem.importing.IncrementalDataResolverPolicy;
+import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
-import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.internal.InternalExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskState;
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
+import com.intellij.openapi.externalSystem.model.task.*;
 import com.intellij.openapi.externalSystem.service.ExternalSystemFacadeManager;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemExecutionAware;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl;
 import com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl;
@@ -45,25 +47,17 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
   private final boolean myIsPreviewMode;
   @Nullable private final String myVmOptions;
   @Nullable private final String myArguments;
+  @Nullable private final ProjectResolverPolicy myResolverPolicy;
 
-  public ExternalSystemResolveProjectTask(@NotNull ProjectSystemId externalSystemId,
-                                          @NotNull Project project,
+  public ExternalSystemResolveProjectTask(@NotNull Project project,
                                           @NotNull String projectPath,
-                                          boolean isPreviewMode) {
-    this(externalSystemId, project, projectPath, null, null, isPreviewMode);
-  }
-
-  public ExternalSystemResolveProjectTask(@NotNull ProjectSystemId externalSystemId,
-                                          @NotNull Project project,
-                                          @NotNull String projectPath,
-                                          @Nullable String vmOptions,
-                                          @Nullable String arguments,
-                                          boolean isPreviewMode) {
-    super(externalSystemId, ExternalSystemTaskType.RESOLVE_PROJECT, project, projectPath);
+                                          @NotNull ImportSpec importSpec) {
+    super(importSpec.getExternalSystemId(), ExternalSystemTaskType.RESOLVE_PROJECT, project, projectPath);
     myProjectPath = projectPath;
-    myIsPreviewMode = isPreviewMode;
-    myVmOptions = vmOptions;
-    myArguments = arguments;
+    myIsPreviewMode = importSpec.isPreviewMode();
+    myVmOptions = importSpec.getVmOptions();
+    myArguments = importSpec.getArguments();
+    myResolverPolicy = importSpec instanceof ImportSpecImpl ? ((ImportSpecImpl)importSpec).getProjectResolverPolicy() : null;
   }
 
   @Override
@@ -79,8 +73,14 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
     try {
       progressNotificationManager.onStart(id, myProjectPath);
 
-      final ExternalSystemFacadeManager manager = ServiceManager.getService(ExternalSystemFacadeManager.class);
       ideProject = getIdeProject();
+
+      ExternalSystemTaskNotificationListener progressNotificationListener = wrapWithListener(progressNotificationManager);
+      for (ExternalSystemExecutionAware executionAware : ExternalSystemExecutionAware.getExtensions(getExternalSystemId())) {
+        executionAware.prepareExecution(id, myProjectPath, myIsPreviewMode, progressNotificationListener, ideProject);
+      }
+
+      final ExternalSystemFacadeManager manager = ServiceManager.getService(ExternalSystemFacadeManager.class);
       resolver = manager.getFacade(ideProject, myProjectPath, getExternalSystemId()).getResolver();
       settings = ExternalSystemApiUtil.getExecutionSettings(ideProject, myProjectPath, getExternalSystemId());
       if (StringUtil.isNotEmpty(myVmOptions)) {
@@ -97,7 +97,7 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
     }
 
     try {
-      DataNode<ProjectData> project = resolver.resolveProjectInfo(id, myProjectPath, myIsPreviewMode, settings);
+      DataNode<ProjectData> project = resolver.resolveProjectInfo(id, myProjectPath, myIsPreviewMode, settings, myResolverPolicy);
       if (project != null) {
         myExternalProject.set(project);
 
@@ -112,7 +112,7 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
         String projectPath = project.getData().getLinkedExternalProjectPath();
         ExternalProjectSettings linkedProjectSettings =
           systemManager.getSettingsProvider().fun(ideProject).getLinkedProjectSettings(projectPath);
-        if (linkedProjectSettings != null) {
+        if (linkedProjectSettings != null && !externalModulePaths.isEmpty()) {
           linkedProjectSettings.setModules(externalModulePaths);
         }
       }
@@ -141,7 +141,9 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
   @Override
   protected void setState(@NotNull ExternalSystemTaskState state) {
     super.setState(state);
-    if (state.isStopped()) {
+    if (state.isStopped() &&
+        // merging cache data with the new incremental data is not supported yet
+        !(myResolverPolicy instanceof IncrementalDataResolverPolicy)) {
       InternalExternalProjectInfo projectInfo =
         new InternalExternalProjectInfo(getExternalSystemId(), getExternalProjectPath(), myExternalProject.getAndSet(null));
       final long currentTimeMillis = System.currentTimeMillis();

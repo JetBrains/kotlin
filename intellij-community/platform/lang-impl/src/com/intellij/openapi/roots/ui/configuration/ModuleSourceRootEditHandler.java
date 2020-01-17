@@ -14,9 +14,6 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @author nik
- */
 public abstract class ModuleSourceRootEditHandler<P extends JpsElement> {
   public static final ExtensionPointName<ModuleSourceRootEditHandler> EP_NAME = ExtensionPointName.create("com.intellij.projectStructure.sourceRootEditHandler");
   private final JpsModuleSourceRootType<P> myRootType;
@@ -27,13 +24,8 @@ public abstract class ModuleSourceRootEditHandler<P extends JpsElement> {
 
   @Nullable
   public static <P extends JpsElement> ModuleSourceRootEditHandler<P> getEditHandler(@NotNull JpsModuleSourceRootType<P> type) {
-    for (ModuleSourceRootEditHandler editor : EP_NAME.getExtensions()) {
-      if (editor.getRootType().equals(type)) {
-        //noinspection unchecked
-        return editor;
-      }
-    }
-    return null;
+    //noinspection unchecked
+    return EP_NAME.getExtensionList().stream().filter(editor -> editor.getRootType().equals(type)).findFirst().orElse(null);
   }
 
   public final JpsModuleSourceRootType<P> getRootType() {

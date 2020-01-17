@@ -11,9 +11,6 @@ import com.intellij.util.xmlb.annotations.XCollection;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ExcludesConfigurationState {
   private List<String> myFrameworkTypes = new ArrayList<>();
   private List<ExcludedFileState> myFiles = new ArrayList<>();

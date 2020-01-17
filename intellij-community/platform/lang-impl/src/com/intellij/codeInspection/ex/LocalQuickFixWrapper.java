@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ex;
 
@@ -22,9 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author max
- */
 public class LocalQuickFixWrapper extends QuickFixAction {
   private final QuickFix myFix;
 
@@ -49,7 +46,7 @@ public class LocalQuickFixWrapper extends QuickFixAction {
   }
 
   @Nullable
-  private QuickFix getWorkingQuickFix(@NotNull QuickFix[] fixes) {
+  private QuickFix getWorkingQuickFix(QuickFix @NotNull [] fixes) {
     for (QuickFix fix : fixes) {
       if (fix.getFamilyName().equals(myFix.getFamilyName())) {
         return fix;
@@ -59,14 +56,14 @@ public class LocalQuickFixWrapper extends QuickFixAction {
   }
 
   @Override
-  protected boolean applyFix(@NotNull RefEntity[] refElements) {
+  protected boolean applyFix(RefEntity @NotNull [] refElements) {
     return true;
   }
 
   @Override
   protected void applyFix(@NotNull final Project project,
                           @NotNull final GlobalInspectionContextImpl context,
-                          @NotNull final CommonProblemDescriptor[] descriptors,
+                          final CommonProblemDescriptor @NotNull [] descriptors,
                           @NotNull final Set<? super PsiElement> ignoredElements) {
     if (myFix instanceof BatchQuickFix) {
       final List<PsiElement> collectedElementsToIgnore = new ArrayList<>();

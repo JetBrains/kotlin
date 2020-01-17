@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public abstract class LibraryDetectionManager {
   public static LibraryDetectionManager getInstance() {
     return ServiceManager.getService(LibraryDetectionManager.class);

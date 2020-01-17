@@ -17,6 +17,7 @@ package com.intellij.codeInsight.highlighting;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.PersistentFSConstants;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,11 +32,13 @@ public class LargeFilesAnnotator implements Annotator {
     if (element instanceof PsiFile) {
       VirtualFile file = ((PsiFile)element).getViewProvider().getVirtualFile();
       if (SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
-        holder.createWarningAnnotation(element, "The file size (" +
+        holder.newAnnotation(HighlightSeverity.WARNING, "The file size (" +
                                                 StringUtil.formatFileSize(file.getLength()) + ") " +
                                                 "exceeds configured limit (" +
                                                 StringUtil.formatFileSize(PersistentFSConstants.getMaxIntellisenseFileSize()) + "). " +
-                                                "Code insight features are not available.").setFileLevelAnnotation(true);
+                                                "Code insight features are not available.")
+          .fileLevel()
+          .create();
       }
     }
   }

@@ -22,7 +22,10 @@ import javax.swing.*;
 
 /**
  * @author cdr
+
+ * Use {@link com.intellij.ide.hierarchy.newAPI.ChangeViewTypeActionBase} instead
  */
+@Deprecated
 abstract class ChangeViewTypeActionBase extends ChangeHierarchyViewActionBase {
   ChangeViewTypeActionBase(final String shortDescription, final String longDescription, final Icon icon) {
     super(shortDescription, longDescription, icon);

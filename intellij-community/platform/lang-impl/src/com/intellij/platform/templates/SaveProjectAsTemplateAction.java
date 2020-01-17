@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -37,8 +38,9 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.project.ProjectKt;
 import com.intellij.util.PlatformUtils;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.io.Compressor;
 import com.intellij.util.io.PathKt;
-import com.intellij.util.io.ZipUtil;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.TIntObjectHashMap;
 import org.jdom.Element;
@@ -46,28 +48,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * @author Dmitry Avdeev
  */
 public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
-
   private static final Logger LOG = Logger.getInstance(SaveProjectAsTemplateAction.class);
   private static final String PROJECT_TEMPLATE_XML = "project-template.xml";
+
   static final String FILE_HEADER_TEMPLATE_PLACEHOLDER = "<IntelliJ_File_Header>";
 
   @Override
@@ -84,7 +79,6 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     final SaveProjectAsTemplateDialog dialog = new SaveProjectAsTemplateDialog(project, descriptionFile);
 
     if (dialog.showAndGet()) {
-
       final Module moduleToSave = dialog.getModuleToSave();
       final Path file = dialog.getTemplateFile();
       final String description = dialog.getDescription();
@@ -106,8 +100,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
                                                        "Template Created",
                                                        FileUtilRt.getNameWithoutExtension(file.getFileName().toString()) +
                                                        " was successfully created",
-                                                       NotificationType.INFORMATION
-          );
+                                                       NotificationType.INFORMATION);
           notification.addAction(newProjectAction);
           if (manageAction != null) {
             notification.addAction(manageAction);
@@ -133,24 +126,25 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     return baseDir != null ? baseDir.findFileByRelativePath(path) : null;
   }
 
-  public static void saveProject(final Project project,
+  public static void saveProject(Project project,
                                  @NotNull Path zipFile,
                                  Module moduleToSave,
-                                 final String description,
+                                 String description,
                                  boolean replaceParameters,
-                                 final ProgressIndicator indicator,
+                                 ProgressIndicator indicator,
                                  boolean shouldEscape) {
-    final Map<String, String> parameters = computeParameters(project, replaceParameters);
+    Map<String, String> parameters = computeParameters(project, replaceParameters);
     indicator.setText("Saving project...");
     StoreUtil.saveSettings(project, true);
+
     indicator.setText("Processing project files...");
-    try (ZipOutputStream stream = new ZipOutputStream(PathKt.outputStream(zipFile))) {
-      final VirtualFile dir = getDirectoryToSave(project, moduleToSave);
-
-      List<LocalArchivedTemplate.RootDescription> roots = collectStructure(project, moduleToSave);
-      LocalArchivedTemplate.RootDescription basePathRoot = findOrAddBaseRoot(roots, dir);
-
+    VirtualFile dir = getDirectoryToSave(project, moduleToSave);
+    List<LocalArchivedTemplate.RootDescription> roots = collectStructure(project, moduleToSave);
+    LocalArchivedTemplate.RootDescription basePathRoot = findOrAddBaseRoot(roots, dir);
+    PathKt.createDirectories(zipFile.getParent());
+    try (Compressor stream = new Compressor.Zip(zipFile.toFile())) {
       writeFile(LocalArchivedTemplate.DESCRIPTION_PATH, description, project, basePathRoot.myRelativePath, stream, true);
+
       if (replaceParameters) {
         String text = getInputFieldsText(parameters);
         writeFile(LocalArchivedTemplate.TEMPLATE_DESCRIPTOR, text, project, basePathRoot.myRelativePath, stream, false);
@@ -170,9 +164,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
         index.iterateContentUnderDirectory(rootFile, iterator);
       }
     }
-    catch (ProcessCanceledException ex){
-      //ignore
-    }
+    catch (ProcessCanceledException ignored) { }
     catch (Exception ex) {
       LOG.error(ex);
       UIUtil.invokeLaterIfNeeded(() -> Messages.showErrorDialog(project, "Can't save project as template", "Internal Error"));
@@ -204,36 +196,29 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
   }
 
   static String getNewProjectActionId() {
-    if (PlatformUtils.isIntelliJ()) {
-      return "NewProject";
-    }
-    else if (PlatformUtils.isPhpStorm()) {
-      return "NewDirectoryProject";
-    } else if (PlatformUtils.isWebStorm()) {
-      return "NewWebStormDirectoryProject";
-    } else {
-      throw new IllegalStateException("Provide new project action id for your IDE");
-    }
+    if (PlatformUtils.isIntelliJ()) return "NewProject";
+    if (PlatformUtils.isPhpStorm()) return "NewDirectoryProject";
+    if (PlatformUtils.isWebStorm()) return "NewWebStormDirectoryProject";
+    throw new IllegalStateException("Provide new project action id for your IDE");
   }
 
-  private static void writeFile(String path,
-                                final String text,
-                                Project project, String prefix, ZipOutputStream stream, boolean overwrite) throws IOException {
-    final VirtualFile descriptionFile = getDescriptionFile(project, path);
+  private static void writeFile(String path, String text, Project project, String prefix, Compressor zip, boolean overwrite) throws IOException {
+    VirtualFile descriptionFile = getDescriptionFile(project, path);
     if (descriptionFile == null) {
-      stream.putNextEntry(new ZipEntry(prefix + "/" + path));
-      stream.write(text.getBytes(StandardCharsets.UTF_8));
-      stream.closeEntry();
+      zip.addFile(prefix + '/' + path, text.getBytes(StandardCharsets.UTF_8));
     }
     else if (overwrite) {
-      ApplicationManager.getApplication().invokeAndWait(() -> WriteAction.run(() -> {
+      Ref<IOException> exceptionRef = Ref.create();
+      ApplicationManager.getApplication().invokeAndWait(() -> {
         try {
-          VfsUtil.saveText(descriptionFile, text);
+          WriteAction.run(() -> VfsUtil.saveText(descriptionFile, text));
         }
         catch (IOException e) {
-          LOG.error(e);
+          exceptionRef.set(e);
         }
-      }));
+      });
+      IOException e = exceptionRef.get();
+      if (e != null) throw e;
     }
   }
 
@@ -385,21 +370,20 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
   }
 
   private static class MyContentIterator implements ContentIterator {
+    private static final Set<String> ALLOWED_FILES = ContainerUtil.newHashSet(
+      "description.html", PROJECT_TEMPLATE_XML, LocalArchivedTemplate.TEMPLATE_META_XML, "misc.xml", "modules.xml", "workspace.xml");
+
     private final ProgressIndicator myIndicator;
-    private VirtualFile myRootDir;
-    private String myPrefix;
-    private final ZipOutputStream myFinalStream;
+    private final Compressor myStream;
     private final Project myProject;
     private final Map<String, String> myParameters;
     private final boolean myShouldEscape;
+    private VirtualFile myRootDir;
+    private String myPrefix;
 
-    MyContentIterator(ProgressIndicator indicator,
-                             ZipOutputStream finalStream,
-                             Project project,
-                             Map<String, String> parameters,
-                             boolean shouldEscape) {
+    MyContentIterator(ProgressIndicator indicator, Compressor stream, Project project, Map<String, String> parameters, boolean shouldEscape) {
       myIndicator = indicator;
-      myFinalStream = finalStream;
+      myStream = stream;
       myProject = project;
       myParameters = parameters;
       myShouldEscape = shouldEscape;
@@ -411,47 +395,36 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     }
 
     @Override
-    public boolean processFile(@NotNull final VirtualFile virtualFile) {
+    public boolean processFile(@NotNull VirtualFile virtualFile) {
+      myIndicator.checkCanceled();
+
       if (!virtualFile.isDirectory()) {
-        final String fileName = virtualFile.getName();
+        String fileName = virtualFile.getName();
         myIndicator.setText2(fileName);
-        try {
-          String relativePath = VfsUtilCore.getRelativePath(virtualFile, myRootDir, '/');
-          if (relativePath == null) {
-            throw new RuntimeException("Can't find relative path for " + virtualFile + " in " + myRootDir);
-          }
-          final boolean system = Project.DIRECTORY_STORE_FOLDER.equals(virtualFile.getParent().getName());
-          if (system) {
-            if (!fileName.equals("description.html") &&
-                !fileName.equals(PROJECT_TEMPLATE_XML) &&
-                !fileName.equals(LocalArchivedTemplate.TEMPLATE_META_XML) &&
-                !fileName.equals("misc.xml") &&
-                !fileName.equals("modules.xml") &&
-                !fileName.equals("workspace.xml") &&
-                !fileName.endsWith(".iml")) {
-              return true;
+
+        String relativePath = VfsUtilCore.getRelativePath(virtualFile, myRootDir, '/');
+        if (relativePath == null) {
+          throw new RuntimeException("Can't find relative path for " + virtualFile + " in " + myRootDir);
+        }
+
+        boolean system = Project.DIRECTORY_STORE_FOLDER.equals(virtualFile.getParent().getName());
+        if (!system || ALLOWED_FILES.contains(fileName) || fileName.endsWith(".iml")) {
+          String entryName = myPrefix + '/' + relativePath;
+          try {
+            if (virtualFile.getFileType().isBinary() || PROJECT_TEMPLATE_XML.equals(virtualFile.getName())) {
+              myStream.addFile(entryName, new File(virtualFile.getPath()));
+            }
+            else {
+              String result = getEncodedContent(virtualFile, myProject, myParameters, getFileHeaderTemplateName(), myShouldEscape);
+              myStream.addFile(entryName, result.getBytes(StandardCharsets.UTF_8));
             }
           }
-
-          ZipUtil.addFileToZip(myFinalStream, new File(virtualFile.getPath()),
-                               myPrefix + "/" + relativePath, null, null,
-                               new ZipUtil.FileContentProcessor() {
-                                 @Override
-                                 public InputStream getContent(@NotNull final File file) throws IOException {
-                                   if (virtualFile.getFileType().isBinary() || PROJECT_TEMPLATE_XML.equals(virtualFile.getName())) {
-                                     return STANDARD.getContent(file);
-                                   }
-                                   String result =
-                                     getEncodedContent(virtualFile, myProject, myParameters, getFileHeaderTemplateName(), myShouldEscape);
-                                   return new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
-                                 }
-                               }, false);
-        }
-        catch (IOException e) {
-          LOG.error(e);
+          catch (IOException e) {
+            LOG.error(e);
+          }
         }
       }
-      myIndicator.checkCanceled();
+
       return true;
     }
   }

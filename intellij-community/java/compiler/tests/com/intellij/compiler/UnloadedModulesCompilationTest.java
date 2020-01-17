@@ -16,9 +16,6 @@ import java.util.List;
 
 import static com.intellij.util.io.TestFileSystemBuilder.fs;
 
-/**
- * @author nik
- */
 public class UnloadedModulesCompilationTest extends BaseCompilerTestCase {
   public void testDoNotCompileUnloadedModulesByDefault() {
     VirtualFile a = createFile("unloaded/src/A.java", "class A{ error }");

@@ -7,6 +7,7 @@ import com.intellij.execution.KillableProcess;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -15,7 +16,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
@@ -28,7 +29,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.TimerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -41,7 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class ShowRunningListAction extends AnAction {
+public final class ShowRunningListAction extends AnAction {
   public ShowRunningListAction() {
     super(ExecutionBundle.message("show.running.list.action.name"), ExecutionBundle.message("show.running.list.action.description"), null);
   }
@@ -53,7 +54,7 @@ public class ShowRunningListAction extends AnAction {
     final Ref<Pair<? extends JComponent, String>> stateRef = new Ref<>();
     final Ref<Balloon> balloonRef = new Ref<>();
 
-    final Timer timer = UIUtil.createNamedTimer("runningLists", 250);
+    final Timer timer = TimerUtil.createNamedTimer("runningLists", 250);
     ActionListener actionListener = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
@@ -80,7 +81,7 @@ public class ShowRunningListAction extends AnAction {
           .setHideOnKeyOutside(false);
         IdeFrame frame = e.getData(IdeFrame.KEY);
         if (frame == null) {
-          frame = WindowManagerEx.getInstanceEx().getFrame(project);
+          frame = WindowManagerEx.getInstanceEx().getFrameHelper(project);
         }
         if (balloon != null) {
           balloon.hide();
@@ -99,7 +100,7 @@ public class ShowRunningListAction extends AnAction {
                 if (aFrame != null && !aFrame.isActive()) {
                   IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(aFrame, true));
                 }
-                ExecutionManagerImpl.getInstance(aProject).getContentManager().
+                RunContentManager.getInstance(aProject).
                   toFrontRunContent((Executor)((Trinity)value).second, (RunContentDescriptor)((Trinity)value).third);
               }
             }
@@ -126,7 +127,7 @@ public class ShowRunningListAction extends AnAction {
     for (int i = 0; i < projects.size(); i++) {
       Project project = projects.get(i);
       final ExecutionManagerImpl executionManager = ExecutionManagerImpl.getInstance(project);
-      List<RunContentDescriptor> runningDescriptors = executionManager.getRunningDescriptors(Condition.TRUE);
+      List<RunContentDescriptor> runningDescriptors = executionManager.getRunningDescriptors(Conditions.alwaysTrue());
 
       if (!runningDescriptors.isEmpty() && projects.size() > 1) {
         state.append(project.getName());
@@ -170,7 +171,7 @@ public class ShowRunningListAction extends AnAction {
     Project[] projects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : projects) {
       boolean enabled = project != null && !project.isDisposed()
-                        && !ExecutionManagerImpl.getInstance(project).getRunningDescriptors(Condition.TRUE).isEmpty();
+                        && !ExecutionManagerImpl.getInstance(project).getRunningDescriptors(Conditions.alwaysTrue()).isEmpty();
       e.getPresentation().setEnabled(enabled);
       if (enabled) break;
     }

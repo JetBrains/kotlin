@@ -10,7 +10,7 @@ public final class DefaultGradleExtension extends DefaultGradleProperty implemen
 
   @PropertyMapping({"name", "typeFqn"})
   public DefaultGradleExtension(@NotNull String name, @Nullable String typeFqn) {
-    super(name, typeFqn, null);
+    super(name, typeFqn);
   }
 
   public DefaultGradleExtension(GradleExtension extension) {

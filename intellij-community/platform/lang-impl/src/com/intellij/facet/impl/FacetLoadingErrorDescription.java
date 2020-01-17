@@ -22,15 +22,12 @@ import com.intellij.openapi.module.ConfigurationErrorDescription;
 import com.intellij.openapi.module.ConfigurationErrorType;
 import com.intellij.openapi.project.ProjectBundle;
 
-/**
- * @author nik
- */
 public class FacetLoadingErrorDescription extends ConfigurationErrorDescription {
-  private static final ConfigurationErrorType INVALID_FACET = new ConfigurationErrorType(ProjectBundle.message("element.kind.name.facet"), true);
   private final InvalidFacet myFacet;
 
   public FacetLoadingErrorDescription(final InvalidFacet facet) {
-    super(facet.getName() + " (" + facet.getModule().getName() + ")", facet.getErrorMessage(), INVALID_FACET);
+    super(facet.getName() + " (" + facet.getModule().getName() + ")", facet.getErrorMessage(),
+          new ConfigurationErrorType(ProjectBundle.message("element.kind.name.facet"), true));
     myFacet = facet;
   }
 

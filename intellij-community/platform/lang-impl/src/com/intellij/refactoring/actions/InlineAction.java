@@ -37,7 +37,7 @@ public class InlineAction extends BasePlatformRefactoringAction {
   }
 
   @Override
-  public boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  public boolean isEnabledOnElements(PsiElement @NotNull [] elements) {
     return elements.length == 1 && hasInlineActionHandler(elements [0], null, null);
   }
 

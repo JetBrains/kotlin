@@ -42,7 +42,7 @@ public class SafeDeleteAction extends BaseRefactoringAction {
   }
 
   @Override
-  public boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  public boolean isEnabledOnElements(PsiElement @NotNull [] elements) {
     for (PsiElement element : elements) {
       if (!SafeDeleteProcessor.validElement(element)) return false;
     }

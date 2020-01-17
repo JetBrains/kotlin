@@ -45,6 +45,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GotoClassAction extends GotoActionBase implements DumbAware {
+  public GotoClassAction() {
+    //we need to change the template presentation to show the proper text for the action in Settings | Keymap
+    Presentation presentation = getTemplatePresentation();
+    presentation.setText(GotoClassPresentationUpdater.getActionTitle() + "...");
+    presentation.setDescription(IdeBundle.message("go.to.class.action.description",
+                                                  StringUtil.join(GotoClassPresentationUpdater.getElementKinds(), "/")));
+  }
+
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
@@ -52,7 +60,7 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
 
     boolean dumb = DumbService.isDumb(project);
     if (Registry.is("new.search.everywhere")) {
-      if (!dumb || new ClassSearchEverywhereContributor(project, null).isDumbAware()) {
+      if (!dumb || new ClassSearchEverywhereContributor(e).isDumbAware()) {
         showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
       }
       else {
@@ -234,8 +242,7 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
     return current;
   }
 
-  @NotNull
-  private static PsiElement[] getAnonymousClasses(@NotNull PsiElement element) {
+  private static PsiElement @NotNull [] getAnonymousClasses(@NotNull PsiElement element) {
     for (AnonymousElementProvider provider : AnonymousElementProvider.EP_NAME.getExtensionList()) {
       final PsiElement[] elements = provider.getAnonymousElements(element);
       if (elements.length > 0) {

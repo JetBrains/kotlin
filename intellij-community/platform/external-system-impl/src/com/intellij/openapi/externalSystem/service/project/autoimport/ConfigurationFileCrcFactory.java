@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.autoimport;
 
 import com.intellij.lang.Language;
@@ -14,21 +14,27 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.zip.CRC32;
 
 /**
- * @author Vladislav.Soroka
+ * @deprecated use {@link com.intellij.openapi.externalSystem.util.CrcUtils} instead
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
 public class ConfigurationFileCrcFactory {
 
-  private static final Logger LOG = Logger.getInstance(ConfigurationFileCrcFactory.class);
+  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport");
 
   private final VirtualFile myFile;
 
-  @Deprecated // left for plugin compatibility
+  /**
+   * @deprecated left for plugin compatibility
+   */
+  @Deprecated
   public ConfigurationFileCrcFactory(@NotNull Project project, @NotNull VirtualFile file) {
     this(file);
   }

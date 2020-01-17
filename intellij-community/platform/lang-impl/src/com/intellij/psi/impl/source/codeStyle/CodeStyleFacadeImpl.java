@@ -25,7 +25,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -72,7 +71,6 @@ public class CodeStyleFacadeImpl extends CodeStyleFacade {
     if (indent == LineIndentProvider.DO_NOT_ADJUST) {
       return allowDocCommit ? null : indent;
     }
-    //noinspection deprecation
     return indent != null ? indent : (allowDocCommit ? getLineIndent(editor.getDocument(), offset) : null);
   }
 
@@ -99,16 +97,6 @@ public class CodeStyleFacadeImpl extends CodeStyleFacade {
   }
 
   @Override
-  public boolean isUnsuitableCodeStyleConfigurable(final Configurable c) {
-    return false;
-  }
-
-  @Override
-  public int getRightMargin(Language language) {
-    return CodeStyle.getProjectOrDefaultSettings(myProject).getRightMargin(language);
-  }
-
-  @Override
   public int getTabSize(final FileType fileType) {
     return CodeStyle.getProjectOrDefaultSettings(myProject).getTabSize(fileType);
   }
@@ -116,5 +104,20 @@ public class CodeStyleFacadeImpl extends CodeStyleFacade {
   @Override
   public boolean useTabCharacter(final FileType fileType) {
     return CodeStyle.getProjectOrDefaultSettings(myProject).useTabCharacter(fileType);
+  }
+
+  @Override
+  public boolean useSpaceBeforeComma(@NotNull PsiFile psiFile, @NotNull Language language) {
+    return CodeStyle.getLanguageSettings(psiFile, language).SPACE_BEFORE_COMMA;
+  }
+
+  @Override
+  public boolean useSpaceAfterComma(@NotNull PsiFile psiFile, @NotNull Language language) {
+    return CodeStyle.getLanguageSettings(psiFile, language).SPACE_AFTER_COMMA;
+  }
+
+  @Override
+  public boolean useSpaceAroundAssignmentOperators(@NotNull PsiFile psiFile, @NotNull Language language) {
+    return CodeStyle.getLanguageSettings(psiFile, language).SPACE_AROUND_ASSIGNMENT_OPERATORS;
   }
 }

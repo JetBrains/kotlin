@@ -6,6 +6,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
+import com.intellij.openapi.projectRoots.impl.UnknownSdkEditorNotification;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
@@ -26,16 +27,16 @@ public final class SdkSetupNotificationProvider extends EditorNotifications.Prov
 
   @Override
   public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor, @NotNull Project project) {
-    for (ProjectSdkSetupValidator validator : ProjectSdkSetupValidator.PROJECT_SDK_SETUP_VALIDATOR_EP.getExtensionList()) {
-      if (validator.isApplicableFor(project, file)) {
-        final String errorMessage = validator.getErrorMessage(project, file);
-        if (errorMessage != null) {
-          return createPanel(errorMessage, () -> validator.doFix(project, file));
-        }
-        return null;
-      }
+    if (!UnknownSdkEditorNotification.getInstance(project).allowProjectSdkNotifications()) {
+      return null;
     }
 
+    for (ProjectSdkSetupValidator validator : ProjectSdkSetupValidator.EP_NAME.getExtensionList()) {
+      if (validator.isApplicableFor(project, file)) {
+        String errorMessage = validator.getErrorMessage(project, file);
+        return errorMessage != null ? createPanel(errorMessage, () -> validator.doFix(project, file)) : null;
+      }
+    }
     return null;
   }
 

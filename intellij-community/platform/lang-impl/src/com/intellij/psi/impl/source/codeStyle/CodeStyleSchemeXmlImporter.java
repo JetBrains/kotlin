@@ -38,9 +38,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Rustam Vishnyakov
  */
 public class CodeStyleSchemeXmlImporter extends CodeStyleSettingsLoader implements SchemeImporter<CodeStyleScheme> {
-  @NotNull
   @Override
-  public String[] getSourceExtensions() {
+  public String @NotNull [] getSourceExtensions() {
     return new String[]{"xml"};
   }
 

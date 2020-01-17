@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.impl;
 
@@ -9,6 +9,7 @@ import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.structureView.impl.StructureViewComposite;
 import com.intellij.ide.structureView.newStructureView.StructureViewComponent;
+import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ModalityState;
@@ -41,6 +42,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
 import com.intellij.util.BitUtil;
+import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
@@ -91,10 +93,12 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
       LOG.error("StructureViewWrapperImpl must be not created for light project.");
     }
 
-    myUpdateQueue = new MergingUpdateQueue("StructureView", REBUILD_TIME, false, component, this, component);
+    myUpdateQueue = new MergingUpdateQueue("StructureView", REBUILD_TIME, false, component, this, component)
+      .usePassThroughInUnitTestMode();
     myUpdateQueue.setRestartTimerOnAdd(true);
 
-    Timer timer = UIUtil.createNamedTimer("StructureView", REFRESH_TIME, event -> {
+    // to check on the next turn
+    Timer timer = TimerUtil.createNamedTimer("StructureView", REFRESH_TIME, event -> {
       if (!component.isShowing()) return;
 
       int count = ActivityTracker.getInstance().getCount();
@@ -134,7 +138,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
         }
       }
     });
-    myToolWindow.getContentManager().addContentManagerListener(new ContentManagerAdapter() {
+    myToolWindow.getContentManager().addContentManagerListener(new ContentManagerListener() {
       @Override
       public void selectionChanged(@NotNull ContentManagerEvent event) {
         if (myStructureView instanceof StructureViewComposite) {
@@ -149,6 +153,18 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
       }
     });
     Disposer.register(myToolWindow.getContentManager(), this);
+
+    PsiStructureViewFactory.EP_NAME.addExtensionPointListener(this::clearCaches, this);
+
+    StructureViewBuilder.EP_NAME.addExtensionPointListener(this::clearCaches, this);
+  }
+
+  private void clearCaches() {
+    StructureViewComponent.clearStructureViewState(myProject);
+    if (myStructureView != null) {
+      myStructureView.disableStoreState();
+    }
+    rebuild();
   }
 
   private void checkUpdate() {
@@ -320,7 +336,6 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
           myStructureView = structureViewBuilder.createStructureView(editor, myProject);
           myFileEditor = editor;
           Disposer.register(this, myStructureView);
-          updateHeaderActions(myStructureView);
 
           if (myStructureView instanceof StructureView.Scrollable) {
             ((StructureView.Scrollable)myStructureView).setReferenceSizeWhileInitializing(referenceSize);
@@ -345,6 +360,8 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
         }
       }
     }
+
+    updateHeaderActions(myStructureView);
 
     if (myModuleStructureComponent == null && myStructureView == null) {
       JBPanelWithEmptyText panel = new JBPanelWithEmptyText() {
@@ -378,7 +395,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
     }
   }
 
-  private void updateHeaderActions(StructureView structureView) {
+  private void updateHeaderActions(@Nullable StructureView structureView) {
     AnAction[] titleActions = AnAction.EMPTY_ARRAY;
     if (structureView instanceof StructureViewComponent) {
       JTree tree = ((StructureViewComponent)structureView).getTree();

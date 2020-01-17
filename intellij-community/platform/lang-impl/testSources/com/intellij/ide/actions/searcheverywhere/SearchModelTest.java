@@ -148,7 +148,7 @@ public class SearchModelTest extends BasePlatformTestCase {
       @NotNull
       @Override
       public ListCellRenderer<? super Object> getElementsRenderer() {
-        return null;
+        throw new UnsupportedOperationException();
       }
 
       @Nullable

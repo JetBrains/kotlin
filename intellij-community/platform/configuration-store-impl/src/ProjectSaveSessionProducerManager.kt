@@ -5,13 +5,16 @@ import com.intellij.notification.Notifications
 import com.intellij.notification.NotificationsManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.impl.stores.SaveSessionAndFile
+import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.impl.ProjectManagerImpl.UnableToSaveProjectNotification
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SmartList
 import com.intellij.util.containers.mapSmart
+import org.jetbrains.annotations.ApiStatus
 
-internal class ProjectSaveSessionProducerManager(private val project: Project) : SaveSessionProducerManager() {
+@ApiStatus.Internal
+open class ProjectSaveSessionProducerManager(private val project: Project) : SaveSessionProducerManager() {
   suspend fun saveWithAdditionalSaveSessions(extraSessions: List<SaveSession>): SaveResult {
     val saveSessions = SmartList<SaveSession>()
     collectSaveSessions(saveSessions)
@@ -80,8 +83,8 @@ internal class ProjectSaveSessionProducerManager(private val project: Project) :
   }
 
   private fun getUnableToSaveNotifications(): Array<out UnableToSaveProjectNotification> {
-    return NotificationsManager.getNotificationsManager()
-      .getNotificationsOfType(UnableToSaveProjectNotification::class.java, project)
+    val notificationManager = serviceIfCreated<NotificationsManager>() ?: return emptyArray()
+    return notificationManager.getNotificationsOfType(UnableToSaveProjectNotification::class.java, project)
   }
 }
 

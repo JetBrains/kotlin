@@ -67,7 +67,7 @@ public class LookupValueFactory {
     }
 
     public boolean equals(Object a) {
-      return a.getClass() == getClass() && a instanceof PresentableLookupValue && ((PresentableLookupValue)a).getPresentation().equals(getPresentation());
+      return a != null && a.getClass() == getClass() && ((PresentableLookupValue)a).getPresentation().equals(getPresentation());
     }
   }
 

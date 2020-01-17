@@ -17,10 +17,11 @@
 package com.intellij.stats.completion
 
 
-class LookupEntryInfo(val id: Int, val length: Int, val relevance: Map<String, String?>?) {
+class LookupEntryInfo(val id: Int, val length: Int, val hash: Int, val relevance: Map<String, String?>?) {
     // returns null if no difference found
     fun calculateDiff(newValue: LookupEntryInfo): LookupEntryDiff? {
         assert(id == newValue.id) { "Could not compare infos for different lookup elements" }
+        //assert(hash == newValue.hash) { "Hashes of elements with the same ids should be the same" } // lookupString is not actually stable
         if (this === newValue) return null
         if (relevance == null && newValue.relevance == null) {
             return null

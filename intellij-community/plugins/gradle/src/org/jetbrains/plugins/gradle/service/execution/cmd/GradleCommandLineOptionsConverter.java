@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.service.execution.cmd;
 
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import groovyjarjarcommonscli.Option;
 import org.gradle.cli.*;
@@ -50,7 +51,7 @@ public class GradleCommandLineOptionsConverter extends AbstractCommandLineConver
     for (Option supportedOption : supportedOptions) {
 
 
-      final List<String> objects = ContainerUtil.newSmartList();
+      final List<String> objects = new SmartList<>();
       ContainerUtil.addAllNotNull(objects, supportedOption.getOpt(), supportedOption.getLongOpt());
 
       if (!objects.isEmpty()) {

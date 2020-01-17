@@ -29,7 +29,7 @@ import java.util.List;
 import static com.intellij.formatting.InitialInfoBuilder.prepareToBuildBlocksSequentially;
 
 public class FormatProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.formatting.FormatProcessor");
+  private static final Logger LOG = Logger.getInstance(FormatProcessor.class);
   
   private final WrapBlocksState myWrapState;
   private final boolean myReformatContext;
@@ -48,7 +48,7 @@ public class FormatProcessor {
                          @Nullable FormatTextRanges affectedRanges,
                          @NotNull FormattingProgressCallback progressCallback)
   {
-    this(docModel, rootBlock, new FormatOptions(settings, indentOptions, affectedRanges, false), progressCallback);
+    this(docModel, rootBlock, new FormatOptions(settings, indentOptions, affectedRanges), progressCallback);
   }
 
   public FormatProcessor(final FormattingDocumentModel model,
@@ -63,15 +63,15 @@ public class FormatProcessor {
     BlockIndentOptions blockIndentOptions = new BlockIndentOptions(settings, defaultIndentOption, block);
     
     myDocument = model.getDocument();
-    myReformatContext = options.myReformatContext;
+    myReformatContext = options.isReformatWithContext();
     
-    final InitialInfoBuilder builder = prepareToBuildBlocksSequentially(block, model, options, settings, defaultIndentOption, myProgressCallback);
+    final InitialInfoBuilder builder = prepareToBuildBlocksSequentially(block, model, options, defaultIndentOption, myProgressCallback);
     myWrapState = new WrapBlocksState(builder, blockIndentOptions);
     
     FormatTextRanges ranges = options.myAffectedRanges;
     
     if (ranges != null && myReformatContext) {
-      AdjustFormatRangesState adjustRangesState = new AdjustFormatRangesState(block, ranges);
+      AdjustFormatRangesState adjustRangesState = new AdjustFormatRangesState(block, ranges, model);
       myStateProcessor = new StateProcessor(adjustRangesState);
       myStateProcessor.setNextState(myWrapState);
     }
@@ -391,27 +391,27 @@ public class FormatProcessor {
     public CommonCodeStyleSettings.IndentOptions myIndentOptions;
 
     public FormatTextRanges myAffectedRanges;
-    public boolean myReformatContext;
 
     public int myInterestingOffset;
 
     public FormatOptions(CodeStyleSettings settings,
                          CommonCodeStyleSettings.IndentOptions options,
-                         FormatTextRanges ranges,
-                         boolean reformatContext) {
-      this(settings, options, ranges, reformatContext, -1);
+                         FormatTextRanges ranges) {
+      this(settings, options, ranges,  -1);
     }
 
     public FormatOptions(CodeStyleSettings settings,
                          CommonCodeStyleSettings.IndentOptions options,
                          FormatTextRanges ranges,
-                         boolean reformatContext,
                          int interestingOffset) {
       mySettings = settings;
       myIndentOptions = options;
       myAffectedRanges = ranges;
-      myReformatContext = reformatContext;
       myInterestingOffset = interestingOffset;
+    }
+
+    public boolean isReformatWithContext() {
+      return myAffectedRanges != null && myAffectedRanges.isExtendToContext();
     }
   }
 }

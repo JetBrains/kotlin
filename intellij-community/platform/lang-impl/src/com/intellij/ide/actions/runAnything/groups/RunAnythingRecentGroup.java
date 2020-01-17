@@ -15,10 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class RunAnythingRecentGroup extends RunAnythingGroupBase {
-  public static final RunAnythingRecentGroup INSTANCE = new RunAnythingRecentGroup();
-
-  private RunAnythingRecentGroup() {}
-
   @NotNull
   @Override
   public String getTitle() {

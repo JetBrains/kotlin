@@ -15,24 +15,27 @@
  */
 package com.intellij.ide.macro;
 
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.fileChooser.*;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class FilePromptMacro extends PromptingMacro implements SecondQueueExpandMacro {
+  @NotNull
   @Override
   public String getName() {
     return "FilePrompt";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return "Shows a file chooser dialog";
@@ -47,7 +50,7 @@ public class FilePromptMacro extends PromptingMacro implements SecondQueueExpand
   }
 
   @Override
-  public void cachePreview(DataContext dataContext) {
-    myCachedPreview = IdeBundle.message("macro.fileprompt.preview");
+  public void cachePreview(@NotNull DataContext dataContext) {
+    myCachedPreview = "<filename>";
   }
 }

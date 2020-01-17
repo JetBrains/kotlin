@@ -1,10 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:Suppress("DEPRECATION")
 
 package com.intellij.configurationStore.xml
 
 import com.intellij.configurationStore.deserialize
 import com.intellij.ide.plugins.PluginBean
+import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.util.JDOMExternalizableStringList
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.assertions.Assertions.assertThat
@@ -210,7 +211,31 @@ internal class XmlSerializerCollectionTest {
       bean)
   }
 
-  @Test fun testPropertyAndNoSurround() {
+  @Test
+  fun `string set with one value as default`() {
+    class Bean : BaseState() {
+      @get:XCollection(style = XCollection.Style.v2)
+      val names by stringSet("test")
+    }
+
+    val bean = Bean()
+    assertThat(bean.isEqualToDefault()).isTrue()
+    testSerializer(
+      "<Bean />",
+      bean)
+
+    bean.names.clear()
+    bean.intIncrementModificationCount()
+    assertThat(bean.isEqualToDefault()).isFalse()
+    testSerializer(
+      "<Bean>\n" +
+      "  <names />\n" +
+      "</Bean>",
+      bean)
+  }
+
+  @Test
+  fun testPropertyAndNoSurround() {
     val bean = XmlSerializer.deserialize<PluginBean>(JDOMUtil.load("""<idea-plugin>
               <id>com.intellij.database.ide</id>
               <name>DataGrip Customization</name>

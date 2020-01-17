@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.config;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -32,7 +33,7 @@ import java.util.List;
  * </pre>
  * <p/>
  * Not thread-safe.
- * 
+ *
  * @author Denis Zhdanov
  */
 public abstract class GradleToolWindowPanel extends SimpleToolWindowPanel {
@@ -55,7 +56,7 @@ public abstract class GradleToolWindowPanel extends SimpleToolWindowPanel {
     myPlace = place;
     setContent(myContent);
 
-    MessageBusConnection connection = project.getMessageBus().connect(project);
+    MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(GradleSettingsListener.TOPIC, new GradleSettingsListenerAdapter() {
       // TODO den implement
 //      @Override public void onLinkedProjectConfigChange(@Nullable String oldPath, @Nullable String newPath) {
@@ -86,7 +87,7 @@ public abstract class GradleToolWindowPanel extends SimpleToolWindowPanel {
       toolbarControl.add(component, constraints);
     }
     setToolbar(toolbarControl);
-    
+
     final JComponent payloadControl = buildContent();
     JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(payloadControl);
     JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
@@ -108,7 +109,7 @@ public abstract class GradleToolWindowPanel extends SimpleToolWindowPanel {
   protected List<JComponent> getToolbarControls() {
     return Collections.emptyList();
   }
-  
+
   /**
    * Asks current control to update its state.
    */
@@ -134,7 +135,7 @@ public abstract class GradleToolWindowPanel extends SimpleToolWindowPanel {
    */
   @NotNull
   protected abstract JComponent buildContent();
-  
+
   /**
    * Callback for asking content control to update its state.
    */

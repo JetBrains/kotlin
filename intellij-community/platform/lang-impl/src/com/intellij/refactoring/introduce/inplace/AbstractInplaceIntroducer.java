@@ -135,7 +135,7 @@ public abstract class AbstractInplaceIntroducer<V extends PsiNameIdentifierOwner
    * @return the declaration
    */
   @Nullable
-  protected abstract V createFieldToStartTemplateOn(boolean replaceAll, @NotNull String[] names);
+  protected abstract V createFieldToStartTemplateOn(boolean replaceAll, String @NotNull [] names);
 
   /**
    * Returns the suggested names for the introduced element.
@@ -144,8 +144,7 @@ public abstract class AbstractInplaceIntroducer<V extends PsiNameIdentifierOwner
    * @param variable   introduced element declaration, if already created.
    * @return the suggested names
    */
-  @NotNull
-  protected abstract String[] suggestNames(boolean replaceAll, @Nullable V variable);
+  protected abstract String @NotNull [] suggestNames(boolean replaceAll, @Nullable V variable);
 
   protected abstract void performIntroduce();
   protected void performPostIntroduceTasks() {}
@@ -393,12 +392,12 @@ public abstract class AbstractInplaceIntroducer<V extends PsiNameIdentifierOwner
       final int variableNameLength = name.length();
       if (isReplaceAllOccurrences()) {
         for (RangeMarker marker : getOccurrenceMarkers()) {
-          final int startOffset = marker.getStartOffset();
+          final int startOffset = adjustHighlightsStartOffset(marker.getStartOffset());
           highlightManager.addOccurrenceHighlight(editor, startOffset, startOffset + variableNameLength, attributes, 0, highlighters, null);
         }
       }
       else if (getExpr() != null) {
-        final int startOffset = getExprMarker().getStartOffset();
+        final int startOffset = adjustHighlightsStartOffset(getExprMarker().getStartOffset());
         highlightManager.addOccurrenceHighlight(editor, startOffset, startOffset + variableNameLength, attributes, 0, highlighters, null);
       }
     }
@@ -407,6 +406,10 @@ public abstract class AbstractInplaceIntroducer<V extends PsiNameIdentifierOwner
       highlighter.setGreedyToLeft(true);
       highlighter.setGreedyToRight(true);
     }
+  }
+
+  protected int adjustHighlightsStartOffset(int offset) {
+    return offset;
   }
 
   protected void restoreState(@NotNull final V psiField) {

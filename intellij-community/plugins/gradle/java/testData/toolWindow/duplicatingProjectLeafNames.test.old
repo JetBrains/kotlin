@@ -1,0 +1,166 @@
+View root() {
+  rootProject() {
+    Tasks() {
+      build setup() {
+        init()
+        wrapper()
+      }
+      help() {
+        buildEnvironment()
+        components()
+        dependencies()
+        dependencyInsight()
+        dependentComponents()
+        help()
+        model()
+        projects()
+        properties()
+        tasks()
+      }
+    }
+    p1() {
+      Tasks() {
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+      }
+      p1-leaf() {
+        Tasks() {
+          help() {
+            buildEnvironment()
+            components()
+            dependencies()
+            dependencyInsight()
+            dependentComponents()
+            help()
+            model()
+            projects()
+            properties()
+            tasks()
+          }
+        }
+      }
+      p1-sub() {
+        Tasks() {
+          help() {
+            buildEnvironment()
+            components()
+            dependencies()
+            dependencyInsight()
+            dependentComponents()
+            help()
+            model()
+            projects()
+            properties()
+            tasks()
+          }
+        }
+        sp1() {
+          Tasks() {
+            help() {
+              buildEnvironment()
+              components()
+              dependencies()
+              dependencyInsight()
+              dependentComponents()
+              help()
+              model()
+              projects()
+              properties()
+              tasks()
+            }
+          }
+        }
+      }
+    }
+    p2() {
+      Tasks() {
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+      }
+      p2-leaf() {
+        Tasks() {
+          help() {
+            buildEnvironment()
+            components()
+            dependencies()
+            dependencyInsight()
+            dependentComponents()
+            help()
+            model()
+            projects()
+            properties()
+            tasks()
+          }
+        }
+      }
+      p2sub() {
+        Tasks() {
+          help() {
+            buildEnvironment()
+            components()
+            dependencies()
+            dependencyInsight()
+            dependentComponents()
+            help()
+            model()
+            projects()
+            properties()
+            tasks()
+          }
+        }
+        p2sub-sub() {
+          Tasks() {
+            help() {
+              buildEnvironment()
+              components()
+              dependencies()
+              dependencyInsight()
+              dependentComponents()
+              help()
+              model()
+              projects()
+              properties()
+              tasks()
+            }
+          }
+          sp2() {
+            Tasks() {
+              help() {
+                buildEnvironment()
+                components()
+                dependencies()
+                dependencyInsight()
+                dependentComponents()
+                help()
+                model()
+                projects()
+                properties()
+                tasks()
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

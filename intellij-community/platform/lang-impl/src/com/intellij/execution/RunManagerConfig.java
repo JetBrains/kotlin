@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public final class RunManagerConfig {
-  public static final String MAKE = ExecutionBundle.message("before.run.property.make");
-
   public static final int MIN_RECENT_LIMIT = 0;
   public static final int DEFAULT_RECENT_LIMIT = 5;
 

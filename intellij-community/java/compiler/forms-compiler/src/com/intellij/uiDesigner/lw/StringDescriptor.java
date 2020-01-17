@@ -41,8 +41,10 @@ public final class StringDescriptor {
    * Marker for string values which do not need internationalization
    */
   private boolean myNoI18n;
+  
+  private String myFormClass;
 
-  private StringDescriptor(final String value){
+  private StringDescriptor(final String value) {
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
@@ -117,6 +119,14 @@ public final class StringDescriptor {
 
   public void setNoI18n(final boolean noI18n) {
     myNoI18n = noI18n;
+  }
+
+  public String getFormClass() {
+    return myFormClass;
+  }
+
+  public void setFormClass(String formClass) {
+    myFormClass = formClass;
   }
 
   public boolean equals(final Object o) {

@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.actions;
 
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Caret;
@@ -19,7 +19,7 @@ public class LfeEditorActionHandlerDisabled extends LfeBaseEditorActionHandler {
   }
 
   @Override
-  protected void doExecuteInLfe(@NotNull EditorManager editorManager,
+  protected void doExecuteInLfe(@NotNull LargeFileEditor largeFileEditor,
                                 @NotNull Editor editor,
                                 @Nullable Caret caret,
                                 DataContext dataContext) {
@@ -28,7 +28,7 @@ public class LfeEditorActionHandlerDisabled extends LfeBaseEditorActionHandler {
   }
 
   @Override
-  protected boolean isEnabledInLfe(@NotNull EditorManager editorManager,
+  protected boolean isEnabledInLfe(@NotNull LargeFileEditor largeFileEditor,
                                    @NotNull Editor editor,
                                    @NotNull Caret caret,
                                    DataContext dataContext) {

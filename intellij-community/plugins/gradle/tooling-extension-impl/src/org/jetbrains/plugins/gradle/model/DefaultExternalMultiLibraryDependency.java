@@ -3,6 +3,8 @@ package org.jetbrains.plugins.gradle.model;
 
 import org.gradle.internal.impldep.com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
+import org.jetbrains.plugins.gradle.tooling.util.GradleContainerUtil;
 
 import java.io.File;
 import java.util.Collection;
@@ -10,11 +12,14 @@ import java.util.LinkedHashSet;
 
 public final class DefaultExternalMultiLibraryDependency extends AbstractExternalDependency implements ExternalMultiLibraryDependency {
   private static final long serialVersionUID = 1L;
-  private Collection<File> files = new LinkedHashSet<File>();
-  private Collection<File> sources = new LinkedHashSet<File>();
-  private Collection<File> javadocs = new LinkedHashSet<File>();
+  private final Collection<File> files;
+  private final Collection<File> sources;
+  private final Collection<File> javadocs;
 
   public DefaultExternalMultiLibraryDependency() {
+    files = new LinkedHashSet<File>(0);
+    sources = new LinkedHashSet<File>(0);
+    javadocs = new LinkedHashSet<File>(0);
   }
 
   public DefaultExternalMultiLibraryDependency(ExternalMultiLibraryDependency dependency) {
@@ -48,16 +53,21 @@ public final class DefaultExternalMultiLibraryDependency extends AbstractExterna
     if (!(o instanceof DefaultExternalMultiLibraryDependency)) return false;
     if (!super.equals(o)) return false;
     DefaultExternalMultiLibraryDependency that = (DefaultExternalMultiLibraryDependency)o;
-    return Objects.equal(files, that.files);
+    return GradleContainerUtil.match(files.iterator(), that.files.iterator(), new BooleanBiFunction<File, File>() {
+      @Override
+      public Boolean fun(File o1, File o2) {
+        return Objects.equal(o1.getPath(), o2.getPath());
+      }
+    });
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), files);
+    return Objects.hashCode(super.hashCode(), calcFilesPathsHashCode(files));
   }
 
   @Override
   public String toString() {
-    return "library '" + files + '\'';
+    return "library '" + files + '\'' + super.toString();
   }
 }

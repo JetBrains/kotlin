@@ -27,8 +27,7 @@ public class ShowRecentFindUsagesGroup extends ActionGroup {
   }
 
   @Override
-  @NotNull
-  public AnAction[] getChildren(@Nullable final AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable final AnActionEvent e) {
     if (e == null) return EMPTY_ARRAY;
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null || DumbService.isDumb(project)) return EMPTY_ARRAY;

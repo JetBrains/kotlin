@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.folding.impl;
 
@@ -33,6 +31,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FoldingUpdate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.folding.impl.FoldingUpdate");
+  private static final Logger LOG = Logger.getInstance(FoldingUpdate.class);
 
   private static final Key<CachedValue<Runnable>> CODE_FOLDING_KEY = Key.create("code folding");
 
@@ -80,7 +79,7 @@ public class FoldingUpdate {
                                                                       final Project project,
                                                                       final Editor editor,
                                                                       final boolean applyDefaultState) {
-
+    PsiUtilCore.ensureValid(file);
     final List<RegionInfo> elementsToFold = getFoldingsFor(file, document, quick);
     final UpdateFoldRegionsOperation operation = new UpdateFoldRegionsOperation(project, editor, file, elementsToFold,
                                                                                 applyDefaultStateMode(applyDefaultState),
@@ -90,12 +89,18 @@ public class FoldingUpdate {
     Runnable runnable = () -> {
       if (alreadyExecuted.compareAndSet(false, true)) {
         int curLength = editor.getDocument().getTextLength();
-        boolean committed = PsiDocumentManager.getInstance(project).isCommitted(document);
+        PsiDocumentManager pdm = PsiDocumentManager.getInstance(project);
+        boolean committed = pdm.isCommitted(document);
         if (documentLength != curLength || !committed) {
-          LOG.error("Document has changed since fold regions were calculated: " +
-                    "lengths " + documentLength + " vs " + curLength + ", " +
-                    "document=" + document + ", " +
-                    "committed=" + committed);
+          Document fileDoc = file.getViewProvider().getDocument();
+          PsiFile docFile = pdm.getCachedPsiFile(document);
+          LOG.error("Document has changed since fold regions were calculated:\n" +
+                    "  lengths: " + documentLength + " vs " + curLength + "\n" +
+                    "  document=" + document + "\n" +
+                    "  file.document=" + (fileDoc == document ? "same" : fileDoc) + "\n" +
+                    "  document.file=" + (docFile == file ? "same" : docFile) + "\n" +
+                    "  committed=" + committed + "\n" +
+                    "  file.valid=" + file);
         }
         editor.getFoldingModel().runBatchFoldingOperationDoNotCollapseCaret(operation);
       }
@@ -304,7 +309,7 @@ public class FoldingUpdate {
       this.descriptor = descriptor;
       element = psiElement;
       Boolean hardCoded = descriptor.isCollapsedByDefault();
-      collapsedByDefault = hardCoded == null ? FoldingPolicy.isCollapsedByDefault(psiElement, foldingBuilder) : hardCoded;
+      collapsedByDefault = hardCoded == null ? FoldingPolicy.isCollapsedByDefault(descriptor, foldingBuilder) : hardCoded;
       signature = createSignature(psiElement);
     }
 

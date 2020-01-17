@@ -45,9 +45,8 @@ public class RunDialog extends DialogWrapper implements RunDialogBase {
     myConfigurable.reset();
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{getOKAction(), getCancelAction(), new ApplyAction(), getHelpAction()};
   }
 

@@ -26,7 +26,6 @@ class ExternalSystemSettingsCollector : ProjectUsagesCollector() {
       addWithSystemId(newCounterMetric("numberOfLinkedProject", projects.size))
 
       for (projectsSetting in projects) {
-        addWithSystemId(newBooleanMetric("autoImport", projectsSetting.isUseAutoImport))
         addWithSystemId(newBooleanMetric("useQualifiedModuleNames", projectsSetting.isUseQualifiedModuleNames))
         addWithSystemId(newCounterMetric("modules.count", projectsSetting.modules.size))
       }

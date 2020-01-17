@@ -1,10 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation;
 
 import com.intellij.ide.IdeTooltipManager;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationActivationListener;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -14,17 +12,17 @@ import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.psi.*;
 import com.intellij.reference.SoftReference;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.util.Alarm;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +39,7 @@ import java.util.Map;
  *
  * @author Denis Zhdanov
  */
-public class QuickDocOnMouseOverManager {
+public final class QuickDocOnMouseOverManager {
   private static final Logger LOG = Logger.getInstance(QuickDocOnMouseOverManager.class);
 
   @NotNull private final MyEditorMouseListener     myMouseListener       = new MyEditorMouseListener();
@@ -60,17 +58,16 @@ public class QuickDocOnMouseOverManager {
   private           boolean             myEnabled;
   private           boolean             myApplicationActive;
 
-  private MyShowQuickDocRequest myCurrentRequest; // accessed only in EDT
-
-  public QuickDocOnMouseOverManager(@NotNull Application application) {
-    myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, application);
+  public QuickDocOnMouseOverManager() {
+    Application app = ApplicationManager.getApplication();
+    myAlarm = new Alarm(app);
 
     EditorFactory factory = EditorFactory.getInstance();
     if (factory != null) {
-      factory.addEditorFactoryListener(new MyEditorFactoryListener(), application);
+      factory.addEditorFactoryListener(new MyEditorFactoryListener(), app);
     }
 
-    ApplicationManager.getApplication().getMessageBus().connect().subscribe(
+    app.getMessageBus().connect().subscribe(
       ApplicationActivationListener.TOPIC, new ApplicationActivationListener() {
         @Override
         public void applicationActivated(@NotNull IdeFrame ideFrame) {
@@ -227,9 +224,8 @@ public class QuickDocOnMouseOverManager {
     myActiveElements.put(editor, new WeakReference<>(elementUnderMouse));
 
     myAlarm.cancelAllRequests();
-    if (myCurrentRequest != null) myCurrentRequest.cancel();
-    myCurrentRequest = new MyShowQuickDocRequest(documentationManager, editor, mouseOffset, elementUnderMouse);
-    myAlarm.addRequest(myCurrentRequest, EditorSettingsExternalizable.getInstance().getQuickDocOnMouseOverElementDelayMillis());
+    myAlarm.addRequest(new MyShowQuickDocRequest(documentationManager, editor, mouseOffset, elementUnderMouse),
+                       EditorSettingsExternalizable.getInstance().getTooltipsDelay());
   }
 
   private void closeQuickDocIfPossible() {
@@ -264,7 +260,6 @@ public class QuickDocOnMouseOverManager {
     @NotNull private final Editor editor;
     private final int offset;
     @NotNull private final PsiElement originalElement;
-    @NotNull private final ProgressIndicator myProgressIndicator = new ProgressIndicatorBase();
 
     private MyShowQuickDocRequest(@NotNull DocumentationManager docManager, @NotNull Editor editor, int offset,
                                   @NotNull PsiElement originalElement) {
@@ -274,58 +269,57 @@ public class QuickDocOnMouseOverManager {
       this.originalElement = originalElement;
     }
 
-    private void cancel() {
-      myProgressIndicator.cancel();
-    }
-
     @Override
     public void run() {
-      Ref<PsiElement> targetElementRef = new Ref<>();
+      ReadAction
+        .<Runnable>nonBlocking(() -> {
+          PsiElement targetElement = originalElement.isValid()
+                                     ? docManager.findTargetElement(editor, offset, originalElement.getContainingFile(), originalElement)
+                                     : null;
+          Ref<String> documentationRef = Ref.create();
+          if (targetElement != null) {
+            try {
+              documentationRef.set(docManager.generateDocumentation(targetElement, originalElement, true));
+            }
+            catch (Exception e) {
+              LOG.info(e);
+            }
+          }
+          return () -> showDocumentation(targetElement, documentationRef.get());
+        })
+        .finishOnUiThread(ModalityState.NON_MODAL, Runnable::run)
+        .coalesceBy(myAlarm)
+        .submit(AppExecutorUtil.getAppExecutorService());
+    }
 
-      QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
-        if (originalElement.isValid()) {
-          targetElementRef.set(docManager.findTargetElement(editor, offset, originalElement.getContainingFile(), originalElement));
-        }
-      }, 5000, 100, myProgressIndicator);
+    private void showDocumentation(@Nullable PsiElement targetElement, @Nullable String documentation) {
 
-      Ref<String> documentationRef = new Ref<>();
-      if (!targetElementRef.isNull()) {
-        try {
-          documentationRef.set(docManager.generateDocumentation(targetElementRef.get(), originalElement));
-        }
-        catch (Exception e) {
-          LOG.info(e);
-        }
+      if (editor.isDisposed() ||
+          (IdeTooltipManager.getInstance().hasCurrent() || IdeTooltipManager.getInstance().hasScheduled()) &&
+          !docManager.hasActiveDockedDocWindow()) {
+        return;
       }
 
-      ApplicationManager.getApplication().invokeLater(() -> {
-        myCurrentRequest = null;
+      if (targetElement == null || StringUtil.isEmpty(documentation)) {
+        closeQuickDocIfPossible();
+        return;
+      }
 
-        if (editor.isDisposed() || IdeTooltipManager.getInstance().hasCurrent() && !docManager.hasActiveDockedDocWindow()) return;
+      myAlarm.cancelAllRequests();
 
-        PsiElement targetElement = targetElementRef.get();
-        String documentation = documentationRef.get();
-        if (targetElement == null || StringUtil.isEmpty(documentation)) {
-          closeQuickDocIfPossible();
-          return;
-        }
+      if (!originalElement.equals(SoftReference.dereference(myActiveElements.get(editor)))) {
+        return;
+      }
 
-        myAlarm.cancelAllRequests();
+      // Skip the request if there is a control shown as a result of explicit 'show quick doc' (Ctrl + Q) invocation.
+      if (docManager.getDocInfoHint() != null && !docManager.isCloseOnSneeze()) {
+        return;
+      }
 
-        if (!originalElement.equals(SoftReference.dereference(myActiveElements.get(editor)))) {
-          return;
-        }
-
-        // Skip the request if there is a control shown as a result of explicit 'show quick doc' (Ctrl + Q) invocation.
-        if (docManager.getDocInfoHint() != null && !docManager.isCloseOnSneeze()) {
-          return;
-        }
-
-        editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION,
-                           editor.offsetToVisualPosition(originalElement.getTextRange().getStartOffset()));
-        docManager.showJavaDocInfo(editor, targetElement, originalElement, new MyCloseDocCallback(editor), documentation, true, false);
-        myDocumentationManager = new WeakReference<>(docManager);
-      }, ApplicationManager.getApplication().getNoneModalityState());
+      editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION,
+                         editor.offsetToVisualPosition(originalElement.getTextRange().getStartOffset()));
+      docManager.showJavaDocInfo(editor, targetElement, originalElement, new MyCloseDocCallback(editor), documentation, true, false);
+      myDocumentationManager = new WeakReference<>(docManager);
     }
   }
 
@@ -363,11 +357,13 @@ public class QuickDocOnMouseOverManager {
   private class MyEditorMouseListener implements EditorMouseMotionListener, EditorMouseListener {
     @Override
     public void mouseExited(@NotNull EditorMouseEvent e) {
+      if (Registry.is("editor.new.mouse.hover.popups")) return;
       processMouseExited();
     }
 
     @Override
     public void mouseMoved(@NotNull EditorMouseEvent e) {
+      if (Registry.is("editor.new.mouse.hover.popups")) return;
       processMouseMove(e);
     }
   }
@@ -375,6 +371,7 @@ public class QuickDocOnMouseOverManager {
   private class MyVisibleAreaListener implements VisibleAreaListener {
     @Override
     public void visibleAreaChanged(@NotNull VisibleAreaEvent e) {
+      if (Registry.is("editor.new.mouse.hover.popups")) return;
       Editor editor = getEditor();
       if (editor == null || editor == e.getEditor()) {
         closeQuickDocIfPossible();
@@ -385,6 +382,7 @@ public class QuickDocOnMouseOverManager {
   private class MyCaretListener implements CaretListener {
     @Override
     public void caretPositionChanged(@NotNull CaretEvent e) {
+      if (Registry.is("editor.new.mouse.hover.popups")) return;
       Editor editor = getEditor();
       if (editor == null || editor == e.getEditor()) {
         allowUpdateFromContext(e.getEditor().getProject(), true);
@@ -396,6 +394,7 @@ public class QuickDocOnMouseOverManager {
   private class MyDocumentListener implements DocumentListener {
     @Override
     public void documentChanged(@NotNull DocumentEvent e) {
+      if (Registry.is("editor.new.mouse.hover.popups")) return;
       Editor editor = getEditor();
       if (editor == null || editor.getDocument() == e.getDocument()) {
         closeQuickDocIfPossible();

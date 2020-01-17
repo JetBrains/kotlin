@@ -26,7 +26,6 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
@@ -87,7 +86,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
   @Nls
   @Override
   public String getDisplayName() {
-    return "Startup Tasks";
+    return ExecutionBundle.message("configurable.ProjectStartupConfigurable.display.name");
   }
 
   @NotNull
@@ -101,7 +100,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
   public JComponent createComponent() {
     myModel = new ProjectStartupTasksTableModel();
     myTable = new JBTable(myModel);
-    myTable.getEmptyText().setText("Add run configurations with the + button");
+    myTable.getEmptyText().setText(ExecutionBundle.message("settings.project.startup.add.run.configurations.with.the.button"));
     new TableSpeedSearch(myTable);
     DefaultCellEditor defaultEditor = (DefaultCellEditor)myTable.getDefaultEditor(Object.class);
     defaultEditor.setClickCountToStart(1);
@@ -141,11 +140,11 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
       .disableUpAction().disableDownAction();
 
     final JPanel tasksPanel = myDecorator.createPanel();
-    final JLabel label = new JLabel("Run tasks and tools via run configurations");
+    final JLabel label = new JLabel(ExecutionBundle.message("settings.project.startup.run.tasks.and.tools.via.run.configurations"));
     label.setForeground(UIUtil.getInactiveTextColor());
     label.setHorizontalAlignment(SwingConstants.RIGHT);
     final JPanel wrapper = new JPanel(new BorderLayout());
-    wrapper.add(new JLabel("To be started on project opening:"), BorderLayout.WEST);
+    wrapper.add(new JLabel(ExecutionBundle.message("settings.project.startup.to.be.started.on.project.opening")), BorderLayout.WEST);
     wrapper.add(label, BorderLayout.EAST);
     wrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, UIUtil.DEFAULT_VGAP, 0));
 
@@ -217,7 +216,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
           return factory != null &&
                  ProgramRunner.getRunner(executor.getId(), runManager.getConfigurationTemplate(factory).getConfiguration()) != null;
         });
-        final ListPopup popup = NewRunConfigurationPopup.createAddPopup(typesToShow, "",
+        final JBPopup popup = NewRunConfigurationPopup.createAddPopup(project, typesToShow, "",
                                                                         factory -> ApplicationManager.getApplication().invokeLater(() -> {
                                                                           final EditConfigurationsDialog dialog = new EditConfigurationsDialog(project, factory);
                                                                           if (dialog.showAndGet()) {
@@ -241,8 +240,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
 
   private void addConfiguration(RunnerAndConfigurationSettings configuration) {
     if (!ProjectStartupRunner.canBeRun(configuration)) {
-      final String message = "Can not add Run Configuration '" + configuration.getName() + "' to Startup Tasks," +
-                             " since it can not be started with 'Run' action.";
+      final String message = ExecutionBundle.message("settings.project.startup.warning", configuration.getName());
       final Balloon balloon = JBPopupFactory.getInstance()
         .createHtmlTextBalloonBuilder(message, MessageType.ERROR, null)
         .setHideOnClickOutside(true)

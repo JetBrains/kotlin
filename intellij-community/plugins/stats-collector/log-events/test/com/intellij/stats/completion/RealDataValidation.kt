@@ -59,7 +59,7 @@ class RealDataValidation {
 
         val validSessions = sessionStatuses.count { it.value }
 
-        Assert.assertEquals(7, validSessions)
+        Assert.assertEquals(15, validSessions)
         Assert.assertEquals(6, invalidSessions)
     }
 

@@ -17,11 +17,12 @@ import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.keymap.impl.ModifierKeyDoubleClickHandler;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.FontUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -35,21 +36,16 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
   public static final DataKey<Executor> EXECUTOR_KEY = DataKey.create("EXECUTOR_KEY");
   public static final AtomicBoolean SHIFT_IS_PRESSED = new AtomicBoolean(false);
   public static final AtomicBoolean ALT_IS_PRESSED = new AtomicBoolean(false);
-  static final String RUN_ANYTHING = "RunAnything";
 
   private boolean myIsDoubleCtrlRegistered;
 
-  private static final NotNullLazyValue<Boolean> IS_ACTION_ENABLED = new NotNullLazyValue<Boolean>() {
-    @NotNull
-    @Override
-    protected Boolean compute() {
-      return Arrays.stream(RunAnythingProvider.EP_NAME.getExtensions())
-        .anyMatch(provider -> !(provider instanceof RunAnythingRunConfigurationProvider ||
-                                provider instanceof RunAnythingRecentProjectProvider ||
-                                provider instanceof RunAnythingRecentCommandProvider ||
-                                provider instanceof RunAnythingCommandExecutionProvider));
-    }
-  };
+  private static class Holder {
+    private static final boolean IS_ACTION_ENABLED = Arrays.stream(RunAnythingProvider.EP_NAME.getExtensions())
+          .anyMatch(provider -> !(provider instanceof RunAnythingRunConfigurationProvider ||
+                                  provider instanceof RunAnythingRecentProjectProvider ||
+                                  provider instanceof RunAnythingRecentCommandProvider ||
+                                  provider instanceof RunAnythingCommandExecutionProvider));
+  }
 
   static {
     IdeEventQueue.getInstance().addPostprocessor(event -> {
@@ -98,7 +94,7 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
       }
     }
 
-    boolean isEnabled = IS_ACTION_ENABLED.getValue();
+    boolean isEnabled = Holder.IS_ACTION_ENABLED;
     e.getPresentation().setEnabledAndVisible(isEnabled);
   }
 
@@ -108,34 +104,30 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
     return new ActionButton(this, presentation, place, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE) {
       @Override
       protected void updateToolTipText() {
-        if (Registry.is("ide.helptooltip.enabled")) {
-          HelpTooltip.dispose(this);
+        HelpTooltip.dispose(this);
 
-          new HelpTooltip()
-            .setTitle(myPresentation.getText())
-            .setShortcut(getShortcut())
-            .setDescription(getShortcutText())
-            .setLocation(getTooltipLocation()).installOn(this);
+        new HelpTooltip()
+          .setTitle(myPresentation.getText())
+          .setShortcut(getShortcut())
+          .setDescription(IdeBundle.message("run.anything.action.tooltip.text"))
+          .installOn(this);
+      }
+
+      @Nullable
+      private String getShortcut() {
+        if (myIsDoubleCtrlRegistered) {
+          return IdeBundle.message("run.anything.double.ctrl.shortcut",
+                                   SystemInfo.isMac ? FontUtil.thinSpace() + MacKeymapUtil.CONTROL : "Ctrl");
         }
-        else {
-          setToolTipText(getShortcutText());
-        }
+        //keymap shortcut is added automatically
+        return null;
+      }
+
+      @Override
+      public void setToolTipText(String s) {
+        String shortcutText = getShortcutText();
+        super.setToolTipText(StringUtil.isNotEmpty(shortcutText) ? (s + " (" + shortcutText + ")") : s);
       }
     };
-  }
-
-  @NotNull
-  private String getShortcutText() {
-    return IdeBundle.message("run.anything.action.tooltip.text") + getShortcut();
-  }
-
-  @NotNull
-  private String getShortcut() {
-    if (myIsDoubleCtrlRegistered) {
-      return " " + IdeBundle
-        .message("run.anything.double.ctrl.shortcut", SystemInfo.isMac ? FontUtil.thinSpace() + MacKeymapUtil.CONTROL : " Ctrl");
-    }
-    //keymap shortcut is added automatically
-    return "";
   }
 }

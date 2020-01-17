@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.gradle.initialization.BuildLayoutParameters;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
@@ -38,6 +39,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.intellij.jarFinder.InternetAttachSourceProvider.attachSourceJar;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.attachSourcesAndJavadocFromGradleCacheIfNeeded;
@@ -82,6 +84,10 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
         final String gradlePath = GradleProjectResolverUtil.getGradlePath(module);
         if (gradlePath == null) return ActionCallback.REJECTED;
 
+        String sourceArtifactNotation = getSourcesArtifactNotation(artifactIdCandidate -> {
+          VirtualFile[] rootFiles = libraryOrderEntry.getRootFiles(OrderRootType.CLASSES);
+          return rootFiles.length == 0 || Arrays.stream(rootFiles).anyMatch(file -> file.getName().startsWith(artifactIdCandidate));
+        }, artifactCoordinates);
         final String sourcesLocationFilePath;
         final File sourcesLocationFile;
         try {
@@ -98,7 +104,8 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
         String initScript = "allprojects {\n" +
                             "  afterEvaluate { project ->\n" +
                             "    if(project.path == '" + gradlePath + "') {\n" +
-                            "        project.tasks.create(name: '" + taskName + "', overwrite: true) {\n" +
+                            "        def overwrite = project.tasks.findByName('" + taskName + "') != null\n" +
+                            "        project.tasks.create(name: '" + taskName + "', overwrite: overwrite) {\n" +
                             "        doLast {\n" +
                             "          def configuration = null\n" +
                             "          def repository = project.repositories.toList().find {\n" +
@@ -106,13 +113,13 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
                             "              project.repositories.add(it)\n" +
                             "              configuration = project.configurations.create('downloadSourcesFrom_' + it.name + '_' + UUID.randomUUID())\n" +
                             "              configuration.transitive = false\n" +
-                            "              project.dependencies.add(configuration.name, '" + artifactCoordinates + ":sources" + "')\n" +
+                            "              project.dependencies.add(configuration.name, '" + sourceArtifactNotation + "')\n" +
                             "              configuration.resolvedConfiguration.lenientConfiguration.getFiles().any()\n" +
                             "          }\n" +
                             "          if (!repository) {\n" +
                             "              configuration = project.configurations.create('downloadSources_' + UUID.randomUUID())\n" +
                             "              configuration.transitive = false\n" +
-                            "              project.dependencies.add(configuration.name, '" + artifactCoordinates + ":sources" + "')\n" +
+                            "              project.dependencies.add(configuration.name, '" + sourceArtifactNotation + "')\n" +
                             "              configuration.resolve()\n" +
                             "          }\n" +
                             "          new File('" + sourcesLocationFilePath + "').write configuration?.singleFile?.path\n" +
@@ -174,6 +181,26 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
         return resultWrapper;
       }
     });
+  }
+
+  @NotNull
+  @ApiStatus.Internal
+  static String getSourcesArtifactNotation(@NotNull Predicate<String> artifactIdChecker, String artifactCoordinates) {
+    String groupNameVersionCoordinates;
+    String[] split = artifactCoordinates.split(":");
+    if (split.length == 4) {
+      // group:name:packaging:classifier || name:packaging:classifier:version || group:name:classifier:version || group:name:packaging:version
+      boolean isArtifactId = artifactIdChecker.test(split[1]);
+      groupNameVersionCoordinates = isArtifactId ? split[0] + ":" + split[1] + ":" + split[3] : artifactCoordinates;
+    }
+    else if (split.length == 5) {
+      // group:name:packaging:classifier:version
+      groupNameVersionCoordinates = split[0] + ":" + split[1] + ":" + split[4];
+    }
+    else {
+      groupNameVersionCoordinates = artifactCoordinates;
+    }
+    return groupNameVersionCoordinates + ":sources";
   }
 
   @Nullable

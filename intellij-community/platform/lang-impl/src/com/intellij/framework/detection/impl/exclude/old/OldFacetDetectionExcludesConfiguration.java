@@ -20,9 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author nik
- */
 @State(name = "FacetAutodetectingManager")
 public class OldFacetDetectionExcludesConfiguration implements PersistentStateComponent<DisabledAutodetectionInfo> {
   public static final String COMPONENT_NAME = "FacetAutodetectingManager";

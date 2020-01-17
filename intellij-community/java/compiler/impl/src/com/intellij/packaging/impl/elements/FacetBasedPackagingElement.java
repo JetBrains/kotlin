@@ -20,9 +20,6 @@ import com.intellij.packaging.elements.PackagingElementResolvingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public interface FacetBasedPackagingElement {
   @Nullable
   Facet findFacet(@NotNull PackagingElementResolvingContext context);

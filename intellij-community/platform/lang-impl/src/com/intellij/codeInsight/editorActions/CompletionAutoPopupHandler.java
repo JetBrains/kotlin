@@ -1,10 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.impl.CompletionServiceImpl;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -18,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
  * @author peter
  */
 public class CompletionAutoPopupHandler extends TypedHandlerDelegate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler");
-  public static volatile Key<Boolean> ourTestingAutopopup = Key.create("TestingAutopopup");
+  private static final Logger LOG = Logger.getInstance(CompletionAutoPopupHandler.class);
+  public static final Key<Boolean> ourTestingAutopopup = Key.create("TestingAutopopup");
 
   @NotNull
   @Override
@@ -52,7 +53,7 @@ public class CompletionAutoPopupHandler extends TypedHandlerDelegate {
    * @deprecated can be emulated with {@link com.intellij.openapi.application.AppUIExecutor}
    */
   @Deprecated
-  public static void runLaterWithCommitted(@NotNull final Project project, final Document document, @NotNull final Runnable runnable) {
-    AutoPopupController.runTransactionWithEverythingCommitted(project, runnable);
+  public static void runLaterWithCommitted(@NotNull Project project, @SuppressWarnings("unused") Document document, @NotNull Runnable runnable) {
+    AppUIExecutor.onUiThread().later().withDocumentsCommitted(project).execute(runnable);
   }
 }

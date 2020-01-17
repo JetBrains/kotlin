@@ -17,6 +17,7 @@ public class SearchEverywhereUsageTriggerCollector {
   private static final String NOT_REPORTABLE_CONTRIBUTOR_ID = "third.party";
 
   public static final String DIALOG_OPEN = "dialogOpen";
+  public static final String DIALOG_CLOSED = "dialogClosed";
   public static final String TAB_SWITCHED = "tabSwitched";
   public static final String GROUP_NAVIGATE = "navigateThroughGroups";
   public static final String CONTRIBUTOR_ITEM_SELECTED = "contributorItemChosen";
@@ -25,6 +26,7 @@ public class SearchEverywhereUsageTriggerCollector {
   public static final String COMMAND_COMPLETED = "commandCompleted";
 
   public static final String CONTRIBUTOR_ID_FIELD = "contributorID";
+  public static final String CURRENT_TAB_FIELD = "currentTabId";
 
   public static void trigger(@NotNull Project project, @NotNull String feature) {
     trigger(project, feature, new FeatureUsageData());
@@ -39,6 +41,21 @@ public class SearchEverywhereUsageTriggerCollector {
     FeatureUsageData res = new FeatureUsageData();
     if (contributorID != null) {
       res.addData(CONTRIBUTOR_ID_FIELD, contributorID);
+    }
+
+    return res;
+  }
+
+  public static FeatureUsageData createData(@Nullable String contributorID, @Nullable String currentTab) {
+    FeatureUsageData res = new FeatureUsageData();
+
+    if (contributorID == null && currentTab == null) {
+      return res;
+    }
+
+    res.addData(CONTRIBUTOR_ID_FIELD, contributorID);
+    if (currentTab != null) {
+      res.addData(CURRENT_TAB_FIELD, currentTab);
     }
 
     return res;

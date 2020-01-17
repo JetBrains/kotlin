@@ -22,7 +22,6 @@ import com.intellij.find.findUsages.FindUsagesManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -89,8 +88,7 @@ public class ShowRecentFindUsagesAction extends AnAction {
         public PopupStep onChosen(final ConfigurableUsageTarget selectedValue, final boolean finalChoice) {
           return doFinalStep(() -> {
             if (selectedValue != null) {
-              TransactionGuard.getInstance().submitTransactionAndWait(
-                () -> findUsagesManager.rerunAndRecallFromHistory(selectedValue));
+              findUsagesManager.rerunAndRecallFromHistory(selectedValue);
             }
           });
         }

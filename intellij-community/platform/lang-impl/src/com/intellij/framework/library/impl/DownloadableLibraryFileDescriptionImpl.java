@@ -20,9 +20,6 @@ import com.intellij.util.download.impl.DownloadableFileDescriptionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author nik
- */
 public class DownloadableLibraryFileDescriptionImpl extends DownloadableFileDescriptionImpl implements DownloadableLibraryFileDescription {
   private final DownloadableFileDescriptionImpl mySourceDownloadUrl;
   private final DownloadableFileDescriptionImpl myDocumentationDownloadUrl;

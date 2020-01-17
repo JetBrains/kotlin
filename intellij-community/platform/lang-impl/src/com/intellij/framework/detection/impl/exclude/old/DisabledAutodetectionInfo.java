@@ -10,9 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author nik
- */
 public class DisabledAutodetectionInfo {
   private List<DisabledAutodetectionByTypeElement> myElements = new SortedList<>(DisabledAutodetectionByTypeElement.COMPARATOR);
 
@@ -80,7 +77,7 @@ public class DisabledAutodetectionInfo {
     }
   }
 
-  public void addDisabled(final @NotNull String facetTypeId, final @NotNull String moduleName, final @NotNull String... urls) {
+  public void addDisabled(final @NotNull String facetTypeId, final @NotNull String moduleName, final String @NotNull ... urls) {
     for (String url : urls) {
       addDisabled(facetTypeId, moduleName, url, false);
     }

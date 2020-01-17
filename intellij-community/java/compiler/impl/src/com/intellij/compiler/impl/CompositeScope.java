@@ -19,6 +19,7 @@
  */
 package com.intellij.compiler.impl;
 
+import com.intellij.compiler.ModuleSourceSet;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.ExportableUserDataHolderBase;
 import com.intellij.openapi.fileTypes.FileType;
@@ -27,6 +28,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.SmartHashSet;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +42,7 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
     addScope(scope2);
   }
 
-  public CompositeScope(@NotNull CompileScope[] scopes) {
+  public CompositeScope(CompileScope @NotNull [] scopes) {
     for (CompileScope scope : scopes) {
       addScope(scope);
     }
@@ -59,8 +61,7 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
   }
 
   @Override
-  @NotNull
-  public VirtualFile[] getFiles(FileType fileType, boolean inSourceOnly) {
+  public VirtualFile @NotNull [] getFiles(FileType fileType, boolean inSourceOnly) {
     Set<VirtualFile> allFiles = new THashSet<>();
     for (CompileScope scope : myScopes) {
       final VirtualFile[] files = scope.getFiles(fileType, inSourceOnly);
@@ -82,8 +83,7 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
   }
 
   @Override
-  @NotNull
-  public Module[] getAffectedModules() {
+  public Module @NotNull [] getAffectedModules() {
     Set<Module> modules = new HashSet<>();
     for (final CompileScope compileScope : myScopes) {
       ContainerUtil.addAll(modules, compileScope.getAffectedModules());
@@ -91,12 +91,21 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
     return modules.toArray(Module.EMPTY_ARRAY);
   }
 
+  @Override
+  public Collection<ModuleSourceSet> getAffectedSourceSets() {
+    Set<ModuleSourceSet> sets = new SmartHashSet<>();
+    for (CompileScope scope : myScopes) {
+      sets.addAll(scope.getAffectedSourceSets());
+    }
+    return sets;
+  }
+
   @NotNull
   @Override
   public Collection<String> getAffectedUnloadedModules() {
     Set<String> unloadedModules = new LinkedHashSet<>();
     for (final CompileScope compileScope : myScopes) {
-      ContainerUtil.addAll(unloadedModules, compileScope.getAffectedUnloadedModules());
+      unloadedModules.addAll(compileScope.getAffectedUnloadedModules());
     }
     return unloadedModules;
   }

@@ -70,7 +70,7 @@ import java.util.Collection;
 @Deprecated
 public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
 
-  @NotNull public static final String[] BUILD_FILE_EXTENSIONS = {GradleConstants.EXTENSION, GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION};
+  public static final String @NotNull [] BUILD_FILE_EXTENSIONS = {GradleConstants.EXTENSION, GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION};
 
   @NotNull
   @Override
@@ -270,11 +270,8 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
       //noinspection unchecked
       settings.linkProject(gradleProjectSettings);
 
-      ImportSpec importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-        .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
-        .useDefaultCallback()
-        .build();
-      ExternalSystemUtil.refreshProject(gradleProjectSettings.getExternalProjectPath(), importSpec);
+      ExternalSystemUtil.refreshProject(gradleProjectSettings.getExternalProjectPath(),
+                                        new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID));
     };
     ExternalProjectsManagerImpl.getInstance(project)
       .runWhenInitialized(
@@ -288,7 +285,7 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
   private static boolean setupGradleJvm(@Nullable Project project, @NotNull GradleProjectSettings projectSettings) {
     final Pair<String, Sdk> sdkPair = ExternalSystemJdkUtil.getAvailableJdk(project);
     if (!ExternalSystemJdkUtil.USE_INTERNAL_JAVA.equals(sdkPair.first) ||
-        ExternalSystemJdkUtil.isValidJdk(sdkPair.second.getHomePath())) {
+        ExternalSystemJdkUtil.isValidJdk(sdkPair.second)) {
       projectSettings.setGradleJvm(sdkPair.first);
       return true;
     }
@@ -303,7 +300,10 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
   }
 
   private static void createProjectPreview(@NotNull Project project, @NotNull String rootProjectPath, @Nullable VirtualFile virtualFile) {
-    ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, rootProjectPath, true, ProgressExecutionMode.MODAL_SYNC);
+    ExternalSystemUtil.refreshProject(rootProjectPath,
+                                      new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+                                        .usePreviewMode()
+                                        .use(ProgressExecutionMode.MODAL_SYNC));
     ExternalProjectsManagerImpl.getInstance(project).runWhenInitialized(() -> DumbService.getInstance(project).runWhenSmart(() -> {
       ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID);
       if (virtualFile == null) return;

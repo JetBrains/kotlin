@@ -27,7 +27,7 @@ public class ShowParameterInfoMacro extends Macro {
 
   @Nullable
   @Override
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, ExpressionContext context) {
     return new InvokeActionResult(
       () -> finishTemplateAndShowParamInfo(context.getEditor(), context.getProject(), context.getStartOffset())
     );
