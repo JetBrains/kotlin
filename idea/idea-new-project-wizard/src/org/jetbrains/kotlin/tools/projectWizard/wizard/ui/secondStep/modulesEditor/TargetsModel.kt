@@ -23,13 +23,13 @@ class TargetsModel(
                 val userObject = parentToAdd.userObject
                 when {
                     userObject is Module && userObject.kind == ModuleKind.singleplatform -> {
-                        val indexOfLastModule = parent.children()
+                        val indexOfLastModule = parentToAdd.children()
                             .toList()
                             .indexOfLast {
                                 it.safeAs<DefaultMutableTreeNode>()?.userObject is Module
                             }
-                        if (indexOfLastModule == -1) parent.insert(this, 0)
-                        else parent.insert(this, indexOfLastModule)
+                        if (indexOfLastModule == -1) parentToAdd.insert(this, 0)
+                        else parentToAdd.insert(this, indexOfLastModule)
                     }
                     else -> parentToAdd.add(this)
                 }
