@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Companion.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
 import java.awt.BorderLayout
-import javax.swing.BorderFactory
 import javax.swing.JComponent
 
 class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : DynamicComponent(valuesReadingContext) {
@@ -42,12 +40,6 @@ class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : Dyna
 
 
     override val component: JComponent = panel {
-        border = BorderFactory.createEmptyBorder(
-            UiConstants.GAP_BORDER_SIZE,
-            UiConstants.GAP_BORDER_SIZE,
-            UiConstants.GAP_BORDER_SIZE,
-            UiConstants.GAP_BORDER_SIZE
-        )
         add(nameField.component, BorderLayout.NORTH)
         add(tabPanel, BorderLayout.CENTER)
     }
