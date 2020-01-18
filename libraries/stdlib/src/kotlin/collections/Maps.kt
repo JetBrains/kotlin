@@ -127,7 +127,6 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = p
  * Calculate the initial capacity of a map.
  */
 @PublishedApi
-@Suppress("NO_ACTUAL_FOR_EXPECT") // JS IR
 internal expect fun mapCapacity(expectedSize: Int): Int
 
 /** Returns `true` if this map is not empty. */
@@ -210,7 +209,6 @@ public inline fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(
 @kotlin.internal.InlineOnly
 public inline fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue(value: V): Boolean = this.containsValue(value)
 
-
 /**
  * Removes the specified key and its corresponding value from this map.
  *
@@ -261,7 +259,6 @@ public inline fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
  */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V = get(key) ?: defaultValue()
-
 
 internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () -> V): V {
     val value = get(key)
@@ -424,7 +421,6 @@ public inline fun <K, V> Map<out K, V>.filterValues(predicate: (V) -> Boolean): 
     }
     return result
 }
-
 
 /**
  * Appends all entries matching the given [predicate] into the mutable map given as [destination] parameter.
@@ -603,7 +599,6 @@ public operator fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<
 public operator fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V> =
     LinkedHashMap(this).apply { putAll(map) }
 
-
 /**
  * Appends or replaces the given [pair] in this mutable map.
  */
@@ -727,27 +722,28 @@ internal fun <K, V> Map<K, V>.optimizeReadOnlyMap() = when (size) {
 }
 
 /**
- * Build a new read-only [Map] with the [key][K]–[value][V] pairs from the [builderAction].
+ * Build a new read-only [Map] with the [key][K]-[value][V] pairs from the [builderAction] while preserving the insertion order.
  *
  * @sample samples.collections.Builders.Maps.buildMapSample
  */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-@SinceKotlin("1.4")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
 public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return LinkedHashMap<K, V>().apply(builderAction)
 }
 
 /**
- * Build a new read-only [Map] with the given [expectedSize] and [key][K]–[value][V] pairs from the [builderAction].
+ * Build a new read-only [Map] with the given [expectedSize] and [key][K]-[value][V] pairs from the [builderAction] while preserving
+ * the insertion order.
  *
  * @sample samples.collections.Builders.Maps.buildMapSample
  * @throws IllegalArgumentException if the given [expectedSize] is negative.
  */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-@SinceKotlin("1.4")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
 public inline fun <K, V> buildMap(expectedSize: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return LinkedHashMap<K, V>(mapCapacity(expectedSize)).apply(builderAction)

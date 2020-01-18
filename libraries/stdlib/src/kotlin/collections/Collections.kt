@@ -389,12 +389,10 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
 
 @PublishedApi
 @SinceKotlin("1.3")
-@Suppress("NO_ACTUAL_FOR_EXPECT") // JS IR
 internal expect fun checkIndexOverflow(index: Int): Int
 
 @PublishedApi
 @SinceKotlin("1.3")
-@Suppress("NO_ACTUAL_FOR_EXPECT") // JS IR
 internal expect fun checkCountOverflow(count: Int): Int
 
 
@@ -411,9 +409,9 @@ internal fun throwCountOverflow() { throw ArithmeticException("Count overflow ha
  *
  * @sample samples.collections.Builders.Lists.buildListSample
  */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-@SinceKotlin("1.4")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
 public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return ArrayList<E>().apply(builderAction)
@@ -425,9 +423,9 @@ public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.
  * @sample samples.collections.Builders.Lists.buildListSample
  * @throws IllegalArgumentException if the given [expectedSize] is negative.
  */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-@SinceKotlin("1.4")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
 public inline fun <E> buildList(expectedSize: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return ArrayList<E>(expectedSize).apply(builderAction)

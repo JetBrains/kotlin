@@ -15,7 +15,6 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
 
-
 /**
  * Returns an immutable map, mapping only the specified key to the
  * specified value.
@@ -25,7 +24,6 @@ import java.util.concurrent.ConcurrentMap
  * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
-
 
 /**
  * Concurrent getOrPut, that is safe for concurrent maps.
@@ -42,7 +40,6 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -
             ?: defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
 
 }
-
 
 /**
  * Converts this [Map] to a [SortedMap]. The resulting [SortedMap] determines the equality and order of keys according to their natural sorting order.
@@ -76,7 +73,6 @@ public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): Sorte
 public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V> =
     TreeMap<K, V>().apply { putAll(pairs) }
 
-
 /**
  * Converts this [Map] to a [Properties] object.
  *
@@ -85,7 +81,6 @@ public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedM
 @kotlin.internal.InlineOnly
 public inline fun Map<String, String>.toProperties(): Properties =
     Properties().apply { putAll(this@toProperties) }
-
 
 // creates a singleton copy of map, if there is specialization available in target platform, otherwise returns itself
 @kotlin.internal.InlineOnly
@@ -100,6 +95,7 @@ internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> =
  * [com.google.common.collect.Maps.capacity](https://github.com/google/guava/blob/master/guava/src/com/google/common/collect/Maps.java)
  * approach. This is similar to [java.util.HashMap.putMapEntries] (JDK8+) but provides further optimizations for small or large sizes.
  */
+@PublishedApi
 internal actual fun mapCapacity(expectedSize: Int): Int = when {
     // We are not coercing the value to a valid one and not throwing an exception. It is up to the receiving class to
     // properly handle negative values. Note that all built-in classes do exactly that and will throw.

@@ -124,5 +124,6 @@ public fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> {
 /**
  * JS does not make use of capacities or load factors and if it would the algorithm would probably differ to the one for the JVM.
  */
+@PublishedApi
 @kotlin.internal.InlineOnly
 internal actual inline fun mapCapacity(expectedSize: Int) = expectedSize

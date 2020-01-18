@@ -100,27 +100,28 @@ internal fun <T> Set<T>.optimizeReadOnlySet() = when (size) {
 }
 
 /**
- * Build a new read-only [Set] with the [elements][E] from the [builderAction].
+ * Build a new read-only [Set] with the [elements][E] from the [builderAction] while preserving the insertion order.
  *
  * @sample samples.collections.Builders.Sets.buildSetSample
  */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-@SinceKotlin("1.4")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
 public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return LinkedHashSet<E>().apply(builderAction)
 }
 
 /**
- * Build a new read-only [Set] with the given [expectedSize] and [elements][E] from the [builderAction].
+ * Build a new read-only [Set] with the given [expectedSize] and [elements][E] from the [builderAction] while preserving the insertion
+ * order.
  *
  * @sample samples.collections.Builders.Sets.buildSetSample
  * @throws IllegalArgumentException if the given [expectedSize] is negative.
  */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-@SinceKotlin("1.4")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
 public inline fun <E> buildSet(expectedSize: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return LinkedHashSet<E>(mapCapacity(expectedSize)).apply(builderAction)
