@@ -74,6 +74,13 @@ public final class StringPropertyCodeGenerator extends PropertyCodeGenerator imp
     if (!"text".equals(property.getName())) {
       return false;
     }
+    
+    StringDescriptor propertyValue = (StringDescriptor)lwComponent.getPropertyValue(property);
+    String key = propertyValue.getKey();
+
+    if (key != null) {
+      propertyValue.setFormClass(formClassName);
+    }
 
     InstrumentationClassFinder.PseudoClass abstractButtonClass = componentClass.getFinder().loadClass(AbstractButton.class.getName());
     InstrumentationClassFinder.PseudoClass jLabelClass = componentClass.getFinder().loadClass(JLabel.class.getName());
@@ -81,8 +88,6 @@ public final class StringPropertyCodeGenerator extends PropertyCodeGenerator imp
       return false;
     }
 
-    StringDescriptor propertyValue = (StringDescriptor)lwComponent.getPropertyValue(property);
-    String key = propertyValue.getKey();
     if (key == null) {
       String value = propertyValue.getValue();
       SupportCode.TextWithMnemonic textWithMnemonic = value == null ? null : SupportCode.parseText(value);
@@ -121,7 +126,6 @@ public final class StringPropertyCodeGenerator extends PropertyCodeGenerator imp
       generator.loadThis();
       generator.loadLocal(componentLocal);
 
-      propertyValue.setFormClass(formClassName);
       generateGetBundleString(propertyValue, generator);
 
       Method method;
