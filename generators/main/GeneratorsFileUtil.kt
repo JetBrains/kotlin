@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.generators.util
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -33,7 +32,7 @@ object GeneratorsFileUtil {
         }
         val useTempFile = !SystemInfo.isWindows
         val tempFile =
-            if (useTempFile) File(KotlinTestUtils.tmpDir(file.name), file.name + ".tmp") else file
+            if (useTempFile) File(createTempDir(file.name), file.name + ".tmp") else file
         tempFile.writeText(newText, Charsets.UTF_8)
         println("File written: " + tempFile.absolutePath)
         if (useTempFile) {
