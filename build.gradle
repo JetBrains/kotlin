@@ -496,6 +496,10 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/testLibrary'
         into baseName
     }
+    from(project.rootDir) {
+        include 'licenses/**'
+        into baseName
+    }
     if (isWindows()) {
         zip64 true
     } else {
@@ -517,11 +521,16 @@ task bundleRestricted(type: Tar) {
                 exclude "klib/platform/${target.name}"
                 exclude {
                     // Exclude platform libraries caches too.
-                    !it.isDirectory && it.relativePath.startsWithAny("klib/cache/${target.name}-g") &&
+                    !it.isDirectory() && it.relativePath.startsWithAny("klib/cache/${target.name}-g") &&
                             it.name != "libstdlib-cache.a"
                 }
             }
         }
+        exclude '**/xcode_license.pdf'
+        into baseName
+    }
+    from(project.rootDir) {
+        include 'licenses/**'
         exclude '**/xcode_license.pdf'
         into baseName
     }
@@ -543,10 +552,6 @@ configure([bundle, bundleRestricted]) {
     }
     from(project.rootDir) {
         include 'RELEASE_NOTES.md'
-        into baseName
-    }
-    from(project.rootDir) {
-        include 'licenses/**'
         into baseName
     }
 
