@@ -875,7 +875,9 @@ public class AsmCodeGenerator {
                                       final GeneratorAdapter generator, 
                                       final StringDescriptor borderTitle,
                                       final int componentLocal) {
-      borderTitle.setFormClass(myClassName);
+      if (borderTitle != null) {
+        borderTitle.setFormClass(myClassName);
+      }
       pushPropValue(generator, "java.lang.String", borderTitle);
       generator.push(container.getBorderTitleJustification());
       generator.push(container.getBorderTitlePosition());
