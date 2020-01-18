@@ -26,18 +26,18 @@ sourceSets {
     }
     coroutinesExperimental {
         kotlin {
-            srcDir '../coroutines-experimental/jvm/src'
+//            srcDir '../coroutines-experimental/jvm/src'
         }
     }
     coroutinesExperimentalTest {
         kotlin {
-            srcDir '../coroutines-experimental/jvm/test'
+//            srcDir '../coroutines-experimental/jvm/test'
         }
     }
     coroutinesExperimentalMigrationTest {
         kotlin {
             if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
-                srcDir '../coroutines-experimental/jvm/test'
+//                srcDir '../coroutines-experimental/jvm/test'
             }
         }
     }
@@ -77,6 +77,7 @@ dependencies {
 
     testCompile project(':kotlin-test:kotlin-test-junit')
     testCompile sourceSets.coroutinesExperimental.output
+    testCompile project(':kotlin-coroutines-experimental-compat')
 
     coroutinesExperimentalCompile sourceSets.main.output
     coroutinesExperimentalTestCompile sourceSets.test.output

@@ -46,6 +46,7 @@ configurations {
 dependencies {
     compile project(':kotlin-stdlib')
     testCompile project(':kotlin-test:kotlin-test-junit')
+    testCompile project(':kotlin-coroutines-experimental-compat')
 }
 
 jar {

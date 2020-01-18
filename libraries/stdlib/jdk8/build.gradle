@@ -16,6 +16,7 @@ dependencies {
     compile project(':kotlin-stdlib')
     compile project(':kotlin-stdlib-jdk7')
     testCompile project(':kotlin-test:kotlin-test-junit')
+    testCompile project(':kotlin-coroutines-experimental-compat')
 }
 
 sourceSets {

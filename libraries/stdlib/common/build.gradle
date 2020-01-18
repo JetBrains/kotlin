@@ -28,7 +28,7 @@ sourceSets {
     }
     coroutinesExperimental {
         kotlin {
-            srcDir '../coroutines-experimental/src'
+//            srcDir '../coroutines-experimental/src'
         }
     }
 }
