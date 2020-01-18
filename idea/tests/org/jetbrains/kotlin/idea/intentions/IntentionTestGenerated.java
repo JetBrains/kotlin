@@ -13024,6 +13024,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeBraces/elseInPlusAssignExpression.kt");
         }
 
+        @TestMetadata("elseLambda.kt")
+        public void testElseLambda() throws Exception {
+            runTest("idea/testData/intentions/removeBraces/elseLambda.kt");
+        }
+
+        @TestMetadata("elseLambda2.kt")
+        public void testElseLambda2() throws Exception {
+            runTest("idea/testData/intentions/removeBraces/elseLambda2.kt");
+        }
+
         @TestMetadata("for.kt")
         public void testFor() throws Exception {
             runTest("idea/testData/intentions/removeBraces/for.kt");
@@ -13077,6 +13087,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("ifInsideIf7.kt")
         public void testIfInsideIf7() throws Exception {
             runTest("idea/testData/intentions/removeBraces/ifInsideIf7.kt");
+        }
+
+        @TestMetadata("ifLambda.kt")
+        public void testIfLambda() throws Exception {
+            runTest("idea/testData/intentions/removeBraces/ifLambda.kt");
+        }
+
+        @TestMetadata("ifLambda2.kt")
+        public void testIfLambda2() throws Exception {
+            runTest("idea/testData/intentions/removeBraces/ifLambda2.kt");
         }
 
         @TestMetadata("ifWithComment.kt")

@@ -38,6 +38,7 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val block = element.findChildBlock() ?: return false
         val singleStatement = block.statements.singleOrNull() ?: return false
+        if (singleStatement is KtLambdaExpression && singleStatement.functionLiteral.arrow == null) return false
         when (val container = block.parent) {
             is KtContainerNode -> {
                 if (singleStatement is KtIfExpression) {
@@ -52,11 +53,11 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
             is KtWhenEntry -> {
                 text = KotlinBundle.message("remove.braces.from.when.entry")
                 return singleStatement !is KtNamedDeclaration
-                        && !(singleStatement is KtLambdaExpression && singleStatement.functionLiteral.arrow == null)
             }
             else -> return false
         }
     }
+
 
     override fun applyTo(element: KtElement, editor: Editor?) {
         val block = element.findChildBlock() ?: return
