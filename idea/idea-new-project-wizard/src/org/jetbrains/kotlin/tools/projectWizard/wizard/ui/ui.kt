@@ -10,8 +10,6 @@ import com.intellij.ui.PopupHandler
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
-import com.intellij.util.ui.JBUI
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
@@ -20,11 +18,19 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfig
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
-import java.awt.*
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
+import java.awt.BorderLayout
+import java.awt.Cursor
+import java.awt.Font
+import java.awt.LayoutManager
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.Icon
+import javax.swing.JComponent
+import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -133,27 +139,6 @@ fun <C : JComponent> C.bordered(
             )
             else -> lineBorder
         }
-    )
-}
-
-// Copied from com.intellij.ide.projectWizard.ProjectSettingsStep.addField
-fun JPanel.addFieldWithLabel(label: String, field: JComponent) {
-    val jLabel = JBLabel(label)
-    jLabel.labelFor = field
-    jLabel.verticalAlignment = SwingConstants.TOP
-    add(
-        jLabel,
-        GridBagConstraints(
-            0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-            GridBagConstraints.VERTICAL, JBUI.insets(5, 0, 5, 0), 4, 0
-        )
-    )
-    add(
-        field,
-        GridBagConstraints(
-            1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-            GridBagConstraints.HORIZONTAL, JBUI.insetsBottom(5), 0, 0
-        )
     )
 }
 
