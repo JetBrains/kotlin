@@ -1,4 +1,4 @@
-extra["versions.shadow"] = "4.0.3"
+extra["versions.shadow"] = "5.2.0"
 extra["versions.native-platform"] = "0.14"
 
 buildscript {
