@@ -696,7 +696,9 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                               @NotNull final Map<K, StubIdList> newInputData) {
     try {
       if (DO_TRACE_STUB_INDEX_UPDATE) {
-        LOG.info("stub index update: " + fileId + " old = " + oldInputData.keySet() + " new  = " + newInputData.keySet());
+        LOG.info("stub index '" + key + "' update: " + fileId +
+                 " old = " + Arrays.toString(oldInputData.keySet().toArray()) +
+                 " new  = " + Arrays.toString(newInputData.keySet().toArray()));
       }
       final UpdatableIndex<K, Void, FileContent> index = getIndex(key);
       if (index == null) return;
