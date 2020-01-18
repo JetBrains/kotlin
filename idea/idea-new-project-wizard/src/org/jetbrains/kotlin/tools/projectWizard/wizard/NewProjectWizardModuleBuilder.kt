@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
 import org.jetbrains.kotlin.tools.projectWizard.core.Success
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.isSuccess
 import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -50,6 +52,8 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
         private const val DEFAULT_GROUP_ID = "me.user"
+        private val projectNameValidator = StringValidators.shouldBeValidIdentifier("Project name", setOf('-', '_'))
+        private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
     }
 
     override fun isAvailable(): Boolean = NewProjectWizardService.isEnabled
@@ -103,6 +107,16 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
                 )
             }
             else -> PomWizardStep(settingsStep, wizard)
+        }
+    }
+
+    override fun validateModuleName(moduleName: String): Boolean {
+        when (val validationResult = projectNameValidator.validate(wizard.valuesReadingContext, moduleName)) {
+            ValidationResult.OK -> return true
+            is ValidationResult.ValidationError -> {
+                val message = validationResult.messages.firstOrNull() ?: INVALID_PROJECT_NAME_MESSAGE
+                throw ConfigurationException(message, INVALID_PROJECT_NAME_MESSAGE)
+            }
         }
     }
 
