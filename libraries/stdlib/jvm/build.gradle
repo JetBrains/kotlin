@@ -24,11 +24,6 @@ sourceSets {
             srcDir 'src'
         }
     }
-    experimental {
-        kotlin {
-            srcDir "../experimental"
-        }
-    }
     coroutinesExperimental {
         kotlin {
             srcDir '../coroutines-experimental/jvm/src'
@@ -95,7 +90,6 @@ jar {
     from {
         zipTree(configurations.builtins.singleFile)
     }
-    from sourceSets.experimental.output
     from sourceSets.coroutinesExperimental.output
     // TODO: enable as soon as this doesn't cause D8/DX to crash
     // from sourceSets.java9.output
@@ -165,19 +159,6 @@ compileKotlin {
     }
 }
 
-
-compileExperimentalKotlin {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs = [
-                "-version",
-                "-Xallow-kotlin-package",
-                "-Xmultifile-parts-inherit",
-                "-module-name", "kotlin-stdlib-experimental"
-        ]
-    }
-}
 
 compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output, sourceSets.coroutinesExperimental.output])
 

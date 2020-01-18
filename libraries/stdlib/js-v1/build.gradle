@@ -26,8 +26,6 @@ def coroutinesExpJsSrcDir = "${rootDir}/libraries/stdlib/coroutines-experimental
 
 def builtinsDir = "${rootDir}/core/builtins"
 def unsignedCommonSrcDir = "${rootDir}/libraries/stdlib/unsigned/src"
-def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
-def experimentalJsModuleName = 'kotlin-experimental'
 def coroutinesJsModuleName = 'kotlin-stdlib-coroutines'
 
 def jsSrcDir = "src"
@@ -59,13 +57,6 @@ sourceSets {
             srcDir builtinsSrcDir
             srcDir jsCommonSrcDir
             srcDir jsSrcDir
-        }
-    }
-
-    experimental {
-        if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
-        kotlin {
-            srcDir experimentalSrcDir
         }
     }
 
@@ -163,18 +154,6 @@ compileKotlin2Js {
     }
 }
 
-compileExperimentalKotlin2Js {
-    dependsOn compileKotlin2Js
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        outputFile = "${buildDir}/classes/experimental/${experimentalJsModuleName}.js"
-        sourceMap = true
-        sourceMapPrefix = "./"
-        freeCompilerArgs += ["-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator)]
-    }
-}
-
 compileCoroutinesExperimentalKotlin2Js {
     kotlinOptions {
         languageVersion = "1.3"
@@ -203,10 +182,9 @@ compileTestKotlin2Js {
 }
 
 task compileJs(type: NoDebugJavaExec) {
-    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileExperimentalKotlin2Js, compileCoroutinesExperimentalKotlin2Js
+    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileCoroutinesExperimentalKotlin2Js
     inputs.files(compileBuiltinsKotlin2Js.outputs.files)
     inputs.files(compileKotlin2Js.outputs.files)
-    inputs.files(compileExperimentalKotlin2Js.outputs.files)
     inputs.files(compileCoroutinesExperimentalKotlin2Js.outputs.files)
     inputs.dir(jsSrcDir)
     inputs.dir(jsCommonSrcDir)
@@ -222,8 +200,7 @@ task compileJs(type: NoDebugJavaExec) {
         args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
                (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
                 compileKotlin2Js.outputs.files.collect { it.path }.sort() +
-                compileCoroutinesExperimentalKotlin2Js.outputs.files.collect { it.path }.sort() /* +
-                compileExperimentalKotlin2Js.outputs.files.collect { it.path }.sort() */).findAll {
+                compileCoroutinesExperimentalKotlin2Js.outputs.files.collect { it.path }.sort()).findAll {
                    it.endsWith(".js") && !it.endsWith(".meta.js")
                }
     }
@@ -259,7 +236,7 @@ task compileJs(type: NoDebugJavaExec) {
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [jsSrcDir, jsCommonSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir,  unsignedCommonSrcDir]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsCommonSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir,  unsignedCommonSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
             def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
@@ -270,9 +247,7 @@ task compileJs(type: NoDebugJavaExec) {
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
 
         file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text +
-                                      file(compileCoroutinesExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text /* +
-                                      file(compileExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
-                                              .replaceFirst(experimentalJsModuleName, 'kotlin') */
+                                      file(compileCoroutinesExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
     }
 }
 
@@ -301,11 +276,9 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
     from jsOutputMetaFile
     from "${jsOutputFile}.map"
     from sourceSets.main.output
-    from sourceSets.experimental.output
     from("${buildDir}/classes/coroutinesExperimental/kotlin") {
         into coroutinesJsModuleName
     }
-    exclude "${experimentalJsModuleName}.*"
 }
 
 task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
@@ -340,9 +313,6 @@ task sourcesJar(type: Jar, dependsOn: compileJs) {
     }
     from(sourceSets.main.allSource) {
         include 'org.w3c/**'
-    }
-    from(sourceSets.experimental.allSource) {
-        into 'kotlin'
     }
     from(sourceSets.coroutinesExperimental.allSource) {
         into 'kotlin'
