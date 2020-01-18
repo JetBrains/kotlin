@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,7 +52,10 @@ public data class Char internal constructor(val value: Int) : Comparable<Char> {
     /** Returns the value of this character as a `Double`. */
     public fun toDouble(): Double = value.toDouble()
 
-    override fun toString(): String {
+    // TODO implicit usages of toString and valueOf must be covered in DCE
+    @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")
+    @JsName("toString")
+    public override fun toString(): String {
         return js("String").fromCharCode(value).unsafeCast<String>()
     }
 
