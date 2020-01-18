@@ -164,7 +164,7 @@ abstract class WizardStep(protected val wizard: IdeWizard, private val phase: Ge
             is Success<*> -> true
             is Failure -> {
                 val messages = result.errors.joinToString(separator = "\n") { it.message }
-                throw ConfigurationException(messages)
+                throw ConfigurationException(messages, "Validation Error")
             }
         }
 }

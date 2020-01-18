@@ -68,7 +68,7 @@ data class VersionIsNotInRangeError(val subject: String, val version: Version, v
 
 data class ValidationError(val validationMessage: String) : Error() {
     override val message: String
-        get() = "Validation error: $validationMessage"
+        get() = validationMessage.capitalize()
 }
 
 data class InvalidSourceSetName(val name: String) : Error() {
