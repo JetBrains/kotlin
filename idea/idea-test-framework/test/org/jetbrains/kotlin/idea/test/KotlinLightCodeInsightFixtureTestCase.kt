@@ -86,9 +86,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         UnusedSymbolInspection()
 
         (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(project, KotlinTestUtils.getHomeDirectory())
 
-        project.getComponent(EditorTracker::class.java)?.projectOpened()
+        EditorTracker.getInstance(project)
 
         invalidateLibraryCache(project)
 
@@ -104,8 +104,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     override fun tearDown() {
         LoggedErrorProcessor.restoreDefaultProcessor()
-
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         super.tearDown()
 

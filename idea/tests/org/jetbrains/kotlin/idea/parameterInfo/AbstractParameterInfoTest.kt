@@ -44,9 +44,9 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         val mainFile = File(FileUtil.toSystemDependentName(fileName))
         mainFile.parentFile
             .listFiles { _, name -> name.startsWith("$prefix.") && name != mainFile.name }
-            .forEach { myFixture.configureByFile(FileUtil.toSystemIndependentName(it.path)) }
+            .forEach { myFixture.configureByFile(it.absolutePath.substringAfter(myFixture.testDataPath)) }
 
-        myFixture.configureByFile(fileName)
+        myFixture.configureByFile(File(fileName).absolutePath.substringAfter(myFixture.testDataPath))
 
         val file = myFixture.file as KtFile
 
@@ -64,7 +64,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
             val handlers = ShowParameterInfoHandler.getHandlers(project, KotlinLanguage.INSTANCE)!!
             val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
-                ?: error("Could not find parameter info handler")
+                          ?: error("Could not find parameter info handler")
 
             val mockCreateParameterInfoContext = MockCreateParameterInfoContext(file, myFixture)
             val parameterOwner = handler.findElementForParameterInfo(mockCreateParameterInfoContext) as PsiElement

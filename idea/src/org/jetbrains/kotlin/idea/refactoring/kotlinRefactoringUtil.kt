@@ -41,7 +41,6 @@ import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsExcepti
 import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
 import com.intellij.refactoring.listeners.RefactoringEventData
 import com.intellij.refactoring.listeners.RefactoringEventListener
-import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.refactoring.util.ConflictsUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
@@ -485,7 +484,7 @@ private fun <T> copyTypeParameters(
         inserter(to, factory.createTypeParameterList())
         val targetTypeParamList = to.typeParameterList
         val newTypeParams = templateTypeParams.map {
-            factory.createTypeParameter(it.name, it.extendsList.referencedTypes)
+            factory.createTypeParameter(it.name!!, it.extendsList.referencedTypes)
         }
         ChangeSignatureUtil.synchronizeList(
             targetTypeParamList,
@@ -960,20 +959,17 @@ fun checkSuperMethodsWithPopup(
         append(" of ")
         append(SymbolPresentationUtil.getSymbolPresentableText(superClass))
     }
-
+    val list = JBList<String>(renameBase, renameCurrent)
     JBPopupFactory.getInstance()
-        .createPopupChooserBuilder(listOf(renameBase, renameCurrent))
+        .createListPopupBuilder(list)
         .setTitle(title)
         .setMovable(false)
         .setResizable(false)
         .setRequestFocus(true)
-        .setItemChosenCallback { selected ->
-            if (selected == renameBase) {
-                val ableToRename = declaration.project.let { project ->
-                    deepestSuperMethods.all { PsiElementRenameHandler.canRename(project, editor, it) }
-                }
-                if (ableToRename) action(deepestSuperMethods + declaration)
-            } else action(listOf(declaration))
+        .setItemChoosenCallback {
+            val value = list.selectedValue ?: return@setItemChoosenCallback
+            val chosenElements = if (value == renameBase) deepestSuperMethods + declaration else listOf(declaration)
+            action(chosenElements)
         }
         .createPopup()
         .showInBestPositionFor(editor)

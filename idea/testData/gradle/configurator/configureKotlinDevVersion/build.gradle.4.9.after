@@ -4,9 +4,7 @@ plugins {
 group 'testgroup'
 version '1.0-SNAPSHOT'
 repositories {
-    maven {
-        url 'https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:1.2.60-dev-286,branch:(default:any)/artifacts/content/maven'
-    }
+    maven { url 'https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:1.2.60-dev-286,branch:(default:any)/artifacts/content/maven' }
     mavenCentral()
 }
 dependencies {

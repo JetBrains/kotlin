@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import org.gradle.tooling.model.GradleProject
 import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
+import org.jetbrains.plugins.gradle.model.Build
 
 class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
     override fun getModelProvider() = KotlinDslScriptModelProvider()
@@ -19,7 +21,7 @@ class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
         super.populateProjectExtraModels(gradleProject, ideProject)
 
         if (kotlinDslScriptsModelImportSupported(resolverCtx.projectGradleVersion)) {
-            populateBuildModels(gradleProject, ideProject)
+            populateBuildModels(resolverCtx.models.mainBuild, ideProject)
 
             resolverCtx.models.includedBuilds.forEach { includedRoot ->
                 populateBuildModels(includedRoot, ideProject)
@@ -28,12 +30,12 @@ class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
     }
 
     private fun populateBuildModels(
-        root: IdeaProject,
+        root: Build,
         ideProject: DataNode<ProjectData>
     ) {
-        root.modules.forEach {
-            if (it.gradleProject.parent == null) {
-                resolverCtx.getExtraProject(it, KotlinDslScriptsModel::class.java)?.let { model ->
+        root.projects.forEach {
+            if ((it as? GradleProject)?.parent == null) {
+                resolverCtx.models.getModel(it, KotlinDslScriptsModel::class.java)?.let { model ->
                     ideProject.KOTLIN_DSL_SCRIPT_MODELS.addAll(model.toListOfScriptModels())
                 }
             }

@@ -20,7 +20,7 @@ class CoroutineDebugConfigurationExtension : RunConfigurationExtension() {
 
     override fun <T : RunConfigurationBase<*>?> updateJavaParameters(
         configuration: T,
-        params: JavaParameters?,
+        params: JavaParameters,
         runnerSettings: RunnerSettings?
     ) {
         if (runnerSettings is DebuggingRunnerData && configuration is RunConfigurationBase<*>) {

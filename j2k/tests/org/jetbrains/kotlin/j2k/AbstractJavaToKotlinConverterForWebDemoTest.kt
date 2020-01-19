@@ -59,7 +59,8 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
     }
 
     fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
-        Extensions.cleanRootArea(DISPOSABLE)
+        // FIXME: There is no `Extensions.cleanRootArea` in 193 platform
+        // Extensions.cleanRootArea(DISPOSABLE)
         val area = Extensions.getRootArea()
 
         registerExtensionPoints(area)
