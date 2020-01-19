@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlinx.metadata.jvm.KmModuleVisitor
@@ -63,6 +64,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:13.0")
 }
 
+@CacheableTransformer
 class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
     @Suppress("ArrayInDataClass")
     private data class Entry(val path: String, val bytes: ByteArray)
