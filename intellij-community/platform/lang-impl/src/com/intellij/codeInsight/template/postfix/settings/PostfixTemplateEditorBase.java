@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.settings;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplate;
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider;
@@ -72,7 +73,7 @@ public abstract class PostfixTemplateEditorBase<Condition extends PostfixTemplat
     myProvider = provider;
     myTemplateEditor = templateEditor;
 
-    myApplyToTheTopmostJBCheckBox = new JBCheckBox("Apply to the &topmost expression");
+    myApplyToTheTopmostJBCheckBox = new JBCheckBox(CodeInsightBundle.message("checkbox.apply.to.the.&topmost.expression"));
     DialogUtil.registerMnemonic(myApplyToTheTopmostJBCheckBox, '&');
     myApplyToTheTopmostJBCheckBox.setBorder(JBUI.Borders.emptyBottom(UIUtil.DEFAULT_VGAP));
 
