@@ -4021,8 +4021,8 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
 
     task coverage_jumps(type: CoverageTest) {
         binaryName = "CoverageJumps"
-        numberOfCoveredFunctions = 7
-        numberOfCoveredLines = 66
+        numberOfCoveredFunctions = 8
+        numberOfCoveredLines = 74
 
         konanArtifacts {
             program(binaryName, targets: [ target ]) {

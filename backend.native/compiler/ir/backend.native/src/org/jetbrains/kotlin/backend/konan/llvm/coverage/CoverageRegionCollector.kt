@@ -165,17 +165,19 @@ private class IrFunctionRegionsCollector(
         body.acceptVoid(this)
     }
 
-    override fun visitReturn(expression: IrReturn) {
-        val next = irStatementsStack.lastOrNull()?.next ?: return
-        val nextRegion = recordRegion(next, expression.endOffset, currentRegion.endOffset) ?: return
-        currentRegion.endOffset = expression.endOffset
-        regionStack.pop()
-        regionStack.push(nextRegion)
-    }
-
     override fun visitBreakContinue(jump: IrBreakContinue) {
         val (current, next) = irStatementsStack.lastOrNull() ?: return
         recordRegion(next ?: return, current.endOffset, jump.loop.endOffset)
+    }
+
+    override fun visitReturn(expression: IrReturn) {
+        irStatementsStack.subList(0, irStatementsStack.lastIndex)
+                .filter { (current, next) -> next != null && current.endOffset > expression.endOffset }
+                .forEach { (current, next) -> recordRegion(next!!, expression.endOffset, current.endOffset) }
+        val next = irStatementsStack.lastOrNull()?.next ?: return
+        val nextRegion = recordRegion(next, expression.endOffset, currentRegion.endOffset) ?: return
+        regionStack.pop()
+        regionStack.push(nextRegion)
     }
 
     private fun visitInFileContext(file: IrFile, visit: () -> Unit) {
@@ -199,7 +201,8 @@ private class IrFunctionRegionsCollector(
             if (!current.hasValidOffsets()) {
                 continue
             }
-            val next = if (i < statements.lastIndex && statements[i + 1].hasValidOffsets()) statements[i + 1] else null
+            val nextInContext = irStatementsStack.lastOrNull()?.next
+            val next = if (i < statements.lastIndex && statements[i + 1].hasValidOffsets()) statements[i + 1] else nextInContext
             irStatementsStack.push(StatementContext(current, next))
             visit(current)
             irStatementsStack.pop()

@@ -55,6 +55,21 @@ fun singleReturn() {
     return
 }
 
+fun nestedReturn() {
+    while (true) {
+        while (true) {
+            while (true) {
+                if (1 < 2) {
+                    return
+                }
+                println()
+            }
+            println()
+        }
+    }
+    println()
+}
+
 fun main() {
     simpleReturn(0)
     simpleReturn(1)
@@ -71,4 +86,5 @@ fun main() {
     breakFromWhile()
     continueFromDoWhile()
     singleReturn()
+    nestedReturn()
 }

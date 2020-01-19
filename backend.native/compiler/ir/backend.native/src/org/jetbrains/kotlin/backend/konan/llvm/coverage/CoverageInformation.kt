@@ -20,26 +20,11 @@ import org.jetbrains.kotlin.ir.declarations.name
  * Besides the obvious [file] and line/column borders, it has [RegionKind] which is described later.
  */
 class Region(
-        startOffset: Int,
-        endOffset: Int,
+        val startOffset: Int,
+        val endOffset: Int,
         val file: IrFile,
         val kind: RegionKind
 ) {
-
-    var startOffset: Int = startOffset
-        set(value) {
-            if (value != UNDEFINED_OFFSET) {
-                field = value
-            }
-        }
-
-    var endOffset: Int = endOffset
-        set(value) {
-            if (value != UNDEFINED_OFFSET) {
-                field = value
-            }
-        }
-
     val startLine: Int
         get() = file.fileEntry.line(startOffset)
 
