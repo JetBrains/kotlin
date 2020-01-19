@@ -1,6 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <depends>com.intellij.modules.lang</depends>
-  <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>com.intellij.gradle</depends>
 
   <xi:include href="/META-INF/KotlinPlugin.xml" xpointer="xpointer(/idea-plugin/*)">
     <xi:fallback/>

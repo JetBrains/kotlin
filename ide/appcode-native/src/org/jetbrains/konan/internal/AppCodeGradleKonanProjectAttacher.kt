@@ -19,7 +19,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.plugins.gradle.service.project.GradleNotification
-import org.jetbrains.plugins.gradle.service.project.open.importProject
+import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -54,7 +54,7 @@ class AppCodeGradleKonanProjectAttacher(
                 notification.addAction(NotificationAction.createSimple(
                         GradleBundle.message("gradle.notifications.unlinked.project.found.import")) {
                     notification.expire()
-                    importProject(it.parentFile.absolutePath, project)
+                    linkAndRefreshGradleProject(it.parentFile.absolutePath, project)
                 })
 
                 notification.notify(project)

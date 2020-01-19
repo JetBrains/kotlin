@@ -19,49 +19,42 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.debugger.CidrDebugProfile
 import org.jdom.Element
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import javax.swing.Icon
 
 const val DEFAULT_PASS_PARENT_ENVS = true
 
-class IdeaKonanRunConfiguration(
+open class IdeaKonanRunConfiguration(
     project: Project,
     factory: ConfigurationFactory,
     var executable: KonanExecutable?
-) : LocatableConfigurationBase<Any>(project, factory, executable?.base?.name), CommonProgramRunConfigurationParameters, CidrDebugProfile {
+) : LocatableConfigurationBase<Any>(project, factory, executable?.base?.name),
+    CommonProgramRunConfigurationParameters,
+    CidrDebugProfile {
 
     var selectedTarget: IdeaKonanExecutionTarget? = null
+    var debugPort: Int? = null // affects getState
 
-    private var parameters: String? = null
-    private var directory: String? = null
-    private var envs: MutableMap<String, String>? = null
-    private var passPaternalEnvs: Boolean = DEFAULT_PASS_PARENT_ENVS
-
-    fun copyFrom(rhs: IdeaKonanRunConfiguration) {
-        executable = rhs.executable
-        selectedTarget = rhs.selectedTarget
-        parameters = rhs.parameters
-        directory = rhs.directory
-        envs = rhs.envs
-        passPaternalEnvs = rhs.passPaternalEnvs
-    }
-
+    protected var directory: String? = null
+    protected var parameters: String? = null
+    protected var environmentVariables: MutableMap<String, String>? = null
+    protected var passPaternalEnvs: Boolean = DEFAULT_PASS_PARENT_ENVS
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         return IdeaKonanRunConfigurationSettingsEditor(project)
     }
 
     override fun getWorkingDirectory(): String? = directory
-
     override fun setWorkingDirectory(newDirectory: String?) {
         directory = newDirectory
     }
 
     override fun getEnvs(): MutableMap<String, String> {
-        if (envs == null) envs = LinkedHashMap()
-        return envs!!
+        if (environmentVariables == null) environmentVariables = LinkedHashMap()
+        return environmentVariables!!
     }
 
     override fun setEnvs(newEnvs: MutableMap<String, String>) {
-        envs = newEnvs
+        environmentVariables = newEnvs
     }
 
     override fun isPassParentEnvs(): Boolean = passPaternalEnvs
@@ -75,18 +68,39 @@ class IdeaKonanRunConfiguration(
     }
 
     override fun getProgramParameters(): String? = parameters
+    override fun getIcon(): Icon? = factory?.icon
+
+    fun copyFrom(rhs: IdeaKonanRunConfiguration) {
+        executable = rhs.executable
+        selectedTarget = rhs.selectedTarget
+        parameters = rhs.parameters
+        directory = rhs.directory
+        environmentVariables = rhs.environmentVariables
+        passPaternalEnvs = rhs.passPaternalEnvs
+    }
 
     override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
-        val runFile = selectedTarget?.productFile ?: return null
-        return KonanCommandLineState(env, this, runFile)
+        if (debugPort != null) {
+            val dummyConfiguration = GradleRunConfiguration(project, IdeaKonanRunConfigurationType.instance.factory, "")
+            dummyConfiguration.settings.externalProjectPath = ""
+            return KonanExternalSystemState(this, project, env, dummyConfiguration)
+        }
+
+        val execFile = selectedTarget?.productFile ?: return null
+        return KonanCommandLineState(env, this, execFile)
     }
 
     override fun canRunOn(target: ExecutionTarget): Boolean {
-        if (HostManager.host != executable?.base?.targetType) return false
-        return target is IdeaKonanExecutionTarget && (executable?.executionTargets?.contains(target) ?: false)
-    }
+        if (executable == null || HostManager.host != executable?.base?.targetType) {
+            return false
+        }
 
-    override fun getIcon(): Icon? = factory?.icon
+        return when {
+            debugPort != null -> executable!!.executionTargets.any { it.isDebug }
+            target is IdeaKonanExecutionTarget -> executable!!.executionTargets.contains(target)
+            else -> false
+        }
+    }
 
     override fun readExternal(element: Element) {
         super.readExternal(element)
@@ -97,8 +111,8 @@ class IdeaKonanRunConfiguration(
         parameters = element.getAttributeValue(XmlRunConfiguration.attributeParameters)
         directory = element.getAttributeValue(XmlRunConfiguration.attributeDirectory)
         passPaternalEnvs = element.getAttributeValue(XmlRunConfiguration.attributePassParent)?.toBoolean() ?: DEFAULT_PASS_PARENT_ENVS
-        envs = LinkedHashMap()
-        EnvironmentVariablesComponent.readExternal(element, envs)
+        environmentVariables = LinkedHashMap()
+        EnvironmentVariablesComponent.readExternal(element, environmentVariables)
     }
 
     override fun writeExternal(element: Element) {
@@ -113,6 +127,6 @@ class IdeaKonanRunConfiguration(
             element.setAttribute(XmlRunConfiguration.attributePassParent, passPaternalEnvs.toString())
         }
 
-        envs?.let { EnvironmentVariablesComponent.writeExternal(element, it) }
+        environmentVariables?.let { EnvironmentVariablesComponent.writeExternal(element, it) }
     }
 }

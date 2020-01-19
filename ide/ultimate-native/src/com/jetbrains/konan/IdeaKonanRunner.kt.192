@@ -48,26 +48,25 @@ class IdeaKonanRunner : DefaultProgramRunner() {
     }
 
     @Throws(ExecutionException::class)
-    override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
-        if (DefaultDebugExecutor.EXECUTOR_ID == environment.executor.id) {
-            if (state !is KonanCommandLineState && state !is KonanExternalSystemState) {
-                throw ExecutionException("Unsupported RunProfileState: " + state.javaClass)
+    fun startDebugSession(
+        state: KonanCommandLineState,
+        env: ExecutionEnvironment
+    ): XDebugSession {
+        val session = XDebuggerManager.getInstance(env.project).startSession(env, object : XDebugProcessConfiguratorStarter() {
+            override fun configure(session: XDebugSessionData?) {}
+
+            @Throws(ExecutionException::class)
+            override fun start(session: XDebugSession): XDebugProcess {
+                return state.startDebugProcess(session)
             }
+        })
+        configureDebugSessionUI(session)
+        return session
+    }
 
-            val session =
-                XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessConfiguratorStarter() {
-                    override fun configure(session: XDebugSessionData?) {}
-
-                    @Throws(ExecutionException::class)
-                    override fun start(session: XDebugSession): XDebugProcess {
-                        if (state is KonanCommandLineState) return state.startDebugProcess(session)
-                        return (state as KonanExternalSystemState).startDebugProcess(session, environment)
-                    }
-                })
-
-            configureDebugSessionUI(session)
-            return session.runContentDescriptor
-        }
+    override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
+        if (DefaultDebugExecutor.EXECUTOR_ID == environment.executor.id)
+            return startDebugSession(state as KonanCommandLineState, environment).runContentDescriptor
 
         return super.doExecute(state, environment)
     }

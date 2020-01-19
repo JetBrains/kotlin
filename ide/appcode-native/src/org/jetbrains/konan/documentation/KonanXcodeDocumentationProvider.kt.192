@@ -291,7 +291,7 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
 
   // TODO: move this builder to AppCodeDocumentationProvider after K/N to master branch merge
   private class InfoBuilder private constructor(private var myDocElementName: String) {
-    private val myDocTokenTypes: MutableSet<CocoaDocumentationManagerImpl.DocTokenType>
+    private val myDocTokenTypes: Set<CocoaDocumentationManagerImpl.DocTokenType>
     private val myContainers: MutableSet<String?>
 
     init {
