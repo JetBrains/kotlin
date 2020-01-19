@@ -6,20 +6,24 @@ import org.jetbrains.kotlin.tools.projectWizard.core.checker
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RootFileModuleStructureIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.ModulesDependencyMavenIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.PluginRepositoryMavenIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 
 class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
     override val title: String = "Maven"
 
+    private val isMaven = checker {
+        rule(BuildSystemPlugin::type.reference shouldBeEqual BuildSystemType.Maven)
+    }
+
     val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         runBefore(BuildSystemPlugin::createModules)
-        activityChecker = checker {
-            rule(BuildSystemPlugin::type.reference shouldBeEqual BuildSystemType.Maven)
-        }
+        activityChecker = isMaven
         withAction {
             BuildSystemPlugin::buildFiles.update { buildFiles ->
                 if (buildFiles.size == 1) return@update buildFiles.asSuccess()
@@ -34,6 +38,19 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
                         else -> buildFile
                     }
                 }.asSuccess()
+            }
+        }
+    }
+
+    val addBuildSystemPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+        runAfter(KotlinPlugin::createPluginRepositories)
+        runBefore(BuildSystemPlugin::createModules)
+        activityChecker = isMaven
+
+        withAction {
+            val repositories = BuildSystemPlugin::pluginRepositoreis.propertyValue
+            updateBuildFiles { buildFile ->
+                buildFile.withIrs(repositories.map(::PluginRepositoryMavenIR)).asSuccess()
             }
         }
     }

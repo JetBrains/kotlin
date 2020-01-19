@@ -10,14 +10,16 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.event.ItemEvent
+import javax.swing.DefaultComboBoxModel
 import javax.swing.Icon
+import javax.swing.JComboBox
 import javax.swing.JList
 
 class DropDownComponent<T : DisplayableSettingItem>(
     private val valuesReadingContext: ValuesReadingContext,
     initialValues: List<T> = emptyList(),
     labelText: String? = null,
-    filter: (T) -> Boolean = { true },
+    private val filter: (T) -> Boolean = { true },
     private val validator: SettingValidator<T> = settingValidator { ValidationResult.OK },
     private val iconProvider: (T) -> Icon? = { null },
     onValueUpdate: (T) -> Unit = {}
@@ -65,11 +67,16 @@ class DropDownComponent<T : DisplayableSettingItem>(
         }
     }
 
+    fun setValues(newValues: List<T>) {
+        @Suppress("UNCHECKED_CAST")
+        uiComponent.model = DefaultComboBoxModel(newValues.filter(filter).toTypedArray<DisplayableSettingItem>() as Array<T>)
+    }
+
     override fun updateUiValue(newValue: T) = safeUpdateUi {
         uiComponent.selectedItem = newValue
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun getUiValue(): T = uiComponent.selectedItem as T
+    override fun getUiValue(): T? = uiComponent.selectedItem as? T
 }
 

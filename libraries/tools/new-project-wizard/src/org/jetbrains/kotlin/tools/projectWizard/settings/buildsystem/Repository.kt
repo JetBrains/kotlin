@@ -39,4 +39,6 @@ data class BintrayRepository(val repository: String) : CustomMavenRepository {
 
 object Repositories {
     val KTOR_BINTRAY = BintrayRepository("kotlin/ktor")
+    val KOTLIN_EAP_BINTRAY = BintrayRepository("kotlin/kotlin-eap")
+    val KOTLIN_DEV_BINTRAY = BintrayRepository("kotlin/kotlin-dev")
 }

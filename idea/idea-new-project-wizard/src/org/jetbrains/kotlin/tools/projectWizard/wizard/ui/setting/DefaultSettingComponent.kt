@@ -91,7 +91,7 @@ class VersionSettingComponent(
 
 class DropdownSettingComponent(
     reference: SettingReference<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>,
-    private val valuesReadingContext: ValuesReadingContext
+    valuesReadingContext: ValuesReadingContext
 ) : UIComponentDelegatingSettingComponent<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>(
     reference,
     valuesReadingContext

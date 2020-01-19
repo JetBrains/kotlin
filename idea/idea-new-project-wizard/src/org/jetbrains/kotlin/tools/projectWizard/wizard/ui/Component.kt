@@ -42,5 +42,9 @@ abstract class DynamicComponent(private val valuesReadingContext: ValuesReadingC
             if (isInitialized) onValueUpdated(reference)
         }
     }
+
+    protected fun <T> read(reader: ValuesReadingContext.() -> T): T =
+        reader(valuesReadingContext)
+
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}
 }

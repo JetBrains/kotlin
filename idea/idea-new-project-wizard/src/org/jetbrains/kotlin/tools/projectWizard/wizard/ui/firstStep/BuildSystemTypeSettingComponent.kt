@@ -20,7 +20,7 @@ import java.awt.BorderLayout
 
 
 class BuildSystemTypeSettingComponent(
-    private val valuesReadingContext: ValuesReadingContext
+    valuesReadingContext: ValuesReadingContext
 ) : UIComponentDelegatingSettingComponent<BuildSystemType, DropDownSettingType<BuildSystemType>>(
     BuildSystemPlugin::type.reference,
     valuesReadingContext

@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 
 abstract class SettingComponent<V : Any, T: SettingType<V>>(
     val reference: SettingReference<V, T>,
-    private val valuesReadingContext: ValuesReadingContext
+    val valuesReadingContext: ValuesReadingContext
 ) : DynamicComponent(valuesReadingContext), Displayable {
     var value: V?
         get() = reference.value

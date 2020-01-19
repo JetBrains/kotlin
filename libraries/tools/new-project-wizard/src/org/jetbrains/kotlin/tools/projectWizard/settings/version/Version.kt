@@ -1,19 +1,35 @@
 package org.jetbrains.kotlin.tools.projectWizard.settings.version
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.maven.ArtifactVersion
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.maven.DefaultArtifactVersion
 
-class Version private constructor(internal val mavenVersion: ArtifactVersion) : Comparable<Version> {
+class Version private constructor(internal val mavenVersion: ArtifactVersion) : Comparable<Version>, DisplayableSettingItem {
     override fun compareTo(other: Version): Int = mavenVersion.compareTo(other.mavenVersion)
     override fun equals(other: Any?): Boolean = mavenVersion == other.safeAs<Version>()?.mavenVersion
     override fun hashCode(): Int = mavenVersion.hashCode()
     override fun toString(): String = mavenVersion.toString()
 
+    val major
+        get() = mavenVersion.majorVersion
+    val minor
+        get() = mavenVersion.minorVersion
+    val incremental
+        get() = mavenVersion.incrementalVersion
+
+    override val text: String
+        get() = toString()
+    override val greyText: String?
+        get() = null
+
     companion object {
         fun fromString(string: String) = Version(
             DefaultArtifactVersion(string)
         )
+
+        fun fromComponents(major: Int, minor: Int, incremental: Int) =
+            fromString("$major.$minor.$incremental")
 
         val parser: Parser<Version> = valueParser { value, path ->
             val (stringVersion) = value.parseAs<String>(path)
