@@ -126,6 +126,7 @@ val stripMetadata by tasks.registering {
     val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
     inputs.file(inputJar)
     outputs.file(outputJar)
+    outputs.cacheIf { true }
     doLast {
         stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar.get(), outputJar)
     }
