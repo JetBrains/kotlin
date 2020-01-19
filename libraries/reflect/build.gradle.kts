@@ -128,7 +128,13 @@ val stripMetadata by tasks.registering {
     outputs.file(outputJar)
     outputs.cacheIf { true }
     doLast {
-        stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar.get(), outputJar)
+        stripMetadata(
+            logger = logger,
+            classNamePattern = "kotlin/reflect/jvm/internal/impl/.*",
+            inFile = inputJar.get(),
+            outFile = outputJar,
+            preserveFileTimestamps = false
+        )
     }
 }
 
