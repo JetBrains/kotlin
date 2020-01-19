@@ -38,10 +38,8 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
   @NotNull
@@ -110,8 +108,8 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
   /**
    * oldSuperClass and newSuperClass can be interfaces or classes in any combination
    * <p/>
-   * 1. not checks that oldSuperClass is really super of aClass
-   * 2. not checks that newSuperClass not exists in currently existed supers
+   * 1. does not check that oldSuperClass is really super of aClass
+   * 2. does not check that newSuperClass not exists in currently existed supers
    */
   private static void changeSuperClass(@NotNull final PsiClass aClass,
                                        @NotNull final PsiClass oldSuperClass,
@@ -119,12 +117,12 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
     PsiMethod[] ownMethods = aClass.getMethods();
     // first is own method, second is parent
     List<Pair<PsiMethod, Set<PsiMethod>>> oldOverridenMethods =
-      Stream.of(ownMethods).map(m -> {
+      ContainerUtil.mapNotNull(ownMethods, m -> {
         if (m.isConstructor()) return null;
         PsiMethod[] supers = m.findSuperMethods(oldSuperClass);
         if (supers.length == 0) return null;
         return Pair.create(m, ContainerUtil.set(supers));
-      }).filter(Objects::nonNull).collect(Collectors.toList());
+      });
 
     JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(aClass.getProject());
     PsiElementFactory factory = psiFacade.getElementFactory();
@@ -132,7 +130,8 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
       PsiElement ref;
       if (aClass instanceof PsiAnonymousClass) {
         ref = ((PsiAnonymousClass)aClass).getBaseClassReference().replace(factory.createClassReferenceElement(newSuperClass));
-      } else {
+      }
+      else {
         PsiReferenceList extendsList = ObjectUtils.notNull(aClass.getExtendsList());
         PsiJavaCodeReferenceElement[] refElements =
           ArrayUtil.mergeArrays(getReferences(extendsList), getReferences(aClass.getImplementsList()));
