@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
+import java.nio.file.Path
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val type by enumSetting<BuildSystemType>("Build System", GenerationPhase.FIRST_STEP) {
@@ -36,7 +38,9 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
 
     val buildSystemData by property<List<BuildSystemData>>(emptyList())
 
-    val buildFiles by property<List<BuildFileIR>>(emptyList())
+    val buildFiles by listProperty<BuildFileIR>()
+
+    val pluginRepositoreis by listProperty<Repository>()
 
     val takeRepositoriesFromDependencies by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(BuildSystemPlugin::createModules)
@@ -139,6 +143,6 @@ val TaskRunningContext.allModulesPaths
     }
 
 
-val TaskRunningContext.buildSystemType: BuildSystemType
+val ValuesReadingContext.buildSystemType: BuildSystemType
     get() = BuildSystemPlugin::type.reference.settingValue
 

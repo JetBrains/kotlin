@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
@@ -28,7 +27,6 @@ class BuildSystemSubStep(valuesReadingContext: ValuesReadingContext) :
     private val buildSystemSetting = BuildSystemTypeSettingComponent(valuesReadingContext).asSubComponent()
 
     override fun buildContent(): JComponent = panel {
-        bordered(needBottomEmptyBorder = false)
         add(buildSystemSetting.component, BorderLayout.CENTER)
     }
 }

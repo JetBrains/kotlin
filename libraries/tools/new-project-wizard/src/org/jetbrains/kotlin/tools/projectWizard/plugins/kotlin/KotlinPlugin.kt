@@ -3,10 +3,14 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderServiceImpl
+import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.pomIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
@@ -16,8 +20,15 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 
 class KotlinPlugin(context: Context) : Plugin(context) {
-    val version by versionSetting("Kotlin Version", GenerationPhase.FIRST_STEP) {
-        defaultValue = DEFAULT_VERSION
+    val version by property(KotlinVersionProviderServiceImpl.DEFAULT)
+
+    val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE) {
+        title = "Downloading list of Kotlin versions"
+
+        withAction {
+            val version = service<KotlinVersionProviderService>()!!.getKotlinVersion()
+            KotlinPlugin::version.update { version.asSuccess() }
+        }
     }
 
     val projectKind by enumSetting<ProjectKind>("Project Kind", GenerationPhase.FIRST_STEP)
@@ -59,6 +70,17 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         }
     }
 
+    val createPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+        runBefore(BuildSystemPlugin::createModules)
+        withAction {
+            val pluginRepository = KotlinPlugin::version.propertyValue.kotlinVersionKind.repository ?: return@withAction UNIT_SUCCESS
+            BuildSystemPlugin::pluginRepositoreis.addValues(pluginRepository) andThen
+                    updateBuildFiles { buildFile ->
+                        buildFile.withIrs(RepositoryIR(pluginRepository)).asSuccess()
+                    }
+        }
+    }
+
     val createSourcesetDirectories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         withAction {
@@ -83,7 +105,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
                     modules,
                     projectPath,
                     StructurePlugin::name.settingValue,
-                    KotlinPlugin::version.settingValue,
+                    KotlinPlugin::version.propertyValue,
                     buildSystemType,
                     pomIR(),
                     this

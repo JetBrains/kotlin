@@ -8,8 +8,8 @@ abstract class BuildFilePrinter {
     private val builder = StringBuilder()
     protected var currentIndent = 0
 
-    fun nl() {
-        +"\n"
+    fun nl(lineBreaks: Int = 1) {
+        +"\n".repeat(lineBreaks)
     }
 
     fun nlIndented() {

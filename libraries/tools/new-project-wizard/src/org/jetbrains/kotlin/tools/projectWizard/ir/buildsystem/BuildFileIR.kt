@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.PluginRepositoryMavenIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
@@ -12,13 +13,15 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import java.nio.file.Path
 
+interface FileIR : BuildSystemIR, IrsOwner
+
 data class BuildFileIR(
     val name: String,
     val directoryPath: Path,
     val modules: ModulesStructureIR,
     val pom: PomIR,
     override val irs: List<BuildSystemIR>
-) : BuildSystemIR, IrsOwner {
+) : FileIR {
     override fun withReplacedIrs(irs: List<BuildSystemIR>): BuildFileIR = copy(irs = irs)
 
     @Suppress("UNCHECKED_CAST")
@@ -27,7 +30,14 @@ data class BuildFileIR(
 
     private fun distinctRepositories(): List<RepositoryIR> =
         irsOfType<RepositoryIR>()
-            .distinctBy { it.repository }
+            .distinctBy(RepositoryIR::repository)
+            .sortedBy { repositoryIR ->
+                if (repositoryIR.repository is DefaultRepository) 0 else 1
+            }
+
+    private fun distinctPluginRepositories(): List<PluginRepositoryMavenIR> =
+        irsOfType<PluginRepositoryMavenIR>()
+            .distinctBy(PluginRepositoryMavenIR::repository)
             .sortedBy { repositoryIR ->
                 if (repositoryIR.repository is DefaultRepository) 0 else 1
             }
@@ -78,6 +88,13 @@ data class BuildFileIR(
             distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
                 nl()
                 node("repositories") {
+                    repositories.listNl()
+                }
+            }
+
+            distinctPluginRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
+                nl()
+                node("pluginRepositories") {
                     repositories.listNl()
                 }
             }

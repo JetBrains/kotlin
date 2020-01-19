@@ -28,7 +28,7 @@ abstract class UIComponent<V : Any>(
     protected abstract val uiComponent: JComponent
 
     abstract fun updateUiValue(newValue: V)
-    abstract fun getUiValue(): V
+    abstract fun getUiValue(): V?
 
     private var allowEventFiring = true
 
@@ -41,7 +41,7 @@ abstract class UIComponent<V : Any>(
 
     override fun onInit() {
         super.onInit()
-        validate(getUiValue())
+        getUiValue()?.let(::validate)
     }
 
     final override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
@@ -65,5 +65,5 @@ abstract class UIComponent<V : Any>(
     }
 }
 
-fun <V: Any> UIComponent<V>.valueForSetting(setting: Setting<V, SettingType<V>>): V =
-    setting.defaultValue ?:  getUiValue()
+fun <V : Any> UIComponent<V>.valueForSetting(setting: Setting<V, SettingType<V>>): V? =
+    setting.defaultValue ?: getUiValue()

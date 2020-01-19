@@ -86,6 +86,8 @@ class ListBuilder<T> {
         irs += this
     }
 
+    fun isNotEmpty(): Boolean = irs.isNotEmpty()
+
     fun build() = irs.toList()
 }
 

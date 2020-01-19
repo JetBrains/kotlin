@@ -44,7 +44,7 @@ abstract class ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings() {
                     dependencyName,
                     isInMppModule = module.kind
                         .let { it == ModuleKind.multiplatform || it == ModuleKind.target },
-                    version = KotlinPlugin::version.settingValue,
+                    version = KotlinPlugin::version.propertyValue,
                     dependencyType = DependencyType.TEST
                 )
             }
