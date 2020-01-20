@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
-    FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
           kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? [var]' field='FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <uninitialized parent>>, kotlin.String?> origin=null
@@ -74,11 +74,11 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalText> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
             t: CONST Null type=kotlin.Nothing? value=null
-            p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' getter='public final fun <get-additionalText> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int [delegated,val]' field='FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' getter='public final fun <get-additionalText> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
   PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
-    FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
           kmember: PROPERTY_REFERENCE 'public final value: T of <uninitialized parent> [var]' field=null getter='public final fun <get-value> (): T of <uninitialized parent> declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <uninitialized parent>): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <uninitialized parent>>, T of <uninitialized parent>> origin=null
@@ -87,9 +87,9 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalValue> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=GET_PROPERTY
             t: CONST Null type=kotlin.Nothing? value=null
-            p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' getter='public final fun <get-additionalValue> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int [delegated,val]' field='FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' getter='public final fun <get-additionalValue> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
   CLASS CLASS name:DVal modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DVal
     CONSTRUCTOR visibility:public <> (kmember:kotlin.Any) returnType:<root>.DVal [primary]

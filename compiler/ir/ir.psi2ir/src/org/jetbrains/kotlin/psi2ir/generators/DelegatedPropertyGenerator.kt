@@ -125,7 +125,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
 
         val startOffset = ktDelegate.startOffsetSkippingComments
         val endOffset = ktDelegate.endOffset
-        val origin = IrDeclarationOrigin.DELEGATE
+        val origin = IrDeclarationOrigin.PROPERTY_DELEGATE
         val type = delegateDescriptor.type.toIrType()
         return context.symbolTable.declareField(
             startOffset, endOffset, origin, delegateDescriptor, type
@@ -287,7 +287,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val delegateDescriptor = createLocalPropertyDelegatedDescriptor(variableDescriptor, delegateType, kPropertyType)
 
         return context.symbolTable.declareVariable(
-            ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
+            ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
             delegateDescriptor, delegateDescriptor.type.toIrType()
         ).also { irVariable ->
             irVariable.initializer = generateInitializerForLocalDelegatedPropertyDelegate(

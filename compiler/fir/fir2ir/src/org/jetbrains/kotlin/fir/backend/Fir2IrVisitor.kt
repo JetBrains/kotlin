@@ -550,7 +550,7 @@ class Fir2IrVisitor(
                 )
             } else if (delegate != null) {
                 backingField = createBackingField(
-                    property, IrDeclarationOrigin.DELEGATE, descriptor,
+                    property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
                     Visibilities.PRIVATE, Name.identifier("${property.name}\$delegate"), true, delegate
                 )
             }

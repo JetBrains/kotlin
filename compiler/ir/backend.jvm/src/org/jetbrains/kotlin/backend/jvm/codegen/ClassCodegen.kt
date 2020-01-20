@@ -320,7 +320,7 @@ open class ClassCodegen protected constructor(
 
         val fieldType = typeMapper.mapType(field)
         val fieldSignature =
-            if (field.origin == IrDeclarationOrigin.DELEGATE) null
+            if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
         val fv = visitor.newField(

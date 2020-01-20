@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/delegatedProperties.kt
   PROPERTY name:test1 visibility:public modality:FINAL [delegated,val]
-    FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: kotlin.Int
@@ -14,9 +14,9 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
             <T>: kotlin.Int
-            $receiver: GET_FIELD 'FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final test1: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test1> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            property: PROPERTY_REFERENCE 'public final test1: kotlin.Int [delegated,val]' field='FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test1> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> (map:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>) returnType:<root>.C [primary]
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-map>' type=<root>.C origin=null
     PROPERTY name:test2 visibility:public modality:FINAL [delegated,val]
-      FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]
+      FIELD PROPERTY_DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]
         EXPRESSION_BODY
           CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int
@@ -52,11 +52,11 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>.C'
             CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
               <T>: kotlin.Int
-              $receiver: GET_FIELD 'FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
+              $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
               thisRef: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
-              property: PROPERTY_REFERENCE 'public final test2: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' getter='public final fun <get-test2> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty<*> origin=null
+              property: PROPERTY_REFERENCE 'public final test2: kotlin.Int [delegated,val]' field='FIELD PROPERTY_DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' getter='public final fun <get-test2> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty<*> origin=null
     PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
-      FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]
+      FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any> declared in <root>.C.<init>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:<root>.C) returnType:IrErrorType
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>.C'
             ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
               GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
-              PROPERTY_REFERENCE 'public final test3: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' getter='public final fun <get-test3> (): IrErrorType declared in <root>.C' setter='public final fun <set-test3> (<set-?>: IrErrorType): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KProperty<*> origin=null
+              PROPERTY_REFERENCE 'public final test3: IrErrorType [delegated,var]' field='FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' getter='public final fun <get-test3> (): IrErrorType declared in <root>.C' setter='public final fun <set-test3> (<set-?>: IrErrorType): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KProperty<*> origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:IrErrorType) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         BLOCK_BODY
           ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
             GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
-            PROPERTY_REFERENCE 'public final test3: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' getter='public final fun <get-test3> (): IrErrorType declared in <root>.C' setter='public final fun <set-test3> (<set-?>: IrErrorType): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KProperty<*> origin=null
+            PROPERTY_REFERENCE 'public final test3: IrErrorType [delegated,var]' field='FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' getter='public final fun <get-test3> (): IrErrorType declared in <root>.C' setter='public final fun <set-test3> (<set-?>: IrErrorType): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KProperty<*> origin=null
             GET_VAR '<set-?>: IrErrorType declared in <root>.C.<set-test3>' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
-    FIELD DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> [inline] declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Any> origin=null
           <K>: kotlin.String
@@ -101,12 +101,12 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): IrErrorType declared in <root>'
           ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
             CONST Null type=kotlin.Nothing? value=null
-            PROPERTY_REFERENCE 'public final test4: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]' getter='public final fun <get-test4> (): IrErrorType declared in <root>' setter='public final fun <set-test4> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
+            PROPERTY_REFERENCE 'public final test4: IrErrorType [delegated,var]' field='FIELD PROPERTY_DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]' getter='public final fun <get-test4> (): IrErrorType declared in <root>' setter='public final fun <set-test4> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL <> (<set-?>:IrErrorType) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
           CONST Null type=kotlin.Nothing? value=null
-          PROPERTY_REFERENCE 'public final test4: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]' getter='public final fun <get-test4> (): IrErrorType declared in <root>' setter='public final fun <set-test4> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
+          PROPERTY_REFERENCE 'public final test4: IrErrorType [delegated,var]' field='FIELD PROPERTY_DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]' getter='public final fun <get-test4> (): IrErrorType declared in <root>' setter='public final fun <set-test4> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
           GET_VAR '<set-?>: IrErrorType declared in <root>.<set-test4>' type=IrErrorType origin=null
