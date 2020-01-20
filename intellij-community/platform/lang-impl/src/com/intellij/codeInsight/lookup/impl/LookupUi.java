@@ -306,7 +306,7 @@ class LookupUi {
 
   private class HintAction extends DumbAwareAction {
     private HintAction() {
-      super(Presentation.NULL_STRING, Presentation.NULL_STRING, AllIcons.Actions.IntentionBulb);
+      super(AllIcons.Actions.IntentionBulb);
 
       AnAction showIntentionAction = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
       if (showIntentionAction != null) {
