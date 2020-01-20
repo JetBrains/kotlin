@@ -50,6 +50,7 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.pico.CachingConstructorInjectionComponentAdapter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -280,22 +281,36 @@ public final class FindUsagesManager {
     return indicator;
   }
 
+  private static void startProcessUsages(@NotNull ProgressIndicator indicator,
+                                         @NotNull FindUsagesHandler handler,
+                                         PsiElement @NotNull [] primaryElements,
+                                         PsiElement @NotNull [] secondaryElements,
+                                         @NotNull Processor<? super Usage> processor,
+                                         @NotNull FindUsagesOptions findUsagesOptions,
+                                         @NotNull Runnable onComplete) {
+    startProcessUsages(indicator, handler.getProject(), createUsageHandler(handler, primaryElements, secondaryElements, findUsagesOptions), processor, onComplete);
+  }
+
+  @ApiStatus.Internal
+  public static UsageSearcher createUsageHandler(@NotNull FindUsagesHandler handler,
+                                                  PsiElement @NotNull [] primaryElements,
+                                                  PsiElement @NotNull [] secondaryElements, @NotNull FindUsagesOptions findUsagesOptions) {
+    return ReadAction.compute(() -> {
+      PsiElement2UsageTargetAdapter[] primaryTargets = PsiElement2UsageTargetAdapter.convert(primaryElements);
+      PsiElement2UsageTargetAdapter[] secondaryTargets = PsiElement2UsageTargetAdapter.convert(secondaryElements);
+      return createUsageSearcher(primaryTargets, secondaryTargets, handler, findUsagesOptions, null);
+    });
+  }
+
   public static void startProcessUsages(@NotNull ProgressIndicator indicator,
-                                        @NotNull FindUsagesHandler handler,
-                                        PsiElement @NotNull [] primaryElements,
-                                        PsiElement @NotNull [] secondaryElements,
+                                        @NotNull final Project project,
+                                        @NotNull UsageSearcher usageSearcher,
                                         @NotNull Processor<? super Usage> processor,
-                                        @NotNull FindUsagesOptions findUsagesOptions,
                                         @NotNull Runnable onComplete) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    Task.Backgroundable task = new Task.Backgroundable(handler.getProject(), "Finding Usages") {
+    Task.Backgroundable task = new Task.Backgroundable(project, "Finding Usages") {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        UsageSearcher usageSearcher = ReadAction.compute(()-> {
-          PsiElement2UsageTargetAdapter[] primaryTargets = PsiElement2UsageTargetAdapter.convert(primaryElements);
-          PsiElement2UsageTargetAdapter[] secondaryTargets = PsiElement2UsageTargetAdapter.convert(secondaryElements);
-          return createUsageSearcher(primaryTargets, secondaryTargets, handler, findUsagesOptions, null);
-        });
         usageSearcher.generate(processor);
       }
     };
@@ -330,7 +345,7 @@ public final class FindUsagesManager {
    * @throws PsiInvalidElementAccessException when the searcher can't be created (i.e. because element was invalidated)
    */
   @NotNull
-  private static UsageSearcher createUsageSearcher(@NotNull PsiElement2UsageTargetAdapter[] primaryTargets,
+  public static UsageSearcher createUsageSearcher(@NotNull PsiElement2UsageTargetAdapter[] primaryTargets,
                                                    @NotNull PsiElement2UsageTargetAdapter[] secondaryTargets,
                                                    @NotNull FindUsagesHandler handler,
                                                    @NotNull FindUsagesOptions options,

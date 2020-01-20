@@ -1,24 +1,19 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.actions;
 
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.ide.util.gotoByName.ModelDiff;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ui.popup.util.PopupUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.ScrollingUtil;
 import com.intellij.ui.SpeedSearchBase;
 import com.intellij.ui.SpeedSearchComparator;
 import com.intellij.ui.TableUtil;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.HintUpdateSupply;
 import com.intellij.ui.table.JBTable;
 import com.intellij.usageView.UsageInfo;
@@ -96,13 +91,7 @@ class ShowUsagesTable extends JBTable implements DataProvider {
   }
 
   @NotNull
-  Runnable prepareTable(final Editor editor,
-                        @NotNull RelativePoint popupPosition,
-                        @NotNull FindUsagesHandler handler,
-                        final int maxUsages,
-                        @NotNull final FindUsagesOptions options,
-                        final boolean previewMode,
-                        @NotNull ShowUsagesAction action) {
+  Runnable prepareTable(final boolean previewMode, @NotNull Runnable appendMoreUsageRunnable, @NotNull Runnable showInMaximalScopeRunnable) {
     SpeedSearchBase<JTable> speedSearch = new MySpeedSearch(this);
     speedSearch.setComparator(new SpeedSearchComparator(false));
 
@@ -149,13 +138,12 @@ class ShowUsagesTable extends JBTable implements DataProvider {
 
     final Runnable itemChosenCallback = () -> {
       if (moreUsagesSelected.get()) {
-        action.appendMoreUsages(editor, popupPosition, handler, maxUsages, options);
+        appendMoreUsageRunnable.run();
         return;
       }
 
       if (outsideScopeUsagesSelected.get()) {
-        options.searchScope = GlobalSearchScope.projectScope(handler.getProject());
-        action.showElementUsages(editor, popupPosition, handler, maxUsages, options, action.myWidth);
+        showInMaximalScopeRunnable.run();
         return;
       }
 
