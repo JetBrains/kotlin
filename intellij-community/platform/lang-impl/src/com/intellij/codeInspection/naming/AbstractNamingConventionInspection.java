@@ -53,17 +53,30 @@ public abstract class AbstractNamingConventionInspection<T extends PsiNameIdenti
     for (NamingConvention<T> convention : extensions) {
       registerConvention(convention);
     }
-    initDisabledState();
     myDefaultConventionShortName = defaultConventionShortName;
   }
 
-  private void registerConvention(NamingConvention<T> convention) {
+  protected void registerConvention(NamingConvention<T> convention) {
     String shortName = convention.getShortName();
     NamingConvention<T> oldConvention = myNamingConventions.put(shortName, convention);
     if (oldConvention != null) {
       LOG.error("Duplicated short names: " + shortName + " first: " + oldConvention + "; second: " + convention);
     }
     myNamingConventionBeans.put(shortName, convention.createDefaultBean());
+    if (!convention.isEnabledByDefault()) {
+      myDisabledShortNames.add(shortName);
+    }
+  }
+
+  protected void unregisterConvention(@NotNull NamingConvention<T> extension) {
+    String shortName = extension.getShortName();
+    Element element = writeConvention(shortName, extension);
+    if (element != null) {
+      myUnloadedElements.put(shortName, element);
+    }
+    myNamingConventionBeans.remove(shortName);
+    myNamingConventions.remove(shortName);
+    myDisabledShortNames.remove(shortName);
   }
 
   protected void registerConventionsListener(ExtensionPointName<NamingConvention<T>> epName) {
@@ -72,21 +85,11 @@ public abstract class AbstractNamingConventionInspection<T extends PsiNameIdenti
       @Override
       public void extensionAdded(@NotNull NamingConvention<T> extension, @NotNull PluginDescriptor pluginDescriptor) {
         registerConvention(extension);
-        if (!extension.isEnabledByDefault()) {
-          myDisabledShortNames.add(extension.getShortName());
-        }
       }
 
       @Override
       public void extensionRemoved(@NotNull NamingConvention<T> extension, @NotNull PluginDescriptor pluginDescriptor) {
-        String shortName = extension.getShortName();
-        Element element = writeConvention(shortName, extension);
-        if (element != null) {
-          myUnloadedElements.put(shortName, element);
-        }
-        myNamingConventionBeans.remove(shortName);
-        myNamingConventions.remove(shortName);
-        myDisabledShortNames.remove(shortName);
+        unregisterConvention(extension);
       }
     }, false, application);
   }
