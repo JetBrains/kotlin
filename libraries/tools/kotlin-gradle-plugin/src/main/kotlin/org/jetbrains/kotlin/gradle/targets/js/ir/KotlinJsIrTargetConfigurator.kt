@@ -21,6 +21,11 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
     override val testRunClass: Class<KotlinJsIrReportAggregatingTestRun> get() = KotlinJsIrReportAggregatingTestRun::class.java
 
+    @Deprecated("Remove when legacy js plugin will be removed")
+    fun configureTarget(target: KotlinJsIrTarget, mixedMode: Boolean) {
+        super<KotlinOnlyTargetConfigurator>.configureTarget(target) // TODO Add tests support
+    }
+
     override fun createTestRun(
         name: String,
         target: KotlinJsIrTarget

@@ -59,7 +59,5 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String, val irConfigu
                 sourceMapEmbedSources = null
             }
         }
-
-        irConfigurator?.configureCompilations(target.irTarget!!)
     }
 }

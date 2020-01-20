@@ -56,7 +56,10 @@ open class KotlinJsTargetPreset(
             }
         }
 
-        createKotlinTargetConfigurator().configureTarget(result)
+        createKotlinTargetConfigurator().apply {
+            irConfigurator?.configureTarget(result.irTarget!!, true)
+            configureTarget(result)
+        }
 
         return result
     }
@@ -89,7 +92,8 @@ class KotlinJsSingleTargetPreset(
 ) {
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null
+    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
+        irPreset?.let { "legacy${target.name}" }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
         kotlinPluginVersion,
