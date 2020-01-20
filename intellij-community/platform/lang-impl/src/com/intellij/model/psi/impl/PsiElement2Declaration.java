@@ -52,7 +52,7 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
     if (declaringElement instanceof PsiNameIdentifierOwner) {
       PsiElement identifyingElement = ((PsiNameIdentifierOwner)declaringElement).getIdentifyingElement();
       if (identifyingElement != null) {
-        return identifyingElement.getTextRangeInParent();
+        return identifyingElement.getTextRange().shiftLeft(declaringElement.getTextRange().getStartOffset());
       }
     }
     return rangeOf(declaringElement);
