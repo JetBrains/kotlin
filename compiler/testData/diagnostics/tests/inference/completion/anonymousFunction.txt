@@ -1,0 +1,8 @@
+package
+
+public fun </*0*/ I> id(/*0*/ arg: I): I
+public fun </*0*/ L> inferFromLambda(/*0*/ fn: () -> L): L
+public fun </*0*/ T> materialize(): T
+public fun take(/*0*/ fn: () -> kotlin.collections.List<kotlin.String>): kotlin.Unit
+public fun testFunctions(): kotlin.Unit
+public fun testNestedCalls(): kotlin.Unit

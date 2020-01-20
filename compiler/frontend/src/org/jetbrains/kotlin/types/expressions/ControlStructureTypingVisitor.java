@@ -56,6 +56,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingServices.getNewInferenceLambdaInfo;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
@@ -943,17 +944,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         LabelResolver.INSTANCE.resolveControlLabel(expression, context);
         return components.dataFlowAnalyzer.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression).
                 replaceJumpOutPossible(true);
-    }
-
-    @Nullable
-    private static KotlinResolutionCallbacksImpl.LambdaInfo getNewInferenceLambdaInfo(
-            @NotNull ExpressionTypingContext context,
-            @NotNull KtElement function
-    ) {
-        if (function instanceof KtFunction) {
-            return context.trace.get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, (KtFunction) function);
-        }
-        return null;
     }
 
     @NotNull
