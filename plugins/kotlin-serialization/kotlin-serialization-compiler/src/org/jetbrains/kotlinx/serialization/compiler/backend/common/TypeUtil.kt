@@ -214,7 +214,9 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "java.util.Map.Entry" -> "MapEntrySerializer"
         else -> return null
     }
-    return module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier(name)))
+    val identifier = Name.identifier(name)
+    return module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, identifier))
+        ?: module.findClassAcrossModuleDependencies(ClassId(SerializationPackages.packageFqName, identifier))
 }
 
 fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
