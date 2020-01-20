@@ -1,0 +1,2 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /kt1875.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R|<local>/t|?.R|kt1875/T.f|?.invoke#(IntegerLiteral(1))
