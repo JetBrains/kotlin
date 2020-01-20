@@ -32,6 +32,12 @@ public class ToolingStreamApiUtils {
     return reader.intValue();
   }
 
+  public static long readLong(@NotNull IonReader reader, @NotNull String fieldName) {
+    reader.next();
+    assertFieldName(reader, fieldName);
+    return reader.longValue();
+  }
+
   public static boolean readBoolean(@NotNull IonReader reader, @NotNull String fieldName) {
     reader.next();
     assertFieldName(reader, fieldName);
@@ -106,6 +112,11 @@ public class ToolingStreamApiUtils {
   public static void writeString(@NotNull IonWriter writer, @NotNull String fieldName, @Nullable String value) throws IOException {
     writer.setFieldName(fieldName);
     writer.writeString(value);
+  }
+
+  public static void writeLong(@NotNull IonWriter writer, @NotNull String fieldName, long value) throws IOException {
+    writer.setFieldName(fieldName);
+    writer.writeInt(value);
   }
 
   public static void writeBoolean(@NotNull IonWriter writer, @NotNull String fieldName, boolean value) throws IOException {

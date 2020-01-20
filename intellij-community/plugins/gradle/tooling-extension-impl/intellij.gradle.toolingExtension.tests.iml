@@ -16,15 +16,15 @@
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library name="org.jeasy:easy-random-core:4.0.0" type="repository">
-        <properties maven-id="org.jeasy:easy-random-core:4.0.0">
+        <properties maven-id="org.jeasy:easy-random-core:4.1.0">
           <exclude>
             <dependency maven-id="com.fasterxml.jackson.core:jackson-databind" />
           </exclude>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jeasy/easy-random-core/4.0.0/easy-random-core-4.0.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/objenesis/objenesis/3.0.1/objenesis-3.0.1.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/io/github/classgraph/classgraph/4.8.29/classgraph-4.8.29.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jeasy/easy-random-core/4.1.0/easy-random-core-4.1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/objenesis/objenesis/3.1/objenesis-3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/github/classgraph/classgraph/4.8.52/classgraph-4.8.52.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

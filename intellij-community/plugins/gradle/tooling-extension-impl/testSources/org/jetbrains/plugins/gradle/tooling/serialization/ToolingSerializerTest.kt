@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.tooling.serialization
 
+import com.intellij.openapi.externalSystem.model.project.dependencies.ProjectDependencies
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.artifacts.Dependency
 import org.gradle.util.GradleVersion
@@ -126,6 +127,12 @@ class ToolingSerializerTest {
   @Throws(Exception::class)
   fun `annotation processing model serialization test`() {
     doTest(AnnotationProcessingModelImpl::class.java)
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun `project dependencies serialization test`() {
+    doTest(ProjectDependencies::class.java)
   }
 
   @Throws(IOException::class)

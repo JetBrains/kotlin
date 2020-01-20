@@ -20,3 +20,4 @@ org.jetbrains.plugins.gradle.tooling.serialization.RepositoriesModelSerializatio
 org.jetbrains.plugins.gradle.tooling.serialization.GradleExtensionsSerializationService
 org.jetbrains.plugins.gradle.tooling.serialization.ExternalTestsSerializationService
 org.jetbrains.plugins.gradle.tooling.serialization.AnnotationProcessingModelSerializationService
+org.jetbrains.plugins.gradle.tooling.serialization.ProjectDependenciesSerializationService
