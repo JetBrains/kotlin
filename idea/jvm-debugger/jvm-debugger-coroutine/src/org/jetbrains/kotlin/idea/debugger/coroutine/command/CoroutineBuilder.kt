@@ -74,7 +74,7 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
         } else if ((coroutine.state == CoroutineInfoData.State.SUSPENDED || coroutine.activeThread == null) && coroutine.lastObservedFrameFieldRef is ObjectReference) {
             // to get frames from CoroutineInfo anyway
             // the thread is paused on breakpoint - it has at least one frame
-            val suspendedStackTrace = coroutine.stackTrace.take(creationFrameSeparatorIndex + 1)
+            val suspendedStackTrace = coroutine.stackTrace.take(creationFrameSeparatorIndex)
             for (suspendedFrame in suspendedStackTrace) {
                 val suspendedXStackFrame = stackFrame(positionManager, firstSuspendedStackFrameProxyImpl, suspendedFrame)
 
