@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.statements
 import java.lang.invoke.MethodHandle
 
@@ -26,6 +30,8 @@ enum class Code(var info: String = "") {
 
 class IrInterpreter(irModule: IrModuleFragment) {
     private val irBuiltIns = irModule.irBuiltins
+    private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
+        .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
@@ -44,7 +50,19 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     fun interpret(expression: IrExpression): IrExpression {
-        return InterpreterFrame().apply { expression.interpret(this) }.popReturnValue().toIrExpression(expression)
+        val data = InterpreterFrame()
+        return when (val code = expression.interpret(data)) {
+            Code.NEXT -> data.popReturnValue().toIrExpression(expression)
+            Code.EXCEPTION -> {
+                val message = when (val exception = data.popReturnValue()) {
+                    is Wrapper -> (exception.value as Throwable).message.toString()
+                    is Complex -> (exception.fields.first { it.descriptor.name.asString() == "message" }.state as Primitive<*>).value.toString()
+                    else -> TODO("not supported")
+                }
+                IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, message)
+            }
+            else -> TODO("$code not supported as result of interpretation")
+        }
     }
 
     private fun IrElement.interpret(data: Frame): Code {
@@ -71,6 +89,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrBreak -> interpretBreak(this, data)
                 is IrContinue -> interpretContinue(this, data)
                 is IrVararg -> interpretVararg(this, data)
+                is IrTry -> interpretTry(this, data)
+                is IrCatch -> interpretCatch(this, data)
+                is IrThrow -> interpretThrow(this, data)
 
                 else -> TODO("${this.javaClass} not supported")
             }
@@ -92,12 +113,13 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     is IrWhileLoop -> if ((this.label ?: "") == code.info) this.interpret(data) else code
                     else -> code
                 }
-                Code.EXCEPTION -> TODO("Code.EXCEPTION not implemented")
+                Code.EXCEPTION -> Code.EXCEPTION
                 Code.NEXT -> Code.NEXT
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            assert(false)
+        } catch (e: Exception) { // TODO catch Throwable
+            // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
+            val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == e::class.java.simpleName }
+            irExceptionClass?.let { data.pushReturnValue(Wrapper(e, it)) } ?: throw AssertionError("Cannot handle exception $e")
             return Code.EXCEPTION
         }
     }
@@ -443,5 +465,30 @@ class IrInterpreter(irModule: IrModuleFragment) {
         data.pushReturnValue(array)
 
         return Code.NEXT
+    }
+
+    private fun interpretTry(expression: IrTry, data: Frame): Code {
+        var code = expression.tryResult.interpret(data)
+        if (code == Code.EXCEPTION) {
+            val exception = data.peekReturnValue()
+            for (catchBlock in expression.catches) {
+                if (exception.irClass.defaultType.isSubtypeOf(catchBlock.catchParameter.type, irBuiltIns)) {
+                    code = catchBlock.interpret(data)
+                    break
+                }
+            }
+        }
+        return expression.finallyExpression?.interpret(data) ?: code
+    }
+
+    private fun interpretCatch(expression: IrCatch, data: Frame): Code {
+        val newFrame = InterpreterFrame(data.getAll().toMutableList())
+        newFrame.addVar(Variable(expression.parameter, data.popReturnValue()))
+        return expression.result.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
+    }
+
+    private fun interpretThrow(expression: IrThrow, data: Frame): Code {
+        expression.value.interpret(data)
+        return Code.EXCEPTION
     }
 }

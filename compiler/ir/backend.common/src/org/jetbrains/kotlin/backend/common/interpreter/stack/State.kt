@@ -139,12 +139,13 @@ class Wrapper(val value: Any, override var irClass: IrClass) : Complex(irClass, 
     private val receiverClass = irClass.defaultType.getClass(true)
 
     fun getMethod(irFunction: IrFunction): MethodHandle {
-        // intrinsicName is used to get correct java method
-        // for example, method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
-        val intrinsicName = irFunction.getEvaluateIntrinsicValue()
-
         // if function is actually a getter, then use property name as method name
         val property = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol?.owner
+
+        // intrinsicName is used to get correct java method
+        // for example: - method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
+        //              - use getter for private fields such as detailMessage in java.lang.Throwable
+        val intrinsicName = property?.getEvaluateIntrinsicValue() ?: irFunction.getEvaluateIntrinsicValue()
         val methodName = intrinsicName ?: (property ?: irFunction).name.toString()
 
         val methodType = irFunction.getMethodType()
