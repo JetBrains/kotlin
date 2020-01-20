@@ -2941,6 +2941,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             public void testSimpleSafe() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/reified/checkCast/simpleSafe.kt");
             }
+
+            @TestMetadata("simple_1_3.kt")
+            public void testSimple_1_3() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/reified/checkCast/simple_1_3.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda")

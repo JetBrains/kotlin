@@ -18,14 +18,14 @@ fun box(): String {
     try {
         val i = J.listOfNotNull()[0]
         return "Fail: should throw on get()"
-    } catch (e: IllegalStateException) {}
+    } catch (e: NullPointerException) {}
 
     try {
         for (i in J.listOfNotNull()) {
             return "Fail: should throw on get() in loop header"
         }
     }
-    catch (e: IllegalStateException) {}
+    catch (e: NullPointerException) {}
     return "OK"
 }
 

@@ -17,14 +17,14 @@ fun box(): String {
     try {
         val i = J.iteratorOfNotNull().next()
         return "Fail: should throw on get()"
-    } catch (e: IllegalStateException) {}
+    } catch (e: NullPointerException) {}
 
     try {
         for (i in J.iteratorOfNotNull()) {
             return "Fail: should throw on get() in loop header"
         }
     }
-    catch (e: IllegalStateException) {}
+    catch (e: NullPointerException) {}
     return "OK"
 }
 

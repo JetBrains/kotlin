@@ -16,14 +16,14 @@ fun box(): String {
     try {
         val i = JImpl().arrayOfNotNull()[0]
         return "Fail: should throw on get()"
-    } catch (e: IllegalStateException) {}
+    } catch (e: NullPointerException) {}
 
     try {
         for (i in JImpl().arrayOfNotNull()) {
             return "Fail: should throw on get() in loop header"
         }
     }
-    catch (e: IllegalStateException) {}
+    catch (e: NullPointerException) {}
     return "OK"
 }
 

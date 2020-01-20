@@ -1,4 +1,6 @@
+// !API_VERSION: 1.3
 // FILE: 1.kt
+// WITH_RUNTIME
 package test
 
 class A
@@ -11,10 +13,10 @@ inline fun <reified T> Any?.foo(): T = this as T
 import test.*
 
 fun box(): String {
-    failNPE { null.foo<Any>(); return "Fail 1" }
+    failTypeCast { null.foo<Any>(); return "Fail 1" }
     if (null.foo<Any?>() != null) return "Fail 2"
 
-    failNPE { null.foo<A>(); return "Fail 3" }
+    failTypeCast { null.foo<A>(); return "Fail 3" }
     if  (null.foo<A?>() != null) return "Fail 4"
 
     val a = A()
@@ -33,11 +35,11 @@ fun box(): String {
     return "OK"
 }
 
-inline fun failNPE(s: () -> Unit) {
+inline fun failTypeCast(s: () -> Unit) {
     try {
         s()
     }
-    catch (e: NullPointerException) {
+    catch (e: TypeCastException) {
         // OK
     }
 }
