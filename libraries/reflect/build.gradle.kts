@@ -4,6 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlinx.metadata.jvm.KmModuleVisitor
 import kotlinx.metadata.jvm.KotlinModuleMetadata
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
@@ -126,7 +127,7 @@ val stripMetadata by tasks.registering {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
     val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
-    inputs.file(inputJar)
+    inputs.file(inputJar).withPathSensitivity(RELATIVE)
     outputs.file(outputJar)
     outputs.cacheIf { true }
     doLast {
