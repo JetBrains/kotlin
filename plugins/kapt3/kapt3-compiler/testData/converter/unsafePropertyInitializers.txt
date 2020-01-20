@@ -135,6 +135,8 @@ public final class HavingState {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Integer[] intArray = {1};
     @org.jetbrains.annotations.NotNull()
+    private final float[] floatArray = {-1.0F};
+    @org.jetbrains.annotations.NotNull()
     private final java.util.List<java.lang.Integer> intList = null;
     private final int uint = 1;
     @org.jetbrains.annotations.NotNull()
@@ -170,6 +172,11 @@ public final class HavingState {
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.Integer[] getIntArray() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final float[] getFloatArray() {
         return null;
     }
 

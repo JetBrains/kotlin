@@ -29,6 +29,7 @@ class HavingState {
     val stringArray = arrayOf("foo")
     val stringList = listOf("foo")
     val intArray = arrayOf(1)
+    val floatArray = floatArrayOf(-1.0f)
     val intList = listOf(1)
     val uint = 1U
     val uintArray = arrayOf(1U)
