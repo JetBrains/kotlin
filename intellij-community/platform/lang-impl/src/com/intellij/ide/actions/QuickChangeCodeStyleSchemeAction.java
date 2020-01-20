@@ -2,6 +2,7 @@
 package com.intellij.ide.actions;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -22,8 +23,7 @@ public class QuickChangeCodeStyleSchemeAction extends QuickSwitchSchemeAction {
   protected void fillActions(Project project, @NotNull DefaultActionGroup group, @NotNull DataContext dataContext) {
     final CodeStyleSettingsManager manager = CodeStyleSettingsManager.getInstance(project);
     if (manager.getMainProjectCodeStyle() != null) {
-      //noinspection HardCodedStringLiteral
-      group.add(new AnAction("<Project>", "",
+      group.add(new AnAction(() -> IdeBundle.message("action.QuickChangeCodeStyleSchemeAction.Anonymous.text.project"), () -> "",
                              manager.USE_PER_PROJECT_SETTINGS ? AllIcons.Actions.Forward : ourNotCurrentAction) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
