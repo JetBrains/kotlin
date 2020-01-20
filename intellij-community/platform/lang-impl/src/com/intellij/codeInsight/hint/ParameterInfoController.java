@@ -373,7 +373,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
           assert !ApplicationManager.getApplication().isDispatchThread() :
             "Show parameter info on dispatcher thread leads to live lock";
 
-          final VisibleAreaListener visibleAreaListener = e -> indicator.cancel();
+          final VisibleAreaListener visibleAreaListener = new CancelProgressOnScrolling(indicator);
 
           myEditor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
 
@@ -414,7 +414,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
           assert !ApplicationManager.getApplication().isDispatchThread() :
             "Show parameter info on dispatcher thread leads to live lock";
 
-          final VisibleAreaListener visibleAreaListener = e -> indicator.cancel();
+          final VisibleAreaListener visibleAreaListener = new CancelProgressOnScrolling(indicator);
 
           myEditor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
 

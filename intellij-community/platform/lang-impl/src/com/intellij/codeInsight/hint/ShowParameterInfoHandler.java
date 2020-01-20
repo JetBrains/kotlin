@@ -97,7 +97,7 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
           assert !ApplicationManager.getApplication().isWriteAccessAllowed() :
             "Show parameter info under write action could lead to live lock";
 
-          final VisibleAreaListener visibleAreaListener = e -> indicator.cancel();
+          final VisibleAreaListener visibleAreaListener = new CancelProgressOnScrolling(indicator);
 
           editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
 
