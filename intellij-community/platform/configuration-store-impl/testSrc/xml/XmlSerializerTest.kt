@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:Suppress("PropertyName")
 
 package com.intellij.configurationStore.xml
@@ -671,6 +671,16 @@ internal class XmlSerializerTest {
 
     bean = deserialize(JDOMUtil.load("""<bean><description><![CDATA[<h4>Node.js integration</h4>]]></description></bean>"""))
     assertThat(bean.description).isEqualTo("<h4>Node.js integration</h4>")
+  }
+
+  @Test
+  fun nullCollection() {
+    class BeanWithCollection {
+      @Property(surroundWithTag = false)
+      @XCollection
+      var collection: List<BeanWithProperty>? = null
+    }
+    testSerializer("<BeanWithCollection />", BeanWithCollection())
   }
 
 //  @Test
