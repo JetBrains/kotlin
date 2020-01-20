@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.highlighting;
 
@@ -11,6 +11,7 @@ import com.intellij.find.EditorSearchSession;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.model.psi.PsiSymbolReference;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -381,21 +382,31 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
                                       @NotNull TextAttributes attributes, boolean clearHighlights) {
     List<TextRange> textRanges = new ArrayList<>(refs.size());
     for (PsiReference ref : refs) {
-      collectRangesToHighlight(ref, textRanges);
+      collectHighlightRanges(ref, textRanges);
     }
     highlightRanges(highlightManager, editor, attributes, clearHighlights, textRanges);
   }
 
+  @SuppressWarnings("unused") // NB don't deprecate this method while PsiSymbolReference is @Experimental
   @NotNull
   public static List<TextRange> collectRangesToHighlight(@NotNull PsiReference ref, @NotNull List<TextRange> result) {
-    for (TextRange relativeRange : ReferenceRange.getRanges(ref)) {
-      PsiElement element = ref.getElement();
-      TextRange range = safeCut(element.getTextRange(), relativeRange);
-      if (range.isEmpty()) continue;
-      // injection occurs
-      result.add(InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, range));
-    }
+    collectHighlightRanges(ref, result);
     return result;
+  }
+
+  public static void collectHighlightRanges(@NotNull PsiSymbolReference ref, @NotNull List<TextRange> result) {
+    for (TextRange relativeRange : ReferenceRange.getRanges(ref)) {
+      collectHighlightRanges(ref.getElement(), relativeRange, result);
+    }
+  }
+
+  public static void collectHighlightRanges(@NotNull PsiElement element,
+                                            @NotNull TextRange rangeInElement,
+                                            @NotNull List<TextRange> result) {
+    TextRange range = safeCut(element.getTextRange(), rangeInElement);
+    if (range.isEmpty()) return;
+    // injection occurs
+    result.add(InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, range));
   }
 
   @NotNull
