@@ -87,7 +87,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             disambiguationClassifier = name
             preset = this@AbstractKotlinNativeTargetPreset
 
-            val compilationFactory = KotlinNativeCompilationFactory(project, this)
+            val compilationFactory = KotlinNativeCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
@@ -209,5 +209,5 @@ internal val KonanTarget.isCurrentHost: Boolean
 internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
 
-internal val KotlinNativeCompilation.isMainCompilation: Boolean
+internal val AbstractKotlinNativeCompilation.isMainCompilation: Boolean
     get() = name == KotlinCompilation.MAIN_COMPILATION_NAME

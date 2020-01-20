@@ -14,7 +14,7 @@ interface KotlinCompilationFactory<T : KotlinCompilation<*>> : NamedDomainObject
 }
 
 class KotlinCommonCompilationFactory(
-    val target: KotlinOnlyTarget<KotlinCommonCompilation>
+    val target: KotlinOnlyTarget<*>
 ) : KotlinCompilationFactory<KotlinCommonCompilation> {
     override val itemClass: Class<KotlinCommonCompilation>
         get() = KotlinCommonCompilation::class.java

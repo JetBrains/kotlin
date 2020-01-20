@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.createTempDir
+import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.Test
@@ -292,15 +294,23 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
 
 }
 
-internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project) {
+internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, renameTo: String? = null) {
     setupWorkingDir()
     other.setupWorkingDir()
-    other.testCase.apply {
-        val gradleBuildScript = other.gradleBuildScript()
-        if (gradleBuildScript.extension == "kts") {
-            gradleBuildScript.modify { it.replace(".version(\"$PLUGIN_MARKER_VERSION_PLACEHOLDER\")", "") }
+    val tempDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
+    val embeddedModuleName = renameTo ?: other.projectName
+    try {
+        other.projectDir.copyRecursively(tempDir)
+        tempDir.copyRecursively(projectDir.resolve(embeddedModuleName))
+    } finally {
+        check(tempDir.deleteRecursively())
+    }
+    testCase.apply {
+        gradleSettingsScript().appendText("\ninclude(\"$embeddedModuleName\")")
+
+        val embeddedBuildScript = gradleBuildScript(embeddedModuleName)
+        if (embeddedBuildScript.extension == "kts") {
+            embeddedBuildScript.modify { it.replace(".version(\"$PLUGIN_MARKER_VERSION_PLACEHOLDER\")", "") }
         }
     }
-    other.projectDir.copyRecursively(projectDir.resolve(other.projectName))
-    projectDir.resolve("settings.gradle").appendText("\ninclude '${other.projectName}'")
 }

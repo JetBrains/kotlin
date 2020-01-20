@@ -36,9 +36,6 @@ internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: St
     return lowerCamelCaseName(prefix, targetNamePart, compilationNamePart, suffix)
 }
 
-internal val KotlinCompilation<*>.defaultSourceSetName: String
-    get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName)
-
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     target: KotlinTarget,
     override val compilationName: String
@@ -69,6 +66,16 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override val allKotlinSourceSets: Set<KotlinSourceSet>
         get() = kotlinSourceSets.flatMapTo(mutableSetOf()) { it.getSourceSetHierarchy() }
+
+    override val defaultSourceSetName: String
+        get() = lowerCamelCaseName(
+            target.disambiguationClassifier.takeIf { target !is KotlinMetadataTarget },
+            when {
+                compilationName == KotlinCompilation.MAIN_COMPILATION_NAME && target is KotlinMetadataTarget ->
+                    KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME // corner case: main compilation of the metadata target compiles commonMain
+                else -> compilationName
+            }
+        )
 
     override val defaultSourceSet: KotlinSourceSet
         get() = target.project.kotlinExtension.sourceSets.getByName(defaultSourceSetName)

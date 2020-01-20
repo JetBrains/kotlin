@@ -22,7 +22,8 @@ import javax.inject.Inject
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 
 open class KotlinMetadataTarget @Inject constructor(project: Project) :
-    KotlinOnlyTarget<KotlinCommonCompilation>(project, KotlinPlatformType.common) {
+    KotlinOnlyTarget<AbstractKotlinCompilation<*>>(project, KotlinPlatformType.common) {
+
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (!project.isKotlinGranularMetadataEnabled)
             super.kotlinComponents

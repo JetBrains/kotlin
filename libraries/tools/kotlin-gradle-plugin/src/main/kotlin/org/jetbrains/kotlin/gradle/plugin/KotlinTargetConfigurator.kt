@@ -63,7 +63,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         cleanTask.delete(kotlinCompilation.output.allOutputs)
     }
 
-    protected open fun setupCompilationDependencyFiles(project: Project, compilation: KotlinCompilation<KotlinCommonOptions>) {
+    protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
+        val project = compilation.target.project
+
         compilation.compileDependencyFiles = project.configurations.maybeCreate(compilation.compileDependencyConfigurationName)
         if (compilation is KotlinCompilationToRunnableFiles) {
             compilation.runtimeDependencyFiles = project.configurations.maybeCreate(compilation.runtimeDependencyConfigurationName)
@@ -76,7 +78,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         target.compilations.all {
             project.registerOutputsForStaleOutputCleanup(it)
-            setupCompilationDependencyFiles(project, it)
+            setupCompilationDependencyFiles(it)
         }
 
         if (createTestCompilation) {
@@ -322,7 +324,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
     createDefaultSourceSets,
     createTestCompilation
 ) {
-    internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinSourceSetProcessor<*>
+    internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinCompilationProcessor<*>
 
     override fun configureCompilations(target: KotlinTargetType) {
         super.configureCompilations(target)
@@ -336,7 +338,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
     }
 
     /** The implementations are expected to create a [Jar] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
-    protected open fun createJarTasks(target: KotlinOnlyTarget<KotlinCompilationType>) {
+    protected open fun createJarTasks(target: KotlinTargetType) {
         val result = target.project.tasks.create(target.artifactsTaskName, Jar::class.java)
         result.description = "Assembles a jar archive containing the main classes."
         result.group = BasePlugin.BUILD_GROUP

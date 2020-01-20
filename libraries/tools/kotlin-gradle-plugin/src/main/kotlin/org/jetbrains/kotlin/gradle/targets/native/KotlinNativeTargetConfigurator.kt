@@ -17,6 +17,7 @@ import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
@@ -41,7 +42,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
     createTestCompilation = true
 ) {
     private fun Project.klibOutputDirectory(
-        compilation: KotlinNativeCompilation
+        compilation: AbstractKotlinNativeCompilation
     ): File {
         val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
         return buildDir.resolve("classes/kotlin/$targetSubDirectory${compilation.name}")
@@ -148,35 +149,39 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
         }
     }
 
-    private fun Project.createKlibCompilationTask(compilation: KotlinNativeCompilation) {
-        val compileTask = tasks.create(
+    internal fun Project.createKlibCompilationTask(compilation: AbstractKotlinNativeCompilation): TaskProvider<out KotlinNativeCompile> {
+        val compileTask = project.registerTask<KotlinNativeCompile>(
             compilation.compileKotlinTaskName,
             KotlinNativeCompile::class.java
-        ).apply {
-            this.compilation = compilation
-            group = BasePlugin.BUILD_GROUP
-            description = "Compiles a klibrary from the '${compilation.name}' " +
+        ) { task ->
+            task.compilation = compilation
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = "Compiles a klibrary from the '${compilation.name}' " +
                     "compilation for target '${compilation.platformType.name}'."
-            enabled = compilation.konanTarget.enabledOnCurrentHost
+            task.enabled = compilation.konanTarget.enabledOnCurrentHost
 
-            destinationDir = klibOutputDirectory(compilation)
-            addCompilerPlugins()
+            task.destinationDir = klibOutputDirectory(compilation)
+            task.addCompilerPlugins()
             compilation.output.addClassesDir {
-                project.files(this.outputFile).builtBy(this)
+                project.files(task.outputFile).builtBy(task)
             }
         }
 
         project.tasks.getByName(compilation.compileAllTaskName).dependsOn(compileTask)
 
         if (compilation.compilationName == MAIN_COMPILATION_NAME) {
+            compilation as? KotlinNativeCompilation ?: error("Main shared-Native compilation is not yet supported!")
+
             project.tasks.getByName(compilation.target.artifactsTaskName).apply {
                 dependsOn(compileTask)
             }
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).apply {
                 dependsOn(compileTask)
             }
-            createRegularKlibArtifact(compilation, compileTask)
+            createRegularKlibArtifact(compilation, compileTask.get() /*TODO don't instantiate the task eagerly*/)
         }
+
+        return compileTask
     }
 
     private fun Project.createCInteropTasks(compilation: KotlinNativeCompilation) {
