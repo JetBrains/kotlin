@@ -436,6 +436,10 @@ targetList.each { target ->
 
         destinationDir distDir
 
+        from(project(':runtime').file("build/${target}Stdlib")) {
+            include('**')
+            into(stdlib)
+        }
         from(project(':runtime').file("build/$target")) {
             include("runtime.bc")
             into("$stdlibDefaultComponent/targets/$target/native")
@@ -444,10 +448,6 @@ targetList.each { target ->
             include("*.bc")
             exclude("runtime.bc")
             into("konan/targets/$target/native")
-        }
-        from(project(':runtime').file("build/${target}Stdlib")) {
-            include('**')
-            into(stdlibDefaultComponent)
         }
         if (target == 'wasm32') {
             into("$stdlibDefaultComponent/targets/wasm32/included") {
