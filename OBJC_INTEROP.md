@@ -229,7 +229,7 @@ foo {
 Objective-C supports "lightweight generics" defined on classes, with a relatively limited feature set. Swift can import 
 generics defined on classes to help provide additional type information to the compiler.
 
-Generic feature support for Objc and Swift differ from Kotlin, so the translation will inevitably lose some information,
+Generic feature support for Objective-C and Swift differ from Kotlin, so the translation will inevitably lose some information,
 but the features supported retain meaningful information.
 
 #### Limitations
@@ -237,18 +237,18 @@ but the features supported retain meaningful information.
 Objective-C generics do not support all features of either Kotlin or Swift, so there will be some information lost
 in the translation.
 
-Generics can only be defined on classes, not on interfaces (protocols in Objc and Swift) or functions.
+Generics can only be defined on classes, not on interfaces (protocols in Objective-C and Swift) or functions.
 
 #### Nullability
 
-Kotlin and Swift both define nullability as part of the type specification, while Objc defines nullability on methods
+Kotlin and Swift both define nullability as part of the type specification, while Objective-C defines nullability on methods
 and properties of a type. As such, the following:
 
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-class Sample<T>(){
-  fun myVal():T
+class Sample<T>() {
+  fun myVal(): T
 }
 ```
 
@@ -259,14 +259,14 @@ will (logically) look like this:
 <div class="sample" markdown="1" theme="idea" mode="swift">
 
 ```swift
-class Sample<T>(){
-  fun myVal():T?
+class Sample<T>() {
+  fun myVal(): T?
 }
 ```
 
 </div>
 
-In order to support a potentially nullable type, the Objc header needs to define `myVal` with a nullable return value.
+In order to support a potentially nullable type, the Objective-C header needs to define `myVal` with a nullable return value.
 
 To mitigate this, when defining your generic classes, if the generic type should *never* be null, provide a non-null 
 type constraint:
@@ -274,14 +274,14 @@ type constraint:
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-class Sample<T:Any>(){
-  fun myVal():T
+class Sample<T : Any>() {
+  fun myVal(): T
 }
 ```
 
 </div>
 
-That will force the Objc header to mark `myVal` as non-null.
+That will force the Objective-C header to mark `myVal` as non-null.
 
 #### Variance
 
@@ -291,8 +291,8 @@ from Objective-C can be force-cast as needed.
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-data class SomeData(val num:Int = 42):BaseData()
-class GenVarOut<out T:Any>(val arg:T)
+data class SomeData(val num: Int = 42) : BaseData()
+class GenVarOut<out T : Any>(val arg: T)
 ```
 
 </div>
