@@ -130,7 +130,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             rangeMarker.isGreedyToLeft = true
             rangeMarker.isGreedyToRight = true
 
-            KotlinCopyPasteReferenceProcessor().processReferenceData(project, targetFile, bounds.start, referenceData.toTypedArray())
+            KotlinCopyPasteReferenceProcessor().processReferenceData(project, editor, targetFile, bounds.start, referenceData.toTypedArray())
 
             runWriteAction {
                 explicitImports.forEach { fqName ->
@@ -224,7 +224,11 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
         }
 
         val dummyFile = KtPsiFactory(targetFile.project).createAnalyzableFile("dummy.kt", fileText, targetFile)
-        return KotlinCopyPasteReferenceProcessor().collectReferenceData(dummyFile, intArrayOf(blockStart!!), intArrayOf(blockEnd!!))
+        val startOffset = blockStart!!
+        val endOffset = blockEnd!!
+        return KotlinCopyPasteReferenceProcessor().collectReferenceData(dummyFile, intArrayOf(startOffset), intArrayOf(endOffset)).map {
+            it.copy(startOffset = it.startOffset - startOffset, endOffset = it.endOffset - startOffset)
+        }
     }
 
     private fun generateDummyFunctionName(convertedCode: String): String {

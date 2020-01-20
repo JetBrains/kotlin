@@ -14,6 +14,7 @@ class BasicKotlinReferenceTransferableData(
     val sourceFileUrl: String,
     val packageName: String,
     val imports: List<String>,
+    val sourceTextOffset: Int,
     val sourceText: String,
     val textRanges: List<TextRange>
 ) : TextBlockTransferableData, Cloneable, Serializable {

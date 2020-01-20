@@ -12,7 +12,7 @@ package d
 import foo.Bar
 
 /**
- * Some kdoc for class Foo
+ * Some kdoc [Bar] for class Foo
  */
 class Foo(val a: A) {
 }
