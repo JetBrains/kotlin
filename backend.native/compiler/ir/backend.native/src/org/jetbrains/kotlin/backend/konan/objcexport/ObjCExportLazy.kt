@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierTypeOrDefault
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
@@ -140,10 +138,18 @@ internal class ObjCExportLazyImpl(
 
             LazyObjCInterfaceImpl(name,
                                   attributes,
-                                  generics = if (configuration.objcGenerics) TODO() else emptyList(),
+                                  generics = translateGenerics(ktClassOrObject),
                                   psi = ktClassOrObject,
                                   lazy = this)
         }
+    }
+
+    private fun translateGenerics(ktClassOrObject: KtClassOrObject): List<String> = if (configuration.objcGenerics) {
+        ktClassOrObject.typeParametersWithOuter
+                .map { nameTranslator.getTypeParameterName(it) }
+                .toList()
+    } else {
+        emptyList()
     }
 
     private fun translateTopLevels(file: KtFile): List<ObjCInterface> {
@@ -437,3 +443,7 @@ private val KtCallableDeclaration.isSuspend: Boolean
 
 internal val KtPureClassOrObject.isInterface: Boolean
     get() = this is KtClass && this.isInterface()
+
+internal val KtClassOrObject.typeParametersWithOuter
+    get() = generateSequence(this, { if (it is KtClass && it.isInner()) it.containingClassOrObject else null })
+            .flatMap { it.typeParameters.asSequence() }

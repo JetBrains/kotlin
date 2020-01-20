@@ -29,6 +29,8 @@ internal interface ObjCExportNameTranslator {
     fun getClassOrProtocolName(
             ktClassOrObject: KtClassOrObject
     ): ObjCExportNamer.ClassOrProtocolName
+
+    fun getTypeParameterName(ktTypeParameter: KtTypeParameter): String
 }
 
 interface ObjCExportNamer {
@@ -130,6 +132,11 @@ internal open class ObjCExportNameTranslatorImpl(
             append(ownName)
         }
     }
+
+    override fun getTypeParameterName(ktTypeParameter: KtTypeParameter): String = buildString {
+        append(ktTypeParameter.name!!.toIdentifier())
+        while (helper.isTypeParameterNameReserved(this.toString())) append('_')
+    }
 }
 
 private class ObjCExportNamingHelper(
@@ -161,6 +168,12 @@ private class ObjCExportNamingHelper(
         "Type" -> "${name}_" // See https://github.com/JetBrains/kotlin-native/issues/3167
         else -> name
     }
+
+    fun isTypeParameterNameReserved(name: String): Boolean = name in reservedTypeParameterNames
+
+    private val reservedTypeParameterNames = setOf("id", "NSObject", "NSArray", "NSCopying", "NSNumber", "NSInteger",
+            "NSUInteger", "NSString", "NSSet", "NSDictionary", "NSMutableArray", "int", "unsigned", "short",
+            "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar")
 }
 
 internal class ObjCExportNamerImpl(
@@ -613,10 +626,6 @@ internal class ObjCExportNamerImpl(
         private val elementToName = mutableMapOf<TypeParameterDescriptor, String>()
         private val typeParameterNameClassOverrides = mutableMapOf<ClassDescriptor, MutableSet<String>>()
 
-        fun reserved(name: String): Boolean {
-            return name in reservedNames
-        }
-
         fun getOrPut(element: TypeParameterDescriptor, nameCandidates: () -> Sequence<String>): String {
             getIfAssigned(element)?.let { return it }
 
@@ -632,7 +641,7 @@ internal class ObjCExportNamerImpl(
         private fun tryAssign(element: TypeParameterDescriptor, name: String): Boolean {
             if (element in elementToName) error(element)
 
-            if (reserved(name)) return false
+            if (helper.isTypeParameterNameReserved(name)) return false
 
             if (!validName(element, name)) return false
 
@@ -644,28 +653,25 @@ internal class ObjCExportNamerImpl(
         private fun assignName(element: TypeParameterDescriptor, name: String) {
             if (!local) {
                 elementToName[element] = name
+                classNameSet(element).add(name)
             }
-            classNameSet(element).add(name)
         }
 
         private fun validName(element: TypeParameterDescriptor, name: String): Boolean {
             assert(element.containingDeclaration is ClassDescriptor)
 
-            val nameSet = classNameSet(element)
-            return !objCClassNames.nameExists(name) && !objCProtocolNames.nameExists(name) && name !in nameSet
+            return !objCClassNames.nameExists(name) && !objCProtocolNames.nameExists(name) &&
+                    (local || name !in classNameSet(element))
         }
 
         private fun classNameSet(element: TypeParameterDescriptor): MutableSet<String> {
+            require(!local)
             return typeParameterNameClassOverrides.getOrPut(element.containingDeclaration as ClassDescriptor) {
                 mutableSetOf()
             }
         }
 
         private fun getIfAssigned(element: TypeParameterDescriptor): String? = elementToName[element]
-
-        private val reservedNames = setOf("id", "NSObject", "NSArray", "NSCopying", "NSNumber", "NSInteger",
-                "NSUInteger", "NSString", "NSSet", "NSDictionary", "NSMutableArray", "int", "unsigned", "short",
-                "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar")
     }
 
     private abstract inner class Mapping<in T : Any, N>() {
