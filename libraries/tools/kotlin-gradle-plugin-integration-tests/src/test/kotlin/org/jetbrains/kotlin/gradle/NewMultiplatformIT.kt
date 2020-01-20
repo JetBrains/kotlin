@@ -562,7 +562,17 @@ class NewMultiplatformIT : BaseGradleIT() {
             """.trimIndent()
         )
 
-        fun testMonotonousCheck(sourceSetConfigurationChange: String, expectedErrorHint: String) {
+        fun testMonotonousCheck(
+            initialSetupForSourceSets: String?,
+            sourceSetConfigurationChange: String,
+            expectedErrorHint: String
+        ) {
+            if (initialSetupForSourceSets != null) {
+                gradleBuildScript().appendText(
+                    "\nkotlin.sourceSets.foo.${initialSetupForSourceSets}\n" + "" +
+                            "kotlin.sourceSets.bar.${initialSetupForSourceSets}",
+                )
+            }
             gradleBuildScript().appendText("\nkotlin.sourceSets.foo.${sourceSetConfigurationChange}")
             build("tasks") {
                 assertFailed()
@@ -574,7 +584,11 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
 
+        fun testMonotonousCheck(sourceSetConfigurationChange: String, expectedErrorHint: String): Unit =
+            testMonotonousCheck(null, sourceSetConfigurationChange, expectedErrorHint)
+
         testMonotonousCheck(
+            "languageSettings.languageVersion = '1.3'",
             "languageSettings.languageVersion = '1.4'",
             SourceSetConsistencyChecks.languageVersionCheckHint
         )
@@ -594,7 +608,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         gradleBuildScript().appendText(
             "\n" + """
                 kotlin.sourceSets.foo.languageSettings {
-                    apiVersion = '1.3'
+                    apiVersion = '1.4'
                     enableLanguageFeature('SoundSmartcastForEnumEntries')
                     progressiveMode = true
                 }
