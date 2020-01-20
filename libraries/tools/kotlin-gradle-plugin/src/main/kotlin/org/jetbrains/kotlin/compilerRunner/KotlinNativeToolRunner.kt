@@ -50,7 +50,7 @@ internal val Project.konanVersion: CompilerVersion
     } ?: NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
 internal val Project.disableKonanDaemon: Boolean
-    get() = PropertiesProvider(this).nativeDisableCompilerDaemon
+    get() = PropertiesProvider(this).nativeDisableCompilerDaemon == true
 
 internal val Project.konanCacheKind: NativeCacheKind
     get() = PropertiesProvider(this).nativeCacheKind
