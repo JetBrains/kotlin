@@ -446,7 +446,7 @@ public class KotlinTestUtils {
             tags.add(new TagsTestDataUtil.TagInfo<>(selectionEnd, false, "selection"));
         }
 
-        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText());
+        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText(), (TagsTestDataUtil.TagInfo t) -> null);
 
         assertEqualsToFile(expectedFile, afterText);
     }

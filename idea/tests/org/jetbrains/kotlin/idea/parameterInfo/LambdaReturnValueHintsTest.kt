@@ -62,7 +62,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val expectedText = run {
             val tags = if (editor.caretModel.offset > 0) listOf(CaretTag(editor)) else emptyList()
-            TagsTestDataUtil.insertTagsInText(tags, editor.document.text)
+            TagsTestDataUtil.insertTagsInText(tags, editor.document.text) { null }
         }
 
         // Clean test file from the hints tags
@@ -92,7 +92,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
 
             tags.addAll(collectActualLineExtensionsTags())
 
-            TagsTestDataUtil.insertTagsInText(tags, editor.document.text)
+            TagsTestDataUtil.insertTagsInText(tags, editor.document.text) { null }
         }
 
         Assert.assertEquals(expectedText, actualText)

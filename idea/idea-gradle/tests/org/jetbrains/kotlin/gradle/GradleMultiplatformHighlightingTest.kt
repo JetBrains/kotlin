@@ -108,13 +108,15 @@ abstract class GradleDaemonAnalyzerTestCase(
         val highlightsTags: List<TagInfo<*>> = TagsTestDataUtil.toHighlightTagPoints(filteredHighlights)
 
         val allTags = lineMarkersTags + highlightsTags
-        val actualTextWithTags = TagsTestDataUtil.insertTagsInText(allTags, text)
+        val actualTextWithTags = TagsTestDataUtil.insertTagsInText(allTags, text) { renderAdditionalAttributeForTag(it) }
 
         val physicalFileWithExpectedTestData = file.testDataFileByUserData
         KotlinTestUtils.assertEqualsToFile(physicalFileWithExpectedTestData, actualTextWithTags)
     }
 
     protected open fun performAdditionalChecksAfterHighlighting(editor: Editor) { }
+
+    protected open fun renderAdditionalAttributeForTag(tag: TagInfo<*>): String? = null
 }
 
 internal fun checkFiles(

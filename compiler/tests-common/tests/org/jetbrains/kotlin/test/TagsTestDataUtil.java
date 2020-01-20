@@ -27,19 +27,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TagsTestDataUtil {
     public static String insertInfoTags(List<LineMarkerInfo> lineMarkers, boolean withDescription, String text) {
         List<LineMarkerTagPoint> lineMarkerPoints = toLineMarkerTagPoints(lineMarkers, withDescription);
 
-        return insertTagsInText(lineMarkerPoints, text);
+        return insertTagsInText(lineMarkerPoints, text, (TagInfo t) -> null);
     }
 
     public static String insertInfoTags(List<HighlightInfo> highlights, String text) {
         List<HighlightTagPoint> highlightPoints = toHighlightTagPoints(highlights);
 
-        return insertTagsInText(highlightPoints, text);
+        return insertTagsInText(highlightPoints, text, (TagInfo t) -> null);
     }
 
     public static String generateTextWithCaretAndSelection(@NotNull Editor editor) {
@@ -50,10 +51,10 @@ public class TagsTestDataUtil {
             points.add(new TagInfo<String>(editor.getSelectionModel().getSelectionEnd(), false, "selection"));
         }
 
-        return insertTagsInText(points, editor.getDocument().getText());
+        return insertTagsInText(points, editor.getDocument().getText(), (TagInfo t) -> null);
     }
 
-    public static String insertTagsInText(List<? extends TagInfo> tags, String text) {
+    public static String insertTagsInText(List<? extends TagInfo> tags, String text, Function<TagInfo, String> computeExtraAttributes) {
         StringBuilder builder = new StringBuilder(text);
 
         // Need to sort tags for inserting them in reverse order to have valid offsets for yet not inserted tags.
@@ -65,12 +66,21 @@ public class TagsTestDataUtil {
             String tagText;
             if (point.isStart) {
                 String attributesString = point.getAttributesString();
+                String extraAttributes = computeExtraAttributes.apply(point);
+
+                String allAttributes;
+                if (extraAttributes != null) {
+                    allAttributes = attributesString + " " + extraAttributes;
+                } else {
+                    allAttributes = attributesString;
+                }
+
                 String closeSuffix = point.isClosed ? "/" : "";
                 if (attributesString.isEmpty()) {
                     tagText = String.format("<%s%s>", point.getName(), closeSuffix);
                 }
                 else {
-                    tagText = String.format("<%s %s%s>", point.getName(), attributesString, closeSuffix);
+                    tagText = String.format("<%s %s%s>", point.getName(), allAttributes, closeSuffix);
                 }
             }
             else {
@@ -111,7 +121,7 @@ public class TagsTestDataUtil {
         protected final boolean isStart;
         protected final boolean isClosed;
         protected final boolean isFixed;
-        protected final Data data;
+        public final Data data;
 
         public TagInfo(int offset, boolean start, Data data) {
             this(offset, start, false, false, data);
