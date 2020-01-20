@@ -1,7 +1,7 @@
 # watchOS sample
 
 This example shows how to write watchOS UI applications in Kotlin, and run them on
-iWatch or simulator.
+Apple Watch or simulator.
 
 To build and run the sample do the following:
 
@@ -19,7 +19,7 @@ To build and run the sample do the following:
 2. Update property `WKAppBundleIdentifier` in `plists/Ext/Info.plist` with new ID of the watch application,
    if not regenerating project.
 
-3.  Now build and run the application on a connected iPhone with paired iWatch or simulator.
+3.  Now build and run the application on a connected iPhone with paired Apple Watch or simulator.
 
 Note that in this example we do not use storyboards, and instead create user interface
 components programmatically.
