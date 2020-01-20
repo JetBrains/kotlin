@@ -308,9 +308,17 @@ fun IrFunctionAccessExpression.passTypeArgumentsFrom(irFunction: IrTypeParameter
     }
 }
 
-/*
-    Type parameters should correspond to the function where they are defined.
-    `source` is where the type is originally taken from.
+/**
+ * Perform a substitution of type parameters occuring in [this]. In order of
+ * precedence, parameter `P` is substituted with...
+ *
+ *   1) `T`, if `srcToDstParameterMap.get(P) == T`
+ *   2) `T`, if `source.typeParameters[i] == P` and
+ *      `target.typeParameters[i] == T`
+ *   3) `P`
+ *
+ *  If [srcToDstParameterMap] is total on the domain of type parameters in
+ *  [this], this effectively performs a substitution according to that map.
  */
 fun IrType.remapTypeParameters(
     source: IrTypeParametersContainer,
