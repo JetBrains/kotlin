@@ -246,6 +246,7 @@ internal class ObjCExportCodeGenerator(
         }
         dataGenerator.exportClass(namer.mutableSetName.binaryName)
         dataGenerator.exportClass(namer.mutableMapName.binaryName)
+        dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
 
         emitSpecialClassesConvertions()
 
