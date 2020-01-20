@@ -125,8 +125,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     return Math.max(1, Registry.intValue("ide.usages.page.size", 100));
   }
 
-  private Runnable mySearchEverywhereRunnable;
-
   public ShowUsagesAction() {
     setInjectedContext(true);
   }
@@ -148,14 +146,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     Project project = e.getProject();
     if (project == null) return;
 
-    Runnable searchEverywhere = mySearchEverywhereRunnable;
-    mySearchEverywhereRunnable = null;
     hideHints();
-
-    if (searchEverywhere != null) {
-      searchEverywhere.run();
-      return;
-    }
 
     RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(e.getDataContext());
     PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -403,19 +394,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     }
     InplaceButton button = createSettingsButton(handler, popupPosition, editor, maxUsages, cancelAction);
 
-    JPanel panel = new JPanel(new BorderLayout()) {
-      @Override
-      public void addNotify() {
-        mySearchEverywhereRunnable = () -> searchEverywhere(options, handler, editor, popupPosition, maxUsages);
-        super.addNotify();
-      }
-
-      @Override
-      public void removeNotify() {
-        mySearchEverywhereRunnable = null;
-        super.removeNotify();
-      }
-    };
+    JPanel panel = new JPanel(new BorderLayout());
     button.setBackground(label.getBackground());
     panel.setBackground(label.getBackground());
     label.setOpaque(false);
