@@ -9,6 +9,7 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.SurroundWithLogger;
 import com.intellij.codeInsight.template.impl.SurroundWithTemplateHandler;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.IdeBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageSurrounders;
 import com.intellij.lang.folding.CustomFoldingSurroundDescriptor;
@@ -223,7 +224,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
 
     List<AnAction> templateGroup = SurroundWithTemplateHandler.createActionGroup(editor, file, usedMnemonicsSet);
     if (!templateGroup.isEmpty()) {
-      applicable.add(new Separator("Live templates"));
+      applicable.add(new Separator(() -> IdeBundle.message("action.Anonymous.text.live.templates")));
       applicable.addAll(templateGroup);
       applicable.add(Separator.getInstance());
       applicable.add(new ConfigureTemplatesAction());

@@ -2,6 +2,7 @@
 package com.intellij.ui.popup.util;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.*;
@@ -276,7 +277,7 @@ public class MasterDetailPopupBuilder implements MasterController {
     });
 
     if (myDoneRunnable != null) {
-      new AnAction("Done") {
+      new AnAction(() -> IdeBundle.message("action.Anonymous.text.done")) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           myDoneRunnable.run();

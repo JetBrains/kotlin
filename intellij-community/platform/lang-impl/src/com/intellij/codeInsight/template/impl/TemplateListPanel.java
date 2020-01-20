@@ -4,6 +4,7 @@ package com.intellij.codeInsight.template.impl;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.dnd.*;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.openapi.Disposable;
@@ -614,13 +615,13 @@ public class TemplateListPanel extends JPanel implements Disposable {
 
   private void addTemplateOrGroup(AnActionButton button) {
     DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new DumbAwareAction("Live Template") {
+    group.add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.live.template")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         addTemplate();
       }
     });
-    group.add(new DumbAwareAction("Template Group...") {
+    group.add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.template.group")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         String newName = Messages
@@ -644,7 +645,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
   }
 
   private void installPopup() {
-    final DumbAwareAction rename = new DumbAwareAction("Rename") {
+    final DumbAwareAction rename = new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.rename")) {
 
       @Override
       public void update(@NotNull AnActionEvent e) {
@@ -684,7 +685,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
             }
           }
           addSeparator();
-          add(new DumbAwareAction("New group...") {
+          add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.new.group")) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
               String newName = Messages.showInputDialog(myTree, "Enter the new group name:", "Move to a New Group", null, "", new TemplateGroupInputValidator(null));
@@ -697,7 +698,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
       }
     };
 
-    final DumbAwareAction changeContext = new DumbAwareAction("Change context...") {
+    final DumbAwareAction changeContext = new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.change.context")) {
 
       @Override
       public void update(@NotNull AnActionEvent e) {

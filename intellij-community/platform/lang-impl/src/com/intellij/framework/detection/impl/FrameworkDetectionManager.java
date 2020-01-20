@@ -10,6 +10,7 @@ import com.intellij.framework.detection.DetectionExcludesConfiguration;
 import com.intellij.framework.detection.FrameworkDetector;
 import com.intellij.framework.detection.impl.exclude.DetectionExcludesConfigurationImpl;
 import com.intellij.framework.detection.impl.ui.ConfigureDetectedFrameworksDialog;
+import com.intellij.ide.IdeBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroup;
@@ -176,7 +177,7 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
         final String text = ProjectBundle.message("framework.detected.info.text", names, frameworkNames.size());
         FRAMEWORK_DETECTION_NOTIFICATION
           .createNotification("Frameworks Detected", text, NotificationType.INFORMATION, null)
-          .addAction(new NotificationAction("Configure") {
+          .addAction(new NotificationAction(() -> IdeBundle.message("action.Anonymous.text.configure")) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
               showSetupFrameworksDialog(notification);
