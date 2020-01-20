@@ -462,7 +462,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "data".takeIf { isData },
             "external".takeIf { isExternal },
             "inline".takeIf { isInline },
-            "expect".takeIf { isExpect }
+            "expect".takeIf { isExpect },
+            "fun".takeIf { isFun }
         )
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =

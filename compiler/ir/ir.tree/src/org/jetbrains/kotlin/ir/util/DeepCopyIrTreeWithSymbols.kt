@@ -142,12 +142,13 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.kind,
             declaration.visibility,
             declaration.modality,
-            declaration.isCompanion,
-            declaration.isInner,
-            declaration.isData,
-            declaration.isExternal,
-            declaration.isInline,
-            declaration.isExpect
+            isCompanion = declaration.isCompanion,
+            isInner = declaration.isInner,
+            isData = declaration.isData,
+            isExternal = declaration.isExternal,
+            isInline = declaration.isInline,
+            isExpect = declaration.isExpect,
+            isFun = declaration.isFun
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)

@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -27,7 +26,7 @@ fun IrClassBuilder.buildClass(): IrClass {
         IrClassSymbolImpl(wrappedDescriptor),
         name, kind, visibility, modality,
         isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal,
-        isInline = isInline, isExpect = isExpect
+        isInline = isInline, isExpect = isExpect, isFun = isFun
     ).also {
         wrappedDescriptor.bind(it)
     }

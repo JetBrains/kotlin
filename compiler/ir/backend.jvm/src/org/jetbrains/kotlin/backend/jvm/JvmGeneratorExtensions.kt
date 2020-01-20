@@ -58,8 +58,8 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
         }
 
         override fun getSubstitutedFunctionTypeForSamType(samType: KotlinType): KotlinType {
-            val descriptor = samType.constructor.declarationDescriptor as? JavaClassDescriptor
-                ?: throw AssertionError("SAM should be represented by a Java class: $samType")
+            val descriptor = samType.constructor.declarationDescriptor as? ClassDescriptor
+                ?: throw AssertionError("SAM should be represented by a class: $samType")
             val singleAbstractMethod = getSingleAbstractMethodOrNull(descriptor)
                 ?: throw AssertionError("$descriptor should have a single abstract method")
             val unsubstitutedFunctionType = getFunctionTypeForAbstractMethod(singleAbstractMethod, false)

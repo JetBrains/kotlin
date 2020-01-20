@@ -198,6 +198,11 @@ public final class IrClass extends
             isExpect_ = input.readBool();
             break;
           }
+          case 128: {
+            bitField0_ |= 0x00004000;
+            isFun_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -475,6 +480,21 @@ public final class IrClass extends
     return isExpect_;
   }
 
+  public static final int IS_FUN_FIELD_NUMBER = 16;
+  private boolean isFun_;
+  /**
+   * <code>required bool is_fun = 16;</code>
+   */
+  public boolean hasIsFun() {
+    return ((bitField0_ & 0x00004000) == 0x00004000);
+  }
+  /**
+   * <code>required bool is_fun = 16;</code>
+   */
+  public boolean getIsFun() {
+    return isFun_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
@@ -491,6 +511,7 @@ public final class IrClass extends
     declarationContainer_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer.getDefaultInstance();
     superType_ = java.util.Collections.emptyList();
     isExpect_ = false;
+    isFun_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -547,6 +568,10 @@ public final class IrClass extends
       return false;
     }
     if (!hasIsExpect()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasIsFun()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -624,6 +649,9 @@ public final class IrClass extends
     if (((bitField0_ & 0x00002000) == 0x00002000)) {
       output.writeBool(15, isExpect_);
     }
+    if (((bitField0_ & 0x00004000) == 0x00004000)) {
+      output.writeBool(16, isFun_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -697,6 +725,10 @@ public final class IrClass extends
     if (((bitField0_ & 0x00002000) == 0x00002000)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(15, isExpect_);
+    }
+    if (((bitField0_ & 0x00004000) == 0x00004000)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(16, isFun_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -822,6 +854,8 @@ public final class IrClass extends
       bitField0_ = (bitField0_ & ~0x00002000);
       isExpect_ = false;
       bitField0_ = (bitField0_ & ~0x00004000);
+      isFun_ = false;
+      bitField0_ = (bitField0_ & ~0x00008000);
       return this;
     }
 
@@ -906,6 +940,10 @@ public final class IrClass extends
         to_bitField0_ |= 0x00002000;
       }
       result.isExpect_ = isExpect_;
+      if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
+        to_bitField0_ |= 0x00004000;
+      }
+      result.isFun_ = isFun_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -964,6 +1002,9 @@ public final class IrClass extends
       if (other.hasIsExpect()) {
         setIsExpect(other.getIsExpect());
       }
+      if (other.hasIsFun()) {
+        setIsFun(other.getIsFun());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -1019,6 +1060,10 @@ public final class IrClass extends
         return false;
       }
       if (!hasIsExpect()) {
+        
+        return false;
+      }
+      if (!hasIsFun()) {
         
         return false;
       }
@@ -1738,6 +1783,38 @@ public final class IrClass extends
     public Builder clearIsExpect() {
       bitField0_ = (bitField0_ & ~0x00004000);
       isExpect_ = false;
+      
+      return this;
+    }
+
+    private boolean isFun_ ;
+    /**
+     * <code>required bool is_fun = 16;</code>
+     */
+    public boolean hasIsFun() {
+      return ((bitField0_ & 0x00008000) == 0x00008000);
+    }
+    /**
+     * <code>required bool is_fun = 16;</code>
+     */
+    public boolean getIsFun() {
+      return isFun_;
+    }
+    /**
+     * <code>required bool is_fun = 16;</code>
+     */
+    public Builder setIsFun(boolean value) {
+      bitField0_ |= 0x00008000;
+      isFun_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required bool is_fun = 16;</code>
+     */
+    public Builder clearIsFun() {
+      bitField0_ = (bitField0_ & ~0x00008000);
+      isFun_ = false;
       
       return this;
     }

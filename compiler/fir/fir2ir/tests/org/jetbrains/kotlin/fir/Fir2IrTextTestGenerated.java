@@ -1420,6 +1420,39 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
         }
 
+        @TestMetadata("compiler/testData/ir/irText/expressions/funInterface")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FunInterface extends AbstractFir2IrTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+            }
+
+            public void testAllFilesPresentInFunInterface() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("basicFunInterfaceConversion.kt")
+            public void testBasicFunInterfaceConversion() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/basicFunInterfaceConversion.kt");
+            }
+
+            @TestMetadata("castFromAny.kt")
+            public void testCastFromAny() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/castFromAny.kt");
+            }
+
+            @TestMetadata("partialSam.kt")
+            public void testPartialSam() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");
+            }
+
+            @TestMetadata("samConversionsWithSmartCasts.kt")
+            public void testSamConversionsWithSmartCasts() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionsWithSmartCasts.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/ir/irText/expressions/sam")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

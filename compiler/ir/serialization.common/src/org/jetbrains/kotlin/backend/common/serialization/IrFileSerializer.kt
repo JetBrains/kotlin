@@ -1198,6 +1198,7 @@ open class IrFileSerializer(
             .setIsExternal(clazz.isExternal)
             .setIsInline(clazz.isInline)
             .setIsExpect(clazz.isExpect)
+            .setIsFun(clazz.isFun)
             .setTypeParameters(serializeIrTypeParameterContainer(clazz.typeParameters))
             .setDeclarationContainer(serializeIrDeclarationContainer(clazz.declarations))
         clazz.superTypes.forEach {

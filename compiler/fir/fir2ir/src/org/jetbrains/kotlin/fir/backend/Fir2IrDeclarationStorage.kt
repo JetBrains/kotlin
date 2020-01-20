@@ -168,7 +168,8 @@ class Fir2IrDeclarationStorage(
                         isData = regularClass?.isData == true,
                         isExternal = regularClass?.isExternal == true,
                         isInline = regularClass?.isInline == true,
-                        isExpect = regularClass?.isExpect == true
+                        isExpect = regularClass?.isExpect == true,
+                        isFun = false // TODO FirRegularClass.isFun
                     ).apply {
                         descriptor.bind(this)
                         if (setParent && regularClass != null) {
@@ -216,7 +217,7 @@ class Fir2IrDeclarationStorage(
                     Name.special("<no name provided>"), anonymousObject.classKind,
                     Visibilities.LOCAL, modality,
                     isCompanion = false, isInner = false, isData = false,
-                    isExternal = false, isInline = false, isExpect = false
+                    isExternal = false, isInline = false, isExpect = false, isFun = false
                 ).apply {
                     descriptor.bind(this)
                     declareThisReceiver()
@@ -236,7 +237,7 @@ class Fir2IrDeclarationStorage(
                     enumEntry.name, anonymousObject.classKind,
                     Visibilities.LOCAL, modality,
                     isCompanion = false, isInner = false, isData = false,
-                    isExternal = false, isInline = false, isExpect = false
+                    isExternal = false, isInline = false, isExpect = false, isFun = false
                 ).apply {
                     descriptor.bind(this)
                     declareThisReceiver()
