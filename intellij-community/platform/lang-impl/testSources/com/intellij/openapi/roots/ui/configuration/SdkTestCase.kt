@@ -10,7 +10,6 @@ import com.intellij.openapi.projectRoots.impl.MockSdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownload
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.containers.MultiMap
@@ -28,18 +27,11 @@ abstract class SdkTestCase : LightPlatformTestCase() {
 
     TestSdkGenerator.reset()
     SdkType.EP_NAME.getPoint(null)
-      .registerExtension(TestSdkType, project)
+      .registerExtension(TestSdkType, testRootDisposable)
     SdkType.EP_NAME.getPoint(null)
-      .registerExtension(DependentTestSdkType, project)
+      .registerExtension(DependentTestSdkType, testRootDisposable)
     SdkDownload.EP_NAME.getPoint(null)
-      .registerExtension(TestSdkDownloader, project)
-  }
-
-  override fun tearDown() {
-    Disposer.disposeChildren(project)
-    closeAndDeleteProject()
-
-    super.tearDown()
+      .registerExtension(TestSdkDownloader, testRootDisposable)
   }
 
   fun createAndRegisterSdk(isProjectSdk: Boolean = false): TestSdk {
@@ -66,7 +58,7 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     invokeAndWaitIfNeeded {
       runWriteAction {
         val jdkTable = ProjectJdkTable.getInstance()
-        jdkTable.addJdk(sdk, project)
+        jdkTable.addJdk(sdk, testRootDisposable)
       }
     }
   }
@@ -150,7 +142,6 @@ abstract class SdkTestCase : LightPlatformTestCase() {
   object TestSdkGenerator {
     private var createdSdkCounter = 0
     private lateinit var createdSdks: MutableMap<String, TestSdk>
-    private lateinit var parentSdks: MutableMap<TestSdk, TestSdk>
 
     fun findTestSdk(sdk: Sdk): TestSdk? = createdSdks[sdk.name]
 

@@ -18,7 +18,7 @@ abstract class SdkComboBoxTestCase : SdkTestCase() {
   fun createJdkComboBox(): SdkComboBox {
     val sdksModel = TestProjectSdksModel()
     sdksModel.reset(project)
-    Disposer.register(project, sdksModel)
+    Disposer.register(testRootDisposable, sdksModel)
     val model = createJdkComboBoxModel(project, sdksModel, Predicate { it is TestSdkType })
     return SdkComboBox(model)
   }
