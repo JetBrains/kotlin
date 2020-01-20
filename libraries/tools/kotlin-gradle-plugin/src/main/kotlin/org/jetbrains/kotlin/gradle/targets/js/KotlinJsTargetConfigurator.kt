@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
-open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
+open class KotlinJsTargetConfigurator(kotlinPluginVersion: String, val irConfigurator: KotlinJsIrTargetConfigurator?) :
     KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsTarget>(true, true, kotlinPluginVersion),
     KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsTarget> {
 
@@ -58,5 +59,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
                 sourceMapEmbedSources = null
             }
         }
+
+        irConfigurator?.configureCompilations(target.irTarget!!)
     }
 }

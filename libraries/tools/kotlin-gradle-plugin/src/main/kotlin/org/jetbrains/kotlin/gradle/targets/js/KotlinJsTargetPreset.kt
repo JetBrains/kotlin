@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 
 open class KotlinJsTargetPreset(
     project: Project,
     kotlinPluginVersion: String,
-    irPreset: KotlinJsIrTargetPreset?
+    val irPreset: KotlinJsIrTargetPreset?
 ) : KotlinOnlyTargetPreset<KotlinJsTarget, KotlinJsCompilation>(
     project,
     kotlinPluginVersion
@@ -47,6 +48,12 @@ open class KotlinJsTargetPreset(
 
             val compilationFactory = createCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
+
+            if (irTarget != null) {
+                val irCompilationFactory = irPreset?.createCompilationFactory(irTarget)!!
+                irTarget.targetName = "${name}Ir"
+                irTarget.compilations = project.container(irCompilationFactory.itemClass, irCompilationFactory)
+            }
         }
 
         createKotlinTargetConfigurator().configureTarget(result)
@@ -54,13 +61,16 @@ open class KotlinJsTargetPreset(
         return result
     }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
+        kotlinPluginVersion,
+        irPreset?.let { KotlinJsIrTargetConfigurator(kotlinPluginVersion) }
+    )
 
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>): KotlinJsCompilationFactory {
         forTarget as KotlinJsTarget
-        return KotlinJsCompilationFactory(project, forTarget, forTarget.irTarget)
+        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { forTarget.irTarget })
     }
 
     companion object {
@@ -81,5 +91,8 @@ class KotlinJsSingleTargetPreset(
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
+        kotlinPluginVersion,
+        irPreset?.let { KotlinJsIrTargetConfigurator(kotlinPluginVersion) }
+    )
 }

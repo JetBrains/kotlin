@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 
@@ -32,7 +31,8 @@ open class KotlinJsIrTargetPreset(
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createCompilationFactory(
+    //TODO[Ilya Goncharov] remove public morozov
+    public override fun createCompilationFactory(
         forTarget: KotlinOnlyTarget<KotlinJsIrCompilation>
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(project, forTarget)

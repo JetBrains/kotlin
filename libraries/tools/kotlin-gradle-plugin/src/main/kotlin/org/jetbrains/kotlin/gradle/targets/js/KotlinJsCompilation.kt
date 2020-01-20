@@ -12,17 +12,17 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
-open class KotlinJsCompilation(
-    target: KotlinTarget,
-    name: String
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(target, name), KotlinCompilationWithResources<KotlinJsOptions> {
-    override val processResourcesTaskName: String
-        get() = disambiguateName("processResources")
+ open class KotlinJsCompilation(
+     target: KotlinTarget,
+     name: String
+ ) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(target, name), KotlinCompilationWithResources<KotlinJsOptions> {
+     override val processResourcesTaskName: String
+         get() = disambiguateName("processResources")
 
-    override val compileKotlinTask: Kotlin2JsCompile
-        get() = super.compileKotlinTask as Kotlin2JsCompile
+     override val compileKotlinTask: Kotlin2JsCompile
+         get() = super.compileKotlinTask as Kotlin2JsCompile
 
-    internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
+     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 
     @Suppress("unused")
     fun packageJson(handler: PackageJson.() -> Unit) {
