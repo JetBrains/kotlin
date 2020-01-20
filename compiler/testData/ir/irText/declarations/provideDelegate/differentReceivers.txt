@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>'
         GET_VAR '<this>: kotlin.String declared in <root>.getValue' type=kotlin.String origin=null
   PROPERTY name:testO visibility:public modality:FINAL [delegated,val]
-    FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>' type=kotlin.String origin=null
           $receiver: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.MyClass' type=<root>.MyClass origin=null
@@ -58,11 +58,11 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testO> (): kotlin.String declared in <root>'
           CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>' type=kotlin.String origin=null
-            $receiver: GET_FIELD 'FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final testO: kotlin.String [delegated,val]' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testK visibility:public modality:FINAL [delegated,val]
-    FIELD DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]
+    FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="K"
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testK> visibility:public modality:FINAL <> () returnType:kotlin.String
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testK> (): kotlin.String declared in <root>'
           CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>' type=kotlin.String origin=null
-            $receiver: GET_FIELD 'FIELD DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final testK: kotlin.String [delegated,val]' field=null getter='public final fun <get-testK> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testOK visibility:public modality:FINAL [val]
