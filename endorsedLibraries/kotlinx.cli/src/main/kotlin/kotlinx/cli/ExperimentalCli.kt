@@ -32,5 +32,5 @@ import kotlin.annotation.AnnotationTarget.*
         PROPERTY_SETTER,
         TYPEALIAS
 )
-@SinceKotlin("1.3")
+
 public annotation class ExperimentalCli

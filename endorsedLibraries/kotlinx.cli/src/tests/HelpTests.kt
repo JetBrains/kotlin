@@ -28,6 +28,8 @@ class HelpTests {
         val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
         argParser.parse(arrayOf("main.txt"))
         val helpOutput = argParser.makeUsage().trimIndent()
+        @Suppress("CanBeVal") // can't be val in order to build expectedOutput only in run time.
+        var epsDefault = 1.0
         val expectedOutput = """
 Usage: test options_list
 Arguments: 
@@ -35,7 +37,7 @@ Arguments:
     compareToReport -> Report to compare to (optional) { String }
 Options: 
     --output, -o -> Output file { String }
-    --eps, -e [1.0] -> Meaningful performance changes { Double }
+    --eps, -e [$epsDefault] -> Meaningful performance changes { Double }
     --short, -s [false] -> Show short version of report 
     --renders, -r [text] -> Renders for showing information { Value should be one of [text, html, teamcity, statistics, metrics] }
     --user, -u -> User access information for authorization { String }

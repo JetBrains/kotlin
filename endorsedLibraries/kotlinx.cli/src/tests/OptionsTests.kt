@@ -5,8 +5,6 @@
 
 package kotlinx.cli
 
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
 import kotlin.test.*
 
 class OptionsTests {
@@ -32,7 +30,7 @@ class OptionsTests {
 
     @Test
     fun testJavaPrefix() {
-        val argParser = ArgParser("testParser", prefixStyle = ArgParser.OPTION_PREFIX_STYLE.JVM)
+        val argParser = ArgParser("testParser", prefixStyle = ArgParser.OptionPrefixStyle.JVM)
         val output by argParser.option(ArgType.String, "output", "o", "Output file")
         val input by argParser.option(ArgType.String, "input", "i", "Input file")
         argParser.parse(arrayOf("-output", "out.txt", "-i", "input.txt"))

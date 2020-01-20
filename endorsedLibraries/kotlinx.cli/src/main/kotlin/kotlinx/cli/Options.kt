@@ -4,37 +4,49 @@
  */
 package kotlinx.cli
 
-import kotlin.reflect.KProperty
-
 /**
  * Base interface for all possible types of options with multiple values.
+ * Provides limitations for API that is accessible for options with several values.
+ * Allows to save the way of providing several values in command line.
+ *
+ * @see [MultipleOption]
  */
-interface MultipleOptionType
+interface MultipleOptionType {
+    /**
+     * Type of an option with multiple values allowed to be provided several times in command line.
+     */
+    class Repeated : MultipleOptionType
+
+    /**
+     * Type of an option with multiple values allowed to be provided using delimiter in one command line value.
+     */
+    class Delimited : MultipleOptionType
+
+    /**
+     * Type of an option with multiple values allowed to be provided several times in command line
+     * both with specifying several values and with delimiter.
+     */
+    class RepeatedDelimited : MultipleOptionType
+}
 
 /**
- * Type of option with multiple values that can be provided several times in command line.
+ * The base class for command line options.
+ *
+ * You can use [ArgParser.option] function to declare an option.
  */
-class RepeatedOption: MultipleOptionType
+abstract class Option<TResult> internal constructor(delegate: ArgumentValueDelegate<TResult>,
+                                                    owner: CLIEntityWrapper) : CLIEntity<TResult>(delegate, owner)
 
 /**
- * Type of option with multiple values that are provided using delimiter.
+ * The base class of an option with a single value.
+ *
+ * A required option or an option with a default value is represented with the [SingleOption] inheritor.
+ * An option having nullable value is represented with the [SingleNullableOption] inheritor.
  */
-class DelimitedOption: MultipleOptionType
-
-/**
- * Type of option with multiple values that can be both provided several times in command line and using delimiter.
- */
-class RepeatedDelimitedOption: MultipleOptionType
-
-/**
- * Option instance.
- */
-abstract class Option<TResult> internal constructor(owner: CLIEntityWrapper): CLIEntity<TResult>(owner)
-
-/**
- * Common single option instance.
- */
-abstract class AbstractSingleOption<T: Any, TResult> internal constructor(owner: CLIEntityWrapper): Option<TResult>(owner) {
+abstract class AbstractSingleOption<T : Any, TResult, DefaultRequired: DefaultRequiredType> internal constructor(
+    delegate: ArgumentValueDelegate<TResult>,
+    owner: CLIEntityWrapper) :
+    Option<TResult>(delegate, owner) {
     /**
      * Check descriptor for this kind of option.
      */
@@ -46,154 +58,208 @@ abstract class AbstractSingleOption<T: Any, TResult> internal constructor(owner:
 }
 
 /**
- * Option wit single non-nullable value.
+ * A required option or an option with a default value.
+ *
+ * The [value] of such option is non-null.
  */
-class SingleOption<T : Any> internal constructor(descriptor: OptionDescriptor<T, T>, owner: CLIEntityWrapper):
-        AbstractSingleOption<T, T>(owner) {
+class SingleOption<T : Any, DefaultType: DefaultRequiredType> internal constructor(descriptor: OptionDescriptor<T, T>,
+                                                                                   owner: CLIEntityWrapper) :
+    AbstractSingleOption<T, T, DefaultRequiredType>(ArgumentSingleValue(descriptor), owner) {
     init {
         checkDescriptor(descriptor)
-        delegate = ArgumentSingleValue(descriptor)
     }
 }
 
 /**
- * Option with single nullable value.
+ * An option with nullable [value].
  */
-class SingleNullableOption<T : Any> internal constructor(descriptor: OptionDescriptor<T, T>, owner: CLIEntityWrapper):
-        AbstractSingleOption<T, T?>(owner) {
+class SingleNullableOption<T : Any> internal constructor(descriptor: OptionDescriptor<T, T>, owner: CLIEntityWrapper) :
+    AbstractSingleOption<T, T?, DefaultRequiredType.None>(ArgumentSingleNullableValue(descriptor), owner) {
     init {
         checkDescriptor(descriptor)
-        delegate = ArgumentSingleNullableValue(descriptor)
     }
 }
 
 /**
- * Option with multiple values.
+ * An option that allows several values to be provided in command line string.
+ *
+ * The [value] property of such option has type `List<T>`.
  */
-class MultipleOption<T : Any, OptionType: MultipleOptionType> internal constructor(descriptor: OptionDescriptor<T, List<T>>, owner: CLIEntityWrapper):
-        Option<List<T>>(owner) {
+class MultipleOption<T : Any, OptionType : MultipleOptionType, DefaultType: DefaultRequiredType> internal constructor(
+    descriptor: OptionDescriptor<T, List<T>>,
+    owner: CLIEntityWrapper
+) :
+    Option<List<T>>( ArgumentMultipleValues(descriptor), owner) {
     init {
         if (!descriptor.multiple && descriptor.delimiter == null) {
             failAssertion("Option with multiple values can't be initialized with descriptor for single one.")
         }
-        delegate = ArgumentMultipleValues(descriptor)
     }
 }
 
 /**
- * Allow option have several values.
+ * Allows the option to have several values specified in command line string.
+ * Number of values is unlimited.
  */
-fun <T : Any, TResult> AbstractSingleOption<T, TResult>.multiple(): MultipleOption<T, RepeatedOption> {
+fun <T : Any, TResult, DefaultType: DefaultRequiredType> AbstractSingleOption<T, TResult, DefaultType>.multiple():
+        MultipleOption<T, MultipleOptionType.Repeated, DefaultType> {
     val newOption = with((delegate as ParsingValue<T, T>).descriptor as OptionDescriptor) {
-        MultipleOption<T, RepeatedOption>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
+        MultipleOption<T, MultipleOptionType.Repeated, DefaultType>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
                 description, listOfNotNull(defaultValue),
-                required, true, delimiter, deprecatedWarning), owner)
+                required, true, delimiter, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption
 }
 
 /**
- * Allow option have several values.
+ * Allows the option to have several values specified in command line string.
+ * Number of values is unlimited.
  */
-fun <T : Any> MultipleOption<T, DelimitedOption>.multiple(): MultipleOption<T, RepeatedDelimitedOption> {
+fun <T : Any, DefaultType: DefaultRequiredType> MultipleOption<T, MultipleOptionType.Delimited, DefaultType>.multiple():
+        MultipleOption<T, MultipleOptionType.RepeatedDelimited, DefaultRequiredType> {
     val newOption = with((delegate as ParsingValue<T, List<T>>).descriptor as OptionDescriptor) {
         if (multiple) {
             error("Try to use modifier multiple() twice on option ${fullName ?: ""}")
         }
-        MultipleOption<T, RepeatedDelimitedOption>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
+        MultipleOption<T, MultipleOptionType.RepeatedDelimited, DefaultRequiredType>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
                 description, defaultValue?.toList() ?: listOf(),
-                required, true, delimiter, deprecatedWarning), owner)
+                required, true, delimiter, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption
 }
 
 /**
- * Set default option value.
+ * Specifies the default value for the option, that will be used when no value is provided for it
+ * in command line string.
  *
- * @param value default value.
+ * @param value the default value.
  */
-fun <T: Any, TResult> AbstractSingleOption<T, TResult>.default(value: T): SingleOption<T> {
+fun <T : Any> SingleNullableOption<T>.default(value: T): SingleOption<T, DefaultRequiredType.Default> {
     val newOption = with((delegate as ParsingValue<T, T>).descriptor as OptionDescriptor) {
-        SingleOption(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
-                description, value, required, multiple, delimiter, deprecatedWarning), owner)
+        SingleOption<T, DefaultRequiredType.Default>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
+                description, value, required, multiple, delimiter, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption
 }
 
 /**
- * Set default option value.
+ * Specifies the default value for the option with multiple values, that will be used when no values are provided
+ * for it in command line string.
  *
- * @param value default value.
+ * @param value the default value, must be a non-empty collection.
+ * @throws IllegalArgumentException if provided default value is empty collection.
  */
-fun <T: Any, OptionType: MultipleOptionType>
-        MultipleOption<T, OptionType>.default(value: Collection<T>): MultipleOption<T, OptionType> {
+fun <T : Any, OptionType : MultipleOptionType>
+        MultipleOption<T, OptionType, DefaultRequiredType.None>.default(value: Collection<T>):
+        MultipleOption<T, OptionType, DefaultRequiredType.Default> {
     val newOption = with((delegate as ParsingValue<T, List<T>>).descriptor as OptionDescriptor) {
-        if (value.isEmpty()) {
-            error("Default value for option can't be empty collection.")
-        }
-        MultipleOption<T, OptionType>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName,
+        require(value.isNotEmpty()) { "Default value for option can't be empty collection." }
+        MultipleOption<T, OptionType, DefaultRequiredType.Default>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName,
                 shortName, description, value.toList(),
-                required, multiple, delimiter, deprecatedWarning), owner)
+                required, multiple, delimiter, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption
 }
 
 /**
- * Require option to be always provided in command line.
+ * Requires the option to be always provided in command line.
  */
-fun <T: Any> SingleNullableOption<T>.required(): SingleOption<T> {
+fun <T : Any> SingleNullableOption<T>.required(): SingleOption<T, DefaultRequiredType.Required> {
     val newOption = with((delegate as ParsingValue<T, T>).descriptor as OptionDescriptor) {
-        SingleOption(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName,
+        SingleOption<T, DefaultRequiredType.Required>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName,
                 shortName, description, defaultValue,
-                true, multiple, delimiter, deprecatedWarning), owner)
+                true, multiple, delimiter, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption
 }
 
 /**
- * Require option to be always provided in command line.
+ * Requires the option to be always provided in command line.
  */
-fun <T: Any, OptionType: MultipleOptionType>
-        MultipleOption<T, OptionType>.required(): MultipleOption<T, OptionType> {
+fun <T : Any, OptionType : MultipleOptionType>
+        MultipleOption<T, OptionType, DefaultRequiredType.None>.required():
+        MultipleOption<T, OptionType, DefaultRequiredType.Required> {
     val newOption = with((delegate as ParsingValue<T, List<T>>).descriptor as OptionDescriptor) {
-        MultipleOption<T, OptionType>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
+        MultipleOption<T, OptionType, DefaultRequiredType.Required>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
                 description, defaultValue?.toList() ?: listOf(),
-                true, multiple, delimiter, deprecatedWarning), owner)
+                true, multiple, delimiter, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption
 }
 
 /**
- * Allow provide several options using [delimiter].
+ * Allows the option to have several values joined with [delimiter] specified in command line string.
+ * Number of values is unlimited.
  *
- * @param delimiterValue delimiter used to separate string value to option values.
+ * The value of the argument is an empty list in case if no value was specified in command line string.
+ *
+ * @param delimiterValue delimiter used to separate string value to option values list.
  */
-fun <T : Any, TResult> AbstractSingleOption<T, TResult>.delimiter(delimiterValue: String): MultipleOption<T, DelimitedOption> {
+fun <T : Any, DefaultRequired: DefaultRequiredType> AbstractSingleOption<T, *, DefaultRequired>.delimiter(
+    delimiterValue: String):
+        MultipleOption<T, MultipleOptionType.Delimited, DefaultRequired> {
     val newOption = with((delegate as ParsingValue<T, T>).descriptor as OptionDescriptor) {
-        MultipleOption<T, DelimitedOption>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
+        MultipleOption<T, MultipleOptionType.Delimited, DefaultRequired>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
                 description, listOfNotNull(defaultValue),
-                required, multiple, delimiterValue, deprecatedWarning), owner)
+                required, multiple, delimiterValue, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption
 }
 
 /**
- * Allow provide several options using [delimiter].
+ * Allows the option to have several values joined with [delimiter] specified in command line string.
+ * Number of values is unlimited.
  *
- * @param delimiterValue delimiter used to separate string value to option values.
+ * The value of the argument is an empty list in case if no value was specified in command line string.
+ *
+ * @param delimiterValue delimiter used to separate string value to option values list.
  */
-fun <T : Any> MultipleOption<T, RepeatedOption>.delimiter(delimiterValue: String): MultipleOption<T, RepeatedDelimitedOption> {
+fun <T : Any, DefaultRequired: DefaultRequiredType> MultipleOption<T, MultipleOptionType.Repeated, DefaultRequired>.delimiter(
+    delimiterValue: String):
+        MultipleOption<T, MultipleOptionType.RepeatedDelimited, DefaultRequired> {
     val newOption = with((delegate as ParsingValue<T, List<T>>).descriptor as OptionDescriptor) {
-        MultipleOption<T, RepeatedDelimitedOption>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
+        MultipleOption<T, MultipleOptionType.RepeatedDelimited, DefaultRequired>(
+            OptionDescriptor(
+                optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
                 description, defaultValue?.toList() ?: listOf(),
-                required, multiple, delimiterValue, deprecatedWarning), owner)
+                required, multiple, delimiterValue, deprecatedWarning
+            ), owner
+        )
     }
     owner.entity = newOption
     return newOption

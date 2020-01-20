@@ -23,7 +23,7 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
      *
      * @param value value
      */
-    abstract val conversion: (value: kotlin.String, name: kotlin.String)->T
+    abstract fun convert(value: kotlin.String, name: kotlin.String): T
 
     /**
      * Argument type for flags that can be only set/unset.
@@ -32,8 +32,8 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = ""
 
-        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.Boolean
-            get() = { value, _ -> if (value == "false") false else true }
+        override fun convert(value: kotlin.String, name: kotlin.String): kotlin.Boolean =
+            value != "false"
     }
 
     /**
@@ -43,8 +43,7 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ String }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.String
-            get() = { value, _ -> value }
+        override fun convert(value: kotlin.String, name: kotlin.String): kotlin.String = value
     }
 
     /**
@@ -54,9 +53,9 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ Int }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.Int
-            get() = { value, name -> value.toIntOrNull()
-                    ?: throw ParsingException("Option $name is expected to be integer number. $value is provided.") }
+        override fun convert(value: kotlin.String, name: kotlin.String): kotlin.Int =
+            value.toIntOrNull()
+                    ?: throw ParsingException("Option $name is expected to be integer number. $value is provided.")
     }
 
     /**
@@ -66,9 +65,9 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ Double }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.Double
-            get() = { value, name -> value.toDoubleOrNull()
-                    ?: throw ParsingException("Option $name is expected to be double number. $value is provided.") }
+        override fun convert(value: kotlin.String, name: kotlin.String): kotlin.Double =
+            value.toDoubleOrNull()
+                    ?: throw ParsingException("Option $name is expected to be double number. $value is provided.")
     }
 
     /**
@@ -78,9 +77,9 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ Value should be one of $values }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.String
-            get() = { value, name -> if (value in values) value
-            else throw ParsingException("Option $name is expected to be one of $values. $value is provided.") }
+        override fun convert(value: kotlin.String, name: kotlin.String): kotlin.String =
+            if (value in values) value
+            else throw ParsingException("Option $name is expected to be one of $values. $value is provided.")
     }
 }
 
