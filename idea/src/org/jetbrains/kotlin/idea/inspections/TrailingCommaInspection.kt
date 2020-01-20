@@ -60,7 +60,7 @@ class TrailingCommaInspection(
                 )
             } else if (!needComma(commaOwner, checkExistingTrailingComma = true)) {
                 if (!trailingCommaOrLastElement.isComma) return
-                reportProblem(trailingCommaOrLastElement, "Redundant trailing comma", "Remove trailing comma")
+                reportProblem(trailingCommaOrLastElement, "Useless trailing comma", "Remove trailing comma")
             }
         }
 

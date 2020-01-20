@@ -6,7 +6,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -15,7 +15,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -24,7 +24,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -33,7 +33,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -42,7 +42,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -51,7 +51,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -60,7 +60,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -69,7 +69,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -87,7 +87,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -105,7 +105,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -114,7 +114,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -123,7 +123,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -132,7 +132,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -150,7 +150,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -159,7 +159,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
@@ -186,7 +186,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>CollectionLiteralInAnnotation.kt</file>
@@ -195,7 +195,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>CollectionLiteralInAnnotation.kt</file>
@@ -204,7 +204,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>CollectionLiteralInAnnotation.kt</file>
@@ -240,7 +240,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>DestructionDeclarationsInLambda.kt</file>
@@ -249,7 +249,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>DestructionDeclarationsInLambda.kt</file>
@@ -258,7 +258,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>DestructionDeclarationsInLambda.kt</file>
@@ -285,7 +285,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>DestructionDeclarationsInLambda.kt</file>
@@ -294,7 +294,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>DestructionDeclarationsInLambda.kt</file>
@@ -321,7 +321,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -330,7 +330,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -339,7 +339,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -348,7 +348,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -357,7 +357,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -366,7 +366,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -375,7 +375,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -384,7 +384,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -402,7 +402,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -420,7 +420,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -429,7 +429,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -438,7 +438,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -447,7 +447,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -465,7 +465,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>IndicesAccess.kt</file>
@@ -474,7 +474,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>LambdaParameterList.kt</file>
@@ -483,7 +483,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>LambdaParameterList.kt</file>
@@ -510,7 +510,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>LambdaValueParameters.kt</file>
@@ -519,7 +519,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>LambdaValueParameters.kt</file>
@@ -537,7 +537,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -546,7 +546,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -555,7 +555,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -564,7 +564,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -573,7 +573,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -582,7 +582,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -591,7 +591,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -600,7 +600,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>MultiVariableDeclaration.kt</file>
@@ -618,7 +618,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ParameterList.kt</file>
@@ -627,7 +627,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ParameterList.kt</file>
@@ -636,7 +636,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>ParameterList.kt</file>
@@ -663,7 +663,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -672,7 +672,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -681,7 +681,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -690,7 +690,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -708,7 +708,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -726,7 +726,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -735,7 +735,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -744,7 +744,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -753,7 +753,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -771,7 +771,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeArgumentList.kt</file>
@@ -780,7 +780,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeParameterList.kt</file>
@@ -789,7 +789,7 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
   <problem>
     <file>TypeParameterList.kt</file>
@@ -870,6 +870,6 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Redundant trailing comma</description>
+    <description>Useless trailing comma</description>
   </problem>
 </problems>
