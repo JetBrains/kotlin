@@ -1,0 +1,22 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="kotlin.gradle.testing.enabled"
+                 description="Import Kotlin Gradle test tasks and process test output"
+                 defaultValue="false"
+                 restartRequired="false"/>
+    <registryKey key="kotlin.mpp.tests.force.gradle"
+                 description="Run multi-platform tests with Gradle runner even if the platform runner is used by default.
+                 This setting currently affects only HMPP projects. You may need to delete existing test configurations for the change to take place."
+                 defaultValue="true"
+                 restartRequired="false"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.gradle.testing.js.KotlinMultiplatformJsTestClassGradleConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.gradle.testing.js.KotlinMultiplatformJsTestMethodGradleConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.gradle.testing.native.KotlinMultiplatformNativeTestClassGradleConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.gradle.testing.native.KotlinMultiplatformNativeTestMethodGradleConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.gradle.testing.common.KotlinMultiplatformCommonTestClassGradleConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.gradle.testing.common.KotlinMultiplatformCommonTestMethodGradleConfigurationProducer"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <projectResolve implementation="org.jetbrains.kotlin.idea.gradle.testing.KotlinTestTasksResolver"/>
+  </extensions>
+</idea-plugin>
