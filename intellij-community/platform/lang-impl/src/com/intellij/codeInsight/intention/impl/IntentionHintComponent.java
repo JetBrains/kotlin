@@ -167,9 +167,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     myPanel.hide();
 
     if (myOuterComboboxPopupListener != null) {
-      final Container ancestor = SwingUtilities.getAncestorOfClass(JComboBox.class, myEditor.getContentComponent());
+      JComboBox<?> ancestor = findAncestorCombo();
       if (ancestor != null) {
-        ((JComboBox)ancestor).removePopupMenuListener(myOuterComboboxPopupListener);
+        ancestor.removePopupMenuListener(myOuterComboboxPopupListener);
       }
 
       myOuterComboboxPopupListener = null;
@@ -181,31 +181,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     closePopup();
   }
 
-  public boolean isForEditor(@NotNull Editor editor) {
-    return editor == myEditor;
-  }
-
-
-  public enum PopupUpdateResult {
-    NOTHING_CHANGED,    // intentions did not change
-    CHANGED_INVISIBLE,  // intentions changed but the popup has not been shown yet, so can recreate list silently
-    HIDE_AND_RECREATE   // ahh, has to close already shown popup, recreate and re-show again
-  }
-
-  @NotNull
-  public PopupUpdateResult getPopupUpdateResult(boolean actionsChanged) {
-    if (myPopup.isDisposed() || !myFile.isValid()) {
-      return PopupUpdateResult.HIDE_AND_RECREATE;
-    }
-    if (!actionsChanged) {
-      return PopupUpdateResult.NOTHING_CHANGED;
-    }
-    return myPopupShown ? PopupUpdateResult.HIDE_AND_RECREATE : PopupUpdateResult.CHANGED_INVISIBLE;
-  }
-
   public void recreate() {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    ListPopupStep step = myPopup.getListStep();
+    ListPopupStep<IntentionActionWithTextCaching> step = myPopup.getListStep();
     recreateMyPopup(step);
   }
 
@@ -242,7 +220,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
       }
     };
     if (hintManager.canShowQuestionAction(action)) {
-      Point position = getHintPosition(myEditor);
+      Point position = getHintPosition();
       if (position != null) {
         hintManager.showQuestionHint(myEditor, position, offset, offset, myComponentHint, action, HintManager.ABOVE);
       }
@@ -250,8 +228,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
   }
 
   @Nullable
-  private static Point getHintPosition(Editor editor) {
+  private Point getHintPosition() {
     if (ApplicationManager.getApplication().isUnitTestMode()) return new Point();
+    Editor editor = myEditor;
     final int offset = editor.getCaretModel().getOffset();
     final VisualPosition pos = editor.offsetToVisualPosition(offset);
     int line = pos.line;
@@ -265,21 +244,21 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     final boolean oneLineEditor = editor.isOneLineMode();
     if (oneLineEditor) {
       // place bulb at the corner of the surrounding component
-      final JComponent contentComponent = editor.getContentComponent();
-      Container ancestorOfClass = SwingUtilities.getAncestorOfClass(JComboBox.class, contentComponent);
-
-      if (ancestorOfClass != null) {
-        convertComponent = (JComponent) ancestorOfClass;
-      } else {
-        ancestorOfClass = SwingUtilities.getAncestorOfClass(JTextField.class, contentComponent);
-        if (ancestorOfClass != null) {
-          convertComponent = (JComponent) ancestorOfClass;
+      Container ancestor = findAncestorCombo();
+      if (ancestor != null) {
+        convertComponent = (JComponent) ancestor;
+      }
+      else {
+        ancestor = SwingUtilities.getAncestorOfClass(JTextField.class, editor.getContentComponent());
+        if (ancestor != null) {
+          convertComponent = (JComponent) ancestor;
         }
       }
 
       realPoint = new Point(- (AllIcons.Actions.RealIntentionBulb.getIconWidth() / 2) - 4, - (AllIcons.Actions.RealIntentionBulb
                                                                                                 .getIconHeight() / 2));
-    } else {
+    }
+    else {
       Rectangle visibleArea = editor.getScrollingModel().getVisibleArea();
       if (position.y < visibleArea.y || position.y >= visibleArea.y + visibleArea.height) return null;
 
@@ -368,7 +347,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     });
 
     myComponentHint = new MyComponentHint(myPanel);
-    ListPopupStep step = new IntentionListStep(this, myEditor, myFile, project, myCachedIntentions);
+    ListPopupStep<IntentionActionWithTextCaching> step = new IntentionListStep(this, myEditor, myFile, project, myCachedIntentions);
     recreateMyPopup(step);
     EditorUtil.disposeWithEditor(myEditor, this);
     DynamicPlugins.onPluginUnload(this, () -> Disposer.dispose(this));
@@ -425,7 +404,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     myPopupShown = true;
   }
 
-  private void recreateMyPopup(@NotNull ListPopupStep step) {
+  private void recreateMyPopup(@NotNull ListPopupStep<IntentionActionWithTextCaching> step) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     if (myPopup != null) {
       Disposer.dispose(myPopup);
@@ -498,9 +477,8 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
     if (myEditor.isOneLineMode()) {
       // hide popup on combobox popup show
-      final Container ancestor = SwingUtilities.getAncestorOfClass(JComboBox.class, myEditor.getContentComponent());
-      if (ancestor != null) {
-        final JComboBox comboBox = (JComboBox)ancestor;
+      JComboBox<?> comboBox = findAncestorCombo();
+      if (comboBox != null) {
         myOuterComboboxPopupListener = new PopupMenuListenerAdapter() {
           @Override
           public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -514,6 +492,14 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
     Disposer.register(this, myPopup);
     Disposer.register(myPopup, ApplicationManager.getApplication()::assertIsDispatchThread);
+  }
+
+  private JComboBox<?> findAncestorCombo() {
+    Container ancestor = SwingUtilities.getAncestorOfClass(JComboBox.class, myEditor.getContentComponent());
+    if (ancestor != null) {
+      return (JComboBox<?>)ancestor;
+    }
+    return null;
   }
 
   private void updatePreviewPopup(@NotNull IntentionAction action, int index) {
@@ -530,7 +516,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
       public void actionPerformed(ActionEvent e) {
         myPreviewPopupUpdateProcessor.toggleShow();
         if (myPopup instanceof ListPopupImpl) {
-          JList list = ((ListPopupImpl)myPopup).getList();
+          JList<?> list = ((ListPopupImpl)myPopup).getList();
           int selectedIndex = list.getSelectedIndex();
           Object selectedValue = list.getSelectedValue();
           if (selectedValue instanceof IntentionActionWithTextCaching) {
@@ -542,12 +528,11 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     myPopup.setAdText(CodeInsightBundle.message("intention.preview.adv.show.text", INTENTION_PREVIEW_SHORTCUT_TEXT), SwingConstants.LEFT);
   }
 
-  void canceled(@NotNull ListPopupStep intentionListStep) {
-    if (myPopup.getListStep() != intentionListStep || myDisposed) {
-      return;
+  void canceled(@NotNull ListPopupStep<IntentionActionWithTextCaching> intentionListStep) {
+    if (myPopup.getListStep() == intentionListStep && !isDisposed()) {
+      // Root canceled. Create new popup. This one cannot be reused.
+      recreateMyPopup(intentionListStep);
     }
-    // Root canceled. Create new popup. This one cannot be reused.
-    recreateMyPopup(intentionListStep);
   }
 
   private static class MyComponentHint extends LightweightHint {

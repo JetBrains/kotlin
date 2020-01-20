@@ -45,10 +45,10 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
   private final Editor myEditor;
 
   public IntentionListStep(@Nullable IntentionHintComponent intentionHintComponent,
-                    @Nullable Editor editor,
-                    @NotNull PsiFile file,
-                    @NotNull Project project,
-                    CachedIntentions intentions) {
+                           @Nullable Editor editor,
+                           @NotNull PsiFile file,
+                           @NotNull Project project,
+                           CachedIntentions intentions) {
     myIntentionHintComponent = intentionHintComponent;
     myProject = project;
     myFile = file;
@@ -67,7 +67,7 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
   }
 
   @Override
-  public PopupStep onChosen(IntentionActionWithTextCaching action, final boolean finalChoice) {
+  public PopupStep<?> onChosen(IntentionActionWithTextCaching action, final boolean finalChoice) {
     IntentionAction a = IntentionActionDelegate.unwrap(action.getAction());
 
     if (finalChoice && !(a instanceof AbstractEmptyIntentionAction)) {
@@ -85,13 +85,10 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
   }
 
   private static void closeIntentionPreviewPopup() {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      List<JBPopup> popups = StackingPopupDispatcher.getInstance().getPopupStream()
-        .filter(popup -> popup.getUserData(IntentionPreviewPopupUpdateProcessor.IntentionPreviewPopupKey.class) != null)
-        .collect(Collectors.toList());
-
-      popups.forEach(popup -> { popup.cancel(); });
-    });
+    ApplicationManager.getApplication().invokeLater(() ->
+       StackingPopupDispatcher.getInstance().getPopupStream()
+      .filter(popup -> popup.getUserData(IntentionPreviewPopupUpdateProcessor.IntentionPreviewPopupKey.class) != null)
+      .forEach(popup -> popup.cancel()));
   }
 
   @Override
