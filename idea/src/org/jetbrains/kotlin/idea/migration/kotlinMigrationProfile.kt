@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.migration
 
-import com.intellij.codeInspection.InspectionEP
-import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.codeInspection.ex.InspectionToolWrapper
@@ -56,7 +54,7 @@ fun createMigrationProfile(
 
 fun applicableMigrationTools(migrationInfo: MigrationInfo) = applicableMigrationToolsImpl(migrationInfo)
 
-private fun applicableMigrationToolsImpl(migrationInfo: MigrationInfo?): List<InspectionToolWrapper<InspectionProfileEntry, InspectionEP>> {
+private fun applicableMigrationToolsImpl(migrationInfo: MigrationInfo?): List<InspectionToolWrapper<*, *>> {
     val rootProfile = InspectionProfileManager.getInstance().currentProfile
 
     return rootProfile.allTools.asSequence()

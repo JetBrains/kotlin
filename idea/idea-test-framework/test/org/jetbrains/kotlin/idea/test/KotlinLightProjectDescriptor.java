@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
+import com.intellij.openapi.module.ModuleTypeId;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -30,10 +29,11 @@ public class KotlinLightProjectDescriptor extends LightProjectDescriptor {
     }
     
     public static final KotlinLightProjectDescriptor INSTANCE = new KotlinLightProjectDescriptor();
-    
+
+    @NotNull
     @Override
-    public ModuleType getModuleType() {
-        return StdModuleTypes.JAVA;
+    public String getModuleTypeId() {
+        return ModuleTypeId.JAVA_MODULE;
     }
 
     @Override

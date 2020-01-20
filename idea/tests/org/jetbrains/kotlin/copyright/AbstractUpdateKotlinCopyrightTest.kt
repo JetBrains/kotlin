@@ -15,7 +15,7 @@ import java.io.File
 
 abstract class AbstractUpdateKotlinCopyrightTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
-        myFixture.configureByFile(path)
+        myFixture.configureByFile(fileName())
 
         val fileText = myFixture.file.text.trim()
         val expectedNumberOfComments = InTextDirectivesUtils.getPrefixedInt(fileText, "// COMMENTS: ") ?: run {
