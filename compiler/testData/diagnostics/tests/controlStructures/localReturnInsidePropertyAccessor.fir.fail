@@ -1,2 +1,2 @@
 Failures detected in FirImplicitTypeBodyResolveTransformerAdapter, file: /localReturnInsidePropertyAccessor.fir.kt
-Cause: kotlin.KotlinNullPointerException
+Cause: java.lang.NullPointerException
