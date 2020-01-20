@@ -153,10 +153,21 @@ class KotlinMultiplatformPlugin(
     }
 
     fun setupDefaultPresets(project: Project) {
+        val propertiesProvider = PropertiesProvider(project)
+
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
-            add(KotlinJsTargetPreset(project, kotlinPluginVersion))
-            add(KotlinJsIrTargetPreset(project, kotlinPluginVersion))
+            when (propertiesProvider.jsMode) {
+                JsMode.LEGACY -> add(KotlinJsTargetPreset(project, kotlinPluginVersion, null))
+                JsMode.IR -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion))
+                JsMode.MIXED -> add(
+                    KotlinJsTargetPreset(
+                        project,
+                        kotlinPluginVersion,
+                        KotlinJsIrTargetPreset(project, kotlinPluginVersion)
+                    )
+                )
+            }
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
 

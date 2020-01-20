@@ -12,10 +12,14 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 
 open class KotlinJsTargetPreset(
     project: Project,
-    kotlinPluginVersion: String
+    kotlinPluginVersion: String,
+    irPreset: KotlinJsIrTargetPreset?
 ) : KotlinOnlyTargetPreset<KotlinJsTarget, KotlinJsCompilation>(
     project,
     kotlinPluginVersion
@@ -24,15 +28,40 @@ open class KotlinJsTargetPreset(
         get() = KotlinPlatformType.js
 
     override fun instantiateTarget(): KotlinJsTarget {
-        return project.objects.newInstance(KotlinJsTarget::class.java, project, platformType)
+
+        val irTarget = KotlinJsIrTarget(project, platformType)
+
+        return project.objects.newInstance(
+            KotlinJsTarget::class.java,
+            project,
+            platformType,
+            irTarget
+        )
+    }
+
+    override fun createTarget(name: String): KotlinJsTarget {
+        val result = instantiateTarget().apply {
+            targetName = name
+            disambiguationClassifier = provideTargetDisambiguationClassifier(this)
+            preset = this@KotlinJsTargetPreset
+
+            val compilationFactory = createCompilationFactory(this)
+            compilations = project.container(compilationFactory.itemClass, compilationFactory)
+        }
+
+        createKotlinTargetConfigurator().configureTarget(result)
+
+        return result
     }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>) =
-        KotlinJsCompilationFactory(project, forTarget)
+    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>): KotlinJsCompilationFactory {
+        forTarget as KotlinJsTarget
+        return KotlinJsCompilationFactory(project, forTarget, forTarget.irTarget)
+    }
 
     companion object {
         const val PRESET_NAME = "js"
@@ -41,9 +70,13 @@ open class KotlinJsTargetPreset(
 
 class KotlinJsSingleTargetPreset(
     project: Project,
-    kotlinPluginVersion: String
-) :
-    KotlinJsTargetPreset(project, kotlinPluginVersion) {
+    kotlinPluginVersion: String,
+    irPreset: KotlinJsIrSingleTargetPreset?
+) : KotlinJsTargetPreset(
+    project,
+    kotlinPluginVersion,
+    irPreset
+) {
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null

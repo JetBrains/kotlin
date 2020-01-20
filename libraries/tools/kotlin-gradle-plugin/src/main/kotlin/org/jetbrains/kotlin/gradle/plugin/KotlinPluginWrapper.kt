@@ -166,8 +166,8 @@ open class KotlinJsPluginWrapper @Inject constructor(
 
         return when (propertiesProvider.jsMode) {
             JsMode.IR -> KotlinJsIrPlugin(kotlinPluginVersion)
-            JsMode.LEGACY -> KotlinJsPlugin(kotlinPluginVersion)
-            JsMode.MIXED -> KotlinJsPlugin(kotlinPluginVersion)
+            JsMode.LEGACY -> KotlinJsPlugin(kotlinPluginVersion, false)
+            JsMode.MIXED -> KotlinJsPlugin(kotlinPluginVersion, true)
         }
     }
 
@@ -176,11 +176,9 @@ open class KotlinJsPluginWrapper @Inject constructor(
     override fun defineExtension(project: Project) {
         val propertiesProvider = PropertiesProvider(project)
 
-        when (propertiesProvider.jsMode) {
-            JsMode.IR -> projectExtensionClass = KotlinJsIrProjectExtension::class
-            JsMode.LEGACY -> projectExtensionClass = KotlinJsProjectExtension::class
-            JsMode.MIXED -> {
-            } //TODO MIXED MODE
+        projectExtensionClass = when (propertiesProvider.jsMode) {
+            JsMode.IR -> KotlinJsIrProjectExtension::class
+            JsMode.LEGACY, JsMode.MIXED -> KotlinJsProjectExtension::class
         }
     }
 

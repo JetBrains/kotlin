@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.configureDefaultVersionsResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 
 open class KotlinJsPlugin(
-    private val kotlinPluginVersion: String
+    private val kotlinPluginVersion: String,
+    private val mixedMode: Boolean
 ) : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -29,7 +31,9 @@ open class KotlinJsPlugin(
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
         configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
 
-        val target = KotlinJsSingleTargetPreset(project, kotlinPluginVersion).createTarget("Js")
+        val irPrest = if (mixedMode) KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion) else null
+
+        val target = KotlinJsSingleTargetPreset(project, kotlinPluginVersion, irPrest).createTarget("Js")
 
         kotlinExtension.target = target
 
