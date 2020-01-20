@@ -9,6 +9,8 @@ import com.intellij.execution.Location
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -17,13 +19,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 internal fun getTestMethodForKotlinTest(location: Location<*>): PsiMethod? {
     val leaf = location.psiElement
     val function = leaf?.getParentOfType<KtNamedFunction>(false) ?: return null
-    val owner = function.getParentOfType<KtDeclaration>(true) as? KtClass ?: return null
-    val delegate = owner.toLightClass() ?: return null
-    return delegate.methods.firstOrNull { it.navigationElement == function } ?: return null
+    return KtFakeLightMethod.get(function)
 }
 
 internal fun getTestClassForKotlinTest(location: Location<*>): PsiClass? {
     val leaf = location.psiElement
     val owner = leaf?.getParentOfType<KtDeclaration>(true) as? KtClass ?: return null
-    return owner.toLightClass()
+    return KtFakeLightClass(owner)
 }
