@@ -2744,7 +2744,6 @@ public abstract interface annotation class kotlin/coroutines/RestrictsSuspension
 }
 
 public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
-	public static final field Companion Lkotlin/coroutines/SafeContinuation$Companion;
 	public fun <init> (Lkotlin/coroutines/Continuation;)V
 	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
