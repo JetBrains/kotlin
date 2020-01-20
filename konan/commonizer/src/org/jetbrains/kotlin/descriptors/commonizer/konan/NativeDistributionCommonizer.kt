@@ -34,6 +34,8 @@ class NativeDistributionCommonizer(
     private val repository: File,
     private val targets: List<KonanTarget>,
     private val destination: File,
+    private val copyStdlib: Boolean,
+    private val copyEndorsedLibs: Boolean,
     private val withStats: Boolean,
     private val handleError: (String) -> Nothing,
     private val log: (String) -> Unit
@@ -181,16 +183,23 @@ class NativeDistributionCommonizer(
         originalModulesByTargets: Map<InputTarget, List<NativeModuleForCommonization>>,
         result: CommonizationPerformed
     ) {
-        // optimization: stdlib effectively remains the same across all Kotlin/Native targets,
-        // so it can be just copied to the new destination without running serializer
-        val stdlibOrigin = originalModulesByTargets.values.asSequence()
-            .flatten()
-            .filterIsInstance<DeserializedModule>()
-            .map { it.location }
-            .first { it.endsWith(KONAN_STDLIB_NAME) }
-
-        val stdlibDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR).resolve(KONAN_STDLIB_NAME)
-        stdlibOrigin.copyRecursively(stdlibDestination)
+        // optimization: stdlib and endorsed libraries effectively remain the same across all Kotlin/Native targets,
+        // so they can be just copied to the new destination without running serializer
+        if (copyStdlib || copyEndorsedLibs) {
+            repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+                .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
+                .listFiles()
+                ?.filter { it.isDirectory }
+                ?.let {
+                    if (copyStdlib) {
+                        if (copyEndorsedLibs) it else it.filter { dir -> dir.endsWith(KONAN_STDLIB_NAME) }
+                    } else
+                        it.filter { dir -> !dir.endsWith(KONAN_STDLIB_NAME) }
+                }?.forEach { libraryOrigin ->
+                    val libraryDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR).resolve(libraryOrigin.name)
+                    libraryOrigin.copyRecursively(libraryDestination)
+                }
+        }
 
         val originalModulesManifestData = originalModulesByTargets.mapValues { (_, modules) ->
             modules.asSequence()

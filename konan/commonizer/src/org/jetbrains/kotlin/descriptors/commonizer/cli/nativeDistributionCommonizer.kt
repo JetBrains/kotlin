@@ -34,6 +34,8 @@ fun main(args: Array<String>) {
         repository = repository,
         targets = targets,
         destination = destination,
+        copyStdlib = true,
+        copyEndorsedLibs = true,
         withStats = withStats,
         handleError = ::printErrorAndExit,
         log = ::println
