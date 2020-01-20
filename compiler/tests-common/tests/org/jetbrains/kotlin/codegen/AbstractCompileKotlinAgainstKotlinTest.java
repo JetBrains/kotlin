@@ -86,7 +86,10 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     @NotNull
     private URLClassLoader createGeneratedClassLoader() throws Exception {
         return new URLClassLoader(
-                new URL[]{ bDir.toURI().toURL(), aDir.toURI().toURL() },
+                new URL[]{
+                        bDir.toURI().toURL(), aDir.toURI().toURL(),
+                        ForTestCompileRuntime.coroutinesCompatForTests().toURI().toURL()
+                },
                 ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
         );
     }

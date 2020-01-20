@@ -109,13 +109,14 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             val oldModule = modules[testModule]!!
 
             val languageVersionSettings =
-                if (coroutinesPackage.isNotEmpty())
+                if (coroutinesPackage.isNotEmpty()) {
+                    val isExperimental = coroutinesPackage == DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
                     CompilerTestLanguageVersionSettings(
                         DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
-                        if (coroutinesPackage.contains("experimental")) ApiVersion.KOTLIN_1_2 else ApiVersion.KOTLIN_1_3,
-                        if (coroutinesPackage.contains("experimental")) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3
+                        if (isExperimental) ApiVersion.KOTLIN_1_2 else ApiVersion.KOTLIN_1_3,
+                        if (isExperimental) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3
                     )
-                else loadLanguageVersionSettings(testFilesInModule)
+                } else loadLanguageVersionSettings(testFilesInModule)
 
             languageVersionSettingsByModule[testModule] = languageVersionSettings
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
@@ -112,6 +113,11 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         }
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
             result.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8());
+        }
+
+        if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString().equals(coroutinesPackage) ||
+            fileText.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
+            result.add(ForTestCompileRuntime.coroutinesCompatForTests());
         }
 
         return result;
