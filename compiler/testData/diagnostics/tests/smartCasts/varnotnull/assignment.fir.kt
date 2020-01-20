@@ -7,5 +7,5 @@ fun foo() {
     v = null
     v.<!UNRESOLVED_REFERENCE!>length<!>
     v = "abc"
-    v.<!UNRESOLVED_REFERENCE!>length<!>
+    v.length
 }

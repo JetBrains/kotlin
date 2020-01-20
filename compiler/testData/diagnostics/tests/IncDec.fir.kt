@@ -24,7 +24,7 @@ fun testWrongIncDec() {
   var x = WrongIncDec()
   x++
   <!AMBIGUITY!>++<!>x
-  x<!AMBIGUITY!>--<!>
+  x--
   <!AMBIGUITY!>--<!>x
 }
 

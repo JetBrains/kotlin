@@ -33,6 +33,6 @@ fun foo(x: B<*>) {
     Test.rawB.field = A<String>()
     val anyA: A<Any> = Test.rawB.field
 
-    Test.rawB.field.consume("")
-    val y: Any = Test.rawB.field.produce()
+    Test.rawB.field.<!INAPPLICABLE_CANDIDATE!>consume<!>("")
+    val y: Any = Test.rawB.field.<!INAPPLICABLE_CANDIDATE!>produce<!>()
 }

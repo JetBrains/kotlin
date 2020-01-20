@@ -22,7 +22,7 @@ fun f(): Unit {
     x === 1
     x !== 1
 
-    x<!UNRESOLVED_REFERENCE!>..<!>2
+    x..2
     x in 1..2
 
     val y : Boolean? = true

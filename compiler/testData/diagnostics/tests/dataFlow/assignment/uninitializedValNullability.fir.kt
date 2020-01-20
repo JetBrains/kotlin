@@ -10,6 +10,6 @@ fun test(a: Any?, flag: Boolean, x: Any?) {
     }
     else {
         b = x
-        b.hashCode()
+        b.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
     }
 }

@@ -9,6 +9,6 @@ fun foo() {
     var y: My? = My(42)
     if (y!!.x != null) {
         y = My(null)
-        (y + My(0)).x.hashCode()
+        (y + My(0)).x.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
     }
 }

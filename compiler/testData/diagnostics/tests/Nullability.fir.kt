@@ -285,7 +285,7 @@ fun f8(b : String?, a : String) {
     b?.get(0)
   }
   else {
-    b.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+    b.get(0)
   }
 }
 

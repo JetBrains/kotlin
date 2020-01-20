@@ -30,7 +30,7 @@ fun test() {
     ++platformJ
 
     platformNN++
-    platformN++
+    platformN<!INAPPLICABLE_CANDIDATE!>++<!>
     platformJ++
 
     1 + platformNN

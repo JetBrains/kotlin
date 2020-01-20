@@ -11,7 +11,7 @@ fun foo(x: String?, y: String?, z: String?, w: String?) {
     if (x == null || y == null || (x != z && y != z))
         z.<!INAPPLICABLE_CANDIDATE!>length<!>
     else
-        z.<!INAPPLICABLE_CANDIDATE!>length<!>
+        z.length
     if (x != null && y == x && z == y && w == z)
         w.length
     else

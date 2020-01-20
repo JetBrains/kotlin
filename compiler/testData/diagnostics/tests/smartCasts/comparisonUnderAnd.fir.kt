@@ -33,7 +33,7 @@ fun foo(x : String?, y : String?) {
     }
     else {
         // Both not null
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x.length
         y.length
     }
 }

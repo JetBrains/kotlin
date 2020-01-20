@@ -31,7 +31,7 @@ fun test2(s: String?) {
             requireNotNull(s)
             t2 = true
         }
-        t2.<!UNRESOLVED_REFERENCE!>not<!>()
+        t2.not()
         s.length
     }
 }

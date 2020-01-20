@@ -17,14 +17,14 @@ fun foo(arg: Int?) {
     var z = arg
     z = z?.let { 42 }
     if (z != null) {
-        arg.hashCode()
+        arg.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
     }
 }
 
 fun kt6840_1(s: String?) {
     val hash = s?.hashCode()
     if (hash != null) {
-        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+        s.length
     }
 }
 
