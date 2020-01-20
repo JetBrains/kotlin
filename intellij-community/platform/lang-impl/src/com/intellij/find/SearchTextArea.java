@@ -379,7 +379,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
 
   private class ClearAction extends DumbAwareAction {
     ClearAction() {
-      super(null, null, AllIcons.Actions.Close);
+      super(Presentation.NULL_STRING, Presentation.NULL_STRING, AllIcons.Actions.Close);
       getTemplatePresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
     }
 

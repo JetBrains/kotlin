@@ -125,7 +125,7 @@ class ServiceViewActionProvider {
     return (ServiceView)contextComponent;
   }
 
-  private static final AnAction EMPTY_ACTION = new DumbAwareAction(null, null, EmptyIcon.ICON_16) {
+  private static final AnAction EMPTY_ACTION = new DumbAwareAction(Presentation.NULL_STRING, Presentation.NULL_STRING, EmptyIcon.ICON_16) {
     @Override
     public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabled(false);
