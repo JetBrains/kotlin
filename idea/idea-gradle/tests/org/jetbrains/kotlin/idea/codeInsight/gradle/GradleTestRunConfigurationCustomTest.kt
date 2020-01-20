@@ -10,16 +10,19 @@ import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.execution.junit.JUnitConfiguration
 import com.intellij.execution.junit.JUnitConfigurationType
-import org.junit.Test
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.PlatformUtils
+import org.jetbrains.kotlin.gradle.textWithoutTags
 import org.jetbrains.kotlin.idea.run.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.junit.Test
 
-class GradleTestRunConfigurationTest : GradleImportingTestCase() {
+class GradleTestRunConfigurationCustomTest : GradleImportingTestCase() {
     @Test
     @TargetVersions("4.7+")
     fun testPreferredConfigurations() {
@@ -86,5 +89,11 @@ class GradleTestRunConfigurationTest : GradleImportingTestCase() {
 
     override fun testDataDirName(): String {
         return "testRunConfigurations"
+    }
+
+    override fun createProjectSubFile(relativePath: String, content: String): VirtualFile {
+        val file = createProjectSubFile(relativePath)
+        ExternalSystemTestCase.setFileContent(file, textWithoutTags(content), /* advanceStamps = */ false)
+        return file
     }
 }

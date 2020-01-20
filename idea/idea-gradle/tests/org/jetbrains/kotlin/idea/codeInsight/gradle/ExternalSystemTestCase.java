@@ -271,7 +271,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
         }
     }
 
-    private static void setFileContent(final VirtualFile file, final String content, final boolean advanceStamps) throws IOException {
+    protected static void setFileContent(final VirtualFile file, final String content, final boolean advanceStamps) throws IOException {
         new WriteAction<VirtualFile>() {
             @Override
             protected void run(@NotNull Result<VirtualFile> result) throws Throwable {
