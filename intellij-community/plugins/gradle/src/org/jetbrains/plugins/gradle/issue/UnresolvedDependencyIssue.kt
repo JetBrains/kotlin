@@ -8,11 +8,11 @@ import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.externalSystem.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.util.concurrent.CompletableFuture
@@ -55,7 +55,7 @@ class UnresolvedDependencySyncIssue(dependencyName: String,
     override val id = offlineQuickFixId
     override fun runQuickFix(project: Project, dataProvider: DataProvider): CompletableFuture<*> {
       GradleSettings.getInstance(project).isOfflineWork = false
-      return tryRerun(dataProvider) ?: requestImport(project, projectPath)
+      return tryRerun(dataProvider) ?: requestImport(project, projectPath, GradleConstants.SYSTEM_ID)
     }
   }
 }

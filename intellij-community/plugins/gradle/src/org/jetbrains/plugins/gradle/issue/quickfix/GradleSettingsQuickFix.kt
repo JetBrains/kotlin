@@ -5,14 +5,15 @@ import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import com.intellij.openapi.options.ex.ConfigurableVisitor
 import com.intellij.openapi.options.newEditor.SettingsDialogFactory
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import org.jetbrains.plugins.gradle.service.settings.GradleConfigurable
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiPredicate
 
@@ -39,7 +40,7 @@ class GradleSettingsQuickFix(private val myProjectPath: String, private val myRe
     }
     return future.thenCompose { isSettingsChanged ->
       if (isSettingsChanged!! && myRequestImport)
-        requestImport(project, myProjectPath)
+        requestImport(project, myProjectPath, GradleConstants.SYSTEM_ID)
       else
         CompletableFuture.completedFuture(null)
     }

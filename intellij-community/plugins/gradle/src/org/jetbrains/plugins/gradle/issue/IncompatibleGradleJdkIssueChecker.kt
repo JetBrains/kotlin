@@ -5,6 +5,7 @@ import com.intellij.build.BuildConsoleUtils.getMessageTitle
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.externalSystem.issue.quickfix.ReimportQuickFix
 import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import com.intellij.util.PlatformUtils.getPlatformPrefix
@@ -15,9 +16,9 @@ import org.jetbrains.jps.model.java.JdkVersionDetector
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleSettingsQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleVersionQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleWrapperSettingsOpenQuickFix
-import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionErrorHandler.getRootCauseAndLocation
 import org.jetbrains.plugins.gradle.util.GradleBundle
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.util.*
 import java.util.function.BiPredicate
@@ -103,7 +104,7 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
     }
     else {
       val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
-      val reimportQuickFix = ReimportQuickFix(issueData.projectPath)
+      val reimportQuickFix = ReimportQuickFix(issueData.projectPath, GradleConstants.SYSTEM_ID)
       issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings</a>, " +
                               "upgrade version to 4.8.1 or newer and <a href=\"${reimportQuickFix.id}\">reimport the project</a>\n")
       quickFixes.add(wrapperSettingsOpenQuickFix)

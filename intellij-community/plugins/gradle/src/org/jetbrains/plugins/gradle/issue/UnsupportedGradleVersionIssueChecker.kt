@@ -4,14 +4,15 @@ package org.jetbrains.plugins.gradle.issue
 import com.intellij.build.BuildConsoleUtils.getMessageTitle
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
+import com.intellij.openapi.externalSystem.issue.quickfix.ReimportQuickFix
 import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleVersionQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleWrapperSettingsOpenQuickFix
-import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionErrorHandler.getRootCauseAndLocation
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.util.*
 
@@ -73,7 +74,7 @@ class UnsupportedGradleVersionIssueChecker : GradleIssueChecker {
     }
     else {
       val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
-      val reimportQuickFix = ReimportQuickFix(issueData.projectPath)
+      val reimportQuickFix = ReimportQuickFix(issueData.projectPath, GradleConstants.SYSTEM_ID)
       issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings</a>, " +
                               "upgrade version to ${gradleMinimumVersionRequired.version} or newer and <a href=\"${reimportQuickFix.id}\">reimport the project</a>\n")
       quickFixes.add(wrapperSettingsOpenQuickFix)
