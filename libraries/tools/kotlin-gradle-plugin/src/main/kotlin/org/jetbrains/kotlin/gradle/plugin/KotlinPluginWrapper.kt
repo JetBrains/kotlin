@@ -77,6 +77,8 @@ abstract class KotlinBasePluginWrapper(
 
         kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
+        defineExtension(project)
+
         project.createKotlinExtension(projectExtensionClass).apply {
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =
                 project.container(KotlinSourceSet::class.java, factory)
@@ -107,6 +109,9 @@ abstract class KotlinBasePluginWrapper(
         project: Project,
         kotlinGradleBuildServices: KotlinGradleBuildServices
     ): Plugin<Project>
+
+    protected open fun defineExtension(project: Project) {
+    }
 }
 
 open class KotlinPluginWrapper @Inject constructor(
@@ -156,11 +161,28 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 open class KotlinJsPluginWrapper @Inject constructor(
     fileResolver: FileResolver
 ) : KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinJsPlugin(kotlinPluginVersion)
+    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> {
+        val propertiesProvider = PropertiesProvider(project)
 
-    override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
-        get() = KotlinJsProjectExtension::class
+        return when (propertiesProvider.jsMode) {
+            JsMode.IR -> KotlinJsIrPlugin(kotlinPluginVersion)
+            JsMode.LEGACY -> KotlinJsPlugin(kotlinPluginVersion)
+            JsMode.MIXED -> KotlinJsPlugin(kotlinPluginVersion)
+        }
+    }
+
+    override lateinit var projectExtensionClass: KClass<out KotlinProjectExtension>
+
+    override fun defineExtension(project: Project) {
+        val propertiesProvider = PropertiesProvider(project)
+
+        when (propertiesProvider.jsMode) {
+            JsMode.IR -> projectExtensionClass = KotlinJsIrProjectExtension::class
+            JsMode.LEGACY -> projectExtensionClass = KotlinJsProjectExtension::class
+            JsMode.MIXED -> {
+            } //TODO MIXED MODE
+        }
+    }
 
     override fun createTestRegistry(project: Project) = KotlinTestsRegistry(project, "test")
 }

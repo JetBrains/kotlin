@@ -168,6 +168,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val jsDiscoverTypes: Boolean?
         get() = booleanProperty("kotlin.js.experimental.discoverTypes")
 
+    /**
+     * Use Kotlin/JS backend mode
+     */
+    val jsMode: JsMode
+        get() = property("kotlin.js.mode")?.let { JsMode.byCompilerArgument(it) } ?: JsMode.IR
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -199,5 +205,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 return get(CACHED_PROVIDER_EXT_NAME) as? PropertiesProvider
                     ?: PropertiesProvider(project) // Fallback if multiple class loaders are involved
             }
+    }
+}
+
+internal enum class JsMode {
+    LEGACY,
+    IR,
+    MIXED;
+
+    companion object {
+        fun byCompilerArgument(argument: String): JsMode? =
+            JsMode.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }
