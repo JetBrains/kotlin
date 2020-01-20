@@ -40,16 +40,18 @@ class CoroutineProjectConnectionListener(val project: Project) : XDebuggerManage
         params: JavaParameters?,
         runnerSettings: RunnerSettings?
     ) {
-        val configurationName = configuration.type.id
-        try {
-            if (!gradleConfiguration(configurationName)) { // gradle test logic in KotlinGradleCoroutineDebugProjectResolver
-                val kotlinxCoroutinesClassPathLib =
-                    params?.classPath?.pathList?.first { it.contains("kotlinx-coroutines-debug") }
-                initializeCoroutineAgent(params!!, kotlinxCoroutinesClassPathLib)
+        if(coroutineDebuggerEnabled()) {
+            val configurationName = configuration.type.id
+            try {
+                if (!gradleConfiguration(configurationName)) { // gradle test logic in KotlinGradleCoroutineDebugProjectResolver
+                    val kotlinxCoroutinesClassPathLib =
+                        params?.classPath?.pathList?.first { it.contains("kotlinx-coroutines-debug") }
+                    initializeCoroutineAgent(params!!, kotlinxCoroutinesClassPathLib)
+                }
+                starting()
+            } catch (e: NoSuchElementException) {
+                log.warn("'kotlinx-coroutines-debug' not found in classpath. Coroutine debugger disabled.")
             }
-            starting()
-        } catch (e: NoSuchElementException) {
-            log.warn("'kotlinx-coroutines-debug' not found in classpath. Coroutine debugger disabled.")
         }
     }
 
