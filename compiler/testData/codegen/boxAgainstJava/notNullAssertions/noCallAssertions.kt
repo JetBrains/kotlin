@@ -1,15 +1,16 @@
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.DISABLE_PARAM_ASSERTIONS, +JVM.DISABLE_CALL_ASSERTIONS
+// IGNORE_BACKEND: JVM_IR
 // FILE: noCallAssertions.kt
 
-class AssertionChecker(val illegalStateExpected: Boolean) {
+class AssertionChecker(val nullPointerExceptionExpected: Boolean) {
     operator fun invoke(name: String, f: () -> Any) {
         try {
             f()
-        } catch (e: IllegalStateException) {
-            if (!illegalStateExpected) throw AssertionError("Unexpected IllegalStateException on calling $name")
+        } catch (e: NullPointerException) {
+            if (!nullPointerExceptionExpected) throw AssertionError("Unexpected NullPointerException on calling $name")
             return
         }
-        if (illegalStateExpected) throw AssertionError("IllegalStateException expected on calling $name")
+        if (nullPointerExceptionExpected) throw AssertionError("NullPointerException expected on calling $name")
     }
 }
 
@@ -25,8 +26,8 @@ class Derived : A(), Tr {
 class Delegated : Tr by Derived() {
 }
 
-fun checkAssertions(illegalStateExpected: Boolean) {
-    val check = AssertionChecker(illegalStateExpected)
+fun checkAssertions(nullPointerExceptionExpected: Boolean) {
+    val check = AssertionChecker(nullPointerExceptionExpected)
 
     // simple call
     check("foo") { A().foo() }
