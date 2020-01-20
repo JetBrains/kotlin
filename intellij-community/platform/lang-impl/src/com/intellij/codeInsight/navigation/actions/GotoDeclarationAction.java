@@ -88,9 +88,6 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
           }
         }
 
-        //disable 'no declaration found' notification for keywords
-        if (isKeywordUnderCaret(project, file, offset)) return;
-
         chooseAmbiguousTarget(project, editor, offset, elements, file);
         return;
       }
@@ -159,7 +156,9 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     boolean found =
       chooseAmbiguousTarget(project, editor, offset, navigateProcessor, CodeInsightBundle.message("declaration.navigation.title"),
                             elements);
-    if (!found) {
+
+    // Disable the 'no declaration found' notification for keywords
+    if (!found && !isKeywordUnderCaret(project, currentFile, offset)) {
       HintManager.getInstance().showErrorHint(editor, "Cannot find declaration to go to");
     }
   }
