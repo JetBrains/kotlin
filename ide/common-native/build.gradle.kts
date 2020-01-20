@@ -22,3 +22,7 @@ if (intellijBranch >= 192 || cidrUnscrambledJarDir?.exists() == true) {
 }
 
 sourceSets["test"].java.setSrcDirs(emptyList<String>())
+
+dependencies {
+    implementation(project(":idea:jvm-debugger:jvm-debugger-core")) { isTransitive = false }
+}

@@ -5,6 +5,8 @@
   <version>0.1</version>
   <vendor url="http://jetbrains.com">JetBrains</vendor>
 
+  <depends>org.jetbrains.kotlin</depends>
+
   <description>Provides functionality for development of Kotlin MPP applications for mobile targets.</description>
   <idea-version since-build="192.0"/>
 
@@ -23,9 +25,14 @@
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
                         serviceImplementation="com.jetbrains.mpp.PathManagerCustomization" overrides="true"/>
 
+    <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
     <externalProjectDataService implementation="com.jetbrains.konan.MPPProjectDataService"/>
     <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
+    <programRunner implementation="com.jetbrains.mpp.execution.AppleDebugRunner"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mpp.BuildIOSAppTaskProvider"/>
-    <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.debugger">
+    <languageSupport language="Koltin" implementationClass="com.jetbrains.mpp.execution.KonanDebuggerLanguageSupport"/>
   </extensions>
 </idea-plugin>

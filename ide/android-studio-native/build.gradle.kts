@@ -14,11 +14,11 @@ val addCidrDeps: (Project) -> Unit by ultimateTools
 addCidrDeps(project)
 
 dependencies {
-    compile(kotlin("stdlib"))
-    compile(project(":idea")) { isTransitive = false }
-    compile(project(":idea:idea-gradle")) { isTransitive = false }
-    compile(project(":kotlin-ultimate:ide:common-native"))
-    compile(project(":kotlin-ultimate:ide:common-noncidr-native"))
+    implementation(kotlin("stdlib"))
+    implementation(project(":idea")) { isTransitive = false }
+    implementation(project(":idea:idea-gradle")) { isTransitive = false }
+    implementation(project(":kotlin-ultimate:ide:common-native"))
+    implementation(project(":kotlin-ultimate:ide:common-noncidr-native"))
     compileOnly(intellijDep()) { includeJars(
         "android-base-common",
         "external-system-rt",
