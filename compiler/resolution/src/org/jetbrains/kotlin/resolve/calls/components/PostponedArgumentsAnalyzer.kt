@@ -118,7 +118,7 @@ class PostponedArgumentsAnalyzer(
             else FilteredAnnotations(annotations, true) { it != KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
         }
 
-        val (returnArguments, inferenceSession) = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
+        val (returnArgumentsInfo, inferenceSession) = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
             lambda.atom,
             lambda.isSuspend,
             receiver,
@@ -128,21 +128,21 @@ class PostponedArgumentsAnalyzer(
             stubsForPostponedVariables.cast()
         )
 
-        returnArguments.forEach { c.addSubsystemFromArgument(it) }
+        returnArgumentsInfo.nonErrorArguments.forEach { c.addSubsystemFromArgument(it) }
 
-        val subResolvedKtPrimitives = returnArguments.map {
+        val subResolvedKtPrimitives = returnArgumentsInfo.nonErrorArguments.map {
             resolveKtPrimitive(
                 c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false
             )
         }
 
-        if (returnArguments.isEmpty()) {
+        if (!returnArgumentsInfo.returnArgumentsExist) {
             val unitType = lambda.returnType.builtIns.unitType
             val lambdaReturnType = lambda.returnType.let(::substitute)
             c.getBuilder().addSubtypeConstraint(unitType, lambdaReturnType, LambdaArgumentConstraintPosition(lambda))
         }
 
-        lambda.setAnalyzedResults(returnArguments, subResolvedKtPrimitives)
+        lambda.setAnalyzedResults(returnArgumentsInfo, subResolvedKtPrimitives)
 
         if (inferenceSession != null) {
             val storageSnapshot = c.getBuilder().currentStorage()

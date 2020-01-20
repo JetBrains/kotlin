@@ -1,0 +1,8 @@
+package
+
+public fun takeFnToAny(/*0*/ fn: () -> kotlin.Any): kotlin.Unit
+public fun </*0*/ P> takeFnToParameter(/*0*/ fn: () -> P): kotlin.Unit
+public fun takeFnToUnit(/*0*/ fn: () -> kotlin.Unit): kotlin.Unit
+public fun testAny(): kotlin.Unit
+public fun testParameter(): kotlin.Unit
+public fun testUnit(): kotlin.Unit

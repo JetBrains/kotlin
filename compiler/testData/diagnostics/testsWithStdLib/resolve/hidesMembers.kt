@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 // FILE: 2.kt
 package b
@@ -41,7 +42,7 @@ fun test(a: A) {
 
     a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>("")
 
-    with(a) {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) {
         forEach() checkType { _<String>() }
 
         forEach(1) checkType { _<Int>() }

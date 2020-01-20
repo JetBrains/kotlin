@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 class B
 
 class A {
@@ -11,7 +13,7 @@ fun test(a: A, b: B) {
 
     b.<!FUNCTION_EXPECTED!>(a)<!>()
 
-    with(b) {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(b) {
         val <!UNUSED_VARIABLE!>y<!>: Int = a()
         <!FUNCTION_EXPECTED!>(a)<!>()
     }

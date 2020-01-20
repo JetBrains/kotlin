@@ -104,9 +104,9 @@ fun testTwoLambdas() {
             <!OI;TYPE_MISMATCH!>twoLambdaArgs({})
             {}
             <!MANY_LAMBDA_EXPRESSION_ARGUMENTS, UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!><!>
-        } else {
+        } else <!NI;TYPE_MISMATCH!>{
             {}
-        }<!>
+        }<!><!>
     }
 }
 

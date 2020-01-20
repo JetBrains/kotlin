@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 class B
 
 class A {

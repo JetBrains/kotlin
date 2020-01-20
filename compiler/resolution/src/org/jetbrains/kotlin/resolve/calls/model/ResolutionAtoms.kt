@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
+import org.jetbrains.kotlin.resolve.calls.components.ReturnArgumentsInfo
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
 import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
@@ -115,14 +116,14 @@ class ResolvedLambdaAtom(
     val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?,
     override val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
-    lateinit var resultArguments: List<KotlinCallArgument>
+    lateinit var resultArgumentsInfo: ReturnArgumentsInfo
         private set
 
     fun setAnalyzedResults(
-        resultArguments: List<KotlinCallArgument>,
+        resultArguments: ReturnArgumentsInfo,
         subResolvedAtoms: List<ResolvedAtom>
     ) {
-        this.resultArguments = resultArguments
+        this.resultArgumentsInfo = resultArguments
         setAnalyzedResults(subResolvedAtoms)
     }
 

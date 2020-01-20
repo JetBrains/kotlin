@@ -10,7 +10,7 @@ fun text() {
     bar1 {1}
     bar1 {it + 1}
 
-    bar2 {<!TYPE_MISMATCH!><!>}
+    bar2 <!NI;TYPE_MISMATCH!>{<!TYPE_MISMATCH!><!>}<!>
     bar2 {1}
     bar2 {<!UNRESOLVED_REFERENCE!>it<!>}
     bar2 <!NI;TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>it<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>}<!>

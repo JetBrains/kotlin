@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
-import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
-import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession
@@ -95,7 +92,7 @@ class KotlinResolutionCallbacksImpl(
         expectedReturnType: UnwrappedType?,
         annotations: Annotations,
         stubsForPostponedVariables: Map<NewTypeVariable, StubType>
-    ): Pair<List<KotlinCallArgument>, InferenceSession?> {
+    ): ReturnArgumentsAnalysisResult {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext
 
@@ -191,7 +188,9 @@ class KotlinResolutionCallbacksImpl(
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
         var hasReturnWithoutExpression = false
+        var returnArgumentFound = false
         val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, contextInfo) ->
+            returnArgumentFound = true
             val returnedExpression = expression.returnedExpression
             if (returnedExpression != null) {
                 createCallArgument(
@@ -210,6 +209,7 @@ class KotlinResolutionCallbacksImpl(
             if (expectedReturnType?.isUnit() == true || hasReturnWithoutExpression) return@let null // coercion to Unit
 
             // todo lastExpression can be if without else
+            returnArgumentFound = true
             val lastExpressionType = trace.getType(lastExpression)
             val contextInfo = lambdaInfo.lastExpressionInfo
             val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, contextInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
@@ -218,7 +218,7 @@ class KotlinResolutionCallbacksImpl(
 
         returnArguments.addIfNotNull(lastExpressionArgument)
 
-        return Pair(returnArguments, coroutineSession)
+        return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo(returnArguments, returnArgumentFound), coroutineSession)
     }
 
     private fun getLastDeparentesizedExpression(psiCallArgument: PSIKotlinCallArgument): KtExpression? {

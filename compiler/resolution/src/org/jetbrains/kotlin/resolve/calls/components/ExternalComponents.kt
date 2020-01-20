@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -42,6 +41,16 @@ interface KotlinResolutionStatelessCallbacks {
     ): SimpleConstraintSystem
 }
 
+data class ReturnArgumentsInfo(
+    val nonErrorArguments: List<KotlinCallArgument>,
+    val returnArgumentsExist: Boolean
+)
+
+data class ReturnArgumentsAnalysisResult(
+    val returnArgumentsInfo: ReturnArgumentsInfo,
+    val inferenceSession: InferenceSession?
+)
+
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaReturnArguments(
@@ -52,7 +61,7 @@ interface KotlinResolutionCallbacks {
         expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
         annotations: Annotations,
         stubsForPostponedVariables: Map<NewTypeVariable, StubType>
-    ): Pair<List<KotlinCallArgument>, InferenceSession?>
+    ): ReturnArgumentsAnalysisResult
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 

@@ -153,7 +153,7 @@ class ResolvedAtomCompleter(
     private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
         get() {
             val returnTypes =
-                resultArguments.map {
+                resultArgumentsInfo.nonErrorArguments.map {
                     val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
                     val unwrappedType = when (type) {
                         is WrappedType -> type.unwrap()
@@ -161,7 +161,7 @@ class ResolvedAtomCompleter(
                     }
                     resultSubstitutor.safeSubstitute(unwrappedType)
                 }
-            if (returnTypes.isEmpty()) return true
+            if (returnTypes.isEmpty() && !resultArgumentsInfo.returnArgumentsExist) return true
             val substitutedTypes = returnTypes.filterNotNull()
             // we have some unsubstituted types
             if (substitutedTypes.isEmpty()) return false
@@ -184,7 +184,7 @@ class ResolvedAtomCompleter(
             )
         updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType)
 
-        for (lambdaResult in lambda.resultArguments) {
+        for (lambdaResult in lambda.resultArgumentsInfo.nonErrorArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
             val newContext =
                 topLevelCallContext.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)

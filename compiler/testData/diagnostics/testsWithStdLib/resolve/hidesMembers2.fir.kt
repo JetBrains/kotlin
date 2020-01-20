@@ -1,5 +1,7 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
+
 class A {
     fun forEach() = this
     fun forEach(i: Int) = this

@@ -1,5 +1,7 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
+
 class A {
     fun forEach() = this
     fun forEach(i: Int) = this
@@ -35,7 +37,7 @@ fun test2(a: A) {
     a.forEach() checkType { _<String>() }
     a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>(1)
 
-    with(a) {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) {
         forEach() checkType { _<String>() }
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>(1)
     }
