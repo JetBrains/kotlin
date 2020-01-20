@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -421,7 +422,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   Promise<Void> select(@NotNull VirtualFile virtualFile) {
     AsyncPromise<Void> result = new AsyncPromise<>();
     myModel.getInvoker().invoke(() -> {
-      ServiceViewItem fileItem = myModel.findItem(
+      ServiceViewItem fileItem = ReadAction.compute(() -> myModel.findItem(
         item -> {
           ServiceViewDescriptor descriptor = item.getViewDescriptor();
           return descriptor instanceof ServiceViewLocatableDescriptor &&
@@ -429,7 +430,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         },
         item -> !(item instanceof ServiceModel.ServiceNode) ||
                 item.getViewDescriptor() instanceof ServiceViewLocatableDescriptor
-      );
+      ));
       if (fileItem != null) {
         Promise<Void> promise = select(fileItem.getValue(), fileItem.getRootContributor().getClass(), false, false);
         promise.processed(result);
@@ -924,7 +925,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           eventHandled(e);
         }
         if (getToolWindowId().equals(toolWindowId)) {
-          registerActivateByContributorActions(myProject, contributors);
+          AppUIUtil.invokeOnEdt(() -> registerActivateByContributorActions(myProject, contributors), myProject.getDisposed());
         }
       });
     }
