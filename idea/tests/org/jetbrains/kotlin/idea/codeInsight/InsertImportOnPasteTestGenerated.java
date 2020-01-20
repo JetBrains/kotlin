@@ -55,6 +55,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             runTest("idea/testData/copyPaste/imports/ClassObject.kt");
         }
 
+        @TestMetadata("ClassObjectAndDropImports.kt")
+        public void testClassObjectAndDropImports() throws Exception {
+            runTest("idea/testData/copyPaste/imports/ClassObjectAndDropImports.kt");
+        }
+
         @TestMetadata("ClassObjectFunInsideClass.kt")
         public void testClassObjectFunInsideClass() throws Exception {
             runTest("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
@@ -243,6 +248,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
             runTest("idea/testData/copyPaste/imports/Local.kt");
+        }
+
+        @TestMetadata("MultiCaretSelectionEntireFile.kt")
+        public void testMultiCaretSelectionEntireFile() throws Exception {
+            runTest("idea/testData/copyPaste/imports/MultiCaretSelectionEntireFile.kt");
         }
 
         @TestMetadata("MultiDeclaration.kt")
@@ -408,6 +418,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             runTest("idea/testData/copyPaste/imports/ClassObject.kt");
         }
 
+        @TestMetadata("ClassObjectAndDropImports.kt")
+        public void testClassObjectAndDropImports() throws Exception {
+            runTest("idea/testData/copyPaste/imports/ClassObjectAndDropImports.kt");
+        }
+
         @TestMetadata("ClassObjectFunInsideClass.kt")
         public void testClassObjectFunInsideClass() throws Exception {
             runTest("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
@@ -596,6 +611,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
             runTest("idea/testData/copyPaste/imports/Local.kt");
+        }
+
+        @TestMetadata("MultiCaretSelectionEntireFile.kt")
+        public void testMultiCaretSelectionEntireFile() throws Exception {
+            runTest("idea/testData/copyPaste/imports/MultiCaretSelectionEntireFile.kt");
         }
 
         @TestMetadata("MultiDeclaration.kt")

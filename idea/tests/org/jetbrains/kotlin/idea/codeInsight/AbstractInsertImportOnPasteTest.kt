@@ -47,6 +47,14 @@ abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
         }
 
         KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested = emptyList()
+        ReviewAddedImports.importsToBeReviewed = emptyList()
+
+        val importsToBeDeletedFile = testDataFile(testFileName.replace(".kt", ".imports_to_delete"))
+        ReviewAddedImports.importsToBeDeleted = if (importsToBeDeletedFile.exists()) {
+            importsToBeDeletedFile.readLines()
+        } else {
+            emptyList()
+        }
 
         configureTargetFile(testFileName.replace(".kt", ".to.kt"))
         performNotWriteEditorAction(IdeActions.ACTION_PASTE)
@@ -59,6 +67,7 @@ abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
 
         val namesToImportDump = KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested.joinToString("\n")
         KotlinTestUtils.assertEqualsToFile(testDataFile(testFileName.replace(".kt", ".expected.names")), namesToImportDump)
+        assertEquals(namesToImportDump, ReviewAddedImports.importsToBeReviewed.joinToString("\n"))
 
         val resultFile = myFixture.file as KtFile
         val resultText = if (InTextDirectivesUtils.isDirectiveDefined(testFileText, NO_ERRORS_DUMP_DIRECTIVE))
