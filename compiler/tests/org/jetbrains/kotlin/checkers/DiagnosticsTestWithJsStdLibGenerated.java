@@ -415,11 +415,6 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("coroutineProhibitedMigration.kt")
-        public void testCoroutineProhibitedMigration() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/coroutineProhibitedMigration.kt");
-        }
-
         @TestMetadata("dualModuleFromUmd.kt")
         public void testDualModuleFromUmd() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/dualModuleFromUmd.kt");
