@@ -273,6 +273,7 @@ class DiagnosticReporterByTrackingStrategy(
                         is ArgumentConstraintPosition -> position.argument
                         is ReceiverConstraintPosition -> position.argument
                         is LHSArgumentConstraintPosition -> position.argument
+                        is LambdaArgumentConstraintPosition -> position.lambda.atom
                         else -> null
                     }
                 argument?.let {

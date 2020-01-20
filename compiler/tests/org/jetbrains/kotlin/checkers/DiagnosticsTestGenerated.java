@@ -8403,6 +8403,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/generics/kt30590.kt");
             }
 
+            @TestMetadata("kt34729.kt")
+            public void testKt34729() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/kt34729.kt");
+            }
+
             @TestMetadata("kt5508.kt")
             public void testKt5508() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/kt5508.kt");
@@ -10464,6 +10469,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
 
                 public void testAllFilesPresentInCompletion() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/completion"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("anonymousFunction.kt")
+                public void testAnonymousFunction() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/anonymousFunction.kt");
                 }
 
                 @TestMetadata("basic.kt")
