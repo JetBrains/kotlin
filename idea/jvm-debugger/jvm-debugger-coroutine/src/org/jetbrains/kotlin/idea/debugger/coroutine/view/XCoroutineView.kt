@@ -97,7 +97,6 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         myThreadsPanel.setBorder(CustomLineBorder(CaptionPanel.CNT_ACTIVE_BORDER_COLOR, 0, 0, 1, 0))
         myThreadsPanel.add(myToolbar?.getComponent(), BorderLayout.EAST)
         myThreadsPanel.add(someCombobox, BorderLayout.CENTER)
-        mainPanel.add(myThreadsPanel, BorderLayout.NORTH)
         mainPanel.add(panel.mainPanel, BorderLayout.CENTER)
         selectedNodeListener.installOn()
     }
