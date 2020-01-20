@@ -15,6 +15,7 @@ val mavenCompileScope by configurations.creating {
 description = "Kotlin/Native library commonizer"
 
 dependencies {
+    compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:ir.serialization.common"))
 
