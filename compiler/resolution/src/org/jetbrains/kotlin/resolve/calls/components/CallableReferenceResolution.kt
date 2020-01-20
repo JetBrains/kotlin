@@ -266,7 +266,7 @@ class CallableReferencesCandidateFactory(
                 val mappedArgument: KotlinType?
                 if (substitutedParameter.isVararg) {
                     val (varargType, newVarargMappingState) = varargParameterTypeByExpectedParameter(
-                        inputOutputTypes.inputTypes[index],
+                        inputOutputTypes.inputTypes[index + unboundReceiverCount],
                         substitutedParameter,
                         varargMappingState,
                         builtins
