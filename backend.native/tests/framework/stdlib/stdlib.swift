@@ -147,7 +147,7 @@ class StdlibTests : TestProvider {
         try assertEquals(actual: smd.object(forKey: "XYZ" as NSString) as! Int, expected: 321, "Get element from Kotlin")
     }
 
-    func zeroTo(_ n: Int32) -> KotlinArray { return KotlinArray(size: n) { $0 } }
+    func zeroTo(_ n: Int32) -> KotlinArray<AnyObject> { return KotlinArray<AnyObject>(size: n) { $0 } }
 
     func testList() throws {
         let elements = zeroTo(5)
@@ -216,10 +216,10 @@ class StdlibTests : TestProvider {
         try applyVoid { $0.add("bar") }
         try applyVoid { $0.remove("baz") }
         try applyVoid { $0.add("baz") }
-        try applyVoid { $0.add(TripleVals(first: 1, second: 2, third: 3)) }
-        try apply { $0.member(TripleVals(first: 1, second: 2, third: 3)) as! TripleVals }
+        try applyVoid { $0.add(TripleVals<NSNumber>(first: 1, second: 2, third: 3)) }
+        try apply { $0.member(TripleVals<NSNumber>(first: 1, second: 2, third: 3)) as! TripleVals<NSNumber> }
         try apply { $0.member(42) == nil }
-        try applyVoid { $0.remove(TripleVals(first: 1, second: 2, third: 3)) }
+        try applyVoid { $0.remove(TripleVals<NSNumber>(first: 1, second: 2, third: 3)) }
 
         let NULL0: Any? = nil
         let NULL = NULL0 as Any
@@ -259,7 +259,7 @@ class StdlibTests : TestProvider {
         try apply { $0.object(forKey: 42) == nil }
         try applyVoid { $0.setObject(42, forKey: 42 as NSNumber) }
         try applyVoid { $0.setObject(17, forKey: "foo" as NSString) }
-        let triple = TripleVals(first: 3, second: 2, third: 1)
+        let triple = TripleVals<NSNumber>(first: 3, second: 2, third: 1)
         try applyVoid { $0.setObject("bar", forKey: triple) }
         try applyVoid { $0.removeObject(forKey: 42) }
         try apply { $0.count }
@@ -314,9 +314,9 @@ class StdlibTests : TestProvider {
     }
 
     func testSet() throws {
-        let elements = KotlinArray(size: 2) { index in nil }
+        let elements = KotlinArray<AnyObject>(size: 2) { index in nil }
         elements.set(index: 0, value: nil)
-        elements.set(index: 1, value: 42)
+        elements.set(index: 1, value: 42 as NSNumber)
         let set = StdlibKt.set(elements: elements) as! NSSet
         try assertEquals(actual: set.count, expected: 2)
         try assertEquals(actual: set.member(NSNull()) as! NSNull, expected: NSNull())
@@ -331,12 +331,12 @@ class StdlibTests : TestProvider {
     }
 
     func testMap() throws {
-        let elements = KotlinArray(size: 6) { index in nil }
+        let elements = KotlinArray<AnyObject>(size: 6) { index in nil }
         elements.set(index: 0, value: nil)
-        elements.set(index: 1, value: 42)
-        elements.set(index: 2, value: "foo")
-        elements.set(index: 3, value: "bar")
-        elements.set(index: 4, value: 42)
+        elements.set(index: 1, value: 42 as NSNumber)
+        elements.set(index: 2, value: "foo" as NSString)
+        elements.set(index: 3, value: "bar" as NSString)
+        elements.set(index: 4, value: 42 as NSNumber)
         elements.set(index: 5, value: nil)
 
         let map = StdlibKt.map(keysAndValues: elements) as! NSDictionary

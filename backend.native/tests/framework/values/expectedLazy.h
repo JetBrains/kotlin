@@ -125,8 +125,8 @@ __attribute__((swift_name("DelegateClass")))
 @interface ValuesDelegateClass : ValuesBase <ValuesKotlinReadWriteProperty>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (ValuesKotlinArray *)getValueThisRef:(ValuesKotlinNothing * _Nullable)thisRef property:(id<ValuesKotlinKProperty>)property __attribute__((swift_name("getValue(thisRef:property:)")));
-- (void)setValueThisRef:(ValuesKotlinNothing * _Nullable)thisRef property:(id<ValuesKotlinKProperty>)property value:(ValuesKotlinArray *)value __attribute__((swift_name("setValue(thisRef:property:value:)")));
+- (ValuesKotlinArray<NSString *> *)getValueThisRef:(ValuesKotlinNothing * _Nullable)thisRef property:(id<ValuesKotlinKProperty>)property __attribute__((swift_name("getValue(thisRef:property:)")));
+- (void)setValueThisRef:(ValuesKotlinNothing * _Nullable)thisRef property:(id<ValuesKotlinKProperty>)property value:(ValuesKotlinArray<NSString *> *)value __attribute__((swift_name("setValue(thisRef:property:value:)")));
 @end;
 
 __attribute__((swift_name("I")))
@@ -186,7 +186,7 @@ __attribute__((swift_name("ExtConstrClass")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Enumeration")))
-@interface ValuesEnumeration : ValuesKotlinEnum
+@interface ValuesEnumeration : ValuesKotlinEnum<ValuesEnumeration *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
@@ -199,34 +199,34 @@ __attribute__((swift_name("Enumeration")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TripleVals")))
-@interface ValuesTripleVals : ValuesBase
-- (instancetype)initWithFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("init(first:second:third:)"))) __attribute__((objc_designated_initializer));
+@interface ValuesTripleVals<T> : ValuesBase
+- (instancetype)initWithFirst:(T _Nullable)first second:(T _Nullable)second third:(T _Nullable)third __attribute__((swift_name("init(first:second:third:)"))) __attribute__((objc_designated_initializer));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (id _Nullable)component1 __attribute__((swift_name("component1()")));
-- (id _Nullable)component2 __attribute__((swift_name("component2()")));
-- (id _Nullable)component3 __attribute__((swift_name("component3()")));
-- (ValuesTripleVals *)doCopyFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
-@property (readonly) id _Nullable first __attribute__((swift_name("first")));
-@property (readonly) id _Nullable second __attribute__((swift_name("second")));
-@property (readonly) id _Nullable third __attribute__((swift_name("third")));
+- (T _Nullable)component1 __attribute__((swift_name("component1()")));
+- (T _Nullable)component2 __attribute__((swift_name("component2()")));
+- (T _Nullable)component3 __attribute__((swift_name("component3()")));
+- (ValuesTripleVals<T> *)doCopyFirst:(T _Nullable)first second:(T _Nullable)second third:(T _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
+@property (readonly) T _Nullable first __attribute__((swift_name("first")));
+@property (readonly) T _Nullable second __attribute__((swift_name("second")));
+@property (readonly) T _Nullable third __attribute__((swift_name("third")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TripleVars")))
-@interface ValuesTripleVars : ValuesBase
-- (instancetype)initWithFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("init(first:second:third:)"))) __attribute__((objc_designated_initializer));
+@interface ValuesTripleVars<T> : ValuesBase
+- (instancetype)initWithFirst:(T _Nullable)first second:(T _Nullable)second third:(T _Nullable)third __attribute__((swift_name("init(first:second:third:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)description __attribute__((swift_name("description()")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (id _Nullable)component1 __attribute__((swift_name("component1()")));
-- (id _Nullable)component2 __attribute__((swift_name("component2()")));
-- (id _Nullable)component3 __attribute__((swift_name("component3()")));
-- (ValuesTripleVars *)doCopyFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
-@property id _Nullable first __attribute__((swift_name("first")));
-@property id _Nullable second __attribute__((swift_name("second")));
-@property id _Nullable third __attribute__((swift_name("third")));
+- (T _Nullable)component1 __attribute__((swift_name("component1()")));
+- (T _Nullable)component2 __attribute__((swift_name("component2()")));
+- (T _Nullable)component3 __attribute__((swift_name("component3()")));
+- (ValuesTripleVars<T> *)doCopyFirst:(T _Nullable)first second:(T _Nullable)second third:(T _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
+@property T _Nullable first __attribute__((swift_name("first")));
+@property T _Nullable second __attribute__((swift_name("second")));
+@property T _Nullable third __attribute__((swift_name("third")));
 @end;
 
 __attribute__((swift_name("WithCompanionAndObject")))
@@ -325,7 +325,7 @@ __attribute__((swift_name("WithGenericDeeply.Nested")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("WithGenericDeeply.NestedType")))
-@interface ValuesWithGenericDeeplyNestedType : ValuesBase
+@interface ValuesWithGenericDeeplyNestedType<T> : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @property (readonly) int32_t thirtyThree __attribute__((swift_name("thirtyThree")));
@@ -399,9 +399,10 @@ __attribute__((swift_name("TransformWithDefault")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TransformInheritingDefault")))
-@interface ValuesTransformInheritingDefault : ValuesBase <ValuesTransformWithDefault>
+@interface ValuesTransformInheritingDefault<T> : ValuesBase <ValuesTransformWithDefault>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (T _Nullable)mapValue:(T _Nullable)value __attribute__((swift_name("map(value:)")));
 @end;
 
 __attribute__((swift_name("TransformIntString")))
@@ -622,7 +623,7 @@ __attribute__((swift_name("TestInvalidIdentifiers.Bar_")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestInvalidIdentifiers.E")))
-@interface ValuesTestInvalidIdentifiersE : ValuesKotlinEnum
+@interface ValuesTestInvalidIdentifiersE : ValuesKotlinEnum<ValuesTestInvalidIdentifiersE *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
@@ -1073,7 +1074,7 @@ __attribute__((swift_name("ValuesKt")))
 + (NSString *)funArgumentFoo:(NSString *(^)(void))foo __attribute__((swift_name("funArgument(foo:)")));
 + (id _Nullable)genericFooT:(id _Nullable)t foo:(id _Nullable (^)(id _Nullable))foo __attribute__((swift_name("genericFoo(t:foo:)")));
 + (id)fooGenericNumberR:(id)r foo:(id (^)(id))foo __attribute__((swift_name("fooGenericNumber(r:foo:)")));
-+ (NSArray<id> *)varargToListArgs:(ValuesKotlinArray *)args __attribute__((swift_name("varargToList(args:)")));
++ (NSArray<id> *)varargToListArgs:(ValuesKotlinArray<id> *)args __attribute__((swift_name("varargToList(args:)")));
 + (NSString *)subExt:(NSString *)receiver i:(int32_t)i __attribute__((swift_name("subExt(_:i:)")));
 + (NSString *)toString:(id _Nullable)receiver __attribute__((swift_name("toString(_:)")));
 + (void)print:(id _Nullable)receiver __attribute__((swift_name("print(_:)")));
@@ -1094,8 +1095,8 @@ __attribute__((swift_name("ValuesKt")))
 + (ValuesInt * _Nullable)getValueOrNull1:(id _Nullable)receiver __attribute__((swift_name("getValueOrNull1(_:)")));
 + (NSString *)getValue2:(id)receiver __attribute__((swift_name("getValue2(_:)")));
 + (NSString * _Nullable)getValueOrNull2:(id _Nullable)receiver __attribute__((swift_name("getValueOrNull2(_:)")));
-+ (ValuesTripleVals * _Nullable)getValue3:(id _Nullable)receiver __attribute__((swift_name("getValue3(_:)")));
-+ (ValuesTripleVals * _Nullable)getValueOrNull3:(id _Nullable)receiver __attribute__((swift_name("getValueOrNull3(_:)")));
++ (ValuesTripleVals<id> * _Nullable)getValue3:(id _Nullable)receiver __attribute__((swift_name("getValue3(_:)")));
++ (ValuesTripleVals<id> * _Nullable)getValueOrNull3:(id _Nullable)receiver __attribute__((swift_name("getValueOrNull3(_:)")));
 + (BOOL)isFrozenObj:(id)obj __attribute__((swift_name("isFrozen(obj:)")));
 + (id)kotlinLambdaBlock:(id (^)(id))block __attribute__((swift_name("kotlinLambda(block:)")));
 + (int64_t)multiplyInt:(int32_t)int_ long:(int64_t)long_ __attribute__((swift_name("multiply(int:long:)")));
@@ -1123,7 +1124,7 @@ __attribute__((swift_name("ValuesKt")))
 + (BOOL)testInterfaceTypeCheckX:(id)x __attribute__((swift_name("testInterfaceTypeCheck(x:)")));
 + (int32_t)testAbstractInterfaceCallX:(id<ValuesIAbstractInterface>)x __attribute__((swift_name("testAbstractInterfaceCall(x:)")));
 + (int32_t)testAbstractInterfaceCall2X:(id<ValuesIAbstractInterface2>)x __attribute__((swift_name("testAbstractInterfaceCall2(x:)")));
-+ (void)fooA:(ValuesKotlinAtomicReference *)a __attribute__((swift_name("foo(a:)")));
++ (void)fooA:(ValuesKotlinAtomicReference<id> *)a __attribute__((swift_name("foo(a:)")));
 @property (class, readonly) double dbl __attribute__((swift_name("dbl")));
 @property (class, readonly) float flt __attribute__((swift_name("flt")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));
@@ -1143,7 +1144,7 @@ __attribute__((swift_name("ValuesKt")))
 @property (class, readonly) NSArray<id> *anyList __attribute__((swift_name("anyList")));
 @property (class) id lateinitIntVar __attribute__((swift_name("lateinitIntVar")));
 @property (class, readonly) NSString *lazyVal __attribute__((swift_name("lazyVal")));
-@property (class) ValuesKotlinArray *delegatedGlobalArray __attribute__((swift_name("delegatedGlobalArray")));
+@property (class) ValuesKotlinArray<NSString *> *delegatedGlobalArray __attribute__((swift_name("delegatedGlobalArray")));
 @property (class, readonly) NSArray<NSString *> *delegatedList __attribute__((swift_name("delegatedList")));
 @property (class, readonly) id _Nullable nullVal __attribute__((swift_name("nullVal")));
 @property (class) NSString * _Nullable nullVar __attribute__((swift_name("nullVar")));
