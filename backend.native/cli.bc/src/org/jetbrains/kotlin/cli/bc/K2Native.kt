@@ -218,7 +218,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(COVERAGE, arguments.coverage)
                 put(LIBRARIES_TO_COVER, arguments.coveredLibraries.toNonNullList())
                 arguments.coverageFile?.let { put(PROFRAW_PATH, it) }
-                put(OBJC_GENERICS, arguments.objcGenerics)
+                put(OBJC_GENERICS, !arguments.noObjcGenerics)
 
                 put(LIBRARIES_TO_CACHE, parseLibrariesToCache(arguments, configuration, outputKind))
                 val libraryToAddToCache = parseLibraryToAddToCache(arguments, configuration, outputKind)

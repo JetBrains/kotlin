@@ -3788,7 +3788,6 @@ if (isAppleTarget(project)) {
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
-                extraOpts "-Xobjc-generics"
                 extraOpts "-Xemit-lazy-objc-header=$lazyHeader"
                 extraOpts project.globalTestArgs
             }
@@ -3810,7 +3809,7 @@ if (isAppleTarget(project)) {
                     dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
                 }
 
-                extraOpts "-Xembed-bitcode-marker", "-Xobjc-generics"
+                extraOpts "-Xembed-bitcode-marker"
                 extraOpts project.globalTestArgs
             }
         }
@@ -3832,7 +3831,6 @@ if (isAppleTarget(project)) {
                 }
 
                 extraOpts "-Xembed-bitcode"
-                extraOpts "-Xobjc-generics"
                 extraOpts project.globalTestArgs
             }
         }

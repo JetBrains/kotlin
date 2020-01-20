@@ -236,8 +236,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xcoverage-file", valueDescription = "<path>", description = "Save coverage information to the given file")
     var coverageFile: String? = null
 
-    @Argument(value = "-Xobjc-generics", description = "Enable experimental generics support for framework header")
-    var objcGenerics: Boolean = false
+    @Argument(value = "-Xno-objc-generics", description = "Disable generics support for framework header")
+    var noObjcGenerics: Boolean = false
 
     @Argument(value="-Xoverride-clang-options", valueDescription = "<arg1,arg2,...>", description = "Explicit list of Clang options")
     var clangOptions: Array<String>? = null

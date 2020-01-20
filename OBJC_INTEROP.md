@@ -232,21 +232,6 @@ generics defined on classes to help provide additional type information to the c
 Generic feature support for Objc and Swift differ from Kotlin, so the translation will inevitably lose some information,
 but the features supported retain meaningful information.
 
-### To Use
-
-Generics are currently not enabled by default. To have the framework header written with generics, add an experimental
-flag to the compiler config:
-
-<div class="sample" markdown="1" theme="idea" data-highlight-only>
-
-```kotlin
-binaries.framework {
-     freeCompilerArgs += "-Xobjc-generics"
-}
-```
-
-</div>
-
 #### Limitations
 
 Objective-C generics do not support all features of either Kotlin or Swift, so there will be some information lost
@@ -326,6 +311,20 @@ let variOutAny : GenVarOut<BaseData> = variOut as! GenVarOut<BaseData>
 In Kotlin you can provide upper bounds for a generic type. Objective-C also supports this, but that support is unavailable 
 in more complex cases, and is currently not supported in the Kotlin - Objective-C interop. The exception here being a non-null
 upper bound will make Objective-C methods/properties non-null.
+
+### To disable
+
+To have the framework header written without generics, add the flag to the compiler config:
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
+binaries.framework {
+     freeCompilerArgs += "-Xno-objc-generics"
+}
+```
+
+</div>
 
 ## Casting between mapped types
 
