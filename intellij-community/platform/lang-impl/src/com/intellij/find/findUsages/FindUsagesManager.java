@@ -288,11 +288,11 @@ public final class FindUsagesManager {
                                          @NotNull Processor<? super Usage> processor,
                                          @NotNull FindUsagesOptions findUsagesOptions,
                                          @NotNull Runnable onComplete) {
-    startProcessUsages(indicator, handler.getProject(), createUsageHandler(handler, primaryElements, secondaryElements, findUsagesOptions), processor, onComplete);
+    startProcessUsages(indicator, handler.getProject(), createUsageSearcher(handler, primaryElements, secondaryElements, findUsagesOptions), processor, onComplete);
   }
 
   @ApiStatus.Internal
-  public static UsageSearcher createUsageHandler(@NotNull FindUsagesHandler handler,
+  public static UsageSearcher createUsageSearcher(@NotNull FindUsagesHandler handler,
                                                   PsiElement @NotNull [] primaryElements,
                                                   PsiElement @NotNull [] secondaryElements, @NotNull FindUsagesOptions findUsagesOptions) {
     return ReadAction.compute(() -> {
