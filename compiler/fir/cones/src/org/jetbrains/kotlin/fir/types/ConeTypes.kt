@@ -170,7 +170,7 @@ class ConeCapturedType(
         get() = emptyArray()
 }
 
-class ConeTypeVariableType(
+data class ConeTypeVariableType(
     override val nullability: ConeNullability,
     override val lookupTag: ConeClassifierLookupTag
 ) : ConeLookupTagBasedType() {
