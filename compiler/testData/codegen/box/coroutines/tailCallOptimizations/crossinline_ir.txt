@@ -28,7 +28,7 @@ final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2 {
-    synthetic final field $this$anonymous$inlined: Sink
+    synthetic final field $this$inlined: Sink
     inner class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2
     public method <init>(p0: Sink): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
@@ -38,7 +38,7 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1 {
-    synthetic final field $this$filter$inlined: SourceCrossinline
+    synthetic final field $this$inlined: SourceCrossinline
     inner class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1
     public method <init>(p0: SourceCrossinline): void
     public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -131,7 +131,7 @@ final class CrossinlineKt$filter$$inlined$source$1$1 {
 @kotlin.Metadata
 public final class CrossinlineKt$filter$$inlined$source$1 {
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
-    synthetic final field $this$filter$inlined: SourceCrossinline
+    synthetic final field $this$inlined: SourceCrossinline
     inner class CrossinlineKt$filter$$inlined$source$1
     public method <init>(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function1): void
     public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -156,7 +156,7 @@ final class CrossinlineKt$filter$$inlined$source$2$1 {
 @kotlin.Metadata
 public final class CrossinlineKt$filter$$inlined$source$2 {
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
-    synthetic final field $this$filter$inlined: SourceCrossinline
+    synthetic final field $this$inlined: SourceCrossinline
     inner class CrossinlineKt$filter$$inlined$source$2
     public method <init>(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function1): void
     public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -179,7 +179,7 @@ final class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$1$1 {
 @kotlin.Metadata
 public final class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$1 {
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
-    synthetic final field $this$anonymous$inlined: Sink
+    synthetic final field $this$inlined: Sink
     inner class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$1
     public method <init>(p0: kotlin.jvm.functions.Function1, p1: Sink): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
@@ -203,7 +203,7 @@ final class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$2$1 {
 @kotlin.Metadata
 public final class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$2 {
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
-    synthetic final field $this$anonymous$inlined: Sink
+    synthetic final field $this$inlined: Sink
     inner class CrossinlineKt$filter$lambda-3$$inlined$consumeEach$2
     public method <init>(p0: kotlin.jvm.functions.Function1, p1: Sink): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
