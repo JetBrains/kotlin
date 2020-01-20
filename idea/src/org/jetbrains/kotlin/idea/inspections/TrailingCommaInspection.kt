@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -21,8 +24,12 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import javax.swing.JComponent
 
-class TrailingCommaInspection : AbstractKotlinInspection() {
+class TrailingCommaInspection(
+    @JvmField
+    var addCommaWarning: Boolean = false,
+) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object : TrailingCommaVisitor() {
         override val recursively: Boolean = false
 
@@ -42,20 +49,34 @@ class TrailingCommaInspection : AbstractKotlinInspection() {
             val trailingCommaOrLastElement = trailingCommaOrLastElement(commaOwner) ?: return
             if (needComma(commaOwner, checkExistingTrailingComma = false)) {
                 if (!trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
-                reportProblem(trailingCommaOrLastElement, "Missing trailing comma", "Add trailing comma")
+                reportProblem(
+                    trailingCommaOrLastElement,
+                    "Missing trailing comma",
+                    "Add trailing comma",
+                    if (addCommaWarning || ApplicationManager.getApplication().isUnitTestMode)
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                    else
+                        ProblemHighlightType.INFORMATION,
+                )
             } else if (!needComma(commaOwner, checkExistingTrailingComma = true)) {
                 if (!trailingCommaOrLastElement.isComma) return
                 reportProblem(trailingCommaOrLastElement, "Redundant trailing comma", "Remove trailing comma")
             }
         }
 
-        private fun reportProblem(commaOrElement: PsiElement, message: String, fixMessage: String) {
+        private fun reportProblem(
+            commaOrElement: PsiElement,
+            message: String,
+            fixMessage: String,
+            highlightType: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+        ) {
             val commaOwner = commaOrElement.parent
             holder.registerProblem(
                 commaOwner,
-                commaOrElement.textRangeOfLastSymbol.shiftLeft(commaOwner.startOffset),
                 message,
-                ReformatQuickFix(fixMessage)
+                highlightType,
+                commaOrElement.textRangeOfLastSymbol.shiftLeft(commaOwner.startOffset),
+                ReformatQuickFix(fixMessage),
             )
         }
 
@@ -70,4 +91,9 @@ class TrailingCommaInspection : AbstractKotlinInspection() {
             }
     }
 
+    override fun createOptionsPanel(): JComponent? {
+        val panel = MultipleCheckboxOptionsPanel(this)
+        panel.addCheckbox("Report also a missing comma", "addCommaWarning")
+        return panel
+    }
 }
