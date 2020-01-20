@@ -40,7 +40,8 @@ private data class SdkLookupBuilderImpl(
   val onLocalSdkSuggested: (UnknownSdkLocalSdkFix) -> Boolean = { true },
   val onDownloadableSdkSuggested: (UnknownSdkDownloadableSdkFix) -> Boolean = { true },
 
-  val sdkHomeFilter: (String) -> Boolean = { true },
+  val sdkHomeFilter: ((String) -> Boolean)? = null,
+
   val onSdkResolved: (Sdk?) -> Unit = { }
 ) : SdkLookupBuilder {
   override fun withProject(project: Project?) = copy(project = project)
@@ -52,7 +53,6 @@ private data class SdkLookupBuilderImpl(
   override fun withMaxSdkVersionExclusive(version: String) = copy(sdkMaxVersionExclusive = version)
   override fun withSdkHomeFilter(filter: (String) -> Boolean) = copy(sdkHomeFilter = filter)
   override fun onBeforeSdkSuggestionStarted(handler: () -> Boolean) = copy(onBeforeSdkSuggestionStarted = handler)
-
   override fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> Boolean) = copy(onLocalSdkSuggested = handler)
   override fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> Boolean) = copy(onDownloadableSdkSuggested = handler)
   override fun onSdkResolved(handler: (Sdk?) -> Unit) = copy(onSdkResolved = handler)
@@ -61,7 +61,7 @@ private data class SdkLookupBuilderImpl(
 
   fun sdkHomeFilter(sdk: Sdk): Boolean {
     val sdkHome = sdk.homePath ?: return false
-    return sdkHomeFilter(sdkHome)
+    return sdkHomeFilter?.invoke(sdkHome) != false
   }
 }
 
@@ -137,14 +137,15 @@ internal class SdkLookupImpl : SdkLookup {
 
     val versionPredicate = if (sdkMinVersionInclusive != null || sdkMaxVersionExclusive != null) {
       val vCmp = sdkType.versionStringComparator()
-      Predicate<String> { version ->
-        ((sdkMinVersionInclusive == null || vCmp.compare(sdkMinVersionInclusive, version) <= 0))
-        &&
-        ((sdkMaxVersionExclusive == null || vCmp.compare(version, sdkMaxVersionExclusive) > 0))
+      object : Predicate<String> {
+        override fun test(version: String) =
+          ((sdkMinVersionInclusive == null || vCmp.compare(sdkMinVersionInclusive, version) <= 0))
+           &&
+          ((sdkMaxVersionExclusive == null || vCmp.compare(version, sdkMaxVersionExclusive) > 0))
+
+        override fun toString() = "[ $sdkMinVersionInclusive .. $sdkMaxVersionExclusive )"
       }
-    } else {
-      Predicate { true }
-    }
+    } else null
 
     if (!onBeforeSdkSuggestionStarted()) {
       onSdkResolved(null)
@@ -154,6 +155,7 @@ internal class SdkLookupImpl : SdkLookup {
     val unknownSdk = object: UnknownSdk {
       override fun getSdkType() : SdkType = this@continueSdkLookupWithSuggestions.sdkType
       override fun getSdkVersionStringPredicate() = versionPredicate
+      override fun getSdkHomePredicate() = sdkHomeFilter?.let { filter -> Predicate<String> { path -> filter(path) } }
       override fun toString() = "SdkLookup{${sdkType.presentableName}, version in [$sdkMinVersionInclusive, $sdkMaxVersionExclusive) }"
     }
 
@@ -171,7 +173,7 @@ internal class SdkLookupImpl : SdkLookup {
 
         indicator.checkCanceled()
 
-        if (localFix != null && onLocalSdkSuggested.invoke(localFix) && sdkHomeFilter(localFix.existingSdkHome)) {
+        if (localFix != null && onLocalSdkSuggested.invoke(localFix) && sdkHomeFilter?.invoke(localFix.existingSdkHome) != false) {
           UnknownSdkTracker.configureLocalSdk(unknownSdk, localFix, Consumer {
             if (it != null && sdkHomeFilter(it)) {
               onSdkResolved(it)

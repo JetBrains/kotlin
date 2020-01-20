@@ -34,8 +34,17 @@ public interface UnknownSdk {
    * <br/>
    * Use the {@link SdkType#versionComparator()} to better deal with versions comparison
    */
-  @NotNull
+  @Nullable
   default Predicate<String> getSdkVersionStringPredicate() {
-    return Predicates.alwaysTrue();
+    return null;
+  }
+
+  /**
+   * A predicate to test with local (know or detected) SDKs
+   * to filter away probably invalid options
+   */
+  @Nullable
+  default Predicate<String> getSdkHomePredicate() {
+    return null;
   }
 }
