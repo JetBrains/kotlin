@@ -11,7 +11,7 @@ class C {
 }
 
 fun box(): String {
-    assertFailsWith<IllegalStateException> { C().test() }
+    assertFailsWith<NullPointerException> { C().test() }
     return "OK"
 }
 

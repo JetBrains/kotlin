@@ -19,7 +19,7 @@ fun box(): String {
     try {
         test3<Int>()
     }
-    catch(e: TypeCastException) {
+    catch(e: NullPointerException) {
         result3 = "OK"
     }
     if (result3 != "OK") return "fail: test3"

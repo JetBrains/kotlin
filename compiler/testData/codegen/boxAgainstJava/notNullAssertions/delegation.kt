@@ -15,7 +15,7 @@ fun box(): String {
         DelegateFrom().foo()
         return "Fail: should have been an exception"
     }
-    catch(e: IllegalStateException) {
+    catch(e: NullPointerException) {
         return "OK"
     }
 }

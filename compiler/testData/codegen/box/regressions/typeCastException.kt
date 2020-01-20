@@ -12,7 +12,7 @@ fun box(): String {
         val a: Any? = null
         a as Array<String>
     }
-    catch (e: TypeCastException) {
+    catch (e: NullPointerException) {
         if (e.message != "null cannot be cast to non-null type kotlin.Array<kotlin.String>") {
             return "Fail 1: $e"
         }
@@ -22,7 +22,7 @@ fun box(): String {
         val x: String? = null
         x as String
     }
-    catch (e: TypeCastException) {
+    catch (e: NullPointerException) {
         if (e.message != "null cannot be cast to non-null type kotlin.String") {
             return "Fail 2: $e"
         }

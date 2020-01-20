@@ -31,7 +31,7 @@ fun box(): String {
                 }
             })
         }.run()
-    } catch (e: IllegalArgumentException) {
+    } catch (e: NullPointerException) {
         return "OK"
     }
 

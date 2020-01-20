@@ -9,7 +9,7 @@ import kotlin.test.*
 operator fun A.inc() = A()
 
 fun box(): String {
-    assertFailsWith<IllegalArgumentException> {
+    assertFailsWith<NullPointerException> {
         var aNull = A.n()
         aNull++
     }

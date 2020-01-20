@@ -11,10 +11,10 @@ public abstract class C<Type> {
     public static void runTest(C a) {
         try {
             a.doTest(null);
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             return;
         }
-        throw new AssertionError("Fail: IllegalArgumentException expected");
+        throw new AssertionError("Fail: NullPointerException expected");
     }
 }
 

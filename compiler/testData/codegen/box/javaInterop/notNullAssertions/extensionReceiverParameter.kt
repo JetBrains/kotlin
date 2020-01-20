@@ -8,11 +8,11 @@ public class Test {
         try {
             ExtensionKt.foo(null);
         }
-        catch (IllegalArgumentException e) {
+        catch (NullPointerException e) {
             try {
                 ExtensionKt.getBar(null);
             }
-            catch (IllegalArgumentException f) {
+            catch (NullPointerException f) {
                 return "OK";
             }
         }

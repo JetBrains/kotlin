@@ -6,5 +6,5 @@ public fun <R : Any> foo(x: MutableCollection<in R>, block: java.util.AbstractLi
     x.add(block.get(0))
 }
 
-// 1 checkExpressionValueIsNotNull
-// 0 checkNotNullExpressionValue
+// 0 checkExpressionValueIsNotNull
+// 1 checkNotNullExpressionValue

@@ -19,13 +19,13 @@ fun box(): String {
         foo(baz() ?: RightElvisOperand.foo())
         return "Fail: should have been an exception in `foo(baz() ?: RightElvisOperand.foo())`"
     }
-    catch(e: IllegalStateException) {}
+    catch(e: NullPointerException) {}
 
     try {
         bar()
         return "Fail: should have been an exception in `bar()`"
     }
-    catch(e: IllegalStateException) {
+    catch(e: NullPointerException) {
         return "OK"
     }
 }

@@ -35,7 +35,7 @@ fun box(): String {
             suspendHere()
         }
         return "fail 1"
-    } catch (e: kotlin.KotlinNullPointerException) {
+    } catch (e: NullPointerException) {
     }
 
     try {
@@ -54,7 +54,7 @@ fun box(): String {
             result = "fail 5"
         }
         return "fail 6"
-    } catch (e: kotlin.KotlinNullPointerException) {
+    } catch (e: NullPointerException) {
     }
 
     try {

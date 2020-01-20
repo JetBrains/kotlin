@@ -10,7 +10,7 @@ class C : I
 fun box() = try {
     B.f()
     "FAIL"
-} catch (e: IllegalArgumentException) {
+} catch (e: NullPointerException) {
     "OK"
 }
 

@@ -16,7 +16,7 @@ public class F {
 inline fun <T, U> expectAssertion(f: () -> (T) -> U): Unit? {
     try {
         F.passNull(f())
-    } catch (e: IllegalArgumentException) {
+    } catch (e: NullPointerException) {
         return Unit
     }
     return null
