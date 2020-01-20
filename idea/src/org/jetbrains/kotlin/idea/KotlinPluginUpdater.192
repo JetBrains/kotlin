@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
-import com.intellij.ide.actions.RevealFileAction
+import com.intellij.ide.actions.ShowFilePathAction
 import com.intellij.ide.plugins.*
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.NotificationDisplayType
@@ -306,7 +306,7 @@ class KotlinPluginUpdater : Disposable {
             NotificationType.INFORMATION
         ) { notification, _ ->
             val logFile = File(PathManager.getLogPath(), "idea.log")
-            RevealFileAction.openFile(logFile)
+            ShowFilePathAction.openFile(logFile)
 
             notification.expire()
         }

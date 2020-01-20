@@ -75,21 +75,19 @@ class RunScratchAction : ScratchAction(
 
             if (!isAutoRun && module != null && isMakeBeforeRun) {
                 val project = scratchFile.project
-                ProjectTaskManager.getInstance(project).build(arrayOf(module), object : ProjectTaskNotification {
-                    override fun finished(context: ProjectTaskContext, executionResult: ProjectTaskResult) {
-                        if (executionResult.isAborted || executionResult.errors > 0) {
-                            executor.errorOccurs("There were compilation errors in module ${module.name}")
-                        }
+                ProjectTaskManager.getInstance(project).build(module).onSuccess { executionResult ->
+                    if (executionResult.isAborted || executionResult.hasErrors()) {
+                        executor.errorOccurs("There were compilation errors in module ${module.name}")
+                    }
 
-                        if (DumbService.isDumb(project)) {
-                            DumbService.getInstance(project).smartInvokeLater {
-                                executeScratch()
-                            }
-                        } else {
+                    if (DumbService.isDumb(project)) {
+                        DumbService.getInstance(project).smartInvokeLater {
                             executeScratch()
                         }
+                    } else {
+                        executeScratch()
                     }
-                })
+                }
             } else {
                 executeScratch()
             }

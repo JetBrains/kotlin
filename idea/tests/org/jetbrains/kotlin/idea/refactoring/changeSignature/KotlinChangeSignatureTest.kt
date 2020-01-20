@@ -74,7 +74,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun findCallers(method: PsiMethod): LinkedHashSet<PsiMethod> {
         val root = KotlinMethodNode(method, HashSet(), project, Runnable { })
         return (0..root.childCount - 1).flatMapTo(LinkedHashSet<PsiMethod>()) {
-            (root.getChildAt(it) as KotlinMethodNode).method.toLightMethods()
+            (root.getChildAt(it) as KotlinMethodNode).member.toLightMethods()
         }
     }
 
