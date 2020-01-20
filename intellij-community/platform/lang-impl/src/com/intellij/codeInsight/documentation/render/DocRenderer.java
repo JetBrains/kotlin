@@ -91,7 +91,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   @Override
-  public GutterIconRenderer calcGutterIconProvider(@NotNull Inlay inlay) {
+  public GutterIconRenderer calcGutterIconRenderer(@NotNull Inlay inlay) {
     return myItem.highlighter.getGutterIconRenderer();
   }
 
