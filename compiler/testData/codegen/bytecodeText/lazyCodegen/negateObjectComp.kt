@@ -6,5 +6,5 @@ fun test3() {
         val p = 1
     }
 }
-// 2 IFNONNULL
-// 3 IF
+// 2 checkNotNull \(Ljava/lang/Object;\)V
+// 1 IF_ICMP

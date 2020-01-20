@@ -13,7 +13,7 @@ fun box(u: Int) {
 }
 
 // 0 IFNULL
-// 1 IFNONNULL
-// 1 throwNpe
+// 0 IFNONNULL
+// 0 throwNpe
+// 1 checkNotNull \(Ljava/lang/Object;\)V
 // 0 ATHROW
-// 0 checkNotNull

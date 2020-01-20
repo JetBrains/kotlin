@@ -18,5 +18,5 @@ fun asNullableReference(c: AsNonNullReference?) {}
 // 6 checkNotNullParameter
 
 // JVM_IR_TEMPLATES
-// 4 checkParameterIsNotNull
-// 0 checkNotNullParameter
+// 0 checkParameterIsNotNull
+// 4 checkNotNullParameter
