@@ -122,32 +122,37 @@ public class Intrinsics {
 
     public static void checkParameterIsNotNull(Object value, String paramName) {
         if (value == null) {
-            throwParameterIsNullException(paramName);
+            throwParameterIsNullIAE(paramName);
         }
     }
 
     public static void checkNotNullParameter(Object value, String paramName) {
         if (value == null) {
-            throw sanitizeStackTrace(new NullPointerException(paramName));
+            throwParameterIsNullNPE(paramName);
         }
     }
 
-    private static void throwParameterIsNullException(String paramName) {
+    private static void throwParameterIsNullIAE(String paramName) {
+        throw sanitizeStackTrace(new IllegalArgumentException(createParameterIsNullExceptionMessage(paramName)));
+    }
+
+    private static void throwParameterIsNullNPE(String paramName) {
+        throw sanitizeStackTrace(new NullPointerException(createParameterIsNullExceptionMessage(paramName)));
+    }
+
+    private static String createParameterIsNullExceptionMessage(String paramName) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
         // #0 Thread.getStackTrace()
-        // #1 Intrinsics.throwParameterIsNullException
-        // #2 Intrinsics.checkParameterIsNotNull
-        // #3 our caller
-        StackTraceElement caller = stackTraceElements[3];
+        // #1 Intrinsics.createParameterIsNullExceptionMessage
+        // #2 Intrinsics.throwParameterIsNullIAE/throwParameterIsNullNPE
+        // #3 Intrinsics.checkParameterIsNotNull/checkNotNullParameter
+        // #4 our caller
+        StackTraceElement caller = stackTraceElements[4];
         String className = caller.getClassName();
         String methodName = caller.getMethodName();
 
-        IllegalArgumentException exception =
-                new IllegalArgumentException("Parameter specified as non-null is null: " +
-                                             "method " + className + "." + methodName +
-                                             ", parameter " + paramName);
-        throw sanitizeStackTrace(exception);
+        return "Parameter specified as non-null is null: method " + className + "." + methodName + ", parameter " + paramName;
     }
 
     public static int compare(long thisVal, long anotherVal) {

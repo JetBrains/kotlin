@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM, JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: Test.java
 
 public class Test {
