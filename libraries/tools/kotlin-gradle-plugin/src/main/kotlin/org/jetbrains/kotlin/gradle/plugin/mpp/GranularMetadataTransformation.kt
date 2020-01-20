@@ -8,13 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import java.io.File
 import java.util.*
@@ -372,15 +368,22 @@ private class JarArtifactMppDependencyMetadataExtractor(
 
         val resultFiles = mutableMapOf<String, FileCollection>()
 
+        val projectStructureMetadata = checkNotNull(getProjectStructureMetadata()) {
+            "can't extract metadata from a module without project structure metadata"
+        }
+
         ZipFile(artifactJar).use { zip ->
             val entriesBySourceSet = zip.entries().asSequence()
                 .groupBy { it.name.substringBefore("/") }
                 .filterKeys { it in chooseSourceSetsByNames }
 
             entriesBySourceSet.forEach { (sourceSetName, entries) ->
-                // TODO: once IJ supports non-JAR metadata dependencies, extraact to a directory, not a JAR
+                // TODO: once IJ supports non-JAR metadata dependencies, extract to a directory, not a JAR
                 // Also, if both IJ and the CLI compiler can read metadata from a path inside a JAR, then no operations will be needed
-                val extractToJarFile = transformedModuleRoot.resolve("$moduleString-$sourceSetName.jar")
+                val extension =
+                    projectStructureMetadata.sourceSetBinaryLayout[sourceSetName]?.archiveExtension
+                        ?: SourceSetMetadataLayout.METADATA.archiveExtension
+                val extractToJarFile = transformedModuleRoot.resolve("$moduleString-$sourceSetName.$extension")
 
                 resultFiles[sourceSetName] = project.files(extractToJarFile)
 

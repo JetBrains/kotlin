@@ -257,11 +257,11 @@ class KotlinMultiplatformPlugin(
 
         targets.all { target ->
             target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                sourceSets.findByName(mainCompilation.defaultSourceSetName)?.dependsOn(production)
+                mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
             }
 
             target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                sourceSets.findByName(testCompilation.defaultSourceSetName)?.dependsOn(test)
+                testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
             }
 
             KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, target.targetName)

@@ -6,10 +6,9 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Project
+import org.jetbrains.kotlin.konan.target.HostManager
 
 class KotlinNativeCompilationFactory(
-    val project: Project,
     val target: KotlinNativeTarget
 ) : KotlinCompilationFactory<KotlinNativeCompilation> {
 
@@ -22,4 +21,14 @@ class KotlinNativeCompilationFactory(
         // Note: such validation should be done in the whenEvaluate block because
         // a user can change args during project configuration.
         KotlinNativeCompilation(target, target.konanTarget, name)
+}
+
+class KotlinSharedNativeCompilationFactory(
+    val target: KotlinMetadataTarget
+): KotlinCompilationFactory<KotlinSharedNativeCompilation> {
+    override val itemClass: Class<KotlinSharedNativeCompilation>
+        get() = KotlinSharedNativeCompilation::class.java
+
+    override fun create(name: String): KotlinSharedNativeCompilation =
+        KotlinSharedNativeCompilation(target, name)
 }

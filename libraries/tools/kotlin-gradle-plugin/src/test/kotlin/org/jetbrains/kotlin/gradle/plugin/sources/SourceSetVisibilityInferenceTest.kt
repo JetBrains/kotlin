@@ -284,6 +284,9 @@ class MockKotlinCompilation(
 
     override fun source(sourceSet: KotlinSourceSet) = defaultSourceSet.dependsOn(sourceSet)
 
+    override val defaultSourceSetName: String
+        get() = defaultSourceSet.name
+
     override fun associateWith(other: KotlinCompilation<*>) {
         associateWith += other
     }
