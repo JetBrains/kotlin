@@ -5,9 +5,8 @@
 
 package lower.tailrec
 
-import kotlin.test.*
 
-@Test fun runTest() {
+fun main() {
     println(add(5, 7))
     println(add(100000000, 0))
 

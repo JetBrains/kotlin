@@ -802,9 +802,10 @@ task hello4(type: KonanLocalTest) {
     source = "runtime/basic/hello4.kt"
 }
 
-task enumEquals(type: KonanLocalTest) {
+standaloneTest('enumEquals') {
     goldValue = "true\nfalse\nfalse\n"
     source = "runtime/basic/enum_equals.kt"
+    flags = ['-XXLanguage:-ProhibitComparisonOfIncompatibleEnums', '-e', 'runtime.basic.enum_equals.main']
 }
 
 standaloneTest("entry0") {
@@ -1123,9 +1124,10 @@ task enum_reorderedArguments(type: KonanLocalTest) {
     source = "codegen/enum/reorderedArguments.kt"
 }
 
-task switchLowering(type: KonanLocalTest) {
+standaloneTest('switchLowering') {
     goldValue = "EnumA.A\nok\nok\nok\nok\nok\n"
     source = "codegen/enum/switchLowering.kt"
+    flags = ['-XXLanguage:-ProhibitComparisonOfIncompatibleEnums', '-e', 'codegen.enum.switchLowering.main']
 }
 
 task enum_lambdaInDefault(type: KonanLocalTest) {
@@ -2797,7 +2799,7 @@ task vararg_of_literals(type: KonanLocalTest) {
     source = "lower/vararg_of_literals.kt"
 }
 
-task tailrec(type: KonanLocalTest) {
+standaloneTest('tailrec') {
     goldValue = "12\n100000000\n" +
             "8\n" +
             "1\n" +
@@ -2807,6 +2809,7 @@ task tailrec(type: KonanLocalTest) {
             "default\n" +
             "42\n"
     source = "lower/tailrec.kt"
+    flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
 }
 
 task inline1(type: KonanLocalTest) {

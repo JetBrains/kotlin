@@ -81,7 +81,7 @@ fun nestedWhen() {
     })
 }
 
-@Test fun runTest() {
+fun main() {
     differentEnums()
     nullable()
     operatorOverloading()
