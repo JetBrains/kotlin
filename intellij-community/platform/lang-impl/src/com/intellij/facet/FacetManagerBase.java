@@ -38,10 +38,10 @@ public abstract class FacetManagerBase extends FacetManager {
   }
 
   @NotNull
-  private static <F extends Facet<?>, C extends FacetConfiguration> F createFacet(@NotNull Module module, @NotNull FacetType<F, C> type,
-                                                                                  @NotNull String name,
-                                                                                  @NotNull C configuration,
-                                                                                  @Nullable Facet<?> underlying) {
+  protected static <F extends Facet<?>, C extends FacetConfiguration> F createFacet(@NotNull Module module, @NotNull FacetType<F, C> type,
+                                                                                    @NotNull String name,
+                                                                                    @NotNull C configuration,
+                                                                                    @Nullable Facet<?> underlying) {
     final F facet = type.createFacet(module, name, configuration, underlying);
     assertTrue(facet.getModule() == module, facet, "module");
     assertTrue(facet.getConfiguration() == configuration, facet, "configuration");
@@ -126,17 +126,19 @@ public abstract class FacetManagerBase extends FacetManager {
   @NotNull
   public static InvalidFacet createInvalidFacet(@NotNull Module module, @NotNull FacetState state, @Nullable Facet<?> underlyingFacet,
                                                 @NotNull String errorMessage,
-                                                boolean unknownType) {
+                                                boolean unknownType, boolean reportError) {
     Project project = module.getProject();
-    final InvalidFacetManager invalidFacetManager = InvalidFacetManager.getInstance(project);
     final InvalidFacetType type = InvalidFacetType.getInstance();
     final InvalidFacetConfiguration configuration = new InvalidFacetConfiguration(state, errorMessage);
     final InvalidFacet facet = createFacet(module, type, StringUtil.notNullize(state.getName()), configuration, underlyingFacet);
-    if (!invalidFacetManager.isIgnored(facet)) {
-      FacetLoadingErrorDescription description = new FacetLoadingErrorDescription(facet);
-      ProjectLoadingErrorsNotifier.getInstance(project).registerError(description);
-      if (unknownType) {
-        UnknownFeaturesCollector.getInstance(project).registerUnknownFeature("com.intellij.facetType", state.getFacetType(), "Facet");
+    if (reportError) {
+      InvalidFacetManager invalidFacetManager = InvalidFacetManager.getInstance(project);
+      if (!invalidFacetManager.isIgnored(facet)) {
+        FacetLoadingErrorDescription description = new FacetLoadingErrorDescription(facet);
+        ProjectLoadingErrorsNotifier.getInstance(project).registerError(description);
+        if (unknownType) {
+          UnknownFeaturesCollector.getInstance(project).registerUnknownFeature("com.intellij.facetType", state.getFacetType(), "Facet");
+        }
       }
     }
     return facet;

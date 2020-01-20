@@ -73,6 +73,15 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
   }
 
   @Override
+  public void replaceFacet(@NotNull Facet<?> original, @NotNull Facet<?> replacement) {
+    int index = myFacets.indexOf(original);
+    if (index != -1) {
+      myFacets.set(index, replacement);
+      facetsChanged();
+    }
+  }
+
+  @Override
   public void rename(final Facet<?> facet, final String newName) {
     if (!newName.equals(facet.getName())) {
       myFacet2NewName.put(facet, newName);

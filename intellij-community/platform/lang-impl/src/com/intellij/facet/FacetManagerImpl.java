@@ -134,7 +134,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
                                ModifiableFacetModel model,
                                final Facet<?> underlyingFacet,
                                final String errorMessage, boolean unknownType) {
-    model.addFacet(createInvalidFacet(getModule(), state, underlyingFacet, errorMessage, unknownType));
+    model.addFacet(createInvalidFacet(getModule(), state, underlyingFacet, errorMessage, unknownType, true));
   }
 
   private <F extends Facet<C>, C extends FacetConfiguration> void addFacet(final FacetType<F, C> type, final FacetState state, final Facet<?> underlyingFacet,
@@ -161,22 +161,37 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     }
 
     if (facet == null) {
-      final C configuration = type.createDefaultConfiguration();
-      final Element config = state.getConfiguration();
-      FacetUtil.loadFacetConfiguration(configuration, config);
-      String name = state.getName();
-      facet = createFacet(type, name, configuration, underlyingFacet);
-      if (facet instanceof JDOMExternalizable) {
-        //todo[nik] remove
-        ((JDOMExternalizable)facet).readExternal(config);
-      }
-      String externalSystemId = state.getExternalSystemId();
-      if (externalSystemId != null) {
-        facet.setExternalSource(ExternalProjectSystemRegistry.getInstance().getSourceById(externalSystemId));
-      }
+      facet = createFacetFromState(getModule(), type, state, underlyingFacet);
       model.addFacet(facet);
     }
     addFacets(state.getSubFacets(), facet, model);
+  }
+
+  @ApiStatus.Internal
+  @NotNull
+  public static Facet<?> createFacetFromStateRaw(@NotNull Module module, @NotNull FacetType<?, ?> type, @NotNull FacetState state,
+                                                 @Nullable Facet<?> underlyingFacet) {
+    //noinspection unchecked
+    return createFacetFromState(module, type, state, underlyingFacet);
+  }
+
+  @NotNull
+  private static <F extends Facet<C>, C extends FacetConfiguration> F createFacetFromState(Module module, FacetType<F, C> type,
+                                                                                           FacetState state, Facet<?> underlyingFacet) {
+    C configuration = type.createDefaultConfiguration();
+    Element config = state.getConfiguration();
+    FacetUtil.loadFacetConfiguration(configuration, config);
+    String name = state.getName();
+    F facet = createFacet(module, type, name, configuration, underlyingFacet);
+    if (facet instanceof JDOMExternalizable) {
+      //todo[nik] remove
+      ((JDOMExternalizable)facet).readExternal(config);
+    }
+    String externalSystemId = state.getExternalSystemId();
+    if (externalSystemId != null) {
+      facet.setExternalSource(ExternalProjectSystemRegistry.getInstance().getSourceById(externalSystemId));
+    }
+    return facet;
   }
 
   @Override
@@ -224,17 +239,24 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
       if (!filter.test(facet)) continue;
       final Facet<?> underlyingFacet = facet.getUnderlyingFacet();
 
-      FacetState facetState = createFacetState(facet, myModule.getProject());
-      if (!(facet instanceof InvalidFacet)) {
-        final Element config = FacetUtil.saveFacetConfiguration(facet);
-        if (config == null) continue;
-        facetState.setConfiguration(config);
-      }
+      FacetState facetState = saveFacetConfiguration(facet);
+      if (facetState == null) continue;
 
       getOrCreateTargetFacetList(underlyingFacet, states, myModule.getProject()).add(facetState);
       states.put(facet, facetState.getSubFacets());
     }
     return managerState;
+  }
+
+  @ApiStatus.Internal
+  public static @Nullable FacetState saveFacetConfiguration(Facet<?> facet) {
+    FacetState facetState = createFacetState(facet, facet.getModule().getProject());
+    if (!(facet instanceof InvalidFacet)) {
+      final Element config = FacetUtil.saveFacetConfiguration(facet);
+      if (config == null) return null;
+      facetState.setConfiguration(config);
+    }
+    return facetState;
   }
 
   /**
