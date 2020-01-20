@@ -1,5 +1,6 @@
 // !LANGUAGE: +ProperIeee754Comparisons
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND_FIR: JVM_IR
 // ^ if (eq_double_any(0.0, 0)) throw AssertionError("eq_double_any(0.0, 0)")
 
 fun eq_double_doubleN(a: Double, b: Double?) = a == b
