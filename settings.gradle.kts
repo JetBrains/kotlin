@@ -16,6 +16,7 @@ pluginManagement {
 
 includeSubprojects(
         ":kotlin-ultimate:ide:cidr-gradle-tooling",
+        ":kotlin-ultimate:ide:cidr-konan-workspace",
         ":kotlin-ultimate:ide:common-native",
         ":kotlin-ultimate:ide:common-cidr-native",
         ":kotlin-ultimate:ide:common-cidr-swift-native",
