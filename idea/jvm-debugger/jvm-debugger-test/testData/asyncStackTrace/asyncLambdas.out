@@ -3,6 +3,7 @@ Run Java
 Connected to the target VM
 asyncLambdas.kt:19
 Async stack trace:
+    asyncLambdas.AsyncLambdasKt$baz$1:-1
     asyncLambdas.AsyncLambdasKt$bar$1:14
         b = 3
     asyncLambdas.AsyncLambdasKt$foo$1:9
