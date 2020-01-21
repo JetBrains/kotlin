@@ -20,7 +20,7 @@ class MobileRunConfigurationType : ConfigurationTypeBase(
     init {
         addFactory(object : ConfigurationFactory(this) {
             override fun createTemplateConfiguration(project: Project): RunConfiguration =
-                AppleRunConfiguration(project, this, name)
+                MobileRunConfiguration(project, this, name)
         })
     }
 }

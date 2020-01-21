@@ -11,8 +11,8 @@ import java.awt.GridBagLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class MobileRunConfigurationEditor(project: Project) : SettingsEditor<AppleRunConfiguration>() {
-    override fun resetEditorFrom(configuration: AppleRunConfiguration) {
+class MobileRunConfigurationEditor(project: Project) : SettingsEditor<MobileRunConfiguration>() {
+    override fun resetEditorFrom(configuration: MobileRunConfiguration) {
     }
 
     override fun createEditor(): JComponent {
@@ -20,6 +20,6 @@ class MobileRunConfigurationEditor(project: Project) : SettingsEditor<AppleRunCo
         return panel
     }
 
-    override fun applyEditorTo(configuration: AppleRunConfiguration) {
+    override fun applyEditorTo(configuration: MobileRunConfiguration) {
     }
 }
