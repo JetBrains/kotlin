@@ -3,6 +3,7 @@ package com.intellij.find.actions;
 
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.FindManager;
@@ -22,6 +23,8 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.components.Service;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -64,6 +67,7 @@ import com.intellij.usages.*;
 import com.intellij.usages.impl.*;
 import com.intellij.usages.rules.UsageFilteringRuleProvider;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.BitUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.EdtScheduledExecutorService;
 import com.intellij.util.messages.MessageBusConnection;
@@ -76,6 +80,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -85,7 +90,7 @@ import java.util.function.Consumer;
 import static com.intellij.find.actions.ShowUsagesActionHandler.getSecondInvocationTitle;
 import static com.intellij.find.actions.ShowUsagesActionHandler.showUsagesInMaximalScope;
 
-public class ShowUsagesAction extends AnAction implements PopupAction {
+public class ShowUsagesAction extends AnAction implements PopupAction, HintManagerImpl.ActionToIgnore {
   public static final String ID = "ShowUsages";
 
   private static class Holder {
@@ -155,7 +160,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     Project project = e.getProject();
     if (project == null) return;
 
-    hideHints();
+    ShowUsagesActionState state = getState(e.getProject());
+    Runnable continuation = state.continuation;
+    if (continuation != null) {
+      state.continuation = null;
+      hideHints(); // This action is invoked when the hint is showing because it implements HintManagerImpl.ActionToIgnore
+      continuation.run();
+      return;
+    }
 
     RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(e.getDataContext());
     PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -937,6 +949,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
           () -> actionHandler.showDialogAndFindUsages(editor)
         )
       );
+
+      ShowUsagesActionState state = getState(project);
+      state.continuation = () -> showUsagesInMaximalScope(actionHandler);
+      runWhenHidden(label, () -> state.continuation = null);
+
       if (editor == null || editor.isDisposed() || !editor.getComponent().isShowing()) {
         int flags = HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE | HintManager.HIDE_BY_SCROLLING;
         HintManager.getInstance().showHint(label, popupPosition, flags, 0);
@@ -985,5 +1002,37 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     public String toString() {
       return myString.toString();
     }
+  }
+
+  @Service
+  private static final class ShowUsagesActionState {
+    Runnable continuation;
+  }
+
+  @NotNull
+  private static ShowUsagesActionState getState(@NotNull Project project) {
+    return ServiceManager.getService(project, ShowUsagesActionState.class);
+  }
+
+  private static void runWhenHidden(@NotNull Component c, @NotNull Runnable r) {
+    c.addHierarchyListener(runWhenHidden(r));
+  }
+
+  @NotNull
+  private static HierarchyListener runWhenHidden(@NotNull Runnable r) {
+    return new HierarchyListener() {
+      @Override
+      public void hierarchyChanged(HierarchyEvent e) {
+        if (!BitUtil.isSet(e.getChangeFlags(), HierarchyEvent.DISPLAYABILITY_CHANGED)) {
+          return;
+        }
+        Component component = e.getComponent();
+        if (component.isDisplayable()) {
+          return;
+        }
+        r.run();
+        component.removeHierarchyListener(this);
+      }
+    };
   }
 }
