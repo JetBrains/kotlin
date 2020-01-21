@@ -71,6 +71,7 @@ fun buildKLib(
     allDependencies: KotlinLibraryResolveResult,
     commonSources: List<String>
 ) {
+    val configuration = buildConfiguration(environment, moduleName)
     generateKLib(
         project = environment.project,
         files = sources.map { source ->
@@ -80,7 +81,8 @@ fun buildKLib(
             }
             file
         },
-        configuration = buildConfiguration(environment, moduleName),
+        analyzer = AnalyzerWithCompilerReport(configuration),
+        configuration = configuration,
         allDependencies = allDependencies,
         friendDependencies = emptyList(),
         outputKlibPath = outputPath,

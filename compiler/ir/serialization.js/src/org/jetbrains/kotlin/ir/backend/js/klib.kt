@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -18,11 +19,6 @@ import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -59,10 +55,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
 import org.jetbrains.kotlin.konan.file.File as KFile
-
 
 val KotlinLibrary.moduleName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
@@ -96,6 +89,7 @@ class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIr
 fun generateKLib(
     project: Project,
     files: List<KtFile>,
+    analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
@@ -131,7 +125,8 @@ fun generateKLib(
         icData = emptyList()
     }
 
-    val depsDescriptors = ModulesStructure(project, MainModule.SourceFiles(files), configuration, allDependencies, friendDependencies)
+    val depsDescriptors =
+        ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -180,11 +175,12 @@ private fun sortDependencies(dependencies: List<KotlinLibrary>, mapping: Map<Kot
 fun loadIr(
     project: Project,
     mainModule: MainModule,
+    analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, mainModule, configuration, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
@@ -323,6 +319,7 @@ sealed class MainModule {
 private class ModulesStructure(
     private val project: Project,
     private val mainModule: MainModule,
+    private val analyzer: AbstractAnalyzerWithCompilerReport,
     val compilerConfiguration: CompilerConfiguration,
     val allDependencies: KotlinLibraryResolveResult,
     private val friendDependencies: List<KotlinLibrary>
@@ -345,16 +342,7 @@ private class ModulesStructure(
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
 
-        // TODO: Should we not provide default message collector?
-        val messageCollector: MessageCollector =
-            compilerConfiguration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
-
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
-            messageCollector,
-            compilerConfiguration.languageVersionSettings
-        )
-
-        analyzerWithCompilerReport.analyzeAndReport(files) {
+        analyzer.analyzeAndReport(files) {
             TopDownAnalyzerFacadeForJSIR.analyzeFiles(
                 files,
                 project,
@@ -368,12 +356,12 @@ private class ModulesStructure(
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        val analysisResult = analyzerWithCompilerReport.analysisResult
+        val analysisResult = analyzer.analysisResult
         if (IncrementalCompilation.isEnabledForJs()) {
             /** can throw [IncrementalNextRoundException] */
             compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, files)
         }
-        if (analyzerWithCompilerReport.hasErrors() || analysisResult !is JsAnalysisResult)
+        if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult)
             throw JsIrCompilationError
 
         TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext)

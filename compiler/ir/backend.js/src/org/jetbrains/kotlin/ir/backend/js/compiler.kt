@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -48,6 +49,7 @@ class CompilerResult(
 fun compile(
     project: Project,
     mainModule: MainModule,
+    analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
     allDependencies: KotlinLibraryResolveResult,
@@ -58,7 +60,7 @@ fun compile(
     generateDceJs: Boolean = false
 ): CompilerResult {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, configuration, allDependencies, friendDependencies)
+        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
 

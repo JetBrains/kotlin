@@ -11,7 +11,6 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend-common"))
-    compile(project(":compiler:backend"))
     compile(project(":compiler:ir.backend.common"))
     compile(project(":compiler:ir.serialization.js"))
     compile(project(":compiler:backend.js"))

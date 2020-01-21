@@ -20,10 +20,14 @@ import com.intellij.openapi.util.io.FileUtil.toSystemDependentName
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiFormatUtil
+import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -43,8 +47,13 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 class AnalyzerWithCompilerReport(
     private val messageCollector: MessageCollector,
     private val languageVersionSettings: LanguageVersionSettings
-) {
-    lateinit var analysisResult: AnalysisResult
+) : AbstractAnalyzerWithCompilerReport {
+    override lateinit var analysisResult: AnalysisResult
+
+    constructor(configuration: CompilerConfiguration) : this(
+        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE,
+        configuration.languageVersionSettings
+    )
 
     private fun reportIncompleteHierarchies() {
         val bindingContext = analysisResult.bindingContext
@@ -99,11 +108,10 @@ class AnalyzerWithCompilerReport(
 
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
 
-    fun hasErrors(): Boolean {
-        return messageCollector.hasErrors()
-    }
+    override fun hasErrors(): Boolean =
+        messageCollector.hasErrors()
 
-    fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
+    override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
         ExperimentalUsageChecker.checkCompilerArguments(
             analysisResult.moduleDescriptor, languageVersionSettings,

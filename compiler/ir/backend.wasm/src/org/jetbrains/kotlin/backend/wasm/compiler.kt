@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.codegen.IrModuleToWasm
@@ -25,6 +26,7 @@ data class WasmCompilerResult(val wat: String, val js: String)
 fun compileWasm(
     project: Project,
     files: List<KtFile>,
+    analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
     allDependencies: KotlinLibraryResolveResult,
@@ -32,7 +34,7 @@ fun compileWasm(
     exportedDeclarations: Set<FqName> = emptySet()
 ): WasmCompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, MainModule.SourceFiles(files), configuration, allDependencies, friendDependencies)
+        loadIr(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
     val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)

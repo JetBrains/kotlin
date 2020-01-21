@@ -8,7 +8,6 @@ dependencies {
     compile(project(":compiler:ir.psi2ir"))
     compile(project(":compiler:ir.serialization.common"))
     compile(project(":js:js.frontend"))
-    compile(project(":compiler:cli"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
