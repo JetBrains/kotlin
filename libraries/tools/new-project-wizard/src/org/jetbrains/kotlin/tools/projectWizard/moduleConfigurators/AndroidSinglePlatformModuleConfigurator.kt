@@ -30,6 +30,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
     override val moduleType = ModuleType.jvm
     override val id = "android"
     override val suggestedModuleName = "android"
+    override val text = "Android"
     override val greyText = "Requires Android SDK"
 
     val androidSdkPath by pathSetting("Android SDK Path", neededAtPhase = GenerationPhase.PROJECT_GENERATION) {
