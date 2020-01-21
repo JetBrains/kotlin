@@ -8,14 +8,6 @@ val clionVersion: String by rootProject.extra
 val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-if (!isStandaloneBuild) {
-    repositories {
-        if (cacheRedirectorEnabled) {
-            maven("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown")
-        }
-        maven("https://jetbrains.bintray.com/markdown")
-    }
-}
 repositories {
     maven("https://maven.google.com")
     maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
@@ -36,7 +28,6 @@ dependencies {
     compile("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
 
     if (!isStandaloneBuild) {
-        compileOnly("org.jetbrains:markdown:${rootProject.extra["versions.markdown"]}")
         val localDependencies = Class.forName("LocalDependenciesKt")
         val intellijDep = localDependencies
             .getMethod("intellijDep", Project::class.java, String::class.java)
