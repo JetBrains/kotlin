@@ -15,6 +15,10 @@ kotlin {
                 implementation(kotlin("stdlib-jdk8"))
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
+        }
     }
 }

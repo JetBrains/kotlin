@@ -33,7 +33,9 @@ kotlin {
             }
         }
         browserTest {
-
+            dependencies {
+                implementation kotlin('test-js')
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 kotlin:
-  version: 1.3.61
   projectKind: Multiplatform
   modules:
     - type: multiplatform

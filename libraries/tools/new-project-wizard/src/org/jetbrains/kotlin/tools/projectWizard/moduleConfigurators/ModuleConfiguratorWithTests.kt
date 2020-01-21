@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.TemplateSettingReference
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinArbitraryDependencyIR
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
 abstract class ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings() {
-    val framework by enumSetting<KotlinTestFramework>(
+    val testFramework by enumSetting<KotlinTestFramework>(
         "Test Framework",
         neededAtPhase = GenerationPhase.PROJECT_GENERATION
     ) {
@@ -39,7 +38,7 @@ abstract class ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings() {
 
     override fun ValuesReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
         withSettingsOf(module) {
-            framework.reference.settingValue.dependencyNames.map { dependencyName ->
+            testFramework.reference.settingValue.dependencyNames.map { dependencyName ->
                 KotlinArbitraryDependencyIR(
                     dependencyName,
                     isInMppModule = module.kind
@@ -50,7 +49,7 @@ abstract class ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings() {
             }
         }
 
-    override val settings: List<ModuleConfiguratorSetting<*, *>> = listOf(framework)
+    override val settings: List<ModuleConfiguratorSetting<*, *>> = listOf(testFramework)
 }
 
 

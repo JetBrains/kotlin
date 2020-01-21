@@ -1,18 +1,21 @@
 kotlin:
-  version: 1.3.61
   projectKind: Multiplatform
   modules:
     - type: multiplatform
       kind: multiplatform
       name: a
       subModules:
-        - type: jvmTarget
+        - type:
+            name: jvmTarget
+            testFramework: JUNIT4
           kind: target
           name: jvm
           sourcesets:
             - type: main
             - type: test
-        - type: jsBrowser
+        - type:
+              name: jsBrowser
+              testFramework: JS
           kind: target
           name: a
           sourcesets:

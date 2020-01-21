@@ -37,6 +37,7 @@ class Module(
         withSettingsOf(module) {
             configurator.settings.map { setting ->
                 val value = setting.reference.notRequiredSettingValue
+                    ?: setting.defaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
                 setting.validator.validate(this@settingValidator, value)
             }.fold()
@@ -46,6 +47,7 @@ class Module(
         org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf(module) {
             template.settings.map { setting ->
                 val value = setting.reference.notRequiredSettingValue
+                    ?: setting.defaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
                 setting.validator.validate(this@settingValidator, value)
             }.fold()
