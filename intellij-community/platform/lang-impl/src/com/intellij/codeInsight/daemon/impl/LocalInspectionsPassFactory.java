@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +20,13 @@ import java.util.List;
 
 public final class LocalInspectionsPassFactory implements MainHighlightingPassFactory, TextEditorHighlightingPassFactoryRegistrar {
   private static final Logger LOG = Logger.getInstance(LocalInspectionsPassFactory.class);
+  private final boolean runInspectionsAfterCompletionOfGeneralHighlightPass = Registry.is("highlighting.makeRunInspectionsAfterCompletionOfGeneralHighlightPassForKotlin");
 
   @Override
   public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
-    registrar.registerTextEditorHighlightingPass(this, null, new int[]{Pass.UPDATE_ALL}, true, Pass.LOCAL_INSPECTIONS);
+    int[] GHP = {Pass.UPDATE_ALL};
+    registrar.registerTextEditorHighlightingPass(this, runInspectionsAfterCompletionOfGeneralHighlightPass ? GHP : null,
+                                                 runInspectionsAfterCompletionOfGeneralHighlightPass ? null : GHP, true, Pass.LOCAL_INSPECTIONS);
   }
 
   @NotNull
