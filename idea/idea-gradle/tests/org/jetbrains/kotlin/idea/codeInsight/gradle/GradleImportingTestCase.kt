@@ -246,7 +246,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                 it.isDirectory -> null
 
                 !it.name.endsWith(SUFFIX) -> {
-                    var text = it.readText()
+                    var text = FileUtil.loadFile(it, /* convertLineSeparators = */ true)
                     (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { key, value ->
                         text = text.replace("{{${key}}}", value)
                     }
