@@ -123,11 +123,11 @@ public final class RunContentManagerImpl implements RunContentManager {
     });
 
     toolWindow.setIcon(executor.getToolWindowIcon());
-    new ContentManagerWatcher(toolWindow, contentManager);
+    ContentManagerWatcher.watchContentManager(toolWindow, contentManager);
     initToolWindow(executor, toolWindowId, executor.getToolWindowIcon(), contentManager);
   }
 
-  private void initToolWindow(@Nullable final Executor executor, String toolWindowId, Icon toolWindowIcon, ContentManager contentManager) {
+  private void initToolWindow(@Nullable Executor executor, String toolWindowId, Icon toolWindowIcon, @NotNull ContentManager contentManager) {
     myToolwindowIdToBaseIconMap.put(toolWindowId, toolWindowIcon);
     contentManager.addContentManagerListener(new ContentManagerAdapter() {
       @Override
