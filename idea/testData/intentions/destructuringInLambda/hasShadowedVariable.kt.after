@@ -1,0 +1,14 @@
+// WITH_RUNTIME
+data class A(var x: Int)
+
+fun convert(f: (A) -> Unit) {}
+
+fun test() {
+    convert { (x1) ->
+
+        run {
+            val x = 1
+            val z = x1
+        }
+    }
+}
