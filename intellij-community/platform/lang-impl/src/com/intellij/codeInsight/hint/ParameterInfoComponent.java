@@ -312,6 +312,7 @@ public class ParameterInfoComponent extends JPanel {
   public ParameterInfoController.Model update(boolean singleParameterInfo) {
     MyParameterContext context = new MyParameterContext(singleParameterInfo);
 
+    int highlightedComponentIdx = -1;
     for (int i = 0; i < myObjects.length; i++) {
       context.i = i;
       final Object o = myObjects[i];
@@ -330,12 +331,18 @@ public class ParameterInfoComponent extends JPanel {
 
         // ensure that highlighted element is visible
         if (context.isHighlighted()) {
-          myMainPanel.scrollRectToVisible(myPanels[i].getBounds());
+          highlightedComponentIdx = i;
         }
       }
     }
 
     if (myShortcutLabel != null) myShortcutLabel.setVisible(!singleParameterInfo);
+
+    if (highlightedComponentIdx != -1) {
+      myMainPanel.scrollRectToVisible(new Rectangle()); // hack to validate component tree synchronously
+      myMainPanel.scrollRectToVisible(myPanels[highlightedComponentIdx].getBounds());
+    }
+
     return context.result;
   }
 
