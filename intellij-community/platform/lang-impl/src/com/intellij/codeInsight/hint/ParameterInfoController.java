@@ -432,7 +432,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
             })
             .withDocumentsCommitted(myProject)
             .cancelWith(indicator)
-            .expireWhen(() -> !myKeepOnHintHidden && !myHint.isVisible() || getCurrentOffset() != context.getOffset() || !elementForUpdating.isValid())
+            .expireWhen(() -> !myKeepOnHintHidden && !myHint.isVisible() && !ApplicationManager.getApplication().isHeadlessEnvironment() || getCurrentOffset() != context.getOffset() || !elementForUpdating.isValid())
             .expireWith(ParameterInfoController.this)
             .finishOnUiThread(ModalityState.defaultModalityState(), element -> {
               if (element != null && continuation != null && Objects.equals(focusOwner, IdeFocusManager.getInstance(myProject).getFocusOwner())) {
