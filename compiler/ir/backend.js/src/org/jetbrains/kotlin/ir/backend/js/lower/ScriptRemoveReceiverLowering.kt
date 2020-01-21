@@ -77,6 +77,7 @@ private class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : 
                             symbol,
                             typeArgumentsCount,
                             valueArgumentsCount,
+                            reflectionTarget,
                             origin
                         ).also {
                             it.dispatchReceiver = dispatchReceiver

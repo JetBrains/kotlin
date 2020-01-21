@@ -98,8 +98,6 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
     }
 
-    private val adapterOrigin = IrDeclarationOrigin.DEFINED // TODO special declaration origin for callable reference adapter?
-
     private fun isTrivialArgumentAdaptation(irAdapteeCall: IrFunctionAccessExpression): Boolean {
         for (i in 0 until irAdapteeCall.valueArgumentsCount) {
             val irValueArgument = irAdapteeCall.getValueArgument(i) ?: return false
@@ -162,8 +160,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                     startOffset, endOffset,
                     irFunctionalType,
                     irAdapterFun.symbol,
-                    0,
-                    irAdapterFun.valueParameters.size
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = irAdapterFun.valueParameters.size,
+                    reflectionTarget = null
                 )
             )
         }
@@ -341,12 +340,14 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     ): IrSimpleFunction {
         val adapterFunctionDescriptor = WrappedSimpleFunctionDescriptor()
 
-
         return context.symbolTable.declareSimpleFunction(
-            startOffset, endOffset, adapterOrigin, adapterFunctionDescriptor
+            startOffset, endOffset,
+            IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
+            adapterFunctionDescriptor
         ) { irAdapterSymbol ->
             IrFunctionImpl(
-                startOffset, endOffset, adapterOrigin,
+                startOffset, endOffset,
+                IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
                 irAdapterSymbol,
                 adapteeDescriptor.name,
                 Visibilities.LOCAL,
@@ -371,11 +372,14 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                     ktExpectedParameterTypes.mapIndexedTo(irAdapterFun.valueParameters) { index, ktExpectedParameterType ->
                         val adapterValueParameterDescriptor = WrappedValueParameterDescriptor()
                         context.symbolTable.declareValueParameter(
-                            startOffset, endOffset, adapterOrigin, adapterValueParameterDescriptor,
+                            startOffset, endOffset,
+                            IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
+                            adapterValueParameterDescriptor,
                             ktExpectedParameterType.toIrType()
                         ) { irAdapterParameterSymbol ->
                             IrValueParameterImpl(
-                                startOffset, endOffset, adapterOrigin,
+                                startOffset, endOffset,
+                                IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
                                 irAdapterParameterSymbol,
                                 Name.identifier("p$index"),
                                 index,
@@ -487,7 +491,10 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     ): IrFunctionReference =
         IrFunctionReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            symbol, descriptor.typeParametersCount, origin
+            symbol,
+            typeArgumentsCount = descriptor.typeParametersCount,
+            reflectionTarget = symbol,
+            origin = origin
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = descriptor
             putTypeArguments(typeArguments) { it.toIrType() }

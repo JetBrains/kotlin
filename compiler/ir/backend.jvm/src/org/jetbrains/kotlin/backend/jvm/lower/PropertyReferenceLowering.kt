@@ -105,7 +105,10 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     // Delay the computation of the signature until after inline classes lowering to make sure
                     // we mangle the function names correctly for things like extension methods on inline classes.
                     irCall(signatureStringIntrinsic).apply {
-                        putValueArgument(0, IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type, getter, 0, null))
+                        putValueArgument(
+                            0,
+                            IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type, getter, 0, getter, null)
+                        )
                     }
                 }
         } ?: irString(expression.field!!.owner.signature)

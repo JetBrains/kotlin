@@ -57,7 +57,7 @@ FILE fqName:test fileName:/importedFromObject.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KFunction0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in test.Foo' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
+        FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in test.Foo' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.String>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
@@ -67,7 +67,7 @@ FILE fqName:test fileName:/importedFromObject.kt
   PROPERTY name:test2a visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2a type:kotlin.reflect.KFunction0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in test.Foo' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
+        FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in test.Foo' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2a> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.String>
       correspondingProperty: PROPERTY name:test2a visibility:public modality:FINAL [val]

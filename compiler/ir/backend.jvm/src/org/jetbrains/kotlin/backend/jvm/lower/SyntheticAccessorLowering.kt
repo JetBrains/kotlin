@@ -122,7 +122,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 return IrFunctionReferenceImpl(
                     expression.startOffset, expression.endOffset, expression.type,
                     accessor.symbol, accessor.typeParameters.size,
-                    accessor.valueParameters.size, expression.origin
+                    accessor.valueParameters.size, accessor.symbol, expression.origin
                 )
             }
         }

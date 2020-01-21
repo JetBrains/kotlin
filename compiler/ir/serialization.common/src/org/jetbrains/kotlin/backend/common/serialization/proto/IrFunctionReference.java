@@ -84,6 +84,11 @@ public final class IrFunctionReference extends
             bitField0_ |= 0x00000004;
             break;
           }
+          case 32: {
+            bitField0_ |= 0x00000008;
+            reflectionTarget_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -163,10 +168,26 @@ public final class IrFunctionReference extends
     return memberAccess_;
   }
 
+  public static final int REFLECTIONTARGET_FIELD_NUMBER = 4;
+  private int reflectionTarget_;
+  /**
+   * <code>optional int32 reflectionTarget = 4;</code>
+   */
+  public boolean hasReflectionTarget() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+  /**
+   * <code>optional int32 reflectionTarget = 4;</code>
+   */
+  public int getReflectionTarget() {
+    return reflectionTarget_;
+  }
+
   private void initFields() {
     symbol_ = 0;
     origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
     memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
+    reflectionTarget_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -208,6 +229,9 @@ public final class IrFunctionReference extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeMessage(3, memberAccess_);
     }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      output.writeInt32(4, reflectionTarget_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -228,6 +252,10 @@ public final class IrFunctionReference extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(3, memberAccess_);
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(4, reflectionTarget_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -329,6 +357,8 @@ public final class IrFunctionReference extends
       bitField0_ = (bitField0_ & ~0x00000002);
       memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
+      reflectionTarget_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -364,6 +394,10 @@ public final class IrFunctionReference extends
         to_bitField0_ |= 0x00000004;
       }
       result.memberAccess_ = memberAccess_;
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+        to_bitField0_ |= 0x00000008;
+      }
+      result.reflectionTarget_ = reflectionTarget_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -378,6 +412,9 @@ public final class IrFunctionReference extends
       }
       if (other.hasMemberAccess()) {
         mergeMemberAccess(other.getMemberAccess());
+      }
+      if (other.hasReflectionTarget()) {
+        setReflectionTarget(other.getReflectionTarget());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -574,6 +611,38 @@ public final class IrFunctionReference extends
       memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000004);
+      return this;
+    }
+
+    private int reflectionTarget_ ;
+    /**
+     * <code>optional int32 reflectionTarget = 4;</code>
+     */
+    public boolean hasReflectionTarget() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional int32 reflectionTarget = 4;</code>
+     */
+    public int getReflectionTarget() {
+      return reflectionTarget_;
+    }
+    /**
+     * <code>optional int32 reflectionTarget = 4;</code>
+     */
+    public Builder setReflectionTarget(int value) {
+      bitField0_ |= 0x00000008;
+      reflectionTarget_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 reflectionTarget = 4;</code>
+     */
+    public Builder clearReflectionTarget() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      reflectionTarget_ = 0;
+      
       return this;
     }
 

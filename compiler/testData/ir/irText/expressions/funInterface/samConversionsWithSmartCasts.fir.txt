@@ -110,4 +110,4 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        r: FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+        r: FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>

@@ -59,16 +59,16 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
   FUN name:testPlainArgs visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/usePlainArgs]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun sum (args: kotlin.IntArray): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null
+        FUNCTION_REFERENCE 'public final fun sum (args: kotlin.IntArray): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testPrimitiveArrayAsVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePrimitiveArray (fn: kotlin.Function1<kotlin.IntArray, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public final fun sum (args: kotlin.IntArray): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null
+        fn: FUNCTION_REFERENCE 'public final fun sum (args: kotlin.IntArray): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testArrayAsVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useArray]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun nsum (args: kotlin.Array<kotlin.Number>): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<kotlin.Number>, kotlin.Int> origin=null
+        FUNCTION_REFERENCE 'public final fun nsum (args: kotlin.Array<kotlin.Number>): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<kotlin.Number>, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testArrayAndDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useStringArray]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun zap (b: kotlin.Array<kotlin.String>, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<kotlin.Array<kotlin.String>, kotlin.Int, kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'public final fun zap (b: kotlin.Array<kotlin.String>, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<kotlin.Array<kotlin.String>, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>

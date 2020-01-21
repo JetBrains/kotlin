@@ -635,7 +635,15 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         "THROW type=${expression.type.render()}"
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): String =
-        "FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "FUNCTION_REFERENCE '${expression.symbol.renderReference()}' " +
+                "type=${expression.type.render()} origin=${expression.origin} " +
+                "reflectionTarget=${renderReflectionTarget(expression)}"
+
+    private fun renderReflectionTarget(expression: IrFunctionReference) =
+        if (expression.symbol == expression.reflectionTarget)
+            "<same>"
+        else
+            expression.reflectionTarget?.renderReference()
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
         buildTrimEnd {

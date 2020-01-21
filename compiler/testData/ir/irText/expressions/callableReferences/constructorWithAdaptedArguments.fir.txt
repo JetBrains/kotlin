@@ -69,15 +69,15 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testConstructor (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public constructor <init> (xs: kotlin.IntArray) [primary] declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.C> origin=null
+          FUNCTION_REFERENCE 'public constructor <init> (xs: kotlin.IntArray) [primary] declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.C> origin=null reflectionTarget=<same>
   FUN name:testInnerClassConstructor visibility:public modality:FINAL <> (outer:<root>.Outer) returnType:IrErrorType
     VALUE_PARAMETER name:outer index:0 type:<root>.Outer
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructor (outer: <root>.Outer): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public constructor <init> (xs: kotlin.IntArray) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null
+          FUNCTION_REFERENCE 'public constructor <init> (xs: kotlin.IntArray) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null reflectionTarget=<same>
   FUN name:testInnerClassConstructorCapturingOuter visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructorCapturingOuter (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public constructor <init> (xs: kotlin.IntArray) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null
+          FUNCTION_REFERENCE 'public constructor <init> (xs: kotlin.IntArray) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null reflectionTarget=<same>

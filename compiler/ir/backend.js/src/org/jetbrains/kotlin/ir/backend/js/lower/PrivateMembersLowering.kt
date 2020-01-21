@@ -80,7 +80,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                             expression.startOffset, expression.endOffset,
                             expression.type,
                             it.symbol, expression.typeArgumentsCount,
-                            expression.valueArgumentsCount, expression.origin
+                            expression.valueArgumentsCount, expression.reflectionTarget, expression.origin
                         )
                     }
                 } ?: expression

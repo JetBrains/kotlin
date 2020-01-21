@@ -219,6 +219,7 @@ message IrFunctionReference {
   required int32 symbol = 1;
   optional IrStatementOrigin origin = 2;
   required MemberAccessCommon member_access = 3;
+  optional int32 reflectionTarget = 4;
 }
 
 message IrLocalDelegatedPropertyReference {

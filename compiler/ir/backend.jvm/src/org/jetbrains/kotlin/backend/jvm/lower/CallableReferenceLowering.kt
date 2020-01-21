@@ -334,6 +334,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                             irFunctionReference.type,
                             irFunctionReference.symbol,
                             0,
+                            irFunctionReference.reflectionTarget,
                             null
                         )
                     )

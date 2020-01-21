@@ -911,7 +911,8 @@ class Fir2IrVisitor(
                 is IrFunctionSymbol -> {
                     IrFunctionReferenceImpl(
                         startOffset, endOffset, type, symbol,
-                        0
+                        typeArgumentsCount = 0,
+                        reflectionTarget = symbol
                     )
                 }
                 else -> {

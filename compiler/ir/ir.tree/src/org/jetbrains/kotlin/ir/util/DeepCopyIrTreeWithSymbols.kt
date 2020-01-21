@@ -584,12 +584,14 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrFunctionReference {
         val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
+        val reflectionTarget = expression.reflectionTarget?.let { symbolRemapper.getReferencedFunction(it) }
         return IrFunctionReferenceImpl(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             symbol,
             expression.typeArgumentsCount,
             expression.valueArgumentsCount,
+            reflectionTarget,
             mapStatementOrigin(expression.origin)
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)

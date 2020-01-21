@@ -79,8 +79,9 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 originalFunction.symbol,
-                0,
-                BIND_CALL
+                typeArgumentsCount = 0,
+                reflectionTarget = originalFunction.symbol,
+                origin = BIND_CALL
             )
         }
 

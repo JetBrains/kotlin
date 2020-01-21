@@ -383,12 +383,14 @@ class LocalDeclarationsLowering(
 
                 val oldCallee = expression.symbol.owner
                 val newCallee = oldCallee.transformed ?: return expression
+                val newReflectionTarget = expression.reflectionTarget?.run { owner.transformed }
 
                 return IrFunctionReferenceImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type, // TODO functional type for transformed descriptor
                     newCallee.symbol,
                     newCallee.typeParameters.size,
+                    newReflectionTarget?.symbol,
                     expression.origin
                 ).also {
                     it.fillArguments2(expression, newCallee)

@@ -261,6 +261,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         type,
                         newFunction.symbol,
                         typeArgumentsCount,
+                        expression.reflectionTarget,
                         origin
                     ).apply {
                         copyTypeAndValueArgumentsFrom(expression, receiversAsArguments = true)

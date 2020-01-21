@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/genericMember.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY

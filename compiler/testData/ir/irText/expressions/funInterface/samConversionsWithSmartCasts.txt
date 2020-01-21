@@ -128,4 +128,4 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
-          FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>

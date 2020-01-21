@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     private val IrValueSymbol.classForImplicitThis: IrClass?
@@ -170,6 +171,13 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : FileLowe
                 if (!parent.isInner) return expression
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+                val newReflectionTarget = expression.reflectionTarget?.let { reflectionTarget ->
+                    if (reflectionTarget is IrConstructorSymbol) {
+                        context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(reflectionTarget.owner)
+                    } else {
+                        null
+                    }
+                }
 
                 val newReference = expression.run {
                     IrFunctionReferenceImpl(
@@ -178,6 +186,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : FileLowe
                         type,
                         newCallee.symbol,
                         typeArgumentsCount,
+                        newReflectionTarget?.symbol,
                         origin
                     )
                 }
