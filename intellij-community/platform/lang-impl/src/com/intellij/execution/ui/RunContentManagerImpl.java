@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -45,10 +45,11 @@ import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public final class RunContentManagerImpl implements RunContentManager, Disposable {
+public final class RunContentManagerImpl implements RunContentManager {
   public static final Key<Boolean> ALWAYS_USE_DEFAULT_STOPPING_BEHAVIOUR_KEY = Key.create("ALWAYS_USE_DEFAULT_STOPPING_BEHAVIOUR_KEY");
   @ApiStatus.Internal
   public static final Key<RunnerAndConfigurationSettings> TEMPORARY_CONFIGURATION_KEY = Key.create("TemporaryConfiguration");
+
   private static final Logger LOG = Logger.getInstance(RunContentManagerImpl.class);
   private static final Key<Executor> EXECUTOR_KEY = Key.create("Executor");
   private static final Key<ContentManagerListener> CLOSE_LISTENER_KEY = Key.create("CloseListener");
@@ -61,9 +62,7 @@ public final class RunContentManagerImpl implements RunContentManager, Disposabl
   public RunContentManagerImpl(@NotNull Project project) {
     myProject = project;
     DockableGridContainerFactory containerFactory = new DockableGridContainerFactory();
-    DockManager.getInstance(project).register(DockableGridContainerFactory.TYPE, containerFactory);
-    Disposer.register(myProject, containerFactory);
-
+    DockManager.getInstance(project).register(DockableGridContainerFactory.TYPE, containerFactory, myProject);
     AppUIUtil.invokeOnEdt(() -> init(), myProject.getDisposed());
   }
 
@@ -87,18 +86,12 @@ public final class RunContentManagerImpl implements RunContentManager, Disposabl
         ContainerUtil.addAll(currentWindows, toolWindowManager.getToolWindowIds());
         myToolwindowIdZBuffer.retainAll(currentWindows);
 
-        final String activeToolWindowId = toolWindowManager.getActiveToolWindowId();
-        if (activeToolWindowId != null) {
-          if (myToolwindowIdZBuffer.remove(activeToolWindowId)) {
-            myToolwindowIdZBuffer.addFirst(activeToolWindowId);
-          }
+        String activeToolWindowId = toolWindowManager.getActiveToolWindowId();
+        if (activeToolWindowId != null && myToolwindowIdZBuffer.remove(activeToolWindowId)) {
+          myToolwindowIdZBuffer.addFirst(activeToolWindowId);
         }
       }
     });
-  }
-
-  @Override
-  public void dispose() {
   }
 
   private void registerToolWindow(@NotNull Executor executor, @NotNull ToolWindowManagerEx toolWindowManager) {
