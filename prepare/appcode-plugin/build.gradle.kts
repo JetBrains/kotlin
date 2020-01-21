@@ -44,7 +44,7 @@ val cidrPlugin: Configuration by configurations.creating
 val cidrGradleTooling: Configuration by configurations.creating
 
 dependencies {
-    cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
+    cidrPlugin(project(":kotlin-ultimate:prepare:common-cidr-plugin"))
     cidrGradleTooling(project(":kotlin-ultimate:ide:cidr-gradle-tooling"))
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
