@@ -71,6 +71,13 @@ public data class KTypeProjection constructor(
      */
     public val type: KType?
 ) {
+    override fun toString(): String = when (variance) {
+        null -> "*"
+        KVariance.INVARIANT -> type.toString()
+        KVariance.IN -> "in $type"
+        KVariance.OUT -> "out $type"
+    }
+
     public companion object {
         /**
          * Star projection, denoted by the `*` character.

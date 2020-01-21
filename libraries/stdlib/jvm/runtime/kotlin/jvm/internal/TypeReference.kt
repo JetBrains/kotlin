@@ -8,7 +8,6 @@ package kotlin.jvm.internal
 import kotlin.reflect.*
 
 @SinceKotlin("1.4")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE" /* See KT-30129 */) // TODO: remove this in 1.4
 public class TypeReference(
     override val classifier: KClassifier,
     override val arguments: List<KTypeProjection>,
@@ -55,8 +54,8 @@ public class TypeReference(
             else -> "kotlin.Array"
         }
 
-    // TODO: this should be the implementation of KTypeProjection.toString, see KT-30071
-    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
+    // This is based on KTypeProjection.toString, but uses [asString] to avoid adding the
+    // "reflection not supported" suffix to each type argument.
     private fun KTypeProjection.asString(): String {
         if (variance == null) return "*"
 
