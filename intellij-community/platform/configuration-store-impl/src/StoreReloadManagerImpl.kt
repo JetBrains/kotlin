@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.SchemeChangeApplicator
@@ -238,7 +238,7 @@ open class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       return true
     }
 
-    val changes = LinkedHashSet<StateStorage>(changedApplicationFiles)
+    val changes = LinkedHashSet(changedApplicationFiles)
     changedApplicationFiles.clear()
 
     return reloadAppStore(changes)
