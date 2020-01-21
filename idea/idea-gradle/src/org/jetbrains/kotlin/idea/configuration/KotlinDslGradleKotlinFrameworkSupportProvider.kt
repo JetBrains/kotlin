@@ -110,8 +110,6 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
         KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
     }
 
-    private fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
-
     protected abstract fun getOldSyntaxPluginDefinition(): String
     protected abstract fun getPluginDefinition(): String
 

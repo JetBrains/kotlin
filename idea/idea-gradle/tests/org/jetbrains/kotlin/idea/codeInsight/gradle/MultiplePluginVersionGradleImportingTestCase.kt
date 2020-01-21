@@ -85,7 +85,7 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
             "konan/utils/build/libs"
         )
         val customRepositories = arrayOf("https://dl.bintray.com/kotlin/kotlin-dev", "http://dl.bintray.com/kotlin/kotlin-eap")
-        val customMavenRepositories = customRepositories.map { if (useKts) "maven { setUrl(\"$it\") }" else "maven { url '$it' } " }.joinToString("\n")
+        val customMavenRepositories = customRepositories.map { if (useKts) "maven(\"$it\")" else "maven { url '$it' } " }.joinToString("\n")
         val baseFolder = File(".").absolutePath.replace("\\", "/")
         val quote = if (useKts) '"' else '\''
         val flatDirRepositories = if (useMaster)

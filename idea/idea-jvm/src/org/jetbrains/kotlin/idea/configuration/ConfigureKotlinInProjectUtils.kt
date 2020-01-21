@@ -97,7 +97,13 @@ fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this)
 
 fun RepositoryDescription.toGroovyRepositorySnippet() = "maven { url '$url' }"
 
-fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
+/**
+ * This syntax has been released in kotlin-dsl-0.11.1 release and in Gradle 4.2-RC1 release.
+ *
+ * We already require Gradle distribution of higher version (see `checkGradleCompatibility` function),
+ * so it is safe to use this syntax everywhere.
+ */
+fun RepositoryDescription.toKotlinRepositorySnippet() = "maven(\"$url\")"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY

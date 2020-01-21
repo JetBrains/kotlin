@@ -11,7 +11,7 @@ application {
 
 repositories {
     jcenter()
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
 dependencies {

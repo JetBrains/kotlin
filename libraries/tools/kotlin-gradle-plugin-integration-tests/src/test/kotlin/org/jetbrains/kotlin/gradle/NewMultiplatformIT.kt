@@ -139,7 +139,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         with(appProject) {
             setupWorkingDir()
-            gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
+            gradleBuildScript().appendText("\nrepositories { maven(\"$libLocalRepoUri\") }")
 
             fun CompiledProject.checkProgramCompilationCommandLine(check: (String) -> Unit) {
                 output.lineSequence().filter {
