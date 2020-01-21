@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle;
 
 import com.intellij.openapi.application.ApplicationBundle;
@@ -44,9 +44,6 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Function;
 
-/**
- * @author max
- */
 public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCodeStylePanel {
   private static final Logger LOG = Logger.getInstance(OptionTableWithPreviewPanel.class);
 
@@ -499,8 +496,8 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
     IntOption(Class<? extends CustomCodeStyleSettings> clazz,
                      @NotNull String fieldName,
                      @NotNull String title,
-                     @Nullable String groupName, 
-                     @Nullable OptionAnchor anchor, 
+                     @Nullable String groupName,
+                     @Nullable OptionAnchor anchor,
                      @Nullable String anchorFiledName,
                      int minValue,
                      int maxValue,
@@ -520,7 +517,7 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
       }
       catch (IllegalAccessException e) {
         return null;
-      }      
+      }
     }
 
     @Override

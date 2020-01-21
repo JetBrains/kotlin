@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ui;
 
@@ -18,9 +18,6 @@ import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import java.util.*;
 
-/**
- * @author max
- */
 public abstract class InspectionTreeNode implements TreeNode {
   private static final Interner<LevelAndCount[]> LEVEL_AND_COUNT_INTERNER = new WeakInterner<>(new TObjectHashingStrategy<LevelAndCount[]>() {
     @Override
