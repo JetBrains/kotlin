@@ -65,7 +65,7 @@ open class CompileToBitcode @Inject constructor(@InputDirectory val srcRoot: Fil
                     Language.C -> Triple("clang",
                             // Used flags provided by original build of allocator C code.
                             commonFlags + listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Wno-unknown-pragmas",
-                                    "-ftls-model=initial-exec"),
+                                    "-Werror", "-ftls-model=initial-exec", "-Wno-unused-function"),
                             listOf("**/*.c"))
                     Language.CPP -> Triple("clang++",
                             commonFlags + listOfNotNull("-std=c++14", "-Werror", "-O2",

@@ -70,7 +70,7 @@ open class CommonInteropArguments(val argParser: ArgParser) {
 
 class CInteropArguments(argParser: ArgParser =
                                 ArgParser("cinterop",
-                                        prefixStyle = ArgParser.OPTION_PREFIX_STYLE.JVM)): CommonInteropArguments(argParser) {
+                                        prefixStyle = ArgParser.OptionPrefixStyle.JVM)): CommonInteropArguments(argParser) {
     val target by argParser.option(ArgType.String, description = "native target to compile to").default("host")
     val def by argParser.option(ArgType.String, description = "the library definition file")
     val header by argParser.option(ArgType.String, description = "header file to produce kotlin bindings for")
@@ -99,7 +99,7 @@ class CInteropArguments(argParser: ArgParser =
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",
-        prefixStyle = ArgParser.OPTION_PREFIX_STYLE.JVM)): CommonInteropArguments(argParser) {
+        prefixStyle = ArgParser.OptionPrefixStyle.JVM)): CommonInteropArguments(argParser) {
     val target by argParser.option(ArgType.Choice(listOf("wasm32")),
             description = "wasm target to compile to").default("wasm32")
 }

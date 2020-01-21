@@ -163,12 +163,23 @@ bool        _mi_page_is_valid(mi_page_t* page);
 static inline bool mi_mul_overflow(size_t count, size_t size, size_t* total) {
 #if __has_builtin(__builtin_umul_overflow) || __GNUC__ >= 5
 #include <limits.h>   // UINT_MAX, ULONG_MAX
-#if (SIZE_MAX == UINT_MAX)
-  return __builtin_umul_overflow(count, size, total);
-#elif (SIZE_MAX == ULONG_MAX)
-  return __builtin_umull_overflow(count, size, total);
+// Changed order for armv7 (ULONG_MAX == UINT_MAX, but size_t = unsigned long)
+#if defined(__MACH__) && KONAN_MI_MALLOC
+  #if (SIZE_MAX == ULONG_MAX)
+    return __builtin_umull_overflow(count, size, total);
+  #elif (SIZE_MAX == UINT_MAX)
+    return __builtin_umul_overflow(count, size, total);
+  #else
+    return __builtin_umulll_overflow(count, size, total);
+  #endif
 #else
-  return __builtin_umulll_overflow(count, size, total);
+  #if (SIZE_MAX == UINT_MAX)
+    return __builtin_umul_overflow(count, size, total);
+  #elif (SIZE_MAX == ULONG_MAX)
+    return __builtin_umull_overflow(count, size, total);
+  #else
+    return __builtin_umulll_overflow(count, size, total);
+  #endif
 #endif
 #else /* __builtin_umul_overflow is unavailable */
   *total = count * size;
@@ -471,7 +482,7 @@ static inline uintptr_t _mi_thread_id(void) mi_attr_noexcept {
   #if KONAN_MI_MALLOC
   #include <TargetConditionals.h>
     #if TARGET_OS_EMBEDDED // iOS/tvOS/watchOS devices.
-      tid = pthread_self();
+      tid = pthread_mach_thread_np(pthread_self());
     #else
        __asm__("movq %%gs:0, %0" : "=r" (tid) : : );  // x86_64 macOS uses GS
     #endif

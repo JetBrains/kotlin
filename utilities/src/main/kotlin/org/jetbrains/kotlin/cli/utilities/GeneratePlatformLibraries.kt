@@ -11,7 +11,7 @@ import java.util.concurrent.*
 import kotlinx.cli.*
 
 fun generatePlatformLibraries(args: Array<String>) {
-    val argParser = ArgParser("generate-platform", prefixStyle = ArgParser.OPTION_PREFIX_STYLE.JVM)
+    val argParser = ArgParser("generate-platform", prefixStyle = ArgParser.OptionPrefixStyle.JVM)
     val inputDirectoryPath by argParser.option(
             ArgType.String, "input-directory", "i", "Input directory").required()
     val outputDirectoryPath by argParser.option(
