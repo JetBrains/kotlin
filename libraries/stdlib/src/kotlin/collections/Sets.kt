@@ -115,6 +115,7 @@ public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.()
 @kotlin.internal.InlineOnly
 public inline fun <E> buildSet(expectedSize: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    checkBuilderCapacity(expectedSize)
     return LinkedHashSet<E>(mapCapacity(expectedSize)).apply(builderAction)
 }
 

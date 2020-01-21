@@ -97,19 +97,27 @@ internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> =
 
 /**
  * Calculate the initial capacity of a map, based on Guava's
- * [com.google.common.collect.Maps.capacity](https://github.com/google/guava/blob/master/guava/src/com/google/common/collect/Maps.java)
- * approach. This is similar to [java.util.HashMap.putMapEntries] (JDK8+) but provides further optimizations for small or large sizes.
+ * [com.google.common.collect.Maps.capacity](https://github.com/google/guava/blob/v28.2/guava/src/com/google/common/collect/Maps.java#L325)
+ * approach.
  */
 @PublishedApi
 internal actual fun mapCapacity(expectedSize: Int): Int = when {
-    // We are not coercing the value to a valid one and not throwing an exception. It is up to the receiving class to
-    // properly handle negative values. Note that all built-in classes do exactly that and will throw.
+    // We are not coercing the value to a valid one and not throwing an exception. It is up to the caller to
+    // properly handle negative values.
     expectedSize < 0 -> expectedSize
-    expectedSize < MIN_CAPACITY -> expectedSize + 1
-    expectedSize < MAX_CAPACITY -> ((expectedSize / 0.75F) + 1.0F).toInt()
-    else -> MAX_CAPACITY
+    expectedSize < 3 -> expectedSize + 1
+    expectedSize < INT_MAX_POWER_OF_TWO -> ((expectedSize / 0.75F) + 1.0F).toInt()
+    // any large value
+    else -> Int.MAX_VALUE
 }
+private const val INT_MAX_POWER_OF_TWO: Int = 1 shl (Int.SIZE_BITS - 2)
 
-// java.util.HashMap.MAX_CAPACITY
-private const val MAX_CAPACITY = 1 shl 30
-private const val MIN_CAPACITY = 3
+/**
+ * Checks a collection builder function capacity argument.
+ * Does nothing, capacity is validated in List/Set/Map constructor
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@PublishedApi
+@kotlin.internal.InlineOnly
+internal actual inline fun checkBuilderCapacity(capacity: Int) {}
