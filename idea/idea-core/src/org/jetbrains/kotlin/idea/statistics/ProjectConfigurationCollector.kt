@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
@@ -30,12 +31,16 @@ class ProjectConfigurationCollector : ProjectUsagesCollector() {
         if (modulesWithFacet.isNotEmpty()) {
             val pluginVersion = KotlinPluginUtil.getPluginVersion()
             modulesWithFacet.forEach {
+
                 val buildSystem = getBuildSystemType(it)
                 val platform = getPlatform(it)
+                val languageVersion = it.languageVersionSettings.languageVersion.versionString
+
                 val data = FeatureUsageData()
                     .addData("pluginVersion", pluginVersion)
                     .addData("system", buildSystem)
                     .addData("platform", platform)
+                    .addData("languageVersion", languageVersion)
                 val usageDescriptor = UsageDescriptor("Build", data)
                 usages.add(usageDescriptor)
             }
