@@ -164,8 +164,9 @@ internal interface ContextUtils : RuntimeAware {
             assert(this.isReal)
 
             return if (isExternal(this)) {
-                context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this),
-                        origin = this.llvmSymbolOrigin)
+                runtime.addedLLVMExternalFunctions.getOrPut(this) { context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this),
+                        origin = this.llvmSymbolOrigin) }
+
             } else {
                 context.llvmDeclarations.forFunctionOrNull(this)?.llvmFunction
             }

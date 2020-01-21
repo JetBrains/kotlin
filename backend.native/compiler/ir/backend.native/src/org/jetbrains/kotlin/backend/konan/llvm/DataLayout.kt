@@ -28,7 +28,7 @@ private fun RuntimeAware.getLlvmType(primitiveBinaryType: PrimitiveBinaryType?) 
 }
 
 internal fun RuntimeAware.getLLVMType(type: IrType): LLVMTypeRef =
-        getLlvmType(type.computePrimitiveBinaryTypeOrNull())
+        runtime.calculatedLLVMTypes.getOrPut(type) { getLlvmType(type.computePrimitiveBinaryTypeOrNull()) }
 
 internal fun RuntimeAware.getLLVMType(type: DataFlowIR.Type) =
         getLlvmType(type.primitiveBinaryType)
