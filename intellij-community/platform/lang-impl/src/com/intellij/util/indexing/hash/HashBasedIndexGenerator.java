@@ -142,7 +142,9 @@ public class HashBasedIndexGenerator<K, V> {
       byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
       int hashId = Math.abs(hashEnumerator.enumerate(hash));
       if (!myIndex.update(hashId, fc).compute()) {
-        throw new RuntimeException();
+        throw new RuntimeException("Index computation returned false for hashId = " + hashId + ", " +
+                                   "file = " + f.getPath() + ", " +
+                                   "index = " + myExtension.getName().getName());
       }
     }
     catch (IOException e) {
