@@ -155,10 +155,11 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
      */
     actual fun find(input: CharSequence, startIndex: Int): MatchResult? {
         if (startIndex < 0 || startIndex > input.length) {
-            throw IndexOutOfBoundsException("Start index out of bounds: $startIndex")
+            throw IndexOutOfBoundsException("Start index is out of bounds: $startIndex, input length: ${input.length}")
         }
         val matchResult = MatchResultImpl(input, this)
         matchResult.mode = Mode.FIND
@@ -174,9 +175,15 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
 
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+     *
+     * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
      */
-    actual fun findAll(input: CharSequence, startIndex: Int): Sequence<MatchResult>
-            = generateSequence({ find(input, startIndex) }, MatchResult::next)
+    actual fun findAll(input: CharSequence, startIndex: Int): Sequence<MatchResult> {
+        if (startIndex < 0 || startIndex > input.length) {
+            throw IndexOutOfBoundsException("Start index is out of bounds: $startIndex, input length: ${input.length}")
+        }
+        return generateSequence({ find(input, startIndex) }, MatchResult::next)
+    }
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.
