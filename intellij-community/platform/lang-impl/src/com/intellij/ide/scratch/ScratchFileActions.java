@@ -164,7 +164,7 @@ public class ScratchFileActions {
     ScratchFileCreationHelper.EXTENSION.forLanguage(language).beforeCreate(project, context);
 
     VirtualFile dir = context.ideView != null ? PsiUtilCore.getVirtualFile(ArrayUtil.getFirstElement(context.ideView.getDirectories())) : null;
-    RootType rootType = dir == null ? null : ScratchFileService.getInstance().getRootType(dir);
+    RootType rootType = dir == null ? null : ScratchFileService.findRootType(dir);
     String relativePath = rootType != ScratchRootType.getInstance() ? "" :
                           FileUtil.getRelativePath(ScratchFileService.getInstance().getRootPath(rootType), dir.getPath(), '/');
 

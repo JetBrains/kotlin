@@ -143,9 +143,8 @@ public class ScratchProjectViewPane extends ProjectViewPane {
         VirtualFile vFile = PsiUtilCore.getVirtualFile(file);
         vFile = BackedVirtualFile.getOriginFileIfBacked(vFile);
         if (vFile == null || !vFile.isValid()) return false;
-        if (!vFile.isInLocalFileSystem()) return false;
 
-        return ScratchFileService.getInstance().getRootType(vFile) != null;
+        return ScratchUtil.isScratch(vFile);
       }
 
       @Override
@@ -316,7 +315,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
 
     @Override
     public boolean contains(@NotNull VirtualFile file) {
-      return ScratchFileService.getInstance().getRootType(file) == getValue();
+      return getValue().containsFile(file);
     }
 
     @Nullable

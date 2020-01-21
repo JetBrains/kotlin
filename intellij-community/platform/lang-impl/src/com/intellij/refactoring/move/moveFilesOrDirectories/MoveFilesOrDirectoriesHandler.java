@@ -15,7 +15,7 @@
  */
 package com.intellij.refactoring.move.moveFilesOrDirectories;
 
-import com.intellij.ide.scratch.ScratchFileService;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
@@ -68,7 +68,8 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
     if (!(psiElement instanceof PsiDirectory || psiElement instanceof PsiDirectoryContainer)) return false;
     if (psiElement.getManager().isInProject(psiElement)) return true;
     VirtualFile virtualFile = PsiUtilCore.getVirtualFile(psiElement);
-    return ScratchFileService.isInScratchRoot(virtualFile) || virtualFile != null && ProjectRootManager.getInstance(psiElement.getProject()).getFileIndex().isExcluded(virtualFile);
+    return ScratchUtil.isScratch(virtualFile) ||
+           virtualFile != null && ProjectRootManager.getInstance(psiElement.getProject()).getFileIndex().isExcluded(virtualFile);
   }
 
   public void doMove(final PsiElement[] elements, final PsiElement targetContainer) {

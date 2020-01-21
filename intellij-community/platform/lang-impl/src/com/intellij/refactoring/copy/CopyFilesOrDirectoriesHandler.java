@@ -3,7 +3,7 @@ package com.intellij.refactoring.copy;
 
 import com.intellij.CommonBundle;
 import com.intellij.ide.CopyPasteDelegator;
-import com.intellij.ide.scratch.ScratchFileService;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.util.EditorHelper;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -63,7 +63,7 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
   public void doCopy(final PsiElement[] elements, PsiDirectory defaultTargetDirectory) {
     if (defaultTargetDirectory == null) {
       PsiDirectory commonParent = getCommonParentDirectory(elements);
-      if (commonParent != null && !ScratchFileService.isInScratchRoot(commonParent.getVirtualFile())) {
+      if (commonParent != null && !ScratchUtil.isScratch(commonParent.getVirtualFile())) {
         defaultTargetDirectory = commonParent;
       }
     }

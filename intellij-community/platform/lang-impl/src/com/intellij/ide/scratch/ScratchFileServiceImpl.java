@@ -43,6 +43,7 @@ import com.intellij.psi.search.UseScopeEnlarger;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ConcurrentFactoryMap;
 import com.intellij.util.containers.ContainerUtil;
@@ -213,7 +214,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
       if (project == null || file.isDirectory()) return null;
       RootType rootType = ScratchFileService.getInstance().getRootType(file);
       if (rootType == null) return null;
-      return rootType.substituteIcon(project, file);
+      return ObjectUtils.notNull(rootType.substituteIcon(project, file), AllIcons.FileTypes.Text);
     }
 
     @Nullable

@@ -19,7 +19,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -55,7 +54,7 @@ public final class ScratchRootType extends RootType {
   @Override
   public Icon substituteIcon(@NotNull Project project, @NotNull VirtualFile file) {
     if (file.isDirectory()) return null;
-    Icon icon = ObjectUtils.chooseNotNull(super.substituteIcon(project, file), PlainTextFileType.INSTANCE.getIcon());
+    Icon icon = ObjectUtils.notNull(super.substituteIcon(project, file), AllIcons.FileTypes.Text);
     return LayeredIcon.create(icon, AllIcons.Actions.Scratch);
   }
 
