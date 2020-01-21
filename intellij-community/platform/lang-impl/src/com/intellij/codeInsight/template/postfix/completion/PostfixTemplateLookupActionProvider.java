@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.completion;
 
 import com.intellij.codeInsight.lookup.Lookup;
@@ -44,7 +44,7 @@ public class PostfixTemplateLookupActionProvider implements LookupActionProvider
 
       PostfixTemplatesSettings settings = PostfixTemplatesSettings.getInstance();
       if (settings.isTemplateEnabled(template, templateLookupElement.getProvider())) {
-        consumer.consume(new LookupElementAction(AllIcons.Actions.Delete, String.format("Disable '%s' template", template.getKey())) {
+        consumer.consume(new LookupElementAction(AllIcons.Actions.Cancel, String.format("Disable '%s' template", template.getKey())) {
           @Override
           public Result performLookupAction() {
             ApplicationManager.getApplication().invokeLater(() -> settings.disableTemplate(template, templateLookupElement.getProvider()));
