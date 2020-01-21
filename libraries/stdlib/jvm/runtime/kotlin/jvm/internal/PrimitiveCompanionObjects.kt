@@ -6,19 +6,33 @@
 package kotlin.jvm.internal
 
 internal object DoubleCompanionObject {
-    val MIN_VALUE: Double = java.lang.Double.MIN_VALUE
-    val MAX_VALUE: Double = java.lang.Double.MAX_VALUE
-    val POSITIVE_INFINITY: Double = java.lang.Double.POSITIVE_INFINITY
-    val NEGATIVE_INFINITY: Double = java.lang.Double.NEGATIVE_INFINITY
-    val NaN: Double = java.lang.Double.NaN
+    const val MIN_VALUE: Double = java.lang.Double.MIN_VALUE
+    const val MAX_VALUE: Double = java.lang.Double.MAX_VALUE
+    const val POSITIVE_INFINITY: Double = java.lang.Double.POSITIVE_INFINITY
+    const val NEGATIVE_INFINITY: Double = java.lang.Double.NEGATIVE_INFINITY
+    const val NaN: Double = java.lang.Double.NaN
+
+    // for binary compatibility with pre 1.4
+    fun getMIN_VALUE(): Double = java.lang.Double.MIN_VALUE
+    fun getMAX_VALUE(): Double = java.lang.Double.MAX_VALUE
+    fun getPOSITIVE_INFINITY(): Double = java.lang.Double.POSITIVE_INFINITY
+    fun getNEGATIVE_INFINITY(): Double = java.lang.Double.NEGATIVE_INFINITY
+    fun getNaN(): Double = java.lang.Double.NaN
 }
 
 internal object FloatCompanionObject {
-    val MIN_VALUE: Float = java.lang.Float.MIN_VALUE
-    val MAX_VALUE: Float = java.lang.Float.MAX_VALUE
-    val POSITIVE_INFINITY: Float = java.lang.Float.POSITIVE_INFINITY
-    val NEGATIVE_INFINITY: Float = java.lang.Float.NEGATIVE_INFINITY
-    val NaN: Float = java.lang.Float.NaN
+    const val MIN_VALUE: Float = java.lang.Float.MIN_VALUE
+    const val MAX_VALUE: Float = java.lang.Float.MAX_VALUE
+    const val POSITIVE_INFINITY: Float = java.lang.Float.POSITIVE_INFINITY
+    const val NEGATIVE_INFINITY: Float = java.lang.Float.NEGATIVE_INFINITY
+    const val NaN: Float = java.lang.Float.NaN
+
+    // for binary compatibility with pre 1.4
+    fun getMIN_VALUE(): Float = java.lang.Float.MIN_VALUE
+    fun getMAX_VALUE(): Float = java.lang.Float.MAX_VALUE
+    fun getPOSITIVE_INFINITY(): Float = java.lang.Float.POSITIVE_INFINITY
+    fun getNEGATIVE_INFINITY(): Float = java.lang.Float.NEGATIVE_INFINITY
+    fun getNaN(): Float = java.lang.Float.NaN
 }
 
 internal object IntCompanionObject {

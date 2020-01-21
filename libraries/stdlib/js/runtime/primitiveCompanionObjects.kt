@@ -8,37 +8,37 @@ package kotlin.js.internal
 @JsName("DoubleCompanionObject")
 internal object DoubleCompanionObject {
     @JsName("MIN_VALUE")
-    val MIN_VALUE: Double = js("Number.MIN_VALUE")
+    const val MIN_VALUE: Double = 4.9E-324
 
     @JsName("MAX_VALUE")
-    val MAX_VALUE: Double = js("Number.MAX_VALUE")
+    const val MAX_VALUE: Double = 1.7976931348623157E308
 
     @JsName("POSITIVE_INFINITY")
-    val POSITIVE_INFINITY: Double = js("Number.POSITIVE_INFINITY")
+    const val POSITIVE_INFINITY: Double = 1.0/0.0
 
     @JsName("NEGATIVE_INFINITY")
-    val NEGATIVE_INFINITY: Double = js("Number.NEGATIVE_INFINITY")
+    const val NEGATIVE_INFINITY: Double = -1.0/0.0
 
     @JsName("NaN")
-    val NaN: Double = js("Number.NaN")
+    const val NaN: Double = -(0.0/0.0)
 }
 
 @JsName("FloatCompanionObject")
 internal  object FloatCompanionObject {
     @JsName("MIN_VALUE")
-    val MIN_VALUE: Float = js("Number.MIN_VALUE")
+    const val MIN_VALUE: Float = 1.4E-45F
 
     @JsName("MAX_VALUE")
-    val MAX_VALUE: Float = js("Number.MAX_VALUE")
+    const val MAX_VALUE: Float = 3.4028235E38F
 
     @JsName("POSITIVE_INFINITY")
-    val POSITIVE_INFINITY: Float = js("Number.POSITIVE_INFINITY")
+    const val POSITIVE_INFINITY: Float = 1.0F/0.0F
 
     @JsName("NEGATIVE_INFINITY")
-    val NEGATIVE_INFINITY: Float = js("Number.NEGATIVE_INFINITY")
+    const val NEGATIVE_INFINITY: Float = -1.0F/0.0F
 
     @JsName("NaN")
-    val NaN: Float = js("Number.NaN")
+    const val NaN: Float = -(0.0F/0.0F)
 }
 
 @JsName("IntCompanionObject")

@@ -3313,6 +3313,11 @@ public final class kotlin/jvm/internal/CollectionToArray {
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/DoubleCompanionObject;
+	public static final field MAX_VALUE D
+	public static final field MIN_VALUE D
+	public static final field NEGATIVE_INFINITY D
+	public static final field NaN D
+	public static final field POSITIVE_INFINITY D
 	public final fun getMAX_VALUE ()D
 	public final fun getMIN_VALUE ()D
 	public final fun getNEGATIVE_INFINITY ()D
@@ -3333,6 +3338,11 @@ public final class kotlin/jvm/internal/EnumCompanionObject {
 
 public final class kotlin/jvm/internal/FloatCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/FloatCompanionObject;
+	public static final field MAX_VALUE F
+	public static final field MIN_VALUE F
+	public static final field NEGATIVE_INFINITY F
+	public static final field NaN F
+	public static final field POSITIVE_INFINITY F
 	public final fun getMAX_VALUE ()F
 	public final fun getMIN_VALUE ()F
 	public final fun getNEGATIVE_INFINITY ()F
