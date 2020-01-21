@@ -31,6 +31,11 @@ class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() 
         doTest()
     }
 
+    @Test
+    fun multiplatformTestsInObject() {
+        doTest()
+    }
+
     private fun doTest() {
         val files = importProjectFromTestData()
         val project = myTestFixture.project
