@@ -6,6 +6,7 @@ import com.intellij.codeInsight.hints.settings.language.SingleLanguageInlayHints
 import com.intellij.ide.DataManager
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.extensions.BaseExtensionPointName
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.options.ex.Settings
@@ -13,7 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBusConnection
 import javax.swing.JComponent
 
-class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
+class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite, Configurable.WithEpDependencies {
   private val settings = InlayHintsSettings.instance()
   private val configurables: List<SingleLanguageInlayHintsConfigurable>
   private val panel: InlayHintsPanel
@@ -63,6 +64,8 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
       configurable.reset()
     }
   }
+
+  override fun getDependencies(): Collection<BaseExtensionPointName<*>> = listOf(InlaySettingsProvider.EP.EXTENSION_POINT_NAME)
 
   companion object {
     /**
