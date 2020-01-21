@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa.new
+package org.jetbrains.kotlin.fir.resolve.dfa
 
 import com.google.common.collect.ArrayListMultimap
 import kotlinx.collections.immutable.*
@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import java.util.*
 import kotlin.NoSuchElementException
-import kotlin.collections.HashSet
 
-data class PersistentDataFlowInfo(
+data class PersistentTypeStatement(
     override val variable: RealVariable,
     override val exactType: PersistentSet<ConeKotlinType>,
     override val exactNotType: PersistentSet<ConeKotlinType>
-) : DataFlowInfo() {
-    override operator fun plus(other: DataFlowInfo): PersistentDataFlowInfo {
-        return PersistentDataFlowInfo(
+) : TypeStatement() {
+    override operator fun plus(other: TypeStatement): PersistentTypeStatement {
+        return PersistentTypeStatement(
             variable,
             exactType + other.exactType,
             exactNotType + other.exactNotType
@@ -29,49 +28,49 @@ data class PersistentDataFlowInfo(
     override val isEmpty: Boolean
         get() = exactType.isEmpty() && exactNotType.isEmpty()
 
-    override fun invert(): PersistentDataFlowInfo {
-        return PersistentDataFlowInfo(variable, exactNotType, exactType)
+    override fun invert(): PersistentTypeStatement {
+        return PersistentTypeStatement(variable, exactNotType, exactType)
     }
 }
 
-typealias PersistentKnownFacts = PersistentMap<RealVariable, PersistentDataFlowInfo>
-typealias PersistentLogicStatements = PersistentMap<DataFlowVariable, PersistentList<LogicStatement>>
+typealias PersistentApprovedTypeStatements = PersistentMap<RealVariable, PersistentTypeStatement>
+typealias PersistentImplications = PersistentMap<DataFlowVariable, PersistentList<Implication>>
 
 class PersistentFlow : Flow {
     val previousFlow: PersistentFlow?
-    var knownFacts: PersistentKnownFacts
-    var logicStatements: PersistentLogicStatements
+    var approvedTypeStatements: PersistentApprovedTypeStatements
+    var logicStatements: PersistentImplications
     val level: Int
-    var knownFactsDiff: PersistentKnownFacts = persistentHashMapOf()
+    var approvedTypeStatementsDiff: PersistentApprovedTypeStatements = persistentHashMapOf()
 
     constructor(previousFlow: PersistentFlow) {
         this.previousFlow = previousFlow
-        knownFacts = previousFlow.knownFacts
+        approvedTypeStatements = previousFlow.approvedTypeStatements
         logicStatements = previousFlow.logicStatements
         level = previousFlow.level + 1
     }
 
     constructor() {
         previousFlow = null
-        knownFacts = persistentHashMapOf()
+        approvedTypeStatements = persistentHashMapOf()
         logicStatements = persistentHashMapOf()
         level = 1
     }
 
-    override fun getKnownInfo(variable: RealVariable): DataFlowInfo? {
-        return knownFacts[variable]
+    override fun getTypeStatement(variable: RealVariable): TypeStatement? {
+        return approvedTypeStatements[variable]
     }
 
-    override fun getLogicStatements(variable: DataFlowVariable): Collection<LogicStatement> {
+    override fun getImplications(variable: DataFlowVariable): Collection<Implication> {
         return logicStatements[variable] ?: emptyList()
     }
 
-    override fun getVariablesInKnownInfos(): Collection<RealVariable> {
-        return knownFacts.keys
+    override fun getVariablesInTypeStatements(): Collection<RealVariable> {
+        return approvedTypeStatements.keys
     }
 
-    override fun removeConditions(variable: DataFlowVariable): Collection<LogicStatement> {
-        return getLogicStatements(variable).also {
+    override fun removeOperations(variable: DataFlowVariable): Collection<Implication> {
+        return getImplications(variable).also {
             if (it.isNotEmpty()) {
                 logicStatements -= variable
             }
@@ -79,8 +78,7 @@ class PersistentFlow : Flow {
     }
 }
 
-abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, context: ConeInferenceContext) :
-    LogicSystem<PersistentFlow>(context) {
+abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSystem<PersistentFlow>(context) {
     override fun createEmptyFlow(): PersistentFlow {
         return PersistentFlow()
     }
@@ -99,11 +97,11 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
             ?: return commonFlow
 
         for (variable in commonVariables) {
-            val info = or(flows.map { it.getKnownFactsDiff(variable, commonFlow) })
+            val info = or(flows.map { it.getApprovedTypeStatementsDiff(variable, commonFlow) })
             if (info.isEmpty) continue
-            commonFlow.knownFacts = commonFlow.knownFacts.addNewInfo(info)
+            commonFlow.approvedTypeStatements = commonFlow.approvedTypeStatements.addTypeStatement(info)
             if (commonFlow.previousFlow != null) {
-                commonFlow.knownFactsDiff = commonFlow.knownFactsDiff.addNewInfo(info)
+                commonFlow.approvedTypeStatementsDiff = commonFlow.approvedTypeStatementsDiff.addTypeStatement(info)
             }
         }
 
@@ -112,11 +110,11 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
         return commonFlow
     }
 
-    private fun PersistentFlow.getKnownFactsDiff(variable: RealVariable, parentFlow: PersistentFlow): MutableDataFlowInfo {
+    private fun PersistentFlow.getApprovedTypeStatementsDiff(variable: RealVariable, parentFlow: PersistentFlow): MutableTypeStatement {
         var flow = this
-        val result = MutableDataFlowInfo(variable)
+        val result = MutableTypeStatement(variable)
         while (flow != parentFlow) {
-            flow.knownFactsDiff[variable]?.let {
+            flow.approvedTypeStatementsDiff[variable]?.let {
                 result += it
             }
             flow = flow.previousFlow!!
@@ -131,7 +129,7 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
     private fun PersistentFlow.diffVariablesIterable(parentFlow: PersistentFlow): Iterable<RealVariable> =
         object : DiffIterable<RealVariable>(parentFlow, this) {
             override fun extractIterator(flow: PersistentFlow): Iterator<RealVariable> {
-                return flow.knownFactsDiff.keys.iterator()
+                return flow.approvedTypeStatementsDiff.keys.iterator()
             }
         }
 
@@ -162,49 +160,49 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
         }
     }
 
-    override fun addKnownInfo(flow: PersistentFlow, info: DataFlowInfo) {
+    override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement) {
         with(flow) {
-            knownFacts = knownFacts.addNewInfo(info)
+            approvedTypeStatements = approvedTypeStatements.addTypeStatement(statement)
             if (previousFlow != null) {
-                knownFactsDiff = knownFactsDiff.addNewInfo(info)
+                approvedTypeStatementsDiff = approvedTypeStatementsDiff.addTypeStatement(statement)
             }
-            if (info.variable.isThisReference) {
-                processUpdatedReceiverVariable(flow, info.variable)
+            if (statement.variable.isThisReference) {
+                processUpdatedReceiverVariable(flow, statement.variable)
             }
         }
     }
 
-    override fun addLogicStatement(flow: PersistentFlow, statement: LogicStatement) {
-        if (statement.condition == statement.effect) return
+    override fun addImplication(flow: PersistentFlow, implication: Implication) {
+        if (implication.condition == implication.effect) return
         with(flow) {
-            val variable = statement.condition.variable
-            val existingFacts = logicStatements[variable]
-            logicStatements = if (existingFacts == null) {
-                logicStatements.put(variable, persistentListOf(statement))
+            val variable = implication.condition.variable
+            val existingImplications = logicStatements[variable]
+            logicStatements = if (existingImplications == null) {
+                logicStatements.put(variable, persistentListOf(implication))
             } else {
-                logicStatements.put(variable, existingFacts + statement)
+                logicStatements.put(variable, existingImplications + implication)
             }
         }
     }
 
     override fun removeAllAboutVariable(flow: PersistentFlow, variable: RealVariable) {
-        flow.knownFacts -= variable
-        flow.knownFactsDiff -= variable
+        flow.approvedTypeStatements -= variable
+        flow.approvedTypeStatementsDiff -= variable
         // TODO: should we search variable in all logic statements?
     }
 
-    override fun translateConditionalVariableInStatements(
+    override fun translateVariableFromConditionInStatements(
         flow: PersistentFlow,
         originalVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
         shouldRemoveOriginalStatements: Boolean,
-        filter: (LogicStatement) -> Boolean,
-        transform: (LogicStatement) -> LogicStatement
+        filter: (Implication) -> Boolean,
+        transform: (Implication) -> Implication
     ) {
         with(flow) {
             val statements = logicStatements[originalVariable]?.takeIf { it.isNotEmpty() } ?: return
             val newStatements = statements.filter(filter).map {
-                val newStatement = Predicate(newVariable, it.condition.condition) implies it.effect
+                val newStatement = OperationStatement(newVariable, it.condition.operation) implies it.effect
                 transform(newStatement)
             }.toPersistentList()
             if (shouldRemoveOriginalStatements) {
@@ -216,13 +214,13 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
 
     override fun approveStatementsInsideFlow(
         flow: PersistentFlow,
-        predicate: Predicate,
+        approvedStatement: OperationStatement,
         shouldForkFlow: Boolean,
         shouldRemoveSynthetics: Boolean
     ): PersistentFlow {
-        val approvedFacts = approvePredicatesInternal(
+        val approvedFacts = approveOperationStatementsInternal(
             flow,
-            predicate,
+            approvedStatement,
             initialStatements = null,
             shouldRemoveSynthetics
         )
@@ -232,14 +230,14 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
 
         val updatedReceivers = mutableSetOf<RealVariable>()
         approvedFacts.asMap().forEach { (variable, infos) ->
-            var resultInfo = PersistentDataFlowInfo(variable, persistentSetOf(), persistentSetOf())
+            var resultInfo = PersistentTypeStatement(variable, persistentSetOf(), persistentSetOf())
             for (info in infos) {
                 resultInfo += info
             }
             if (variable.isThisReference) {
                 updatedReceivers += variable
             }
-            addKnownInfo(resultFlow, resultInfo)
+            addTypeStatement(resultFlow, resultInfo)
         }
 
         updatedReceivers.forEach {
@@ -249,86 +247,63 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
         return resultFlow
     }
 
-    private fun approvePredicatesInternal(
+    private fun approveOperationStatementsInternal(
         flow: PersistentFlow,
-        predicate: Predicate,
-        initialStatements: Collection<LogicStatement>?,
+        approvedStatement: OperationStatement,
+        initialStatements: Collection<Implication>?,
         shouldRemoveSynthetics: Boolean
-    ): ArrayListMultimap<RealVariable, DataFlowInfo> {
-        val approvedFacts: ArrayListMultimap<RealVariable, DataFlowInfo> = ArrayListMultimap.create()
-        val predicatesToApprove = LinkedList<Predicate>().apply { this += predicate }
-        approvePredicatesInternal(flow, predicatesToApprove, initialStatements, shouldRemoveSynthetics, approvedFacts)
+    ): ArrayListMultimap<RealVariable, TypeStatement> {
+        val approvedFacts: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
+        val approvedStatements = LinkedList<OperationStatement>().apply { this += approvedStatement }
+        approveOperationStatementsInternal(flow, approvedStatements, initialStatements, shouldRemoveSynthetics, approvedFacts)
         return approvedFacts
     }
 
-    private fun approvePredicatesInternal(
+    private fun approveOperationStatementsInternal(
         flow: PersistentFlow,
-        predicatesToApprove: LinkedList<Predicate>,
-        initialStatements: Collection<LogicStatement>?,
+        approvedStatements: LinkedList<OperationStatement>,
+        initialStatements: Collection<Implication>?,
         shouldRemoveSynthetics: Boolean,
-        approvedFacts: ArrayListMultimap<RealVariable, DataFlowInfo>
+        approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement>
     ) {
-        if (predicatesToApprove.isEmpty()) return
-        val approvedVariables = mutableSetOf<RealVariable>()
-        val approvedPredicates = mutableSetOf<Predicate>()
+        if (approvedStatements.isEmpty()) return
+        val approvedOperationStatements = mutableSetOf<OperationStatement>()
         var firstIteration = true
-        while (predicatesToApprove.isNotEmpty()) {
+        while (approvedStatements.isNotEmpty()) {
             @Suppress("NAME_SHADOWING")
-            val predicate: Predicate = predicatesToApprove.removeFirst()
+            val approvedStatement: OperationStatement = approvedStatements.removeFirst()
             // Defense from cycles in facts
-            if (!approvedPredicates.add(predicate)) {
+            if (!approvedOperationStatements.add(approvedStatement)) {
                 continue
             }
             val statements = initialStatements?.takeIf { firstIteration }
-                ?: flow.logicStatements[predicate.variable]?.takeIf { it.isNotEmpty() }
+                ?: flow.logicStatements[approvedStatement.variable]?.takeIf { it.isNotEmpty() }
                 ?: continue
-            if (shouldRemoveSynthetics && predicate.variable.isSynthetic()) {
-                flow.logicStatements -= predicate.variable
+            if (shouldRemoveSynthetics && approvedStatement.variable.isSynthetic()) {
+                flow.logicStatements -= approvedStatement.variable
             }
             for (statement in statements) {
-                if (statement.condition == predicate) {
+                if (statement.condition == approvedStatement) {
                     when (val effect = statement.effect) {
-                        is Predicate -> predicatesToApprove += effect
-                        is DataFlowInfo -> {
-                            approvedFacts.put(effect.variable, effect)
-                            approvedVariables += effect.variable
-                        }
+                        is OperationStatement -> approvedStatements += effect
+                        is TypeStatement -> approvedTypeStatements.put(effect.variable, effect)
                     }
                 }
             }
             firstIteration = false
         }
-
-        val newPredicates = LinkedList<Predicate>()
-        for (approvedVariable in approvedVariables) {
-            var variable = approvedVariable
-            foo@ while (variable.explicitReceiverVariable != null && variable.isSafeCall) {
-                when (val receiver = variable.explicitReceiverVariable!!) {
-                    is RealVariable -> {
-                        approvedFacts.put(receiver, receiver has anyType)
-                        variable = receiver
-                    }
-                    is SyntheticVariable -> {
-                        newPredicates += receiver notEq null
-                        break@foo
-                    }
-                    else -> throw IllegalStateException()
-                }
-            }
-        }
-        approvePredicatesInternal(flow, newPredicates, initialStatements = null, shouldRemoveSynthetics, approvedFacts)
     }
 
-    override fun approvePredicateTo(
-        destination: MutableKnownFacts,
+    override fun approveStatementsTo(
+        destination: MutableTypeStatements,
         flow: PersistentFlow,
-        predicate: Predicate,
-        statements: Collection<LogicStatement>
+        approvedStatement: OperationStatement,
+        statements: Collection<Implication>
     ) {
-        val approvePredicates = approvePredicatesInternal(flow, predicate, statements, shouldRemoveSynthetics = false)
-        approvePredicates.asMap().forEach { (variable, infos) ->
+        val approveOperationStatements = approveOperationStatementsInternal(flow, approvedStatement, statements, shouldRemoveSynthetics = false)
+        approveOperationStatements.asMap().forEach { (variable, infos) ->
             for (info in infos) {
-                val mutableInfo = info.asMutableInfo()
+                val mutableInfo = info.asMutableStatement()
                 destination.put(variable, mutableInfo) {
                     it += mutableInfo
                     it
@@ -346,11 +321,11 @@ abstract class PersistentLogicSystem(private val anyType: ConeKotlinType, contex
         return InfoForBooleanOperator(
             leftFlow.logicStatements[leftVariable] ?: emptyList(),
             rightFlow.logicStatements[rightVariable] ?: emptyList(),
-            rightFlow.knownFactsDiff
+            rightFlow.approvedTypeStatementsDiff
         )
     }
 
-    override fun getLogicStatementsWithVariable(flow: PersistentFlow, variable: DataFlowVariable): Collection<LogicStatement> {
+    override fun getImplicationsWithVariable(flow: PersistentFlow, variable: DataFlowVariable): Collection<Implication> {
         return flow.logicStatements[variable] ?: emptyList()
     }
 
@@ -377,35 +352,25 @@ private fun lowestCommonFlow(left: PersistentFlow, right: PersistentFlow): Persi
     return left
 }
 
-private fun <E> Collection<Collection<E>>.intersectSets(): Set<E> {
-    if (isEmpty()) return emptySet()
-    val iterator = iterator()
-    val result = HashSet<E>(iterator.next())
-    while (iterator.hasNext()) {
-        result.retainAll(iterator.next())
-    }
-    return result
-}
-
-private fun PersistentKnownFacts.addNewInfo(info: DataFlowInfo): PersistentKnownFacts {
+private fun PersistentApprovedTypeStatements.addTypeStatement(info: TypeStatement): PersistentApprovedTypeStatements {
     val variable = info.variable
     val existingInfo = this[variable]
     return if (existingInfo == null) {
-        val persistentInfo = if (info is PersistentDataFlowInfo) info else info.toPersistent()
+        val persistentInfo = if (info is PersistentTypeStatement) info else info.toPersistent()
         put(variable, persistentInfo)
     } else {
         put(variable, existingInfo + info)
     }
 }
 
-private fun DataFlowInfo.toPersistent(): PersistentDataFlowInfo = PersistentDataFlowInfo(
+private fun TypeStatement.toPersistent(): PersistentTypeStatement = PersistentTypeStatement(
     variable,
     exactType.toPersistentSet(),
     exactNotType.toPersistentSet()
 )
 
-fun DataFlowInfo.asMutableInfo(): MutableDataFlowInfo = when (this) {
-    is MutableDataFlowInfo -> this
-    is PersistentDataFlowInfo -> MutableDataFlowInfo(variable, exactType.toMutableSet(), exactNotType.toMutableSet())
-    else -> throw IllegalArgumentException("Unknown DataFlowInfo type: ${this::class}")
+fun TypeStatement.asMutableStatement(): MutableTypeStatement = when (this) {
+    is MutableTypeStatement -> this
+    is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.toMutableSet(), exactNotType.toMutableSet())
+    else -> throw IllegalArgumentException("Unknown TypeStatement type: ${this::class}")
 }

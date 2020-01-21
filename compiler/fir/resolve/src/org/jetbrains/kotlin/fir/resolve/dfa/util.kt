@@ -1,46 +1,27 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa.new
+package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
-import org.jetbrains.kotlin.fir.resolve.dfa.Condition
+import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
+import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeIntersector
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-
-fun ConeInferenceContext.commonSuperTypeOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
-    return when (types.size) {
-        0 -> null
-        1 -> types.first()
-        else -> with(NewCommonSuperTypeCalculator) {
-            commonSuperType(types) as ConeKotlinType
-        }
-    }
-}
-
-fun ConeInferenceContext.intersectTypesOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
-    return when (types.size) {
-        0 -> null
-        1 -> types.first()
-        else -> ConeTypeIntersector.intersectTypes(this, types)
-    }
-}
 
 @UseExperimental(ExperimentalContracts::class)
 fun DataFlowVariable.isSynthetic(): Boolean {
@@ -60,15 +41,15 @@ fun DataFlowVariable.isReal(): Boolean {
     return this is RealVariable
 }
 
-operator fun DataFlowInfo.plus(other: DataFlowInfo?): DataFlowInfo = other?.let { this + other } ?: this
+operator fun TypeStatement.plus(other: TypeStatement?): TypeStatement = other?.let { this + other } ?: this
 
-fun MutableKnownFacts.addInfo(variable: RealVariable, info: DataFlowInfo) {
-    put(variable, info.asMutableInfo()) { it.apply { this += info } }
+fun MutableTypeStatements.addStatement(variable: RealVariable, statement: TypeStatement) {
+    put(variable, statement.asMutableStatement()) { it.apply { this += statement } }
 }
 
-fun MutableKnownFacts.mergeInfo(other: Map<RealVariable, DataFlowInfo>) {
+fun MutableTypeStatements.mergeTypeStatements(other: TypeStatements) {
     other.forEach { (variable, info) ->
-        addInfo(variable, info)
+        addStatement(variable, info)
     }
 }
 
@@ -85,8 +66,7 @@ internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunct
     }
 }
 
-internal val FirExpression.coneType: ConeKotlinType? get() = typeRef.coneTypeSafe()
-
+@DfaInternals
 internal fun FirOperation.invert(): FirOperation = when (this) {
     FirOperation.EQ -> FirOperation.NOT_EQ
     FirOperation.NOT_EQ -> FirOperation.EQ
@@ -95,6 +75,7 @@ internal fun FirOperation.invert(): FirOperation = when (this) {
     else -> throw IllegalArgumentException("$this can not be inverted")
 }
 
+@DfaInternals
 internal fun FirOperation.isEq(): Boolean {
     return when (this) {
         FirOperation.EQ, FirOperation.IDENTITY -> true
@@ -108,10 +89,32 @@ internal fun FirFunctionCall.isBooleanNot(): Boolean {
     return symbol.callableId == FirDataFlowAnalyzer.KOTLIN_BOOLEAN_NOT
 }
 
-internal fun ConeConstantReference.toCondition(): Condition = when (this) {
-    ConeConstantReference.NULL -> Condition.EqNull
-    ConeConstantReference.NOT_NULL -> Condition.NotEqNull
-    ConeBooleanConstantReference.TRUE -> Condition.EqTrue
-    ConeBooleanConstantReference.FALSE -> Condition.EqFalse
-    else -> throw IllegalArgumentException("$this can not be transformed to Condition")
+internal fun ConeConstantReference.toOperation(): Operation = when (this) {
+    ConeConstantReference.NULL -> Operation.EqNull
+    ConeConstantReference.NOT_NULL -> Operation.NotEqNull
+    ConeBooleanConstantReference.TRUE -> Operation.EqTrue
+    ConeBooleanConstantReference.FALSE -> Operation.EqFalse
+    else -> throw IllegalArgumentException("$this can not be transformed to Operation")
 }
+
+@DfaInternals
+internal val FirExpression.coneType: ConeKotlinType?
+    get() = typeRef.coneTypeSafe()
+
+@DfaInternals
+internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
+    get() = when (this) {
+        is FirResolvable -> symbol
+        is FirSymbolOwner<*> -> symbol
+        is FirWhenSubjectExpression -> whenSubject.whenExpression.subject?.symbol
+        else -> null
+    }?.takeIf { this is FirThisReceiverExpression || it !is FirFunctionSymbol<*> }
+
+@DfaInternals
+internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
+    get() = when (val reference = calleeReference) {
+        is FirExplicitThisReference -> reference.boundSymbol
+        is FirResolvedNamedReference -> reference.resolvedSymbol
+        is FirNamedReferenceWithCandidate -> reference.candidateSymbol
+        else -> null
+    }

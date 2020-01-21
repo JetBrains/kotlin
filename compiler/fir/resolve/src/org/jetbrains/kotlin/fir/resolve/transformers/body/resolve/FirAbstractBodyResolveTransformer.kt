@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
-import org.jetbrains.kotlin.fir.resolve.dfa.new.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope

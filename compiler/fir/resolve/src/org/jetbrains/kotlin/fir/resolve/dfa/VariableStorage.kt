@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa.new
+package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
+@UseExperimental(DfaInternals::class)
 class VariableStorage {
     private var counter = 1
     private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
@@ -53,7 +54,6 @@ class VariableStorage {
      */
     private fun createRealVariableInternal(identifier: Identifier, originalFir: FirElement): RealVariable {
         val receiver: FirExpression?
-        val isSafeCall: Boolean
         val isThisReference: Boolean
         val expression = when (originalFir) {
             is FirQualifiedAccessExpression -> originalFir
@@ -63,16 +63,14 @@ class VariableStorage {
 
         if (expression != null) {
             receiver = expression.explicitReceiver
-            isSafeCall = expression.safe
             isThisReference = expression.calleeReference is FirThisReference
         } else {
             receiver = null
-            isSafeCall = false
             isThisReference = false
         }
 
         val receiverVariable = receiver?.let { getOrCreateVariable(it) }
-        return RealVariable(identifier, isThisReference, receiverVariable, isSafeCall, counter++)
+        return RealVariable(identifier, isThisReference, receiverVariable, counter++)
     }
 
     @JvmName("getOrCreateRealVariableOrNull")
@@ -134,19 +132,3 @@ class VariableStorage {
         localVariableAliases.clear()
     }
 }
-
-internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
-    get() = when (this) {
-        is FirResolvable -> symbol
-        is FirSymbolOwner<*> -> symbol
-        is FirWhenSubjectExpression -> whenSubject.whenExpression.subject?.symbol
-        else -> null
-    }?.takeIf { this is FirThisReceiverExpression || it !is FirFunctionSymbol<*> }
-
-internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
-    get() = when (val reference = calleeReference) {
-        is FirExplicitThisReference -> reference.boundSymbol
-        is FirResolvedNamedReference -> reference.resolvedSymbol
-        is FirNamedReferenceWithCandidate -> reference.candidateSymbol
-        else -> null
-    }
