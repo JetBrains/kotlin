@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @State(
@@ -71,7 +72,7 @@ public final class RunDashboardManagerImpl implements RunDashboardManager, Persi
   private final ReentrantReadWriteLock myServiceLock = new ReentrantReadWriteLock();
   private final RunDashboardStatusFilter myStatusFilter = new RunDashboardStatusFilter();
   private String myToolWindowId;
-  private final Condition<Content> myReuseCondition;
+  private final Predicate<Content> myReuseCondition;
   private final AtomicBoolean myListenersInitialized = new AtomicBoolean();
 
   public RunDashboardManagerImpl(@NotNull Project project) {
@@ -327,7 +328,7 @@ public final class RunDashboardManagerImpl implements RunDashboardManager, Persi
 
   @NotNull
   @Override
-  public Condition<Content> getReuseCondition() {
+  public Predicate<Content> getReuseCondition() {
     return myReuseCondition;
   }
 
