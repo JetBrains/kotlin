@@ -1,0 +1,138 @@
+digraph smartcastFromArgument_kt {
+  graph [splines=ortho nodesep=3]
+  node [shape=box penwidth=2]
+  edge [penwidth=2]
+
+  subgraph cluster_0 {
+    color=red
+    0 [label="Enter function foo" style="filled" fillcolor=red];
+    1 [label="Exit function foo" style="filled" fillcolor=red];
+  }
+
+  0 -> {1};
+
+  subgraph cluster_1 {
+    color=red
+    2 [label="Enter function takeA" style="filled" fillcolor=red];
+    3 [label="Const: Boolean(true)"];
+    4 [label="Jump: ^takeA Boolean(true)"];
+    5 [label="Stub" style="filled" fillcolor=gray];
+    6 [label="Exit function takeA" style="filled" fillcolor=red];
+  }
+
+  2 -> {3};
+  3 -> {4};
+  4 -> {6};
+  4 -> {5} [style=dotted];
+  5 -> {6} [style=dotted];
+
+  subgraph cluster_2 {
+    color=red
+    7 [label="Enter function test" style="filled" fillcolor=red];
+    subgraph cluster_3 {
+      color=blue
+      8 [label="Enter when"];
+      subgraph cluster_4 {
+        color=blue
+        9 [label="Enter when branch condition "];
+        subgraph cluster_5 {
+          color=blue
+          10 [label="Enter when"];
+          11 [label="Access variable R|<local>/a|"];
+          12 [label="Type operator: a as? A"];
+          13 [label="Variable declaration: lval <elvis>: R|A?|"];
+          subgraph cluster_6 {
+            color=blue
+            14 [label="Enter when branch condition "];
+            15 [label="Const: Null(null)"];
+            16 [label="Operator =="];
+            17 [label="Exit when branch condition"];
+          }
+          subgraph cluster_7 {
+            color=blue
+            18 [label="Enter when branch condition else"];
+            19 [label="Exit when branch condition"];
+          }
+          20 [label="Enter when branch result"];
+          subgraph cluster_8 {
+            color=blue
+            21 [label="Enter block"];
+            22 [label="Access variable R|<local>/<elvis>|"];
+            23 [label="Exit block"];
+          }
+          24 [label="Exit when branch result"];
+          25 [label="Enter when branch result"];
+          subgraph cluster_9 {
+            color=blue
+            26 [label="Enter block"];
+            27 [label="Jump: ^test Unit"];
+            28 [label="Stub" style="filled" fillcolor=gray];
+            29 [label="Exit block" style="filled" fillcolor=gray];
+          }
+          30 [label="Exit when branch result" style="filled" fillcolor=gray];
+          31 [label="Exit when"];
+        }
+        32 [label="Function call: R|/takeA|(when (lval <elvis>: R|A?| = (R|<local>/a| as? R|A|)) {
+    ==($subj$, Null(null)) ->  {
+        ^test Unit
+    }
+    else ->  {
+        R|<local>/<elvis>|
+    }
+}
+)"];
+        33 [label="Exit when branch condition"];
+      }
+      34 [label="Synthetic else branch"];
+      35 [label="Enter when branch result"];
+      subgraph cluster_10 {
+        color=blue
+        36 [label="Enter block"];
+        37 [label="Access variable R|<local>/a|"];
+        38 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+        39 [label="Exit block"];
+      }
+      40 [label="Exit when branch result"];
+      41 [label="Exit when"];
+    }
+    42 [label="Exit function test" style="filled" fillcolor=red];
+  }
+
+  7 -> {8};
+  8 -> {9};
+  9 -> {10};
+  10 -> {11};
+  11 -> {12};
+  12 -> {13};
+  13 -> {14};
+  14 -> {15};
+  15 -> {16};
+  16 -> {17};
+  17 -> {25 18};
+  18 -> {19};
+  19 -> {20};
+  20 -> {21};
+  21 -> {22};
+  22 -> {23};
+  23 -> {24};
+  24 -> {31};
+  25 -> {26};
+  26 -> {27};
+  27 -> {42};
+  27 -> {28} [style=dotted];
+  28 -> {29} [style=dotted];
+  29 -> {30} [style=dotted];
+  30 -> {31} [style=dotted];
+  31 -> {32};
+  32 -> {33};
+  33 -> {35 34};
+  34 -> {41};
+  35 -> {36};
+  36 -> {37};
+  37 -> {38};
+  38 -> {39};
+  39 -> {40};
+  40 -> {41};
+  41 -> {42};
+
+}

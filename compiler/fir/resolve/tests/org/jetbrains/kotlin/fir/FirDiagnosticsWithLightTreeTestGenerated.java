@@ -1041,11 +1041,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
         }
 
-        @TestMetadata("noSmartcast.kt")
-        public void testNoSmartcast() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/noSmartcast.kt");
-        }
-
         @TestMetadata("propertyFromJavaPlusAssign.kt")
         public void testPropertyFromJavaPlusAssign() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/propertyFromJavaPlusAssign.kt");
