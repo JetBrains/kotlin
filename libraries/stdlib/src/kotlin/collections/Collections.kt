@@ -155,7 +155,11 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
 }
 
 /**
- * Build a new read-only [List] with the [elements][E] from the [builderAction].
+ * Builds a new read-only [List] by populating a [MutableList] using the given [builderAction]
+ * and returning a read-only list with the same elements.
+ *
+ * The list passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
  *
  * @sample samples.collections.Builders.Lists.buildListSample
  */
@@ -168,18 +172,25 @@ public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.
 }
 
 /**
- * Build a new read-only [List] with the given [expectedSize] and [elements][E] from the [builderAction].
+ * Builds a new read-only [List] by populating a [MutableList] using the given [builderAction]
+ * and returning a read-only list with the same elements.
+ *
+ * The list passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
+ *
+ * [capacity] is used to hint the expected number of elements added in the [builderAction].
+ *
+ * @throws IllegalArgumentException if the given [capacity] is negative.
  *
  * @sample samples.collections.Builders.Lists.buildListSample
- * @throws IllegalArgumentException if the given [expectedSize] is negative.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun <E> buildList(expectedSize: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
+public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    checkBuilderCapacity(expectedSize)
-    return ArrayList<E>(expectedSize).apply(builderAction)
+    checkBuilderCapacity(capacity)
+    return ArrayList<E>(capacity).apply(builderAction)
 }
 
 
