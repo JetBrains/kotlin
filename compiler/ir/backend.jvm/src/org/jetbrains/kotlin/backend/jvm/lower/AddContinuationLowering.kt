@@ -585,6 +585,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                             if (function.isInline) JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
                     }.apply {
+                        annotations.addAll(function.annotations)
                         copyTypeParameters(function.typeParameters)
                         dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
                         extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this)

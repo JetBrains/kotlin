@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isDefaultStub
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.codegen.isSuspendFunctionForInline
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -115,7 +116,11 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
     val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*> ?: return null
     val value = const.value as? String ?: return null
-    return if (origin.isDefaultStub) "$value\$default" else value
+    return when {
+        origin.isDefaultStub -> "$value\$default"
+        origin.isSuspendFunctionForInline -> "$value\$\$forInline"
+        else -> value
+    }
 }
 
 val IrFunction.propertyIfAccessor: IrDeclaration

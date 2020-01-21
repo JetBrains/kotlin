@@ -139,8 +139,15 @@ internal val IrDeclarationOrigin.isDefaultStub: Boolean
 
 internal val IrDeclarationOrigin.isSuspendView: Boolean
     get() = this == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW ||
+            this == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_VIEW ||
             this == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW ||
             this == JvmLoweredDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER_SUSPEND_VIEW
+
+internal val IrDeclarationOrigin.isSuspendFunctionForInline: Boolean
+    get() = this == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE ||
+            this == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_VIEW ||
+            this == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ||
+            this == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
 
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
@@ -165,6 +172,8 @@ fun IrFunction.suspendFunctionView(context: JvmBackendContext, generateBody: Boo
         updateFrom(this@suspendFunctionView)
         name = this@suspendFunctionView.name
         origin = when (origin) {
+            JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE ->
+                JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_VIEW
             JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ->
                 JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
             IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ->
