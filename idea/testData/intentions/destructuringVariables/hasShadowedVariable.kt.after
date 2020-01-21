@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+fun main() {
+    data class A(var x: Int)
+
+    val (x1) = A(0)
+
+    run {
+        val x = 1
+        val z = x1
+    }
+}
