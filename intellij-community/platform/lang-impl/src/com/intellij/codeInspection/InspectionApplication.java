@@ -291,7 +291,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     runAnalysis(project, projectPath, inspectionProfile, scope, reportConverter, resultsDataPath);
   }
 
-  private void configureProject(Path projectPath, Project project, AnalysisScope scope) {
+  private void configureProject(@NotNull Path projectPath, @NotNull Project project, @NotNull AnalysisScope scope) {
     for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
       if (configurator.isApplicable(projectPath, this)) {
         configurator.configureProject(project, scope, this);
@@ -493,14 +493,15 @@ public final class InspectionApplication implements CommandLineInspectionProgres
   }
 
   private void runUnderProgress(@NotNull Project project,
-                                Path projectPath, @NotNull GlobalInspectionContextImpl context,
+                                @NotNull Path projectPath,
+                                @NotNull GlobalInspectionContextImpl context,
                                 @NotNull AnalysisScope scope,
                                 @NotNull Path resultsDataPath,
                                 @NotNull List<? super Path> inspectionsResults) {
     ProgressManager.getInstance().runProcess(() -> {
       configureProject(projectPath, project, scope);
 
-      if (!GlobalInspectionContextUtil.canRunInspections(project, false)) {
+      if (!GlobalInspectionContextUtil.canRunInspections(project, false, () -> {})) {
         gracefulExit();
         return;
       }

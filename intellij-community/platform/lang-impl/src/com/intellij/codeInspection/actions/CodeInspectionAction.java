@@ -27,6 +27,7 @@ import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
@@ -73,10 +74,19 @@ public class CodeInspectionAction extends BaseAnalysisAction {
     }
   }
 
-  protected void runInspections(Project project, AnalysisScope scope) {
+  protected void runInspections(@NotNull Project project,
+                                @NotNull AnalysisScope scope) {
     scope.setSearchInLibraries(false);
     FileDocumentManager.getInstance().saveAllDocuments();
     final GlobalInspectionContextImpl inspectionContext = getGlobalInspectionContext(project);
+    inspectionContext.setRerunAction(() -> ApplicationManager.getApplication().invokeLater(() -> {
+      if (project.isDisposed()) return;
+      if (!scope.isValid()) return;
+
+      FileDocumentManager.getInstance().saveAllDocuments();
+      analyze(project, scope);
+    }));
+
     inspectionContext.setExternalProfile(myExternalProfile);
     inspectionContext.setCurrentScope(scope);
     inspectionContext.doInspections(scope);
