@@ -196,7 +196,7 @@ fun mergeSmartCasts(a: Any?) {
     a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("")
   }
   when (a) {
-    is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
+    is String, is Any -> a.compareTo("")
   }
   if (a is String && a is Any) {
     val i: Int = a.compareTo("")

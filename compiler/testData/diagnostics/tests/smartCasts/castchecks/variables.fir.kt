@@ -27,8 +27,8 @@ fun g(a: SomeClass?) {
     c = Impl
     if (c != null) {
         // 'a' cannot be cast to SomeSubClass
-        a.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
-        a.<!UNRESOLVED_REFERENCE!>foo<!>
+        a.hashCode()
+        a.foo
         (a as? SomeSubClass).<!INAPPLICABLE_CANDIDATE!>foo<!>
         c.hashCode()
         c.foo

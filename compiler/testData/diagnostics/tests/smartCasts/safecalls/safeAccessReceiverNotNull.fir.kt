@@ -52,7 +52,7 @@ fun kt4565_1(a: SomeClass?) {
         a.data.hashCode()
     }
     if (a?.data is String) {
-        a.data.length
+        a.<!INAPPLICABLE_CANDIDATE!>data<!>.<!UNRESOLVED_REFERENCE!>length<!>
         data.length
     }
 }
