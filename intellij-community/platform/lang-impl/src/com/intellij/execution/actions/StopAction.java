@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.actions;
 
 import com.intellij.execution.ExecutionBundle;
@@ -240,14 +240,14 @@ public class StopAction extends DumbAwareAction implements AnAction.TransparentU
   }
 
   @NotNull
-  private static List<RunContentDescriptor> getActiveStoppableDescriptors(final DataContext dataContext) {
-    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    final List<RunContentDescriptor> runningProcesses = project == null ? Collections.emptyList() : ExecutionManagerImpl.getAllDescriptors(project);
+  private static List<RunContentDescriptor> getActiveStoppableDescriptors(@NotNull DataContext dataContext) {
+    Project project = CommonDataKeys.PROJECT.getData(dataContext);
+    List<RunContentDescriptor> runningProcesses = project == null ? Collections.emptyList() : ExecutionManagerImpl.getAllDescriptors(project);
     if (runningProcesses.isEmpty()) {
       return Collections.emptyList();
     }
 
-    final List<RunContentDescriptor> activeDescriptors = new SmartList<>();
+    List<RunContentDescriptor> activeDescriptors = new SmartList<>();
     for (RunContentDescriptor descriptor : runningProcesses) {
       if (canBeStopped(descriptor)) {
         activeDescriptors.add(descriptor);
