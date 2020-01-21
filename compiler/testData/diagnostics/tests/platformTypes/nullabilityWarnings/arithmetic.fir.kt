@@ -38,7 +38,7 @@ fun test() {
     1 + platformJ
 
     platformNN + 1
-    platformN + 1
+    platformN <!INAPPLICABLE_CANDIDATE!>+<!> 1
     platformJ + 1
 
     1 plus platformNN
@@ -46,10 +46,10 @@ fun test() {
     1 plus platformJ
 
     platformNN plus 1
-    platformN plus 1
+    platformN <!INAPPLICABLE_CANDIDATE!>plus<!> 1
     platformJ plus 1
 
     platformNN += 1
-    platformN += 1
+    <!UNRESOLVED_REFERENCE!>platformN += 1<!>
     platformJ += 1
 }

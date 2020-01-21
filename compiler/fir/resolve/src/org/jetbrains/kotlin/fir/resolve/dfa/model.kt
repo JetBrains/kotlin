@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.Operation
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 // --------------------------------------- Variables ---------------------------------------
@@ -207,8 +208,16 @@ infix fun OperationStatement.implies(effect: Statement<*>): Implication = Implic
 
 infix fun RealVariable.typeEq(types: MutableSet<ConeKotlinType>): TypeStatement = MutableTypeStatement(this, types, HashSet())
 infix fun RealVariable.typeEq(type: ConeKotlinType): TypeStatement =
-    MutableTypeStatement(this, HashSet<ConeKotlinType>().apply { this += type }, HashSet())
+    if (type !is ConeClassErrorType) {
+        MutableTypeStatement(this, HashSet<ConeKotlinType>().apply { this += type }, HashSet())
+    } else {
+        MutableTypeStatement(this)
+    }
 
 infix fun RealVariable.typeNotEq(types: MutableSet<ConeKotlinType>): TypeStatement = MutableTypeStatement(this, HashSet(), types)
 infix fun RealVariable.typeNotEq(type: ConeKotlinType): TypeStatement =
-    MutableTypeStatement(this, HashSet(), HashSet<ConeKotlinType>().apply { this += type })
+    if (type !is ConeClassErrorType) {
+        MutableTypeStatement(this, HashSet(), HashSet<ConeKotlinType>().apply { this += type })
+    } else {
+        MutableTypeStatement(this)
+    }

@@ -161,6 +161,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement) {
+        if (statement.isEmpty) return
         with(flow) {
             approvedTypeStatements = approvedTypeStatements.addTypeStatement(statement)
             if (previousFlow != null) {
@@ -173,6 +174,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun addImplication(flow: PersistentFlow, implication: Implication) {
+        if ((implication.effect as? TypeStatement)?.isEmpty == true) return
         if (implication.condition == implication.effect) return
         with(flow) {
             val variable = implication.condition.variable
