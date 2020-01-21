@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.navigationToolbar.ui.NavBarUIManager;
@@ -38,8 +38,8 @@ public class NavBarPopup extends LightweightHint implements Disposable{
   private final NavBarPanel myPanel;
   private final int myIndex;
 
-  public NavBarPopup(final NavBarPanel panel, Object[] siblings, final int selectedIndex) {
-    super(createPopupContent(panel, siblings));
+  public NavBarPopup(final NavBarPanel panel, int sourceItemIndex, Object[] siblings, final int selectedIndex) {
+    super(createPopupContent(panel, sourceItemIndex, siblings));
     myPanel = panel;
     myIndex = selectedIndex;
     setFocusRequestor(getComponent());
@@ -66,7 +66,7 @@ public class NavBarPopup extends LightweightHint implements Disposable{
         if (e.isPopupTrigger()) return;
         Object value = getList().getSelectedValue();
         if (value != null) {
-          myPanel.navigateInsideBar(value);
+          myPanel.navigateInsideBar(sourceItemIndex, value);
         }
       }
     });
@@ -135,7 +135,7 @@ public class NavBarPopup extends LightweightHint implements Disposable{
   public void dispose() {
   }
 
-  private static JComponent createPopupContent(NavBarPanel panel, Object[] siblings) {
+  private static JComponent createPopupContent(NavBarPanel panel, int sourceItemIndex, Object[] siblings) {
     class MyList<E> extends JBList<E> implements DataProvider, Queryable {
       @Override
       public void putInfo(@NotNull Map<String, String> info) {
@@ -168,18 +168,18 @@ public class NavBarPopup extends LightweightHint implements Disposable{
     ActionMap map = list.getActionMap();
     map.put(ListActions.Left.ID, createMoveAction(panel, -1));
     map.put(ListActions.Right.ID, createMoveAction(panel, 1));
-    installEnterAction(list, panel, KeyEvent.VK_ENTER);
+    installEnterAction(list, panel, sourceItemIndex, KeyEvent.VK_ENTER);
     installEscapeAction(list, panel, KeyEvent.VK_ESCAPE);
     JComponent component = ListWithFilter.wrap(list, new NavBarListWrapper(list), o -> panel.getPresentation().getPresentableText(o, false));
     component.putClientProperty(JBLIST_KEY, list);
     return component;
   }
 
-  private static void installEnterAction(JBList list, NavBarPanel panel, int keyCode) {
+  private static void installEnterAction(JBList list, NavBarPanel panel, int sourceItemIndex, int keyCode) {
     AbstractAction action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        panel.navigateInsideBar(list.getSelectedValue());
+        panel.navigateInsideBar(sourceItemIndex, list.getSelectedValue());
       }
     };
     list.registerKeyboardAction(action, KeyStroke.getKeyStroke(keyCode, 0), JComponent.WHEN_FOCUSED);
