@@ -10,12 +10,14 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
+import com.intellij.util.messages.MessageBusConnection
 import javax.swing.JComponent
 
 class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
   private val settings = InlayHintsSettings.instance()
   private val configurables: List<SingleLanguageInlayHintsConfigurable>
   private val panel: InlayHintsPanel
+  private val connection: MessageBusConnection
 
   init {
     val allInlayLanguages = InlaySettingsProvider.EP.getExtensions()
@@ -24,15 +26,13 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
     configurables = allInlayLanguages.map { SingleLanguageInlayHintsConfigurable(project, it) }
     panel = InlayHintsPanel(allInlayLanguages, settings)
 
-    ApplicationManager.getApplication().messageBus.connect(project).subscribe(
-      InlayHintsSettings.INLAY_SETTINGS_CHANGED,
-      ConfigurationChangeListener(configurables))
+    connection = ApplicationManager.getApplication().messageBus.connect(project)
+    connection.subscribe(InlayHintsSettings.INLAY_SETTINGS_CHANGED, ConfigurationChangeListener(configurables))
   }
 
   override fun getConfigurables(): Array<Configurable> {
     return configurables.toTypedArray()
   }
-
 
   override fun isModified(): Boolean {
     return panel.isModified()
@@ -52,6 +52,10 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
 
   override fun reset() {
     panel.reset()
+  }
+
+  override fun disposeUIResources() {
+    connection.disconnect()
   }
 
   fun loadFromSettings() {
