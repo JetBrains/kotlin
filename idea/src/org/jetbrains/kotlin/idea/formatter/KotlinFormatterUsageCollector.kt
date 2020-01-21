@@ -6,38 +6,38 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.internal.statistic.beans.UsageDescriptor
-import com.intellij.internal.statistic.utils.getEnumUsage
+import com.intellij.internal.statistic.beans.MetricEvent
+import com.intellij.internal.statistic.beans.newMetric
+import com.intellij.internal.statistic.eventLog.FeatureUsageData
+import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector.KotlinFormatterKind.*
 import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
 
-//todo: convert to FUS?
-class KotlinFormatterUsageCollector {
-    fun getProjectUsages(project: Project): Set<UsageDescriptor> {
+class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
+
+    override fun getGroupId() = "kotlin.ide.formatter"
+    override fun getVersion(): Int = 1
+
+    override fun getMetrics(project: Project): Set<MetricEvent> {
         val usedFormatter = getKotlinFormatterKind(project)
 
         val settings = CodeStyle.getSettings(project)
         val kotlinCommonSettings = settings.kotlinCommonSettings
         val kotlinCustomSettings = settings.kotlinCustomSettings
 
+        val data = FeatureUsageData()
+            .addData("kind", usedFormatter.name)
+            .addData("defaults", kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: kotlinCommonSettings.CODE_STYLE_DEFAULTS)
+
         return setOf(
-            getEnumUsage("kotlin.formatter.kind", usedFormatter),
-            getEnumStringPropertyUsage(
-                "kotlin.formatter.defaults",
-                kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: kotlinCommonSettings.CODE_STYLE_DEFAULTS
-            )
+            newMetric("settings", data)
         )
     }
 
-    private fun getEnumStringPropertyUsage(key: String, value: String?): UsageDescriptor {
-        return UsageDescriptor(key + "." + value.toString().toLowerCase(java.util.Locale.ENGLISH), 1)
-    }
-
     companion object {
-        private const val GROUP_ID = "kotlin.formatter"
 
         private val KOTLIN_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
             .also { KotlinStyleGuideCodeStyle.applyToCommonSettings(it) }
