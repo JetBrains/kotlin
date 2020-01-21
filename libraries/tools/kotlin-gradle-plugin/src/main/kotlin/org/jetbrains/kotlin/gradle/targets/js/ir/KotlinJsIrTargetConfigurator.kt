@@ -61,7 +61,10 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
             it.compileKotlinTask.kotlinOptions {
                 configureOptions()
 
-                freeCompilerArgs += DISABLE_PRE_IR
+                freeCompilerArgs += listOf(
+                    DISABLE_PRE_IR,
+                    PRODUCE_UNZIPPED_KLIB
+                )
             }
 
             it.productionLinkTask.configure()

@@ -57,11 +57,11 @@ abstract class KotlinJsIrSubTarget(
     }
 
     override fun produceKotlinLibrary() {
-        produceByFlags(PRODUCE_UNZIPPED_KLIB)
+        produceByFlags()
     }
 
     override fun produceJs() {
-        produceByFlags(PRODUCE_UNZIPPED_KLIB)
+        produceByFlags()
 
         configureMain()
     }
@@ -73,7 +73,7 @@ abstract class KotlinJsIrSubTarget(
             .matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
             .all {
                 it.kotlinOptions {
-                    freeCompilerArgs += listOf(PRODUCE_UNZIPPED_KLIB, PRODUCE_JS)
+                    freeCompilerArgs += PRODUCE_JS
                 }
             }
 
