@@ -160,7 +160,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     Project project = e.getProject();
     if (project == null) return;
 
-    ShowUsagesActionState state = getState(e.getProject());
+    ShowUsagesActionState state = getState(project);
     Runnable continuation = state.continuation;
     if (continuation != null) {
       state.continuation = null;
