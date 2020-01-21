@@ -10,19 +10,8 @@ dependencies {
     compile(project(":js:js.frontend"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:util"))
-
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(intellijDep()) { includeJars("picocontainer", "trove4j", "guava", "jdom", rootProject = rootProject) }
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
 }
-
-testsJar {}

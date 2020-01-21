@@ -3,8 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.8"
-
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
@@ -19,20 +17,8 @@ dependencies {
     compile(project(":js:js.dce"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
-}
-
-testsJar {}
-
-projectTest {
-    workingDir = rootDir
 }
