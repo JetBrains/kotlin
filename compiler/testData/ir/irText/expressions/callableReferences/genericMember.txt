@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/callableRefToGenericMember.kt
+FILE fqName:<root> fileName:/genericMember.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]

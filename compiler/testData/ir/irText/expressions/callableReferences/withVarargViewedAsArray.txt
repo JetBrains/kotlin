@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/callableReferenceWithVarargViewedAsArray.kt
+FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
   FUN name:sum visibility:public modality:FINAL <> (args:kotlin.IntArray) returnType:kotlin.Int
     VALUE_PARAMETER name:args index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     BLOCK_BODY

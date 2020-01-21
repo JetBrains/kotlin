@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/callableReferenceWithArgumentsConversion.kt
+FILE fqName:<root> fileName:/withAdaptedArguments.kt
   FUN name:use visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:kotlin.String
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.String>
     BLOCK_BODY

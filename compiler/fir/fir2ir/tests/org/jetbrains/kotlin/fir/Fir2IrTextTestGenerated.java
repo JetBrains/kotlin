@@ -787,31 +787,6 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/callWithReorderedArguments.kt");
         }
 
-        @TestMetadata("callableRefToGenericMember.kt")
-        public void testCallableRefToGenericMember() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/callableRefToGenericMember.kt");
-        }
-
-        @TestMetadata("callableReferenceToImportedFromObject.kt")
-        public void testCallableReferenceToImportedFromObject() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/callableReferenceToImportedFromObject.kt");
-        }
-
-        @TestMetadata("callableReferenceTypeArguments.kt")
-        public void testCallableReferenceTypeArguments() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/callableReferenceTypeArguments.kt");
-        }
-
-        @TestMetadata("callableReferenceWithArgumentsConversion.kt")
-        public void testCallableReferenceWithArgumentsConversion() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/callableReferenceWithArgumentsConversion.kt");
-        }
-
-        @TestMetadata("callableReferenceWithVarargViewedAsArray.kt")
-        public void testCallableReferenceWithVarargViewedAsArray() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/callableReferenceWithVarargViewedAsArray.kt");
-        }
-
         @TestMetadata("calls.kt")
         public void testCalls() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/calls.kt");
@@ -1360,6 +1335,44 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("whileDoWhile.kt")
         public void testWhileDoWhile() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/whileDoWhile.kt");
+        }
+
+        @TestMetadata("compiler/testData/ir/irText/expressions/callableReferences")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallableReferences extends AbstractFir2IrTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+            }
+
+            public void testAllFilesPresentInCallableReferences() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("genericMember.kt")
+            public void testGenericMember() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/genericMember.kt");
+            }
+
+            @TestMetadata("importedFromObject.kt")
+            public void testImportedFromObject() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/importedFromObject.kt");
+            }
+
+            @TestMetadata("typeArguments.kt")
+            public void testTypeArguments() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/typeArguments.kt");
+            }
+
+            @TestMetadata("withAdaptedArguments.kt")
+            public void testWithAdaptedArguments() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/withAdaptedArguments.kt");
+            }
+
+            @TestMetadata("withVarargViewedAsArray.kt")
+            public void testWithVarargViewedAsArray() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/withVarargViewedAsArray.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons")
