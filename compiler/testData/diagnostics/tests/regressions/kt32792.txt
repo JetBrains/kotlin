@@ -1,0 +1,4 @@
+package
+
+public fun main(): kotlin.Unit
+public inline fun </*0*/ T> tryLambdas(/*0*/ lamb: () -> T): T
