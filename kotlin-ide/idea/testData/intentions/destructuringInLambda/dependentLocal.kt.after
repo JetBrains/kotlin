@@ -2,9 +2,9 @@
 
 data class XY(val x: Int, val y: Int)
 fun test(xys: Array<XY>) {
-    xys.forEach { (x, y) ->
+    xys.forEach { (x, y1) ->
         println(x)
-        val y = y + x
+        val y = y1 + x
         println(y)
     }
 }

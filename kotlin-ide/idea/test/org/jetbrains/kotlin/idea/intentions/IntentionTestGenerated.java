@@ -8115,6 +8115,21 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/destructuringInLambda/fold.kt");
         }
 
+        @TestMetadata("hasSameNameParameter.kt")
+        public void testHasSameNameParameter() throws Exception {
+            runTest("idea/testData/intentions/destructuringInLambda/hasSameNameParameter.kt");
+        }
+
+        @TestMetadata("hasShadowedVariable.kt")
+        public void testHasShadowedVariable() throws Exception {
+            runTest("idea/testData/intentions/destructuringInLambda/hasShadowedVariable.kt");
+        }
+
+        @TestMetadata("hasShadowedVariable2.kt")
+        public void testHasShadowedVariable2() throws Exception {
+            runTest("idea/testData/intentions/destructuringInLambda/hasShadowedVariable2.kt");
+        }
+
         @TestMetadata("invisible.kt")
         public void testInvisible() throws Exception {
             runTest("testData/intentions/destructuringInLambda/invisible.kt");
@@ -8206,6 +8221,11 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("classProperty.kt")
         public void testClassProperty() throws Exception {
             runTest("testData/intentions/destructuringVariables/classProperty.kt");
+        }
+
+        @TestMetadata("hasShadowedVariable.kt")
+        public void testHasShadowedVariable() throws Exception {
+            runTest("idea/testData/intentions/destructuringVariables/hasShadowedVariable.kt");
         }
 
         @TestMetadata("noInitializer.kt")
