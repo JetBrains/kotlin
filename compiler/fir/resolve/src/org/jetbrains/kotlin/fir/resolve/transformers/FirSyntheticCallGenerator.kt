@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -16,10 +18,13 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
+import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.withNullability
@@ -108,7 +113,13 @@ class FirSyntheticCallGenerator(
         val reference =
             generateCalleeReferenceWithCandidate(
                 idFunction, arguments, SyntheticCallableId.ID.callableName, CallKind.SyntheticIdForCallableReferencesResolution
-            ) ?: return null
+            ) ?: return callableReferenceAccess.transformCalleeReference(
+                StoreCalleeReference,
+                FirErrorNamedReferenceImpl(
+                    callableReferenceAccess.source,
+                    FirUnresolvedNameError(callableReferenceAccess.calleeReference.name)
+                )
+            )
         val fakeCallElement = FirFunctionCallImpl(null).copy(calleeReference = reference, arguments = arguments)
 
         return callCompleter.completeCall(fakeCallElement, expectedTypeRef).arguments[0] as FirCallableReferenceAccess?
@@ -204,7 +215,9 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun generateMemberFunction(session: FirSession, symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef): FirSimpleFunctionImpl {
+    private fun generateMemberFunction(
+        session: FirSession, symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef
+    ): FirSimpleFunctionImpl {
         val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
             isExpect = false
             isActual = false
@@ -229,8 +242,10 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun FirResolvedTypeRef.toValueParameter(session: FirSession, name: String, isVararg: Boolean = false): FirValueParameterImpl {
-        val name = Name.identifier(name)
+    private fun FirResolvedTypeRef.toValueParameter(
+        session: FirSession, nameAsString: String, isVararg: Boolean = false
+    ): FirValueParameterImpl {
+        val name = Name.identifier(nameAsString)
         return FirValueParameterImpl(
             session = session,
             source = null,

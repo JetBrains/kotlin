@@ -87,21 +87,21 @@ internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() 
     }
 }
 
-internal object StoreCalleeReference : FirTransformer<FirResolvedNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirResolvedNamedReference): CompositeTransformResult<E> {
+internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): CompositeTransformResult<E> {
         return element.compose()
     }
 
     override fun transformNamedReference(
         namedReference: FirNamedReference,
-        data: FirResolvedNamedReference
+        data: FirNamedReference
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
     }
 
     override fun transformResolvedNamedReference(
         resolvedNamedReference: FirResolvedNamedReference,
-        data: FirResolvedNamedReference
+        data: FirNamedReference
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
     }

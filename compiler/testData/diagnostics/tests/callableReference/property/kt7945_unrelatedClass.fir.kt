@@ -7,5 +7,5 @@ class TestClass(var prop: Int)
 open class OtherClass
 fun OtherClass.test(prop: KProperty1<TestClass, Int>): Unit = throw Exception()
 class OtherClass2: OtherClass() {
-    val result = <!INAPPLICABLE_CANDIDATE!>test<!>(TestClass::result)
+    val result = <!INAPPLICABLE_CANDIDATE!>test<!>(<!UNRESOLVED_REFERENCE!>TestClass::result<!>)
 }

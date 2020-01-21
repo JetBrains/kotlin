@@ -14,7 +14,7 @@ fun A.main() {
 }
 
 fun Int.main() {
-    ::Nested
+    <!UNRESOLVED_REFERENCE!>::Nested<!>
     val y = A::Nested
 
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction0<A.Nested>>(y)

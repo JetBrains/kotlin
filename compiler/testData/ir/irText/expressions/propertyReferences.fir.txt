@@ -252,7 +252,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:IrErrorType visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: Q|J|::CONST#' type=IrErrorType
+        ERROR_CALL 'Unsupported callable reference: Q|J|::<Unresolved name: CONST>#' type=IrErrorType
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:IrErrorType
       correspondingProperty: PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -261,7 +261,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:IrErrorType visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: Q|J|::nonConst#' type=IrErrorType
+        ERROR_CALL 'Unsupported callable reference: Q|J|::<Unresolved name: nonConst>#' type=IrErrorType
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:IrErrorType
       correspondingProperty: PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
       BLOCK_BODY

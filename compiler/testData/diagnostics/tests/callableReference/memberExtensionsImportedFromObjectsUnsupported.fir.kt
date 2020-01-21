@@ -21,6 +21,6 @@ fun test() {
     A.Companion::ext2
     A::ext2
 
-    A::foo
-    A::bar
+    <!UNRESOLVED_REFERENCE!>A::foo<!>
+    <!UNRESOLVED_REFERENCE!>A::bar<!>
 }

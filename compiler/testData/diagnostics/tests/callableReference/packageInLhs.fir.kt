@@ -4,7 +4,7 @@
 package foo
 
 fun test() {
-    foo::test
+    <!UNRESOLVED_REFERENCE!>foo::test<!>
 }
 
 // FILE: qualifiedName.kt
@@ -12,5 +12,5 @@ fun test() {
 package foo.bar
 
 fun test() {
-    foo.bar::test
+    <!UNRESOLVED_REFERENCE!>foo.bar::test<!>
 }

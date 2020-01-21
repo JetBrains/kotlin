@@ -13,4 +13,4 @@ import test.Foo
 fun Foo(): String = ""
 
 val f = Foo::bar
-val g = Foo::length
+val g = <!UNRESOLVED_REFERENCE!>Foo::length<!>

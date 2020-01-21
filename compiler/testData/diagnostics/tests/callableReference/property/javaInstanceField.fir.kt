@@ -17,10 +17,10 @@ public class JavaClass {
 import kotlin.reflect.*
 
 fun test() {
-    val pubFinRef: KProperty1<JavaClass, Int> = JavaClass::publicFinal
-    val pubMutRef: KMutableProperty1<JavaClass, Long> = JavaClass::publicMutable
-    val protFinRef: KProperty1<JavaClass, Double> = JavaClass::protectedFinal
-    val protMutRef: KMutableProperty1<JavaClass, Char> = JavaClass::protectedMutable
-    val privFinRef: KProperty1<JavaClass, String?> = JavaClass::privateFinal
-    val privMutRef: KMutableProperty1<JavaClass, Any?> = JavaClass::privateMutable
+    val pubFinRef: KProperty1<JavaClass, Int> = <!UNRESOLVED_REFERENCE!>JavaClass::publicFinal<!>
+    val pubMutRef: KMutableProperty1<JavaClass, Long> = <!UNRESOLVED_REFERENCE!>JavaClass::publicMutable<!>
+    val protFinRef: KProperty1<JavaClass, Double> = <!UNRESOLVED_REFERENCE!>JavaClass::protectedFinal<!>
+    val protMutRef: KMutableProperty1<JavaClass, Char> = <!UNRESOLVED_REFERENCE!>JavaClass::protectedMutable<!>
+    val privFinRef: KProperty1<JavaClass, String?> = <!UNRESOLVED_REFERENCE!>JavaClass::privateFinal<!>
+    val privMutRef: KMutableProperty1<JavaClass, Any?> = <!UNRESOLVED_REFERENCE!>JavaClass::privateMutable<!>
 }

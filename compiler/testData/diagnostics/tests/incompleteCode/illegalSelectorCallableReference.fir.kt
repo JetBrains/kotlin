@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun test() {
-    "a"."b"::foo
+    <!UNRESOLVED_REFERENCE!>"a"."b"::foo<!>
     "a"."b"::class
-    "a"."b"."c"::foo
+    <!UNRESOLVED_REFERENCE!>"a"."b"."c"::foo<!>
     "a"."b"."c"::class
 }

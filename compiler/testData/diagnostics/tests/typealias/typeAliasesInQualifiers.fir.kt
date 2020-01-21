@@ -50,7 +50,7 @@ fun foo(
     test.ClassAlias::Nested
 
     test.ClassSample::func
-    test.ClassAlias::func
+    <!UNRESOLVED_REFERENCE!>test.ClassAlias::func<!>
 
     test.ClassSample.Nested::func
     test.ClassAlias.Nested::func
@@ -68,7 +68,7 @@ fun foo(
     test.EnumAlias::Nested
 
     test.EnumSample::func
-    test.EnumAlias::func
+    <!UNRESOLVED_REFERENCE!>test.EnumAlias::func<!>
 
     test.EnumSample.Nested::func
     test.EnumAlias.Nested::func

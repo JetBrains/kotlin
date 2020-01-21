@@ -7,7 +7,7 @@ class A {
 }
 
 fun main() {
-    ::Inner
+    <!UNRESOLVED_REFERENCE!>::Inner<!>
     val y = A::Inner
 
     checkSubtype<KFunction1<A, A.Inner>>(y)

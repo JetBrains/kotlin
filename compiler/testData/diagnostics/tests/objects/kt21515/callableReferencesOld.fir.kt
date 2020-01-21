@@ -115,17 +115,17 @@ class C : O.B() {
     val n = FromCompanionC::foo
 
     // INVISIBLE: direct superclasses themselves.
-    val a = <!UNRESOLVED_REFERENCE!>A<!>::foo
-    val b = <!UNRESOLVED_REFERENCE!>A<!>::foo
+    val a = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>A<!>::foo<!>
+    val b = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>A<!>::foo<!>
 
     // DEPRECATED: Classifiers from companions of direct superclasses
     val e = FromCompanionA::foo
     val f = FromCompanionB::foo
 
     // INVISIBLE: "cousin" supertypes themselves
-    val g = <!UNRESOLVED_REFERENCE!>Alpha<!>::foo
-    val h = <!UNRESOLVED_REFERENCE!>Beta<!>::foo
-    val i = <!UNRESOLVED_REFERENCE!>Gamma<!>::foo
+    val g = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Alpha<!>::foo<!>
+    val h = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Beta<!>::foo<!>
+    val i = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Gamma<!>::foo<!>
 
     // DEPRECATED: classifiers from "cousin" superclasses
     val k = FromAlpha::foo
@@ -133,9 +133,9 @@ class C : O.B() {
     val m = FromGamma::foo
 
     // INVISIBLE: We don't see classifiers from companions of "cousin" superclasses
-    val o = <!UNRESOLVED_REFERENCE!>FromCompanionAlpha<!>::foo
-    val p = <!UNRESOLVED_REFERENCE!>FromCompanionBeta<!>::foo
-    val q = <!UNRESOLVED_REFERENCE!>FromCompanionGamma<!>::foo
+    val o = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>FromCompanionAlpha<!>::foo<!>
+    val p = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>FromCompanionBeta<!>::foo<!>
+    val q = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>FromCompanionGamma<!>::foo<!>
 
     // DEPRECATED: Classifiers from supertypes of our own companion
     val r = FromDelta::foo

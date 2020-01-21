@@ -119,8 +119,8 @@ class C : O.B() {
     val b = O.A::foo
 
     // DEPRECATED: Classifiers from companions of direct superclasses
-    val e = O.A.<!AMBIGUITY!>Companion<!>.<!UNRESOLVED_REFERENCE!>FromCompanionA<!>::foo
-    val f = O.B.<!AMBIGUITY!>Companion<!>.<!UNRESOLVED_REFERENCE!>FromCompanionB<!>::foo
+    val e = <!UNRESOLVED_REFERENCE!>O.A.<!AMBIGUITY!>Companion<!>.<!UNRESOLVED_REFERENCE!>FromCompanionA<!>::foo<!>
+    val f = <!UNRESOLVED_REFERENCE!>O.B.<!AMBIGUITY!>Companion<!>.<!UNRESOLVED_REFERENCE!>FromCompanionB<!>::foo<!>
 
     // INVISIBLE: "cousin" supertypes themselves
     val g = O.Alpha::foo

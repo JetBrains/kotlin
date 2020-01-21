@@ -4,7 +4,7 @@ class Your {
 
 class My {
     fun foo() {
-        val x = ::Nested // Should be error
+        val x = <!UNRESOLVED_REFERENCE!>::Nested<!> // Should be error
     }
 }
 

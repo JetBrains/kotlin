@@ -4,8 +4,8 @@
 
 fun main() {
     Configuration().commands {
-        <!INAPPLICABLE_CANDIDATE!>Command1<!> { <!UNRESOLVED_REFERENCE!>someService<!>::execute } // Overload resolution ambiguity. All these functions match.
-        <!INAPPLICABLE_CANDIDATE!>Command2<!> { <!UNRESOLVED_REFERENCE!>someService<!>::execute } // Overload resolution ambiguity. All these functions match.
+        <!INAPPLICABLE_CANDIDATE!>Command1<!> { <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>someService<!>::execute<!> } // Overload resolution ambiguity. All these functions match.
+        <!INAPPLICABLE_CANDIDATE!>Command2<!> { <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>someService<!>::execute<!> } // Overload resolution ambiguity. All these functions match.
         <!INAPPLICABLE_CANDIDATE!>Command1<!> { { <!UNRESOLVED_REFERENCE!>someService<!>.<!UNRESOLVED_REFERENCE!>execute<!>(<!UNRESOLVED_REFERENCE!>it<!>) } } // fine
         <!INAPPLICABLE_CANDIDATE!>Command2<!> { { <!UNRESOLVED_REFERENCE!>someService<!>.<!UNRESOLVED_REFERENCE!>execute<!>(<!UNRESOLVED_REFERENCE!>it<!>) } } // fine
     }

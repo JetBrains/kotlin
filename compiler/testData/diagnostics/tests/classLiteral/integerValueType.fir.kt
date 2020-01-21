@@ -7,5 +7,5 @@ fun f(x: KClass<out Int>) {}
 fun test() {
     f(42::class)
     f((40 + 2)::class)
-    42::toInt
+    <!UNRESOLVED_REFERENCE!>42::toInt<!>
 }

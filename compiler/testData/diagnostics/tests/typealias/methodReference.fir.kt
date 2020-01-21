@@ -4,4 +4,4 @@ class C {
 
 typealias CA = C
 
-val cf = CA::foo
+val cf = <!UNRESOLVED_REFERENCE!>CA::foo<!>
