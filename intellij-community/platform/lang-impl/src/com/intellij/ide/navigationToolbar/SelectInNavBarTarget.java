@@ -48,15 +48,15 @@ final class SelectInNavBarTarget extends SelectInTargetPsiWrapper implements Dum
 
   @Override
   protected void select(final Object selector, final VirtualFile virtualFile, final boolean requestFocus) {
-    selectInNavBar();
+    selectInNavBar(false);
   }
 
   @Override
   protected void select(final PsiElement element, boolean requestFocus) {
-    selectInNavBar();
+    selectInNavBar(false);
   }
 
-  private static void selectInNavBar() {
+  public static void selectInNavBar(boolean showPopup) {
     DataManager.getInstance().getDataContextFromFocus()
       .doWhenDone((Consumer<DataContext>)context -> {
         IdeFrame frame = IdeFrame.KEY.getData(context);
@@ -71,7 +71,7 @@ final class SelectInNavBarTarget extends SelectInTargetPsiWrapper implements Dum
                 if (lastDirectory >= 0 && lastDirectory < list.size() - 1) return lastDirectory;
               }
               return list.size() - 1;
-            });
+            }, showPopup);
           }
         }
       });

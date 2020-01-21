@@ -320,13 +320,18 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     }
   }
 
-  public void rebuildAndSelectItem(final Function<List<NavBarItem>, Integer> indexToSelectCallback) {
+  public void rebuildAndSelectItem(final Function<List<NavBarItem>, Integer> indexToSelectCallback, boolean showPopup) {
     myUpdateQueue.queueModelUpdateFromFocus();
     myUpdateQueue.queueRebuildUi();
     myUpdateQueue.queueSelect(() -> {
       if (!myList.isEmpty()) {
-        myModel.setSelectedIndex(indexToSelectCallback.apply(myList));
+        int index = indexToSelectCallback.apply(myList);
+        myModel.setSelectedIndex(index);
         requestSelectedItemFocus();
+        if (showPopup) {
+          ctrlClick(index);
+        }
+
       }
     });
 
@@ -334,7 +339,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
   }
 
   public void rebuildAndSelectTail(final boolean requestFocus) {
-    rebuildAndSelectItem((list) -> list.size() - 1);
+    rebuildAndSelectItem((list) -> list.size() - 1, false);
   }
 
   public void requestSelectedItemFocus() {
