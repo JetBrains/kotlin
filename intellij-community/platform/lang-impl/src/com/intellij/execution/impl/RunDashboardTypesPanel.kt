@@ -148,7 +148,9 @@ internal class RunDashboardTypesPanel(private val myProject: Project) : JPanel(B
                              onAddCallback: Consumer<List<ConfigurationType>>, popupOpener: Consumer<JBPopup>,
                              showApplicableTypesOnly: Boolean) {
       val allTypes = ConfigurationType.CONFIGURATION_TYPE_EP.extensionList.filter { !addedTypes.contains(it.id) }
-      val configurationTypes = RunConfigurable.getTypesToShow(project, showApplicableTypesOnly, allTypes).toMutableList()
+      val configurationTypes = RunConfigurable.getTypesToShow(project,
+                                                              showApplicableTypesOnly && !project.isDefault,
+                                                              allTypes).toMutableList()
       configurationTypes.sortWith(IGNORE_CASE_DISPLAY_NAME_COMPARATOR)
       val hiddenCount = allTypes.size - configurationTypes.size
       val popupList = ArrayList<Any>(configurationTypes)
