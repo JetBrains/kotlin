@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 enum class ModuleKind {
     multiplatform,
     target,
-    singleplatform
+    singleplatformJvm,
+    singleplatformJs,
 }
 
 // TODO separate to classes
@@ -150,7 +151,7 @@ fun MultiplatformModule(name: String, targets: List<Module> = emptyList()) =
 fun SingleplatformModule(name: String, sourcesets: List<Sourceset>) =
     Module(
         name,
-        ModuleKind.singleplatform,
+        ModuleKind.singleplatformJvm,
         JvmSinglePlatformModuleConfigurator,
         null,
         sourcesets,

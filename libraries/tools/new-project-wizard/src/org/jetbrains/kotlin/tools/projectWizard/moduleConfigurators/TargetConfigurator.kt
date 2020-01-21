@@ -51,11 +51,7 @@ private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
     )
 
 
-abstract class JsTargetConfigurator : TargetConfiguratorWithTests(), SingleCoexistenceTargetConfigurator {
-    override val moduleType: ModuleType get() = ModuleType.js
-
-    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
-}
+abstract class JsTargetConfigurator : JSConfigurator(), TargetConfigurator, SingleCoexistenceTargetConfigurator
 
 object JsBrowserTargetConfigurator : JsTargetConfigurator() {
     override val id = "jsBrowser"

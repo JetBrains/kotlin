@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Templa
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 
 class SimpleJsClientTemplate : Template() {
-    override val title: String = "Simple JS client"
+    override val title: String = "JS client"
     override val htmlDescription: String = title
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.js)
     override val id: String = "simpleJsClient"
@@ -41,9 +41,10 @@ class SimpleJsClientTemplate : Template() {
             )
         }
 
-    override fun TaskRunningContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
-        FileTemplateDescriptor("$id/client.kt.vm", "client.kt".asPath()) asSrcOf SourcesetType.main
-    )
+    override fun TaskRunningContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = buildList {
+        +(FileTemplateDescriptor("$id/client.kt.vm", "client.kt".asPath()) asSrcOf SourcesetType.main)
+        +(FileTemplateDescriptor("$id/TestClient.kt.vm", "TestClient.kt".asPath()) asSrcOf SourcesetType.test)
+    }
 
     override fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = buildList {
         +interceptTemplate(KtorServerTemplate()) {

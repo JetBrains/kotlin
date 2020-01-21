@@ -81,6 +81,6 @@ data class KotlinBuildSystemPluginIR(
 
     @Suppress("EnumEntryName", "unused", "SpellCheckingInspection")
     enum class Type {
-        jvm, multiplatform, android
+        jvm, multiplatform, android, js
     }
 }

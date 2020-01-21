@@ -28,6 +28,7 @@ class ModulesEditorComponent(
                 moduleCreator.create(
                     target = null, // The empty tree case
                     allowMultiplatform = isMppProject,
+                    allowSinglepaltformJs = isMppProject,
                     allowAndroid = isMppProject,
                     allowIos = isMppProject,
                     allModules = value ?: emptyList(),

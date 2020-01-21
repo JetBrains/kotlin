@@ -27,7 +27,7 @@ object MppModuleConfigurator : ModuleConfigurator {
 
 
 interface SinglePlatformModuleConfigurator : ModuleConfigurator {
-    override val moduleKind get() = ModuleKind.singleplatform
+    override val moduleKind get() = ModuleKind.singleplatformJvm
 
 }
 

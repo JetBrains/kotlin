@@ -87,7 +87,7 @@ class ModulesToIRsConverter(
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = when (module.kind) {
         ModuleKind.multiplatform -> createMultiplatformModule(module, state)
-        ModuleKind.singleplatform -> createSinglePlatformModule(module, state)
+        ModuleKind.singleplatformJvm, ModuleKind.singleplatformJs -> createSinglePlatformModule(module, state)
         else -> Success(emptyList())
     }
 
