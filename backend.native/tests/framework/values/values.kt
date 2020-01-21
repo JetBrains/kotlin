@@ -283,6 +283,8 @@ class Deeply {
         class Type {
             val thirtyTwo = 32
         }
+
+        interface IType
     }
 }
 

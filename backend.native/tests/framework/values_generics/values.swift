@@ -230,7 +230,7 @@ func testGenericInnerClass() throws {
     let deep2 = GenOuterDeep2()
     let deep2Before = GenOuterDeep2.Before(deep2)
     let deep2After = GenOuterDeep2.After(deep2)
-    let deep2soi = GenOuterDeep2GenShallowOuterInner(deep2)
+    let deep2soi = GenOuterDeep2.GenShallowOuterInner(deep2)
     let deep2si = GenOuterDeep2GenShallowOuterInnerGenShallowInner<SomeData>(deep2soi)
     let deep2i = GenOuterDeep2GenShallowOuterInnerGenShallowInnerGenDeepInner<SomeData>(deep2si)
 

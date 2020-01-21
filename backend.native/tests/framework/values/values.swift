@@ -546,6 +546,7 @@ func testNames() throws {
     try assertEquals(actual: WithGenericDeeplyNestedType<AnyObject>().thirtyThree, expected: 33)
     try assertEquals(actual: CKeywords(float: 1.0, enum : 42, goto: true).goto_, expected: true)
     try assertEquals(actual: TypeOuter.Type_().thirtyFour, expected: 34)
+    try assertTrue(String(describing: DeeplyNestedIType.self).hasSuffix("DeeplyNestedIType"))
 }
 
 class Base123 : Base23, ExtendedBase1 {

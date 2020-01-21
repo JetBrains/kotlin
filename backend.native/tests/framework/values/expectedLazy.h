@@ -309,6 +309,11 @@ __attribute__((swift_name("Deeply.NestedType")))
 @property (readonly) int32_t thirtyTwo __attribute__((swift_name("thirtyTwo")));
 @end;
 
+__attribute__((swift_name("DeeplyNestedIType")))
+@protocol ValuesDeeplyNestedIType
+@required
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("WithGenericDeeply")))
 @interface ValuesWithGenericDeeply : ValuesBase
@@ -324,7 +329,7 @@ __attribute__((swift_name("WithGenericDeeply.Nested")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("WithGenericDeeply.NestedType")))
+__attribute__((swift_name("WithGenericDeeplyNestedType")))
 @interface ValuesWithGenericDeeplyNestedType<T> : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
