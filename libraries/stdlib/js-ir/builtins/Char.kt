@@ -12,7 +12,7 @@ package kotlin
 // TODO: KT-35100
 //@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 //public inline class Char internal constructor (val value: Int) : Comparable<Char> {
-public data class Char internal constructor(val value: Int) : Comparable<Char> {
+public class Char internal constructor(val value: Int) : Comparable<Char> {
 
     /**
      * Compares this value with the specified value for order.
@@ -51,6 +51,15 @@ public data class Char internal constructor(val value: Int) : Comparable<Char> {
     public fun toFloat(): Float = value.toFloat()
     /** Returns the value of this character as a `Double`. */
     public fun toDouble(): Double = value.toDouble()
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is Char) return false
+
+        return this.value == other.value
+    }
+
+    override fun hashCode(): Int = value
 
     // TODO implicit usages of toString and valueOf must be covered in DCE
     @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")
