@@ -28,5 +28,5 @@ typealias TestCWC = ClassWithCompanion
 
 val test35: ClassWithCompanion.Companion = TestCWC
 val test36 = TestCWC
-val test37: String = TestCWC.<!UNRESOLVED_REFERENCE!>ok<!>
-val test38: String = TestCWC.<!UNRESOLVED_REFERENCE!>foo<!>()
+val test37: String = TestCWC.ok
+val test38: String = TestCWC.foo()

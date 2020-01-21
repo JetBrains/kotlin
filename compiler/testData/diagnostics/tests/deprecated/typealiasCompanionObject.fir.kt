@@ -8,5 +8,5 @@ class Relevant {
 typealias Obsolete = Relevant
 
 fun test1() = Obsolete
-fun test2() = Obsolete.<!UNRESOLVED_REFERENCE!>value<!>
+fun test2() = Obsolete.value
 fun test3() = Obsolete.toString()

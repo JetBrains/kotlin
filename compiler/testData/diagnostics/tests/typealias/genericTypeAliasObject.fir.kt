@@ -21,5 +21,5 @@ typealias TestGCWC<T> = GenericClassWithCompanion<T>
 
 val test25: GenericClassWithCompanion.Companion = TestGCWC
 val test26 = TestGCWC
-val test27: String = TestGCWC.<!UNRESOLVED_REFERENCE!>ok<!>
-val test28: String = TestGCWC.<!UNRESOLVED_REFERENCE!>foo<!>()
+val test27: String = TestGCWC.ok
+val test28: String = TestGCWC.foo()
