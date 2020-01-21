@@ -74,6 +74,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.util.KeyedLazyInstance;
+import com.intellij.util.ThreeState;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
@@ -403,9 +404,8 @@ public final class DaemonListeners implements Disposable {
     if (file instanceof PsiCodeFragment) return true;
     if (ScratchUtil.isScratch(virtualFile)) return listeners.canUndo(virtualFile);
     if (!ModuleUtilCore.projectContainsFile(project, virtualFile, false)) return false;
-    Result vcs = listeners.vcsThinksItChanged(virtualFile);
-    if (vcs == Result.CHANGED) return true;
-    if (vcs == Result.UNCHANGED) return false;
+    ThreeState vcs = listeners.mayChangeBasedOnVcsStatus(virtualFile);
+    if (vcs != ThreeState.UNSURE) return vcs.toBoolean();
 
     return listeners.canUndo(virtualFile);
   }
@@ -425,22 +425,24 @@ public final class DaemonListeners implements Disposable {
     return false;
   }
 
-  private enum Result {
-    CHANGED, UNCHANGED, NOT_SURE
-  }
-
   @NotNull
-  private Result vcsThinksItChanged(@NotNull VirtualFile virtualFile) {
+  private ThreeState mayChangeBasedOnVcsStatus(@NotNull VirtualFile virtualFile) {
     AbstractVcs activeVcs = ProjectLevelVcsManager.getInstance(myProject).getVcsFor(virtualFile);
-    if (activeVcs == null) return Result.NOT_SURE;
+    if (activeVcs == null) return ThreeState.UNSURE;
 
     FilePath path = VcsUtil.getFilePath(virtualFile);
     boolean vcsIsThinking = !VcsDirtyScopeManager.getInstance(myProject).whatFilesDirty(Collections.singletonList(path)).isEmpty();
-    if (vcsIsThinking) return Result.NOT_SURE; // do not modify file which is in the process of updating
+    if (vcsIsThinking) return ThreeState.UNSURE; // do not modify file which is in the process of updating
 
     FileStatus status = FileStatusManager.getInstance(myProject).getStatus(virtualFile);
-    if (status == FileStatus.UNKNOWN) return Result.NOT_SURE;
-    return status == FileStatus.MODIFIED || status == FileStatus.ADDED ? Result.CHANGED : Result.UNCHANGED;
+    if (status == FileStatus.UNKNOWN) return ThreeState.UNSURE;
+    if (status == FileStatus.MERGE ||
+        status == FileStatus.MERGED_WITH_CONFLICTS ||
+        status == FileStatus.MERGED_WITH_BOTH_CONFLICTS ||
+        status == FileStatus.MERGED_WITH_PROPERTY_CONFLICTS) {
+      return ThreeState.NO;
+    }
+    return ThreeState.fromBoolean(status != FileStatus.NOT_CHANGED);
   }
 
   private class MyApplicationListener implements ApplicationListener {
