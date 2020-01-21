@@ -17,7 +17,7 @@ fun foo(arg: Int?) {
     var z = arg
     z = z?.let { 42 }
     if (z != null) {
-        arg.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        arg.hashCode()
     }
 }
 

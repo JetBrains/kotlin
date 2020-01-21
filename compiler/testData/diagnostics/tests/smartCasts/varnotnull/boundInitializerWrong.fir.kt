@@ -23,7 +23,7 @@ fun bar(s: String?) {
     val hashCode = ss?.hashCode()
     ss = null
     if (hashCode != null) {
-        ss.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        ss.<!UNRESOLVED_REFERENCE!>hashCode<!>()
     }
 }
 

@@ -610,10 +610,16 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun exitVariableInitialization(node: CFGNode<*>, initializer: FirExpression, variable: FirProperty, isVariableDeclaration: Boolean) {
-        val propertyVariable = variableStorage.getOrCreateRealVariable(variable.symbol, variable)
+        var propertyVariable = variableStorage.getOrCreateRealVariable(variable.symbol, variable)
         if (!isVariableDeclaration) {
-            node.flow.removeAllAboutVariable(propertyVariable)
-            variableStorage.unboundPossiblyAliasedVariable(variable.symbol)
+            // Don't remove statements for variable under alias
+            if (propertyVariable.identifier.symbol == variable.symbol) {
+                node.flow.removeAllAboutVariable(propertyVariable)
+            } else {
+                variableStorage.unboundPossiblyAliasedVariable(variable.symbol)
+                // We should create new dataFlowVariable for local variable without alias
+                propertyVariable = variableStorage.getOrCreateRealVariable(variable.symbol, variable)
+            }
         }
 
         variableStorage[initializer]?.safeAs<SyntheticVariable>()?.let { initializerVariable ->

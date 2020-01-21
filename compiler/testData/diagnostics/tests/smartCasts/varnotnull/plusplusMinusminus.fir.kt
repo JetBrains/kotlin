@@ -2,7 +2,7 @@
 fun foo(arg: Int?): Int {
     var i = arg
     if (i != null && i++ == 5) {
-        return i<!INAPPLICABLE_CANDIDATE!>--<!> + i
+        return i-- + i
     }
     return 0
 }

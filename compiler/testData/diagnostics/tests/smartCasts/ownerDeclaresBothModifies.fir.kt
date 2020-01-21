@@ -9,5 +9,5 @@ fun foo(arg: Int?) {
     }
     if (x != null) x = 42
     // Unsafe because of lambda
-    x.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    x.<!UNRESOLVED_REFERENCE!>hashCode<!>()
 }
