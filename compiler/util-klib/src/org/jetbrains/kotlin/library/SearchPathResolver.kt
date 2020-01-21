@@ -233,7 +233,7 @@ class SingleKlibComponentResolver(
     logger: Logger
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
     emptyList(), listOf(klibFile), knownAbiVersions, emptyList(),
-    null, null, true, logger, emptyList()
+    null, null, false, logger, emptyList()
 ) {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
 }
@@ -246,5 +246,5 @@ fun resolveSingleFileKlib(libraryFile: File,
             override fun fatal(message: String) = kotlin.error("e: $message")
         }
 ): KotlinLibrary {
-    return SingleKlibComponentResolver(libraryFile.absolutePath, emptyList(), logger).resolve(libraryFile.absolutePath)
+    return SingleKlibComponentResolver(libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger).resolve(libraryFile.absolutePath)
 }
