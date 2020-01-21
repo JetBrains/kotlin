@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.icons.AllIcons;
@@ -56,8 +56,8 @@ public abstract class JavaSourceRootEditHandlerBase extends ModuleSourceRootEdit
   public JComponent createPropertiesEditor(@NotNull final SourceFolder folder,
                                            @NotNull final JComponent parentComponent,
                                            @NotNull final ContentRootPanel.ActionCallback callback) {
-    final IconActionComponent iconComponent = new IconActionComponent(AllIcons.Modules.SetPackagePrefix,
-                                                                      AllIcons.Modules.SetPackagePrefixRollover,
+    final IconActionComponent iconComponent = new IconActionComponent(AllIcons.General.Inline_edit,
+                                                                      AllIcons.General.Inline_edit_hovered,
                                                                       ProjectBundle.message("module.paths.edit.properties.tooltip"), () -> {
                                                                         JavaSourceRootProperties properties = folder.getJpsElement().getProperties(JavaModuleSourceRootTypes.SOURCES);
                                                                         assert properties != null;

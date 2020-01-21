@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.elements
 
 import com.intellij.icons.AllIcons
@@ -18,8 +18,8 @@ class ProductionModuleSourceElementType private constructor() : ModuleElementTyp
 
   override fun createElement(project: Project, pointer: ModulePointer) = ProductionModuleSourcePackagingElement(project, pointer)
   override fun createEmpty(project: Project) = ProductionModuleSourcePackagingElement(project)
-  override fun getCreateElementIcon(): Icon = AllIcons.Modules.SourceFolder
-  override fun getElementIcon(module: Module?): Icon = AllIcons.Modules.SourceFolder
+  override fun getCreateElementIcon(): Icon = AllIcons.Nodes.Package
+  override fun getElementIcon(module: Module?): Icon = AllIcons.Nodes.Package
   override fun getElementText(moduleName: String) = CompilerBundle.message("node.text.0.module.sources", moduleName)
 
   companion object {
