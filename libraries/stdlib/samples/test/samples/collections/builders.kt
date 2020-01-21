@@ -22,15 +22,15 @@ class Builders {
     class Sets {
         @Sample
         fun buildSetSample() {
-            val x = setOf('b', 'c')
+            val x = setOf('a', 'b')
 
             val y = buildSet(x.size + 2) {
-                add('a')
+                add('b')
                 addAll(x)
-                add('d')
+                add('c')
             }
 
-            assertPrints(y, "[a, b, c, d]")
+            assertPrints(y, "[b, a, c]")
         }
     }
 
@@ -41,11 +41,12 @@ class Builders {
 
             val y = buildMap<Char, Int>(x.size + 2) {
                 put('a', 1)
+                put('c', 0)
                 putAll(x)
                 put('d', 4)
             }
 
-            assertPrints(y, "{a=1, b=2, c=3, d=4}")
+            assertPrints(y, "{a=1, c=3, b=2, d=4}")
         }
     }
 }
