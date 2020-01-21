@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import java.util.concurrent.Callable
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String, val irConfigurator: KotlinJsIrTargetConfigurator?) :
     KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsTarget>(true, true, kotlinPluginVersion),
@@ -47,6 +51,43 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String, val irConfigu
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
         return Kotlin2JsSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
+    }
+
+    override fun configureCompilationDefaults(target: KotlinJsTarget) {
+        val project = target.project
+
+        target.compilations.all { compilation ->
+            defineConfigurationsForCompilation(compilation)
+
+            if (createDefaultSourceSets) {
+                project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
+                    compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
+                }
+            }
+
+            configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))
+
+            createLifecycleTaskInternal(compilation)
+        }
+    }
+
+    private fun createLifecycleTaskInternal(compilation: KotlinJsCompilation) {
+        val project = compilation.target.project
+
+        compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
+
+        val compileAllTask = project.tasks.findByPath(compilation.compileAllTaskName)
+        if (compileAllTask != null) {
+            compileAllTask.dependsOn(compilation.compileKotlinTaskName)
+            compileAllTask.dependsOn(compilation.processResourcesTaskName)
+        } else {
+            project.tasks.create(compilation.compileAllTaskName).apply {
+                group = LifecycleBasePlugin.BUILD_GROUP
+                description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
+                dependsOn(compilation.compileKotlinTaskName)
+                dependsOn(compilation.processResourcesTaskName)
+            }
+        }
     }
 
     override fun configureCompilations(target: KotlinJsTarget) {

@@ -29,14 +29,15 @@ open class KotlinJsTarget
 @Inject
 constructor(
     project: Project,
-    platformType: KotlinPlatformType,
-    val irTarget: KotlinJsIrTarget?
+    platformType: KotlinPlatformType
 ) :
     KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
+
+    var irTarget: KotlinJsIrTarget? = null
 
     val testTaskName get() = testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).testTaskName
     val testTask: TaskProvider<KotlinTestReport>
