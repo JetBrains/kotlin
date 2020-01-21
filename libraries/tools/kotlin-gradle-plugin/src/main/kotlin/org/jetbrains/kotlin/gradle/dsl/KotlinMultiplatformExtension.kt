@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.gradle.dsl
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.internal.LoggerWrapper
-import com.android.build.gradle.internal.SdkLocationSourceSet
-import com.android.build.gradle.internal.SdkLocator
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.build.gradle.internal.publishing.AndroidArtifacts.ARTIFACT_TYPE
-import com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask
 import com.android.sdklib.IAndroidTarget
 import com.android.sdklib.repository.AndroidSdkHandler
 import com.android.sdklib.repository.LoggerProgressIndicatorWrapper
+import com.intellij.openapi.util.Version
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
@@ -23,13 +21,16 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+import org.gradle.api.provider.Provider
 import org.gradle.internal.component.external.model.DefaultModuleComponentIdentifier
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
+import kotlin.reflect.full.findParameterByName
 
 open class KotlinMultiplatformExtension :
     KotlinProjectExtension(),
@@ -74,14 +75,52 @@ open class KotlinMultiplatformExtension :
 
     private fun getAndroidSdkJar(project: Project): File? {
         val androidExtension = project.extensions.findByName("android") as BaseExtension? ?: return null
-        val sdkLocation = SdkLocator.getSdkLocation(SdkLocationSourceSet(project.rootDir)).directory ?: return null
+        val sdkLocation = getClassOrNull("com.android.build.gradle.internal.SdkLocationSourceSet")?.let { sdkLocationSourceSetClass ->
+            val sdkLocationSourceSet = sdkLocationSourceSetClass.kotlin.constructors.firstOrNull()?.let { callable ->
+                callable.findParameterByName("projectRoot")?.let { param ->
+                    callable.callBy(mapOf(param to project.rootDir))
+                }
+            }
+
+            val sdkLocatorClass = getClassOrNull("com.android.build.gradle.internal.SdkLocator")
+            val sdkLocation =
+                sdkLocatorClass?.getMethodOrNull("getSdkLocation", sdkLocationSourceSetClass)?.invoke(sdkLocatorClass, sdkLocationSourceSet)
+            sdkLocation?.javaClass?.getMethodOrNull("getDirectory")?.invoke(sdkLocation) as? File
+        } ?: return null
         val sdkHandler = AndroidSdkHandler.getInstance(sdkLocation)
         val logger = LoggerProgressIndicatorWrapper(LoggerWrapper(project.logger))
         val androidTarget = sdkHandler.getAndroidTargetManager(logger).getTargetFromHashString(androidExtension.compileSdkVersion, logger)
         return File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR))
     }
 
+    private fun getClassOrNull(s: String) =
+        try {
+            Class.forName(s)
+        } catch (e: Exception) {
+            null
+        }
+
+    private fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<*>) =
+        try {
+            getMethod(name, *parameterTypes)
+        } catch (e: Exception) {
+            null
+        }
+
+    private fun isAndroidPluginCompatible(): Boolean {
+        val version = getClassOrNull("com.android.Version")?.let {
+            try {
+                it.getField("ANDROID_GRADLE_PLUGIN_VERSION").get(null) as String
+            } catch (e: Exception) {
+                return false
+            }
+        } ?: return false
+        return Version.parseVersion(version)?.isOrGreaterThan(3, 6) ?: false
+    }
+
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<File>?> {
+        if (!isAndroidPluginCompatible()) return emptyMap()
+
         data class SourceSetConfigs(val implConfig: Configuration, val compileConfig: Configuration)
 
         val androidSdkJar = getAndroidSdkJar(project) ?: return emptyMap()
@@ -108,9 +147,13 @@ open class KotlinMultiplatformExtension :
 
             if (entry.key == "androidMain") {
                 // this is a terrible hack, but looks like the only way, other than proper support via light-classes
-                val task = project.tasks.findByName("processDebugResources") as? LinkApplicationAndroidResourcesTask
-                @Suppress("UnstableApiUsage")
-                task?.rClassOutputJar?.orNull?.asFile?.let { result += it }
+                val task = project.tasks.findByName("processDebugResources")
+                getClassOrNull("com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask")?.let { linkAppClass ->
+                    @Suppress("UNCHECKED_CAST")
+                    val rClassOutputJar =
+                        linkAppClass.getMethodOrNull("getRClassOutputJar")?.invoke(task) as Provider<FileSystemLocation>?
+                    rClassOutputJar?.orNull?.asFile?.let { result += it }
+                }
             }
 
             result
