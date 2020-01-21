@@ -459,6 +459,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/enumValues.kt");
         }
 
+        @TestMetadata("errCallable.kt")
+        public void testErrCallable() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/errCallable.kt");
+        }
+
         @TestMetadata("extensionPropertyInLambda.kt")
         public void testExtensionPropertyInLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/extensionPropertyInLambda.kt");
