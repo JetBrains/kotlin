@@ -3,7 +3,7 @@ package com.intellij.psi.codeStyle;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
-import com.intellij.ide.scratch.ScratchFileType;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.lang.LanguageFormatting;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
@@ -101,9 +101,9 @@ public class DetectableIndentOptionsProvider extends FileIndentOptionsProvider {
   private boolean isEnabled(@NotNull CodeStyleSettings settings, @NotNull PsiFile file) {
     if (!file.isValid() ||
         !file.isWritable() ||
-        (file instanceof PsiBinaryFile) ||
-        (file instanceof PsiCompiledFile) ||
-        file.getFileType() == ScratchFileType.INSTANCE) {
+        file instanceof PsiBinaryFile ||
+        file instanceof PsiCompiledFile ||
+        ScratchUtil.isScratch(file.getVirtualFile())) {
       return false;
     }
     if (ApplicationManager.getApplication().isUnitTestMode()) {

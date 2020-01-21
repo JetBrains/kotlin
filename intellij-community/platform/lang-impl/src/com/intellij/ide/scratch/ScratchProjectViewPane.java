@@ -19,7 +19,6 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
@@ -276,15 +275,16 @@ public class ScratchProjectViewPane extends ProjectViewPane {
 
     @Override
     public boolean contains(@NotNull VirtualFile file) {
-      return FileTypeRegistry.getInstance().isFileOfType(file, ScratchFileType.INSTANCE);
+      return ScratchUtil.isScratch(file);
     }
 
     @NotNull
     @Override
     public Collection<? extends AbstractTreeNode<?>> getChildren() {
       List<AbstractTreeNode<?>> list = new ArrayList<>();
+      Project project = ObjectUtils.notNull(getProject());
       for (RootType rootType : RootType.getAllRootTypes()) {
-        ContainerUtil.addIfNotNull(list, createRootNode(getProject(), rootType, getSettings()));
+        ContainerUtil.addIfNotNull(list, createRootNode(project, rootType, getSettings()));
       }
       return list;
     }

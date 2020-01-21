@@ -3,7 +3,7 @@
 package com.intellij.refactoring.rename;
 
 import com.intellij.featureStatistics.FeatureUsageTracker;
-import com.intellij.ide.scratch.ScratchFileType;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKey;
@@ -97,7 +97,7 @@ public class PsiElementRenameHandler implements RenameHandler {
 
     if (checkInProject && nameSuggestionContext != null &&
         nameSuggestionContext.isPhysical() &&
-        (contextFile == null || contextFile.getFileType() != ScratchFileType.INSTANCE) &&
+        (contextFile == null || !ScratchUtil.isScratch(contextFile)) &&
         !PsiManager.getInstance(project).isInProject(nameSuggestionContext)) {
       final String message = "Selected element is used from non-project files. These usages won't be renamed. Proceed anyway?";
       if (ApplicationManager.getApplication().isUnitTestMode()) throw new CommonRefactoringUtil.RefactoringErrorHintException(message);
