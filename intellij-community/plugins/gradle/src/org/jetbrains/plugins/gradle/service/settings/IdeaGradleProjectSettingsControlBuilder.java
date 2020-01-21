@@ -721,7 +721,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (projectSdk != null) {
       // resolves executable JDK
       // e.g: for Android projects
-      projectSdk = ExternalSystemJdkUtil.resolveDependentJDK(projectSdk);
+      projectSdk = ExternalSystemJdkUtil.resolveDependentJdk(projectSdk);
       // Find editable sdk
       // see ProjectSdksModel#getProjectSdk for details
       projectSdk = sdksModel.findSdk(projectSdk.getName());

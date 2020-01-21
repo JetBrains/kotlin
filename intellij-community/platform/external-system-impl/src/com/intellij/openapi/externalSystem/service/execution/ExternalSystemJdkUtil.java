@@ -50,7 +50,7 @@ public class ExternalSystemJdkUtil {
         if (projectSdk == null) {
           throw new ProjectJdkNotFoundException();
         }
-        return resolveDependentJDK(projectSdk);
+        return resolveDependentJdk(projectSdk);
       case USE_JAVA_HOME:
         return getJavaHomeJdk();
       default:
@@ -107,7 +107,7 @@ public class ExternalSystemJdkUtil {
         return pair(USE_PROJECT_JDK, projectJdk);
       }
 
-      Sdk referencedJdk = findReferencedJDK(project);
+      Sdk referencedJdk = findReferencedJdk(project);
       if (referencedJdk != null) {
         return pair(USE_PROJECT_JDK, referencedJdk);
       }
@@ -143,7 +143,7 @@ public class ExternalSystemJdkUtil {
 
   @Nullable
   @Contract("null -> null")
-  private static Sdk findReferencedJDK(Sdk projectSdk) {
+  private static Sdk findReferencedJdk(Sdk projectSdk) {
     if (projectSdk != null
         && projectSdk.getSdkType() instanceof DependentSdkType
         && projectSdk.getSdkType() instanceof JavaSdkType) {
@@ -161,14 +161,14 @@ public class ExternalSystemJdkUtil {
   }
 
   @Nullable
-  private static Sdk findReferencedJDK(Project project) {
+  private static Sdk findReferencedJdk(Project project) {
     Sdk projectSdk = ProjectRootManager.getInstance(project).getProjectSdk();
-    return findReferencedJDK(projectSdk);
+    return findReferencedJdk(projectSdk);
   }
 
   @NotNull
-  public static Sdk resolveDependentJDK(@NotNull Sdk sdk) {
-    Sdk parentSdk = findReferencedJDK(sdk);
+  public static Sdk resolveDependentJdk(@NotNull Sdk sdk) {
+    Sdk parentSdk = findReferencedJdk(sdk);
     if (parentSdk == null) return sdk;
     return parentSdk;
   }
@@ -198,7 +198,10 @@ public class ExternalSystemJdkUtil {
 
   @NotNull
   public static Sdk addJdk(String homePath) {
-    Sdk jdk = ExternalSystemJdkProvider.getInstance().createJdk(null, homePath);
+    ExternalSystemJdkProvider jdkProvider = ExternalSystemJdkProvider.getInstance();
+    List<Sdk> sdks = Arrays.asList(ProjectJdkTable.getInstance().getAllJdks());
+    String name = SdkConfigurationUtil.createUniqueSdkName(jdkProvider.getJavaSdkType(), homePath, sdks);
+    Sdk jdk = jdkProvider.createJdk(name, homePath);
     SdkConfigurationUtil.addSdk(jdk);
     return jdk;
   }

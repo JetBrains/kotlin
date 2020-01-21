@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.importing
 
+import com.intellij.openapi.externalSystem.util.use as utilUse
 import com.intellij.ide.actions.ImportModuleAction
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.actionSystem.AnAction
@@ -120,5 +121,18 @@ interface ExternalSystemSetupProjectTestCase {
     val openProjects = projectManager.openProjects.map { it.name }.toSet()
     action()
     return projectManager.openProjects.first { it.name !in openProjects }
+  }
+
+  fun cleanupProjectTestResources(project: Project) {}
+
+  fun Project.use(save: Boolean = false, action: (Project) -> Unit) {
+    utilUse(save) {
+      try {
+        action(this)
+      }
+      finally {
+        cleanupProjectTestResources(this)
+      }
+    }
   }
 }

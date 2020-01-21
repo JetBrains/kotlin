@@ -13,7 +13,6 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.findProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getSettings
-import com.intellij.openapi.externalSystem.util.use
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.DefaultModulesProvider
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
@@ -32,6 +31,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runners.Parameterized
 import java.io.File
 import java.util.concurrent.TimeUnit
+import com.intellij.openapi.externalSystem.util.use as utilUse
 
 
 abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
@@ -238,6 +238,17 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     return when (useKotlinDsl) {
       true -> """findProject(":$from")?.name = "$to""""
       else -> """findProject(':$from')?.name = '$to'"""
+    }
+  }
+
+  fun Project.use(save: Boolean = false, action: (Project) -> Unit) {
+    utilUse(save) {
+      try {
+        action(this)
+      }
+      finally {
+        GradleSetupProjectTest.removeGradleJvmSdk(this)
+      }
     }
   }
 
