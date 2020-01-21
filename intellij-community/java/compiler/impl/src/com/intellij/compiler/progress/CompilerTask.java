@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author: Eugene Zhuravlev
@@ -565,7 +565,7 @@ public final class CompilerTask extends Task.Backgroundable {
     return TextRange.EMPTY_RANGE;
   }
 
-  private final class CloseListener extends ContentManagerAdapter implements ProjectManagerListener {
+  private final class CloseListener implements ProjectManagerListener, ContentManagerListener {
     private Content myContent;
     private ContentManager myContentManager;
     private boolean myIsApplicationExitingOrProjectClosing = false;

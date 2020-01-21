@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -16,15 +16,16 @@ import com.intellij.openapi.project.VetoableProjectManagerListener;
 import com.intellij.openapi.util.Key;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
-import com.intellij.ui.content.ContentManagerAdapter;
 import com.intellij.ui.content.ContentManagerEvent;
+import com.intellij.ui.content.ContentManagerListener;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class BaseContentCloseListener extends ContentManagerAdapter implements VetoableProjectManagerListener {
+public abstract class BaseContentCloseListener implements VetoableProjectManagerListener,
+                                                          ContentManagerListener {
   private static final Key<Boolean> PROJECT_DISPOSING = Key.create("Project disposing is in progress");
   private static final Logger LOG = Logger.getInstance(BaseContentCloseListener.class);
 

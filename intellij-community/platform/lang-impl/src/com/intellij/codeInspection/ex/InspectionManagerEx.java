@@ -52,7 +52,7 @@ public class InspectionManagerEx extends InspectionManagerBase {
           ContentManager contentManager = toolWindow.getContentManager();
           toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowInspection);
           ContentManagerWatcher.watchContentManager(toolWindow, contentManager);
-          contentManager.addContentManagerListener(new ContentManagerAdapter() {
+          contentManager.addContentManagerListener(new ContentManagerListener() {
             private static final String PREFIX = "of ";
 
             @Override

@@ -129,7 +129,7 @@ public final class RunContentManagerImpl implements RunContentManager {
 
   private void initToolWindow(@Nullable Executor executor, String toolWindowId, Icon toolWindowIcon, @NotNull ContentManager contentManager) {
     myToolwindowIdToBaseIconMap.put(toolWindowId, toolWindowIcon);
-    contentManager.addContentManagerListener(new ContentManagerAdapter() {
+    contentManager.addContentManagerListener(new ContentManagerListener() {
       @Override
       public void selectionChanged(@NotNull final ContentManagerEvent event) {
         if (event.getOperation() == ContentManagerEvent.ContentOperation.add) {

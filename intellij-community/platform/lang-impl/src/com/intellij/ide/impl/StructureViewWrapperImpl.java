@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.impl;
 
@@ -138,7 +138,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
         }
       }
     });
-    myToolWindow.getContentManager().addContentManagerListener(new ContentManagerAdapter() {
+    myToolWindow.getContentManager().addContentManagerListener(new ContentManagerListener() {
       @Override
       public void selectionChanged(@NotNull ContentManagerEvent event) {
         if (myStructureView instanceof StructureViewComposite) {
@@ -155,7 +155,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
     Disposer.register(myToolWindow.getContentManager(), this);
 
     PsiStructureViewFactory.EP_NAME.addExtensionPointListener(this::clearCaches, this);
-    
+
     StructureViewBuilder.EP_NAME.addExtensionPointListener(this::clearCaches, this);
   }
 

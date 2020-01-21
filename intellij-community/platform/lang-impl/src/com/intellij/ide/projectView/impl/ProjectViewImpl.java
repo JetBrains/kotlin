@@ -64,8 +64,8 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.*;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
-import com.intellij.ui.content.ContentManagerAdapter;
 import com.intellij.ui.content.ContentManagerEvent;
+import com.intellij.ui.content.ContentManagerListener;
 import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.*;
@@ -963,7 +963,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     isInitialized = true;
     doAddUninitializedPanes();
 
-    getContentManager().addContentManagerListener(new ContentManagerAdapter() {
+    getContentManager().addContentManagerListener(new ContentManagerListener() {
       @Override
       public void selectionChanged(@NotNull ContentManagerEvent event) {
         if (event.getOperation() == ContentManagerEvent.ContentOperation.add) {
@@ -1074,7 +1074,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
         return true;
       }
     }, getComponent());
-    collapseAllAction.getTemplatePresentation().setIcon(AllIcons.General.CollapseAll);
+    collapseAllAction.getTemplatePresentation().setIcon(AllIcons.Actions.Collapseall);
     titleActions.add(collapseAllAction);
   }
 
