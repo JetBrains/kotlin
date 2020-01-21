@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:JvmName("Declarations")
 
 package com.intellij.model.psi.impl
@@ -13,36 +13,37 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.elementsAroundOffsetUp
 import com.intellij.util.SmartList
 
+/**
+ * @return collection of declarations found around the given [offset][offsetInFile] in [file][this]
+ */
+fun PsiFile.allDeclarationsAround(offsetInFile: Int): Collection<PsiSymbolDeclaration> {
+  for ((element: PsiElement, offsetInElement: Int) in elementsAroundOffsetUp(offsetInFile)) {
+    ProgressManager.checkCanceled()
+    val declarations: Collection<PsiSymbolDeclaration> = declarationsInElement(element, offsetInElement)
+    if (declarations.isNotEmpty()) {
+      return declarations
+    }
+  }
+
+  // fall back
+  val leaf: PsiElement? = findElementAt(offsetInFile)
+  if (leaf != null) {
+    val namedElement: PsiElement? = TargetElementUtil.getNamedElement(leaf)
+    if (namedElement != null) {
+      return listOf(PsiElement2Declaration.createFromPsi(namedElement, leaf))
+    }
+  }
+  return emptyList()
+}
+
 private val declarationProviderEP = ExtensionPointName.create<PsiSymbolDeclarationProvider>("com.intellij.psi.declarationProvider")
 
-private fun findDeclarationsInElement(element: PsiElement, offsetInElement: Int): Collection<PsiSymbolDeclaration> {
+private fun declarationsInElement(element: PsiElement, offsetInElement: Int): Collection<PsiSymbolDeclaration> {
   val result = SmartList<PsiSymbolDeclaration>()
   for (extension: PsiSymbolDeclarationProvider in declarationProviderEP.extensions) {
     ProgressManager.checkCanceled()
-    result += extension.getDeclarations(element, offsetInElement).filter {
-      offsetInElement in it.declarationRange
-    }
-  }
-  return result
-}
-
-/**
- * @return collection of declarations at the given [offset][offsetInFile] in [file]
- */
-fun findDeclarationsAtOffset(file: PsiFile, offsetInFile: Int): Collection<PsiSymbolDeclaration> {
-  val result = SmartList<PsiSymbolDeclaration>()
-  for ((element: PsiElement, offsetInElement: Int) in file.elementsAroundOffsetUp(offsetInFile)) {
-    ProgressManager.checkCanceled()
-    result += findDeclarationsInElement(element, offsetInElement)
-  }
-  if (result.isEmpty()) {
-    // fall back
-    val leaf = file.findElementAt(offsetInFile)
-    if (leaf != null) {
-      val namedElement = TargetElementUtil.getNamedElement(leaf)
-      if (namedElement != null) {
-        result += PsiElement2Declaration.createFromPsi(namedElement, leaf)
-      }
+    extension.getDeclarations(element, offsetInElement).filterTo(result) {
+      element === it.declaringElement && offsetInElement in it.declarationRange
     }
   }
   return result

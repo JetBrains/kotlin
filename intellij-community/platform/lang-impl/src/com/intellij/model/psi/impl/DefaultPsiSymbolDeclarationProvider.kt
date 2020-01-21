@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.model.psi.impl
 
 import com.intellij.model.psi.PsiSymbolDeclaration
@@ -25,7 +25,7 @@ class DefaultPsiSymbolDeclarationProvider : PsiSymbolDeclarationProvider {
         result += PsiElement2Declaration.createFromPom(target, element)
       })
       if (result.isNotEmpty()) {
-        return result
+        return listOf(result.first())
       }
     }
 
