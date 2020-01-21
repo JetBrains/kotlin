@@ -8,5 +8,6 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 }

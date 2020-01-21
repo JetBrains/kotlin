@@ -14,17 +14,17 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
-abstract class JSConfigurator : ModuleConfiguratorWithTests() {
+interface JSConfigurator : ModuleConfigurator {
     override val moduleType: ModuleType get() = ModuleType.js
-
-    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 }
 
-object JsSingleplatformModuleConfigurator : JSConfigurator() {
+object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests() {
     override val moduleKind = ModuleKind.singleplatformJs
     override val suggestedModuleName = "js"
     override val id = "jsSinglepaltform"
     override val text = "JS for Browser"
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
     override val canContainSubModules = false
 

@@ -21,7 +21,9 @@ kotlin {
             }
         }
         jvmTest {
-
+            dependencies {
+                implementation kotlin('test-junit')
+            }
         }
         aMain {
             dependencies {
@@ -29,7 +31,9 @@ kotlin {
             }
         }
         aTest {
-
+            dependencies {
+                implementation kotlin('test-js')
+            }
         }
     }
 }
