@@ -27,7 +27,7 @@ class LexicalWritableScope(
     override val ownerDescriptor: DeclarationDescriptor,
     override val isOwnerDescriptorAccessibleByLabel: Boolean,
     redeclarationChecker: LocalRedeclarationChecker,
-    override val kind: LexicalScopeKind
+    override val kind: LexicalScopeKind,
 ) : LexicalScopeStorage(parent, redeclarationChecker) {
 
     override val implicitReceiver: ReceiverParameterDescriptor?
@@ -80,7 +80,7 @@ class LexicalWritableScope(
         // the `LexicalWritableScope` instead of calling it on this snapshot
         override fun getContributedClassifierIncludeDeprecated(
             name: Name,
-            location: LookupLocation
+            location: LookupLocation,
         ): DescriptorWithDeprecation<ClassifierDescriptor>? {
             return variableOrClassDescriptorByName(name, descriptorLimit)
                 ?.safeAs<ClassifierDescriptor>()
@@ -106,7 +106,7 @@ class LexicalWritableScope(
     override fun printStructure(p: Printer) {
         p.println(
             this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {",
         )
         p.pushIndent()
 

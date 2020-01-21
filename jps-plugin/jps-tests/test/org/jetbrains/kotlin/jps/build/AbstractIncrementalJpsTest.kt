@@ -69,7 +69,7 @@ import kotlin.reflect.jvm.javaField
 
 abstract class AbstractIncrementalJpsTest(
     private val allowNoFilesWithSuffixInTestData: Boolean = false,
-    private val checkDumpsCaseInsensitively: Boolean = false
+    private val checkDumpsCaseInsensitively: Boolean = false,
 ) : BaseKotlinJpsBuildTestCase() {
     companion object {
         private val COMPILATION_FAILED = "COMPILATION FAILED"
@@ -155,7 +155,7 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun build(
         name: String?,
-        scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()
+        scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules(),
     ): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
 
@@ -173,7 +173,7 @@ abstract class AbstractIncrementalJpsTest(
                 myBuildParams,
                 CanceledStatus.NULL,
                 mockConstantSearch,
-                true
+                true,
             )
             val buildResult = BuildResult()
             builder.addMessageHandler(buildResult)
@@ -197,14 +197,14 @@ abstract class AbstractIncrementalJpsTest(
                     log = logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n",
                     makeFailed = true,
                     mappingsDump = null,
-                    name = name
+                    name = name,
                 )
             } else {
                 return MakeResult(
                     log = logger.log,
                     makeFailed = false,
                     mappingsDump = createMappingsDump(projectDescriptor, kotlinCompileContext, lookupsDuringTest),
-                    name = name
+                    name = name,
                 )
             }
         } finally {
@@ -245,7 +245,7 @@ abstract class AbstractIncrementalJpsTest(
         val rebuildResult = rebuild()
         assertEquals(
             "Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild result: $rebuildResult",
-            rebuildResult.makeFailed, makeOverallResult.makeFailed
+            rebuildResult.makeFailed, makeOverallResult.makeFailed,
         )
 
         if (!outAfterMake.exists()) {
@@ -312,7 +312,7 @@ abstract class AbstractIncrementalJpsTest(
 
         val otherMakeResults = performModificationsAndMake(
             modulesTxt?.modules?.map { it.name },
-            hasBuildLog = buildLogFile != null
+            hasBuildLog = buildLogFile != null,
         )
 
         buildLogFile?.let {
@@ -328,7 +328,7 @@ abstract class AbstractIncrementalJpsTest(
         val log: String,
         val makeFailed: Boolean,
         val mappingsDump: String?,
-        val name: String? = null
+        val name: String? = null,
     )
 
     open val testDataSrc: File
@@ -336,14 +336,14 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun performModificationsAndMake(
         moduleNames: Collection<String>?,
-        hasBuildLog: Boolean
+        hasBuildLog: Boolean,
     ): List<MakeResult> {
         val results = arrayListOf<MakeResult>()
         val modifications = getModificationsToPerform(
             testDataSrc,
             moduleNames,
             allowNoFilesWithSuffixInTestData = allowNoFilesWithSuffixInTestData || !hasBuildLog,
-            touchPolicy = TouchPolicy.TIMESTAMP
+            touchPolicy = TouchPolicy.TIMESTAMP,
         )
 
         if (!hasBuildLog) {
@@ -413,7 +413,7 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun configureMultiModuleProject(
         modulesTxt: ModulesTxt,
-        jdk: JpsSdk<JpsDummyElement>?
+        jdk: JpsSdk<JpsDummyElement>?,
     ) {
         modulesTxt.modules.forEach { module ->
             module.jpsModule = addModule(
@@ -421,7 +421,7 @@ abstract class AbstractIncrementalJpsTest(
                 arrayOf(getAbsolutePath("${module.name}/src")),
                 null,
                 null,
-                jdk
+                jdk,
             )!!
 
             val kotlinFacetSettings = module.kotlinFacetSettings
@@ -437,7 +437,7 @@ abstract class AbstractIncrementalJpsTest(
 
                 module.jpsModule.container.setChild(
                     JpsKotlinFacetModuleExtension.KIND,
-                    JpsKotlinFacetModuleExtension(kotlinFacetSettings)
+                    JpsKotlinFacetModuleExtension(kotlinFacetSettings),
                 )
             }
         }
@@ -445,7 +445,7 @@ abstract class AbstractIncrementalJpsTest(
         modulesTxt.dependencies.forEach {
             JpsModuleRootModificationUtil.addDependency(
                 it.from.jpsModule, it.to.jpsModule,
-                it.scope, it.exported
+                it.scope, it.exported,
             )
         }
 
@@ -491,7 +491,7 @@ abstract class AbstractIncrementalJpsTest(
         override fun invalidOrUnusedCache(
             chunk: KotlinChunk?,
             target: KotlinModuleBuildTarget<*>?,
-            attributesDiff: CacheAttributesDiff<*>
+            attributesDiff: CacheAttributesDiff<*>,
         ) {
             val cacheManager = attributesDiff.manager
             val cacheTitle = when (cacheManager) {
@@ -575,7 +575,7 @@ abstract class AbstractIncrementalJpsTest(
 private fun createMappingsDump(
     project: ProjectDescriptor,
     kotlinContext: KotlinCompileContext,
-    lookupsDuringTest: Set<LookupSymbol>
+    lookupsDuringTest: Set<LookupSymbol>,
 ) = createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
         createCommonMappingsDump(project) + "\n\n\n" +
         createJavaMappingsDump(project)
@@ -583,13 +583,13 @@ private fun createMappingsDump(
 internal fun createKotlinCachesDump(
     project: ProjectDescriptor,
     kotlinContext: KotlinCompileContext,
-    lookupsDuringTest: Set<LookupSymbol>
+    lookupsDuringTest: Set<LookupSymbol>,
 ) = createKotlinIncrementalCacheDump(project, kotlinContext) + "\n\n\n" +
         createLookupCacheDump(kotlinContext, lookupsDuringTest)
 
 private fun createKotlinIncrementalCacheDump(
     project: ProjectDescriptor,
-    kotlinContext: KotlinCompileContext
+    kotlinContext: KotlinCompileContext,
 ): String {
     return buildString {
         for (target in project.allModuleTargets.sortedBy { it.presentableName }) {

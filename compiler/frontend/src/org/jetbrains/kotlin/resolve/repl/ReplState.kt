@@ -66,7 +66,7 @@ class ReplState {
         class SuccessfulLine(
             override val linePsi: KtFile,
             override val parentLine: SuccessfulLine?,
-            val lineDescriptor: ScriptDescriptor
+            val lineDescriptor: ScriptDescriptor,
         ) : LineInfo()
 
         class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()

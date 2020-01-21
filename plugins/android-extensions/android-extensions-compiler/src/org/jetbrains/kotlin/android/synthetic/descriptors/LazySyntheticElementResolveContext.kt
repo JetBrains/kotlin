@@ -47,24 +47,25 @@ class LazySyntheticElementResolveContext(private val module: ModuleDescriptor, s
         val layoutContainerDescriptor = find(LayoutContainer::class.java.canonicalName)
 
         return SyntheticElementResolveContext(
-                view = viewDescriptor.defaultType,
-                activity = activityDescriptor.defaultType,
-                fragment = fragmentDescriptor?.defaultType,
-                dialog = dialogDescriptor.defaultType,
-                supportActivity = supportActivityDescriptor?.defaultType,
-                supportFragment = supportFragmentDescriptor?.defaultType,
-                layoutContainer = layoutContainerDescriptor?.defaultType)
+            view = viewDescriptor.defaultType,
+            activity = activityDescriptor.defaultType,
+            fragment = fragmentDescriptor?.defaultType,
+            dialog = dialogDescriptor.defaultType,
+            supportActivity = supportActivityDescriptor?.defaultType,
+            supportFragment = supportFragmentDescriptor?.defaultType,
+            layoutContainer = layoutContainerDescriptor?.defaultType,
+        )
     }
 }
 
 internal class SyntheticElementResolveContext(
-        val view: SimpleType,
-        val activity: SimpleType,
-        val fragment: SimpleType?,
-        val dialog: SimpleType,
-        val supportActivity: SimpleType?,
-        val supportFragment: SimpleType?,
-        val layoutContainer: SimpleType?
+    val view: SimpleType,
+    val activity: SimpleType,
+    val fragment: SimpleType?,
+    val dialog: SimpleType,
+    val supportActivity: SimpleType?,
+    val supportFragment: SimpleType?,
+    val layoutContainer: SimpleType?,
 ) {
     companion object {
         private fun errorType() = ErrorUtils.createErrorType("")

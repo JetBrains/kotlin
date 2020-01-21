@@ -30,7 +30,7 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
                 import pkgA.A
                 class B(a: /*|*/A)
                 """,
-            MAIN
+            MAIN,
         )
         myFixture.configureFromExistingVirtualFile(editedFile)
 
@@ -42,7 +42,7 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
                 module MAIN {
                     requires M_TWO;
                 }
-                """
+                """,
         )
     }
 
@@ -55,7 +55,7 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
                 import pkgA.A
                 class B(a: /*|*/A)
                 """,
-            M3
+            M3,
         )
         myFixture.configureFromExistingVirtualFile(editedFile)
 
@@ -72,7 +72,7 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
                     java.util.logging./*|*/FileHandler()   // <-- error; "add 'requires java.logging'" quick fix expected
                 }
                 """,
-            MAIN
+            MAIN,
         )
         myFixture.configureFromExistingVirtualFile(editedFile)
 
@@ -84,7 +84,7 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
                 module MAIN {
                     requires java.logging;
                 }
-                """
+                """,
         )
     }
 

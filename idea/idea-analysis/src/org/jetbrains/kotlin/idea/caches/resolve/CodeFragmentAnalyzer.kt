@@ -39,7 +39,7 @@ import javax.inject.Inject
 class CodeFragmentAnalyzer(
     private val resolveSession: ResolveSession,
     private val qualifierResolver: QualifiedExpressionResolver,
-    private val typeResolver: TypeResolver
+    private val typeResolver: TypeResolver,
 ) {
     @set:Inject // component dependency cycle
     lateinit var resolveElementCache: ResolveElementCache
@@ -62,7 +62,7 @@ class CodeFragmentAnalyzer(
             is KtTypeReference -> {
                 val context = TypeResolutionContext(
                     scope, bindingTrace,
-                    true, true, codeFragment.suppressDiagnosticsInDebugMode()
+                    true, true, codeFragment.suppressDiagnosticsInDebugMode(),
                 ).noBareTypes()
 
                 typeResolver.resolvePossiblyBareType(context, contentElement)
@@ -150,7 +150,7 @@ class CodeFragmentAnalyzer(
 
     private fun getClassDescriptor(
         classOrObject: KtClassOrObject,
-        resolutionFactory: (KtElement) -> BindingContext
+        resolutionFactory: (KtElement) -> BindingContext,
     ): ClassResolutionResult? {
         val bindingContext: BindingContext
         val classDescriptor: ClassDescriptor?
@@ -202,7 +202,7 @@ class CodeFragmentAnalyzer(
         return importList.imports.mapNotNull {
             qualifierResolver.processImportReference(
                 it, resolveSession.moduleDescriptor, resolveSession.trace,
-                excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null
+                excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null,
             )
         }
     }

@@ -96,7 +96,7 @@ abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
     }
 
     protected open fun buildCachedCallAtIndex(
-            bindingContext: BindingContext, jetFile: KtFile, index: Int
+        bindingContext: BindingContext, jetFile: KtFile, index: Int,
     ): Pair<PsiElement?, ResolvedCall<out CallableDescriptor>?> {
         val element = jetFile.findElementAt(index)!!
         val expression = element.getStrictParentOfType<KtExpression>()

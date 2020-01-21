@@ -42,11 +42,13 @@ interface CacheMechanism {
 
     companion object {
         fun getType(cacheImpl: CacheImplementation): Type {
-            return Type.getObjectType(when (cacheImpl) {
-                CacheImplementation.SPARSE_ARRAY -> "android.util.SparseArray"
-                CacheImplementation.HASH_MAP -> HashMap::class.java.canonicalName
-                CacheImplementation.NO_CACHE -> throw IllegalArgumentException("Container should support cache")
-            }.replace('.', '/'))
+            return Type.getObjectType(
+                when (cacheImpl) {
+                    CacheImplementation.SPARSE_ARRAY -> "android.util.SparseArray"
+                    CacheImplementation.HASH_MAP -> HashMap::class.java.canonicalName
+                    CacheImplementation.NO_CACHE -> throw IllegalArgumentException("Container should support cache")
+                }.replace('.', '/'),
+            )
         }
 
         fun get(cacheImpl: CacheImplementation, iv: InstructionAdapter, containerType: Type): CacheMechanism {
@@ -60,8 +62,8 @@ interface CacheMechanism {
 }
 
 internal class HashMapCacheMechanism(
-        val iv: InstructionAdapter,
-        val containerType: Type
+    val iv: InstructionAdapter,
+    val containerType: Type,
 ) : CacheMechanism {
     override fun loadCache() {
         iv.load(0, containerType)
@@ -94,8 +96,8 @@ internal class HashMapCacheMechanism(
 }
 
 internal class SparseArrayCacheMechanism(
-        val iv: InstructionAdapter,
-        val containerType: Type
+    val iv: InstructionAdapter,
+    val containerType: Type,
 ) : CacheMechanism {
     override fun loadCache() {
         iv.load(0, containerType)

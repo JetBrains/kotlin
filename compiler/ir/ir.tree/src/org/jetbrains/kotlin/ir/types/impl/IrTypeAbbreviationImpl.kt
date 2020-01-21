@@ -14,7 +14,7 @@ class IrTypeAbbreviationImpl(
     override val typeAlias: IrTypeAliasSymbol,
     override val hasQuestionMark: Boolean,
     override val arguments: List<IrTypeArgument>,
-    override val annotations: List<IrConstructorCall>
+    override val annotations: List<IrConstructorCall>,
 ) : IrTypeAbbreviation
 
 class IrTypeAbbreviationBuilder {
@@ -35,5 +35,5 @@ fun IrTypeAbbreviationImpl.toBuilder() =
 fun IrTypeAbbreviationBuilder.build() =
     IrTypeAbbreviationImpl(
         typeAlias ?: throw AssertionError("typeAlias not provided"),
-        hasQuestionMark, arguments, annotations
+        hasQuestionMark, arguments, annotations,
     )

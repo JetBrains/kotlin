@@ -40,7 +40,7 @@ interface IrSyntheticPropertySetterDescriptor : IrSyntheticPropertyAccessorDescr
 
 class IrSyntheticPropertyGetterDescriptorImpl(
     correspondingProperty: PropertyDescriptor,
-    override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
+    override val kind: IrSyntheticPropertyAccessorDescriptor.Kind,
 ) : PropertyGetterDescriptorImpl(
     correspondingProperty,
     Annotations.EMPTY,
@@ -51,7 +51,7 @@ class IrSyntheticPropertyGetterDescriptorImpl(
     false, // isInline
     CallableMemberDescriptor.Kind.SYNTHESIZED,
     null,
-    correspondingProperty.source
+    correspondingProperty.source,
 ), IrSyntheticPropertyGetterDescriptor {
     init {
         initialize(correspondingProperty.type)
@@ -60,7 +60,7 @@ class IrSyntheticPropertyGetterDescriptorImpl(
 
 class IrSyntheticPropertySetterDescriptorImpl(
     correspondingProperty: PropertyDescriptor,
-    override val kind: IrSyntheticPropertyAccessorDescriptor.Kind
+    override val kind: IrSyntheticPropertyAccessorDescriptor.Kind,
 ) : PropertySetterDescriptorImpl(
     correspondingProperty,
     Annotations.EMPTY,
@@ -71,7 +71,7 @@ class IrSyntheticPropertySetterDescriptorImpl(
     false, // isInline
     CallableMemberDescriptor.Kind.SYNTHESIZED,
     null,
-    correspondingProperty.source
+    correspondingProperty.source,
 ), IrSyntheticPropertySetterDescriptor {
     init {
         initializeDefault()

@@ -38,7 +38,7 @@ class FSOperationsHelper(
     private val compileContext: CompileContext,
     private val chunk: ModuleChunk,
     private val dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-    private val log: Logger
+    private val log: Logger,
 ) {
     private val moduleBasedFilter = ModulesBasedFileFilter(compileContext, chunk)
 
@@ -104,7 +104,7 @@ class FSOperationsHelper(
     private inline fun markFilesImpl(
         files: Iterable<File>,
         currentRound: Boolean,
-        shouldMark: (File) -> Boolean
+        shouldMark: (File) -> Boolean,
     ) {
         val filesToMark = files.filterTo(HashSet(), shouldMark)
         if (filesToMark.isEmpty()) return
@@ -127,7 +127,7 @@ class FSOperationsHelper(
     // Based on `JavaBuilderUtil#ModulesBasedFileFilter` from Intellij
     private class ModulesBasedFileFilter(
         private val context: CompileContext,
-        chunk: ModuleChunk
+        chunk: ModuleChunk,
     ) : Mappings.DependentFilesFilter {
         private val chunkTargets = chunk.targets
         private val buildRootIndex = context.projectDescriptor.buildRootIndex

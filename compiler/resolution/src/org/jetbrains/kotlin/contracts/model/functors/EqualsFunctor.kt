@@ -79,7 +79,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
             }
 
             if (effect.simpleEffect.value != constant && effect.simpleEffect.value is ESConstant && isSafeToProduceFalse(
-                    call, effect.simpleEffect.value, constant
+                    call, effect.simpleEffect.value, constant,
                 )
             ) {
                 val falseClause = ConditionalEffect(effect.condition, ESReturns(ESConstants.booleanValue(isNegated)))
@@ -95,7 +95,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
     private fun isSafeToProduceFalse(
         leftCall: Computation,
         leftConstant: ESConstant,
-        rightConstant: ESConstant
+        rightConstant: ESConstant,
     ): Boolean = when {
         // Comparison of Boolean
         rightConstant.type.isBoolean() && leftCall.type.isBoolean() -> true
@@ -109,7 +109,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
     private fun equateValues(left: ESValue, right: ESValue): List<ESEffect> {
         return listOf(
             ConditionalEffect(ESEqual(left, right, isNegated), ESReturns(ESConstants.trueValue)),
-            ConditionalEffect(ESEqual(left, right, isNegated.not()), ESReturns(ESConstants.falseValue))
+            ConditionalEffect(ESEqual(left, right, isNegated.not()), ESReturns(ESConstants.falseValue)),
         )
     }
 }

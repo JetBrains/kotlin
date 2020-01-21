@@ -44,10 +44,12 @@ class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
             }
         }
 
-        annotations.addAll(compilerPluginOptions.mapNotNull { text ->
-            if (!text.startsWith(ANNOTATION_PARAMETER_PREFIX)) return@mapNotNull null
-            text.substring(ANNOTATION_PARAMETER_PREFIX.length)
-        })
+        annotations.addAll(
+            compilerPluginOptions.mapNotNull { text ->
+                if (!text.startsWith(ANNOTATION_PARAMETER_PREFIX)) return@mapNotNull null
+                text.substring(ANNOTATION_PARAMETER_PREFIX.length)
+            },
+        )
 
         return annotations.map { PluginOption(AllOpenCommandLineProcessor.ANNOTATION_OPTION.optionName, it) }
     }

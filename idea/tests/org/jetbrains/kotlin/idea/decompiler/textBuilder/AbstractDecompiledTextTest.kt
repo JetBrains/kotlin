@@ -55,7 +55,7 @@ fun findTestLibraryRoot(module: Module): VirtualFile? {
 fun getClassFile(
     packageName: String,
     className: String,
-    module: Module
+    module: Module,
 ): VirtualFile {
     val root = findTestLibraryRoot(module)!!
     val packageDir = root.findFileByRelativePath(packageName.replace(".", "/"))!!

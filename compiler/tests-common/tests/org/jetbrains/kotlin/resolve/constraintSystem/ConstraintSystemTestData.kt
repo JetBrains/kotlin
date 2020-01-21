@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.types.KotlinTypeFactory
 import java.util.regex.Pattern
 
 class ConstraintSystemTestData(
-        context: BindingContext,
-        private val project: Project,
-        private val typeResolver: TypeResolver
+    context: BindingContext,
+    private val project: Project,
+    private val typeResolver: TypeResolver,
 ) {
     private val functionFoo: FunctionDescriptor
     private val scopeToResolveTypeParameters: LexicalScope
@@ -71,12 +71,13 @@ class ConstraintSystemTestData(
                 IntegerValueTypeConstructor(number.toLong(), functionFoo.module, parameters),
                 listOf(),
                 false,
-                MemberScope.Empty
+                MemberScope.Empty,
             )
         }
         return typeResolver.resolveType(
             scopeToResolveTypeParameters, KtPsiFactory(project).createType(name),
-            DummyTraces.DUMMY_TRACE, true)
+            DummyTraces.DUMMY_TRACE, true,
+        )
     }
 }
 

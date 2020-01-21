@@ -24,9 +24,9 @@ import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 class CliAndroidLayoutXmlFileManager(
-        project: Project,
-        applicationPackage: String,
-        variants: List<AndroidVariant>
+    project: Project,
+    applicationPackage: String,
+    variants: List<AndroidVariant>,
 ) : AndroidLayoutXmlFileManager(project) {
     override val androidModule = AndroidModule(applicationPackage, variants)
 
@@ -37,9 +37,12 @@ class CliAndroidLayoutXmlFileManager(
             val resources = arrayListOf<AndroidResource>()
 
             val inputStream = ByteArrayInputStream(layout.virtualFile.contentsToByteArray())
-            saxParser.parse(inputStream, AndroidXmlHandler { id, tag ->
-                resources += parseAndroidResource(id, tag, null)
-            })
+            saxParser.parse(
+                inputStream,
+                AndroidXmlHandler { id, tag ->
+                    resources += parseAndroidResource(id, tag, null)
+                },
+            )
 
             AndroidLayout(resources)
         }

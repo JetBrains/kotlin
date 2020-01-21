@@ -47,7 +47,8 @@ abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<Loca
                 ProtoMapValue(false, bytes, strings).toProtoData(packageFqName)
             }
             KotlinClassHeader.Kind.FILE_FACADE,
-            KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+            KotlinClassHeader.Kind.MULTIFILE_CLASS_PART,
+            -> {
                 ProtoMapValue(true, bytes, strings).toProtoData(packageFqName)
             }
             else -> {

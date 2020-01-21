@@ -28,7 +28,7 @@ object ClassLiteralItems {
         collection: MutableCollection<LookupElement>,
         expectedInfos: Collection<ExpectedInfo>,
         lookupElementFactory: BasicLookupElementFactory,
-        isJvmModule: Boolean
+        isJvmModule: Boolean,
     ) {
         val typeAndSuffixToExpectedInfos = LinkedHashMap<Pair<KotlinType, String>, MutableList<ExpectedInfo>>()
 

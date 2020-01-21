@@ -54,7 +54,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
         do {
             resolved = resolveToPackageOrClass(
                 symbolProvider,
-                FqName.fromSegments(qualifierParts)
+                FqName.fromSegments(qualifierParts),
             )
             if (resolved == null)
                 qualifierParts = qualifierParts.dropLast(1)
@@ -65,7 +65,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
             return FirResolvedQualifierImpl(
                 source,
                 resolved.packageFqName,
-                resolved.relativeClassFqName
+                resolved.relativeClassFqName,
             ).apply { resultType = typeForQualifier(this) }
         }
 

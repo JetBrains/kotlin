@@ -50,8 +50,9 @@ class ContainerOptionsProxy(val containerType: AndroidContainerType, val cache: 
                                     && containerType.doesSupportCache
 
                 return ContainerOptionsProxy(
-                        containerType,
-                        if (supportsCache) null else NO_CACHE) // `null` here means "use global cache implementation setting"
+                    containerType,
+                    if (supportsCache) null else NO_CACHE,
+                ) // `null` here means "use global cache implementation setting"
             }
 
             val cache = anno.getEnumValue(CACHE_NAME) { valueOf(it) }

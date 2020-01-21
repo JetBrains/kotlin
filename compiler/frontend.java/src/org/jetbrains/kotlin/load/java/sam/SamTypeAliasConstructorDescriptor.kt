@@ -28,14 +28,14 @@ interface SamTypeAliasConstructorDescriptor : SamConstructorDescriptor, Declarat
 
 class SamTypeAliasConstructorDescriptorImpl(
     override val typeAliasDescriptor: TypeAliasDescriptor,
-    private val samInterfaceConstructorDescriptor: SamConstructorDescriptor
+    private val samInterfaceConstructorDescriptor: SamConstructorDescriptor,
 ) : SimpleFunctionDescriptorImpl(
-        typeAliasDescriptor.containingDeclaration,
-        null,
-        samInterfaceConstructorDescriptor.baseDescriptorForSynthetic.annotations,
-        typeAliasDescriptor.name,
-        CallableMemberDescriptor.Kind.SYNTHESIZED,
-        typeAliasDescriptor.source
+    typeAliasDescriptor.containingDeclaration,
+    null,
+    samInterfaceConstructorDescriptor.baseDescriptorForSynthetic.annotations,
+    typeAliasDescriptor.name,
+    CallableMemberDescriptor.Kind.SYNTHESIZED,
+    typeAliasDescriptor.source,
 ), SamTypeAliasConstructorDescriptor {
     override val baseDescriptorForSynthetic: ClassDescriptor
         get() = samInterfaceConstructorDescriptor.baseDescriptorForSynthetic

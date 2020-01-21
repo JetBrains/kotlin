@@ -24,7 +24,7 @@ typealias MessageReporter = (ScriptDiagnostic.Severity, String) -> Unit
 class ScriptDefinitionsFromClasspathDiscoverySource(
     private val classpath: List<File>,
     private val hostConfiguration: ScriptingHostConfiguration,
-    private val messageReporter: MessageReporter
+    private val messageReporter: MessageReporter,
 ) : ScriptDefinitionsSource {
 
     override val definitions: Sequence<ScriptDefinition> = run {
@@ -32,7 +32,7 @@ class ScriptDefinitionsFromClasspathDiscoverySource(
             classpath,
             this::class.java.classLoader,
             hostConfiguration,
-            messageReporter
+            messageReporter,
         )
     }
 }
@@ -42,7 +42,7 @@ private const val MANIFEST_RESOURCE_NAME = "/META-INF/MANIFEST.MF"
 fun discoverScriptTemplatesInClassLoader(
     classLoader: ClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): Sequence<ScriptDefinition> {
     val classpath = classLoader.getResources(MANIFEST_RESOURCE_NAME).asSequence().mapNotNull {
         try {
@@ -59,7 +59,7 @@ fun discoverScriptTemplatesInClasspath(
     classpath: List<File>,
     baseClassLoader: ClassLoader?,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): Sequence<ScriptDefinition> {
     // TODO: try to find a way to reduce classpath (and classloader) to minimal one needed to load script definition and its dependencies
     val classpathWithLoader = LazyClasspathWithClassLoader(baseClassLoader) { classpath }
@@ -70,7 +70,7 @@ fun discoverScriptTemplatesInClasspath(
 private fun scriptTemplatesDiscoverySequence(
     classpathWithLoader: ClasspathWithClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): Sequence<ScriptDefinition> {
     return sequence {
         // for jar files the definition class is expected in the same jar as the discovery file
@@ -86,7 +86,7 @@ private fun scriptTemplatesDiscoverySequence(
                                 val definitionNames = jar.entries().asSequence().mapNotNull {
                                     if (it.isDirectory || !it.name.startsWith(SCRIPT_DEFINITION_MARKERS_PATH)) null
                                     else it.name.removePrefix(SCRIPT_DEFINITION_MARKERS_PATH).removeSuffix(
-                                        SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
+                                        SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT,
                                     )
                                 }.toList()
                                 val (loadedDefinitions, notFoundClasses) =
@@ -94,12 +94,12 @@ private fun scriptTemplatesDiscoverySequence(
                                         jar,
                                         classpathWithLoader,
                                         hostConfiguration,
-                                        messageReporter
+                                        messageReporter,
                                     )
                                 if (notFoundClasses.isNotEmpty()) {
                                     messageReporter(
                                         ScriptDiagnostic.Severity.WARNING,
-                                        "Configure scripting: unable to find script definitions [${notFoundClasses.joinToString(", ")}]"
+                                        "Configure scripting: unable to find script definitions [${notFoundClasses.joinToString(", ")}]",
                                     )
                                 }
                                 loadedDefinitions.forEach {
@@ -127,7 +127,7 @@ private fun scriptTemplatesDiscoverySequence(
                 }
             } catch (e: IOException) {
                 messageReporter(
-                    ScriptDiagnostic.Severity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
+                    ScriptDiagnostic.Severity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e",
                 )
             }
         }
@@ -143,14 +143,14 @@ private fun scriptTemplatesDiscoverySequence(
                 remainingDefinitionCandidates = notFoundDefinitions
             } catch (e: IOException) {
                 messageReporter(
-                    ScriptDiagnostic.Severity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
+                    ScriptDiagnostic.Severity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e",
                 )
             }
         }
         if (remainingDefinitionCandidates.isNotEmpty()) {
             messageReporter(
                 ScriptDiagnostic.Severity.WARNING,
-                "The following script definitions are not found in the classpath: [${remainingDefinitionCandidates.joinToString()}]"
+                "The following script definitions are not found in the classpath: [${remainingDefinitionCandidates.joinToString()}]",
             )
         }
     }
@@ -162,7 +162,7 @@ fun loadScriptTemplatesFromClasspath(
     dependenciesClasspath: List<File>,
     baseClassLoader: ClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): Sequence<ScriptDefinition> =
     if (scriptTemplates.isEmpty()) emptySequence()
     else sequence {
@@ -172,7 +172,7 @@ fun loadScriptTemplatesFromClasspath(
                 baseClassLoader,
                 it,
                 hostConfiguration,
-                messageReporter
+                messageReporter,
             )
         }
         initialLoadedDefinitions.forEach {
@@ -201,7 +201,7 @@ fun loadScriptTemplatesFromClasspath(
                         messageReporter(ScriptDiagnostic.Severity.DEBUG, "Configure scripting: Unknown classpath entry $dep")
                         DefinitionsLoadPartitionResult(
                             listOf(),
-                            remainingTemplates
+                            remainingTemplates,
                         )
                     }
                 }
@@ -214,7 +214,7 @@ fun loadScriptTemplatesFromClasspath(
             } catch (e: IOException) {
                 messageReporter(
                     ScriptDiagnostic.Severity.WARNING,
-                    "Configure scripting: unable to process classpath entry $dep: $e"
+                    "Configure scripting: unable to process classpath entry $dep: $e",
                 )
             }
         }
@@ -222,21 +222,21 @@ fun loadScriptTemplatesFromClasspath(
         if (remainingTemplates.isNotEmpty()) {
             messageReporter(
                 ScriptDiagnostic.Severity.WARNING,
-                "Configure scripting: unable to find script definition classes: ${remainingTemplates.joinToString(", ")}"
+                "Configure scripting: unable to find script definition classes: ${remainingTemplates.joinToString(", ")}",
             )
         }
     }
 
 private data class DefinitionsLoadPartitionResult(
     val loaded: List<ScriptDefinition>,
-    val notFound: List<String>
+    val notFound: List<String>,
 )
 
 private inline fun List<String>.partitionLoadDefinitions(
     classpathWithLoader: ClasspathWithClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
     noinline messageReporter: MessageReporter,
-    getBytes: (String) -> ByteArray?
+    getBytes: (String) -> ByteArray?,
 ): DefinitionsLoadPartitionResult {
     val loaded = ArrayList<ScriptDefinition>()
     val notFound = ArrayList<String>()
@@ -248,7 +248,7 @@ private inline fun List<String>.partitionLoadDefinitions(
                 definitionName,
                 classpathWithLoader,
                 hostConfiguration,
-                messageReporter
+                messageReporter,
             )
         }
         when {
@@ -265,7 +265,7 @@ private fun List<String>.partitionLoadJarDefinitions(
     jar: JarFile,
     classpathWithLoader: ClasspathWithClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, hostConfiguration, messageReporter) { definitionName ->
     jar.getJarEntry("${definitionName.replace('.', '/')}.class")?.let { jar.getInputStream(it).readBytes() }
 }
@@ -274,7 +274,7 @@ private fun List<String>.partitionLoadDirDefinitions(
     dir: File,
     classpathWithLoader: ClasspathWithClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, hostConfiguration, messageReporter) { definitionName ->
     File(dir, "${definitionName.replace('.', '/')}.class").takeIf { it.exists() && it.isFile }?.readBytes()
 }
@@ -284,7 +284,7 @@ private fun loadScriptDefinition(
     templateClassName: String,
     classpathWithLoader: ClasspathWithClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): ScriptDefinition? {
     val anns = loadAnnotationsFromClass(templateClassBytes)
     for (ann in anns) {
@@ -295,7 +295,7 @@ private fun loadScriptDefinition(
                 anns,
                 templateClassName,
                 classpathWithLoader.classpath,
-                messageReporter
+                messageReporter,
             )
         } else if (ann.name == ScriptTemplateDefinition::class.java.simpleName) {
             val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
@@ -304,21 +304,21 @@ private fun loadScriptDefinition(
                 KotlinScriptDefinitionFromAnnotatedTemplate(
                     templateClass,
                     hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty(),
-                    classpathWithLoader.classpath
-                )
+                    classpathWithLoader.classpath,
+                ),
             )
         }
         if (def != null) {
             messageReporter(
                 ScriptDiagnostic.Severity.DEBUG,
-                "Configure scripting: Added template $templateClassName from ${classpathWithLoader.classpath.sorted()}"
+                "Configure scripting: Added template $templateClassName from ${classpathWithLoader.classpath.sorted()}",
             )
             return def
         }
     }
     messageReporter(
         ScriptDiagnostic.Severity.WARNING,
-        "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
+        "Configure scripting: $templateClassName is not marked with any known kotlin script annotation",
     )
     return null
 }
@@ -327,7 +327,7 @@ private fun loadScriptDefinition(
     classLoader: ClassLoader,
     template: String,
     hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter
+    messageReporter: MessageReporter,
 ): ScriptDefinition? {
     try {
         val cls = classLoader.loadClass(template)
@@ -339,7 +339,7 @@ private fun loadScriptDefinition(
             }
         messageReporter(
             ScriptDiagnostic.Severity.INFO,
-            "Added script definition $template to configuration: name = ${def.name}"
+            "Added script definition $template to configuration: name = ${def.name}",
         )
         return def
     } catch (ex: ClassNotFoundException) {
@@ -348,7 +348,7 @@ private fun loadScriptDefinition(
         // other exceptions - might be an error
         messageReporter(
             ScriptDiagnostic.Severity.WARNING,
-            "Error on loading script definition $template: ${ex.message}"
+            "Error on loading script definition $template: ${ex.message}",
         )
     }
     return null
@@ -361,7 +361,7 @@ private interface ClasspathWithClassLoader {
 
 private class SimpleClasspathWithClassLoader(
     override val classpath: List<File>,
-    override val classLoader: ClassLoader
+    override val classLoader: ClassLoader,
 ) : ClasspathWithClassLoader
 
 private class LazyClasspathWithClassLoader(baseClassLoader: ClassLoader?, getClasspath: () -> List<File>) : ClasspathWithClassLoader {

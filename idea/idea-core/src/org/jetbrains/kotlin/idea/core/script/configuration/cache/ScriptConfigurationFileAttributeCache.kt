@@ -24,7 +24,7 @@ import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 
 internal class ScriptConfigurationFileAttributeCache(
-    val project: Project
+    val project: Project,
 ) : ScriptConfigurationLoader {
     /**
      * todo(KT-34444): this should be changed to storing all roots in the persistent file cache
@@ -33,7 +33,7 @@ internal class ScriptConfigurationFileAttributeCache(
         isFirstLoad: Boolean,
         ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
-        context: ScriptConfigurationLoadingContext
+        context: ScriptConfigurationLoadingContext,
     ): Boolean {
         if (!isFirstLoad) return false
 
@@ -45,14 +45,14 @@ internal class ScriptConfigurationFileAttributeCache(
             ScriptConfigurationSnapshot(
                 fromFs.inputs,
                 fromFs.reports,
-                FromCompilationConfiguration(KtFileScriptSource(ktFile), fromFs.configuration)
-            )
+                FromCompilationConfiguration(KtFileScriptSource(ktFile), fromFs.configuration),
+            ),
         )
         return fromFs.inputs.isUpToDate(ktFile.project, virtualFile, ktFile)
     }
 
     private fun load(
-        virtualFile: VirtualFile
+        virtualFile: VirtualFile,
     ): ScriptConfigurationSnapshotForFS? {
         val configurationSnapshot = virtualFile.scriptConfigurationSnapshot ?: return null
         debug(virtualFile) { "configuration from fileAttributes = $configurationSnapshot" }
@@ -88,7 +88,7 @@ internal class ScriptConfigurationFileAttributeCache(
             file.scriptConfigurationSnapshot = ScriptConfigurationSnapshotForFS(
                 value.inputs,
                 value.reports,
-                value.configuration?.configuration
+                value.configuration?.configuration,
             )
         }
     }
@@ -97,12 +97,12 @@ internal class ScriptConfigurationFileAttributeCache(
 private class ScriptConfigurationSnapshotForFS(
     val inputs: CachedConfigurationInputs,
     val reports: List<ScriptDiagnostic>,
-    val configuration: ScriptCompilationConfiguration?
+    val configuration: ScriptCompilationConfiguration?,
 ) : Serializable
 
 private var VirtualFile.scriptConfigurationSnapshot: ScriptConfigurationSnapshotForFS? by cachedFileAttribute(
     name = "kotlin-script-dependencies",
     version = 5,
     read = { readObject<ScriptConfigurationSnapshotForFS>() },
-    write = { writeObject<ScriptConfigurationSnapshotForFS>(it) }
+    write = { writeObject<ScriptConfigurationSnapshotForFS>(it) },
 )

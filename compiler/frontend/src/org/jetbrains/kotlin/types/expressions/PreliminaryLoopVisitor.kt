@@ -34,7 +34,7 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
 
     fun clearDataFlowInfoForAssignedLocalVariables(
         dataFlowInfo: DataFlowInfo,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): DataFlowInfo {
         var resultFlowInfo = dataFlowInfo
         val nonTrivialValues = THashSet<DataFlowValue>().apply {

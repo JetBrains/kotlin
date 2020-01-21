@@ -21,14 +21,14 @@ private val testRootTypes: Set<JpsModuleSourceRootType<*>> = setOf(
     JavaSourceRootType.TEST_SOURCE,
     JavaResourceRootType.TEST_RESOURCE,
     TestSourceKotlinRootType,
-    TestResourceKotlinRootType
+    TestResourceKotlinRootType,
 )
 
 private val sourceRootTypes = setOf<JpsModuleSourceRootType<*>>(
     JavaSourceRootType.SOURCE,
     JavaResourceRootType.RESOURCE,
     SourceKotlinRootType,
-    ResourceKotlinRootType
+    ResourceKotlinRootType,
 )
 
 fun JpsModuleSourceRootType<*>.getSourceType(): SourceType? = when (this) {

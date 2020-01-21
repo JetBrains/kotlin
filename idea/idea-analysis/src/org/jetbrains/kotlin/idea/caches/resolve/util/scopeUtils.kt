@@ -36,7 +36,7 @@ fun getResolveScope(file: KtFile): GlobalSearchScope {
     return when (file.getModuleInfo()) {
         is ModuleSourceInfo -> enlargedSearchScope(
             KotlinSourceFilterScope.projectSourceAndClassFiles(file.resolveScope, file.project),
-            file
+            file,
         )
         is ScriptModuleInfo -> file.getModuleInfo().dependencies().map { it.contentScope() }.let {
             GlobalSearchScope.union(it.toTypedArray())

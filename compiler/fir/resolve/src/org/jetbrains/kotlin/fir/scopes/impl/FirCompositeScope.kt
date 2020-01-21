@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.name.Name
 
 class FirCompositeScope(
     val scopes: MutableList<FirScope>,
-    private val reversedPriority: Boolean = false
+    private val reversedPriority: Boolean = false,
 ) : FirScope() {
     constructor(vararg scopes: FirScope) : this(scopes.toMutableList())
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {
@@ -36,7 +36,7 @@ class FirCompositeScope(
     private inline fun <T> processComposite(
         process: FirScope.(Name, (T) -> ProcessorAction) -> ProcessorAction,
         name: Name,
-        noinline processor: (T) -> ProcessorAction
+        noinline processor: (T) -> ProcessorAction,
     ): ProcessorAction {
         val unique = mutableSetOf<T>()
         val scopes = if (reversedPriority) scopes.asReversed() else scopes

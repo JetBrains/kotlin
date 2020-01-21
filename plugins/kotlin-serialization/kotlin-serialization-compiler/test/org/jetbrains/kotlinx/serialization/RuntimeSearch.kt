@@ -17,7 +17,7 @@ class RuntimeLibraryInClasspathTest {
     fun testRuntimeLibraryExists() {
         TestCase.assertNotNull(
             "kotlinx-serialization runtime library is not found. Make sure it is present in test classpath",
-            runtimeLibraryPath
+            runtimeLibraryPath,
         )
     }
 }

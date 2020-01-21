@@ -40,7 +40,7 @@ internal val FirFunctionCall.hasExplicitValueArguments: Boolean
     get() = true // TODO: hasExplicitArgumentList || hasExplicitLambdaArguments
 
 class FirDoubleColonExpressionResolver(
-    private val session: FirSession
+    private val session: FirSession,
 ) {
 
     // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
@@ -57,10 +57,12 @@ class FirDoubleColonExpressionResolver(
     private fun FirExpression.canBeConsideredProperType(): Boolean {
         return when {
             this is FirFunctionCall &&
-                    explicitReceiver?.canBeConsideredProperType() != false -> !hasExplicitValueArguments
+                    explicitReceiver?.canBeConsideredProperType() != false,
+            -> !hasExplicitValueArguments
             this is FirQualifiedAccessExpression &&
                     explicitReceiver?.canBeConsideredProperType() != false &&
-                    calleeReference is FirNamedReference -> true
+                    calleeReference is FirNamedReference,
+            -> true
             this is FirResolvedQualifier -> true
             else -> false
         }
@@ -108,7 +110,7 @@ class FirDoubleColonExpressionResolver(
     private fun <T : DoubleColonLHS> tryResolveLHS(
         doubleColonExpression: FirCallableReferenceAccess,
         criterion: (FirCallableReferenceAccess) -> Boolean,
-        resolve: (FirExpression) -> T?
+        resolve: (FirExpression) -> T?,
     ): T? {
         val expression = doubleColonExpression.explicitReceiver ?: return null
 
@@ -134,7 +136,7 @@ class FirDoubleColonExpressionResolver(
     }
 
     private fun resolveTypeOnLHS(
-        expression: FirExpression
+        expression: FirExpression,
     ): DoubleColonLHS.Type? {
         val resolvedExpression =
             expression as? FirResolvedQualifier
@@ -149,7 +151,7 @@ class FirDoubleColonExpressionResolver(
         val type = ConeClassLikeTypeImpl(
             firClass.symbol.toLookupTag(),
             Array(firClass.typeParameters.size) { ConeStarProjection },
-            isNullable = false // TODO: Use org.jetbrains.kotlin.psi.KtDoubleColonExpression.getHasQuestionMarks
+            isNullable = false, // TODO: Use org.jetbrains.kotlin.psi.KtDoubleColonExpression.getHasQuestionMarks
         )
 
         return DoubleColonLHS.Type(type)

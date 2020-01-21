@@ -18,7 +18,7 @@ abstract class AbstractParcelBytecodeListingTest : AbstractAsmLikeInstructionLis
         addAndroidExtensionsRuntimeLibrary(environment)
         val androidPluginPath = System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
             ?: throw RuntimeException(
-                "Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location"
+                "Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location",
             )
         environment.updateClasspath(listOf(JvmClasspathRoot(File(androidPluginPath, "layoutlib.jar"))))
     }

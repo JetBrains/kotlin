@@ -24,7 +24,7 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         val projDirPath = Paths.get(
             TEST_DATA_PATH,
             "general",
-            workingDirFromAnnotation ?: getTestName(false)
+            workingDirFromAnnotation ?: getTestName(false),
         )
         originalProjectDir = projDirPath.toFile()
         workDir = copyTestDataToTmpDir(originalProjectDir)
@@ -74,9 +74,12 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         protected fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
             for (path in relativePaths) {
                 val outputFile = findFileInOutputDir(module, path)
-                assertTrue("Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(
-                    outputFile.parentFile
-                ), outputFile.exists())
+                assertTrue(
+                    "Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(
+                        outputFile.parentFile,
+                    ),
+                    outputFile.exists(),
+                )
             }
         }
 

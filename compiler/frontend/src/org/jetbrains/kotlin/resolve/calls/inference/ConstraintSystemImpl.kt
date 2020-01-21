@@ -37,7 +37,7 @@ internal class ConstraintSystemImpl(
     private val usedInBounds: Map<TypeVariable, MutableList<TypeBounds.Bound>>,
     private val errors: List<ConstraintError>,
     private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
-    private val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>
+    private val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>,
 ) : ConstraintSystem {
     private val localTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>
         get() = allTypeParameterBounds.filterNot { it.key.isExternal }
@@ -110,7 +110,7 @@ internal class ConstraintSystemImpl(
     private fun getParameterToInferredValueMap(
         typeParameterBounds: Map<TypeVariable, TypeBoundsImpl>,
         getDefaultType: (TypeVariable) -> KotlinType,
-        substituteOriginal: Boolean
+        substituteOriginal: Boolean,
     ): Map<TypeConstructor, TypeProjection> {
         val substitutionContext = HashMap<TypeConstructor, TypeProjection>()
         for ((variable, typeBounds) in typeParameterBounds) {
@@ -145,9 +145,9 @@ internal class ConstraintSystemImpl(
         return TypeSubstitutor.create(
             SubstitutionWithCapturedTypeApproximation(
                 SubstitutionFilteringInternalResolveAnnotations(
-                    TypeConstructorSubstitution.createByConstructorsMap(parameterToInferredValueMap)
-                )
-            )
+                    TypeConstructorSubstitution.createByConstructorsMap(parameterToInferredValueMap),
+                ),
+            ),
         )
     }
 
@@ -178,10 +178,12 @@ internal class ConstraintSystemImpl(
         for ((typeParameter, typeBounds) in allTypeParameterBounds) {
             result.allTypeParameterBounds.put(typeParameter, typeBounds.filter(filterConstraintPosition))
         }
-        result.usedInBounds.putAll(usedInBounds.map {
-            val (variable, bounds) = it
-            variable to bounds.filterTo(arrayListOf<TypeBounds.Bound>()) { filterConstraintPosition(it.position) }
-        }.toMap())
+        result.usedInBounds.putAll(
+            usedInBounds.map {
+                val (variable, bounds) = it
+                variable to bounds.filterTo(arrayListOf<TypeBounds.Bound>()) { filterConstraintPosition(it.position) }
+            }.toMap(),
+        )
         result.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })
 
         result.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })

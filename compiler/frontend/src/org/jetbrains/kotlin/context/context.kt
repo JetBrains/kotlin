@@ -58,29 +58,29 @@ interface MutableModuleContext : ModuleContext {
 
 open class SimpleGlobalContext(
     override val storageManager: StorageManager,
-    override val exceptionTracker: ExceptionTracker
+    override val exceptionTracker: ExceptionTracker,
 ) : GlobalContext
 
 open class GlobalContextImpl(
     storageManager: LockBasedStorageManager,
-    exceptionTracker: ExceptionTracker
+    exceptionTracker: ExceptionTracker,
 ) : SimpleGlobalContext(storageManager, exceptionTracker) {
     override val storageManager: LockBasedStorageManager = super.storageManager as LockBasedStorageManager
 }
 
 class ProjectContextImpl(
     override val project: Project,
-    private val globalContext: GlobalContext
+    private val globalContext: GlobalContext,
 ) : ProjectContext, GlobalContext by globalContext
 
 class ModuleContextImpl(
     override val module: ModuleDescriptor,
-    projectContext: ProjectContext
+    projectContext: ProjectContext,
 ) : ModuleContext, ProjectContext by projectContext
 
 class MutableModuleContextImpl(
     override val module: ModuleDescriptorImpl,
-    projectContext: ProjectContext
+    projectContext: ProjectContext,
 ) : MutableModuleContext, ProjectContext by projectContext
 
 fun GlobalContext(debugName: String): GlobalContextImpl {
@@ -99,7 +99,7 @@ fun ContextForNewModule(
     projectContext: ProjectContext,
     moduleName: Name,
     builtIns: KotlinBuiltIns,
-    platform: TargetPlatform?
+    platform: TargetPlatform?,
 ): MutableModuleContext {
     val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, platform)
     return MutableModuleContextImpl(module, projectContext)

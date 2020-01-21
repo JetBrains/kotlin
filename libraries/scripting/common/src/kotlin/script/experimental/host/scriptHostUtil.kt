@@ -30,8 +30,9 @@ fun getMergedScriptText(script: SourceCode, configuration: ScriptCompilationConf
                 sb.append(
                     originalScriptText.subSequence(
                         curPos,
-                        fragmentStartPos
-                    ).map { if (it == '\r' || it == '\n') it else ' ' }) // preserving lines layout
+                        fragmentStartPos,
+                    ).map { if (it == '\r' || it == '\n') it else ' ' },
+                ) // preserving lines layout
             }
             sb.append(originalScriptText.subSequence(fragmentStartPos, fragmentEndPos))
             prevFragment = fragment

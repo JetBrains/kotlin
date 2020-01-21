@@ -20,12 +20,12 @@ class FirDesignatedBodyResolveTransformer(
     private val designation: Iterator<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession = ScopeSession(),
-    implicitTypeOnly: Boolean = true
+    implicitTypeOnly: Boolean = true,
 ) : FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
     implicitTypeOnly = implicitTypeOnly,
-    scopeSession = scopeSession
+    scopeSession = scopeSession,
 ) {
     override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): CompositeTransformResult<E> {
         if (designation.hasNext()) {
@@ -57,7 +57,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() 
             file.session,
             phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
             implicitTypeOnly = true,
-            scopeSession = scopeSession
+            scopeSession = scopeSession,
         )
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
@@ -77,7 +77,7 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
             file.session,
             phase = FirResolvePhase.BODY_RESOLVE,
             implicitTypeOnly = false,
-            scopeSession = scopeSession
+            scopeSession = scopeSession,
         )
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 
 private class SimpleFlow(
     val approvedInfos: MutableApprovedInfos = mutableMapOf(),
-    val conditionalInfos: ConditionalInfos = HashMultimap.create()
+    val conditionalInfos: ConditionalInfos = HashMultimap.create(),
 ) : Flow {
     override fun getApprovedInfo(variable: RealDataFlowVariable): FirDataFlowInfo? {
         return approvedInfos[variable]
@@ -46,7 +46,7 @@ abstract class SimpleLogicSystem(context: ConeInferenceContext) : LogicSystem(co
         require(flow is SimpleFlow)
         return SimpleFlow(
             flow.approvedInfos.mapValuesTo(mutableMapOf()) { (_, info) -> info.copy() },
-            flow.conditionalInfos.copy()
+            flow.conditionalInfos.copy(),
         )
     }
 
@@ -83,13 +83,13 @@ abstract class SimpleLogicSystem(context: ConeInferenceContext) : LogicSystem(co
         leftFlow: Flow,
         leftVariable: DataFlowVariable,
         rightFlow: Flow,
-        rightVariable: DataFlowVariable
+        rightVariable: DataFlowVariable,
     ): InfoForBooleanOperator {
         require(leftFlow is SimpleFlow && rightFlow is SimpleFlow)
         return InfoForBooleanOperator(
             leftFlow.conditionalInfos[leftVariable],
             rightFlow.conditionalInfos[rightVariable],
-            rightFlow.approvedInfos - leftFlow.approvedInfos
+            rightFlow.approvedInfos - leftFlow.approvedInfos,
         )
     }
 

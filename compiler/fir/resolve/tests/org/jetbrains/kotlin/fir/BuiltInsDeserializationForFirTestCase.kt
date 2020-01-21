@@ -26,7 +26,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
         for (packageFqName in listOf(
             KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
             KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME,
-            KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
+            KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME,
         )) {
             checkPackageContent(packageFqName)
         }
@@ -57,7 +57,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
 
         KotlinTestUtils.assertEqualsToFile(
             File("compiler/fir/resolve/testData/builtIns/" + packageFqName.asString().replace('.', '-') + ".txt"),
-            builder.toString()
+            builder.toString(),
         )
     }
 }

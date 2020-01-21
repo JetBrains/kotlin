@@ -41,7 +41,7 @@ val Qualifier.expression: KtExpression
 
 class PackageQualifier(
     override val referenceExpression: KtSimpleNameExpression,
-    override val descriptor: PackageViewDescriptor
+    override val descriptor: PackageViewDescriptor,
 ) : Qualifier {
     override val classValueReceiver: ReceiverValue? get() = null
     override val staticScope: MemberScope get() = descriptor.memberScope
@@ -51,7 +51,7 @@ class PackageQualifier(
 
 class TypeParameterQualifier(
     override val referenceExpression: KtSimpleNameExpression,
-    override val descriptor: TypeParameterDescriptor
+    override val descriptor: TypeParameterDescriptor,
 ) : Qualifier {
     override val classValueReceiver: ReceiverValue? get() = null
     override val staticScope: MemberScope get() = MemberScope.Empty
@@ -65,7 +65,7 @@ interface ClassifierQualifier : Qualifier {
 
 class ClassQualifier(
     override val referenceExpression: KtSimpleNameExpression,
-    override val descriptor: ClassDescriptor
+    override val descriptor: ClassDescriptor,
 ) : ClassifierQualifier {
     override val classValueReceiver: ClassValueReceiver? = descriptor.classValueType?.let {
         ClassValueReceiver(this, it)
@@ -90,7 +90,7 @@ class ClassQualifier(
 class TypeAliasQualifier(
     override val referenceExpression: KtSimpleNameExpression,
     override val descriptor: TypeAliasDescriptor,
-    val classDescriptor: ClassDescriptor
+    val classDescriptor: ClassDescriptor,
 ) : ClassifierQualifier {
     override val classValueReceiver: ClassValueReceiver?
         get() = classDescriptor.classValueType?.let {
@@ -102,7 +102,7 @@ class TypeAliasQualifier(
             DescriptorUtils.isEnumClass(classDescriptor) ->
                 ChainedMemberScope(
                     "Static scope for typealias ${descriptor.name}",
-                    listOf(classDescriptor.staticScope, EnumEntriesScope())
+                    listOf(classDescriptor.staticScope, EnumEntriesScope()),
                 )
             else ->
                 classDescriptor.staticScope
@@ -119,7 +119,7 @@ class TypeAliasQualifier(
     private inner class EnumEntriesScope : MemberScopeImpl() {
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
         ): Collection<DeclarationDescriptor> =
             classDescriptor.unsubstitutedInnerClassesScope
                 .getContributedDescriptors(kindFilter, nameFilter)
@@ -143,7 +143,7 @@ class TypeAliasQualifier(
 class ClassValueReceiver @JvmOverloads constructor(
     val classQualifier: ClassifierQualifier,
     private val type: KotlinType,
-    original: ClassValueReceiver? = null
+    original: ClassValueReceiver? = null,
 ) : ExpressionReceiver {
     private val original = original ?: this
 

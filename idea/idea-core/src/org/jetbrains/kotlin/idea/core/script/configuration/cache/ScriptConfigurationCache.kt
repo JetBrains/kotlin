@@ -44,7 +44,7 @@ sealed class ScriptConfigurationCacheScope {
 
 data class ScriptConfigurationState(
     val applied: ScriptConfigurationSnapshot? = null,
-    val loaded: ScriptConfigurationSnapshot? = null
+    val loaded: ScriptConfigurationSnapshot? = null,
 ) {
     fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile? = null): Boolean =
         (loaded ?: applied)?.inputs?.isUpToDate(project, file, ktFile) ?: false
@@ -53,7 +53,7 @@ data class ScriptConfigurationState(
 data class ScriptConfigurationSnapshot(
     val inputs: CachedConfigurationInputs,
     val reports: List<ScriptDiagnostic>,
-    val configuration: ScriptCompilationConfigurationWrapper?
+    val configuration: ScriptCompilationConfigurationWrapper?,
 )
 
 interface CachedConfigurationInputs: Serializable {
@@ -65,7 +65,7 @@ interface CachedConfigurationInputs: Serializable {
 
     data class PsiModificationStamp(
         val fileModificationStamp: Long,
-        val psiModificationStamp: Long
+        val psiModificationStamp: Long,
     ) : CachedConfigurationInputs {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean =
             get(project, file, ktFile) == this
@@ -75,7 +75,7 @@ interface CachedConfigurationInputs: Serializable {
                 val actualKtFile = project.getKtFile(file, ktFile)
                 return PsiModificationStamp(
                     file.modificationStamp,
-                    actualKtFile?.modificationStamp ?: 0
+                    actualKtFile?.modificationStamp ?: 0,
                 )
             }
         }

@@ -26,7 +26,7 @@ interface ContractDeserializer {
         proto: ProtoBuf.Function,
         ownerFunction: FunctionDescriptor,
         typeTable: TypeTable,
-        typeDeserializer: TypeDeserializer
+        typeDeserializer: TypeDeserializer,
     ): Pair<CallableDescriptor.UserDataKey<*>, ContractProvider>?
 
     companion object {
@@ -35,7 +35,7 @@ interface ContractDeserializer {
                 proto: ProtoBuf.Function,
                 ownerFunction: FunctionDescriptor,
                 typeTable: TypeTable,
-                typeDeserializer: TypeDeserializer
+                typeDeserializer: TypeDeserializer,
             ): Pair<CallableDescriptor.UserDataKey<*>, Nothing>? = null
         }
     }

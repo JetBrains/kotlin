@@ -21,7 +21,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                   val <rainbow color='ff000004'>local1</rainbow> = ""
                   println(<rainbow color='ff000004'>local1</rainbow> + <rainbow color='ff000003'>args</rainbow>)
              }
-        """
+        """,
         )
     }
 
@@ -31,7 +31,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
              fun main(<rainbow color='ff000003'>args</rainbow>: Array<String>) {
                   listOf("abc", "def").filter { <rainbow color='ff000002'>it</rainbow>.any { <rainbow color='ff000003'>it</rainbow> == 'a' } }
              }
-        """
+        """,
         )
     }
 
@@ -48,7 +48,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                      }
                  }
              }
-            """
+            """,
         )
     }
 
@@ -59,7 +59,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                 val <rainbow color='ff000004'>t</rainbow> = <rainbow color='ff000002'>it</rainbow>
                 <rainbow color='ff000002'>it</rainbow>
             }
-        """
+        """,
         )
     }
 
@@ -73,7 +73,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                     })
                 })
             }
-        """
+        """,
         )
     }
 
@@ -85,7 +85,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
               */
              fun main(<rainbow color='ff000003'>args</rainbow>: Array<String>) {
              }
-        """
+        """,
         )
     }
 
@@ -98,7 +98,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                   println(<rainbow color='ff000004'>foo</rainbow>.bar)
                   System.out.println(<rainbow color='ff000004'>foo</rainbow>)
              }
-        """
+        """,
         )
     }
 
@@ -111,7 +111,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                 println(<rainbow color='ff000003'>a</rainbow>)
                 println(<rainbow color='ff000004'>b</rainbow>)
             }
-        """
+        """,
         )
     }
 
@@ -131,7 +131,7 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                         println(<rainbow color='ff000003'>b</rainbow> + <rainbow color='ff000004'>x</rainbow>)
                     }
                 }
-            }"""
+            }""",
         )
     }
 

@@ -18,7 +18,7 @@ class DslMembersCompletion(
     receiverTypes: List<ReceiverType>?,
     private val collector: LookupElementsCollector,
     private val indicesHelper: KotlinIndicesHelper,
-    private val callTypeAndReceiver: CallTypeAndReceiver<*, *>
+    private val callTypeAndReceiver: CallTypeAndReceiver<*, *>,
 ) {
     /**
      * It is stated that `two implicit receivers of the same DSL are not accessible in the same scope`,
@@ -42,7 +42,7 @@ class DslMembersCompletion(
                     ?: false
             },
             callTypeAndReceiver = callTypeAndReceiver,
-            receiverTypes = listOf(nearestReceiver.type)
+            receiverTypes = listOf(nearestReceiver.type),
         )
         extensionDescriptors.forEach {
             collector.addDescriptorElements(it, elementFactory, notImported = true, withReceiverCast = false, prohibitDuplicates = true)

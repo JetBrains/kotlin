@@ -37,7 +37,7 @@ class BinaryJavaClass(
     private val signatureParser: BinaryClassSignatureParser,
     override var access: Int = 0,
     override val outerClass: JavaClass?,
-    classContent: ByteArray? = null
+    classContent: ByteArray? = null,
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MapBasedJavaAnnotationOwner {
     private lateinit var myInternalName: String
 
@@ -75,7 +75,7 @@ class BinaryJavaClass(
     init {
         ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
             this,
-            ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+            ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES,
         )
     }
 
@@ -120,7 +120,7 @@ class BinaryJavaClass(
         name: String,
         signature: String?,
         superName: String?,
-        interfaces: Array<out String>?
+        interfaces: Array<out String>?,
     ) {
         this.access = this.access or access
         this.myInternalName = name
@@ -209,7 +209,7 @@ class BinaryJavaClass(
         return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.class")?.let {
             BinaryJavaClass(
                 it, fqName.child(name), context.copyForMember(), signatureParser, access, this,
-                classFileContent
+                classFileContent,
             )
         }
     }

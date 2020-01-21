@@ -48,7 +48,7 @@ import java.util.*
 class ConstantExpressionEvaluator(
     internal val module: ModuleDescriptor,
     internal val languageVersionSettings: LanguageVersionSettings,
-    project: Project
+    project: Project,
 ) {
     private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
 
@@ -56,7 +56,7 @@ class ConstantExpressionEvaluator(
         numberType: KotlinType,
         expression: KtExpression?,
         statementFilter: StatementFilter,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         if (expression == null) return
         BindingContextUtils.updateRecordedType(numberType, expression, trace, false)
@@ -74,7 +74,7 @@ class ConstantExpressionEvaluator(
 
     internal fun resolveAnnotationArguments(
         resolvedCall: ResolvedCall<*>,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): Map<Name, ConstantValue<*>> {
         val arguments = HashMap<Name, ConstantValue<*>>()
         for ((parameterDescriptor, resolvedArgument) in resolvedCall.valueArguments.entries) {
@@ -89,7 +89,7 @@ class ConstantExpressionEvaluator(
     fun getAnnotationArgumentValue(
         trace: BindingTrace,
         parameterDescriptor: ValueParameterDescriptor,
-        resolvedArgument: ResolvedValueArgument
+        resolvedArgument: ResolvedValueArgument,
     ): ConstantValue<*>? {
         val varargElementType = parameterDescriptor.varargElementType
         val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
@@ -120,7 +120,7 @@ class ConstantExpressionEvaluator(
         argumentExpression: KtExpression,
         expressionType: KotlinType,
         trace: BindingTrace,
-        useDeprecationWarning: Boolean
+        useDeprecationWarning: Boolean,
     ) {
         val constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.bindingContext)
         if (constant != null && constant.canBeUsedInAnnotations) {
@@ -151,7 +151,7 @@ class ConstantExpressionEvaluator(
         constant: CompileTimeConstant<*>,
         trace: BindingTrace,
         argumentExpression: KtExpression,
-        useDeprecationWarning: Boolean
+        useDeprecationWarning: Boolean,
     ) {
         // array(1, <!>null<!>, 3) - error should be reported on inner expression
         val callArguments = when (argumentExpression) {
@@ -200,7 +200,7 @@ class ConstantExpressionEvaluator(
 
     private fun getArgumentExpressionsForArrayCall(
         expression: KtCallExpression,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): List<KtExpression>? {
         val resolvedCall = expression.getResolvedCall(trace.bindingContext) ?: return null
         return getArgumentExpressionsForArrayLikeCall(resolvedCall)
@@ -208,7 +208,7 @@ class ConstantExpressionEvaluator(
 
     private fun getArgumentExpressionsForCollectionLiteralCall(
         expression: KtCollectionLiteralExpression,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): List<KtExpression>? {
         val resolvedCall = trace[COLLECTION_LITERAL_CALL, expression] ?: return null
         return getArgumentExpressionsForArrayLikeCall(resolvedCall)
@@ -241,7 +241,7 @@ class ConstantExpressionEvaluator(
         resolvedValueArgument: ResolvedValueArgument,
         deprecatedExpectedType: KotlinType,
         expectedType: KotlinType,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): List<CompileTimeConstant<*>> {
         val constants = ArrayList<CompileTimeConstant<*>>()
         for (argument in resolvedValueArgument.arguments) {
@@ -276,7 +276,7 @@ class ConstantExpressionEvaluator(
     fun evaluateExpression(
         expression: KtExpression,
         trace: BindingTrace,
-        expectedType: KotlinType? = TypeUtils.NO_EXPECTED_TYPE
+        expectedType: KotlinType? = TypeUtils.NO_EXPECTED_TYPE,
     ): CompileTimeConstant<*>? {
         val visitor = ConstantExpressionEvaluatorVisitor(this, trace)
         val constant = visitor.evaluate(expression, expectedType) ?: return null
@@ -289,7 +289,7 @@ class ConstantExpressionEvaluator(
     fun evaluateToConstantValue(
         expression: KtExpression,
         trace: BindingTrace,
-        expectedType: KotlinType
+        expectedType: KotlinType,
     ): ConstantValue<*>? {
         return evaluateExpression(expression, trace, expectedType)?.toConstantValue(expectedType)
     }
@@ -298,7 +298,7 @@ class ConstantExpressionEvaluator(
         expression: KtExpression,
         constant: CompileTimeConstant<*>,
         expectedType: KotlinType?,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         if (constant.isError) return
         if (!constant.parameters.isUnsignedNumberLiteral && !constant.parameters.isUnsignedLongNumberLiteral) return
@@ -316,7 +316,7 @@ class ConstantExpressionEvaluator(
             val experimentalities = descriptor.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings)
 
             reportNotAcceptedExperimentalities(
-                experimentalities, expression, languageVersionSettings, trace, EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS
+                experimentalities, expression, languageVersionSettings, trace, EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS,
             )
         }
     }
@@ -324,11 +324,11 @@ class ConstantExpressionEvaluator(
     companion object {
         private class ExperimentalityDiagnostic1(
             val factory: DiagnosticFactory1<PsiElement, String>,
-            val verb: String
+            val verb: String,
         ) : ExperimentalUsageChecker.ExperimentalityDiagnostic {
             override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
                 val defaultMessage = ExperimentalUsageChecker.getDefaultDiagnosticMessage(
-                    "Unsigned literals are experimental and their usages $verb be marked"
+                    "Unsigned literals are experimental and their usages $verb be marked",
                 )
                 trace.reportDiagnosticOnce(factory.on(element, defaultMessage(fqName)))
             }
@@ -336,7 +336,7 @@ class ConstantExpressionEvaluator(
 
         private val EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS = ExperimentalUsageChecker.ExperimentalityDiagnostics(
             warning = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS, "should"),
-            error = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must")
+            error = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must"),
         )
 
         @JvmStatic
@@ -366,7 +366,7 @@ private val DIVISION_OPERATION_NAMES =
 
 private class ConstantExpressionEvaluatorVisitor(
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    private val trace: BindingTrace
+    private val trace: BindingTrace,
 ) : KtVisitor<CompileTimeConstant<*>?, KotlinType>() {
     private val languageVersionSettings = constantExpressionEvaluator.languageVersionSettings
     private val builtIns = constantExpressionEvaluator.module.builtIns
@@ -404,7 +404,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
         override fun visitStringTemplateEntryWithExpression(
             entry: KtStringTemplateEntryWithExpression,
-            data: Nothing?
+            data: Nothing?,
         ): TypedCompileTimeConstant<String>? {
             val expression = entry.expression ?: return null
 
@@ -415,7 +415,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
         override fun visitLiteralStringTemplateEntry(
             entry: KtLiteralStringTemplateEntry,
-            data: Nothing?
+            data: Nothing?,
         ): TypedCompileTimeConstant<String> =
             StringValue(entry.text).wrap()
 
@@ -469,8 +469,8 @@ private class ConstantExpressionEvaluatorVisitor(
                 isUnsignedLongNumberLiteral = isUnsignedLong,
                 usesVariableAsConstant = false,
                 usesNonConstValAsConstant = false,
-                isConvertableConstVal = false
-            )
+                isConvertableConstVal = false,
+            ),
         )
     }
 
@@ -519,8 +519,8 @@ private class ConstantExpressionEvaluatorVisitor(
                     canBeUsedInAnnotation = canBeUsedInAnnotation,
                     usesVariableAsConstant = usesVariableAsConstant,
                     usesNonConstValAsConstant = usesNonConstantVariableAsConstant,
-                    isConvertableConstVal = false
-                )
+                    isConvertableConstVal = false,
+                ),
             )
         else null
     }
@@ -531,7 +531,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
     override fun visitBinaryWithTypeRHSExpression(
         expression: KtBinaryExpressionWithTypeRHS,
-        expectedType: KotlinType?
+        expectedType: KotlinType?,
     ): CompileTimeConstant<*>? {
         val compileTimeConstant = evaluate(expression.left, expectedType)
         if (compileTimeConstant != null) {
@@ -583,8 +583,8 @@ private class ConstantExpressionEvaluatorVisitor(
                     isUnsignedLongNumberLiteral = false,
                     usesVariableAsConstant = leftConstant.usesVariableAsConstant || rightConstant.usesVariableAsConstant,
                     usesNonConstValAsConstant = leftConstant.usesNonConstValAsConstant || rightConstant.usesNonConstValAsConstant,
-                    isConvertableConstVal = false
-                )
+                    isConvertableConstVal = false,
+                ),
             )
         } else {
             return evaluateCall(expression.operationReference, leftExpression, expectedType)
@@ -593,7 +593,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
     override fun visitCollectionLiteralExpression(
         expression: KtCollectionLiteralExpression,
-        expectedType: KotlinType?
+        expectedType: KotlinType?,
     ): CompileTimeConstant<*>? {
         val resolvedCall = trace.bindingContext[COLLECTION_LITERAL_CALL, expression] ?: return null
         return createConstantValueForArrayFunctionCall(resolvedCall)
@@ -602,7 +602,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun evaluateCall(
         callExpression: KtExpression,
         receiverExpression: KtExpression,
-        expectedType: KotlinType?
+        expectedType: KotlinType?,
     ): CompileTimeConstant<*>? {
         val resolvedCall = callExpression.getResolvedCall(trace.bindingContext) ?: return null
         if (!KotlinBuiltIns.isUnderKotlinPackage(resolvedCall.resultingDescriptor)) return null
@@ -631,8 +631,8 @@ private class ConstantExpressionEvaluatorVisitor(
                     !isNumberConversionMethod && isArgumentPure,
                     false, false,
                     usesVariableAsConstant, usesNonConstValAsConstant,
-                    false
-                )
+                    false,
+                ),
             )
         } else if (argumentsEntrySet.size == 1) {
             val (parameter, argument) = argumentsEntrySet.first()
@@ -664,7 +664,7 @@ private class ConstantExpressionEvaluatorVisitor(
             val usesNonConstValAsConstant =
                 usesNonConstValAsConstant(argumentForReceiver.expression) || usesNonConstValAsConstant(argumentForParameter.expression)
             val parameters = CompileTimeConstant.Parameters(
-                canBeUsedInAnnotation, areArgumentsPure, false, false, usesVariableAsConstant, usesNonConstValAsConstant, false
+                canBeUsedInAnnotation, areArgumentsPure, false, false, usesVariableAsConstant, usesNonConstValAsConstant, false,
             )
             return when (resultingDescriptorName) {
                 OperatorNameConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression)?.wrap(parameters)
@@ -700,7 +700,7 @@ private class ConstantExpressionEvaluatorVisitor(
         receiver: OperationArgument,
         parameter: OperationArgument,
         name: String,
-        callExpression: KtExpression
+        callExpression: KtExpression,
     ): Any? {
         return evaluateBinaryAndCheck(name, receiver.ctcType, receiver.value, parameter.ctcType, parameter.value) {
             trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<KtExpression>() ?: callExpression))
@@ -744,8 +744,8 @@ private class ConstantExpressionEvaluatorVisitor(
                         isUnsignedLongNumberLiteral = false,
                         usesVariableAsConstant = true,
                         usesNonConstValAsConstant = !callableDescriptor.isConst,
-                        isConvertableConstVal = isConvertableConstVal
-                    )
+                        isConvertableConstVal = isConvertableConstVal,
+                    ),
                 )
             }
         }
@@ -813,7 +813,7 @@ private class ConstantExpressionEvaluatorVisitor(
                     val descriptor = AnnotationDescriptorImpl(
                         classDescriptor.defaultType,
                         constantExpressionEvaluator.resolveAnnotationArguments(call, trace),
-                        SourceElement.NO_SOURCE
+                        SourceElement.NO_SOURCE,
                     )
                     AnnotationValue(descriptor).wrap()
                 }
@@ -831,7 +831,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun createConstantValueForUnsignedTypeConstructor(
         call: ResolvedCall<*>,
         constructorDescriptor: ConstructorDescriptor,
-        classDescriptor: ClassDescriptor
+        classDescriptor: ClassDescriptor,
     ): TypedCompileTimeConstant<*>? {
         assert(classDescriptor.isInlineClass()) { "Unsigned type should be an inline class type, but it is: $classDescriptor" }
 
@@ -853,7 +853,7 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     private fun createConstantValueForArrayFunctionCall(
-        call: ResolvedCall<*>
+        call: ResolvedCall<*>,
     ): TypedCompileTimeConstant<List<ConstantValue<*>>>? {
         val returnType = call.resultingDescriptor.returnType ?: return null
         val componentType = builtIns.getArrayElementType(returnType)
@@ -866,7 +866,7 @@ private class ConstantExpressionEvaluatorVisitor(
         return ConstantValueFactory.createArrayValue(evaluatedArguments.map { it.toConstantValue(componentType) }, returnType)
             .wrap(
                 usesVariableAsConstant = evaluatedArguments.any { it.usesVariableAsConstant },
-                usesNonConstValAsConstant = arguments.any { it == null || it.usesNonConstValAsConstant }
+                usesNonConstValAsConstant = arguments.any { it == null || it.usesNonConstValAsConstant },
             )
     }
 
@@ -913,7 +913,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
     private fun createOperationArgumentForFirstParameter(
         argument: ResolvedValueArgument,
-        parameter: ValueParameterDescriptor
+        parameter: ValueParameterDescriptor,
     ): OperationArgument? {
         val argumentCompileTimeType = getCompileTimeType(parameter.type) ?: return null
 
@@ -943,7 +943,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun createOperationArgument(
         expression: KtExpression,
         parameterType: KotlinType,
-        compileTimeType: CompileTimeType<*>
+        compileTimeType: CompileTimeType<*>,
     ): OperationArgument? {
         val compileTimeConstant = constantExpressionEvaluator.evaluateExpression(expression, trace, parameterType) ?: return null
         if (compileTimeConstant is TypedCompileTimeConstant && !compileTimeConstant.type.isSubtypeOf(parameterType)) return null
@@ -954,7 +954,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun createConstant(
         value: Any?,
         expectedType: KotlinType?,
-        parameters: CompileTimeConstant.Parameters
+        parameters: CompileTimeConstant.Parameters,
     ): CompileTimeConstant<*>? {
         return if (parameters.isPure || parameters.isUnsignedNumberLiteral) {
             return createCompileTimeConstant(value, parameters, expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
@@ -966,7 +966,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun createCompileTimeConstant(
         value: Any?,
         parameters: CompileTimeConstant.Parameters,
-        expectedType: KotlinType
+        expectedType: KotlinType,
     ): CompileTimeConstant<*>? {
         return when (value) {
             is Byte, is Short, is Int, is Long -> createIntegerCompileTimeConstant((value as Number).toLong(), parameters, expectedType)
@@ -977,7 +977,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun createIntegerCompileTimeConstant(
         value: Long,
         parameters: CompileTimeConstant.Parameters,
-        expectedType: KotlinType
+        expectedType: KotlinType,
     ): CompileTimeConstant<*>? {
         if (parameters.isUnsignedNumberLiteral && !checkAccessibilityOfUnsignedTypes()) {
             return UnsignedErrorValueTypeConstant(value, parameters)
@@ -992,11 +992,11 @@ private class ConstantExpressionEvaluatorVisitor(
                 value,
                 constantExpressionEvaluator.module,
                 parameters,
-                languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+                languageVersionSettings.supportsFeature(LanguageFeature.NewInference),
             )
         }
         val integerValue = ConstantValueFactory.createIntegerConstantValue(
-            value, expectedType, parameters.isUnsignedNumberLiteral
+            value, expectedType, parameters.isUnsignedNumberLiteral,
         )
         if (integerValue != null) {
             return integerValue.wrap(parameters)
@@ -1032,7 +1032,7 @@ private class ConstantExpressionEvaluatorVisitor(
         isUnsignedLong: Boolean = false,
         usesVariableAsConstant: Boolean = false,
         usesNonConstValAsConstant: Boolean = false,
-        isConvertableConstVal: Boolean = false
+        isConvertableConstVal: Boolean = false,
     ): TypedCompileTimeConstant<T> =
         wrap(
             CompileTimeConstant.Parameters(
@@ -1042,8 +1042,8 @@ private class ConstantExpressionEvaluatorVisitor(
                 isUnsignedLong,
                 usesVariableAsConstant,
                 usesNonConstValAsConstant,
-                isConvertableConstVal
-            )
+                isConvertableConstVal,
+            ),
         )
 }
 
@@ -1117,10 +1117,10 @@ internal fun <A, B> binaryOperation(
     b: CompileTimeType<B>,
     functionName: String,
     operation: Function2<A, B, Any>,
-    checker: Function2<BigInteger, BigInteger, BigInteger>
+    checker: Function2<BigInteger, BigInteger, BigInteger>,
 ) = BinaryOperationKey(a, b, functionName) to Pair(
     operation,
-    checker
+    checker,
 ) as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>
 
 @Suppress("UNCHECKED_CAST")
@@ -1128,7 +1128,7 @@ internal fun <A> unaryOperation(
     a: CompileTimeType<A>,
     functionName: String,
     operation: Function1<A, Any>,
-    checker: Function1<Long, Long>
+    checker: Function1<Long, Long>,
 ) = UnaryOperationKey(a, functionName) to Pair(operation, checker) as Pair<Function1<Any?, Any>, Function1<Long, Long>>
 
 internal data class BinaryOperationKey<out A, out B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
@@ -1193,7 +1193,7 @@ fun evaluateBinary(
     receiverTypeStr: String,
     receiverValue: Any,
     parameterTypeStr: String,
-    parameterValue: Any
+    parameterValue: Any,
 ): Any? {
     val receiverType = typeStrToCompileTimeType(receiverTypeStr)
     val parameterType = typeStrToCompileTimeType(parameterTypeStr)
@@ -1207,7 +1207,7 @@ private fun evaluateBinaryAndCheck(
     receiverValue: Any,
     parameterType: CompileTimeType<*>,
     parameterValue: Any,
-    tracer: () -> Unit = {}
+    tracer: () -> Unit = {},
 ): Any? {
     val functions = binaryOperations[BinaryOperationKey(receiverType, parameterType, name)] ?: return null
 

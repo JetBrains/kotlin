@@ -15,7 +15,7 @@ class JavaForKotlinOverridePropertyDescriptor(
     ownerDescriptor: ClassDescriptor,
     getterMethod: SimpleFunctionDescriptor,
     setterMethod: SimpleFunctionDescriptor?,
-    overriddenProperty: PropertyDescriptor
+    overriddenProperty: PropertyDescriptor,
 ) : JavaPropertyDescriptor(
     ownerDescriptor,
     Annotations.EMPTY,
@@ -27,5 +27,5 @@ class JavaForKotlinOverridePropertyDescriptor(
     null,
     CallableMemberDescriptor.Kind.DECLARATION,
     false,
-    null
+    null,
 )

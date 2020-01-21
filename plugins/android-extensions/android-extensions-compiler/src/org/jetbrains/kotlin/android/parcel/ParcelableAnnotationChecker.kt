@@ -72,7 +72,7 @@ class ParcelableAnnotationChecker : CallChecker {
         if (element is KtParameter && PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) is KtPrimaryConstructor) {
             context.trace.reportFromPlugin(
                 ErrorsAndroid.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY.on(annotationEntry),
-                DefaultErrorMessagesAndroid
+                DefaultErrorMessagesAndroid,
             )
         } else if (element !is KtProperty || PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) !is KtClass) {
             context.trace.reportFromPlugin(ErrorsAndroid.INAPPLICABLE_IGNORED_ON_PARCEL.on(annotationEntry), DefaultErrorMessagesAndroid)
@@ -80,10 +80,10 @@ class ParcelableAnnotationChecker : CallChecker {
     }
 
     private fun checkTypeParcelerUsage(
-            resolvedCall: ResolvedCall<*>,
-            annotationEntry: KtAnnotationEntry,
-            context: CallCheckerContext,
-            element: KtModifierListOwner
+        resolvedCall: ResolvedCall<*>,
+        annotationEntry: KtAnnotationEntry,
+        context: CallCheckerContext,
+        element: KtModifierListOwner,
     ) {
         val descriptor = context.trace[BindingContext.DECLARATION_TO_DESCRIPTOR, element] ?: return
         val thisMappedType = resolvedCall.typeArguments.values.takeIf { it.size == 2 }?.first() ?: return
@@ -116,17 +116,18 @@ class ParcelableAnnotationChecker : CallChecker {
                 if (containingClassDescriptor.annotations.any { it.type == thisAnnotationDescriptor.type }) {
                     val reportElement = (annotationEntry.typeReference?.typeElement as? KtUserType)?.referenceExpression ?: annotationEntry
                     context.trace.reportFromPlugin(
-                            ErrorsAndroid.REDUNDANT_TYPE_PARCELER.on(reportElement, containingClass), DefaultErrorMessagesAndroid)
+                        ErrorsAndroid.REDUNDANT_TYPE_PARCELER.on(reportElement, containingClass), DefaultErrorMessagesAndroid,
+                    )
                 }
             }
         }
     }
 
     private fun checkWriteWithUsage(
-            resolvedCall: ResolvedCall<*>,
-            annotationEntry: KtAnnotationEntry,
-            context: CallCheckerContext,
-            element: KtModifierListOwner
+        resolvedCall: ResolvedCall<*>,
+        annotationEntry: KtAnnotationEntry,
+        context: CallCheckerContext,
+        element: KtModifierListOwner,
     ) {
         element as? KtTypeReference ?: return
 
@@ -150,22 +151,26 @@ class ParcelableAnnotationChecker : CallChecker {
         val expectedType = parcelerSuperType.arguments.singleOrNull()?.type ?: return
 
         if (!actualType.isSubtypeOf(expectedType)) {
-            context.trace.reportFromPlugin(ErrorsAndroid.PARCELER_TYPE_INCOMPATIBLE.on(reportElement(), expectedType, actualType),
-                                           DefaultErrorMessagesAndroid)
+            context.trace.reportFromPlugin(
+                ErrorsAndroid.PARCELER_TYPE_INCOMPATIBLE.on(reportElement(), expectedType, actualType),
+                DefaultErrorMessagesAndroid,
+            )
         }
     }
 
     private fun checkIfTheContainingClassIsParcelize(
-            containingClass: KtClassOrObject?,
-            annotationEntry: KtAnnotationEntry,
-            context: CallCheckerContext
+        containingClass: KtClassOrObject?,
+        annotationEntry: KtAnnotationEntry,
+        context: CallCheckerContext,
     ) {
         if (containingClass != null) {
             val containingClassDescriptor = context.trace[BindingContext.CLASS, containingClass]
             if (containingClassDescriptor != null && !containingClassDescriptor.isParcelize) {
                 val reportElement = (annotationEntry.typeReference?.typeElement as? KtUserType)?.referenceExpression ?: annotationEntry
-                context.trace.reportFromPlugin(ErrorsAndroid.CLASS_SHOULD_BE_PARCELIZE.on(reportElement, containingClass),
-                                               DefaultErrorMessagesAndroid)
+                context.trace.reportFromPlugin(
+                    ErrorsAndroid.CLASS_SHOULD_BE_PARCELIZE.on(reportElement, containingClass),
+                    DefaultErrorMessagesAndroid,
+                )
             }
         }
     }

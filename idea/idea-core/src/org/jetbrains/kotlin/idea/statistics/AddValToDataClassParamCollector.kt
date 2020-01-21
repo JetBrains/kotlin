@@ -19,7 +19,7 @@ object AddValToDataClassParamCollector {
             "lagging" to (timeFinished - timeStarted).toString(),
             "is_val_added" to isValAdded.toString(),
             "on_symbol" to symbol,
-            "is_before_typing" to isBeforeTyping.toString()
+            "is_before_typing" to isBeforeTyping.toString(),
         )
 
         KotlinFUSLogger.log(FUSEventGroups.Editor, "AddValToDataClassParameters", data)

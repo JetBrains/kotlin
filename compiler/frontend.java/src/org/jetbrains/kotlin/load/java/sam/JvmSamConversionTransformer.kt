@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 
 class JvmSamConversionTransformer(
     private val samResolver: SamConversionResolver,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
 ) : SamConversionTransformer {
 
     override fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType? =

@@ -37,7 +37,7 @@ private val ALLOWED_CLASSES = setOf(
     FqName("kotlin.reflect.KType"),
     FqName("kotlin.reflect.KTypeProjection"),
     FqName("kotlin.reflect.KTypeProjection.Companion"),
-    FqName("kotlin.reflect.KVariance")
+    FqName("kotlin.reflect.KVariance"),
 )
 
 /**
@@ -45,7 +45,7 @@ private val ALLOWED_CLASSES = setOf(
  */
 abstract class AbstractReflectionApiCallChecker(
     private val reflectionTypes: ReflectionTypes,
-    storageManager: StorageManager
+    storageManager: StorageManager,
 ) : CallChecker {
     protected abstract val isWholeReflectionApiAvailable: Boolean
     protected abstract fun report(element: PsiElement, context: CallCheckerContext)

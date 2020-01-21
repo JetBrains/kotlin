@@ -56,7 +56,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
     private fun checkPackageContent(
         session: FirSession,
         packageFqName: FqName,
-        testDataPath: String
+        testDataPath: String,
     ) {
         val provider = session.firSymbolProvider
 
@@ -86,7 +86,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
 
         KotlinTestUtils.assertEqualsToFile(
             File(testDataDirectoryPath + getTestName(false) + ".txt"),
-            builder.toString()
+            builder.toString(),
         )
     }
 

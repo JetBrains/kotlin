@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrap
 
 internal abstract class ScriptClassRootsCache(
     private val project: Project,
-    val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+    val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>,
 ) {
     protected abstract fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper?
 
@@ -101,15 +101,15 @@ internal abstract class ScriptClassRootsCache(
             if (sdk == null) {
                 return@createWeakMap NonClasspathDirectoriesScope.compose(
                     ScriptConfigurationManager.toVfsRoots(
-                        roots
-                    )
+                        roots,
+                    ),
                 )
             }
 
             return@createWeakMap NonClasspathDirectoriesScope.compose(
                 sdk.rootProvider.getFiles(OrderRootType.CLASSES).toList() + ScriptConfigurationManager.toVfsRoots(
-                    roots
-                )
+                    roots,
+                ),
             )
         }
 

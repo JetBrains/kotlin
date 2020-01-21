@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.Printer
 class SubpackagesImportingScope(
     override val parent: ImportingScope?,
     moduleDescriptor: ModuleDescriptor,
-    fqName: FqName
+    fqName: FqName,
 ) : SubpackagesScope(moduleDescriptor, fqName), ImportingScope by ImportingScope.Empty {
 
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = getPackage(name)
@@ -44,7 +44,7 @@ class SubpackagesImportingScope(
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
-        nameFilter: (Name) -> Boolean
+        nameFilter: (Name) -> Boolean,
     ): Collection<DeclarationDescriptor> =
         emptyList()
 
@@ -52,7 +52,7 @@ class SubpackagesImportingScope(
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
-        changeNamesForAliased: Boolean
+        changeNamesForAliased: Boolean,
     ): Collection<DeclarationDescriptor> = emptyList()
 
     override fun computeImportedNames() = emptySet<Name>()

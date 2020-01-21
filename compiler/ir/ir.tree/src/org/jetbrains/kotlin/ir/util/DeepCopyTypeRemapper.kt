@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 
 class DeepCopyTypeRemapper(
-    private val symbolRemapper: SymbolRemapper
+    private val symbolRemapper: SymbolRemapper,
 ) : TypeRemapper {
 
     lateinit var deepCopy: DeepCopyIrTreeWithSymbols
@@ -36,7 +36,7 @@ class DeepCopyTypeRemapper(
                 type.hasQuestionMark,
                 type.arguments.map { remapTypeArgument(it) },
                 type.annotations.map { it.transform(deepCopy, null) as IrConstructorCall },
-                type.abbreviation?.remapTypeAbbreviation()
+                type.abbreviation?.remapTypeAbbreviation(),
             )
 
     private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
@@ -50,6 +50,6 @@ class DeepCopyTypeRemapper(
             symbolRemapper.getReferencedTypeAlias(typeAlias),
             hasQuestionMark,
             arguments.map { remapTypeArgument(it) },
-            annotations
+            annotations,
         )
 }

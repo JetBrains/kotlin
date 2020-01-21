@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class FirSyntheticCallGenerator(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-    private val callCompleter: FirCallCompleter
+    private val callCompleter: FirCallCompleter,
 ) : BodyResolveComponents by components {
     private val whenSelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
@@ -58,7 +58,7 @@ class FirSyntheticCallGenerator(
         val reference = generateCalleeReferenceWithCandidate(
             whenSelectFunction,
             arguments,
-            SyntheticCallableId.WHEN.callableName
+            SyntheticCallableId.WHEN.callableName,
         ) ?: return null // TODO
 
         return whenExpression.transformCalleeReference(UpdateReference, reference)
@@ -80,7 +80,7 @@ class FirSyntheticCallGenerator(
         val reference = generateCalleeReferenceWithCandidate(
             trySelectFunction,
             arguments,
-            SyntheticCallableId.TRY.callableName
+            SyntheticCallableId.TRY.callableName,
         ) ?: return null // TODO
 
         return tryExpression.transformCalleeReference(UpdateReference, reference)
@@ -93,7 +93,7 @@ class FirSyntheticCallGenerator(
         val reference = generateCalleeReferenceWithCandidate(
             checkNotNullFunction,
             checkNotNullCall.arguments,
-            SyntheticCallableId.CHECK_NOT_NULL.callableName
+            SyntheticCallableId.CHECK_NOT_NULL.callableName,
         ) ?: return null // TODO
 
         return checkNotNullCall.transformCalleeReference(UpdateReference, reference)
@@ -101,13 +101,13 @@ class FirSyntheticCallGenerator(
 
     fun resolveCallableReferenceWithSyntheticOuterCall(
         callableReferenceAccess: FirCallableReferenceAccess,
-        expectedTypeRef: FirTypeRef?
+        expectedTypeRef: FirTypeRef?,
     ): FirCallableReferenceAccess? {
         val arguments = listOf(callableReferenceAccess)
 
         val reference =
             generateCalleeReferenceWithCandidate(
-                idFunction, arguments, SyntheticCallableId.ID.callableName, CallKind.SyntheticIdForCallableReferencesResolution
+                idFunction, arguments, SyntheticCallableId.ID.callableName, CallKind.SyntheticIdForCallableReferencesResolution,
             ) ?: return null
         val fakeCallElement = FirFunctionCallImpl(null).copy(calleeReference = reference, arguments = arguments)
 
@@ -118,7 +118,7 @@ class FirSyntheticCallGenerator(
         function: FirSimpleFunctionImpl,
         arguments: List<FirExpression>,
         name: Name,
-        callKind: CallKind = CallKind.SyntheticSelect
+        callKind: CallKind = CallKind.SyntheticSelect,
     ): FirNamedReferenceWithCandidate? {
         val callInfo = generateCallInfo(name, arguments, callKind)
         val candidate = generateCandidate(callInfo, function)
@@ -133,7 +133,7 @@ class FirSyntheticCallGenerator(
     private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunctionImpl): Candidate =
         CandidateFactory(components, callInfo).createCandidate(
             symbol = function.symbol,
-            explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+            explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
         )
 
     private fun generateCallInfo(name: Name, arguments: List<FirExpression>, callKind: CallKind) = CallInfo(
@@ -145,7 +145,7 @@ class FirSyntheticCallGenerator(
         typeArguments = emptyList(),
         session = session,
         containingFile = file,
-        implicitReceiverStack = implicitReceiverStack
+        implicitReceiverStack = implicitReceiverStack,
     )
 
     private fun generateSyntheticSelectFunction(callableId: CallableId): FirSimpleFunctionImpl {
@@ -187,9 +187,10 @@ class FirSyntheticCallGenerator(
 
         val argumentType =
             FirResolvedTypeRefImpl(
-                null, returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(
-                    ConeNullability.NULLABLE, session.inferenceContext
-                )
+                null,
+                returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(
+                    ConeNullability.NULLABLE, session.inferenceContext,
+                ),
             )
         val typeArgument = FirTypeProjectionWithVarianceImpl(null, returnType, Variance.INVARIANT)
 
@@ -197,7 +198,7 @@ class FirSyntheticCallGenerator(
             session,
             functionSymbol,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
-            typeArgument.typeRef
+            typeArgument.typeRef,
         ).apply {
             typeParameters += typeParameter
             valueParameters += argumentType.toValueParameter(session, "arg")
@@ -223,7 +224,7 @@ class FirSyntheticCallGenerator(
             name = name,
             status = status,
             receiverTypeRef = null,
-            returnTypeRef = returnType
+            returnTypeRef = returnType,
         ).apply {
             this.resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
@@ -240,7 +241,7 @@ class FirSyntheticCallGenerator(
             isCrossinline = false,
             isNoinline = false,
             isVararg = isVararg,
-            symbol = FirVariableSymbol(name)
+            symbol = FirVariableSymbol(name),
         ).apply {
             this.resolvePhase = FirResolvePhase.BODY_RESOLVE
         }

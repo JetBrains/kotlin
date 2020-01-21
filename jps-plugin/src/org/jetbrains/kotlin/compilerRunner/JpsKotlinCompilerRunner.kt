@@ -80,19 +80,19 @@ class JpsKotlinCompilerRunner {
 
     fun classesFqNamesByFiles(
         environment: JpsCompilerEnvironment,
-        files: Set<File>
+        files: Set<File>,
     ): Set<String> = withDaemonOrFallback(
         withDaemon = {
             doWithDaemon(environment) { sessionId, daemon ->
                 daemon.classesFqNamesByFiles(
                     sessionId,
-                    files.toSet() // convert to standard HashSet to avoid serialization issues
+                    files.toSet(), // convert to standard HashSet to avoid serialization issues
                 )
             }
         },
         fallback = {
             CompilerRunnerUtil.invokeClassesFqNames(environment, files)
-        }
+        },
     )
 
     fun runK2MetadataCompiler(
@@ -102,7 +102,7 @@ class JpsKotlinCompilerRunner {
         environment: JpsCompilerEnvironment,
         destination: String,
         classpath: Collection<String>,
-        sourceFiles: Collection<File>
+        sourceFiles: Collection<File>,
     ) {
         val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2MetadataArguments))
 
@@ -122,7 +122,7 @@ class JpsKotlinCompilerRunner {
         k2jvmArguments: K2JVMCompilerArguments,
         compilerSettings: CompilerSettings,
         environment: JpsCompilerEnvironment,
-        moduleFile: File
+        moduleFile: File,
     ) {
         val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jvmArguments))
         setupK2JvmArguments(moduleFile, arguments)
@@ -141,7 +141,7 @@ class JpsKotlinCompilerRunner {
         sourceMapRoots: Collection<File>,
         libraries: List<String>,
         friendModules: List<String>,
-        outputFile: File
+        outputFile: File,
     ) {
         log.debug("K2JS: common arguments: " + ArgumentUtils.convertArgumentsToStringList(commonArguments))
         log.debug("K2JS: JS arguments: " + ArgumentUtils.convertArgumentsToStringList(k2jsArguments))
@@ -164,13 +164,13 @@ class JpsKotlinCompilerRunner {
     private fun compileWithDaemonOrFallback(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ) {
         log.debug("Using kotlin-home = " + environment.kotlinPaths.homePath)
 
         withDaemonOrFallback(
             withDaemon = { compileWithDaemon(compilerClassName, compilerArgs, environment) },
-            fallback = { fallbackCompileStrategy(compilerArgs, compilerClassName, environment) }
+            fallback = { fallbackCompileStrategy(compilerArgs, compilerClassName, environment) },
         )
     }
 
@@ -186,7 +186,7 @@ class JpsKotlinCompilerRunner {
     private fun compileWithDaemon(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ): Int? {
         val targetPlatform = when (compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
@@ -201,7 +201,7 @@ class JpsKotlinCompilerRunner {
             targetPlatform,
             reportCategories(verbose),
             reportSeverity(verbose),
-            requestedCompilationResults = emptyArray()
+            requestedCompilationResults = emptyArray(),
         )
         return doWithDaemon(environment) { sessionId, daemon ->
             environment.withProgressReporter { progress ->
@@ -211,7 +211,7 @@ class JpsKotlinCompilerRunner {
                     withAdditionalCompilerArgs(compilerArgs),
                     options,
                     JpsCompilerServicesFacadeImpl(environment),
-                    null
+                    null,
                 )
             }
         }
@@ -226,7 +226,7 @@ class JpsKotlinCompilerRunner {
 
     private fun <T> doWithDaemon(
         environment: JpsCompilerEnvironment,
-        fn: (sessionId: Int, daemon: CompileService) -> CompileService.CallResult<T>
+        fn: (sessionId: Int, daemon: CompileService) -> CompileService.CallResult<T>,
     ): T? {
         log.debug("Try to connect to daemon")
         val connection = getDaemonConnection(environment)
@@ -269,7 +269,7 @@ class JpsKotlinCompilerRunner {
     private fun fallbackCompileStrategy(
         compilerArgs: CommonCompilerArguments,
         compilerClassName: String,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ) {
         if ("true" == System.getProperty("kotlin.jps.tests") && "true" == System.getProperty(FAIL_ON_FALLBACK_PROPERTY)) {
             error("Cannot compile with Daemon, see logs bellow. Fallback strategy is disabled in tests")
@@ -314,7 +314,7 @@ class JpsKotlinCompilerRunner {
         _commonSources: Collection<File>,
         _libraries: List<String>,
         _friendModules: List<String>,
-        settings: K2JSCompilerArguments
+        settings: K2JSCompilerArguments,
     ) {
         with(settings) {
             noStdlib = true
@@ -358,7 +358,7 @@ class JpsKotlinCompilerRunner {
                     environment.messageCollector,
                     log.isDebugEnabled,
                     daemonOptions,
-                    additionalJvmParams.toTypedArray()
+                    additionalJvmParams.toTypedArray(),
                 )
             }
         }

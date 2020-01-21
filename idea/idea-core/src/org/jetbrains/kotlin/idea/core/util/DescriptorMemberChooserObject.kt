@@ -39,11 +39,11 @@ import javax.swing.Icon
 
 open class DescriptorMemberChooserObject(
     psiElement: PsiElement,
-    open val descriptor: DeclarationDescriptor
+    open val descriptor: DeclarationDescriptor,
 ) : PsiElementMemberChooserObject(
     psiElement,
     getText(descriptor),
-    getIcon(psiElement, descriptor)
+    getIcon(psiElement, descriptor),
 ), ClassMemberWithElement {
 
     override fun getParentNodeDelegate(): MemberChooserObject {

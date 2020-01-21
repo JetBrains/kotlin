@@ -40,13 +40,13 @@ class StaticMembers(
     private val bindingContext: BindingContext,
     private val lookupElementFactory: LookupElementFactory,
     private val resolutionFacade: ResolutionFacade,
-    private val moduleDescriptor: ModuleDescriptor
+    private val moduleDescriptor: ModuleDescriptor,
 ) {
     fun addToCollection(
         collection: MutableCollection<LookupElement>,
         expectedInfos: Collection<ExpectedInfo>,
         context: KtSimpleNameExpression,
-        enumEntriesToSkip: Set<DeclarationDescriptor>
+        enumEntriesToSkip: Set<DeclarationDescriptor>,
     ) {
         val expectedInfosByClass = HashMap<ClassDescriptor, MutableList<ExpectedInfo>>()
         for (expectedInfo in expectedInfos) {
@@ -65,7 +65,7 @@ class StaticMembers(
                         listOf(expectedInfo),
                         context,
                         enumEntriesToSkip,
-                        SmartCompletionItemPriority.DELEGATES_STATIC_MEMBER
+                        SmartCompletionItemPriority.DELEGATES_STATIC_MEMBER,
                     )
                 }
             }
@@ -79,7 +79,7 @@ class StaticMembers(
                     expectedInfosForClass,
                     context,
                     enumEntriesToSkip,
-                    SmartCompletionItemPriority.STATIC_MEMBER
+                    SmartCompletionItemPriority.STATIC_MEMBER,
                 )
             }
         }
@@ -91,14 +91,14 @@ class StaticMembers(
         expectedInfos: Collection<ExpectedInfo>,
         context: KtSimpleNameExpression,
         enumEntriesToSkip: Set<DeclarationDescriptor>,
-        defaultPriority: SmartCompletionItemPriority
+        defaultPriority: SmartCompletionItemPriority,
     ) {
         fun processMember(descriptor: DeclarationDescriptor) {
             if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(
                     context,
                     null,
                     bindingContext,
-                    resolutionFacade
+                    resolutionFacade,
                 )
             ) return
 
@@ -143,7 +143,7 @@ class StaticMembers(
 
     private fun createLookupElements(
         memberDescriptor: DeclarationDescriptor,
-        priority: SmartCompletionItemPriority
+        priority: SmartCompletionItemPriority,
     ): Collection<LookupElement> {
         return lookupElementFactory.createStandardLookupElementsForDescriptor(memberDescriptor, useReceiverTypes = false)
             .map {

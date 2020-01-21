@@ -116,7 +116,8 @@ private fun Any.isJavacComponent(): Boolean {
     @Suppress("Reformat")
     return when (this) {
         is Processor, is ProcessingEnvironment, is RoundEnvironment,
-            is Filer, is Messager, is Elements, is Types, is AnnotatedConstruct -> true
+        is Filer, is Messager, is Elements, is Types, is AnnotatedConstruct,
+        -> true
         else -> false
     }
 }
@@ -125,7 +126,8 @@ private fun Any.isPrimitiveOrString(): Boolean {
     @Suppress("Reformat")
     return when (this) {
         is Boolean, is Byte, is Short, is Int, is Long,
-            is Char, is Float, is Double, is Void, is String -> true
+        is Char, is Float, is Double, is Void, is String,
+        -> true
         else -> false
     }
 }

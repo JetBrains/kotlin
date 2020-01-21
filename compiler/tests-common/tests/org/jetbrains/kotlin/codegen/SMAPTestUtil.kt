@@ -35,11 +35,14 @@ object SMAPTestUtil {
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.mapNotNull { outputFile ->
             var debugInfo: String? = null
-            ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                override fun visitSource(source: String?, debug: String?) {
-                    debugInfo = debug
-                }
-            }, 0)
+            ClassReader(outputFile.asByteArray()).accept(
+                object : ClassVisitor(Opcodes.API_VERSION) {
+                    override fun visitSource(source: String?, debug: String?) {
+                        debugInfo = debug
+                    }
+                },
+                0,
+            )
 
             SMAPAndFile(debugInfo, outputFile.sourceFiles.single(), outputFile.relativePath)
         }
@@ -105,7 +108,7 @@ object SMAPTestUtil {
                 conflictingLines.joinToString(separator = "\n") {
                     "Conflicting mapping for line ${it.key} in ${it.value.joinToString(transform = Any::toString)}"
                 },
-                conflictingLines.isEmpty()
+                conflictingLines.isEmpty(),
             )
         }
     }

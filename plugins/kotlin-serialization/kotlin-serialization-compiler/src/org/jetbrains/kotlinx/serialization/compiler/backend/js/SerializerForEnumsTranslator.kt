@@ -18,14 +18,14 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 class SerializerForEnumsTranslator(
     descriptor: ClassDescriptor,
     translator: DeclarationBodyVisitor,
-    context: TranslationContext
+    context: TranslationContext,
 ) : SerializerJsTranslator(descriptor, translator, context) {
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
         val ordinalProp = serializableDescriptor.unsubstitutedMemberScope.getContributedVariables(
             Name.identifier("ordinal"),
-            NoLookupLocation.FROM_BACKEND
+            NoLookupLocation.FROM_BACKEND,
         ).single()
         val ordinalRef = JsNameRef(context.getNameForDescriptor(ordinalProp), JsNameRef(jsFun.parameters[1].name))
         val encodeEnumF = ctx.getNameForDescriptor(encoderClass.getFuncDesc(CallingConventions.encodeEnum).single())
@@ -46,14 +46,14 @@ class SerializerForEnumsTranslator(
     override fun instantiateNewDescriptor(
         context: TranslationContext,
         correctThis: JsExpression,
-        baseSerialDescImplClass: ClassDescriptor
+        baseSerialDescImplClass: ClassDescriptor,
     ): JsExpression {
         val serialDescForEnums = serializerDescriptor
             .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM)
         val ctor = serialDescForEnums.unsubstitutedPrimaryConstructor!!
         return JsNew(
             context.getInnerReference(ctor),
-            listOf(JsStringLiteral(serialName))
+            listOf(JsStringLiteral(serialName)),
         )
     }
 
@@ -61,7 +61,7 @@ class SerializerForEnumsTranslator(
         context: TranslationContext,
         serialDescriptorInThis: JsNameRef,
         addElementFunction: FunctionDescriptor,
-        pushAnnotationFunction: FunctionDescriptor
+        pushAnnotationFunction: FunctionDescriptor,
     ) {
         val enumEntries = serializableDescriptor.enumEntries()
         for (entry in enumEntries) {
@@ -69,7 +69,7 @@ class SerializerForEnumsTranslator(
             val serialName = entry.annotations.serialNameValue ?: entry.name.toString()
             val call = JsInvocation(
                 JsNameRef(context.getNameForDescriptor(addElementFunction), serialDescriptorInThis),
-                JsStringLiteral(serialName)
+                JsStringLiteral(serialName),
             )
             translator.addInitializerStatement(call.makeStmt())
             // serialDesc.pushAnnotation(...)

@@ -58,7 +58,7 @@ abstract class AbstractResolveByStubTest : KotlinLightCodeInsightFixtureTestCase
                         annotationDescriptor !is PossiblyExternalAnnotationDescriptor || !annotationDescriptor.isIdeExternalAnnotation
                     }
                 },
-            fileToCompareTo
+            fileToCompareTo,
         )
     }
 }

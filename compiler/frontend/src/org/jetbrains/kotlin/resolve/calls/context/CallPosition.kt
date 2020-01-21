@@ -30,7 +30,7 @@ sealed class CallPosition {
     class ValueArgumentPosition(
         val resolvedCall: ResolvedCall<*>,
         val valueParameter: ValueParameterDescriptor,
-        val valueArgument: ValueArgument
+        val valueArgument: ValueArgument,
     ) : CallPosition()
 
     class PropertyAssignment(val leftPart: KtExpression?) : CallPosition()

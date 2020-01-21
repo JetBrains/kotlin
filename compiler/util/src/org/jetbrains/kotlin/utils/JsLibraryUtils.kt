@@ -56,7 +56,7 @@ object JsLibraryUtils {
             lib.name.endsWith(KotlinJavascriptMetadataUtils.JS_EXT) -> {
                 lib.runIfFileExists(lib.path, action)
                 val jsFile = lib.withReplacedExtensionOrNull(
-                        KotlinJavascriptMetadataUtils.META_JS_SUFFIX, KotlinJavascriptMetadataUtils.JS_EXT
+                    KotlinJavascriptMetadataUtils.META_JS_SUFFIX, KotlinJavascriptMetadataUtils.JS_EXT,
                 )
                 jsFile?.runIfFileExists(jsFile.path, action)
             }
@@ -78,15 +78,18 @@ object JsLibraryUtils {
     private fun File.correspondingSourceMapFile(): File = File(parentFile, name + ".map")
 
     private fun processDirectory(dir: File, action: (JsLibrary) -> Unit) {
-        FileUtil.processFilesRecursively(dir, Processor<File> { file ->
-            val relativePath = FileUtil.getRelativePath(dir, file)
-                               ?: throw IllegalArgumentException("relativePath should not be null $dir $file")
-            if (relativePath.endsWith(KotlinJavascriptMetadataUtils.JS_EXT)) {
-                val suggestedRelativePath = getSuggestedPath(relativePath) ?: return@Processor true
-                file.runIfFileExists(suggestedRelativePath, action)
-            }
-            true
-        })
+        FileUtil.processFilesRecursively(
+            dir,
+            Processor<File> { file ->
+                val relativePath = FileUtil.getRelativePath(dir, file)
+                    ?: throw IllegalArgumentException("relativePath should not be null $dir $file")
+                if (relativePath.endsWith(KotlinJavascriptMetadataUtils.JS_EXT)) {
+                    val suggestedRelativePath = getSuggestedPath(relativePath) ?: return@Processor true
+                    file.runIfFileExists(suggestedRelativePath, action)
+                }
+                true
+            },
+        )
     }
 
     private fun traverseDirectory(dir: File, action: (JsLibrary) -> Unit) {

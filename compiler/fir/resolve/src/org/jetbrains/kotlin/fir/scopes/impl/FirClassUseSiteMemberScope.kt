@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 class FirClassUseSiteMemberScope(
     session: FirSession,
     superTypesScope: FirScope,
-    declaredMemberScope: FirScope
+    declaredMemberScope: FirScope,
 ) : AbstractFirUseSiteMemberScope(session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {

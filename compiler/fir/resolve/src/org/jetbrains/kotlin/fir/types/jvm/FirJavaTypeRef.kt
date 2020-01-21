@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class FirJavaTypeRef(
     annotations: List<FirAnnotationCall>,
-    val type: JavaType
+    val type: JavaType,
 ) : FirUserTypeRefImpl(source = null, isMarkedNullable = false) {
     init {
         this.annotations += annotations

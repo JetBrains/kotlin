@@ -52,10 +52,10 @@ import javax.inject.Inject
 class TypeTemplate(
     val typeVariable: TypeVariable,
     val coroutineInferenceData: CoroutineInferenceData,
-    nullable: Boolean = true
+    nullable: Boolean = true,
 ) : FlexibleType(
     typeVariable.originalTypeParameter.builtIns.nothingType,
-    typeVariable.originalTypeParameter.builtIns.anyType.makeNullableAsSpecified(nullable)
+    typeVariable.originalTypeParameter.builtIns.anyType.makeNullableAsSpecified(nullable),
 ) {
     override fun replaceAnnotations(newAnnotations: Annotations) = this
 
@@ -134,7 +134,7 @@ class CoroutineInferenceData {
 
 class CoroutineInferenceSupport(
     val argumentTypeResolver: ArgumentTypeResolver,
-    val expressionTypingServices: ExpressionTypingServices
+    val expressionTypingServices: ExpressionTypingServices,
 ) {
     @set:Inject
     lateinit var callCompleter: CallCompleter
@@ -146,7 +146,7 @@ class CoroutineInferenceSupport(
         valueArgument: ValueArgument,
         csBuilder: ConstraintSystem.Builder,
         context: CallCandidateResolutionContext<*>,
-        lambdaExpectedType: KotlinType
+        lambdaExpectedType: KotlinType,
     ) {
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
         if (!checkExpectedTypeForArgument(lambdaExpectedType)) return
@@ -184,7 +184,7 @@ class CoroutineInferenceSupport(
             approximatedLambdaType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType),
             parameterNames = null, // TODO: parameterNames
             returnType = approximatedLambdaType.getReturnTypeFromFunctionType(),
-            suspendFunction = true
+            suspendFunction = true,
         )
 
         if (hasUnknownFunctionParameter(newExpectedType)) return
@@ -193,7 +193,7 @@ class CoroutineInferenceSupport(
 
         // this trace shouldn't be committed
         val temporaryForCoroutine = TemporaryTraceAndCache.create(
-            context, "trace for type argument inference for coroutine", functionLiteral
+            context, "trace for type argument inference for coroutine", functionLiteral,
         )
 
         val newContext = context.replaceExpectedType(newExpectedType)
@@ -214,7 +214,7 @@ class CoroutineInferenceSupport(
     fun checkCoroutineCalls(
         context: BasicCallResolutionContext,
         tracingStrategy: TracingStrategy,
-        overloadResults: OverloadResolutionResultsImpl<*>
+        overloadResults: OverloadResolutionResultsImpl<*>,
     ) {
         val inferenceData = overloadResults.getCoroutineInferenceData() ?: return
 
@@ -249,14 +249,14 @@ class CoroutineInferenceSupport(
         resultingCall.extensionReceiver?.let { actualReceiver ->
             with(NewKotlinTypeChecker.Default) {
                 CoroutineTypeCheckerContext(allowOnlyTrivialConstraints = allowOnlyTrivialConstraintsForReceiver).isSubtypeOf(
-                    actualReceiver.type.unwrap(), extensionReceiver.value.type.unwrap()
+                    actualReceiver.type.unwrap(), extensionReceiver.value.type.unwrap(),
                 )
             }
         }
     }
 
     private class CoroutineTypeCheckerContext(
-        private val allowOnlyTrivialConstraints: Boolean
+        private val allowOnlyTrivialConstraints: Boolean,
     ) : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) {
 
         override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
@@ -270,7 +270,7 @@ class CoroutineInferenceSupport(
 
     private fun forceInferenceForArguments(
         context: CallResolutionContext<*>,
-        callback: (argument: ValueArgument, argumentType: KotlinType) -> Unit
+        callback: (argument: ValueArgument, argumentType: KotlinType) -> Unit,
     ) {
         val infoForArguments = context.dataFlowInfoForArguments
         val call = context.call
@@ -285,7 +285,7 @@ class CoroutineInferenceSupport(
 
     private fun getArgumentTypeInfo(
         expression: KtExpression,
-        context: CallResolutionContext<*>
+        context: CallResolutionContext<*>,
     ): KotlinTypeInfo {
         getFunctionLiteralArgumentIfAny(expression, context)?.let {
             return argumentTypeResolver.getFunctionLiteralTypeInfo(expression, it, context, RESOLVE_FUNCTION_ARGUMENTS, false)
@@ -328,7 +328,7 @@ private fun isGoodCallForOldCoroutines(resultingDescriptor: CallableDescriptor):
 fun isCoroutineCallWithAdditionalInference(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): Boolean {
     val parameterHasOptIn = if (languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference))
         parameterDescriptor.hasBuilderInferenceAnnotation() && parameterDescriptor.hasFunctionOrSuspendFunctionType

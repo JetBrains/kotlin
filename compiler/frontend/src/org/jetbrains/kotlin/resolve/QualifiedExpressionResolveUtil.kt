@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
 fun resolveQualifierAsReceiverInExpression(
-    qualifier: Qualifier, selector: DeclarationDescriptor?, context: ExpressionTypingContext
+    qualifier: Qualifier, selector: DeclarationDescriptor?, context: ExpressionTypingContext,
 ): DeclarationDescriptor {
     val referenceTarget = resolveQualifierReferenceTarget(qualifier, selector, context)
 
@@ -38,7 +38,7 @@ fun resolveQualifierAsReceiverInExpression(
 }
 
 fun resolveQualifierAsStandaloneExpression(
-    qualifier: Qualifier, context: ExpressionTypingContext
+    qualifier: Qualifier, context: ExpressionTypingContext,
 ): DeclarationDescriptor {
     val referenceTarget = resolveQualifierReferenceTarget(qualifier, null, context)
 
@@ -69,7 +69,7 @@ fun resolveQualifierAsStandaloneExpression(
 private fun resolveQualifierReferenceTarget(
     qualifier: Qualifier,
     selector: DeclarationDescriptor?,
-    context: ExpressionTypingContext
+    context: ExpressionTypingContext,
 ): DeclarationDescriptor {
     if (qualifier is TypeParameterQualifier) {
         return qualifier.descriptor

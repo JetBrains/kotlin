@@ -16,7 +16,7 @@ class SimpleSyntheticPropertyDescriptor(
     name: String,
     type: KotlinType,
     isVar: Boolean = false,
-    visibility: Visibility = Visibilities.PRIVATE
+    visibility: Visibility = Visibilities.PRIVATE,
 ) : PropertyDescriptorImpl(
     owner,
     null,
@@ -27,8 +27,8 @@ class SimpleSyntheticPropertyDescriptor(
     Name.identifier(name),
     CallableMemberDescriptor.Kind.SYNTHESIZED,
     owner.source,
-    false, false, false, false, false, false
-    ) {
+    false, false, false, false, false, false,
+) {
 
     private val _backingField = FieldDescriptorImpl(Annotations.EMPTY, this)
 

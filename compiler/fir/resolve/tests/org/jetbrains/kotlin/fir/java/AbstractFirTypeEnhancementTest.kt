@@ -85,9 +85,9 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             newConfiguration(
-                ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, classpath, listOf(javaFilesDir)
+                ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, classpath, listOf(javaFilesDir),
             ),
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
+            EnvironmentConfigFiles.JVM_CONFIG_FILES,
         ).apply {
             Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
@@ -126,12 +126,13 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
                     return targetFile
                 }
-            }, ""
+            },
+            "",
         )
         environment = createEnvironment(content)
         val virtualFiles = srcFiles.map {
             object : LightVirtualFile(
-                it.name, JavaLanguage.INSTANCE, StringUtilRt.convertLineSeparators(it.readText())
+                it.name, JavaLanguage.INSTANCE, StringUtilRt.convertLineSeparators(it.readText()),
             ) {
                 override fun getPath(): String {
                     //TODO: patch LightVirtualFile

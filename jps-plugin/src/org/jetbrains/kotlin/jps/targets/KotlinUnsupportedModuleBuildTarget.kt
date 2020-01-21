@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 
 class KotlinUnsupportedModuleBuildTarget(
     kotlinContext: KotlinCompileContext,
-    jpsModuleBuildTarget: ModuleBuildTarget
+    jpsModuleBuildTarget: ModuleBuildTarget,
 ) : KotlinModuleBuildTarget<BuildMetaInfo>(kotlinContext, jpsModuleBuildTarget) {
     val kind = module.platform?.idePlatformKind?.name
 
@@ -41,7 +41,7 @@ class KotlinUnsupportedModuleBuildTarget(
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ): Boolean {
         shouldNotBeCalled()
     }

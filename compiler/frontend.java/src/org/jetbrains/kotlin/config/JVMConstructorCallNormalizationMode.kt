@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.config
 enum class JVMConstructorCallNormalizationMode(
     val description: String,
     val isEnabled: Boolean,
-    val shouldPreserveClassInitialization: Boolean
+    val shouldPreserveClassInitialization: Boolean,
 ) {
     DISABLE("disable", false, false),
     ENABLE("enable", true, false),

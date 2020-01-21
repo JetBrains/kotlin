@@ -78,7 +78,7 @@ private fun getOrCreateWrapper(javaBaseClass: PsiClass, kotlinFqName: FqName, is
     return userDataStorage.get() ?: KtLightMutabilityPlatformWrapper(
         javaBaseClass,
         kotlinFqName,
-        isMutable
+        isMutable,
     ).also { userDataStorage.set(it) }
 }
 
@@ -88,7 +88,7 @@ private var PsiClass.mutableWrapper: KtLightMutabilityPlatformWrapper? by UserDa
 class KtLightMutabilityPlatformWrapper(
     private val javaBaseClass: PsiClass,
     private val kotlinInterfaceFqName: FqName,
-    private val isMutable: Boolean
+    private val isMutable: Boolean,
 ) : KtAbstractContainerWrapper(kotlinInterfaceFqName, javaBaseClass), PsiClass {
     private val _methods by lazyPub { calcMethods() }
 
@@ -146,8 +146,8 @@ class KtLightMutabilityPlatformWrapper(
             name = "removeAt",
             signature = MethodSignature(
                 parameterTypes = listOf(PsiType.INT),
-                returnType = singleTypeParameterAsType()
-            )
+                returnType = singleTypeParameterAsType(),
+            ),
         )
     }
 
@@ -159,14 +159,14 @@ class KtLightMutabilityPlatformWrapper(
         hasImplementation: Boolean = false,
         name: String = this.name,
         substituteObjectWith: PsiType? = null,
-        signature: MethodSignature? = null
+        signature: MethodSignature? = null,
     ) = KtLightMethodWrapper(
         this@KtLightMutabilityPlatformWrapper, this@wrap,
         isFinal = makeFinal,
         name = name,
         substituteObjectWith = substituteObjectWith,
         providedSignature = signature,
-        hasImplementation = hasImplementation
+        hasImplementation = hasImplementation,
     )
 
     private fun javaUtilMapMethodWithSpecialSignature(method: PsiMethod): KtLightMethodWrapper? {
@@ -176,29 +176,29 @@ class KtLightMutabilityPlatformWrapper(
         val signature = when (method.name) {
             "get" -> MethodSignature(
                 parameterTypes = listOf(k),
-                returnType = v
+                returnType = v,
             )
             "getOrDefault" -> MethodSignature(
                 parameterTypes = listOf(k, v),
-                returnType = v
+                returnType = v,
             )
             "containsKey" -> MethodSignature(
                 parameterTypes = listOf(k),
-                returnType = PsiType.BOOLEAN
+                returnType = PsiType.BOOLEAN,
             )
             "containsValue" -> MethodSignature(
                 parameterTypes = listOf(v),
-                returnType = PsiType.BOOLEAN
+                returnType = PsiType.BOOLEAN,
             )
             "remove" ->
                 when (method.parameterList.parametersCount) {
                     1 -> MethodSignature(
                         parameterTypes = listOf(k),
-                        returnType = v
+                        returnType = v,
                     )
                     2 -> MethodSignature(
                         parameterTypes = listOf(k, v),
-                        returnType = PsiType.BOOLEAN
+                        returnType = PsiType.BOOLEAN,
                     )
                     else -> null
                 }
@@ -235,7 +235,7 @@ private class KtLightMethodWrapper(
     private val isFinal: Boolean,
     private val hasImplementation: Boolean,
     private val substituteObjectWith: PsiType?,
-    private val providedSignature: MethodSignature?
+    private val providedSignature: MethodSignature?,
 ) : PsiMethod, KtLightElementBase(containingClass) {
 
     init {
@@ -272,8 +272,8 @@ private class KtLightMethodWrapper(
                 addParameter(
                     LightParameter(
                         paramFromJava.name ?: "p$index", type,
-                        this@KtLightMethodWrapper, KotlinLanguage.INSTANCE, paramFromJava.isVarArgs
-                    )
+                        this@KtLightMethodWrapper, KotlinLanguage.INSTANCE, paramFromJava.isVarArgs,
+                    ),
                 )
             }
         }
@@ -328,9 +328,11 @@ abstract class KtAbstractContainerWrapper(internal val fqName: FqName, private v
         }
         .toMap()
 
-    internal val substitutor = createSubstitutor(superClassTypeParametersToMyTypeParameters.mapValues {
-        it.value.asType()
-    })
+    internal val substitutor = createSubstitutor(
+        superClassTypeParametersToMyTypeParameters.mapValues {
+            it.value.asType()
+        },
+    )
 
     override fun getSupers() = arrayOf(superInterface)
 

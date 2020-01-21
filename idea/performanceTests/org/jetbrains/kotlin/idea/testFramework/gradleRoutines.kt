@@ -43,7 +43,7 @@ private fun _importProject(projectPath: String, project: Project) {
  */
 private fun _attachGradleProjectAndRefresh(
     gradleProjectSettings: GradleProjectSettings,
-    project: Project
+    project: Project,
 ) {
     val externalProjectPath = gradleProjectSettings.externalProjectPath
     ExternalProjectsManagerImpl.getInstance(project).runWhenInitialized {

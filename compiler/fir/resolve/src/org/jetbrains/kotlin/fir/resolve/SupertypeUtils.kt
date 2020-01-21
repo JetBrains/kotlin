@@ -33,7 +33,7 @@ fun lookupSuperTypes(
     lookupInterfaces: Boolean,
     deep: Boolean,
     useSiteSession: FirSession,
-    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
 ): List<ConeClassLikeType> {
     return mutableListOf<ConeClassLikeType>().also {
         klass.symbol.collectSuperTypes(it, mutableSetOf(), deep, lookupInterfaces, useSiteSession, supertypeSupplier)
@@ -60,7 +60,7 @@ fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: Sco
 fun createSubstitution(
     typeParameters: List<FirTypeParameter>,
     typeArguments: Array<out ConeKotlinTypeProjection>,
-    session: FirSession
+    session: FirSession,
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
     return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
         val typeParameterSymbol = typeParameter.symbol
@@ -71,7 +71,7 @@ fun createSubstitution(
             else /* StarProjection */ -> {
                 ConeTypeIntersector.intersectTypes(
                     session.inferenceContext,
-                    typeParameterSymbol.fir.bounds.map { it.coneTypeUnsafe() }
+                    typeParameterSymbol.fir.bounds.map { it.coneTypeUnsafe() },
                 )
             }
         }
@@ -82,7 +82,7 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteMemberScope: FirScope,
     declaration: FirClassLikeDeclaration<*>,
-    builder: ScopeSession
+    builder: ScopeSession,
 ): FirScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
@@ -105,7 +105,7 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
 
 private fun ConeClassLikeType.computePartialExpansion(
     useSiteSession: FirSession,
-    supertypeSupplier: SupertypeSupplier
+    supertypeSupplier: SupertypeSupplier,
 ): ConeClassLikeType = fullyExpandedType(useSiteSession, supertypeSupplier::expansionForTypeAlias)
 
 private fun FirClassifierSymbol<*>.collectSuperTypes(
@@ -114,7 +114,7 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
     deep: Boolean,
     lookupInterfaces: Boolean,
     useSiteSession: FirSession,
-    supertypeSupplier: SupertypeSupplier
+    supertypeSupplier: SupertypeSupplier,
 ) {
     if (!visitedSymbols.add(this)) return
     when (this) {
@@ -134,7 +134,7 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
                             deep,
                             lookupInterfaces,
                             useSiteSession,
-                            supertypeSupplier
+                            supertypeSupplier,
                         )
                     }
                 }
@@ -150,7 +150,7 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
 }
 
 private fun ConeClassLikeType?.isClassBasedType(
-    useSiteSession: FirSession
+    useSiteSession: FirSession,
 ): Boolean {
     if (this is ConeClassErrorType) return false
     val symbol = this?.lookupTag?.toSymbol(useSiteSession) as? FirClassSymbol ?: return false

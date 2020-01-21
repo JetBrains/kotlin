@@ -58,7 +58,7 @@ abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPast
 
         assertEquals(
             noConversionExpected, !ConvertJavaCopyPasteProcessor.conversionPerformed,
-            if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested"
+            if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested",
         )
 
         KotlinTestUtils.assertEqualsToFile(File(path.replace(".java", ".expected.kt")), myFixture.file.text)

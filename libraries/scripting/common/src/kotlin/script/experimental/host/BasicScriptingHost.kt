@@ -27,7 +27,7 @@ import kotlin.script.experimental.api.*
  */
 abstract class BasicScriptingHost(
     val compiler: ScriptCompiler,
-    val evaluator: ScriptEvaluator
+    val evaluator: ScriptEvaluator,
 ) {
     /**
      * The overridable wrapper for executing evaluation in a desired coroutines context
@@ -40,7 +40,7 @@ abstract class BasicScriptingHost(
     open fun eval(
         script: SourceCode,
         compilationConfiguration: ScriptCompilationConfiguration,
-        evaluationConfiguration: ScriptEvaluationConfiguration?
+        evaluationConfiguration: ScriptEvaluationConfiguration?,
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
             compiler(script, compilationConfiguration).onSuccess {

@@ -77,7 +77,7 @@ class ExpectedInfo(
     val expectedName: String?,
     val tail: Tail?,
     val itemOptions: ItemOptions = ItemOptions.DEFAULT,
-    val additionalData: AdditionalData? = null
+    val additionalData: AdditionalData? = null,
 ) {
     // just a marker interface
     interface AdditionalData {}
@@ -87,7 +87,7 @@ class ExpectedInfo(
         expectedName: String?,
         tail: Tail?,
         itemOptions: ItemOptions = ItemOptions.DEFAULT,
-        additionalData: AdditionalData? = null
+        additionalData: AdditionalData? = null,
     ) : this(ByExpectedTypeFilter(fuzzyType), expectedName, tail, itemOptions, additionalData)
 
     constructor(
@@ -95,7 +95,7 @@ class ExpectedInfo(
         expectedName: String?,
         tail: Tail?,
         itemOptions: ItemOptions = ItemOptions.DEFAULT,
-        additionalData: AdditionalData? = null
+        additionalData: AdditionalData? = null,
     ) : this(type.toFuzzyType(emptyList()), expectedName, tail, itemOptions, additionalData)
 
     fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? = filter.matchingSubstitutor(descriptorType)
@@ -108,7 +108,7 @@ class ExpectedInfo(
             expectedName: String?,
             tail: Tail?,
             argumentData: ArgumentPositionData,
-            itemOptions: ItemOptions = ItemOptions.DEFAULT
+            itemOptions: ItemOptions = ItemOptions.DEFAULT,
         ): ExpectedInfo {
             return ExpectedInfo(type.toFuzzyType(argumentData.function.typeParameters), expectedName, tail, itemOptions, argumentData)
         }
@@ -136,7 +136,7 @@ sealed class ArgumentPositionData(val function: FunctionDescriptor, val callType
         callType: Call.CallType,
         val argumentIndex: Int,
         val isFunctionLiteralArgument: Boolean,
-        val namedArgumentCandidates: Collection<ParameterDescriptor>
+        val namedArgumentCandidates: Collection<ParameterDescriptor>,
     ) : ArgumentPositionData(function, callType)
 
     class Named(function: FunctionDescriptor, callType: Call.CallType, val argumentName: Name) : ArgumentPositionData(function, callType)
@@ -157,7 +157,7 @@ class ExpectedInfos(
     private val resolutionFacade: ResolutionFacade,
     private val indicesHelper: KotlinIndicesHelper?,
     private val useHeuristicSignatures: Boolean = true,
-    private val useOuterCallsExpectedTypeCount: Int = 0
+    private val useOuterCallsExpectedTypeCount: Int = 0,
 ) {
     fun calculate(expressionWithType: KtExpression): Collection<ExpectedInfo> {
         val expectedInfos = calculateForArgument(expressionWithType)
@@ -280,7 +280,7 @@ class ExpectedInfos(
         call: Call,
         argument: ValueArgument,
         argumentIndex: Int,
-        checkPrevArgumentsMatched: Boolean
+        checkPrevArgumentsMatched: Boolean,
     ) {
         // check that all arguments before the current has mappings to parameters
         if (!candidate.allArgumentsMapped()) return
@@ -405,7 +405,7 @@ class ExpectedInfos(
     private fun namedArgumentTail(
         argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>,
         argumentName: Name,
-        descriptor: FunctionDescriptor
+        descriptor: FunctionDescriptor,
     ): Tail? {
         val usedParameterNames = (argumentToParameter.values.map { it.name } + listOf(argumentName)).toSet()
         val notUsedParameters = descriptor.valueParameters.filter { it.name !in usedParameterNames }
@@ -459,8 +459,8 @@ class ExpectedInfos(
                     resolutionFacade.moduleDescriptor.builtIns.booleanType,
                     null,
                     Tail.RPARENTH,
-                    additionalData = IfConditionAdditionalData
-                )
+                    additionalData = IfConditionAdditionalData,
+                ),
             )
 
             ifExpression.then -> return calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
@@ -540,8 +540,8 @@ class ExpectedInfos(
                     resolutionFacade.moduleDescriptor.builtIns.booleanType,
                     null,
                     null,
-                    additionalData = WhenEntryAdditionalData(whenWithSubject = false)
-                )
+                    additionalData = WhenEntryAdditionalData(whenWithSubject = false),
+                ),
             )
         }
     }

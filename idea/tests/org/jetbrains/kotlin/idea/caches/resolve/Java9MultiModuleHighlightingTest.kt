@@ -29,7 +29,7 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         val library = MockLibraryUtil.compileJvmLibraryToJar(
             testDataPath + "${getTestName(true)}/library", "library",
             extraOptions = listOf("-jdk-home", KotlinTestUtils.getJdk9Home().path, "-Xallow-kotlin-package"),
-            useJava9 = true
+            useJava9 = true,
         )
 
         module("main").addLibrary(library, "library")

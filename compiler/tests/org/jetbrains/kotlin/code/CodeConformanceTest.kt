@@ -62,7 +62,7 @@ class CodeConformanceTest : TestCase() {
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
             "dependencies/protobuf/protobuf-relocated/build",
-            "compiler/fir/lightTree/testData"
+            "compiler/fir/lightTree/testData",
         ).map(::File)
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
@@ -93,7 +93,7 @@ class CodeConformanceTest : TestCase() {
             "libraries/tools/kotlin-source-map-loader/.gradle",
             "libraries/tools/kotlin-source-map-loader/lib",
             "buildSrc/prepare-deps/build",
-            "libraries/stdlib/js-ir/build/"
+            "libraries/stdlib/js-ir/build/",
         )
     }
 
@@ -112,7 +112,7 @@ class CodeConformanceTest : TestCase() {
         val additionalExtensions = listOf(
             "after", "new", "before", "expected",
             "todo", "delete", "touch", "prefix", "postfix", "map",
-            "fragment", "after2", "result", "log", "messages", "conflicts", "match", "imports", "txt", "xml"
+            "fragment", "after2", "result", "log", "messages", "conflicts", "match", "imports", "txt", "xml",
         )
         val possibleAdditionalExtensions = extensions.plus(additionalExtensions)
         val fileExtensions = filename.split("\\.").drop(1)
@@ -163,7 +163,7 @@ class CodeConformanceTest : TestCase() {
                     "@author" in source && atAuthorPattern.matcher(source).find() &&
                             "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
                             "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source
-                }
+                },
             ),
             TestData(
                 "%d source files use something from com.beust.jcommander.internal package.\n" +
@@ -173,7 +173,7 @@ class CodeConformanceTest : TestCase() {
                         "Please change references in these files to com.google.common.collect:\n%s",
                 { source ->
                     "com.beust.jcommander.internal" in source
-                }
+                },
             ),
             TestData(
                 "%d source files contain references to package org.jetbrains.jet.\n" +
@@ -181,7 +181,7 @@ class CodeConformanceTest : TestCase() {
                         "Please consider changing the package in these files:\n%s",
                 { source ->
                     "org.jetbrains.jet" in source
-                }
+                },
             ),
             TestData(
                 "%d source files contain references to package kotlin.reflect.jvm.internal.impl.\n" +
@@ -191,7 +191,7 @@ class CodeConformanceTest : TestCase() {
                         "Please change references in these files or exclude them in this test:\n%s",
                 { source ->
                     "kotlin.reflect.jvm.internal.impl" in source
-                }
+                },
             ),
             TestData(
                 "%d source files contain references to package org.objectweb.asm.\n" +
@@ -199,7 +199,8 @@ class CodeConformanceTest : TestCase() {
                         "Please consider changing the package in these files:\n%s",
                 { source ->
                     " org.objectweb.asm" in source
-                })
+                },
+            ),
         )
 
         for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, File("."))) {
@@ -212,15 +213,17 @@ class CodeConformanceTest : TestCase() {
         }
 
         if (tests.flatMap { it.result }.isNotEmpty()) {
-            fail(buildString {
-                for (test in tests) {
-                    if (test.result.isNotEmpty()) {
-                        append(test.message.format(test.result.size, test.result.joinToString("\n")))
-                        appendln()
-                        appendln()
+            fail(
+                buildString {
+                    for (test in tests) {
+                        if (test.result.isNotEmpty()) {
+                            append(test.message.format(test.result.size, test.result.joinToString("\n")))
+                            appendln()
+                            appendln()
+                        }
                     }
-                }
-            })
+                },
+            )
         }
     }
 
@@ -245,7 +248,7 @@ class CodeConformanceTest : TestCase() {
         if (filesWithUnlistedCopyrights.isNotEmpty()) {
             fail(
                 "The following files contain third-party copyrights and no license information. " +
-                        "Please update license/README.md accordingly:\n${filesWithUnlistedCopyrights.joinToString("\n")}"
+                        "Please update license/README.md accordingly:\n${filesWithUnlistedCopyrights.joinToString("\n")}",
             )
         }
     }

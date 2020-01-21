@@ -45,7 +45,7 @@ import java.io.InputStream
 class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider() {
     private class BuiltInsPackageFragment(
         stream: InputStream, val fqName: FqName, val session: FirSession,
-        val kotlinScopeProvider: KotlinScopeProvider
+        val kotlinScopeProvider: KotlinScopeProvider,
     ) {
         lateinit var version: BuiltInsBinaryVersion
 
@@ -58,7 +58,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                 throw UnsupportedOperationException(
                     "Kotlin built-in definition format version is not supported: " +
                             "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                            "Please update Kotlin"
+                            "Please update Kotlin",
                 )
             }
 
@@ -72,7 +72,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
         private val memberDeserializer by lazy {
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, session,
-                FirBuiltinAnnotationDeserializer(session)
+                FirBuiltinAnnotationDeserializer(session),
             ).memberDeserializer
         }
 
@@ -83,7 +83,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
 
         private fun findAndDeserializeClass(
             classId: ClassId,
-            parentContext: FirDeserializationContext? = null
+            parentContext: FirDeserializationContext? = null,
         ): FirRegularClassSymbol? {
             val classIdExists = classId in classDataFinder.allClassIds
             if (!classIdExists) return null
@@ -94,7 +94,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                 deserializeClassToSymbol(
                     classId, classProto, symbol, nameResolver, session,
                     null, kotlinScopeProvider, parentContext,
-                    this::findAndDeserializeClass
+                    this::findAndDeserializeClass,
                 )
             }
         }
@@ -163,21 +163,23 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                         status,
                         ClassKind.INTERFACE,
                         kotlinScopeProvider,
-                        this
+                        this,
                     ).apply klass@{
                         resolvePhase = FirResolvePhase.DECLARATIONS
-                        typeParameters.addAll((1..arity).map {
-                            FirTypeParameterImpl(
-                                null,
-                                this@FirLibrarySymbolProviderImpl.session,
-                                Name.identifier("P$it"),
-                                FirTypeParameterSymbol(),
-                                Variance.IN_VARIANCE,
-                                false
-                            ).apply {
-                                bounds += session.builtinTypes.nullableAnyType
-                            }
-                        })
+                        typeParameters.addAll(
+                            (1..arity).map {
+                                FirTypeParameterImpl(
+                                    null,
+                                    this@FirLibrarySymbolProviderImpl.session,
+                                    Name.identifier("P$it"),
+                                    FirTypeParameterSymbol(),
+                                    Variance.IN_VARIANCE,
+                                    false,
+                                ).apply {
+                                    bounds += session.builtinTypes.nullableAnyType
+                                }
+                            },
+                        )
                         typeParameters.add(
                             FirTypeParameterImpl(
                                 null,
@@ -185,10 +187,10 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                                 Name.identifier("R"),
                                 FirTypeParameterSymbol(),
                                 Variance.OUT_VARIANCE,
-                                false
+                                false,
                             ).apply {
                                 bounds += session.builtinTypes.nullableAnyType
-                            }
+                            },
                         )
                         val name = OperatorNameConventions.INVOKE
                         val functionStatus = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.ABSTRACT).apply {
@@ -207,7 +209,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                         val typeArguments = typeParameters.map {
                             FirResolvedTypeRefImpl(
                                 null,
-                                ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                                ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false),
                             )
                         }
 
@@ -219,7 +221,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                                 null,
                                 name,
                                 functionStatus,
-                                FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name))
+                                FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name)),
                             ).apply {
                                 resolvePhase = FirResolvePhase.DECLARATIONS
                                 valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
@@ -233,26 +235,27 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                                         defaultValue = null,
                                         isCrossinline = false,
                                         isNoinline = false,
-                                        isVararg = false
+                                        isVararg = false,
                                     )
                                 }
-                            }
+                            },
                         )
 
                         fun createSuperType(
-                            kind: FunctionClassDescriptor.Kind
+                            kind: FunctionClassDescriptor.Kind,
                         ): FirResolvedTypeRef {
                             return FirResolvedTypeRefImpl(
                                 null,
                                 ConeClassLikeLookupTagImpl(kind.classId(arity))
-                                    .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false)
+                                    .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false),
                             )
                         }
 
                         val superTypes = when (kind) {
 
                             FunctionClassDescriptor.Kind.Function,
-                            FunctionClassDescriptor.Kind.SuspendFunction ->
+                            FunctionClassDescriptor.Kind.SuspendFunction,
+                            ->
                                 listOf(session.builtinTypes.anyType)
 
                             FunctionClassDescriptor.Kind.KFunction ->

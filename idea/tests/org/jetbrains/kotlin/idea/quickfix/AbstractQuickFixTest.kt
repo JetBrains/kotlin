@@ -38,7 +38,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             """
                 # Actions that are allowed to resolve in write action. Normally this list shouldn't be extended and eventually should 
                 # be dropped. Please consider rewriting a quick-fix and remove resolve from it before adding a new entry to this list.
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         private fun unwrapIntention(action: Any): Any {
@@ -98,62 +98,66 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
 
     private fun doKotlinQuickFixTest(beforeFileName: String) {
         val testFile = File(beforeFileName)
-        CommandProcessor.getInstance().executeCommand(project, {
-            var fileText = ""
-            var expectedErrorMessage: String? = ""
-            var fixtureClasses = emptyList<String>()
-            try {
-                fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET)
-                TestCase.assertTrue("\"<caret>\" is missing in file \"${testFile.path}\"", fileText.contains("<caret>"))
+        CommandProcessor.getInstance().executeCommand(
+            project,
+            {
+                var fileText = ""
+                var expectedErrorMessage: String? = ""
+                var fixtureClasses = emptyList<String>()
+                try {
+                    fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET)
+                    TestCase.assertTrue("\"<caret>\" is missing in file \"${testFile.path}\"", fileText.contains("<caret>"))
 
-                fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// FIXTURE_CLASS: ")
-                for (fixtureClass in fixtureClasses) {
-                    TestFixtureExtension.loadFixture(fixtureClass, module)
-                }
+                    fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// FIXTURE_CLASS: ")
+                    for (fixtureClass in fixtureClasses) {
+                        TestFixtureExtension.loadFixture(fixtureClass, module)
+                    }
 
-                expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
-                val contents = StringUtil.convertLineSeparators(fileText)
-                var fileName = testFile.canonicalFile.name
-                val putIntoPackageFolder = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FORCE_PACKAGE_FOLDER") != null
-                if (putIntoPackageFolder) {
-                    fileName = getPathAccordingToPackage(fileName, contents)
-                    myFixture.addFileToProject(fileName, contents)
-                    myFixture.configureByFile(fileName)
-                } else {
-                    myFixture.configureByText(fileName, contents)
-                }
+                    expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
+                    val contents = StringUtil.convertLineSeparators(fileText)
+                    var fileName = testFile.canonicalFile.name
+                    val putIntoPackageFolder = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FORCE_PACKAGE_FOLDER") != null
+                    if (putIntoPackageFolder) {
+                        fileName = getPathAccordingToPackage(fileName, contents)
+                        myFixture.addFileToProject(fileName, contents)
+                        myFixture.configureByFile(fileName)
+                    } else {
+                        myFixture.configureByText(fileName, contents)
+                    }
 
-                checkForUnexpectedActions()
+                    checkForUnexpectedActions()
 
-                configExtra(fileText)
+                    configExtra(fileText)
 
-                applyAction(contents, fileName)
+                    applyAction(contents, fileName)
 
-                val compilerArgumentsAfter = InTextDirectivesUtils.findStringWithPrefixes(fileText, "COMPILER_ARGUMENTS_AFTER: ")
-                if (compilerArgumentsAfter != null) {
-                    val facetSettings = KotlinFacet.get(module)!!.configuration.settings
-                    val compilerSettings = facetSettings.compilerSettings
-                    TestCase.assertEquals(compilerArgumentsAfter, compilerSettings?.additionalArguments)
-                }
+                    val compilerArgumentsAfter = InTextDirectivesUtils.findStringWithPrefixes(fileText, "COMPILER_ARGUMENTS_AFTER: ")
+                    if (compilerArgumentsAfter != null) {
+                        val facetSettings = KotlinFacet.get(module)!!.configuration.settings
+                        val compilerSettings = facetSettings.compilerSettings
+                        TestCase.assertEquals(compilerArgumentsAfter, compilerSettings?.additionalArguments)
+                    }
 
-                UsefulTestCase.assertEmpty(expectedErrorMessage)
-            } catch (e: FileComparisonFailure) {
-                throw e
-            } catch (e: AssertionError) {
-                throw e
-            } catch (e: Throwable) {
-                if (expectedErrorMessage == null) {
+                    UsefulTestCase.assertEmpty(expectedErrorMessage)
+                } catch (e: FileComparisonFailure) {
                     throw e
-                } else {
-                    Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
+                } catch (e: AssertionError) {
+                    throw e
+                } catch (e: Throwable) {
+                    if (expectedErrorMessage == null) {
+                        throw e
+                    } else {
+                        Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
+                    }
+                } finally {
+                    for (fixtureClass in fixtureClasses) {
+                        TestFixtureExtension.unloadFixture(fixtureClass)
+                    }
+                    ConfigLibraryUtil.unconfigureLibrariesByDirective(myFixture.module, fileText)
                 }
-            } finally {
-                for (fixtureClass in fixtureClasses) {
-                    TestFixtureExtension.unloadFixture(fixtureClass)
-                }
-                ConfigLibraryUtil.unconfigureLibrariesByDirective(myFixture.module, fileText)
-            }
-        }, "", "")
+            },
+            "", "",
+        )
     }
 
     private fun applyAction(contents: String, fileName: String) {
@@ -163,7 +167,8 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             if (intention == null) {
                 fail(
                     "Action with text '" + actionHint.expectedText + "' not found\nAvailable actions: " +
-                            myFixture.availableIntentions.joinToString(prefix = "[", postfix = "]") { it.text })
+                            myFixture.availableIntentions.joinToString(prefix = "[", postfix = "]") { it.text },
+                )
                 return
             }
 
@@ -191,7 +196,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             if (!shouldBeAvailableAfterExecution()) {
                 assertNull(
                     "Action '${actionHint.expectedText}' is still available after its invocation in test " + fileName,
-                    findActionWithText(actionHint.expectedText)
+                    findActionWithText(actionHint.expectedText),
                 )
             }
 
@@ -223,9 +228,10 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 actions.removeAll { action -> !aClass.isAssignableFrom(action.javaClass) || validActions.contains(action.text) }
 
                 if (!actions.isEmpty()) {
-                    Assert.fail("Unexpected intention actions present\n " + actions.map { action ->
-                        action.javaClass.toString() + " " + action.toString() + "\n"
-                    }
+                    Assert.fail(
+                        "Unexpected intention actions present\n " + actions.map { action ->
+                            action.javaClass.toString() + " " + action.toString() + "\n"
+                        },
                     )
                 }
 

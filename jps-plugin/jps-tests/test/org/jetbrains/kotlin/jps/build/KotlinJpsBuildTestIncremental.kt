@@ -102,9 +102,11 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
 
-        checkWhen(del("src/main.kt"),
-                  pathsToCompile = null,
-                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(
+            del("src/main.kt"),
+            pathsToCompile = null,
+            pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"),
+        )
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
         assertFilesNotExistInOutput(module, "foo/MainKt.class")
 
@@ -120,22 +122,32 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
 
         checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"),
-                  arrayOf("src/Bar.kt"),
-                  arrayOf(klass("kotlinProject", "foo.Bar"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                          module("kotlinProject")))
+        checkWhen(
+            touch("src/Bar.kt"),
+            arrayOf("src/Bar.kt"),
+            arrayOf(
+                klass("kotlinProject", "foo.Bar"),
+                packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
+                module("kotlinProject"),
+            ),
+        )
 
-        checkWhen(del("src/main.kt"),
-                  pathsToCompile = null,
-                  pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(
+            del("src/main.kt"),
+            pathsToCompile = null,
+            pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"),
+        )
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
 
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null,
-                  arrayOf(klass("kotlinProject", "foo.Bar"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
-                          module("kotlinProject")))
+        checkWhen(
+            touch("src/Bar.kt"), null,
+            arrayOf(
+                klass("kotlinProject", "foo.Bar"),
+                packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
+                module("kotlinProject"),
+            ),
+        )
     }
 
     @WorkingDir("LanguageOrApiVersionChanged")

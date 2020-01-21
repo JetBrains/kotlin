@@ -203,7 +203,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun markAdditionalFilesForInitialRound(
         kotlinChunk: KotlinChunk,
         chunk: ModuleChunk,
-        kotlinContext: KotlinCompileContext
+        kotlinContext: KotlinCompileContext,
     ) {
         val context = kotlinContext.jpsContext
         val dirtyFilesHolder = KotlinDirtySourceFilesHolder(
@@ -213,7 +213,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 override fun processDirtyFiles(processor: FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>) {
                     FSOperations.processFilesToRecompile(context, chunk, processor)
                 }
-            }
+            },
         )
         val fsOperations = FSOperationsHelper(context, chunk, dirtyFilesHolder, LOG)
 
@@ -230,7 +230,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LookupTracker.DO_NOTHING,
             ExpectActualTracker.DoNothing,
             chunk,
-            messageCollector
+            messageCollector,
         ) ?: return
 
         val removedClasses = HashSet<String>()
@@ -279,7 +279,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         context: CompileContext,
         chunk: ModuleChunk,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        outputConsumer: ModuleLevelBuilder.OutputConsumer
+        outputConsumer: ModuleLevelBuilder.OutputConsumer,
     ): ModuleLevelBuilder.ExitCode {
         if (chunk.isDummy(context))
             return NOTHING_DONE
@@ -293,7 +293,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             if (chunk.modules.size > 1) {
                 messageCollector.report(
                     CompilerMessageSeverity.ERROR,
-                    "Cyclically dependent modules are not supported in multiplatform projects"
+                    "Cyclically dependent modules are not supported in multiplatform projects",
                 )
                 return ABORT
             }
@@ -335,7 +335,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder,
         messageCollector: MessageCollectorAdapter,
         outputConsumer: OutputConsumer,
-        fsOperations: FSOperationsHelper
+        fsOperations: FSOperationsHelper,
     ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
         if (representativeTarget is KotlinJvmModuleBuildTarget && !JavaBuilder.IS_ENABLED[context, true]) {
@@ -349,7 +349,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         if (!kotlinChunk.haveSameCompiler) {
             messageCollector.report(
                 ERROR,
-                "Cyclically dependent modules ${kotlinChunk.presentableModulesToCompilersList} should have same compiler."
+                "Cyclically dependent modules ${kotlinChunk.presentableModulesToCompilersList} should have same compiler.",
             )
             return ABORT
         }
@@ -403,7 +403,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             lookupTracker,
             exceptActualTracer,
             chunk,
-            messageCollector
+            messageCollector,
         ) ?: return ABORT
 
         if (LOG.isDebugEnabled) {
@@ -419,7 +419,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             kotlinDirtyFilesHolder,
             fsOperations,
             environment,
-            incrementalCaches
+            incrementalCaches,
         )
 
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
@@ -462,7 +462,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             chunk,
             kotlinDirtyFilesHolder,
             generatedFiles,
-            incrementalCaches
+            incrementalCaches,
         )
 
         if (!representativeTarget.isIncrementalCompilationEnabled) {
@@ -483,7 +483,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     incrementalCaches[kotlinModuleBuilderTarget]!!,
                     files,
                     changesCollector,
-                    environment
+                    environment,
                 )
             }
 
@@ -494,7 +494,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     kotlinDirtyFilesHolder.allDirtyFiles,
                     kotlinContext.lookupStorageManager,
                     fsOperations,
-                    incrementalCaches.values
+                    incrementalCaches.values,
                 )
             }
         }
@@ -512,7 +512,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         fsOperations: FSOperationsHelper,
         environment: JpsCompilerEnvironment,
-        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>
+        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
     ): OutputItemsCollector? {
         loadPlugins(representativeTarget, commonArguments, context)
 
@@ -528,7 +528,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
                 if (cache != null && targetDirtyFiles != null) {
                     val complementaryFiles = cache.getComplementaryFilesRecursive(
-                        targetDirtyFiles.dirty.keys + targetDirtyFiles.removed
+                        targetDirtyFiles.dirty.keys + targetDirtyFiles.removed,
                     )
 
                     fsOperations.markFilesForCurrentRound(jpsTarget, complementaryFiles)
@@ -546,7 +546,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun loadPlugins(
         representativeTarget: KotlinModuleBuildTarget<*>,
         commonArguments: CommonCompilerArguments,
-        context: CompileContext
+        context: CompileContext,
     ) {
         fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*strings.orEmpty(), *cp.toTypedArray())
 
@@ -555,12 +555,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             // appending to pluginOptions
             commonArguments.pluginOptions = concatenate(
                 commonArguments.pluginOptions,
-                argumentProvider.getExtraArguments(jpsModuleBuildTarget, context)
+                argumentProvider.getExtraArguments(jpsModuleBuildTarget, context),
             )
             // appending to classpath
             commonArguments.pluginClasspaths = concatenate(
                 commonArguments.pluginClasspaths,
-                argumentProvider.getClasspath(jpsModuleBuildTarget, context)
+                argumentProvider.getClasspath(jpsModuleBuildTarget, context),
             )
 
             LOG.debug("Plugin loaded: ${argumentProvider::class.java.simpleName}")
@@ -574,7 +574,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
         chunk: ModuleChunk,
-        messageCollector: MessageCollectorAdapter
+        messageCollector: MessageCollectorAdapter,
     ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
             kotlinModuleBuilderTarget.makeServices(this, incrementalCaches, lookupTracker, exceptActualTracer)
@@ -584,8 +584,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val paths = computeKotlinPathsForJpsPlugin()
         if (paths == null || !paths.homePath.exists()) {
             messageCollector.report(
-                ERROR, "Cannot find kotlinc home. Make sure the plugin is properly installed, " +
-                        "or specify $JPS_KOTLIN_HOME_PROPERTY system property"
+                ERROR,
+                "Cannot find kotlinc home. Make sure the plugin is properly installed, " +
+                        "or specify $JPS_KOTLIN_HOME_PROPERTY system property",
             )
             return null
         }
@@ -596,7 +597,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             classesToLoadByParent,
             messageCollector,
             OutputItemsCollectorImpl(),
-            ProgressReporterImpl(context, chunk)
+            ProgressReporterImpl(context, chunk),
         )
     }
 
@@ -624,7 +625,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun getGeneratedFiles(
         context: CompileContext,
         chunk: ModuleChunk,
-        outputItemCollector: OutputItemsCollectorImpl
+        outputItemCollector: OutputItemsCollectorImpl,
     ): Map<ModuleBuildTarget, List<GeneratedFile>> {
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
@@ -654,7 +655,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun updateLookupStorage(
         lookupTracker: LookupTracker,
         lookupStorageManager: JpsLookupStorageManager,
-        dirtyFilesHolder: KotlinDirtySourceFilesHolder
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
     ) {
         if (lookupTracker !is LookupTrackerImpl)
             throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
@@ -685,7 +686,7 @@ private fun ChangesCollector.processChangesUsingLookups(
     compiledFiles: Set<File>,
     lookupStorageManager: JpsLookupStorageManager,
     fsOperations: FSOperationsHelper,
-    caches: Iterable<JpsIncrementalCache>
+    caches: Iterable<JpsIncrementalCache>,
 ) {
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
     val reporter = JpsICReporter()
@@ -700,7 +701,7 @@ private fun ChangesCollector.processChangesUsingLookups(
 
 private fun ChangesCollector.getDirtyFiles(
     caches: Iterable<IncrementalCacheCommon>,
-    lookupStorageManager: JpsLookupStorageManager
+    lookupStorageManager: JpsLookupStorageManager,
 ): Set<File> {
     val reporter = JpsICReporter()
     val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(caches, reporter)

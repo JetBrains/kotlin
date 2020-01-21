@@ -33,7 +33,7 @@ object NonExpansiveInheritanceRestrictionChecker {
     fun check(
         declaration: KtClass,
         classDescriptor: ClassDescriptor,
-        diagnosticHolder: DiagnosticSink
+        diagnosticHolder: DiagnosticSink,
     ) {
         val typeConstructor = classDescriptor.typeConstructor
         if (typeConstructor.parameters.isEmpty()) return
@@ -107,7 +107,7 @@ object NonExpansiveInheritanceRestrictionChecker {
                                 addEdge(
                                     typeParameter,
                                     constituentTypeConstructor.parameters[i],
-                                    !TypeUtils.isTypeParameter(typeProjection.type)
+                                    !TypeUtils.isTypeParameter(typeProjection.type),
                                 )
                             }
                         }

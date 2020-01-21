@@ -56,7 +56,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     private fun createDescriptorForTemporaryVariable(
         type: KotlinType,
         nameHint: String? = null,
-        isMutable: Boolean = false
+        isMutable: Boolean = false,
     ): IrTemporaryVariableDescriptor =
         IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier(getNameForTemporary(nameHint)), type, isMutable)
 
@@ -72,16 +72,16 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         type: KotlinType? = null,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
         startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+        endOffset: Int = UNDEFINED_OFFSET,
     ): IrVariable {
         val originalKotlinType = type ?: irType.toKotlinType()
         return IrVariableImpl(
             startOffset, endOffset, origin,
             createDescriptorForTemporaryVariable(
                 originalKotlinType,
-                nameHint, isMutable
+                nameHint, isMutable,
             ),
-            irType
+            irType,
         ).apply {
             parent = getLocalDeclarationParent()
         }
@@ -93,13 +93,13 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         isMutable: Boolean = false,
         type: KotlinType? = null,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-        irType: IrType? = null
+        irType: IrType? = null,
     ): IrVariable {
         val originalKotlinType = type ?: (irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType())
         return createTemporaryVariableDeclaration(
             irType ?: irExpression.type,
             nameHint, isMutable, originalKotlinType,
-            origin, irExpression.startOffset, irExpression.endOffset
+            origin, irExpression.startOffset, irExpression.endOffset,
         ).apply {
             initializer = irExpression
         }
@@ -110,7 +110,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         nameHint: String? = null,
         isMutable: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-        descriptor: VariableDescriptor
+        descriptor: VariableDescriptor,
     ): IrVariable {
         return IrVariableImpl(
             irExpression.startOffset, irExpression.endOffset, origin,
@@ -119,7 +119,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
             irExpression.type,
             isVar = isMutable,
             isConst = false,
-            isLateinit = false
+            isLateinit = false,
         ).also {
             it.initializer = irExpression
         }

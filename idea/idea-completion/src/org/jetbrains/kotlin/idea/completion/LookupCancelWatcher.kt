@@ -99,20 +99,23 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
     }
 
     override fun initComponent() {
-        CompletionPhaseListener.TOPIC.subscribe(project, CompletionPhaseListener { isCompletionRunning ->
-            if (isCompletionRunning) {
-                if (completionStatsData != null) {
-                    completionStatsData = completionStatsData?.copy(finishReason = FinishReasonStats.INTERRUPTED)
-                    CompletionFUSCollector.log(completionStatsData)
-                    completionStatsData = null
+        CompletionPhaseListener.TOPIC.subscribe(
+            project,
+            CompletionPhaseListener { isCompletionRunning ->
+                if (isCompletionRunning) {
+                    if (completionStatsData != null) {
+                        completionStatsData = completionStatsData?.copy(finishReason = FinishReasonStats.INTERRUPTED)
+                        CompletionFUSCollector.log(completionStatsData)
+                        completionStatsData = null
+                    }
+                    completionStatsData = CompletionFUSCollector.CompletionStatsData(System.currentTimeMillis())
                 }
-                completionStatsData = CompletionFUSCollector.CompletionStatsData(System.currentTimeMillis())
-            }
 
-            if (!isCompletionRunning) {
-                completionStatsData = completionStatsData?.copy(finishTime = System.currentTimeMillis())
-            }
-        })
+                if (!isCompletionRunning) {
+                    completionStatsData = completionStatsData?.copy(finishTime = System.currentTimeMillis())
+                }
+            },
+        )
 
         EditorFactory.getInstance().addEditorFactoryListener(
             object : EditorFactoryListener {
@@ -122,36 +125,38 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
                     }
                 }
             },
-            project
+            project,
         )
 
         LookupManager.getInstance(project).addPropertyChangeListener { event ->
             if (event.propertyName == LookupManager.PROP_ACTIVE_LOOKUP) {
                 val lookup = event.newValue as Lookup?
                 lookup?.addLookupListener(lookupCancelListener)
-                lookup?.addLookupListener(object : LookupListener {
-                    override fun lookupShown(event: LookupEvent) {
-                        completionStatsData = completionStatsData?.copy(shownTime = System.currentTimeMillis())
-                    }
+                lookup?.addLookupListener(
+                    object : LookupListener {
+                        override fun lookupShown(event: LookupEvent) {
+                            completionStatsData = completionStatsData?.copy(shownTime = System.currentTimeMillis())
+                        }
 
-                    override fun lookupCanceled(event: LookupEvent) {
-                        completionStatsData = completionStatsData?.copy(
-                            finishReason = if (event.isCanceledExplicitly) FinishReasonStats.CANCELLED else FinishReasonStats.HIDDEN
-                        )
-                        CompletionFUSCollector.log(completionStatsData)
-                        completionStatsData = null
-                    }
+                        override fun lookupCanceled(event: LookupEvent) {
+                            completionStatsData = completionStatsData?.copy(
+                                finishReason = if (event.isCanceledExplicitly) FinishReasonStats.CANCELLED else FinishReasonStats.HIDDEN,
+                            )
+                            CompletionFUSCollector.log(completionStatsData)
+                            completionStatsData = null
+                        }
 
-                    override fun itemSelected(event: LookupEvent) {
-                        val eventLookup = event.lookup
-                        val lookupIndex = eventLookup.items.indexOf(eventLookup.currentItem)
-                        if (lookupIndex >= 0) completionStatsData = completionStatsData?.copy(selectedItem = lookupIndex)
+                        override fun itemSelected(event: LookupEvent) {
+                            val eventLookup = event.lookup
+                            val lookupIndex = eventLookup.items.indexOf(eventLookup.currentItem)
+                            if (lookupIndex >= 0) completionStatsData = completionStatsData?.copy(selectedItem = lookupIndex)
 
-                        completionStatsData = completionStatsData?.copy(finishReason = FinishReasonStats.DONE)
-                        CompletionFUSCollector.log(completionStatsData)
-                        completionStatsData = null
-                    }
-                })
+                            completionStatsData = completionStatsData?.copy(finishReason = FinishReasonStats.DONE)
+                            CompletionFUSCollector.log(completionStatsData)
+                            completionStatsData = null
+                        }
+                    },
+                )
             }
         }
     }

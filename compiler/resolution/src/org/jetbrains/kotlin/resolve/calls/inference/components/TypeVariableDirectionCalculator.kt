@@ -33,7 +33,7 @@ private typealias Variable = VariableWithConstraints
 class TypeVariableDirectionCalculator(
     private val c: VariableFixationFinder.Context,
     private val postponedKtPrimitives: List<PostponedResolvedAtom>,
-    topLevelType: KotlinTypeMarker
+    topLevelType: KotlinTypeMarker,
 ) {
     enum class ResolveDirection {
         TO_SUBTYPE,
@@ -87,7 +87,7 @@ class TypeVariableDirectionCalculator(
 
     private fun getConstraintDependencies(
         variable: Variable,
-        direction: ResolveDirection
+        direction: ResolveDirection,
     ): List<NodeWithDirection> =
         SmartList<NodeWithDirection>().also { result ->
             for (constraint in variable.constraints) {
@@ -106,7 +106,7 @@ class TypeVariableDirectionCalculator(
 
     private fun KotlinTypeMarker.visitType(
         startDirection: ResolveDirection,
-        action: (variable: Variable, direction: ResolveDirection) -> Unit
+        action: (variable: Variable, direction: ResolveDirection) -> Unit,
     ) = when (this) {
         is SimpleTypeMarker -> visitType(startDirection, action)
         is FlexibleTypeMarker -> {
@@ -120,7 +120,7 @@ class TypeVariableDirectionCalculator(
 
     private fun SimpleTypeMarker.visitType(
         startDirection: ResolveDirection,
-        action: (variable: Variable, direction: ResolveDirection) -> Unit
+        action: (variable: Variable, direction: ResolveDirection) -> Unit,
     ): Unit = with(c) {
         val constructor = typeConstructor()
         if (constructor.isIntersection()) {

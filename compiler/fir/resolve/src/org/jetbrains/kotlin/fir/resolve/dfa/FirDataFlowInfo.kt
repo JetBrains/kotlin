@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.types.render
 data class ConditionalFirDataFlowInfo(
     val condition: Condition,
     val variable: RealDataFlowVariable,
-    val info: FirDataFlowInfo
+    val info: FirDataFlowInfo,
 ) {
     fun invert(): ConditionalFirDataFlowInfo {
         return ConditionalFirDataFlowInfo(condition.invert(), variable, info)
@@ -47,16 +47,16 @@ interface FirDataFlowInfo {
 
 data class MutableFirDataFlowInfo(
     override val exactType: MutableSet<ConeKotlinType> = mutableSetOf(),
-    override val exactNotType: MutableSet<ConeKotlinType> = mutableSetOf()
+    override val exactNotType: MutableSet<ConeKotlinType> = mutableSetOf(),
 ) : FirDataFlowInfo {
     override operator fun plus(other: FirDataFlowInfo): MutableFirDataFlowInfo = MutableFirDataFlowInfo(
         HashSet(exactType).apply { addAll(other.exactType) },
-        HashSet(exactNotType).apply { addAll(other.exactNotType) }
+        HashSet(exactNotType).apply { addAll(other.exactNotType) },
     )
 
     override operator fun minus(other: FirDataFlowInfo): MutableFirDataFlowInfo = MutableFirDataFlowInfo(
         HashSet(exactType).apply { removeAll(other.exactType) },
-        HashSet(exactNotType).apply { removeAll(other.exactNotType) }
+        HashSet(exactNotType).apply { removeAll(other.exactNotType) },
     )
 
     override val isNotEmpty: Boolean get() = exactType.isNotEmpty() || exactNotType.isNotEmpty()

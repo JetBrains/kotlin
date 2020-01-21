@@ -123,7 +123,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
         filter: (DeclarationDescriptor) -> Boolean,
         descriptorName: String,
         importInsertHelper: ImportInsertHelper,
-        psiDocumentManager: PsiDocumentManager
+        psiDocumentManager: PsiDocumentManager,
     ): String?
 
 

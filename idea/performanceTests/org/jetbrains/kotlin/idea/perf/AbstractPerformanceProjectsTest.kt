@@ -120,7 +120,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     myApplication.setDataProvider(null)
                     myProject = null
                 }
-            }).run()
+            },
+        ).run()
     }
 
     fun simpleFilename(fileName: String): String {
@@ -144,7 +145,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String,
         path: String,
         simpleModule: Boolean = false,
-        fast: Boolean = false
+        fast: Boolean = false,
     ): Project {
         val projectPath = File(path).canonicalPath
 
@@ -183,7 +184,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
                 (project as ProjectImpl).registerComponentImplementation(
                     FileEditorManager::class.java,
-                    FileEditorManagerImpl::class.java
+                    FileEditorManagerImpl::class.java,
                 )
 
                 dispatchAllInvocationEvents()
@@ -286,11 +287,11 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
     ) = perfTypeAndAutocomplete(
         project(), stats, fileName, marker, insertString, surroundItems,
         lookupElements = lookupElements, typeAfterMarker = typeAfterMarker,
-        revertChangesAtTheEnd = revertChangesAtTheEnd, note = note
+        revertChangesAtTheEnd = revertChangesAtTheEnd, note = note,
     )
 
     fun perfTypeAndAutocomplete(
@@ -303,7 +304,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
     ) {
         assertTrue("lookupElements has to be not empty", lookupElements.isNotEmpty())
         performanceTest<Pair<String, Fixture>, Array<LookupElement>> {
@@ -372,11 +373,11 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         surroundItems: String = "\n",
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
     ) = perfTypeAndHighlight(
         project(), stats, fileName, marker, insertString, surroundItems,
         typeAfterMarker = typeAfterMarker,
-        revertChangesAtTheEnd = revertChangesAtTheEnd, note = note
+        revertChangesAtTheEnd = revertChangesAtTheEnd, note = note,
     )
 
     fun perfTypeAndHighlight(
@@ -388,7 +389,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         surroundItems: String = "\n",
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
     ) {
         performanceTest<Pair<String, Fixture>, List<HighlightInfo>> {
             name("typeAndHighlight ${notePrefix(note)}$fileName")
@@ -452,12 +453,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         targetFileName: String,
         targetInitialMarker: String? = null,
         targetFinalMarker: String? = null,
-        note: String = ""
+        note: String = "",
     ) = perfCopyAndPaste(
         project(), stats,
         sourceFileName, sourceInitialMarker, sourceFinalMarker,
         targetFileName, targetInitialMarker, targetFinalMarker,
-        note
+        note,
     )
 
     fun perfCopyAndPaste(
@@ -469,7 +470,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         targetFileName: String,
         targetInitialMarker: String? = null,
         targetFinalMarker: String? = null,
-        note: String = ""
+        note: String = "",
     ) {
         performanceTest<Pair<Array<Fixture>, String>, Boolean> {
             name("${notePrefix(note)}$sourceFileName")
@@ -522,7 +523,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     private fun updateScriptDependenciesIfNeeded(
         fileName: String,
         fixture: Fixture,
-        project: Project
+        project: Project,
     ) {
         if (isAKotlinScriptFile(fileName)) {
             runAndMeasure("update script dependencies for $fileName") {
@@ -534,7 +535,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     private fun initKotlinProject(
         project: Project,
         projectPath: String,
-        name: String
+        name: String,
     ) {
         val modulePath = "$projectPath/$name${ModuleFileType.DOT_DEFAULT_EXTENSION}"
         val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(projectPath))!!
@@ -559,7 +560,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         project: Project,
         fileName: String,
         stats: Stats,
-        note: String = ""
+        note: String = "",
     ): List<HighlightInfo> {
         return highlightFile {
             val isWarmUp = note == WARM_UP
@@ -612,7 +613,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         project: Project,
         fileName: String,
         stats: Stats,
-        note: String = ""
+        note: String = "",
     ) {
         if (!isAKotlinScriptFile(fileName)) return
         performanceTest<EditorFile, EditorFile> {

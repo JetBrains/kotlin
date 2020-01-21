@@ -21,19 +21,21 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
         checkHighlighting(
             editor,
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
-            InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS")
+            InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS"),
         )
     }
 
     fun doComplexTest(path: String) {
         configureScriptFile(path)
-        assertException(object : AbstractExceptionCase<ComparisonFailure>() {
-            override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java
+        assertException(
+            object : AbstractExceptionCase<ComparisonFailure>() {
+                override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java
 
-            override fun tryClosure() {
-                checkHighlighting(editor, false, false)
-            }
-        })
+                override fun tryClosure() {
+                    checkHighlighting(editor, false, false)
+                }
+            },
+        )
 
         ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFile, project)
         checkHighlighting(editor, false, false)

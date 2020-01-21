@@ -25,28 +25,28 @@ import org.jetbrains.kotlin.types.KotlinType
 // TODO: simplify this interface
 interface AnnotationAndConstantLoader<out A : Any, out C : Any> {
     fun loadClassAnnotations(
-        container: ProtoContainer.Class
+        container: ProtoContainer.Class,
     ): List<A>
 
     fun loadCallableAnnotations(
         container: ProtoContainer,
         proto: MessageLite,
-        kind: AnnotatedCallableKind
+        kind: AnnotatedCallableKind,
     ): List<A>
 
     fun loadPropertyBackingFieldAnnotations(
         container: ProtoContainer,
-        proto: ProtoBuf.Property
+        proto: ProtoBuf.Property,
     ): List<A>
 
     fun loadPropertyDelegateFieldAnnotations(
         container: ProtoContainer,
-        proto: ProtoBuf.Property
+        proto: ProtoBuf.Property,
     ): List<A>
 
     fun loadEnumEntryAnnotations(
         container: ProtoContainer,
-        proto: ProtoBuf.EnumEntry
+        proto: ProtoBuf.EnumEntry,
     ): List<A>
 
     fun loadValueParameterAnnotations(
@@ -54,28 +54,28 @@ interface AnnotationAndConstantLoader<out A : Any, out C : Any> {
         callableProto: MessageLite,
         kind: AnnotatedCallableKind,
         parameterIndex: Int,
-        proto: ProtoBuf.ValueParameter
+        proto: ProtoBuf.ValueParameter,
     ): List<A>
 
     fun loadExtensionReceiverParameterAnnotations(
         container: ProtoContainer,
         proto: MessageLite,
-        kind: AnnotatedCallableKind
+        kind: AnnotatedCallableKind,
     ): List<A>
 
     fun loadTypeAnnotations(
         proto: ProtoBuf.Type,
-        nameResolver: NameResolver
+        nameResolver: NameResolver,
     ): List<A>
 
     fun loadTypeParameterAnnotations(
         proto: ProtoBuf.TypeParameter,
-        nameResolver: NameResolver
+        nameResolver: NameResolver,
     ): List<A>
 
     fun loadPropertyConstant(
         container: ProtoContainer,
         proto: ProtoBuf.Property,
-        expectedType: KotlinType
+        expectedType: KotlinType,
     ): C?
 }

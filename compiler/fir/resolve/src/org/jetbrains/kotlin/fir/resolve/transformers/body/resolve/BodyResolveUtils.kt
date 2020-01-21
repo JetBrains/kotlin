@@ -33,7 +33,7 @@ internal inline var FirExpression.resultType: FirTypeRef
 internal fun inferenceComponents(
     session: FirSession,
     returnTypeCalculator: ReturnTypeCalculator,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ): InferenceComponents {
     val inferenceContext = session.inferenceContext
     return InferenceComponents(inferenceContext, session, returnTypeCalculator, scopeSession)

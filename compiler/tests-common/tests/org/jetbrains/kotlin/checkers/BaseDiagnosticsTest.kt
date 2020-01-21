@@ -82,12 +82,14 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     override fun doMultiFileTest(
         file: File,
         modules: @JvmSuppressWildcards Map<String, ModuleAndDependencies>,
-        testFiles: List<TestFile>
+        testFiles: List<TestFile>,
     ) {
         for (moduleAndDependencies in modules.values) {
-            moduleAndDependencies.module.getDependencies().addAll(moduleAndDependencies.dependencies.map { name ->
-                modules[name]?.module ?: error("Dependency not found: $name for module ${moduleAndDependencies.module.name}")
-            })
+            moduleAndDependencies.module.getDependencies().addAll(
+                moduleAndDependencies.dependencies.map { name ->
+                    modules[name]?.module ?: error("Dependency not found: $name for module ${moduleAndDependencies.module.name}")
+                },
+            )
         }
 
         environment = createEnvironment(file)
@@ -137,7 +139,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val module: TestModule?,
         val fileName: String,
         textWithMarkers: String,
-        val directives: Map<String, String>
+        val directives: Map<String, String>,
     ) {
         val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
         private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
@@ -232,7 +234,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             actualText: StringBuilder,
             skipJvmSignatureDiagnostics: Boolean,
             languageVersionSettings: LanguageVersionSettings,
-            moduleDescriptor: ModuleDescriptorImpl
+            moduleDescriptor: ModuleDescriptorImpl,
         ): Boolean {
             val ktFile = this.ktFile
             if (ktFile == null) {
@@ -261,11 +263,11 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 languageVersionSettings,
                 DataFlowValueFactoryImpl(languageVersionSettings),
                 moduleDescriptor,
-                this.diagnosedRangesToDiagnosticNames
+                this.diagnosedRangesToDiagnosticNames,
             )
             val filteredDiagnostics = ContainerUtil.filter(
                 diagnostics + jvmSignatureDiagnostics,
-                { whatDiagnosticsToConsider.value(it.diagnostic) }
+                { whatDiagnosticsToConsider.value(it.diagnostic) },
             )
 
             actualDiagnostics.addAll(filteredDiagnostics)
@@ -275,55 +277,60 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val invertedInferenceCompatibilityOfTest = asInferenceCompatibility(!withNewInference)
 
             val diagnosticToExpectedDiagnostic =
-                CheckerTestUtil.diagnosticsDiff(diagnosedRanges, filteredDiagnostics, object : DiagnosticDiffCallbacks {
-                    override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
-                        if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
-                            updateUncheckedDiagnostics(diagnostic, expectedStart, expectedEnd)
-                            return
+                CheckerTestUtil.diagnosticsDiff(
+                    diagnosedRanges, filteredDiagnostics,
+                    object : DiagnosticDiffCallbacks {
+                        override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
+                            if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
+                                updateUncheckedDiagnostics(diagnostic, expectedStart, expectedEnd)
+                                return
+                            }
+
+                            val message = "Missing " + diagnostic.description + PsiDiagnosticUtils.atLocation(
+                                ktFile,
+                                TextRange(expectedStart, expectedEnd),
+                            )
+                            System.err.println(message)
+                            ok[0] = false
                         }
 
-                        val message = "Missing " + diagnostic.description + PsiDiagnosticUtils.atLocation(
-                            ktFile,
-                            TextRange(expectedStart, expectedEnd)
-                        )
-                        System.err.println(message)
-                        ok[0] = false
-                    }
-
-                    override fun wrongParametersDiagnostic(
-                        expectedDiagnostic: TextDiagnostic,
-                        actualDiagnostic: TextDiagnostic,
-                        start: Int,
-                        end: Int
-                    ) {
-                        val message = "Parameters of diagnostic not equal at position " +
-                                PsiDiagnosticUtils.atLocation(ktFile, TextRange(start, end)) +
-                                ". Expected: ${expectedDiagnostic.asString()}, actual: $actualDiagnostic"
-                        System.err.println(message)
-                        ok[0] = false
-                    }
-
-                    override fun unexpectedDiagnostic(diagnostic: TextDiagnostic, actualStart: Int, actualEnd: Int) {
-                        if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
-                            updateUncheckedDiagnostics(diagnostic, actualStart, actualEnd)
-                            return
+                        override fun wrongParametersDiagnostic(
+                            expectedDiagnostic: TextDiagnostic,
+                            actualDiagnostic: TextDiagnostic,
+                            start: Int,
+                            end: Int,
+                        ) {
+                            val message = "Parameters of diagnostic not equal at position " +
+                                    PsiDiagnosticUtils.atLocation(ktFile, TextRange(start, end)) +
+                                    ". Expected: ${expectedDiagnostic.asString()}, actual: $actualDiagnostic"
+                            System.err.println(message)
+                            ok[0] = false
                         }
 
-                        val message = "Unexpected ${diagnostic.description}${PsiDiagnosticUtils.atLocation(
-                            ktFile,
-                            TextRange(actualStart, actualEnd)
-                        )}"
-                        System.err.println(message)
-                        ok[0] = false
-                    }
+                        override fun unexpectedDiagnostic(diagnostic: TextDiagnostic, actualStart: Int, actualEnd: Int) {
+                            if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
+                                updateUncheckedDiagnostics(diagnostic, actualStart, actualEnd)
+                                return
+                            }
 
-                    fun updateUncheckedDiagnostics(diagnostic: TextDiagnostic, start: Int, end: Int) {
-                        diagnostic.enhanceInferenceCompatibility(invertedInferenceCompatibilityOfTest)
-                        uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end
-                    )
+                            val message = "Unexpected ${diagnostic.description}${PsiDiagnosticUtils.atLocation(
+                                ktFile,
+                                TextRange(actualStart, actualEnd),
+                            )}"
+                            System.err.println(message)
+                            ok[0] = false
+                        }
+
+                        fun updateUncheckedDiagnostics(diagnostic: TextDiagnostic, start: Int, end: Int) {
+                            diagnostic.enhanceInferenceCompatibility(invertedInferenceCompatibilityOfTest)
+                            uncheckedDiagnostics.add(
+                                PositionalTextDiagnostic(
+                                    diagnostic, start, end,
+                                ),
+                            )
+                        }
+                    },
                 )
-                }
-            })
 
             actualText.append(
                 CheckerTestUtil.addDiagnosticMarkersToText(
@@ -333,8 +340,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     { file -> file.text },
                     uncheckedDiagnostics,
                     withNewInferenceDirective,
-                    renderDiagnosticMessages
-                )
+                    renderDiagnosticMessages,
+                ),
             )
 
             stripExtras(actualText)
@@ -356,7 +363,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 val diagnostics = getJvmSignatureDiagnostics(
                     declaration,
                     bindingContext.diagnostics,
-                    GlobalSearchScope.allScope(project)
+                    GlobalSearchScope.allScope(project),
                 ) ?: continue
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, newInferenceEnabled) })
             }
@@ -376,11 +383,11 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             SyntaxErrorDiagnosticFactory.INSTANCE,
             DebugInfoDiagnosticFactory0.ELEMENT_WITH_ERROR_TYPE,
             DebugInfoDiagnosticFactory0.MISSING_UNRESOLVED,
-            DebugInfoDiagnosticFactory0.UNRESOLVED_WITH_TARGET
+            DebugInfoDiagnosticFactory0.UNRESOLVED_WITH_TARGET,
         )
 
         val DEFAULT_DIAGNOSTIC_TESTS_FEATURES = mapOf(
-            LanguageFeature.Coroutines to LanguageFeature.State.ENABLED
+            LanguageFeature.Coroutines to LanguageFeature.State.ENABLED,
         )
 
         val CHECK_TYPE_DIRECTIVE = "CHECK_TYPE"
@@ -407,7 +414,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         fun parseDiagnosticFilterDirective(
             directiveMap: Map<String, String>,
-            allowUnderscoreUsage: Boolean
+            allowUnderscoreUsage: Boolean,
         ): Condition<Diagnostic> {
             val directives = directiveMap[DIAGNOSTICS_DIRECTIVE]
             val initialCondition =
@@ -420,9 +427,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 // If "!API_VERSION" is present, disable the NEWER_VERSION_IN_SINCE_KOTLIN diagnostic.
                 // Otherwise it would be reported in any non-trivial test on the @SinceKotlin value.
                 if (API_VERSION_DIRECTIVE in directiveMap) {
-                    return Conditions.and(initialCondition, Condition { diagnostic ->
-                        diagnostic.factory !== Errors.NEWER_VERSION_IN_SINCE_KOTLIN
-                    })
+                    return Conditions.and(
+                        initialCondition,
+                        Condition { diagnostic ->
+                            diagnostic.factory !== Errors.NEWER_VERSION_IN_SINCE_KOTLIN
+                        },
+                    )
                 }
                 return initialCondition
             }
@@ -432,12 +442,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             if (!matcher.find()) {
                 Assert.fail(
                     "Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
-                                    "found: '$directives'\n" +
-                                    "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
-                                    "where '+' means 'include'\n" +
-                                    "      '-' means 'exclude'\n" +
-                                    "      '!' means 'exclude everything but this'\n" +
-                                    "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR"
+                            "found: '$directives'\n" +
+                            "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
+                            "where '+' means 'include'\n" +
+                            "      '-' means 'exclude'\n" +
+                            "      '!' means 'exclude everything but this'\n" +
+                            "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR",
                 )
             }
 
@@ -458,7 +468,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         if (!first) {
                             Assert.fail(
                                 "'$operation$name' appears in a position rather than the first one, " +
-                                                "which effectively cancels all the previous filters in this directive"
+                                        "which effectively cancels all the previous filters in this directive",
                             )
                         }
                         condition = newCondition
@@ -472,7 +482,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             // We always include UNRESOLVED_REFERENCE and SYNTAX_ERROR because they are too likely to indicate erroneous test data
             return Conditions.or(
                 condition,
-                Condition { diagnostic -> diagnostic.factory in DIAGNOSTICS_TO_INCLUDE_ANYWAY }
+                Condition { diagnostic -> diagnostic.factory in DIAGNOSTICS_TO_INCLUDE_ANYWAY },
             )
         }
 

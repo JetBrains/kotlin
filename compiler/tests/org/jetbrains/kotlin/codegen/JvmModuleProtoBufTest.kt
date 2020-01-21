@@ -33,25 +33,26 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         relativeDirectory: String,
         compileWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
         loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
-        extraOptions: List<String> = emptyList()
+        extraOptions: List<String> = emptyList(),
     ) {
         val directory = KotlinTestUtils.getTestDataPathBase() + relativeDirectory
         val tmpdir = KotlinTestUtils.tmpDir(this::class.simpleName)
 
         val moduleName = "main"
         CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2JVMCompiler(), listOf(
+            K2JVMCompiler(),
+            listOf(
                 directory,
                 "-d", tmpdir.path,
                 "-module-name", moduleName,
-                "-language-version", compileWith.versionString
-            ) + extraOptions
+                "-language-version", compileWith.versionString,
+            ) + extraOptions,
         )
 
         val mapping = ModuleMapping.loadModuleMapping(
             File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
             CompilerDeserializationConfiguration(LanguageVersionSettingsImpl(loadWith, ApiVersion.createByLanguageVersion(loadWith))),
-            ::error
+            ::error,
         )
         val result = buildString {
             for (annotationClassId in mapping.moduleData.annotations) {
@@ -98,12 +99,13 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
 
     fun testExperimental() {
         doTest(
-            "/moduleProtoBuf/experimental", extraOptions = listOf(
+            "/moduleProtoBuf/experimental",
+            extraOptions = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xexperimental=org.foo.A",
                 "-Xexperimental=org.foo.B.C",
-                "-Xopt-in=org.foo.D"
-            )
+                "-Xopt-in=org.foo.D",
+            ),
         )
     }
 }

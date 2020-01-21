@@ -11,9 +11,9 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class ScriptEvaluationConfigurationFromDefinition(
     val hostConfiguration: ScriptingHostConfiguration,
-    val scriptDefinition: KotlinScriptDefinition
+    val scriptDefinition: KotlinScriptDefinition,
 ) : ScriptEvaluationConfiguration(
     {
         hostConfiguration(hostConfiguration)
-    }
+    },
 )

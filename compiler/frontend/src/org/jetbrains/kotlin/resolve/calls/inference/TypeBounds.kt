@@ -44,7 +44,7 @@ interface TypeBounds {
         val position: ConstraintPosition,
         val isProper: Boolean,
         // to prevent infinite recursion in incorporation we store the variables that was substituted to derive this bound
-        val derivedFrom: Set<TypeVariable>
+        val derivedFrom: Set<TypeVariable>,
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

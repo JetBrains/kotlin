@@ -27,14 +27,14 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
 
 abstract class SerializableCompanionCodegen(
     protected val companionDescriptor: ClassDescriptor,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ) : AbstractSerialGenerator(bindingContext, companionDescriptor) {
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorByCompanion(companionDescriptor)!!
 
     fun generate() {
         val serializerGetterDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
             SERIALIZER_PROVIDER_NAME,
-            NoLookupLocation.FROM_BACKEND
+            NoLookupLocation.FROM_BACKEND,
         ).firstOrNull {
             it.valueParameters.size == serializableDescriptor.declaredTypeParameters.size
                     && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
@@ -42,7 +42,7 @@ abstract class SerializableCompanionCodegen(
                     && it.returnType != null && isKSerializer(it.returnType)
         } ?: throw IllegalStateException(
             "Can't find synthesized 'Companion.serializer()' function to generate, " +
-                    "probably clash with user-defined function has occurred"
+                    "probably clash with user-defined function has occurred",
         )
         generateSerializerGetter(serializerGetterDescriptor)
     }

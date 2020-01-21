@@ -48,7 +48,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     private val consumer: Processor<in PsiReference>,
     private val optimizer: SearchRequestCollector,
     private val options: KotlinReferencesSearchOptions,
-    private val wordsToSearch: List<String>
+    private val wordsToSearch: List<String>,
 ) {
     private val project = targetDeclaration.project
 
@@ -83,7 +83,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             searchScope: SearchScope,
             consumer: Processor<in PsiReference>,
             optimizer: SearchRequestCollector,
-            options: KotlinReferencesSearchOptions
+            options: KotlinReferencesSearchOptions,
         ): OperatorReferenceSearcher<*>? {
             return runReadAction {
                 if (declaration.isValid)
@@ -98,7 +98,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             searchScope: SearchScope,
             consumer: Processor<in PsiReference>,
             optimizer: SearchRequestCollector,
-            options: KotlinReferencesSearchOptions
+            options: KotlinReferencesSearchOptions,
         ): OperatorReferenceSearcher<*>? {
             val functionName = when (declaration) {
                 is KtNamedFunction -> declaration.name
@@ -124,7 +124,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             consumer: Processor<in PsiReference>,
             optimizer: SearchRequestCollector,
             options: KotlinReferencesSearchOptions,
-            searchScope: SearchScope
+            searchScope: SearchScope,
         ): OperatorReferenceSearcher<*>? {
             if (DataClassDescriptorResolver.isComponentLike(name)) {
                 if (!options.searchForComponentConventions) return null
@@ -170,7 +170,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                         searchScope,
                         consumer,
                         optimizer,
-                        options
+                        options,
                     )
 
                 name == OperatorNameConventions.COMPARE_TO ->
@@ -180,7 +180,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                         searchScope,
                         consumer,
                         optimizer,
-                        options
+                        options,
                     )
 
                 name == OperatorNameConventions.ITERATOR ->
@@ -217,7 +217,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
             if (!inProgress.add(psiClass)) {
                 testLog {
                     "ExpressionOfTypeProcessor is already started for ${runReadAction { psiClass.qualifiedName }}. Exit for operator ${logPresentation(
-                        targetDeclaration
+                        targetDeclaration,
                     )}."
                 }
                 return
@@ -236,7 +236,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 searchScope,
                 project,
                 possibleMatchHandler = { expression -> processPossibleReceiverExpression(expression) },
-                possibleMatchesInScopeHandler = { searchScope -> doPlainSearch(searchScope) }
+                possibleMatchesInScopeHandler = { searchScope -> doPlainSearch(searchScope) },
             ).run()
         } finally {
             inProgress.remove(psiClass ?: targetDeclaration)
@@ -296,7 +296,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                 val resultProcessor = KotlinRequestResultProcessor(
                     unwrappedElement,
                     filter = { ref -> isReferenceToCheck(ref) },
-                    options = options
+                    options = options,
                 )
                 wordsToSearch.forEach {
                     optimizer.searchWord(
@@ -305,7 +305,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
                         UsageSearchContext.IN_CODE,
                         true,
                         unwrappedElement,
-                        resultProcessor
+                        resultProcessor,
                     )
                 }
             } else {

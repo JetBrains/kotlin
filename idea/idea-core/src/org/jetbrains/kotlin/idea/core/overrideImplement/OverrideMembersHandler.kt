@@ -24,7 +24,7 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
 
                 class Data(
                     val realSuper: CallableMemberDescriptor,
-                    val immediateSupers: MutableList<CallableMemberDescriptor> = SmartList()
+                    val immediateSupers: MutableList<CallableMemberDescriptor> = SmartList(),
                 )
 
                 val byOriginalRealSupers = LinkedHashMap<CallableMemberDescriptor, Data>()
@@ -70,8 +70,8 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
                             realSuper,
                             immediateSuperToUse,
                             bodyType,
-                            preferConstructorParameters
-                        )
+                            preferConstructorParameters,
+                        ),
                     )
                 }
             }

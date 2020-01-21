@@ -32,7 +32,7 @@ class AllowedToResolveUnderWriteActionData(path: String, private val comment: St
         @Suppress("ConstantConditionIf")
         if (updateTestData && updateTestDataSet.add(action)) {
             file.writeText(
-                "$comment\n\n${updateTestDataSet.joinToString("\n")}"
+                "$comment\n\n${updateTestDataSet.joinToString("\n")}",
             )
         }
 

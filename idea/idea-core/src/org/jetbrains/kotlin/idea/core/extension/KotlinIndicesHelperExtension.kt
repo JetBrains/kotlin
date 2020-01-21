@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface KotlinIndicesHelperExtension {
     companion object : ProjectExtensionDescriptor<KotlinIndicesHelperExtension>(
-        "org.jetbrains.kotlin.kotlinIndicesHelperExtension", KotlinIndicesHelperExtension::class.java
+        "org.jetbrains.kotlin.kotlinIndicesHelperExtension", KotlinIndicesHelperExtension::class.java,
     )
 
     @JvmDefault
@@ -33,7 +33,7 @@ interface KotlinIndicesHelperExtension {
         moduleDescriptor: ModuleDescriptor,
         receiverTypes: Collection<KotlinType>,
         nameFilter: (String) -> Boolean,
-        lookupLocation: LookupLocation
+        lookupLocation: LookupLocation,
     ) {
         appendExtensionCallables(consumer, moduleDescriptor, receiverTypes, nameFilter)
     }
@@ -41,12 +41,12 @@ interface KotlinIndicesHelperExtension {
     @Deprecated(
         "Override the appendExtensionCallables() with the 'lookupLocation' parameter instead. " +
                 "This method can then throw an exception. " +
-                "See 'DebuggerFieldKotlinIndicesHelperExtension' as an example."
+                "See 'DebuggerFieldKotlinIndicesHelperExtension' as an example.",
     )
     fun appendExtensionCallables(
         consumer: MutableList<in CallableDescriptor>,
         moduleDescriptor: ModuleDescriptor,
         receiverTypes: Collection<KotlinType>,
-        nameFilter: (String) -> Boolean
+        nameFilter: (String) -> Boolean,
     )
 }

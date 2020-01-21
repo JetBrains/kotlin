@@ -18,6 +18,7 @@ fun createMappedTypeParametersSubstitution(from: ClassDescriptor, to: ClassDescr
 
     return TypeConstructorSubstitution.createByConstructorsMap(
         from.declaredTypeParameters.map(TypeParameterDescriptor::getTypeConstructor).zip(
-            to.declaredTypeParameters.map { it.defaultType.asTypeProjection() }
-        ).toMap())
+            to.declaredTypeParameters.map { it.defaultType.asTypeProjection() },
+        ).toMap(),
+    )
 }

@@ -53,7 +53,7 @@ abstract class AbstractJsReplTest : Closeable {
     private val collector: MessageCollector = ReplMessageCollector()
     protected val disposable = Disposer.newDisposable()
     protected val environment = KotlinCoreEnvironment.createForProduction(
-        disposable, loadConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES
+        disposable, loadConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES,
     )
 
     private var snippetId: Int = 1 //index 0 for klib
@@ -71,7 +71,7 @@ abstract class AbstractJsReplTest : Closeable {
         }
         configuration.add(
             ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-            ScriptDefinition.FromConfigurations(ScriptingHostConfiguration(), scriptConfiguration, null)
+            ScriptDefinition.FromConfigurations(ScriptingHostConfiguration(), scriptConfiguration, null),
         )
         return configuration
     }

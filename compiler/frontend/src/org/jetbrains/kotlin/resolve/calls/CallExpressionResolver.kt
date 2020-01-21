@@ -79,7 +79,7 @@ class CallExpressionResolver(
     private val qualifiedExpressionResolver: QualifiedExpressionResolver,
     private val languageVersionSettings: LanguageVersionSettings,
     private val dataFlowValueFactory: DataFlowValueFactory,
-    private val kotlinTypeRefiner: KotlinTypeRefiner
+    private val kotlinTypeRefiner: KotlinTypeRefiner,
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -93,12 +93,12 @@ class CallExpressionResolver(
         call: Call,
         context: ResolutionContext<*>,
         checkArguments: CheckArgumentTypesMode,
-        initialDataFlowInfoForArguments: DataFlowInfo
+        initialDataFlowInfoForArguments: DataFlowInfo,
     ): Pair<Boolean, ResolvedCall<FunctionDescriptor>?> {
         val results = callResolver.resolveFunctionCall(
             BasicCallResolutionContext.create(
-                context, call, checkArguments, DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call)
-            )
+                context, call, checkArguments, DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call),
+            ),
         )
         return if (!results.isNothing)
             Pair(true, OverloadResolutionResultsUtil.getResultingCall(results, context))
@@ -108,15 +108,15 @@ class CallExpressionResolver(
 
     private fun getVariableType(
         nameExpression: KtSimpleNameExpression, receiver: Receiver?,
-        callOperationNode: ASTNode?, context: ExpressionTypingContext
+        callOperationNode: ASTNode?, context: ExpressionTypingContext,
     ): Pair<Boolean, KotlinType?> {
         val temporaryForVariable = TemporaryTraceAndCache.create(
-            context, "trace to resolve as local variable or property", nameExpression
+            context, "trace to resolve as local variable or property", nameExpression,
         )
         val call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression)
         val contextForVariable = BasicCallResolutionContext.create(
             context.replaceTraceAndCache(temporaryForVariable),
-            call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS
+            call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
         )
         val resolutionResult = callResolver.resolveSimpleProperty(contextForVariable)
 
@@ -135,27 +135,27 @@ class CallExpressionResolver(
         temporaryForVariable.commit()
         return Pair(
             !resolutionResult.isNothing,
-            if (resolutionResult.isSingleResult) resolutionResult.resultingDescriptor.returnType else null
+            if (resolutionResult.isSingleResult) resolutionResult.resultingDescriptor.returnType else null,
         )
     }
 
     fun getSimpleNameExpressionTypeInfo(
         nameExpression: KtSimpleNameExpression, receiver: Receiver?,
-        callOperationNode: ASTNode?, context: ExpressionTypingContext
+        callOperationNode: ASTNode?, context: ExpressionTypingContext,
     ) = getSimpleNameExpressionTypeInfo(nameExpression, receiver, callOperationNode, context, context.dataFlowInfo)
 
     private fun getSimpleNameExpressionTypeInfo(
         nameExpression: KtSimpleNameExpression, receiver: Receiver?,
         callOperationNode: ASTNode?, context: ExpressionTypingContext,
-        initialDataFlowInfoForArguments: DataFlowInfo
+        initialDataFlowInfoForArguments: DataFlowInfo,
     ): KotlinTypeInfo {
 
         val temporaryForVariable = TemporaryTraceAndCache.create(
-            context, "trace to resolve as variable", nameExpression
+            context, "trace to resolve as variable", nameExpression,
         )
         val (notNothing, type) = getVariableType(
             nameExpression, receiver, callOperationNode,
-            context.replaceTraceAndCache(temporaryForVariable)
+            context.replaceTraceAndCache(temporaryForVariable),
         )
 
         if (notNothing) {
@@ -165,11 +165,11 @@ class CallExpressionResolver(
 
         val call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, emptyList())
         val temporaryForFunction = TemporaryTraceAndCache.create(
-            context, "trace to resolve as function", nameExpression
+            context, "trace to resolve as function", nameExpression,
         )
         val newContext = context.replaceTraceAndCache(temporaryForFunction)
         val (resolveResult, resolvedCall) = getResolvedCallForFunction(
-            call, newContext, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, initialDataFlowInfoForArguments
+            call, newContext, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, initialDataFlowInfoForArguments,
         )
         if (resolveResult) {
             val functionDescriptor = resolvedCall?.resultingDescriptor
@@ -192,10 +192,10 @@ class CallExpressionResolver(
 
     fun getCallExpressionTypeInfo(
         callExpression: KtCallExpression,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ): KotlinTypeInfo {
         val typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            callExpression, null, null, context, context.dataFlowInfo
+            callExpression, null, null, context, context.dataFlowInfo,
         )
         if (context.contextDependency == INDEPENDENT) {
             dataFlowAnalyzer.checkType(typeInfo.type, callExpression, context)
@@ -210,18 +210,18 @@ class CallExpressionResolver(
     private fun getCallExpressionTypeInfoWithoutFinalTypeCheck(
         callExpression: KtCallExpression, receiver: Receiver?,
         callOperationNode: ASTNode?, context: ExpressionTypingContext,
-        initialDataFlowInfoForArguments: DataFlowInfo
+        initialDataFlowInfoForArguments: DataFlowInfo,
     ): KotlinTypeInfo {
         val call = CallMaker.makeCall(receiver, callOperationNode, callExpression)
 
         val temporaryForFunction = TemporaryTraceAndCache.create(
-            context, "trace to resolve as function call", callExpression
+            context, "trace to resolve as function call", callExpression,
         )
         val (resolveResult, resolvedCall) = getResolvedCallForFunction(
             call,
             context.replaceTraceAndCache(temporaryForFunction),
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            initialDataFlowInfoForArguments
+            initialDataFlowInfoForArguments,
         )
         if (resolveResult) {
             val functionDescriptor = resolvedCall?.resultingDescriptor
@@ -267,11 +267,11 @@ class CallExpressionResolver(
         val calleeExpression = callExpression.calleeExpression
         if (calleeExpression is KtSimpleNameExpression && callExpression.typeArgumentList == null) {
             val temporaryForVariable = TemporaryTraceAndCache.create(
-                context, "trace to resolve as variable with 'invoke' call", callExpression
+                context, "trace to resolve as variable with 'invoke' call", callExpression,
             )
             val (notNothing, type) = getVariableType(
                 calleeExpression, receiver, callOperationNode,
-                context.replaceTraceAndCache(temporaryForVariable)
+                context.replaceTraceAndCache(temporaryForVariable),
             )
             val qualifier = temporaryForVariable.trace.get(BindingContext.QUALIFIER, calleeExpression)
             if (notNothing && (qualifier == null || qualifier !is PackageQualifier)) {
@@ -285,15 +285,15 @@ class CallExpressionResolver(
                 context.trace.report(
                     FUNCTION_EXPECTED.on(
                         calleeExpression, calleeExpression,
-                        type ?: ErrorUtils.createErrorType("")
-                    )
+                        type ?: ErrorUtils.createErrorType(""),
+                    ),
                 )
                 argumentTypeResolver.analyzeArgumentsAndRecordTypes(
                     BasicCallResolutionContext.create(
                         context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call)
+                        DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call),
                     ),
-                    ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+                    ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS,
                 )
                 return noTypeInfo(context)
             }
@@ -315,12 +315,12 @@ class CallExpressionResolver(
         }
 
     private fun resolveSimpleName(
-        context: ExpressionTypingContext, expression: KtSimpleNameExpression
+        context: ExpressionTypingContext, expression: KtSimpleNameExpression,
     ): OverloadResolutionResults<VariableDescriptor> {
         val temporaryForVariable = TemporaryTraceAndCache.create(context, "trace to resolve as local variable or property", expression)
         val call = CallMaker.makePropertyCall(null, null, expression)
         val contextForVariable = BasicCallResolutionContext.create(
-            context.replaceTraceAndCache(temporaryForVariable), call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS
+            context.replaceTraceAndCache(temporaryForVariable), call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
         )
         return callResolver.resolveSimpleProperty(contextForVariable)
     }
@@ -330,13 +330,13 @@ class CallExpressionResolver(
         callOperationNode: ASTNode?,
         selectorExpression: KtExpression?,
         context: ExpressionTypingContext,
-        initialDataFlowInfoForArguments: DataFlowInfo
+        initialDataFlowInfoForArguments: DataFlowInfo,
     ): KotlinTypeInfo = when (selectorExpression) {
         is KtCallExpression -> getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments
+            selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments,
         )
         is KtSimpleNameExpression -> getSimpleNameExpressionTypeInfo(
-            selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments
+            selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments,
         )
         is KtExpression -> {
             expressionTypingServices.getTypeInfo(selectorExpression, context)
@@ -353,15 +353,18 @@ class CallExpressionResolver(
         val receiverCanBeNull = receiverDataFlowValue != null &&
                 initialDataFlowInfoForArguments.getStableNullability(receiverDataFlowValue).canBeNull()
 
-        val callOperationNode = AstLoadingFilter.forceAllowTreeLoading(element.qualified.containingFile, ThrowableComputable {
-            element.node
-        })
+        val callOperationNode = AstLoadingFilter.forceAllowTreeLoading(
+            element.qualified.containingFile,
+            ThrowableComputable {
+                element.node
+            },
+        )
 
         if (receiverDataFlowValue != null && element.safe) {
             // Additional "receiver != null" information should be applied if we consider a safe call
             if (receiverCanBeNull) {
                 initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
-                    receiverDataFlowValue, DataFlowValue.nullValue(builtIns), languageVersionSettings
+                    receiverDataFlowValue, DataFlowValue.nullValue(builtIns), languageVersionSettings,
                 )
             } else {
                 reportUnnecessarySafeCall(context.trace, receiver.type, callOperationNode, receiver)
@@ -450,7 +453,7 @@ class CallExpressionResolver(
                     "Type for " + when (val receiver = element.receiver) {
                         is KtNameReferenceExpression -> receiver.getReferencedName()
                         else -> receiver.text
-                    }
+                    },
                 )
 
             val receiver = trace.get(BindingContext.QUALIFIER, element.receiver)
@@ -466,7 +469,7 @@ class CallExpressionResolver(
                 } else {
                     // Take data flow info from the current receiver
                     receiverTypeInfo.dataFlowInfo
-                }
+                },
             )
 
             val selectorTypeInfo = getSafeOrUnsafeSelectorTypeInfo(receiver, element, contextForSelector)
@@ -477,7 +480,7 @@ class CallExpressionResolver(
             }
 
             resultTypeInfo = checkSelectorTypeInfo(qualifiedExpression, selectorTypeInfo, contextForSelector).replaceDataFlowInfo(
-                branchPointDataFlowInfo
+                branchPointDataFlowInfo,
             )
             if (!lastStage) {
                 recordResultTypeInfo(qualifiedExpression, resultTypeInfo, contextForSelector)
@@ -491,7 +494,7 @@ class CallExpressionResolver(
     private fun resolveDeferredReceiverInQualifiedExpression(
         qualifier: Qualifier,
         selectorExpression: KtExpression?,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ) {
         val calleeExpression = KtPsiUtil.deparenthesize(selectorExpression.getCalleeExpressionIfAny())
         val selectorDescriptor = (calleeExpression as? KtReferenceExpression)?.let {
@@ -527,18 +530,18 @@ class CallExpressionResolver(
 
         fun reportUnnecessarySafeCall(
             trace: BindingTrace, type: KotlinType,
-            callOperationNode: ASTNode, explicitReceiver: Receiver?
+            callOperationNode: ASTNode, explicitReceiver: Receiver?,
         ) = trace.report(
             if (explicitReceiver is ExpressionReceiver && explicitReceiver.expression is KtSuperExpression) {
                 UNEXPECTED_SAFE_CALL.on(callOperationNode.psi)
             } else {
                 UNNECESSARY_SAFE_CALL.on(callOperationNode.psi, type)
-            }
+            },
         )
 
         private fun checkNestedClassAccess(
             expression: KtQualifiedExpression,
-            context: ExpressionTypingContext
+            context: ExpressionTypingContext,
         ) {
             val selectorExpression = expression.selectorExpression ?: return
 

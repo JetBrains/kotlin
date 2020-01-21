@@ -11,7 +11,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class SerializerForEnumsCodegen(
     codegen: ImplementationBodyCodegen,
-    serializableClass: ClassDescriptor
+    serializableClass: ClassDescriptor,
 ) : SerializerCodegenImpl(codegen, serializableClass) {
     override fun generateSave(function: FunctionDescriptor) = codegen.generateMethod(function) { _, _ ->
         // fun save(output: KOutput, obj : T)

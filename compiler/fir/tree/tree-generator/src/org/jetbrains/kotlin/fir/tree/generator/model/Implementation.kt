@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 class ImplementationWithArg(
     val implementation: Implementation,
-    val argument: Importable?
+    val argument: Importable?,
 ) : FieldContainer by implementation, KindOwner by implementation {
     val element: Element get() = implementation.element
 }

@@ -38,7 +38,7 @@ class InvokeOperatorReferenceSearcher(
     searchScope: SearchScope,
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
-    options: KotlinReferencesSearchOptions
+    options: KotlinReferencesSearchOptions,
 ) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = emptyList()) {
     private val callArgumentsSize: Int?
 

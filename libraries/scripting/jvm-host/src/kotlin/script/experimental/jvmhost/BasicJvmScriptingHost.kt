@@ -16,38 +16,38 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 open class BasicJvmScriptingHost(
     val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     compiler: JvmScriptCompiler = JvmScriptCompiler(hostConfiguration),
-    evaluator: ScriptEvaluator = BasicJvmScriptEvaluator()
+    evaluator: ScriptEvaluator = BasicJvmScriptEvaluator(),
 ) : BasicScriptingHost(compiler, evaluator) {
 
     inline fun <reified T : Any> evalWithTemplate(
         script: SourceCode,
         noinline compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
-        noinline evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+        noinline evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {},
     ): ResultWithDiagnostics<EvaluationResult> =
         eval(
             script,
             createJvmCompilationConfigurationFromTemplate<T>(hostConfiguration, compilation),
-            createJvmEvaluationConfigurationFromTemplate<T>(hostConfiguration, evaluation)
+            createJvmEvaluationConfigurationFromTemplate<T>(hostConfiguration, evaluation),
         )
 }
 
 
 inline fun <reified T : Any> createJvmCompilationConfigurationFromTemplate(
     hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    noinline body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    noinline body: ScriptCompilationConfiguration.Builder.() -> Unit = {},
 ): ScriptCompilationConfiguration = createCompilationConfigurationFromTemplate(
     KotlinType(T::class),
     hostConfiguration,
     ScriptCompilationConfiguration::class,
-    body
+    body,
 )
 
 inline fun <reified T : Any> createJvmEvaluationConfigurationFromTemplate(
     hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    noinline body: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+    noinline body: ScriptEvaluationConfiguration.Builder.() -> Unit = {},
 ): ScriptEvaluationConfiguration = createEvaluationConfigurationFromTemplate(
     KotlinType(T::class),
     hostConfiguration,
     ScriptEvaluationConfiguration::class,
-    body
+    body,
 )

@@ -117,7 +117,7 @@ fun Module.getStableName(): Name {
 fun Project.getLanguageVersionSettings(
     contextModule: Module? = null,
     jsr305State: Jsr305State? = null,
-    isReleaseCoroutines: Boolean? = null
+    isReleaseCoroutines: Boolean? = null,
 ): LanguageVersionSettings {
     val arguments = KotlinCommonCompilerArgumentsHolder.getInstance(this).settings
     val languageVersion =
@@ -129,19 +129,19 @@ fun Project.getLanguageVersionSettings(
 
     val additionalArguments: CommonCompilerArguments = parseArguments(
         DefaultIdeTargetPlatformKindProvider.defaultPlatform,
-        compilerSettings.additionalArgumentsAsList
+        compilerSettings.additionalArgumentsAsList,
     )
 
     val extraLanguageFeatures = additionalArguments.configureLanguageFeatures(MessageCollector.NONE).apply {
         configureCoroutinesSupport(
             CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this@getLanguageVersionSettings).settings),
-            languageVersion
+            languageVersion,
         )
         configureNewInferenceSupportInIDE(this@getLanguageVersionSettings)
         if (isReleaseCoroutines != null) {
             put(
                 LanguageFeature.ReleaseCoroutines,
-                if (isReleaseCoroutines) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
+                if (isReleaseCoroutines) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED,
             )
         }
     }
@@ -154,7 +154,7 @@ fun Project.getLanguageVersionSettings(
     return LanguageVersionSettingsImpl(
         languageVersion, apiVersion,
         arguments.configureAnalysisFlags(MessageCollector.NONE) + extraAnalysisFlags,
-        arguments.configureLanguageFeatures(MessageCollector.NONE) + extraLanguageFeatures
+        arguments.configureLanguageFeatures(MessageCollector.NONE) + extraLanguageFeatures,
     )
 }
 
@@ -173,22 +173,28 @@ val Module.languageVersionSettings: LanguageVersionSettings
 fun Module.setLanguageVersionSettings(value: LanguageVersionSettings) =
     putUserData(
         LANGUAGE_VERSION_SETTINGS,
-        CachedValuesManager.getManager(project).createCachedValue({
-                                                                      CachedValueProvider.Result(
-                                                                          value, ProjectRootModificationTracker.getInstance(project)
-                                                                      )
-                                                                  }, false)
+        CachedValuesManager.getManager(project).createCachedValue(
+            {
+                CachedValueProvider.Result(
+                    value, ProjectRootModificationTracker.getInstance(project),
+                )
+            },
+            false,
+        ),
     )
 
 private fun Module.createCachedValueForLanguageVersionSettings(): CachedValue<LanguageVersionSettings> {
-    return CachedValuesManager.getManager(project).createCachedValue({
-                                                                         CachedValueProvider.Result(
-                                                                             computeLanguageVersionSettings(),
-                                                                             ProjectRootModificationTracker.getInstance(
-                                                                                 project
-                                                                             )
-                                                                         )
-                                                                     }, false)
+    return CachedValuesManager.getManager(project).createCachedValue(
+        {
+            CachedValueProvider.Result(
+                computeLanguageVersionSettings(),
+                ProjectRootModificationTracker.getInstance(
+                    project,
+                ),
+            )
+        },
+        false,
+    )
 }
 
 private fun Module.shouldUseProjectLanguageVersionSettings(): Boolean {
@@ -229,7 +235,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
         languageVersion,
         ApiVersion.createByLanguageVersion(apiVersion),
         analysisFlags,
-        languageFeatures
+        languageFeatures,
     )
 }
 
@@ -260,14 +266,14 @@ private val Module.implementsCommonModule: Boolean
 
 private fun parseArguments(
     platformKind: TargetPlatform,
-    additionalArguments: List<String>
+    additionalArguments: List<String>,
 ): CommonCompilerArguments {
     return platformKind.createArguments { parseCommandLineArguments(additionalArguments, this) }
 }
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCoroutinesSupport(
     coroutineSupport: LanguageFeature.State?,
-    languageVersion: LanguageVersion
+    languageVersion: LanguageVersion,
 ) {
     val state = if (languageVersion >= LanguageVersion.KOTLIN_1_3) {
         LanguageFeature.State.ENABLED
@@ -279,7 +285,7 @@ fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCoroutinesSuppor
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSupport(
     platformKind: IdePlatformKind<*>?,
-    module: Module?
+    module: Module?,
 ) {
     if (platformKind.isCommon || module?.implementsCommonModule == true) {
         put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
@@ -287,7 +293,7 @@ fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSup
 }
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureNewInferenceSupportInIDE(
-    project: Project
+    project: Project,
 ) {
     if (NewInferenceForIDEAnalysisComponent.isEnabled(project)) {
         putIfAbsent(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)

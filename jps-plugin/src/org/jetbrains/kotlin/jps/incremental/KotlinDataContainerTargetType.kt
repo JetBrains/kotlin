@@ -44,7 +44,7 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
         model: JpsModel?,
         index: ModuleExcludeIndex?,
         ignoredFileIndex: IgnoredFileIndex?,
-        dataPaths: BuildDataPaths?
+        dataPaths: BuildDataPaths?,
     ): List<BuildRootDescriptor> = listOf()
 
     override fun getOutputRoots(context: CompileContext): Collection<File> {
@@ -57,6 +57,6 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
 
     override fun computeDependencies(
         targetRegistry: BuildTargetRegistry?,
-        outputIndex: TargetOutputIndex?
+        outputIndex: TargetOutputIndex?,
     ): Collection<BuildTarget<*>>? = listOf()
 }

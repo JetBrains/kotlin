@@ -34,7 +34,7 @@ import java.io.File
 class KotlinDirtySourceFilesHolder(
     val chunk: ModuleChunk,
     val context: CompileContext,
-    delegate: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>
+    delegate: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
 ) {
     val byTarget: Map<ModuleBuildTarget, TargetFiles>
 

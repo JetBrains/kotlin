@@ -18,8 +18,8 @@ class CacheVersionTest {
             CacheVersion(
                 3,
                 JvmBytecodeBinaryVersion(1, 0, 3),
-                JvmMetadataVersion(1, 1, 13)
-            ).intValue
+                JvmMetadataVersion(1, 1, 13),
+            ).intValue,
         )
     }
 
@@ -27,7 +27,7 @@ class CacheVersionTest {
     fun testDeconstruct() {
         assertEquals(
             "CacheVersion(caches: 3, bytecode: 1.0, metadata: 1.1)",
-            CacheVersion(3011001).toString()
+            CacheVersion(3011001).toString(),
         )
     }
 
@@ -36,7 +36,7 @@ class CacheVersionTest {
         val version = CacheVersion(
             1,
             JvmBytecodeBinaryVersion(2, 3),
-            JvmMetadataVersion(4, 5)
+            JvmMetadataVersion(4, 5),
         )
 
         assertEquals(1024305, version.intValue)
@@ -50,8 +50,8 @@ class CacheVersionTest {
             CacheVersion(
                 2146,
                 JvmBytecodeBinaryVersion(9, 9),
-                JvmMetadataVersion(9, 99)
-            ).toString()
+                JvmMetadataVersion(9, 99),
+            ).toString(),
         )
     }
 }

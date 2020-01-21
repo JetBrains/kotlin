@@ -86,7 +86,7 @@ private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQ
             Result(
                 type,
                 lowerResult.subtreeSize,
-                wereChanges
+                wereChanges,
             )
         }
         is SimpleType -> enhanceInflexible(qualifiers, index, TypeComponentPosition.INFLEXIBLE)
@@ -96,7 +96,7 @@ private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQ
 private fun SimpleType.enhanceInflexible(
     qualifiers: (Int) -> JavaTypeQualifiers,
     index: Int,
-    position: TypeComponentPosition
+    position: TypeComponentPosition,
 ): SimpleResult {
     val shouldEnhance = position.shouldEnhance()
     if (!shouldEnhance && arguments.isEmpty()) return SimpleResult(this, 1, false)
@@ -132,14 +132,14 @@ private fun SimpleType.enhanceInflexible(
     val newAnnotations = listOfNotNull(
         annotations,
         enhancedMutabilityAnnotations,
-        enhancedNullabilityAnnotations
+        enhancedNullabilityAnnotations,
     ).compositeAnnotationsOrSingle()
 
     val enhancedType = KotlinTypeFactory.simpleType(
         newAnnotations,
         typeConstructor,
         enhancedArguments,
-        enhancedNullability
+        enhancedNullability,
     )
 
     val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
@@ -165,7 +165,7 @@ private fun <T> T.enhancedMutability() = EnhancementResult(this, ENHANCED_MUTABI
 
 private fun ClassifierDescriptor.enhanceMutability(
     qualifiers: JavaTypeQualifiers,
-    position: TypeComponentPosition
+    position: TypeComponentPosition,
 ): EnhancementResult<ClassifierDescriptor> {
     if (!position.shouldEnhance()) return this.noChange()
     if (this !is ClassDescriptor) return this.noChange() // mutability is not applicable for type parameters
@@ -235,7 +235,7 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : NotNull
             is SimpleType -> unwrappedType.prepareReplacement()
             is FlexibleType -> KotlinTypeFactory.flexibleType(
                 unwrappedType.lowerBound.prepareReplacement(),
-                unwrappedType.upperBound.prepareReplacement()
+                unwrappedType.upperBound.prepareReplacement(),
             ).wrapEnhancement(unwrappedType.getEnhancement())
             else -> error("Incorrect type: $unwrappedType")
         }

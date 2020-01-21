@@ -45,7 +45,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     data class PlatformMutabilityMapping(
         val javaClass: ClassId,
         val kotlinReadOnly: ClassId,
-        val kotlinMutable: ClassId
+        val kotlinMutable: ClassId,
     )
 
     private inline fun <reified T> mutabilityMapping(kotlinReadOnly: ClassId, kotlinMutable: FqName): PlatformMutabilityMapping {
@@ -62,8 +62,8 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         mutabilityMapping<ListIterator<*>>(ClassId.topLevel(FQ_NAMES.listIterator), FQ_NAMES.mutableListIterator),
         mutabilityMapping<Map<*, *>>(ClassId.topLevel(FQ_NAMES.map), FQ_NAMES.mutableMap),
         mutabilityMapping<Map.Entry<*, *>>(
-            ClassId.topLevel(FQ_NAMES.map).createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry
-        )
+            ClassId.topLevel(FQ_NAMES.map).createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry,
+        ),
     )
 
     init {
@@ -84,14 +84,14 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         for (jvmType in JvmPrimitiveType.values()) {
             add(
                 ClassId.topLevel(jvmType.wrapperFqName),
-                ClassId.topLevel(KotlinBuiltIns.getPrimitiveFqName(jvmType.primitiveType))
+                ClassId.topLevel(KotlinBuiltIns.getPrimitiveFqName(jvmType.primitiveType)),
             )
         }
 
         for (classId in CompanionObjectMapping.allClassesWithIntrinsicCompanions()) {
             add(
                 ClassId.topLevel(FqName("kotlin.jvm.internal." + classId.shortClassName.asString() + "CompanionObject")),
-                classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+                classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT),
             )
         }
 
@@ -255,7 +255,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     private fun convertToOppositeMutability(
         descriptor: ClassDescriptor,
         map: Map<FqNameUnsafe, FqName>,
-        mutabilityKindName: String
+        mutabilityKindName: String,
     ): ClassDescriptor {
         val oppositeClassFqName = map[DescriptorUtils.getFqName(descriptor)]
             ?: throw IllegalArgumentException("Given class $descriptor is not a $mutabilityKindName collection")

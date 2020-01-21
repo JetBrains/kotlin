@@ -41,7 +41,7 @@ object CastDiagnosticsUtil {
     fun isCastPossible(
         lhsType: KotlinType,
         rhsType: KotlinType,
-        platformToKotlinClassMap: PlatformToKotlinClassMap
+        platformToKotlinClassMap: PlatformToKotlinClassMap,
     ): Boolean {
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
@@ -79,7 +79,7 @@ object CastDiagnosticsUtil {
 
     private fun mapToPlatformIndependentClasses(
         type: KotlinType,
-        platformToKotlinClassMap: PlatformToKotlinClassMap
+        platformToKotlinClassMap: PlatformToKotlinClassMap,
     ): List<ClassDescriptor> {
         val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return listOf()
 
@@ -169,7 +169,7 @@ object CastDiagnosticsUtil {
         val substitution: MutableMap<TypeConstructor, TypeProjection> = if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             val solution = TypeUnifier.unify(
-                TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains
+                TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains,
             )
             Maps.newHashMap(solution.substitution)
         } else {
@@ -186,7 +186,7 @@ object CastDiagnosticsUtil {
             if (value == null) {
                 substitution.put(
                     variable.typeConstructor,
-                    TypeUtils.makeStarProjection(variable)
+                    TypeUtils.makeStarProjection(variable),
                 )
                 allArgumentsInferred = false
             }
@@ -205,7 +205,7 @@ object CastDiagnosticsUtil {
         expression: KtBinaryExpressionWithTypeRHS,
         context: ExpressionTypingContext,
         targetType: KotlinType,
-        actualType: KotlinType
+        actualType: KotlinType,
     ): Boolean {
         // Here: x as? Type <=> x as Type?
         val refinedTargetType = if (KtPsiUtil.isSafeCast(expression)) TypeUtils.makeNullable(targetType) else targetType
@@ -217,7 +217,7 @@ object CastDiagnosticsUtil {
     fun isRefinementUseless(
         possibleTypes: Collection<KotlinType>,
         targetType: KotlinType,
-        shouldCheckForExactType: Boolean
+        shouldCheckForExactType: Boolean,
     ): Boolean {
         val intersectedType = TypeIntersector.intersectTypes(possibleTypes.map { it.upperIfFlexible() }) ?: return false
 

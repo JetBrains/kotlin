@@ -42,7 +42,7 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
         ownVersion: Int,
         coroutinesVersion: Int,
         multiplatformVersion: Int,
-        metadataVersionArray: IntArray?
+        metadataVersionArray: IntArray?,
     ): T
 
     fun create(args: CommonCompilerArguments): T {
@@ -60,7 +60,7 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
             ownVersion = OWN_VERSION,
             coroutinesVersion = COROUTINES_VERSION,
             multiplatformVersion = MULTIPLATFORM_VERSION,
-            metadataVersionArray = args.metadataVersion?.let((BinaryVersion)::parseVersionArray)
+            metadataVersionArray = args.metadataVersion?.let((BinaryVersion)::parseVersionArray),
         )
     }
 

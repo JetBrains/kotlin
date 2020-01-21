@@ -36,7 +36,7 @@ class AllClassesCompletion(
     private val resolutionFacade: ResolutionFacade,
     private val kindFilter: (ClassKind) -> Boolean,
     private val includeTypeAliases: Boolean,
-    private val includeJavaClassesNotToBeUsed: Boolean
+    private val includeJavaClassesNotToBeUsed: Boolean,
 ) {
     fun collect(classifierDescriptorCollector: (ClassifierDescriptorWithTypeParameters) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
 

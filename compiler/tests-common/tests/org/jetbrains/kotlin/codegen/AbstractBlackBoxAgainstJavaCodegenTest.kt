@@ -26,12 +26,15 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
             CodegenTestUtil.compileJava(CodegenTestUtil.findJavaSourcesInDirectory(directory), emptyList(), extractJavacOptions(files))
         }
 
-        super.doMultiFileTest(wholeFile, files.map { file ->
-            // This is a hack which allows to avoid compiling Java sources for the second time (which would be incorrect in this test),
-            // while also retaining content of all Java sources so that we could find and use test directives in Java sources
-            // in CodegenTestCase.compile.
-            if (file.name.endsWith(".java")) TestFile("${file.name}.disabled", file.content) else file
-        })
+        super.doMultiFileTest(
+            wholeFile,
+            files.map { file ->
+                // This is a hack which allows to avoid compiling Java sources for the second time (which would be incorrect in this test),
+                // while also retaining content of all Java sources so that we could find and use test directives in Java sources
+                // in CodegenTestCase.compile.
+                if (file.name.endsWith(".java")) TestFile("${file.name}.disabled", file.content) else file
+            },
+        )
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {

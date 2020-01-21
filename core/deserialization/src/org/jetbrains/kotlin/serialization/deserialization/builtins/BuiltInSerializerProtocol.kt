@@ -23,13 +23,13 @@ object BuiltInSerializerProtocol : SerializerExtensionProtocol(
     BuiltInsProtoBuf.compileTimeValue,
     BuiltInsProtoBuf.parameterAnnotation,
     BuiltInsProtoBuf.typeAnnotation,
-    BuiltInsProtoBuf.typeParameterAnnotation
+    BuiltInsProtoBuf.typeParameterAnnotation,
 ) {
     const val BUILTINS_FILE_EXTENSION = "kotlin_builtins"
 
     fun getBuiltInsFilePath(fqName: FqName): String =
         fqName.asString().replace('.', '/') + "/" + getBuiltInsFileName(
-            fqName
+            fqName,
         )
 
     fun getBuiltInsFileName(fqName: FqName): String =

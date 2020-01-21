@@ -62,7 +62,7 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
                     file,
                     selectionModel.selectionStart,
                     selectionModel.selectionEnd,
-                    KtExpression::class.java
+                    KtExpression::class.java,
                 )
                     ?: error("No KtExpression at selection range")
             } else {
@@ -132,7 +132,7 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
     private data class ResolveData(
         val target: DeclarationDescriptor?,
         val type: KotlinType?,
-        val processedStatements: Collection<KtExpression>
+        val processedStatements: Collection<KtExpression>,
     )
 
     private fun doResolve(expression: KtExpression, bindingContext: BindingContext): ResolveData {

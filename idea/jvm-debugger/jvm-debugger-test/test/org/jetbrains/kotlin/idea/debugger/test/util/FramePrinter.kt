@@ -45,7 +45,7 @@ class FramePrinter(
     debuggerSession: DebuggerSession,
     private val delegate: FramePrinterDelegate,
     private val preferences: DebuggerPreferences,
-    private val testRootDisposable: Disposable
+    private val testRootDisposable: Disposable,
 ) : Closeable {
     private companion object {
         fun getClassRenderer() = NodeRendererSettings.getInstance()!!.classRenderer!!
@@ -61,7 +61,8 @@ class FramePrinter(
             {
                 variablesView = createVariablesView(debuggerSession)
                 watchesView = createWatchesView(debuggerSession)
-            }, ModalityState.any()
+            },
+            ModalityState.any(),
         )
 
         getClassRenderer().let { renderer ->
@@ -135,7 +136,7 @@ class FramePrinter(
 
 private class PrinterConfig(
     val variablesToSkipInPrintFrame: List<String> = emptyList(),
-    val viewOptions: DescriptorViewOptions = DescriptorViewOptions.FULL
+    val viewOptions: DescriptorViewOptions = DescriptorViewOptions.FULL,
 ) {
     enum class DescriptorViewOptions {
         FULL, NAME_EXPRESSION, NAME_EXPRESSION_RESULT
@@ -227,7 +228,7 @@ private class Printer(private val delegate: FramePrinterDelegate, private val co
 
                     val codeFragment = KotlinCodeFragmentFactory().createPresentationCodeFragment(
                         TextWithImportsImpl(text.kind, text.text, text.imports + imports, text.fileType),
-                        delegate.debuggerContext.sourcePosition.elementAt, project
+                        delegate.debuggerContext.sourcePosition.elementAt, project,
                     )
                     val codeFragmentText = codeFragment.text
 
@@ -283,7 +284,8 @@ private class Printer(private val delegate: FramePrinterDelegate, private val co
     private fun hasSourcePosition(descriptor: NodeDescriptorImpl): Boolean {
         return when (descriptor) {
             is LocalVariableDescriptor,
-            is FieldDescriptor -> true
+            is FieldDescriptor,
+            -> true
             else -> false
         }
     }

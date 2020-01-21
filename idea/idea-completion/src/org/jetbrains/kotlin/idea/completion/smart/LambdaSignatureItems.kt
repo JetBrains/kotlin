@@ -27,7 +27,7 @@ object LambdaSignatureItems {
         collection: MutableCollection<LookupElement>,
         position: KtExpression,
         bindingContext: BindingContext,
-        resolutionFacade: ResolutionFacade
+        resolutionFacade: ResolutionFacade,
     ) {
         val block = position.parent as? KtBlockExpression ?: return
         if (position != block.statements.first()) return
@@ -47,23 +47,23 @@ object LambdaSignatureItems {
                     createLookupElement(
                         functionType,
                         LambdaSignatureTemplates.SignaturePresentation.NAMES_OR_TYPES,
-                        explicitParameterTypes = true
-                    )
+                        explicitParameterTypes = true,
+                    ),
                 )
             } else {
                 collection.add(
                     createLookupElement(
                         functionType,
                         LambdaSignatureTemplates.SignaturePresentation.NAMES,
-                        explicitParameterTypes = false
-                    )
+                        explicitParameterTypes = false,
+                    ),
                 )
                 collection.add(
                     createLookupElement(
                         functionType,
                         LambdaSignatureTemplates.SignaturePresentation.NAMES_AND_TYPES,
-                        explicitParameterTypes = true
-                    )
+                        explicitParameterTypes = true,
+                    ),
                 )
             }
         }
@@ -72,7 +72,7 @@ object LambdaSignatureItems {
     private fun createLookupElement(
         functionType: KotlinType,
         signaturePresentation: LambdaSignatureTemplates.SignaturePresentation,
-        explicitParameterTypes: Boolean
+        explicitParameterTypes: Boolean,
     ): LookupElement {
         val lookupString = LambdaSignatureTemplates.signaturePresentation(functionType, signaturePresentation)
         val priority = if (explicitParameterTypes)
@@ -89,7 +89,7 @@ object LambdaSignatureItems {
                     TextRange(offset, offset + placeholder.length),
                     functionType,
                     explicitParameterTypes,
-                    signatureOnly = true
+                    signatureOnly = true,
                 )
             }
             .suppressAutoInsertion()

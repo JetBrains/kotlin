@@ -35,14 +35,14 @@ class IndexingOperatorReferenceSearcher(
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
     options: KotlinReferencesSearchOptions,
-    private val isSet: Boolean
+    private val isSet: Boolean,
 ) : OperatorReferenceSearcher<KtArrayAccessExpression>(
     targetFunction,
     searchScope,
     consumer,
     optimizer,
     options,
-    wordsToSearch = listOf("[")
+    wordsToSearch = listOf("["),
 ) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {

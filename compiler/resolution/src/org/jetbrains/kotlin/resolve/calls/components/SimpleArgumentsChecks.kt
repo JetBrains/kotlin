@@ -37,7 +37,7 @@ fun checkSimpleArgument(
     argument: SimpleKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    isReceiver: Boolean
+    isReceiver: Boolean,
 ): ResolvedAtom = when (argument) {
     is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
     is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
@@ -49,7 +49,7 @@ private fun checkExpressionArgument(
     expressionArgument: ExpressionKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    isReceiver: Boolean
+    isReceiver: Boolean,
 ): ResolvedAtom {
     val resolvedExpression = ResolvedExpressionAtom(expressionArgument)
     if (expectedType == null) return resolvedExpression
@@ -58,7 +58,7 @@ private fun checkExpressionArgument(
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
 
     fun unstableSmartCastOrSubtypeError(
-        unstableType: UnwrappedType?, actualExpectedType: UnwrappedType, position: ConstraintPosition
+        unstableType: UnwrappedType?, actualExpectedType: UnwrappedType, position: ConstraintPosition,
     ): KotlinCallDiagnostic? {
         if (unstableType != null) {
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, actualExpectedType, position)) {
@@ -88,7 +88,7 @@ private fun checkExpressionArgument(
         val expectedNullableType = expectedType.makeNullableAsSpecified(true)
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             diagnosticsHolder.addDiagnosticIfNotNull(
-                unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedNullableType, position)
+                unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedNullableType, position),
             )
         }
         return resolvedExpression
@@ -100,8 +100,8 @@ private fun checkExpressionArgument(
                 unstableSmartCastOrSubtypeError(
                     expressionArgument.receiver.unstableType,
                     expectedType,
-                    position
-                )
+                    position,
+                ),
             )
             return resolvedExpression
         }
@@ -162,7 +162,7 @@ private fun checkSubCallArgument(
     subCallArgument: SubKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    isReceiver: Boolean
+    isReceiver: Boolean,
 ): ResolvedAtom {
     val subCallResult = subCallArgument.callResult
 

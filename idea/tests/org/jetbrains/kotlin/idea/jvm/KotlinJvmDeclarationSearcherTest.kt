@@ -54,7 +54,7 @@ class KotlinJvmDeclarationSearcherTest : KotlinLightCodeInsightFixtureTestCase()
         JvmDeclared("a: Long", JvmParameter::class, JvmParameter::class),
         JvmDeclared("b: Int", JvmParameter::class),
         JvmDeclared("fun foo()", JvmMethod::class),
-        JvmDeclared("fun bar", JvmMethod::class, JvmMethod::class, JvmMethod::class)
+        JvmDeclared("fun bar", JvmMethod::class, JvmMethod::class, JvmMethod::class),
     )
 
 
@@ -78,28 +78,40 @@ class KotlinJvmDeclarationSearcherTest : KotlinLightCodeInsightFixtureTestCase()
         JvmDeclared("fun foo()", JvmMethod::class),
         JvmDeclared("object : SomeClass(\"foo\")", JvmClass::class),
         JvmDeclared("object obj2", JvmClass::class),
-        JvmDeclared("fun bar", JvmMethod::class)
+        JvmDeclared("fun bar", JvmMethod::class),
     )
 
 
-    fun testClassDeclaration() = assertElementsByIdentifier("""
+    fun testClassDeclaration() = assertElementsByIdentifier(
+        """
             class Some<caret>Class(val field: String)
-        """, { it is JvmClass }, { it is JvmMethod && it.isConstructor })
+        """,
+        { it is JvmClass }, { it is JvmMethod && it.isConstructor },
+    )
 
 
-    fun testLocalObjectDeclaration() = assertElementsByIdentifier("""
+    fun testLocalObjectDeclaration() = assertElementsByIdentifier(
+        """
             val e = obje<caret>ct {}
-        """, { it is JvmClass })
+        """,
+        { it is JvmClass },
+    )
 
 
-    fun testClassDeclarationWithConstructor() = assertElementsByIdentifier("""
+    fun testClassDeclarationWithConstructor() = assertElementsByIdentifier(
+        """
             class Some<caret>Class constructor(val field: String)
-        """, { it is JvmClass })
+        """,
+        { it is JvmClass },
+    )
 
 
-    fun testPrimaryConstructorByConstructorKeyword() = assertElementsByIdentifier("""
+    fun testPrimaryConstructorByConstructorKeyword() = assertElementsByIdentifier(
+        """
             class SomeClass constr<caret>uctor(val field: String)
-        """, { it is JvmMethod && it.isConstructor })
+        """,
+        { it is JvmMethod && it.isConstructor },
+    )
 
 
     private fun assertElementsByIdentifier(text: String, vararg matches: (JvmElement) -> Boolean) {
@@ -119,16 +131,18 @@ class KotlinJvmDeclarationSearcherTest : KotlinLightCodeInsightFixtureTestCase()
 
         val map = mutableMapOf<PsiElement, List<JvmElement>>()
 
-        file.accept(object : PsiRecursiveElementVisitor() {
+        file.accept(
+            object : PsiRecursiveElementVisitor() {
 
-            override fun visitElement(element: PsiElement) {
-                val declarations = declarationSearcher.findDeclarations(element)
-                if (declarations.isNotEmpty()) {
-                    map[element] = declarations.toList()
+                override fun visitElement(element: PsiElement) {
+                    val declarations = declarationSearcher.findDeclarations(element)
+                    if (declarations.isNotEmpty()) {
+                        map[element] = declarations.toList()
+                    }
+                    super.visitElement(element)
                 }
-                super.visitElement(element)
-            }
-        })
+            },
+        )
         return map
     }
 

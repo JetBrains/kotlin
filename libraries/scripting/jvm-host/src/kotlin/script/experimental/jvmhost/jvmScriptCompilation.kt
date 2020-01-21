@@ -16,7 +16,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 open class JvmScriptCompiler(
     baseHostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    compilerProxy: ScriptCompilerProxy? = null
+    compilerProxy: ScriptCompilerProxy? = null,
 ) : ScriptCompiler {
 
     val hostConfiguration = baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)
@@ -25,13 +25,13 @@ open class JvmScriptCompiler(
 
     override suspend operator fun invoke(
         script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript<*>> =
         compilerProxy.compile(
             script,
             scriptCompilationConfiguration.with {
                 hostConfiguration.update { it.withDefaultsFrom(this@JvmScriptCompiler.hostConfiguration) }
-            }
+            },
         )
 }
 

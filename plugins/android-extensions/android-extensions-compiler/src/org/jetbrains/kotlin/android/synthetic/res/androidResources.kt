@@ -69,25 +69,25 @@ class AndroidLayout(val resources: List<AndroidResource>)
 sealed class AndroidResource(
     val id: ResourceIdentifier,
     val sourceElement: SmartPsiElementPointer<PsiElement>?,
-    val partiallyDefined: Boolean
+    val partiallyDefined: Boolean,
 ) {
     open fun sameClass(other: AndroidResource): Boolean = false
     open fun partiallyDefined(): AndroidResource = this
 
     class Widget(
-            id: ResourceIdentifier,
-            val xmlType: String,
-            sourceElement: SmartPsiElementPointer<PsiElement>?,
-            partiallyDefined: Boolean = false
+        id: ResourceIdentifier,
+        val xmlType: String,
+        sourceElement: SmartPsiElementPointer<PsiElement>?,
+        partiallyDefined: Boolean = false,
     ) : AndroidResource(id, sourceElement, partiallyDefined) {
         override fun sameClass(other: AndroidResource) = other is Widget
         override fun partiallyDefined() = Widget(id, xmlType, sourceElement, true)
     }
 
     class Fragment(
-            id: ResourceIdentifier,
-            sourceElement: SmartPsiElementPointer<PsiElement>?,
-            partiallyDefined: Boolean = false
+        id: ResourceIdentifier,
+        sourceElement: SmartPsiElementPointer<PsiElement>?,
+        partiallyDefined: Boolean = false,
     ) : AndroidResource(id, sourceElement, partiallyDefined) {
         override fun sameClass(other: AndroidResource) = other is Fragment
         override fun partiallyDefined() = Fragment(id, sourceElement, true)

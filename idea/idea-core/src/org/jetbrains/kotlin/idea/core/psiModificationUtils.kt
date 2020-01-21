@@ -60,7 +60,7 @@ fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCa
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     replacement: KtExpression,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ): KtCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getLambdaArgumentName(bindingContext))
 
 
@@ -72,7 +72,7 @@ fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     replacement: KtExpression,
-    functionLiteralArgumentName: Name?
+    functionLiteralArgumentName: Name?,
 ): KtCallExpression {
     val oldCallExpression = parent as KtCallExpression
     val newCallExpression = oldCallExpression.copy() as KtCallExpression
@@ -142,7 +142,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
             it.allowsMoveOfLastParameterOutsideParentheses(
                 lambdaArgumentCount + referenceArgumentCount,
                 samConversionTransformer,
-                languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+                languageVersionSettings.supportsFeature(LanguageFeature.NewInference),
             )
         }
 
@@ -155,7 +155,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
 private fun FunctionDescriptor.allowsMoveOfLastParameterOutsideParentheses(
     lambdaAndCallableReferencesInOriginalCallCount: Int,
     samConversionTransformer: SamConversionTransformer,
-    newInferenceEnabled: Boolean
+    newInferenceEnabled: Boolean,
 ): Boolean {
     fun KotlinType.allowsMoveOutsideParentheses(): Boolean {
         // Fast-path
@@ -401,7 +401,7 @@ fun KtDeclaration.implicitModality(): KtModifierKeywordToken {
             descriptor as? ClassDescriptor,
             containingDescriptor,
             mapModalityToken(predictedModality),
-            isImplicitModality = true
+            isImplicitModality = true,
         )
 
         if (newModality != null) {

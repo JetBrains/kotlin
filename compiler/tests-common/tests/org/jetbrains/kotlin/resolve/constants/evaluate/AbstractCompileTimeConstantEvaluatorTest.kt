@@ -66,9 +66,9 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotationDesc
     private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor): CompileTimeConstant<*>? {
         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as KtProperty
         return ConstantExpressionEvaluator(property.module, LanguageVersionSettingsImpl.DEFAULT, project).evaluateExpression(
-                propertyDeclaration.initializer!!,
-                DelegatingBindingTrace(context, "trace for evaluating compile time constant"),
-                property.type
+            propertyDeclaration.initializer!!,
+            DelegatingBindingTrace(context, "trace for evaluating compile time constant"),
+            property.type,
         )
     }
 

@@ -114,7 +114,7 @@ object LabelResolver {
     private fun resolveNamedLabel(
         labelName: Name,
         labelExpression: KtSimpleNameExpression,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): KtElement? {
         val list = getElementsByLabelName(labelName, labelExpression)
         if (list.isEmpty()) return null
@@ -129,7 +129,7 @@ object LabelResolver {
     fun resolveThisOrSuperLabel(
         expression: KtInstanceExpressionWithLabel,
         context: ResolutionContext<*>,
-        labelName: Name
+        labelName: Name,
     ): LabeledReceiverResolutionResult {
         val referenceExpression = expression.instanceReference
         val targetLabel = expression.getTargetLabel() ?: error(expression)
@@ -180,7 +180,7 @@ object LabelResolver {
 
     class LabeledReceiverResolutionResult private constructor(
         val code: LabeledReceiverResolutionResult.Code,
-        private val receiverParameterDescriptor: ReceiverParameterDescriptor?
+        private val receiverParameterDescriptor: ReceiverParameterDescriptor?,
     ) {
         enum class Code {
             LABEL_RESOLUTION_ERROR,

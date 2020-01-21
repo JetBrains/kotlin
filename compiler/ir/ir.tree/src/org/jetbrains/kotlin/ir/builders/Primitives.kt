@@ -31,7 +31,7 @@ fun primitiveOp1(
     primitiveOpSymbol: IrSimpleFunctionSymbol,
     primitiveOpReturnType: IrType,
     origin: IrStatementOrigin,
-    dispatchReceiver: IrExpression
+    dispatchReceiver: IrExpression,
 ): IrExpression =
     IrCallImpl(startOffset, endOffset, primitiveOpReturnType, primitiveOpSymbol, origin = origin).also {
         it.dispatchReceiver = dispatchReceiver
@@ -42,14 +42,14 @@ fun primitiveOp2(
     primitiveOpSymbol: IrSimpleFunctionSymbol,
     primitiveOpReturnType: IrType,
     origin: IrStatementOrigin,
-    argument1: IrExpression, argument2: IrExpression
+    argument1: IrExpression, argument2: IrExpression,
 ): IrExpression =
     IrCallImpl(
         startOffset, endOffset,
         primitiveOpReturnType,
         primitiveOpSymbol, typeArgumentsCount = 0,
         valueArgumentsCount = 2,
-        origin = origin
+        origin = origin,
     ).apply {
         putValueArgument(0, argument1)
         putValueArgument(1, argument2)
@@ -61,7 +61,7 @@ fun IrGeneratorContextInterface.constNull(startOffset: Int, endOffset: Int): IrE
 fun IrGeneratorContextInterface.equalsNull(startOffset: Int, endOffset: Int, argument: IrExpression): IrExpression =
     primitiveOp2(
         startOffset, endOffset, irBuiltIns.eqeqSymbol, irBuiltIns.booleanType, IrStatementOrigin.EQEQ,
-        argument, constNull(startOffset, endOffset)
+        argument, constNull(startOffset, endOffset),
     )
 
 fun IrGeneratorContextInterface.eqeqeq(startOffset: Int, endOffset: Int, argument1: IrExpression, argument2: IrExpression): IrExpression =
@@ -85,7 +85,7 @@ fun IrGeneratorContextInterface.oror(
     endOffset: Int,
     a: IrExpression,
     b: IrExpression,
-    origin: IrStatementOrigin = IrStatementOrigin.OROR
+    origin: IrStatementOrigin = IrStatementOrigin.OROR,
 ): IrWhen =
     IrIfThenElseImpl(startOffset, endOffset, irBuiltIns.booleanType, origin).apply {
         branches.add(IrBranchImpl(a, constTrue(a.startOffset, a.endOffset)))
@@ -104,7 +104,7 @@ fun IrGeneratorContextInterface.andand(
     endOffset: Int,
     a: IrExpression,
     b: IrExpression,
-    origin: IrStatementOrigin = IrStatementOrigin.ANDAND
+    origin: IrStatementOrigin = IrStatementOrigin.ANDAND,
 ): IrWhen =
     IrIfThenElseImpl(startOffset, endOffset, irBuiltIns.booleanType, origin).apply {
         branches.add(IrBranchImpl(a, b))

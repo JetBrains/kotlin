@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 
 class FirResolvedDeclarationStatusImpl(
     visibility: Visibility,
-    modality: Modality
+    modality: Modality,
 ) : FirDeclarationStatusImpl(visibility, modality), FirResolvedDeclarationStatus {
 
     internal constructor(
         visibility: Visibility,
         modality: Modality,
-        flags: Int
+        flags: Int,
     ) : this(visibility, modality) {
         this.flags = flags
     }

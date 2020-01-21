@@ -55,7 +55,7 @@ val gradleTargetEvents = setOf(
     "MPP.native.mingwX64",
     "MPP.native.mingwX86",
     "MPP.native.wasm32",
-    "MPP.native.zephyrStm32f4Disco"
+    "MPP.native.zephyrStm32f4Disco",
 )
 val refactoringEvents = setOf(
     "RenameKotlinFileProcessor",
@@ -68,7 +68,7 @@ val refactoringEvents = setOf(
     "RenameKotlinParameterProcessor",
     "JavaMemberByKotlinReferenceInplaceRenameHandler",
     "KotlinPushDownHandler",
-    "KotlinPullUpHandler"
+    "KotlinPullUpHandler",
 )
 val newFileTemplateEvents = setOf(
     "Kotlin File",
@@ -77,7 +77,7 @@ val newFileTemplateEvents = setOf(
     "Kotlin Object",
     "Kotlin Enum",
     "Kotlin Scratch",
-    "Kotlin Script"
+    "Kotlin Script",
 )
 val NPWizardsEvents = setOf(
     "KotlinModuleBuilder: JVM (JVM_1_6)",
@@ -101,5 +101,5 @@ val NPWizardsEvents = setOf(
     "KotlinDslGradleKotlinJavaFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
+    "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider",
 )

@@ -24,7 +24,7 @@ class FeaturesTest : TestCase() {
                 val destDir = File(tempDir, "dest").also { it.mkdir() }
                 val javaRes = KotlinTestUtils.compileJavaFiles(
                     srcDir.listFiles { file: File -> file.extension == "java" }!!.toMutableList(),
-                    mutableListOf("-d", destDir.absolutePath)
+                    mutableListOf("-d", destDir.absolutePath),
                 )
                 assertTrue(javaRes)
 

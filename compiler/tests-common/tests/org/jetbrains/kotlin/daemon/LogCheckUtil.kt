@@ -26,8 +26,10 @@ fun LinePattern(regex: String, matchCheck: (MatchResult) -> Boolean = { true }) 
  * calls [body] if receiver does not contain complete sequence of lines matched by [patternsIter], separated by any number of other lines
  * [body] receives first unmatched pattern and index of last matched line in the sequence
  */
-fun Sequence<String>.ifNotContainsSequence(patternsIter: Iterator<LinePattern>,
-                                                    body: (LinePattern, Int) -> Unit) : Unit {
+fun Sequence<String>.ifNotContainsSequence(
+    patternsIter: Iterator<LinePattern>,
+    body: (LinePattern, Int) -> Unit,
+) : Unit {
     class Accumulator(it: Iterator<LinePattern>) {
         val iter = EndBoundIteratorWithValue(it)
         var lineNo = 1
@@ -53,8 +55,10 @@ fun Sequence<String>.ifNotContainsSequence(patternsIter: Iterator<LinePattern>,
  * calls [body] if receiver does not contain complete sequence of lines matched by [patterns], separated by any number of other lines
  * [body] receives first unmatched pattern and index of last matched line in the sequence
  */
-fun Sequence<String>.ifNotContainsSequence(patterns: List<LinePattern>,
-                                                    body: (LinePattern, Int) -> Unit): Unit {
+fun Sequence<String>.ifNotContainsSequence(
+    patterns: List<LinePattern>,
+    body: (LinePattern, Int) -> Unit,
+): Unit {
     ifNotContainsSequence(patterns.iterator(), body)
 }
 
@@ -63,8 +67,10 @@ fun Sequence<String>.ifNotContainsSequence(patterns: List<LinePattern>,
  * calls [body] if receiver does not contain complete sequence of lines matched by [patterns], separated by any number of other lines
  * [body] receives first unmatched pattern and index of last matched line in the sequence
  */
-fun Sequence<String>.ifNotContainsSequence(vararg patterns: LinePattern,
-                                                    body: (LinePattern, Int) -> Unit): Unit {
+fun Sequence<String>.ifNotContainsSequence(
+    vararg patterns: LinePattern,
+    body: (LinePattern, Int) -> Unit,
+): Unit {
     ifNotContainsSequence(patterns.iterator(), body)
 }
 

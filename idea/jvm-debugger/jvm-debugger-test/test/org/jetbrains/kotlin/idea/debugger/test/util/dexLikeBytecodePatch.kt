@@ -42,7 +42,7 @@ private fun ClassVisitor.withRemoveSameLinesInLineTableVisitor(): ClassVisitor {
             name: String?,
             desc: String?,
             signature: String?,
-            exceptions: Array<out String>?
+            exceptions: Array<out String>?,
         ): MethodVisitor? {
             val methodVisitor = super.visitMethod(access, name, desc, signature, exceptions) ?: return null
 

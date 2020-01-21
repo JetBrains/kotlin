@@ -30,7 +30,7 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
         module.cacheByClassInvalidatingOnRootModifications(KeyForCachedDependencies::class.java) {
             HashSet<Module>().also { resultModuleSet ->
                 ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
-                    CommonProcessors.CollectProcessor(resultModuleSet)
+                    CommonProcessors.CollectProcessor(resultModuleSet),
                 )
             }
         }

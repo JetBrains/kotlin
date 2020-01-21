@@ -72,7 +72,7 @@ abstract class AbstractDebugTest : CodegenTestCase() {
         fun startDebuggeeProcess(): ProcessAndPort {
             val classpath = listOf(
                 PathUtil.getJarPathForClass(TestProcessServer::class.java),
-                PathUtil.getJarPathForClass(Delegates::class.java) // Add Kotlin runtime JAR
+                PathUtil.getJarPathForClass(Delegates::class.java), // Add Kotlin runtime JAR
             )
 
             val javaExecutablePath = findJavaExecutable().absolutePath
@@ -82,7 +82,7 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                 "-ea",
                 "-classpath", classpath.joinToString(File.pathSeparator),
                 MAIN_CLASS,
-                TestProcessServer.DEBUG_TEST
+                TestProcessServer.DEBUG_TEST,
             )
 
             val process = ProcessBuilder(*command).start()
@@ -96,10 +96,12 @@ abstract class AbstractDebugTest : CodegenTestCase() {
 
         fun attachDebugger(port: Int): VirtualMachine {
             val connector = SocketAttachingConnector()
-            return connector.attach(connector.defaultArguments().toMutableMap().apply {
-                getValue("port").setValue("$port")
-                getValue("hostname").setValue(DEBUG_ADDRESS)
-            })
+            return connector.attach(
+                connector.defaultArguments().toMutableMap().apply {
+                    getValue("port").setValue("$port")
+                    getValue("hostname").setValue(DEBUG_ADDRESS)
+                },
+            )
         }
 
         fun findJavaExecutable(): File {
@@ -136,17 +138,18 @@ abstract class AbstractDebugTest : CodegenTestCase() {
     internal fun createGeneratedClassLoader(classesDir: File): URLClassLoader {
         return URLClassLoader(
             listOf(classesDir.toURI().toURL()).toTypedArray(),
-            ForTestCompileRuntime.runtimeJarClassLoader()
+            ForTestCompileRuntime.runtimeJarClassLoader(),
         )
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(
-            ConfigurationKind.ALL, *listOfNotNull(
+            ConfigurationKind.ALL,
+            *listOfNotNull(
                 writeJavaFiles(
-                    files
-                )
-            ).toTypedArray()
+                    files,
+                ),
+            ).toTypedArray(),
         )
 
         loadMultiFiles(files)

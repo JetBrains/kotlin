@@ -50,7 +50,7 @@ class DeserializationComponents(
     val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All,
     val extensionRegistryLite: ExtensionRegistryLite,
     val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default,
-    val samConversionResolver: SamConversionResolver
+    val samConversionResolver: SamConversionResolver,
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
@@ -62,11 +62,11 @@ class DeserializationComponents(
         typeTable: TypeTable,
         versionRequirementTable: VersionRequirementTable,
         metadataVersion: BinaryVersion,
-        containerSource: DeserializedContainerSource?
+        containerSource: DeserializedContainerSource?,
     ): DeserializationContext =
         DeserializationContext(
             this, nameResolver, descriptor, typeTable, versionRequirementTable, metadataVersion, containerSource,
-            parentTypeDeserializer = null, typeParameters = listOf()
+            parentTypeDeserializer = null, typeParameters = listOf(),
         )
 }
 
@@ -80,12 +80,12 @@ class DeserializationContext(
     val metadataVersion: BinaryVersion,
     val containerSource: DeserializedContainerSource?,
     parentTypeDeserializer: TypeDeserializer?,
-    typeParameters: List<ProtoBuf.TypeParameter>
+    typeParameters: List<ProtoBuf.TypeParameter>,
 ) {
     val typeDeserializer: TypeDeserializer = TypeDeserializer(
         this, parentTypeDeserializer, typeParameters,
         "Deserializer for \"${containingDeclaration.name}\"",
-        containerSource?.presentableString ?: "[container not found]"
+        containerSource?.presentableString ?: "[container not found]",
     )
 
     val memberDeserializer: MemberDeserializer = MemberDeserializer(this)
@@ -98,11 +98,11 @@ class DeserializationContext(
         nameResolver: NameResolver = this.nameResolver,
         typeTable: TypeTable = this.typeTable,
         versionRequirementTable: VersionRequirementTable = this.versionRequirementTable,
-        metadataVersion: BinaryVersion = this.metadataVersion
+        metadataVersion: BinaryVersion = this.metadataVersion,
     ): DeserializationContext = DeserializationContext(
         components, nameResolver, descriptor, typeTable,
         if (isVersionRequirementTableWrittenCorrectly(metadataVersion)) versionRequirementTable else this.versionRequirementTable,
         metadataVersion, this.containerSource,
-        parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
+        parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos,
     )
 }

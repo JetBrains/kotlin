@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 class KtLightClassForDecompiledDeclaration(
     override val clsDelegate: ClsClassImpl,
     override val kotlinOrigin: KtClassOrObject?,
-    private val file: KtClsFile
+    private val file: KtClsFile,
 ) : KtLightClassBase(clsDelegate.manager) {
     val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName.orEmpty())
 
@@ -31,7 +31,7 @@ class KtLightClassForDecompiledDeclaration(
         return clsDelegate.ownInnerClasses.map { innerClsClass ->
             KtLightClassForDecompiledDeclaration(
                 innerClsClass as ClsClassImpl,
-                nestedClasses.firstOrNull { innerClsClass.name == it.name }, file
+                nestedClasses.firstOrNull { innerClsClass.name == it.name }, file,
             )
         }
     }

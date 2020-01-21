@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 fun analyzeControlFlow(resolveSession: ResolveSession, resolveElement: KtElement, trace: BindingTrace) {
     val controlFlowTrace = DelegatingBindingTrace(
-        trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true
+        trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true,
     )
     ControlFlowInformationProvider(
-        resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
+        resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor,
     ).checkDeclaration()
     controlFlowTrace.addOwnDataTo(trace, null, false)
 }

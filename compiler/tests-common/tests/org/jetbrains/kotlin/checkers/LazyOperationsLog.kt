@@ -39,14 +39,14 @@ import java.util.*
 import java.util.regex.Pattern
 
 class LazyOperationsLog(
-        val stringSanitizer: (String) -> String
+    val stringSanitizer: (String) -> String,
 ) {
     val ids = IdentityHashMap<Any, Int>()
     private fun objectId(o: Any): Int = ids.getOrPut(o, { ids.size })
 
     private class Record(
-            val lambda: Any,
-            val data: LoggingStorageManager.CallData
+        val lambda: Any,
+        val data: LoggingStorageManager.CallData,
     )
 
     private val records = ArrayList<Record>()

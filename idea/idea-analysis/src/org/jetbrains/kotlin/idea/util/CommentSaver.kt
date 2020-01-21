@@ -31,7 +31,7 @@ import kotlin.properties.Delegates
 class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: Boolean = false/*TODO?*/) {
     constructor(originalElement: PsiElement, saveLineBreaks: Boolean = false/*TODO?*/) : this(
         PsiChildRange.singleElement(originalElement),
-        saveLineBreaks
+        saveLineBreaks,
     )
 
     private val SAVED_TREE_KEY = Key<TreeElement>("SAVED_TREE")
@@ -129,7 +129,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
     private class CommentTreeElement(
         val commentText: String,
         val spaceBefore: String,
-        val spaceAfter: String
+        val spaceAfter: String,
     ) : TreeElement() {
         companion object {
             fun create(comment: PsiComment): CommentTreeElement {
@@ -192,14 +192,16 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
     fun deleteCommentsInside(element: PsiElement) {
         assert(!isFinished)
 
-        element.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitComment(comment: PsiComment) {
-                val treeElement = comment.savedTreeElement
-                if (treeElement != null) {
-                    commentsToRestore.remove(treeElement)
+        element.accept(
+            object : PsiRecursiveElementVisitor() {
+                override fun visitComment(comment: PsiComment) {
+                    val treeElement = comment.savedTreeElement
+                    if (treeElement != null) {
+                        commentsToRestore.remove(treeElement)
+                    }
                 }
-            }
-        })
+            },
+        )
     }
 
     fun elementCreatedByText(createdElement: PsiElement, original: PsiElement, rangeInOriginal: TextRange) {
@@ -207,26 +209,28 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
         assert(createdElement.textLength == rangeInOriginal.length)
         assert(createdElement.text == original.text.substring(rangeInOriginal.startOffset, rangeInOriginal.endOffset))
 
-        createdElement.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                if (element is PsiWhiteSpace) return
+        createdElement.accept(
+            object : PsiRecursiveElementVisitor() {
+                override fun visitElement(element: PsiElement) {
+                    if (element is PsiWhiteSpace) return
 
-                val token = original.findElementAt(element.getStartOffsetIn(createdElement) + rangeInOriginal.startOffset)
-                if (token != null) {
-                    val elementLength = element.textLength
-                    for (originalElement in token.parentsWithSelf) {
-                        val length = originalElement.textLength
-                        if (length < elementLength) continue
-                        if (length == elementLength) {
-                            element.savedTreeElement = originalElement.savedTreeElement
+                    val token = original.findElementAt(element.getStartOffsetIn(createdElement) + rangeInOriginal.startOffset)
+                    if (token != null) {
+                        val elementLength = element.textLength
+                        for (originalElement in token.parentsWithSelf) {
+                            val length = originalElement.textLength
+                            if (length < elementLength) continue
+                            if (length == elementLength) {
+                                element.savedTreeElement = originalElement.savedTreeElement
+                            }
+                            break
                         }
-                        break
                     }
-                }
 
-                super.visitElement(element)
-            }
-        })
+                    super.visitElement(element)
+                }
+            },
+        )
     }
 
     private fun putNewElementIntoMap(psiElement: PsiElement, treeElement: TreeElement) {
@@ -242,7 +246,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
         resultElement: PsiElement,
         isCommentBeneathSingleLine: Boolean,
         isCommentInside: Boolean,
-        forceAdjustIndent: Boolean
+        forceAdjustIndent: Boolean,
     ) {
         restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent, isCommentBeneathSingleLine, isCommentInside)
     }
@@ -255,7 +259,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
         resultElements: PsiChildRange,
         forceAdjustIndent: Boolean = false,
         isCommentBeneathSingleLine: Boolean = false,
-        isCommentInside: Boolean = false
+        isCommentInside: Boolean = false,
     ) {
         assert(!isFinished)
         assert(!resultElements.isEmpty)
@@ -267,15 +271,17 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
             if (commentsToRestore.isNotEmpty() || lineBreaksToRestore.isNotEmpty()) {
                 toNewPsiElementMap = HashMap<TreeElement, MutableCollection<PsiElement>>()
                 for (element in resultElements) {
-                    element.accept(object : PsiRecursiveElementVisitor() {
-                        override fun visitElement(element: PsiElement) {
-                            val treeElement = element.savedTreeElement
-                            if (treeElement != null) {
-                                putNewElementIntoMap(element, treeElement)
+                    element.accept(
+                        object : PsiRecursiveElementVisitor() {
+                            override fun visitElement(element: PsiElement) {
+                                val treeElement = element.savedTreeElement
+                                if (treeElement != null) {
+                                    putNewElementIntoMap(element, treeElement)
+                                }
+                                super.visitElement(element)
                             }
-                            super.visitElement(element)
-                        }
-                    })
+                        },
+                    )
                 }
 
                 restoreComments(resultElements, isCommentBeneathSingleLine, isCommentInside)
@@ -284,12 +290,14 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
 
                 // clear user data
                 resultElements.forEach {
-                    it.accept(object : PsiRecursiveElementVisitor() {
-                        override fun visitElement(element: PsiElement) {
-                            element.savedTreeElement = null
-                            super.visitElement(element)
-                        }
-                    })
+                    it.accept(
+                        object : PsiRecursiveElementVisitor() {
+                            override fun visitElement(element: PsiElement) {
+                                element.savedTreeElement = null
+                                super.visitElement(element)
+                            }
+                        },
+                    )
                 }
             }
         }
@@ -312,7 +320,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
     private fun restoreComments(
         resultElements: PsiChildRange,
         isCommentBeneathSingleLine: Boolean = false,
-        isCommentInside: Boolean = false
+        isCommentInside: Boolean = false,
     ) {
         var putAbandonedCommentsAfter = resultElements.last!!
 

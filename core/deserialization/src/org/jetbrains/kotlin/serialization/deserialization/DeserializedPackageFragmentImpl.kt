@@ -33,7 +33,7 @@ abstract class DeserializedPackageFragmentImpl(
     module: ModuleDescriptor,
     proto: ProtoBuf.PackageFragment,
     private val metadataVersion: BinaryVersion,
-    private val containerSource: DeserializedContainerSource?
+    private val containerSource: DeserializedContainerSource?,
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
     protected val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
 
@@ -53,7 +53,7 @@ abstract class DeserializedPackageFragmentImpl(
                 classDataFinder.allClassIds.filter { classId ->
                     !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
                 }.map { it.shortClassName }
-            }
+            },
         )
     }
 

@@ -42,7 +42,7 @@ internal fun modifyCompilerArgumentsForPlugin(
     facet: KotlinFacet,
     setup: AnnotationBasedCompilerPluginSetup?,
     compilerPluginId: String,
-    pluginName: String
+    pluginName: String,
 ) {
     val facetSettings = facet.configuration.settings
 

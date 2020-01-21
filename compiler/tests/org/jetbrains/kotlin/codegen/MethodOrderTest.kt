@@ -44,7 +44,7 @@ class MethodOrderTest : CodegenTestCase() {
                 }
             """,
             "\$obj$1",
-            listOf("f3()V", "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V")
+            listOf("f3()V", "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V"),
         )
     }
 
@@ -61,8 +61,8 @@ class MethodOrderTest : CodegenTestCase() {
             listOf(
                 "invoke()Ljava/lang/Object;",
                 "invoke()Ljava/lang/String;",
-                "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V"
-            )
+                "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V",
+            ),
         )
     }
 
@@ -80,7 +80,7 @@ class MethodOrderTest : CodegenTestCase() {
                 }
             """,
             "\$f$1",
-            listOf("run()V", "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V")
+            listOf("run()V", "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V"),
         )
     }
 
@@ -106,8 +106,8 @@ class MethodOrderTest : CodegenTestCase() {
                 "access\$getB\$p(LOuter;)Ljava/lang/String;",
                 "access\$setB\$p(LOuter;Ljava/lang/String;)V",
                 "access\$getA\$p(LOuter;)I",
-                "access\$c(LOuter;)V"
-            )
+                "access\$c(LOuter;)V",
+            ),
         )
     }
 
@@ -142,8 +142,8 @@ class MethodOrderTest : CodegenTestCase() {
                 "getEntries()I",
                 "entrySet()I",
                 "getValues()I",
-                "values()I"
-            )
+                "values()I",
+            ),
         )
     }
 
@@ -169,8 +169,8 @@ class MethodOrderTest : CodegenTestCase() {
                 "<init>()V",
                 "visitElement(LIrElement;LIrClassContext;)LIrElement;",
                 "visitElement(LIrElement;Ljava/lang/Object;)Ljava/lang/Object;",
-                "visitElement(LIrElement;Ljava/lang/Object;)LIrElement;"
-            )
+                "visitElement(LIrElement;Ljava/lang/Object;)LIrElement;",
+            ),
         )
     }
 
@@ -183,18 +183,21 @@ class MethodOrderTest : CodegenTestCase() {
 
         val methodNames = ArrayList<String>()
 
-        classReader.accept(object : ClassVisitor(Opcodes.API_VERSION) {
-            override fun visitMethod(
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                exceptions: Array<out String>?
-            ): MethodVisitor? {
-                methodNames.add(name + desc)
-                return null
-            }
-        }, ClassReader.SKIP_CODE and ClassReader.SKIP_DEBUG and ClassReader.SKIP_FRAMES)
+        classReader.accept(
+            object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    desc: String,
+                    signature: String?,
+                    exceptions: Array<out String>?,
+                ): MethodVisitor? {
+                    methodNames.add(name + desc)
+                    return null
+                }
+            },
+            ClassReader.SKIP_CODE and ClassReader.SKIP_DEBUG and ClassReader.SKIP_FRAMES,
+        )
 
         TestCase.assertEquals(expectedOrder, methodNames)
     }

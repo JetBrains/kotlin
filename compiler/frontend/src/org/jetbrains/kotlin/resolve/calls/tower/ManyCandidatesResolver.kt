@@ -24,7 +24,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     protected val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     protected val callComponents: KotlinCallComponents,
-    val builtIns: KotlinBuiltIns
+    val builtIns: KotlinBuiltIns,
 ) : InferenceSession {
     protected val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
     private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
@@ -85,10 +85,10 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
                 constraintSystem.asConstraintSystemCompleterContext(),
                 KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
                 atoms,
-                builtIns.unitType
+                builtIns.unitType,
             ) {
                 postponedArgumentsAnalyzer.analyze(
-                    constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder
+                    constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder,
                 )
             }
 
@@ -122,7 +122,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
                                 addEqualityConstraint(
                                     type,
                                     fixedType,
-                                    SimpleConstraintSystemConstraintPosition
+                                    SimpleConstraintSystemConstraintPosition,
                                 )
                                 atomsToAnalyze += StubResolvedAtom(typeVariable)
                             }
@@ -133,7 +133,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
                 val resolutionResult = callInfo.asCallResolutionResult(diagnosticHolder, system)
                 allCandidates += ResolutionResultCallInfo(
                     resolutionResult,
-                    psiCallResolver.convertToOverloadResolutionResults(callInfo.context, resolutionResult, callInfo.tracingStrategy)
+                    psiCallResolver.convertToOverloadResolutionResults(callInfo.context, resolutionResult, callInfo.tracingStrategy),
                 )
             }
         } else {
@@ -146,7 +146,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
             resolvedCallsInfo.mapTo(allCandidates) {
                 val resolutionResult = it.asCallResolutionResult(diagnosticHolder, commonSystem)
                 ResolutionResultCallInfo(
-                    resolutionResult, psiCallResolver.convertToOverloadResolutionResults(it.context, resolutionResult, it.tracingStrategy)
+                    resolutionResult, psiCallResolver.convertToOverloadResolutionResults(it.context, resolutionResult, it.tracingStrategy),
                 )
             }
         }
@@ -158,7 +158,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
 
     private fun PartialCallInfo.asCallResolutionResult(
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
-        commonSystem: NewConstraintSystem
+        commonSystem: NewConstraintSystem,
     ): CallResolutionResult {
         val diagnostics = diagnosticsHolder.getDiagnostics() + callResolutionResult.diagnostics + commonSystem.diagnostics
         return CompletedCallResolutionResult(callResolutionResult.resultCallAtom, diagnostics, commonSystem.asReadOnlyStorage())
@@ -167,29 +167,29 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
 
 data class ResolutionResultCallInfo<D : CallableDescriptor>(
     val resolutionResult: CallResolutionResult,
-    val overloadResolutionResults: OverloadResolutionResults<D>
+    val overloadResolutionResults: OverloadResolutionResults<D>,
 )
 
 abstract class CallInfo(
     open val callResolutionResult: SingleCallResolutionResult,
     val context: BasicCallResolutionContext,
-    val tracingStrategy: TracingStrategy
+    val tracingStrategy: TracingStrategy,
 )
 
 class PSIPartialCallInfo(
     override val callResolutionResult: PartialCallResolutionResult,
     context: BasicCallResolutionContext,
-    tracingStrategy: TracingStrategy
+    tracingStrategy: TracingStrategy,
 ) : CallInfo(callResolutionResult, context, tracingStrategy), PartialCallInfo
 
 class PSICompletedCallInfo(
     override val callResolutionResult: CompletedCallResolutionResult,
     context: BasicCallResolutionContext,
     val resolvedCall: ResolvedCall<*>,
-    tracingStrategy: TracingStrategy
+    tracingStrategy: TracingStrategy,
 ) : CallInfo(callResolutionResult, context, tracingStrategy), CompletedCallInfo
 
 class PSIErrorCallInfo<D : CallableDescriptor>(
     override val callResolutionResult: CallResolutionResult,
-    val result: OverloadResolutionResults<D>
+    val result: OverloadResolutionResults<D>,
 ) : ErrorCallInfo

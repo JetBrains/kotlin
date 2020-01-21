@@ -14,7 +14,7 @@ class JsScriptEvaluator : ScriptEvaluator {
 
     override suspend fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
     ): ResultWithDiagnostics<EvaluationResult> {
         return try {
             val evalResult = engine.eval<Any?>((compiledScript as JsCompiledScript).jsCode)
@@ -25,18 +25,18 @@ class JsScriptEvaluator : ScriptEvaluator {
                         value = evalResult,
                         type = "Any?",
                         scriptClass = null,
-                        scriptInstance = null
+                        scriptInstance = null,
                     ),
-                    scriptEvaluationConfiguration
-                )
+                    scriptEvaluationConfiguration,
+                ),
             )
         } catch (e: Exception) {
             ResultWithDiagnostics.Failure(
                 ScriptDiagnostic(
                     message = e.localizedMessage,
                     severity = ScriptDiagnostic.Severity.ERROR,
-                    exception = e
-                )
+                    exception = e,
+                ),
             )
         }
     }

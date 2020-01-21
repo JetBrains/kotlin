@@ -50,8 +50,8 @@ object LambdaItems {
                             functionType,
                             functionExpectedInfos,
                             LambdaSignatureTemplates.SignaturePresentation.NAMES_OR_TYPES,
-                            explicitParameterTypes = true
-                        )
+                            explicitParameterTypes = true,
+                        ),
                     )
 
                 } else {
@@ -60,16 +60,16 @@ object LambdaItems {
                             functionType,
                             functionExpectedInfos,
                             LambdaSignatureTemplates.SignaturePresentation.NAMES_AND_TYPES,
-                            explicitParameterTypes = true
-                        )
+                            explicitParameterTypes = true,
+                        ),
                     )
                     collection.add(
                         createLookupElement(
                             functionType,
                             functionExpectedInfos,
                             LambdaSignatureTemplates.SignaturePresentation.NAMES,
-                            explicitParameterTypes = false
-                        )
+                            explicitParameterTypes = false,
+                        ),
                     )
                 }
             }
@@ -80,7 +80,7 @@ object LambdaItems {
         functionType: KotlinType,
         functionExpectedInfos: List<ExpectedInfo>,
         signaturePresentation: LambdaSignatureTemplates.SignaturePresentation,
-        explicitParameterTypes: Boolean
+        explicitParameterTypes: Boolean,
     ): LookupElement {
         val lookupString = LambdaSignatureTemplates.lambdaPresentation(functionType, signaturePresentation)
         return LookupElementBuilder.create(lookupString)
@@ -94,7 +94,7 @@ object LambdaItems {
                     placeholderRange,
                     functionType,
                     explicitParameterTypes,
-                    signatureOnly = false
+                    signatureOnly = false,
                 )
             }
             .suppressAutoInsertion()

@@ -32,7 +32,7 @@ internal class ParameterInfo(
     val name: String,
     val type: Type,
     val visibleAnnotations: List<AnnotationNode>?,
-    val invisibleAnnotations: List<AnnotationNode>?
+    val invisibleAnnotations: List<AnnotationNode>?,
 )
 
 internal fun MethodNode.getParametersInfo(containingClass: ClassNode, isInnerClassMember: Boolean): List<ParameterInfo> {

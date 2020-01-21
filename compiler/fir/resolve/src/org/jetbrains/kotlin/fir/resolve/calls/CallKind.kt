@@ -12,12 +12,12 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExplicitReceiverConsistency,
         CreateFreshTypeVariableSubstitutorStage,
         CheckReceivers.Dispatch,
-        CheckReceivers.Extension
+        CheckReceivers.Extension,
     ),
     SyntheticSelect(
         MapArguments,
         CreateFreshTypeVariableSubstitutorStage,
-        CheckArguments
+        CheckArguments,
     ),
     Function(
         CheckVisibility,
@@ -28,19 +28,19 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckReceivers.Dispatch,
         CheckReceivers.Extension,
         CheckArguments,
-        EagerResolveOfCallableReferences
+        EagerResolveOfCallableReferences,
     ),
     CallableReference(
         CheckVisibility,
         DiscriminateSynthetics,
         CreateFreshTypeVariableSubstitutorStage,
-        CheckCallableReferenceExpectedType
+        CheckCallableReferenceExpectedType,
     ),
     SyntheticIdForCallableReferencesResolution(
         MapArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckArguments,
-        EagerResolveOfCallableReferences
+        EagerResolveOfCallableReferences,
     );
 
     val resolutionSequence: List<ResolutionStage> = resolutionSequence.toList()

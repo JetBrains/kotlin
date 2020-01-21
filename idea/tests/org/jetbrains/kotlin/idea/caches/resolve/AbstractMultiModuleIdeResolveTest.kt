@@ -85,7 +85,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             withNewInference = false,
             languageVersionSettings = resolutionFacade.frontendService(),
             dataFlowValueFactory = resolutionFacade.frontendService(),
-            moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
+            moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl,
         ).filter { diagnosticsFilter.value(it.diagnostic) }
 
         val actualTextWithDiagnostics = CheckerTestUtil.addDiagnosticMarkersToText(
@@ -95,7 +95,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             getFileText = { it.text },
             uncheckedDiagnostics = emptyList(),
             withNewInferenceDirective = false,
-            renderDiagnosticMessages = true
+            renderDiagnosticMessages = true,
         ).toString()
 
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithDiagnostics)

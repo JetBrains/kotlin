@@ -39,7 +39,7 @@ protected constructor(
     protected val declarationProvider: DP,
     protected val thisDescriptor: D,
     protected val trace: BindingTrace,
-    protected val mainScope: AbstractLazyMemberScope<D, DP>? = null
+    protected val mainScope: AbstractLazyMemberScope<D, DP>? = null,
 ) : MemberScopeImpl() {
 
     protected val storageManager: StorageManager = c.storageManager
@@ -101,7 +101,7 @@ protected constructor(
     }
 
     private fun getDeclaredFunctions(
-        name: Name
+        name: Name,
     ): Collection<SimpleFunctionDescriptor> {
         // TODO: do we really need to copy descriptors?
         if (mainScope != null) return mainScope.declaredFunctionDescriptors(name).map {
@@ -117,8 +117,8 @@ protected constructor(
                     getScopeForMemberDeclarationResolution(functionDeclaration),
                     functionDeclaration,
                     trace,
-                    c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(functionDeclaration)
-                )
+                    c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(functionDeclaration),
+                ),
             )
         }
 
@@ -147,7 +147,7 @@ protected constructor(
     }
 
     private fun getDeclaredProperties(
-        name: Name
+        name: Name,
     ): Collection<PropertyDescriptor> {
         // TODO: do we really need to copy descriptors?
         if (mainScope != null) return mainScope.declaredPropertyDescriptors(name).map {
@@ -165,7 +165,7 @@ protected constructor(
                 propertyDeclaration,
                 trace,
                 c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration),
-                InferenceSession.default
+                InferenceSession.default,
             )
             result.add(propertyDescriptor)
         }
@@ -178,7 +178,7 @@ protected constructor(
                 entry,
                 trace,
                 c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(entry),
-                InferenceSession.default
+                InferenceSession.default,
             )
             result.add(propertyDescriptor)
         }
@@ -201,7 +201,7 @@ protected constructor(
                 thisDescriptor,
                 getScopeForMemberDeclarationResolution(ktTypeAlias),
                 ktTypeAlias,
-                trace
+                trace,
             )
         }.toList()
     }
@@ -209,7 +209,7 @@ protected constructor(
     protected fun computeDescriptorsFromDeclaredElements(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
-        location: LookupLocation
+        location: LookupLocation,
     ): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = LinkedHashSet<DeclarationDescriptor>(declarations.size)

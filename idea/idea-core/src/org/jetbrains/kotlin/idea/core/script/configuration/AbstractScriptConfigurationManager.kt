@@ -54,7 +54,7 @@ import kotlin.concurrent.withLock
  * (for example, when cache loaded from FS to memory)
  */
 internal abstract class AbstractScriptConfigurationManager(
-    protected val project: Project
+    protected val project: Project,
 ) : ScriptConfigurationManager {
     protected val rootsIndexer = ScriptClassRootsIndexer(project)
 
@@ -79,7 +79,7 @@ internal abstract class AbstractScriptConfigurationManager(
         file: KtFile,
         isFirstLoad: Boolean = getAppliedConfiguration(file.originalFile.virtualFile) == null,
         loadEvenWillNotBeApplied: Boolean = false,
-        forceSync: Boolean = false
+        forceSync: Boolean = false,
     )
 
     @Deprecated("Use getScriptClasspath(KtFile) instead")
@@ -109,7 +109,7 @@ internal abstract class AbstractScriptConfigurationManager(
 
     fun getConfiguration(
         virtualFile: VirtualFile,
-        preloadedKtFile: KtFile? = null
+        preloadedKtFile: KtFile? = null,
     ): ScriptCompilationConfigurationWrapper? {
         val cached = getAppliedConfiguration(virtualFile)
         if (cached != null) return cached.configuration
@@ -150,7 +150,7 @@ internal abstract class AbstractScriptConfigurationManager(
                         reloadOutOfDateConfiguration(
                             file,
                             isFirstLoad = state == null,
-                            loadEvenWillNotBeApplied = loadEvenWillNotBeApplied
+                            loadEvenWillNotBeApplied = loadEvenWillNotBeApplied,
                         )
                     }
                 }
@@ -176,7 +176,7 @@ internal abstract class AbstractScriptConfigurationManager(
 
     protected open fun setAppliedConfiguration(
         file: VirtualFile,
-        newConfigurationSnapshot: ScriptConfigurationSnapshot?
+        newConfigurationSnapshot: ScriptConfigurationSnapshot?,
     ) {
         rootsIndexer.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration
@@ -197,7 +197,7 @@ internal abstract class AbstractScriptConfigurationManager(
 
     protected fun setLoadedConfiguration(
         file: VirtualFile,
-        configurationSnapshot: ScriptConfigurationSnapshot
+        configurationSnapshot: ScriptConfigurationSnapshot,
     ) {
         cache.setLoaded(file, configurationSnapshot)
     }
@@ -208,11 +208,14 @@ internal abstract class AbstractScriptConfigurationManager(
 
     init {
         val connection = project.messageBus.connect()
-        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                clearClassRootsCaches()
-            }
-        })
+        connection.subscribe(
+            ProjectTopics.PROJECT_ROOTS,
+            object : ModuleRootListener {
+                override fun rootsChanged(event: ModuleRootEvent) {
+                    clearClassRootsCaches()
+                }
+            },
+        )
     }
 
     /**

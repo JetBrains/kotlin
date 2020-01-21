@@ -35,7 +35,7 @@ class IDEKotlinBinaryClassCache {
         val kind: KotlinClassHeader.Kind,
         val metadataVersion: JvmMetadataVersion,
         val partNamesIfMultifileFacade: List<String>,
-        val packageName: String?
+        val packageName: String?,
     )
 
     data class KotlinBinaryData(val isKotlinBinary: Boolean, val timestamp: Long, val headerData: KotlinBinaryClassHeaderData?)
@@ -101,7 +101,7 @@ class IDEKotlinBinaryClassCache {
 
     private fun KotlinClassHeader.toLightHeader(classId: ClassId) =
         KotlinBinaryClassHeaderData(
-            classId, kind, metadataVersion, multifilePartNames, packageName
+            classId, kind, metadataVersion, multifilePartNames, packageName,
         )
 
     private val KOTLIN_IS_COMPILED_FILE_ATTRIBUTE: String = "kotlin-is-binary-compiled".apply {

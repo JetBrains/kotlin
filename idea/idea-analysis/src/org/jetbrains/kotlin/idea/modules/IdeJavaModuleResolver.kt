@@ -17,7 +17,7 @@ class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
     private fun findJavaModule(file: VirtualFile): PsiJavaModule? = ModuleHighlightUtil2.getModuleDescriptor(file, project)
 
     override fun checkAccessibility(
-        fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
+        fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?,
     ): JavaModuleResolver.AccessError? {
         val ourModule = fileFromOurModule?.let(this::findJavaModule)
         val theirModule = findJavaModule(referencedFile)

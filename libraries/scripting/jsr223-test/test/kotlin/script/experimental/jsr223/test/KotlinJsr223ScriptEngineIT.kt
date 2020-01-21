@@ -83,7 +83,7 @@ class KotlinJsr223ScriptEngineIT {
         } catch (e: ScriptException) {
             Assert.assertTrue(
                 "Expected message to contain \"Unresolved reference: y\", actual: \"${e.message}\"",
-                e.message?.contains("Unresolved reference: y") ?: false
+                e.message?.contains("Unresolved reference: y") ?: false,
             )
         }
 
@@ -125,13 +125,15 @@ class KotlinJsr223ScriptEngineIT {
     @Test
     fun testInvocable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
-        val res1 = engine.eval("""
+        val res1 = engine.eval(
+            """
 fun fn(x: Int) = x + 2
 val obj = object {
     fun fn1(x: Int) = x + 3
 }
 obj
-""")
+""",
+        )
         Assert.assertNotNull(res1)
         val invocator = engine as? Invocable
         Assert.assertNotNull(invocator)
@@ -196,9 +198,12 @@ obj
 
         // in the current implementation the history is shared between contexts, so "x" could also be used in this line,
         // but this behaviour probably will not be preserved in the future, since contexts may become completely isolated
-        val result2 = engine.eval("""11 + bindings["boundValue"] as Int""", engine.createBindings().apply {
-            put("boundValue", 100)
-        })
+        val result2 = engine.eval(
+            """11 + bindings["boundValue"] as Int""",
+            engine.createBindings().apply {
+                put("boundValue", 100)
+            },
+        )
         Assert.assertEquals(111, result2)
     }
 
@@ -215,9 +220,12 @@ obj
 
         // in the current implementation the history is shared between contexts, so "x" could also be used in this line,
         // but this behaviour probably will not be preserved in the future, since contexts may become completely isolated
-        val result2 = engine.eval("11 + boundValue", engine.createBindings().apply {
-            put("boundValue", 100)
-        })
+        val result2 = engine.eval(
+            "11 + boundValue",
+            engine.createBindings().apply {
+                put("boundValue", 100)
+            },
+        )
         Assert.assertEquals(111, result2)
     }
 

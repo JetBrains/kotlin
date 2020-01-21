@@ -22,7 +22,7 @@ import java.util.*
 
 class InsertHandlerProvider(
     private val callType: CallType<*>,
-    expectedInfosCalculator: () -> Collection<ExpectedInfo>
+    expectedInfosCalculator: () -> Collection<ExpectedInfo>,
 ) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
@@ -45,7 +45,7 @@ class InsertHandlerProvider(
                                             // otherwise additional item with lambda template is to be added
                                             return KotlinFunctionInsertHandler.Normal(
                                                 callType, needTypeArguments, inputValueArguments = false,
-                                                lambdaInfo = GenerateLambdaInfo(parameterType, false)
+                                                lambdaInfo = GenerateLambdaInfo(parameterType, false),
                                             )
                                         }
                                     }

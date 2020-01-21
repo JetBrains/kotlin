@@ -46,9 +46,12 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         val showLocalVariables = testFileLines.any { it.trim() == LOCAL_VARIABLE_TABLE_DIRECTIVE }
         val showTypeAnnotations = testFileLines.any { it.trim() == TYPE_ANNOTATIONS_DIRECTIVE }
 
-        KotlinTestUtils.assertEqualsToFile(txtFile, classes.joinToString(LINE_SEPARATOR.repeat(2)) {
-            renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables, showTypeAnnotations)
-        })
+        KotlinTestUtils.assertEqualsToFile(
+            txtFile,
+            classes.joinToString(LINE_SEPARATOR.repeat(2)) {
+                renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables, showTypeAnnotations)
+            },
+        )
     }
 
     protected open fun getExpectedTextFileName(wholeFile: File): String = wholeFile.nameWithoutExtension + ".txt"
@@ -57,7 +60,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         clazz: ClassNode,
         showBytecodeForTheseMethods: List<String>,
         showLocalVariables: Boolean,
-        showTypeAnnotations: Boolean
+        showTypeAnnotations: Boolean,
     ): String {
         val fields = (clazz.fields ?: emptyList()).sortedBy { it.name }
         val methods = (clazz.methods ?: emptyList()).sortedBy { it.name }
@@ -116,7 +119,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         method: MethodNode,
         showBytecode: Boolean,
         showLocalVariables: Boolean,
-        showTypeAnnotations: Boolean
+        showTypeAnnotations: Boolean,
     ) = buildString {
         renderVisibilityModifiers(method.access)
         renderModalityModifiers(method.access)

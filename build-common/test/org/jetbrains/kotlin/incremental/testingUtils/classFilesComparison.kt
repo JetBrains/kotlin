@@ -77,7 +77,7 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
         throw ComparisonFailure(
             message,
             expectedString.replaceFirst(DIR_ROOT_PLACEHOLDER, expected.canonicalPath),
-            actualString.replaceFirst(DIR_ROOT_PLACEHOLDER, actual.canonicalPath)
+            actualString.replaceFirst(DIR_ROOT_PLACEHOLDER, actual.canonicalPath),
         )
     }
 

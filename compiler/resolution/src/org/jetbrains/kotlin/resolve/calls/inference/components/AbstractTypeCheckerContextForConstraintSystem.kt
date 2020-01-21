@@ -243,7 +243,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
             AbstractTypeChecker.isSubtypeOf(
                 this as TypeCheckerProviderContext,
                 intersectTypes(notTypeVariables),
-                superType
+                superType,
             )
         ) {
             return true

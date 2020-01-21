@@ -92,7 +92,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
                     defaultValue = null,
                     isCrossinline = false,
                     isNoinline = false,
-                    isVararg = false
+                    isVararg = false,
                 )
             }
         }
@@ -109,7 +109,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
         receiverTypeRef = null,
         ALL_OPERATORS.getValue(name),
         FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL),
-        symbol
+        symbol,
     ).apply {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
     }
@@ -137,7 +137,7 @@ class FirIntegerOperator(
     receiverTypeRef: FirTypeRef?,
     val kind: Kind,
     status: FirDeclarationStatus,
-    symbol: FirFunctionSymbol<FirSimpleFunction>
+    symbol: FirFunctionSymbol<FirSimpleFunction>,
 ) : FirSimpleFunctionImpl(source, session, returnTypeRef, receiverTypeRef, kind.operatorName, status, symbol) {
     enum class Kind(val unary: Boolean, val operatorName: Name) {
         PLUS(false, OperatorNameConventions.PLUS),

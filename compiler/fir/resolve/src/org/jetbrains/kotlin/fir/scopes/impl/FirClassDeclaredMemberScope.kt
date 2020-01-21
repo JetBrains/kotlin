@@ -24,7 +24,7 @@ class FirClassDeclaredMemberScope(
     klass: FirClass<*>,
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null,
-    symbolProvider: FirSymbolProvider? = null
+    symbolProvider: FirSymbolProvider? = null,
 ) : FirScope() {
     private val nestedClassifierScope = if (useLazyNestedClassifierScope) {
         lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
@@ -70,6 +70,6 @@ class FirClassDeclaredMemberScope(
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction = nestedClassifierScope.processClassifiersByName(name, processor)
 }

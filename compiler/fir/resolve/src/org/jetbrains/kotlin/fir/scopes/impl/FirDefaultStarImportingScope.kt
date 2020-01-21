@@ -15,7 +15,7 @@ class FirDefaultStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
     priority: DefaultImportPriority,
-    lookupInFir: Boolean = false
+    lookupInFir: Boolean = false,
 ) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir) {
 
     // TODO: put languageVersionSettings into FirSession?
@@ -28,7 +28,7 @@ class FirDefaultStarImportingScope(
                 FirResolvedImportImpl(
                     FirImportImpl(null, it.fqName, isAllUnder = true, aliasName = null),
                     it.fqName,
-                    null
+                    null,
                 )
             } ?: emptyList()
     }

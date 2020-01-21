@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class ConeOverloadConflictResolver(
     specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents
+    inferenceComponents: InferenceComponents,
 ) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
     ): Set<Candidate> {
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
@@ -40,7 +40,7 @@ class ConeOverloadConflictResolver(
 
     private fun findMaximallySpecificCall(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean//,
+        discriminateGenerics: Boolean,//,
         //isDebuggerContext: Boolean
     ): Candidate? {
         if (candidates.size <= 1) return candidates.singleOrNull()
@@ -87,18 +87,18 @@ class ConeOverloadConflictResolver(
     private fun isNotLessSpecificCallWithArgumentMapping(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
     ): Boolean {
         return compareCallsByUsedArguments(
             call1,
             call2,
-            discriminateGenerics
+            discriminateGenerics,
         )
     }
 
     private fun isOfNotLessSpecificShape(
         call1: FlatSignature<Candidate>,
-        call2: FlatSignature<Candidate>
+        call2: FlatSignature<Candidate>,
     ): Boolean {
         val hasVarargs1 = call1.hasVarargs
         val hasVarargs2 = call2.hasVarargs
@@ -131,7 +131,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : Simp
             for (upperBound in typeParameter.fir.bounds) {
                 addSubtypeConstraint(
                     substitutionMap[typeParameter] ?: error("No ${typeParameter.fir.render()} in substitution map"),
-                    substitutor.substituteOrSelf(upperBound.coneTypeUnsafe())
+                    substitutor.substituteOrSelf(upperBound.coneTypeUnsafe()),
                 )
             }
         }

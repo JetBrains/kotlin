@@ -15,6 +15,6 @@ fun JTextComponent.onTextChange(action: (DocumentEvent) -> Unit) {
             override fun textChanged(e: DocumentEvent) {
                 action(e)
             }
-        }
+        },
     )
 }

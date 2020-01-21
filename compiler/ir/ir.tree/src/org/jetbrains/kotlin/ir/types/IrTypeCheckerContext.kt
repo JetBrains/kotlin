@@ -37,7 +37,7 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
 
     override fun newBaseTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
     ): AbstractTypeCheckerContext = IrTypeCheckerContext(irBuiltIns)
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false

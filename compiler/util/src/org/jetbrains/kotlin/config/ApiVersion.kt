@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 class ApiVersion private constructor(
-        val version: MavenComparableVersion,
-        val versionString: String
+    val version: MavenComparableVersion,
+    val versionString: String,
 ) : Comparable<ApiVersion>, DescriptionAware {
     val isStable: Boolean
         get() = this <= ApiVersion.LATEST_STABLE

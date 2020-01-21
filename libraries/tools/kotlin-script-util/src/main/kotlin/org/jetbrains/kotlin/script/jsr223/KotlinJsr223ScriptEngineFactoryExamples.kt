@@ -33,7 +33,7 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
                 scriptCompilationClasspathFromContextOrStlib("kotlin-script-util.jar", wholeClasspath = true),
                 KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
                 { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
-                arrayOf(Bindings::class)
+                arrayOf(Bindings::class),
             )
 }
 
@@ -46,7 +46,7 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptE
                 scriptCompilationClasspathFromContextOrStlib("kotlin-script-util.jar", wholeClasspath = true),
                 KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
                 { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
-                arrayOf(Bindings::class)
+                arrayOf(Bindings::class),
             )
 }
 

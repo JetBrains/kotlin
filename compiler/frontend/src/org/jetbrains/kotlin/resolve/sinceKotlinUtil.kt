@@ -20,11 +20,11 @@ sealed class SinceKotlinAccessibility {
 
     data class NotAccessibleButWasExperimental(
         val version: ApiVersion,
-        val markerClasses: List<ClassDescriptor>
+        val markerClasses: List<ClassDescriptor>,
     ) : SinceKotlinAccessibility()
 
     data class NotAccessible(
-        val version: ApiVersion
+        val version: ApiVersion,
     ) : SinceKotlinAccessibility()
 }
 
@@ -50,7 +50,7 @@ fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSe
 
 private data class SinceKotlinValue(
     val apiVersion: ApiVersion,
-    val wasExperimentalMarkerClasses: List<ClassDescriptor>
+    val wasExperimentalMarkerClasses: List<ClassDescriptor>,
 )
 
 /**

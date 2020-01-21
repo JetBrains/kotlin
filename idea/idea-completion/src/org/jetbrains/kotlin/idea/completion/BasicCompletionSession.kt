@@ -64,7 +64,7 @@ class BasicCompletionSession(
     configuration: CompletionSessionConfiguration,
     parameters: CompletionParameters,
     toFromOriginalFileMapper: ToFromOriginalFileMapper,
-    resultSet: CompletionResultSet
+    resultSet: CompletionResultSet,
 ) : CompletionSession(configuration, parameters, toFromOriginalFileMapper, resultSet) {
 
     private interface CompletionKind {
@@ -86,7 +86,7 @@ class BasicCompletionSession(
         SmartCompletion(
             it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false), prefixMatcher,
             GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, callTypeAndReceiver,
-            isJvmModule, forBasicCompletion = true
+            isJvmModule, forBasicCompletion = true,
         )
     }
 
@@ -159,7 +159,7 @@ class BasicCompletionSession(
             sorter = sorter.weighBefore(
                 KindWeigher.toString(),
                 smartCompletionInBasicWeigher,
-                CallableReferenceWeigher(callTypeAndReceiver.callType)
+                CallableReferenceWeigher(callTypeAndReceiver.callType),
             )
         }
 
@@ -209,7 +209,7 @@ class BasicCompletionSession(
             fun completeWithSmartCompletion(lookupElementFactory: LookupElementFactory) {
                 if (smartCompletion != null) {
                     val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(
-                        lookupElementFactory
+                        lookupElementFactory,
                     )
 
                     // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
@@ -226,7 +226,7 @@ class BasicCompletionSession(
             withCollectRequiredContextVariableTypes { lookupFactory ->
                 DslMembersCompletion(
                     prefixMatcher, lookupFactory, receiverTypes,
-                    collector, indicesHelper(true), callTypeAndReceiver
+                    collector, indicesHelper(true), callTypeAndReceiver,
                 ).completeDslFunctions()
             }
 
@@ -238,7 +238,8 @@ class BasicCompletionSession(
                 when {
                     prefix.isEmpty()
                             || callTypeAndReceiver.receiver != null
-                            || CodeInsightSettings.getInstance().COMPLETION_CASE_SENSITIVE == CodeInsightSettings.NONE -> {
+                            || CodeInsightSettings.getInstance().COMPLETION_CASE_SENSITIVE == CodeInsightSettings.NONE,
+                    -> {
                         addReferenceVariantElements(lookupElementFactory, descriptorKindFilter)
                     }
 
@@ -307,7 +308,7 @@ class BasicCompletionSession(
                     resolutionFacade,
                     lookupElementFactory,
                     referenceVariantsCollector!!.allCollected.imported,
-                    isJvmModule
+                    isJvmModule,
                 )
                 if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
                     staticMembersCompletion.completeFromImports(file, collector)
@@ -326,7 +327,7 @@ class BasicCompletionSession(
                             variants.notImportedExtensions,
                             lookupElementFactory,
                             withReceiverCast = true,
-                            notImported = true
+                            notImported = true,
                         )
                         flushToResultSet()
                     }
@@ -338,7 +339,7 @@ class BasicCompletionSession(
                             indicesHelper(false),
                             receiverTypes.map { it.type },
                             callTypeAndReceiver.callType,
-                            collector
+                            collector,
                         )
                     }
 
@@ -403,7 +404,7 @@ class BasicCompletionSession(
 
                 AllClassesCompletion(
                     parameters.withPosition(receiver, receiver.startOffset), helper, fullTextPrefixMatcher, resolutionFacade,
-                    { true }, true, configuration.javaClassesNotToBeUsed
+                    { true }, true, configuration.javaClassesNotToBeUsed,
                 ).collect({ descriptors += it }, { descriptors.addIfNotNull(it.resolveToDescriptor(resolutionFacade)) })
 
                 val foundDescriptors = mutableSetOf<DeclarationDescriptor>()
@@ -428,55 +429,58 @@ class BasicCompletionSession(
                             resolutionFacade,
                             moduleDescriptor,
                             isVisibleFilter,
-                            NotPropertiesService.getNotProperties(position)
+                            NotPropertiesService.getNotProperties(position),
                         )
                         val rvCollector = ReferenceVariantsCollector(
                             rvHelper, indicesHelper(true), prefixMatcher,
                             nameExpression, callTypeAndReceiver, resolutionFacade, newContext,
-                            importableFqNameClassifier, configuration
+                            importableFqNameClassifier, configuration,
                         )
 
                         val receiverTypes = detectReceiverTypes(newContext, nameExpression, callTypeAndReceiver)
 
-                        val factory = lookupElementFactory.copy(receiverTypes = receiverTypes, standardLookupElementsPostProcessor = {
+                        val factory = lookupElementFactory.copy(
+                            receiverTypes = receiverTypes,
+                            standardLookupElementsPostProcessor = {
 
-                                lookupElement ->
-                            val lookupDescriptor = (lookupElement.`object` as? DeclarationLookupObject)
-                                ?.descriptor as? MemberDescriptor ?: return@copy lookupElement
+                                    lookupElement ->
+                                val lookupDescriptor = (lookupElement.`object` as? DeclarationLookupObject)
+                                    ?.descriptor as? MemberDescriptor ?: return@copy lookupElement
 
-                            if (!desc.isAncestorOf(lookupDescriptor, false)) return@copy lookupElement
+                                if (!desc.isAncestorOf(lookupDescriptor, false)) return@copy lookupElement
 
-                            if (lookupDescriptor is CallableMemberDescriptor &&
-                                lookupDescriptor.isExtension &&
-                                lookupDescriptor.extensionReceiverParameter?.importableFqName != desc.fqNameSafe
-                            ) {
-                                return@copy lookupElement
-                            }
+                                if (lookupDescriptor is CallableMemberDescriptor &&
+                                    lookupDescriptor.isExtension &&
+                                    lookupDescriptor.extensionReceiverParameter?.importableFqName != desc.fqNameSafe
+                                ) {
+                                    return@copy lookupElement
+                                }
 
-                            val fqNameToImport = lookupDescriptor.containingDeclaration.importableFqName ?: return@copy lookupElement
+                                val fqNameToImport = lookupDescriptor.containingDeclaration.importableFqName ?: return@copy lookupElement
 
-                            object : LookupElementDecorator<LookupElement>(lookupElement) {
-                                val name = fqNameToImport.shortName()
-                                val packageName = fqNameToImport.parent()
+                                object : LookupElementDecorator<LookupElement>(lookupElement) {
+                                    val name = fqNameToImport.shortName()
+                                    val packageName = fqNameToImport.parent()
 
-                                override fun handleInsert(context: InsertionContext) {
-                                    super.handleInsert(context)
-                                    context.commitDocument()
-                                    val file = context.file as? KtFile
-                                    if (file != null) {
-                                        val receiverInFile =
-                                            file.findElementAt(receiver.startOffset)?.getParentOfType<KtSimpleNameExpression>(false)
-                                                ?: return
-                                        receiverInFile.mainReference.bindToFqName(fqNameToImport, FORCED_SHORTENING)
+                                    override fun handleInsert(context: InsertionContext) {
+                                        super.handleInsert(context)
+                                        context.commitDocument()
+                                        val file = context.file as? KtFile
+                                        if (file != null) {
+                                            val receiverInFile =
+                                                file.findElementAt(receiver.startOffset)?.getParentOfType<KtSimpleNameExpression>(false)
+                                                    ?: return
+                                            receiverInFile.mainReference.bindToFqName(fqNameToImport, FORCED_SHORTENING)
+                                        }
+                                    }
+
+                                    override fun renderElement(presentation: LookupElementPresentation?) {
+                                        super.renderElement(presentation)
+                                        presentation?.appendTailText(" for $name in $packageName", true)
                                     }
                                 }
-
-                                override fun renderElement(presentation: LookupElementPresentation?) {
-                                    super.renderElement(presentation)
-                                    presentation?.appendTailText(" for $name in $packageName", true)
-                                }
-                            }
-                        })
+                            },
+                        )
 
 
                         rvCollector.collectReferenceVariants(descriptorKindFilter) { (imported, notImportedExtensions) ->
@@ -491,11 +495,11 @@ class BasicCompletionSession(
 
                             collector.addDescriptorElements(
                                 unique.toList(), factory,
-                                prohibitDuplicates = true
+                                prohibitDuplicates = true,
                             )
                             collector.addDescriptorElements(
                                 uniqueNotImportedExtensions.toList(), factory,
-                                notImported = true, prohibitDuplicates = true
+                                notImported = true, prohibitDuplicates = true,
                             )
 
                             flushToResultSet()
@@ -533,7 +537,7 @@ class BasicCompletionSession(
                     lookupString: String,
                     expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
                     priority: SmartCompletionItemPriority,
-                    factory: () -> LookupElement
+                    factory: () -> LookupElement,
                 ) {
                     keywordsToSkip.add(lookupString)
                     val lookupElement = factory()
@@ -555,7 +559,7 @@ class BasicCompletionSession(
                 bindingContext,
                 resolutionFacade,
                 moduleDescriptor,
-                isJvmModule
+                isJvmModule,
             )
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
@@ -573,8 +577,9 @@ class BasicCompletionSession(
                                     bindingContext,
                                     expression,
                                     prefix,
-                                    resolutionFacade
-                                ).map { it.createLookupElement() })
+                                    resolutionFacade,
+                                ).map { it.createLookupElement() },
+                            )
                         } else {
                             // for completion in secondary constructor delegation call
                             collector.addElement(lookupElement)
@@ -616,8 +621,8 @@ class BasicCompletionSession(
                                     project,
                                     keyword,
                                     "val v:Int get(){caret}",
-                                    trimSpacesAroundCaret = true
-                                )
+                                    trimSpacesAroundCaret = true,
+                                ),
                             )
                         }
                     }
@@ -632,8 +637,8 @@ class BasicCompletionSession(
                                     project,
                                     keyword,
                                     "var v:Int set(value){caret}",
-                                    trimSpacesAroundCaret = true
-                                )
+                                    trimSpacesAroundCaret = true,
+                                ),
                             )
                         }
                     }
@@ -801,7 +806,7 @@ class BasicCompletionSession(
         }
         AllClassesCompletion(
             parameters, indicesHelper(true), prefixMatcher, resolutionFacade,
-            kindFilter, includeTypeAliases, configuration.javaClassesNotToBeUsed
+            kindFilter, includeTypeAliases, configuration.javaClassesNotToBeUsed,
         ).collect(classifierDescriptorCollector, javaClassCollector)
     }
 
@@ -809,11 +814,11 @@ class BasicCompletionSession(
         fun addReferenceVariants(referenceVariants: ReferenceVariants) {
             collector.addDescriptorElements(
                 referenceVariantsHelper.excludeNonInitializedVariable(referenceVariants.imported, position),
-                lookupElementFactory, prohibitDuplicates = true
+                lookupElementFactory, prohibitDuplicates = true,
             )
             collector.addDescriptorElements(
                 referenceVariants.notImportedExtensions, lookupElementFactory,
-                notImported = true, prohibitDuplicates = true
+                notImported = true, prohibitDuplicates = true,
             )
         }
 
@@ -830,9 +835,11 @@ class BasicCompletionSession(
 
         // if we are typing parameter name, restart completion each time we type an upper case letter
         // because new suggestions will appear (previous words can be used as user prefix)
-        val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
-            override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
-        })
+        val prefixPattern = StandardPatterns.string().with(
+            object : PatternCondition<String>("Prefix ends with uppercase letter") {
+                override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
+            },
+        )
         collector.restartCompletionOnPrefixChange(prefixPattern)
 
         nameWithTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
@@ -847,11 +854,11 @@ class BasicCompletionSession(
 
 private val USUALLY_START_UPPER_CASE = DescriptorKindFilter(
     DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.FUNCTIONS_MASK,
-    listOf(NonSamConstructorFunctionExclude, DescriptorKindExclude.Extensions /* needed for faster getReferenceVariants */)
+    listOf(NonSamConstructorFunctionExclude, DescriptorKindExclude.Extensions /* needed for faster getReferenceVariants */),
 )
 private val USUALLY_START_LOWER_CASE = DescriptorKindFilter(
     DescriptorKindFilter.CALLABLES_MASK or DescriptorKindFilter.PACKAGES_MASK,
-    listOf(SamConstructorDescriptorKindExclude)
+    listOf(SamConstructorDescriptorKindExclude),
 )
 
 private object NonSamConstructorFunctionExclude : DescriptorKindExclude() {

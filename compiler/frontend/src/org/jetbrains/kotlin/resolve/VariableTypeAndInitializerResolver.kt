@@ -33,7 +33,7 @@ class VariableTypeAndInitializerResolver(
     private val typeApproximator: TypeApproximator,
     private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val anonymousTypeTransformers: Iterable<DeclarationSignatureAnonymousTypeTransformer>
+    private val anonymousTypeTransformers: Iterable<DeclarationSignatureAnonymousTypeTransformer>,
 ) {
     companion object {
         @JvmField
@@ -47,10 +47,10 @@ class VariableTypeAndInitializerResolver(
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession,
         trace: BindingTrace,
-        local: Boolean
+        local: Boolean,
     ): KotlinType {
         resolveTypeNullable(
-            variableDescriptor, scopeForInitializer, variable, dataFlowInfo, inferenceSession, trace, local
+            variableDescriptor, scopeForInitializer, variable, dataFlowInfo, inferenceSession, trace, local,
         )?.let { return it }
 
         if (local) {
@@ -67,29 +67,30 @@ class VariableTypeAndInitializerResolver(
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession,
         trace: BindingTrace,
-        local: Boolean
+        local: Boolean,
     ): KotlinType? {
         val propertyTypeRef = variable.typeReference
         return when {
             propertyTypeRef != null -> typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true)
 
             !variable.hasInitializer() && variable is KtProperty && variableDescriptor is VariableDescriptorWithAccessors &&
-                    variable.hasDelegateExpression() ->
+                    variable.hasDelegateExpression(),
+            ->
                 resolveDelegatedPropertyType(
-                    variable, variableDescriptor, scopeForInitializer, dataFlowInfo, inferenceSession, trace, local
+                    variable, variableDescriptor, scopeForInitializer, dataFlowInfo, inferenceSession, trace, local,
                 )
 
             variable.hasInitializer() -> when {
                 !local ->
                     wrappedTypeFactory.createRecursionIntolerantDeferredType(
-                        trace
+                        trace,
                     ) {
                         PreliminaryDeclarationVisitor.createForDeclaration(
                             variable, trace,
-                            expressionTypingServices.languageVersionSettings
+                            expressionTypingServices.languageVersionSettings,
                         )
                         val initializerType = resolveInitializerType(
-                            scopeForInitializer, variable.initializer!!, dataFlowInfo, inferenceSession, trace, local
+                            scopeForInitializer, variable.initializer!!, dataFlowInfo, inferenceSession, trace, local,
                         )
                         transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace, anonymousTypeTransformers)
                     }
@@ -108,22 +109,23 @@ class VariableTypeAndInitializerResolver(
         dataFlowInfo: DataFlowInfo,
         variableType: KotlinType,
         inferenceSession: InferenceSession,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         if (!variable.hasInitializer() || variable.isVar) return
         variableDescriptor.setCompileTimeInitializer(
             storageManager.createRecursionTolerantNullableLazyValue(
-                computeInitializer@ {
+                computeInitializer@{
                     if (!DescriptorUtils.shouldRecordInitializerForProperty(
                             variableDescriptor,
-                            variableType
-                        )) return@computeInitializer null
+                            variableType,
+                        )
+                    ) return@computeInitializer null
 
                     val initializer = variable.initializer
                     val initializerType =
                         expressionTypingServices.safeGetType(scope, initializer!!, variableType, dataFlowInfo, inferenceSession, trace)
                     val constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType)
-                            ?: return@computeInitializer null
+                        ?: return@computeInitializer null
 
                     if (constant.usesNonConstValAsConstant && variableDescriptor.isConst) {
                         trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(initializer))
@@ -131,8 +133,8 @@ class VariableTypeAndInitializerResolver(
 
                     constant.toConstantValue(initializerType)
                 },
-                null
-            )
+                null,
+            ),
         )
     }
 
@@ -143,15 +145,15 @@ class VariableTypeAndInitializerResolver(
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession,
         trace: BindingTrace,
-        local: Boolean
+        local: Boolean,
     ) = wrappedTypeFactory.createRecursionIntolerantDeferredType(trace) {
         val delegateExpression = property.delegateExpression!!
         val type = delegatedPropertyResolver.resolveDelegateExpression(
-            delegateExpression, property, variableDescriptor, scopeForInitializer, trace, dataFlowInfo, inferenceSession
+            delegateExpression, property, variableDescriptor, scopeForInitializer, trace, dataFlowInfo, inferenceSession,
         )
 
         val getterReturnType = delegatedPropertyResolver.getGetValueMethodReturnType(
-            variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo
+            variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo,
         )
 
         val delegatedType = getterReturnType?.let { approximateType(it, local) }
@@ -166,10 +168,10 @@ class VariableTypeAndInitializerResolver(
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession,
         trace: BindingTrace,
-        local: Boolean
+        local: Boolean,
     ): KotlinType {
         val inferredType = expressionTypingServices.safeGetType(
-            scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, inferenceSession, trace
+            scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, inferenceSession, trace,
         )
         val approximatedType = approximateType(inferredType, local)
         return declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings)

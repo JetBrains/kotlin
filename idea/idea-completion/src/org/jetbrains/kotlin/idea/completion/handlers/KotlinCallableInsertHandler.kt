@@ -50,7 +50,7 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
                 context.document.replaceString(
                     context.startOffset,
                     context.tailOffset,
-                    fqName.withRootPrefixIfNeeded().render() + " "
+                    fqName.withRootPrefixIfNeeded().render() + " ",
                 ) // insert space after for correct parsing
 
                 psiDocumentManager.commitAllDocuments()

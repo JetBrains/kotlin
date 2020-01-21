@@ -21,7 +21,7 @@ class ConstructorArgumentsOrderTest {
 
         assertTrue(
             res is ResultWithDiagnostics.Success,
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
         )
     }
 
@@ -33,7 +33,7 @@ class ConstructorArgumentsOrderTest {
 
         assertTrue(
             res is ResultWithDiagnostics.Success,
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
         )
     }
 
@@ -46,7 +46,7 @@ class ConstructorArgumentsOrderTest {
 
         assertTrue(
             res is ResultWithDiagnostics.Success,
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
         )
     }
 }

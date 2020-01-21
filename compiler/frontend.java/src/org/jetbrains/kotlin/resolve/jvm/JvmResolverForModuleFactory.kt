@@ -39,28 +39,28 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 class JvmPlatformParameters(
     val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider,
-    val moduleByJavaClass: (JavaClass) -> ModuleInfo?
+    val moduleByJavaClass: (JavaClass) -> ModuleInfo?,
 ) : PlatformAnalysisParameters
 
 
 class JvmResolverForModuleFactory(
     private val platformParameters: JvmPlatformParameters,
     private val targetEnvironment: TargetEnvironment,
-    private val platform: TargetPlatform
+    private val platform: TargetPlatform,
 ) : ResolverForModuleFactory() {
     override fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,
             moduleContentScope,
-            moduleInfo
+            moduleInfo,
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
@@ -98,7 +98,7 @@ class JvmResolverForModuleFactory(
             ExpectActualTracker.DoNothing,
             packagePartProvider,
             languageVersionSettings,
-            useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
+            useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
         )
 
         val resolveSession = container.get<ResolveSession>()
@@ -106,14 +106,14 @@ class JvmResolverForModuleFactory(
 
         val providersForModule = arrayListOf(
             resolveSession.packageFragmentProvider,
-            javaDescriptorResolver.packageFragmentProvider
+            javaDescriptorResolver.packageFragmentProvider,
         )
 
         providersForModule +=
                 PackageFragmentProviderExtension.getInstances(project)
                     .mapNotNull {
                         it.getPackageFragmentProvider(
-                            project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo, lookupTracker
+                            project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo, lookupTracker,
                         )
                     }
 

@@ -39,24 +39,24 @@ fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
 fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
     var result = SmartFMap.emptyMap<PsiElement, String>()
     accept(
-            object : KtTreeVisitorVoid() {
-                override fun visitComment(comment: PsiComment) {
-                    val commentText = comment.text
-                    if (commentText.startsWith(prefix)) {
-                        val parent = comment.parent
-                        val elementToAdd = when (parent) {
-                            is KtDeclaration -> parent
-                            is PsiMember -> parent
-                            else -> PsiTreeUtil.skipSiblingsForward(
-                                    comment,
-                                    PsiWhiteSpace::class.java, PsiComment::class.java, KtPackageDirective::class.java
-                            )
-                        } ?: return
+        object : KtTreeVisitorVoid() {
+            override fun visitComment(comment: PsiComment) {
+                val commentText = comment.text
+                if (commentText.startsWith(prefix)) {
+                    val parent = comment.parent
+                    val elementToAdd = when (parent) {
+                        is KtDeclaration -> parent
+                        is PsiMember -> parent
+                        else -> PsiTreeUtil.skipSiblingsForward(
+                            comment,
+                            PsiWhiteSpace::class.java, PsiComment::class.java, KtPackageDirective::class.java,
+                        )
+                    } ?: return
 
-                        result = result.plus(elementToAdd, commentText.substring(prefix.length).trim())
-                    }
+                    result = result.plus(elementToAdd, commentText.substring(prefix.length).trim())
                 }
             }
+        },
     )
     return result
 }

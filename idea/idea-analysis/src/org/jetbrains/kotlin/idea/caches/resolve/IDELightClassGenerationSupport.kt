@@ -99,7 +99,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 moduleName, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
                 jvmTarget = JvmTarget.JVM_1_8,
                 typePreprocessor = KotlinType::cleanFromAnonymousTypes,
-                namePreprocessor = ::tryGetPredefinedName
+                namePreprocessor = ::tryGetPredefinedName,
             )
         }
     }
@@ -108,7 +108,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         manager: PsiManager,
         facadeClassFqName: FqName,
         lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
-        files: Collection<KtFile>
+        files: Collection<KtFile>,
     ): KtUltraLightClassForFacade? {
 
         if (files.any { it.isScript() }) return null
@@ -122,7 +122,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             facadeClassFqName,
             lightClassDataCache,
             files,
-            filesToSupports
+            filesToSupports,
         )
     }
 
@@ -172,13 +172,13 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 builder,
                 exactContextProvider = { IDELightClassContexts.contextForLocalClassOrObject(classOrObject) },
                 dummyContextProvider = null,
-                diagnosticsHolderProvider = { classOrObject.getDiagnosticsHolder() }
+                diagnosticsHolderProvider = { classOrObject.getDiagnosticsHolder() },
             )
             else -> LazyLightClassDataHolder.ForClass(
                 builder,
                 exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },
                 dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) },
-                diagnosticsHolderProvider = { classOrObject.getDiagnosticsHolder() }
+                diagnosticsHolderProvider = { classOrObject.getDiagnosticsHolder() },
             )
         }
     }
@@ -192,7 +192,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             builder,
             exactContextProvider = { IDELightClassContexts.contextForFacade(sortedFiles) },
             dummyContextProvider = { IDELightClassContexts.lightContextForFacade(sortedFiles) },
-            diagnosticsHolderProvider = { files.first().getDiagnosticsHolder() }
+            diagnosticsHolderProvider = { files.first().getDiagnosticsHolder() },
         )
     }
 
@@ -201,7 +201,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             builder,
             exactContextProvider = { IDELightClassContexts.contextForScript(script) },
             dummyContextProvider = { null },
-            diagnosticsHolderProvider = { script.getDiagnosticsHolder() }
+            diagnosticsHolderProvider = { script.getDiagnosticsHolder() },
         )
     }
 

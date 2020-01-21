@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities
 internal class BreakpointCreator(
     private val project: Project,
     private val logger: (String) -> Unit,
-    private val preferences: DebuggerPreferences
+    private val preferences: DebuggerPreferences,
 ) {
     fun createBreakpoints(file: PsiFile) {
         val document = runReadAction { PsiDocumentManager.getInstance(project).getDocument(file) } ?: return
@@ -65,7 +65,7 @@ internal class BreakpointCreator(
                             breakpointManager,
                             kotlinFieldBreakpointType,
                             lineIndex,
-                            virtualFile
+                            virtualFile,
                         )
 
                         (javaBreakpoint as? KotlinFieldBreakpoint)?.apply {
@@ -169,14 +169,14 @@ internal class BreakpointCreator(
         file: PsiFile,
         lineIndex: Int,
         lambdaOrdinal: Int?,
-        condition: String?
+        condition: String?,
     ) {
         val kotlinLineBreakpointType = findBreakpointType(KotlinLineBreakpointType::class.java)
         val javaBreakpoint = createBreakpointOfType(
             breakpointManager,
             kotlinLineBreakpointType,
             lineIndex,
-            file.virtualFile
+            file.virtualFile,
         )
 
         if (javaBreakpoint is LineBreakpoint<*>) {
@@ -204,7 +204,7 @@ internal class BreakpointCreator(
         breakpointManager: XBreakpointManager,
         breakpointType: XLineBreakpointType<XBreakpointProperties<*>>,
         lineIndex: Int,
-        virtualFile: VirtualFile
+        virtualFile: VirtualFile,
     ): Breakpoint<out JavaBreakpointProperties<*>>? {
         if (!breakpointType.canPutAt(virtualFile, lineIndex, project)) return null
         val xBreakpoint = runWriteAction {
@@ -212,7 +212,7 @@ internal class BreakpointCreator(
                 breakpointType,
                 virtualFile.url,
                 lineIndex,
-                breakpointType.createBreakpointProperties(virtualFile, lineIndex)
+                breakpointType.createBreakpointProperties(virtualFile, lineIndex),
             )
         }
         return BreakpointManager.getJavaBreakpoint(xBreakpoint)

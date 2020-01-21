@@ -33,7 +33,7 @@ val IrDeclarationParent.fqNameForIrSerialization: FqName
 @Deprecated(
     "Use fqNameForIrSerialization instead.",
     ReplaceWith("fqNameForIrSerialization", "org.jetbrains.kotlin.ir.util.fqNameForIrSerialization"),
-    DeprecationLevel.ERROR
+    DeprecationLevel.ERROR,
 )
 val IrDeclarationParent.fqNameSafe: FqName
     get() = fqNameForIrSerialization
@@ -54,7 +54,7 @@ val IrDeclaration.nameForIrSerialization: Name
 @Deprecated(
     "Use nameForIrSerialization instead.",
     ReplaceWith("nameForIrSerialization", "org.jetbrains.kotlin.ir.util.nameForIrSerialization"),
-    DeprecationLevel.ERROR
+    DeprecationLevel.ERROR,
 )
 val IrDeclaration.name: Name
     get() = nameForIrSerialization

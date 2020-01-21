@@ -49,10 +49,10 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         containingDeclarationOrModule: DeclarationDescriptor,
         dataFlowInfo: DataFlowInfo,
         languageVersionSettings: LanguageVersionSettings,
-        dataFlowValueFactory: DataFlowValueFactory
+        dataFlowValueFactory: DataFlowValueFactory,
     ): List<KotlinType> {
         val variants = getSmartCastVariantsExcludingReceiver(
-            bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast, languageVersionSettings, dataFlowValueFactory
+            bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast, languageVersionSettings, dataFlowValueFactory,
         )
         val result = ArrayList<KotlinType>(variants.size + 1)
         result.add(receiverToCast.type)
@@ -65,7 +65,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
      */
     fun getSmartCastVariantsExcludingReceiver(
         context: ResolutionContext<*>,
-        receiverToCast: ReceiverValue
+        receiverToCast: ReceiverValue,
     ): Collection<KotlinType> {
         return getSmartCastVariantsExcludingReceiver(
             context.trace.bindingContext,
@@ -73,7 +73,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
             context.dataFlowInfo,
             receiverToCast,
             context.languageVersionSettings,
-            context.dataFlowValueFactory
+            context.dataFlowValueFactory,
         )
     }
 
@@ -86,7 +86,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         dataFlowInfo: DataFlowInfo,
         receiverToCast: ReceiverValue,
         languageVersionSettings: LanguageVersionSettings,
-        dataFlowValueFactory: DataFlowValueFactory
+        dataFlowValueFactory: DataFlowValueFactory,
     ): Collection<KotlinType> {
         val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverToCast, bindingContext, containingDeclarationOrModule)
         return dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
@@ -95,7 +95,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
     fun getSmartCastReceiverResult(
         receiverArgument: ReceiverValue,
         receiverParameterType: KotlinType,
-        context: ResolutionContext<*>
+        context: ResolutionContext<*>,
     ): ReceiverSmartCastResult? {
         getSmartCastReceiverResultWithGivenNullability(receiverArgument, receiverParameterType, context)?.let {
             return it
@@ -111,14 +111,15 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
     private fun getSmartCastReceiverResultWithGivenNullability(
         receiverArgument: ReceiverValue,
         receiverParameterType: KotlinType,
-        context: ResolutionContext<*>
+        context: ResolutionContext<*>,
     ): ReceiverSmartCastResult? =
         when {
             argumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, receiverParameterType) ->
                 ReceiverSmartCastResult.OK
             getSmartCastVariantsExcludingReceiver(context, receiverArgument).any {
                 argumentTypeResolver.isSubtypeOfForArgumentType(it, receiverParameterType)
-            } ->
+            },
+            ->
                 ReceiverSmartCastResult.SMARTCAST_NEEDED_OR_NOT_NULL_EXPECTED
             else -> null
         }
@@ -130,7 +131,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         c: ResolutionContext<*>,
         call: Call?,
         recordExpressionType: Boolean,
-        additionalPredicate: ((KotlinType) -> Boolean)? = null
+        additionalPredicate: ((KotlinType) -> Boolean)? = null,
     ): SmartCastResult? {
         val calleeExpression = call?.calleeExpression
         val expectedTypes = if (c.languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
@@ -162,12 +163,14 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
                             if (oldType != null && oldType != possibleType) {
                                 throw AssertionError(
                                     "Rewriting key $receiver for implicit smart cast on ${calleeExpression.text}: " +
-                                            "was $oldType, now $possibleType"
+                                            "was $oldType, now $possibleType",
                                 )
                             }
                         }
-                        c.trace.record(IMPLICIT_RECEIVER_SMARTCAST, calleeExpression,
-                                       oldSmartCasts?.let { it + newSmartCasts } ?: newSmartCasts)
+                        c.trace.record(
+                            IMPLICIT_RECEIVER_SMARTCAST, calleeExpression,
+                            oldSmartCasts?.let { it + newSmartCasts } ?: newSmartCasts,
+                        )
 
                     }
                 }
@@ -220,7 +223,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
             trace: BindingTrace,
             dataFlowValue: DataFlowValue,
             call: Call?,
-            recordExpressionType: Boolean
+            recordExpressionType: Boolean,
         ) {
             if (KotlinBuiltIns.isNullableNothing(type)) return
             if (dataFlowValue.isStable) {

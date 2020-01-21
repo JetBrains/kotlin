@@ -74,7 +74,7 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
 
     override fun isOverriddenProperty(
         overrideCandidate: FirCallableMemberDeclaration<*>,
-        baseDeclaration: FirProperty
+        baseDeclaration: FirProperty,
     ): Boolean {
         // TODO: substitutor
         return overrideCandidate is FirProperty &&

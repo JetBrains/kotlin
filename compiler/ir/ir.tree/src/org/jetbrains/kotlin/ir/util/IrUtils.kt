@@ -161,7 +161,7 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuilt
             irBuiltIns.unitType,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             irBuiltIns.unitType,
-            this
+            this,
         )
 }
 
@@ -174,7 +174,7 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns)
             irBuiltIns.unitType,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             irBuiltIns.unitType,
-            this
+            this,
         )
 }
 
@@ -419,7 +419,7 @@ inline fun <reified T : IrDeclaration> IrDeclarationContainer.filterDeclarations
 fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
     listOf(this),
     { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.valueParameters[current.index] } ?: listOf() },
-    { current -> current.defaultValue != null }
+    { current -> current.defaultValue != null },
 )
 
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
@@ -431,7 +431,7 @@ fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter 
         IrDeclarationOrigin.DEFINED,
         newDescriptor,
         type,
-        varargElementType
+        varargElementType,
     )
 }
 
@@ -471,7 +471,7 @@ fun irConstructorCall(
     call: IrFunctionAccessExpression,
     newFunction: IrConstructor,
     receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
+    argumentsAsReceivers: Boolean = false,
 ): IrConstructorCall =
     irConstructorCall(call, newFunction.symbol, receiversAsArguments, argumentsAsReceivers)
 
@@ -479,7 +479,7 @@ fun irConstructorCall(
     call: IrFunctionAccessExpression,
     newSymbol: IrConstructorSymbol,
     receiversAsArguments: Boolean = false,
-    argumentsAsDispatchers: Boolean = false
+    argumentsAsDispatchers: Boolean = false,
 ): IrConstructorCall =
     call.run {
         IrConstructorCallImpl(
@@ -490,12 +490,12 @@ fun irConstructorCall(
             typeArgumentsCount,
             0,
             call.valueArgumentsCount,
-            origin
+            origin,
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,
                 receiversAsArguments,
-                argumentsAsDispatchers
+                argumentsAsDispatchers,
             )
         }
     }
@@ -505,14 +505,14 @@ fun irCall(
     newFunction: IrFunction,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
-    newSuperQualifierSymbol: IrClassSymbol? = null
+    newSuperQualifierSymbol: IrClassSymbol? = null,
 ): IrCall =
     irCall(
         call,
         newFunction.symbol,
         receiversAsArguments,
         argumentsAsReceivers,
-        newSuperQualifierSymbol
+        newSuperQualifierSymbol,
     )
 
 fun irCall(
@@ -520,7 +520,7 @@ fun irCall(
     newSymbol: IrFunctionSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
-    newSuperQualifierSymbol: IrClassSymbol? = null
+    newSuperQualifierSymbol: IrClassSymbol? = null,
 ): IrCall =
     call.run {
         IrCallImpl(
@@ -530,12 +530,12 @@ fun irCall(
             newSymbol,
             typeArgumentsCount,
             origin,
-            newSuperQualifierSymbol
+            newSuperQualifierSymbol,
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,
                 receiversAsArguments,
-                argumentsAsReceivers
+                argumentsAsReceivers,
             )
         }
     }
@@ -543,25 +543,25 @@ fun irCall(
 fun IrFunctionAccessExpression.copyTypeAndValueArgumentsFrom(
     src: IrFunctionAccessExpression,
     receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
+    argumentsAsReceivers: Boolean = false,
 ) = copyTypeAndValueArgumentsFrom(
     src,
     src.symbol.owner,
     symbol.owner,
     receiversAsArguments,
-    argumentsAsReceivers
+    argumentsAsReceivers,
 )
 
 fun IrFunctionReference.copyTypeAndValueArgumentsFrom(
     src: IrFunctionReference,
     receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
+    argumentsAsReceivers: Boolean = false,
 ) = copyTypeAndValueArgumentsFrom(
     src,
     src.symbol.owner,
     symbol.owner,
     receiversAsArguments,
-    argumentsAsReceivers
+    argumentsAsReceivers,
 )
 
 private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
@@ -569,7 +569,7 @@ private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
     srcFunction: IrFunction,
     destFunction: IrFunction,
     receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
+    argumentsAsReceivers: Boolean = false,
 ) {
     copyTypeArgumentsFrom(src)
 

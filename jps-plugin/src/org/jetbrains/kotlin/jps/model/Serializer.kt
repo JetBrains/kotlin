@@ -25,7 +25,7 @@ class KotlinModelSerializerService : JpsModelSerializerExtension() {
         KotlinCommonCompilerArgumentsSerializer(),
         Kotlin2JvmCompilerArgumentsSerializer(),
         Kotlin2JsCompilerArgumentsSerializer(),
-        KotlinCompilerSettingsSerializer()
+        KotlinCompilerSettingsSerializer(),
     )
 
     override fun getFacetConfigurationSerializers() = listOf(JpsKotlinFacetConfigurationSerializer)
@@ -34,13 +34,13 @@ class KotlinModelSerializerService : JpsModelSerializerExtension() {
 object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<JpsKotlinFacetModuleExtension>(
     JpsKotlinFacetModuleExtension.KIND,
     JpsKotlinFacetModuleExtension.FACET_TYPE_ID,
-    JpsKotlinFacetModuleExtension.FACET_NAME
+    JpsKotlinFacetModuleExtension.FACET_NAME,
 ) {
     override fun loadExtension(
         facetConfigurationElement: Element,
         name: String,
         parent: JpsElement?,
-        module: JpsModule
+        module: JpsModule,
     ): JpsKotlinFacetModuleExtension {
         return JpsKotlinFacetModuleExtension(deserializeFacetSettings(facetConfigurationElement))
     }
@@ -48,7 +48,7 @@ object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<J
     override fun saveExtension(
         extension: JpsKotlinFacetModuleExtension?,
         facetConfigurationTag: Element,
-        module: JpsModule
+        module: JpsModule,
     ) {
         (extension as JpsKotlinFacetModuleExtension).settings.serializeFacetSettings(facetConfigurationTag)
     }
@@ -56,7 +56,7 @@ object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<J
 
 abstract class BaseJpsCompilerSettingsSerializer<in T : Any>(
     componentName: String,
-    private val settingsFactory: () -> T
+    private val settingsFactory: () -> T,
 ) : JpsProjectExtensionSerializer(SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE, componentName) {
     protected abstract fun onLoad(project: JpsProject, settings: T)
 
@@ -75,7 +75,7 @@ abstract class BaseJpsCompilerSettingsSerializer<in T : Any>(
 }
 
 internal class KotlinCompilerSettingsSerializer : BaseJpsCompilerSettingsSerializer<CompilerSettings>(
-    SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION, ::CompilerSettings
+    SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION, ::CompilerSettings,
 ) {
     override fun onLoad(project: JpsProject, settings: CompilerSettings) {
         project.kotlinCompilerSettings = settings
@@ -83,7 +83,7 @@ internal class KotlinCompilerSettingsSerializer : BaseJpsCompilerSettingsSeriali
 }
 
 internal class KotlinCommonCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<CommonCompilerArguments.DummyImpl>(
-    SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION, CommonCompilerArguments::DummyImpl
+    SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION, CommonCompilerArguments::DummyImpl,
 ) {
     override fun onLoad(project: JpsProject, settings: CommonCompilerArguments.DummyImpl) {
         settings.setApiVersionToLanguageVersionIfNeeded()
@@ -92,7 +92,7 @@ internal class KotlinCommonCompilerArgumentsSerializer : BaseJpsCompilerSettings
 }
 
 internal class Kotlin2JsCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<K2JSCompilerArguments>(
-    SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION, ::K2JSCompilerArguments
+    SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION, ::K2JSCompilerArguments,
 ) {
     override fun onLoad(project: JpsProject, settings: K2JSCompilerArguments) {
         project.k2JsCompilerArguments = settings
@@ -100,7 +100,7 @@ internal class Kotlin2JsCompilerArgumentsSerializer : BaseJpsCompilerSettingsSer
 }
 
 internal class Kotlin2JvmCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<K2JVMCompilerArguments>(
-    SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION, ::K2JVMCompilerArguments
+    SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION, ::K2JVMCompilerArguments,
 ) {
     override fun onLoad(project: JpsProject, settings: K2JVMCompilerArguments) {
         project.k2JvmCompilerArguments = settings

@@ -74,7 +74,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         builder: Services.Builder,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker
+        exceptActualTracer: ExpectActualTracker,
     ) {
         super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer)
 
@@ -83,8 +83,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 IncrementalCompilationComponents::class.java,
                 @Suppress("UNCHECKED_CAST")
                 IncrementalCompilationComponentsImpl(
-                    incrementalCaches.mapKeys { it.key.targetId } as Map<TargetId, IncrementalCache>
-                )
+                    incrementalCaches.mapKeys { it.key.targetId } as Map<TargetId, IncrementalCache>,
+                ),
             )
         }
     }
@@ -92,7 +92,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ): Boolean {
         require(chunk.representativeTarget == this)
 
@@ -101,7 +101,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Circular dependencies are only partially supported. " +
                         "The following modules depend on each other: ${chunk.presentableShortName}. " +
-                        "Kotlin will compile them, but some strange effect may happen"
+                        "Kotlin will compile them, but some strange effect may happen",
             )
         }
 
@@ -111,7 +111,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         if (moduleFile == null) {
             if (KotlinBuilder.LOG.isDebugEnabled) {
                 KotlinBuilder.LOG.debug(
-                    "Not compiling, because no files affected: " + chunk.presentableShortName
+                    "Not compiling, because no files affected: " + chunk.presentableShortName,
                 )
             }
 
@@ -126,7 +126,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             KotlinBuilder.LOG.debug(
                 "Compiling to JVM ${filesSet.size} files"
                         + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
-                        + " in " + chunk.presentableShortName
+                        + " in " + chunk.presentableShortName,
             )
         }
 
@@ -137,7 +137,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 module.k2JvmCompilerArguments,
                 module.kotlinCompilerSettings,
                 environment,
-                moduleFile
+                moduleFile,
             )
         } finally {
             if (System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
@@ -198,7 +198,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 isTests,
                 // this excludes the output directories from the class path, to be removed for true incremental compilation
                 outputDirs,
-                friendDirs
+                friendDirs,
             )
         }
 
@@ -281,7 +281,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         jpsIncrementalCache: JpsIncrementalCache,
         files: List<GeneratedFile>,
         changesCollector: ChangesCollector,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ) {
         super.updateCaches(dirtyFilesHolder, jpsIncrementalCache, files, changesCollector, environment)
 
@@ -296,7 +296,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         chunk: ModuleChunk,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
-        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>
+        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
     ) {
         val previousMappings = localContext.projectDescriptor.dataManager.mappings
         val callback = JavaBuilderUtil.getDependenciesRegistrar(localContext)
@@ -331,7 +331,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 callback.associate(
                     FileUtil.toSystemIndependentName(output.outputFile.canonicalPath),
                     sourceFiles.map { FileUtil.toSystemIndependentName(it.canonicalPath) },
-                    ClassReader(output.outputClass.fileContents)
+                    ClassReader(output.outputClass.fileContents),
                 )
             }
         }

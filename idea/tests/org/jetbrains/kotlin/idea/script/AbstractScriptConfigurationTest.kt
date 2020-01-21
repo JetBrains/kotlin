@@ -58,7 +58,7 @@ private const val configureConflictingModule = "// CONFLICTING_MODULE"
 private fun String.splitOrEmpty(delimeters: String) = split(delimeters).takeIf { it.size > 1 } ?: emptyList()
 internal val switches = listOf(
     useDefaultTemplate,
-    configureConflictingModule
+    configureConflictingModule,
 )
 
 abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
@@ -110,16 +110,16 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
-                    classesRoot = VfsUtil.findFileByIoFile(PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath, true)
-                )
+                    classesRoot = VfsUtil.findFileByIoFile(PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath, true),
+                ),
             )
 
             if (environment["template-classes"] != null) {
                 module.addDependency(
                     projectLibrary(
                         "script-template-library",
-                        classesRoot = VfsUtil.findFileByIoFile(environment["template-classes"] as File, true)
-                    )
+                        classesRoot = VfsUtil.findFileByIoFile(environment["template-classes"] as File, true),
+                    ),
                 )
             }
         }
@@ -259,7 +259,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             "runtime-source" to File("libraries/stdlib/src"),
             "lib-classes" to libClasses,
             "lib-source" to libSrcDir,
-            "template-classes" to templateOutDir
+            "template-classes" to templateOutDir,
         )
     }
 
@@ -268,7 +268,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             arrayOf(
                 File(libPath, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR).path,
                 File(libPath, KOTLIN_SCRIPTING_COMMON_JAR).path,
-                File(libPath, KOTLIN_SCRIPTING_JVM_JAR).path
+                File(libPath, KOTLIN_SCRIPTING_JVM_JAR).path,
             )
         }
     }
@@ -324,7 +324,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         if (javaSourceFiles.isNotEmpty()) {
             KotlinTestUtils.compileJavaFiles(
                 javaSourceFiles,
-                listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
+                listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path),
             )
         }
         return outDir
@@ -341,7 +341,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             ScriptDefinitionContributor.EP_NAME,
             project,
             provider,
-            testRootDisposable
+            testRootDisposable,
         )
 
         ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitions()

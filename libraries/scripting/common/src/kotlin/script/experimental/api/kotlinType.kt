@@ -14,7 +14,7 @@ import kotlin.reflect.KType
  */
 class KotlinType private constructor(
     val typeName: String,
-    @Transient val fromClass: KClass<*>? = null
+    @Transient val fromClass: KClass<*>? = null,
     // TODO: copy properties from KType
 ) : Serializable {
     /**

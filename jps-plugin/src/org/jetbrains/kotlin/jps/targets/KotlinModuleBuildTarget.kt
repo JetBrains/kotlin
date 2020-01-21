@@ -46,7 +46,7 @@ import java.io.File
  */
 abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> internal constructor(
     val kotlinContext: KotlinCompileContext,
-    val jpsModuleBuildTarget: ModuleBuildTarget
+    val jpsModuleBuildTarget: ModuleBuildTarget,
 ) {
     /**
      * Note: beware of using this context for getting compilation round dependent data:
@@ -70,7 +70,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     @Suppress("LeakingThis")
     val localCacheVersionManager = localCacheVersionManager(
         kotlinContext.dataPaths.getTargetDataRoot(jpsModuleBuildTarget),
-        isIncrementalCompilationEnabled
+        isIncrementalCompilationEnabled,
     )
 
     val initialLocalCacheAttributesDiff: CacheAttributesDiff<*> = localCacheVersionManager.loadDiff()
@@ -126,7 +126,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     data class Dependency(
         val src: KotlinModuleBuildTarget<*>,
         val target: KotlinModuleBuildTarget<*>,
-        val exported: Boolean
+        val exported: Boolean,
     )
 
     // TODO(1.2.80): try replace allDependencies with KotlinChunk.collectDependentChunksRecursivelyExportedOnly
@@ -190,7 +190,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
      */
     class Source(
         val file: File,
-        val isCrossCompiled: Boolean
+        val isCrossCompiled: Boolean,
     )
 
     fun isFromIncludedSourceRoot(file: File): Boolean = sources[file]?.isCrossCompiled == true
@@ -206,7 +206,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     abstract fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ): Boolean
 
     open fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
@@ -223,7 +223,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Circular dependencies are not supported. The following modules depend on each other: "
                         + chunk.presentableShortName + " "
-                        + "Kotlin is not compiled for these modules"
+                        + "Kotlin is not compiled for these modules",
             )
 
             return true
@@ -247,7 +247,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         chunk: ModuleChunk,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
-        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>
+        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
     ) {
         // by default do nothing
     }
@@ -257,7 +257,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         jpsIncrementalCache: JpsIncrementalCache,
         files: List<GeneratedFile>,
         changesCollector: ChangesCollector,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ) {
         val changedAndRemovedFiles = dirtyFilesHolder.getDirtyFiles(jpsModuleBuildTarget).keys +
                 dirtyFilesHolder.getRemovedFiles(jpsModuleBuildTarget)
@@ -270,16 +270,19 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         builder: Services.Builder,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker
+        exceptActualTracer: ExpectActualTracker,
     ) {
         with(builder) {
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, exceptActualTracer)
-            register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
-                override fun checkCanceled() {
-                    if (jpsGlobalContext.cancelStatus.isCanceled) throw CompilationCanceledException()
-                }
-            })
+            register(
+                CompilationCanceledStatus::class.java,
+                object : CompilationCanceledStatus {
+                    override fun checkCanceled() {
+                        if (jpsGlobalContext.cancelStatus.isCanceled) throw CompilationCanceledException()
+                    }
+                },
+            )
         }
     }
 
@@ -289,19 +292,19 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
      * Should not be cached since may be vary in different rounds.
      */
     protected fun collectSourcesToCompile(
-        dirtyFilesHolder: KotlinDirtySourceFilesHolder
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
     ) = SourcesToCompile(
         sources = when {
             chunk.representativeTarget.isIncrementalCompilationEnabled ->
                 dirtyFilesHolder.getDirtyFiles(jpsModuleBuildTarget).values
             else -> sources.values
         },
-        removedFiles = dirtyFilesHolder.getRemovedFiles(jpsModuleBuildTarget)
+        removedFiles = dirtyFilesHolder.getRemovedFiles(jpsModuleBuildTarget),
     )
 
     inner class SourcesToCompile(
         sources: Collection<KotlinModuleBuildTarget.Source>,
-        val removedFiles: Collection<File>
+        val removedFiles: Collection<File>,
     ) {
         val allFiles = sources.map { it.file }
         val crossCompiledFiles = sources.filter { it.isCrossCompiled }.map { it.file }

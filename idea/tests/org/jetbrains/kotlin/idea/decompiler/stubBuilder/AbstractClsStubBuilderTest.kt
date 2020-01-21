@@ -98,7 +98,8 @@ fun VirtualFile.findClassFileByName(className: String): VirtualFile {
         },
         { virtualFile ->
             if (!virtualFile.isDirectory) files.addIfNotNull(virtualFile); true
-        })
+        },
+    )
 
     return files.single()
 }

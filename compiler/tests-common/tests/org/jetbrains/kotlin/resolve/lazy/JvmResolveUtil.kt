@@ -40,12 +40,12 @@ object JvmResolveUtil {
     fun createContainer(
         environment: KotlinCoreEnvironment,
         files: Collection<KtFile> = emptyList(),
-        targetEnvironment: TargetEnvironment = CompilerEnvironment
+        targetEnvironment: TargetEnvironment = CompilerEnvironment,
     ): ComponentProvider =
         TopDownAnalyzerFacadeForJVM.createContainer(
             environment.project, files, NoScopeRecordCliBindingTrace(),
             environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory,
-            targetEnvironment
+            targetEnvironment,
         )
 
     @JvmStatic
@@ -62,7 +62,7 @@ object JvmResolveUtil {
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliBindingTrace()
+        trace: BindingTrace = CliBindingTrace(),
     ): AnalysisResult {
         for (file in files) {
             try {
@@ -102,10 +102,10 @@ object JvmResolveUtil {
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliBindingTrace()
+        trace: BindingTrace = CliBindingTrace(),
     ): AnalysisResult {
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-            project, files, trace, configuration, packagePartProviderFactory
+            project, files, trace, configuration, packagePartProviderFactory,
         )
     }
 }

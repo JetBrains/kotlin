@@ -44,10 +44,10 @@ class TestAllOpenForLightClass : KotlinLightCodeInsightFixtureTestCase() {
                     + "@$allOpenAnnotationName class $targetClassName(val e: Int)\n {"
                     + "  fun a() {}\n"
                     + "  val b = 32\n"
-                    + "}"
+                    + "}",
 
 
-        ) as KtFile
+            ) as KtFile
 
         val classes = file.classes
         assertEquals(2, classes.size)

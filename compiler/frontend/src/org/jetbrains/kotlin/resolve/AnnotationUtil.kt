@@ -39,6 +39,6 @@ fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>?
     "Use org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME or " +
             "org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation instead.",
     ReplaceWith("org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME"),
-    DeprecationLevel.ERROR
+    DeprecationLevel.ERROR,
 )
 val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")

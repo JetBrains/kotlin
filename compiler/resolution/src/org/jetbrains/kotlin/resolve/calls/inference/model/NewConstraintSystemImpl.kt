@@ -24,7 +24,7 @@ import kotlin.math.max
 
 class NewConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
-    val typeSystemContext: TypeSystemInferenceExtensionContext
+    val typeSystemContext: TypeSystemInferenceExtensionContext,
 ) :
     TypeSystemInferenceExtensionContext by typeSystemContext,
     NewConstraintSystem,
@@ -108,7 +108,7 @@ class NewConstraintSystemImpl(
             apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
             lowerType,
             upperType,
-            position
+            position,
         )
 
     override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) =
@@ -116,7 +116,7 @@ class NewConstraintSystemImpl(
             apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
             a,
             b,
-            position
+            position,
         )
 
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
@@ -182,7 +182,7 @@ class NewConstraintSystemImpl(
                 State.FREEZED,
                 State.BUILDING,
                 State.COMPLETION,
-                State.TRANSACTION
+                State.TRANSACTION,
             )
         }
 
@@ -279,7 +279,7 @@ class NewConstraintSystemImpl(
         checkState(State.BUILDING, State.COMPLETION)
 
         constraintInjector.addInitialEqualityConstraint(
-            this, variable.defaultType(), resultType, FixVariableConstraintPosition(variable, atom)
+            this, variable.defaultType(), resultType, FixVariableConstraintPosition(variable, atom),
         )
 
         val variableWithConstraints = notFixedTypeVariables.remove(variable.freshTypeConstructor())
@@ -296,7 +296,7 @@ class NewConstraintSystemImpl(
 
     private fun checkOnlyInputTypesAnnotation(
         variableWithConstraints: MutableVariableWithConstraints?,
-        resultType: KotlinTypeMarker
+        resultType: KotlinTypeMarker,
     ) {
         if (resultType !is KotlinType || variableWithConstraints == null) return
         if (variableWithConstraints.typeVariable.safeAs<NewTypeVariable>()?.hasOnlyInputTypesAnnotation() != true) return

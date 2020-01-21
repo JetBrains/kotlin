@@ -38,7 +38,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
                 .single { !it.isFallback }
             RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                 loaded, configuration,
-                File("compiler/testData/builtin-classes/$builtinVersionName/" + packageFqName.asString().replace('.', '-') + ".txt")
+                File("compiler/testData/builtin-classes/$builtinVersionName/" + packageFqName.asString().replace('.', '-') + ".txt"),
             )
         }
     }
@@ -54,7 +54,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
                     annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
                     modifiers = DescriptorRendererModifier.ALL
                     excludedTypeAnnotationClasses = setOf(FQ_NAMES.unsafeVariance)
-                }
+                },
             )
         }
     }

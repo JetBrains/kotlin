@@ -43,14 +43,14 @@ interface GenericRepositoryWithBridge : GenericResolver, Resolver {
         tryResolve(
             with(dependsOn) {
                 MavenArtifactCoordinates(value, groupId, artifactId, version)
-            }
+            },
         )
 
     override fun tryAddRepo(annotation: Repository): Boolean =
         with(annotation) {
             tryAddRepository(
                 value.takeIf { it.isNotBlank() } ?: url,
-                id.takeIf { it.isNotBlank() }
+                id.takeIf { it.isNotBlank() },
             )
         }
 }
@@ -59,7 +59,7 @@ open class MavenArtifactCoordinates(
     val value: String?,
     val groupId: String?,
     val artifactId: String?,
-    val version: String?
+    val version: String?,
 ) : GenericArtifactCoordinates {
     override val string: String
         get() = value.takeIf { it?.isNotBlank() ?: false }

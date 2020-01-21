@@ -58,20 +58,20 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     open class FromLegacy(
         override val hostConfiguration: ScriptingHostConfiguration,
-        override val legacyDefinition: KotlinScriptDefinition
+        override val legacyDefinition: KotlinScriptDefinition,
     ) : ScriptDefinition() {
 
         override val compilationConfiguration by lazy {
             ScriptCompilationConfigurationFromDefinition(
                 hostConfiguration,
-                legacyDefinition
+                legacyDefinition,
             )
         }
 
         override val evaluationConfiguration by lazy {
             ScriptEvaluationConfigurationFromDefinition(
                 hostConfiguration,
-                legacyDefinition
+                legacyDefinition,
             )
         }
 
@@ -106,14 +106,14 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     open class FromLegacyTemplate(
         hostConfiguration: ScriptingHostConfiguration,
         template: KClass<*>,
-        templateClasspath: List<File> = emptyList()
+        templateClasspath: List<File> = emptyList(),
     ) : FromLegacy(
         hostConfiguration,
         KotlinScriptDefinitionFromAnnotatedTemplate(
             template,
             hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke(),
-            templateClasspath
-        )
+            templateClasspath,
+        ),
     )
 
     abstract class FromConfigurationsBase : ScriptDefinition() {
@@ -122,7 +122,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override val legacyDefinition by lazy {
             KotlinScriptDefinitionAdapterFromNewAPI(
                 compilationConfiguration,
-                hostConfiguration
+                hostConfiguration,
             )
         }
 
@@ -177,17 +177,17 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     open class FromConfigurations(
         override val hostConfiguration: ScriptingHostConfiguration,
         override val compilationConfiguration: ScriptCompilationConfiguration,
-        override val evaluationConfiguration: ScriptEvaluationConfiguration?
+        override val evaluationConfiguration: ScriptEvaluationConfiguration?,
     ) : FromConfigurationsBase()
 
     open class FromTemplate(
         hostConfiguration: ScriptingHostConfiguration,
         template: KClass<*>,
-        contextClass: KClass<*> = ScriptCompilationConfiguration::class
+        contextClass: KClass<*> = ScriptCompilationConfiguration::class,
     ) : FromConfigurations(
         hostConfiguration,
         createCompilationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass),
-        createEvaluationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass)
+        createEvaluationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass),
     )
 
     companion object {

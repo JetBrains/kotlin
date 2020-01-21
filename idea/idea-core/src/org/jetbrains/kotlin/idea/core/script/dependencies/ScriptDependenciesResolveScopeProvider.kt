@@ -35,8 +35,8 @@ class ScriptDependenciesResolveScopeProvider : ResolveScopeProvider() {
         return GlobalSearchScope.union(
             arrayOf(
                 GlobalSearchScope.fileScope(project, file),
-                *ScriptDependenciesInfo.ForProject(project).dependencies().map { it.contentScope() }.toTypedArray()
-            )
+                *ScriptDependenciesInfo.ForProject(project).dependencies().map { it.contentScope() }.toTypedArray(),
+            ),
         )
     }
 }

@@ -57,6 +57,6 @@ abstract class AbstractDiagnosticCollector {
 fun AbstractDiagnosticCollector.registerAllComponents() {
     initializeComponents(
         DeclarationCheckersDiagnosticComponent(this),
-        ErrorNodeDiagnosticCollectorComponent(this)
+        ErrorNodeDiagnosticCollectorComponent(this),
     )
 }

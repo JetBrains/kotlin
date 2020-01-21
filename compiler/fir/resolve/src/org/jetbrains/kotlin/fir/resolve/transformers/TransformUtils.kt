@@ -26,14 +26,14 @@ internal object MapArguments : FirDefaultTransformer<Map<FirElement, FirElement>
 
     override fun transformFunctionCall(
         functionCall: FirFunctionCall,
-        data: Map<FirElement, FirElement>
+        data: Map<FirElement, FirElement>,
     ): CompositeTransformResult<FirStatement> {
         return (functionCall.transformArguments(this, data) as FirStatement).compose()
     }
 
     override fun transformWrappedArgumentExpression(
         wrappedArgumentExpression: FirWrappedArgumentExpression,
-        data: Map<FirElement, FirElement>
+        data: Map<FirElement, FirElement>,
     ): CompositeTransformResult<FirStatement> {
         return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
     }
@@ -56,7 +56,7 @@ internal object TransformImplicitType : FirDefaultTransformer<FirTypeRef>() {
 
     override fun transformImplicitTypeRef(
         implicitTypeRef: FirImplicitTypeRef,
-        data: FirTypeRef
+        data: FirTypeRef,
     ): CompositeTransformResult<FirTypeRef> {
         return data.compose()
     }
@@ -70,7 +70,7 @@ internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() 
 
     override fun transformNamedReference(
         namedReference: FirNamedReference,
-        data: FirNamedReference
+        data: FirNamedReference,
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
     }
@@ -81,7 +81,7 @@ internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() 
 
     override fun transformSuperReference(
         superReference: FirSuperReference,
-        data: FirNamedReference
+        data: FirNamedReference,
     ): CompositeTransformResult<FirReference> {
         return data.compose()
     }
@@ -94,14 +94,14 @@ internal object StoreCalleeReference : FirTransformer<FirResolvedNamedReference>
 
     override fun transformNamedReference(
         namedReference: FirNamedReference,
-        data: FirResolvedNamedReference
+        data: FirResolvedNamedReference,
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
     }
 
     override fun transformResolvedNamedReference(
         resolvedNamedReference: FirResolvedNamedReference,
-        data: FirResolvedNamedReference
+        data: FirResolvedNamedReference,
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
     }
@@ -119,7 +119,7 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
         val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
         transformReturnTypeRef(
             StoreType,
-            returnTypeRef.withReplacedConeType(returnType.createArrayOf(session))
+            returnTypeRef.withReplacedConeType(returnType.createArrayOf(session)),
         )
     }
 }

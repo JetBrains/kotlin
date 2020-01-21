@@ -21,7 +21,7 @@ typealias StatInfos = Map<String, Any>?
 class Stats(
     val name: String = "",
     val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev"),
-    val acceptanceStabilityLevel: Int = 25
+    val acceptanceStabilityLevel: Int = 25,
 ) : Closeable {
 
     private val perfTestRawDataMs = mutableListOf<Long>()
@@ -52,7 +52,7 @@ class Stats(
         for (v in listOf(
             Triple("mean", "", calcMean.mean.toLong()),
             Triple("stdDev", " stdDev", calcMean.stdDev.toLong()),
-            Triple("geomMean", " geomMean", calcMean.geomMean.toLong())
+            Triple("geomMean", " geomMean", calcMean.geomMean.toLong()),
         )) {
             val n = "$id : ${v.first}"
 
@@ -92,8 +92,10 @@ class Stats(
         val mean = values.average()
 
         val stdDev = if (values.size > 1) (sqrt(
-            values.fold(0.0,
-                        { accumulator, next -> accumulator + (1.0 * (next - mean)).pow(2) })
+            values.fold(
+                0.0,
+                { accumulator, next -> accumulator + (1.0 * (next - mean)).pow(2) },
+            ),
         ) / (values.size - 1))
         else 0.0
 
@@ -124,7 +126,7 @@ class Stats(
         setUp: (TestData<SV, TV>) -> Unit = { },
         test: (TestData<SV, TV>) -> Unit,
         tearDown: (TestData<SV, TV>) -> Unit = { },
-        profileEnabled: Boolean = false
+        profileEnabled: Boolean = false,
     ) {
 
         val warmPhaseData = PhaseData(
@@ -133,7 +135,7 @@ class Stats(
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profileEnabled = profileEnabled
+            profileEnabled = profileEnabled,
         )
         val mainPhaseData = PhaseData(
             iterations = iterations,
@@ -141,7 +143,7 @@ class Stats(
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profileEnabled = profileEnabled
+            profileEnabled = profileEnabled,
         )
         val block = {
             warmUpPhase(warmPhaseData)
@@ -183,7 +185,7 @@ class Stats(
         prefix: String,
         statInfoArray: Array<StatInfos>,
         printOnlyErrors: Boolean = false,
-        attemptFn: (Int) -> String = { attempt -> "#$attempt" }
+        attemptFn: (Int) -> String = { attempt -> "#$attempt" },
     ) {
         for (statInfoIndex in statInfoArray.withIndex()) {
             val attempt = statInfoIndex.index
@@ -208,12 +210,12 @@ class Stats(
 
     fun printWarmUpTimings(
         prefix: String,
-        warmUpStatInfosArray: Array<StatInfos>
+        warmUpStatInfosArray: Array<StatInfos>,
     ) = printTimings(prefix, warmUpStatInfosArray) { attempt -> "warm-up #$attempt" }
 
     fun appendTimings(
         prefix: String,
-        statInfosArray: Array<StatInfos>
+        statInfosArray: Array<StatInfos>,
     ) {
         printTimings(prefix, statInfosArray)
         append("$name: $prefix", statInfosArray)
@@ -228,7 +230,7 @@ class Stats(
             printTimings(
                 phaseData.testName,
                 printOnlyErrors = true,
-                statInfoArray = warmUpStatInfosArray
+                statInfoArray = warmUpStatInfosArray,
             ) { attempt -> "warm-up #$attempt" }
         }
 
@@ -300,7 +302,7 @@ class Stats(
     private fun <K, T> createPhaseProfiler(
         phaseData: PhaseData<K, T>,
         phaseName: String,
-        attempt: Int
+        attempt: Int,
     ): PhaseProfiler {
         val profilerHandler = if (phaseData.profileEnabled) ProfilerHandler.getInstance() else DummyProfilerHandler
 
@@ -424,7 +426,7 @@ data class PhaseData<SV, TV>(
     val setUp: (TestData<SV, TV>) -> Unit,
     val test: (TestData<SV, TV>) -> Unit,
     val tearDown: (TestData<SV, TV>) -> Unit,
-    val profileEnabled: Boolean = false
+    val profileEnabled: Boolean = false,
 )
 
 data class TestData<SV, TV>(var setUpValue: SV?, var value: TV?) {

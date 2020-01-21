@@ -21,7 +21,7 @@ interface InferenceSession {
             override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
             override fun inferPostponedVariables(
                 lambda: ResolvedLambdaAtom,
-                initialStorage: ConstraintStorage
+                initialStorage: ConstraintStorage,
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
             override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false

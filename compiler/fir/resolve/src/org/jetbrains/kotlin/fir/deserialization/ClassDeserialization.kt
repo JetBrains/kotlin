@@ -40,14 +40,14 @@ fun deserializeClassToSymbol(
     defaultAnnotationDeserializer: AbstractAnnotationDeserializer?,
     scopeProvider: KotlinScopeProvider,
     parentContext: FirDeserializationContext? = null,
-    deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
+    deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?,
 ) {
     val flags = classProto.flags
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
     val status = FirDeclarationStatusImpl(
         ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-        modality
+        modality,
     ).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)
         isActual = false
@@ -65,7 +65,7 @@ fun deserializeClassToSymbol(
             status,
             ProtoEnumFlags.classKind(kind),
             scopeProvider,
-            symbol
+            symbol,
         )
     } else {
         FirClassImpl(
@@ -75,7 +75,7 @@ fun deserializeClassToSymbol(
             status,
             ProtoEnumFlags.classKind(kind),
             scopeProvider,
-            symbol
+            symbol,
         )
     }
     firClass.apply {
@@ -85,10 +85,10 @@ fun deserializeClassToSymbol(
                 classProto.typeParameterList,
                 nameResolver,
                 TypeTable(classProto.typeTable),
-                classId.relativeClassName
+                classId.relativeClassName,
             ) ?: FirDeserializationContext.createForClass(
                 classId, classProto, nameResolver, session,
-                defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
+                defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
             )
         typeParameters += context.typeDeserializer.ownTypeParameters.map { it.fir }
         annotations += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
@@ -111,14 +111,14 @@ fun deserializeClassToSymbol(
         addDeclarations(
             classProto.constructorList.map {
                 classDeserializer.loadConstructor(it, this)
-            }
+            },
         )
 
         addDeclarations(
             classProto.nestedClassNameList.mapNotNull { nestedNameId ->
                 val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
                 deserializeNestedClass(nestedClassId, context)?.fir
-            }
+            },
         )
 
         addDeclarations(
@@ -135,13 +135,13 @@ fun deserializeClassToSymbol(
                     symbol = FirVariableSymbol(CallableId(classId, enumEntryName)),
                     status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
                         isStatic = true
-                    }
+                    },
                 ).apply {
                     resolvePhase = FirResolvePhase.DECLARATIONS
                 }
 
                 property
-            }
+            },
         )
 
         if (isSealed) {

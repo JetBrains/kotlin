@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class AnnotationAndConstantLoaderImpl(
     module: ModuleDescriptor,
     notFoundClasses: NotFoundClasses,
-    private val protocol: SerializerExtensionProtocol
+    private val protocol: SerializerExtensionProtocol,
 ) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>> {
     private val deserializer = AnnotationDeserializer(module, notFoundClasses)
 
@@ -42,7 +42,7 @@ class AnnotationAndConstantLoaderImpl(
     override fun loadCallableAnnotations(
         container: ProtoContainer,
         proto: MessageLite,
-        kind: AnnotatedCallableKind
+        kind: AnnotatedCallableKind,
     ): List<AnnotationDescriptor> {
         val annotations = when (proto) {
             is ProtoBuf.Constructor -> proto.getExtension(protocol.constructorAnnotation)
@@ -78,7 +78,7 @@ class AnnotationAndConstantLoaderImpl(
         callableProto: MessageLite,
         kind: AnnotatedCallableKind,
         parameterIndex: Int,
-        proto: ProtoBuf.ValueParameter
+        proto: ProtoBuf.ValueParameter,
     ): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(protocol.parameterAnnotation).orEmpty()
         return annotations.map { annotationProto ->
@@ -89,7 +89,7 @@ class AnnotationAndConstantLoaderImpl(
     override fun loadExtensionReceiverParameterAnnotations(
         container: ProtoContainer,
         proto: MessageLite,
-        kind: AnnotatedCallableKind
+        kind: AnnotatedCallableKind,
     ): List<AnnotationDescriptor> = emptyList()
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {

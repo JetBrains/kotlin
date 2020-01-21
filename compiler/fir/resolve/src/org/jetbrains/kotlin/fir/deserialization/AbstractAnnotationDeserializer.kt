@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 abstract class AbstractAnnotationDeserializer(
-    private val session: FirSession
+    private val session: FirSession,
 ) {
     protected val protocol = BuiltInSerializerProtocol
 
@@ -88,7 +88,7 @@ abstract class AbstractAnnotationDeserializer(
                     val parameter = parameterByName[name] ?: return@mapNotNull null
                     val value = resolveValue(parameter.returnTypeRef, it.value, nameResolver) ?: return@mapNotNull null
                     FirNamedArgumentExpressionImpl(
-                        null, value, false, name
+                        null, value, false, name,
                     )
                 }
             }
@@ -98,16 +98,16 @@ abstract class AbstractAnnotationDeserializer(
             null, null,
             symbol?.let {
                 FirResolvedTypeRefImpl(
-                    null, it.constructType(emptyList(), isNullable = false)
+                    null, it.constructType(emptyList(), isNullable = false),
                 )
-            } ?: FirErrorTypeRefImpl(null, FirUnresolvedSymbolError(classId))
+            } ?: FirErrorTypeRefImpl(null, FirUnresolvedSymbolError(classId)),
         ).apply {
             this.arguments += arguments
         }
     }
 
     private fun resolveValue(
-        expectedType: FirTypeRef, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver
+        expectedType: FirTypeRef, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver,
     ): FirExpression? {
         // TODO: val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 
@@ -128,7 +128,7 @@ abstract class AbstractAnnotationDeserializer(
                 val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
                 arguments += FirClassReferenceExpressionImpl(
                     null,
-                    FirResolvedTypeRefImpl(null, referencedType)
+                    FirResolvedTypeRefImpl(null, referencedType),
                 )
             }
             ENUM -> FirFunctionCallImpl(null).apply {
@@ -145,7 +145,7 @@ abstract class AbstractAnnotationDeserializer(
                     FirResolvedNamedReferenceImpl(null, entryName, it.symbol)
                 } ?: FirErrorNamedReferenceImpl(
                     null,
-                    FirSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
+                    FirSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError),
                 )
             }
 //            ARRAY -> {

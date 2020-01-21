@@ -34,7 +34,7 @@ fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform? = nu
 private class IdeaModelInfosCache(
     val moduleSourceInfos: List<ModuleSourceInfo>,
     val libraryInfos: List<LibraryInfo>,
-    val sdkInfos: List<SdkInfo>
+    val sdkInfos: List<SdkInfo>,
 ) {
     private val resultByPlatform = ConcurrentHashMap<TargetPlatform, List<IdeaModuleInfo>>()
 
@@ -49,7 +49,7 @@ private class IdeaModelInfosCache(
 
 
 private fun collectModuleInfosFromIdeaModel(
-    project: Project
+    project: Project,
 ): IdeaModelInfosCache {
     val ideaModules = ModuleManager.getInstance(project).modules.toList()
 
@@ -69,13 +69,13 @@ private fun collectModuleInfosFromIdeaModel(
     return IdeaModelInfosCache(
         moduleSourceInfos = ideaModules.flatMap(Module::correspondingModuleInfos),
         libraryInfos = ideaLibraries.flatMap { createLibraryInfo(project, it) },
-        sdkInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
+        sdkInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) },
     )
 }
 
 private fun mergePlatformModules(
     allModules: List<ModuleSourceInfo>,
-    platform: TargetPlatform
+    platform: TargetPlatform,
 ): List<IdeaModuleInfo> {
     if (platform.isCommon()) return allModules
 

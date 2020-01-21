@@ -10,14 +10,14 @@ fun hello() = "hello"
 
 fun main() {
     println(
-            StringBuilder().appendHTML().html {
-                body {
-                    div {
-                        a("https://kotlinlang.org") {
-                            hello()
-                        }
+        StringBuilder().appendHTML().html {
+            body {
+                div {
+                    a("https://kotlinlang.org") {
+                        hello()
                     }
                 }
             }
+        },
     )
 }

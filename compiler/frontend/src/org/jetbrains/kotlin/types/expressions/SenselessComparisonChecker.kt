@@ -36,7 +36,7 @@ object SenselessComparisonChecker {
         right: KtExpression,
         context: ResolutionContext<*>,
         getType: (KtExpression) -> KotlinType?,
-        getNullability: (DataFlowValue) -> Nullability
+        getNullability: (DataFlowValue) -> Nullability,
     ) {
         val expr =
             when {

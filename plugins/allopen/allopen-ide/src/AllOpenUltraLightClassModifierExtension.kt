@@ -52,7 +52,7 @@ class AllOpenUltraLightClassModifierExtension(project: Project) :
     override fun interceptModalityBuilding(
         declaration: KtDeclaration,
         descriptor: Lazy<DeclarationDescriptor?>,
-        modifier: String
+        modifier: String,
     ): String {
 
         //Final can be altered to Open only

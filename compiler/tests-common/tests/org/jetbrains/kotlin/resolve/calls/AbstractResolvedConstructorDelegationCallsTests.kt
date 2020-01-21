@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 abstract class AbstractResolvedConstructorDelegationCallsTests : AbstractResolvedCallsTest() {
     override fun buildCachedCallAtIndex(
-            bindingContext: BindingContext, jetFile: KtFile, index: Int
+        bindingContext: BindingContext, jetFile: KtFile, index: Int,
     ): Pair<PsiElement?, ResolvedCall<out CallableDescriptor>?> {
         val element = jetFile.findElementAt(index)
         val constructor = element?.getNonStrictParentOfType<KtSecondaryConstructor>()!!

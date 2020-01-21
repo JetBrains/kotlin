@@ -41,14 +41,14 @@ class ReferenceVariantsCollector(
     private val bindingContext: BindingContext,
     private val importableFqNameClassifier: ImportableFqNameClassifier,
     private val configuration: CompletionSessionConfiguration,
-    private val runtimeReceiver: ExpressionReceiver? = null
+    private val runtimeReceiver: ExpressionReceiver? = null,
 ) {
 
     private data class FilterConfiguration internal constructor(
         val descriptorKindFilter: DescriptorKindFilter,
         val additionalPropertyNameFilter: ((String) -> Boolean)?,
         val shadowedDeclarationsFilter: ShadowedDeclarationsFilter?,
-        val completeExtensionsFromIndices: Boolean
+        val completeExtensionsFromIndices: Boolean,
     )
 
     private val prefix = prefixMatcher.prefix
@@ -125,7 +125,7 @@ class ReferenceVariantsCollector(
             descriptorKindFilter,
             additionalPropertyNameFilter,
             shadowedDeclarationsFilter,
-            completeExtensionsFromIndices
+            completeExtensionsFromIndices,
         )
     }
 
@@ -138,7 +138,7 @@ class ReferenceVariantsCollector(
                 filterOutJavaGettersAndSetters = false,
                 filterOutShadowed = false,
                 excludeNonInitializedVariable = false,
-                useReceiverType = runtimeReceiver?.type
+                useReceiverType = runtimeReceiver?.type,
             )
         }
 
@@ -151,7 +151,7 @@ class ReferenceVariantsCollector(
         if (additionalPropertyNameFilter != null) {
             basicVariants += getReferenceVariants(
                 descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES),
-                additionalPropertyNameFilter.toNameFilter()
+                additionalPropertyNameFilter.toNameFilter(),
             )
             runDistinct = true
         }
@@ -187,7 +187,7 @@ class ReferenceVariantsCollector(
 
             val (extensionsVariants, notImportedExtensions) = extensions.partition {
                 importableFqNameClassifier.isImportableDescriptorImported(
-                    it
+                    it,
                 )
             }
 
@@ -200,7 +200,7 @@ class ReferenceVariantsCollector(
 
             return ReferenceVariants(
                 importedExtensionsVariants,
-                notImportedExtensions.let { variants -> notImportedDeclarationsFilter?.invoke(variants) ?: variants }
+                notImportedExtensions.let { variants -> notImportedDeclarationsFilter?.invoke(variants) ?: variants },
             )
         }
 

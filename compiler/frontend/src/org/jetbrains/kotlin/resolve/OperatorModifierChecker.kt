@@ -36,7 +36,7 @@ object OperatorModifierChecker {
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptor,
         diagnosticHolder: DiagnosticSink,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         val functionDescriptor = descriptor as? FunctionDescriptor ?: return
         if (!functionDescriptor.isOperator) return
@@ -77,7 +77,7 @@ object OperatorModifierChecker {
         feature: LanguageFeature,
         languageVersionSettings: LanguageVersionSettings,
         diagnosticHolder: DiagnosticSink,
-        modifier: PsiElement
+        modifier: PsiElement,
     ) {
         if (!languageVersionSettings.supportsFeature(feature)) {
             diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, feature to languageVersionSettings))

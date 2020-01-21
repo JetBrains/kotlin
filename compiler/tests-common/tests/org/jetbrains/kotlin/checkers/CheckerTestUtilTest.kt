@@ -27,7 +27,7 @@ private data class DiagnosticData(
     val rangeIndex: Int,
     val name: String,
     val startOffset: Int,
-    val endOffset: Int
+    val endOffset: Int,
 )
 
 private abstract class Test(private vararg val expectedMessages: String) {
@@ -47,8 +47,8 @@ private abstract class Test(private vararg val expectedMessages: String) {
                 false,
                 languageVersionSettings,
                 dataFlowValueFactory,
-                emptyModule
-            )
+                emptyModule,
+            ),
         ).toString()
         val diagnosedRanges = Lists.newArrayList<DiagnosedRange>()
 
@@ -63,7 +63,7 @@ private abstract class Test(private vararg val expectedMessages: String) {
             false,
             languageVersionSettings,
             dataFlowValueFactory,
-            emptyModule
+            emptyModule,
         )
 
         makeTestData(actualDiagnostics, diagnosedRanges)
@@ -71,26 +71,29 @@ private abstract class Test(private vararg val expectedMessages: String) {
         val expectedMessages = listOf(*expectedMessages)
         val actualMessages = mutableListOf<String>()
 
-        CheckerTestUtil.diagnosticsDiff(diagnosedRanges, actualDiagnostics, object : DiagnosticDiffCallbacks {
-            override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
-                actualMessages.add(CheckerTestUtilTest.missing(diagnostic.description, expectedStart, expectedEnd))
-            }
+        CheckerTestUtil.diagnosticsDiff(
+            diagnosedRanges, actualDiagnostics,
+            object : DiagnosticDiffCallbacks {
+                override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
+                    actualMessages.add(CheckerTestUtilTest.missing(diagnostic.description, expectedStart, expectedEnd))
+                }
 
-            override fun wrongParametersDiagnostic(
-                expectedDiagnostic: TextDiagnostic,
-                actualDiagnostic: TextDiagnostic,
-                start: Int,
-                end: Int
-            ) {
-                actualMessages.add(
-                    CheckerTestUtilTest.wrongParameters(expectedDiagnostic.asString(), actualDiagnostic.asString(), start, end)
-                )
-            }
+                override fun wrongParametersDiagnostic(
+                    expectedDiagnostic: TextDiagnostic,
+                    actualDiagnostic: TextDiagnostic,
+                    start: Int,
+                    end: Int,
+                ) {
+                    actualMessages.add(
+                        CheckerTestUtilTest.wrongParameters(expectedDiagnostic.asString(), actualDiagnostic.asString(), start, end),
+                    )
+                }
 
-            override fun unexpectedDiagnostic(diagnostic: TextDiagnostic, actualStart: Int, actualEnd: Int) {
-                actualMessages.add(CheckerTestUtilTest.unexpected(diagnostic.description, actualStart, actualEnd))
-            }
-        })
+                override fun unexpectedDiagnostic(diagnostic: TextDiagnostic, actualStart: Int, actualEnd: Int) {
+                    actualMessages.add(CheckerTestUtilTest.unexpected(diagnostic.description, actualStart, actualEnd))
+                }
+            },
+        )
 
         assertEquals(expectedMessages.joinToString("\n"), actualMessages.joinToString("\n"))
     }
@@ -107,7 +110,7 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
         DiagnosticData(4, 4, "NONE_APPLICABLE", 120, 121),
         DiagnosticData(5, 5, "TYPE_MISMATCH", 159, 167),
         DiagnosticData(6, 6, "UNRESOLVED_REFERENCE", 164, 166),
-        DiagnosticData(7, 6, "TOO_MANY_ARGUMENTS", 164, 166)
+        DiagnosticData(7, 6, "TOO_MANY_ARGUMENTS", 164, 166),
     )
 
     private fun getTestDataPath() = KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil"
@@ -118,59 +121,69 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
         TestCheckerUtil.createCheckAndReturnPsiFile(
             "test.kt",
             KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt"),
-            project
+            project,
         ),
-        environment
+        environment,
     )
 
     fun testEquals() {
-        doTest(object : Test() {
-            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {}
-        })
+        doTest(
+            object : Test() {
+                override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {}
+            },
+        )
     }
 
     fun testMissing() {
         val typeMismatch1 = diagnostics[1]
 
-        doTest(object : Test(missing(typeMismatch1)) {
-            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
-                diagnostics.removeAt(typeMismatch1.index)
-            }
-        })
+        doTest(
+            object : Test(missing(typeMismatch1)) {
+                override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                    diagnostics.removeAt(typeMismatch1.index)
+                }
+            },
+        )
     }
 
     fun testUnexpected() {
         val typeMismatch1 = diagnostics[1]
 
-        doTest(object : Test(unexpected(typeMismatch1)) {
-            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
-                diagnosedRanges.removeAt(typeMismatch1.index)
-            }
-        })
+        doTest(
+            object : Test(unexpected(typeMismatch1)) {
+                override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                    diagnosedRanges.removeAt(typeMismatch1.index)
+                }
+            },
+        )
     }
 
     fun testBoth() {
         val typeMismatch1 = diagnostics[1]
         val unresolvedReference = diagnostics[6]
 
-        doTest(object : Test(unexpected(typeMismatch1), missing(unresolvedReference)) {
-            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
-                diagnosedRanges.removeAt(typeMismatch1.rangeIndex)
-                diagnostics.removeAt(unresolvedReference.index)
-            }
-        })
+        doTest(
+            object : Test(unexpected(typeMismatch1), missing(unresolvedReference)) {
+                override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                    diagnosedRanges.removeAt(typeMismatch1.rangeIndex)
+                    diagnostics.removeAt(unresolvedReference.index)
+                }
+            },
+        )
     }
 
     fun testMissingInTheMiddle() {
         val noneApplicable = diagnostics[4]
         val typeMismatch3 = diagnostics[5]
 
-        doTest(object : Test(unexpected(noneApplicable), missing(typeMismatch3)) {
-            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
-                diagnosedRanges.removeAt(noneApplicable.rangeIndex)
-                diagnostics.removeAt(typeMismatch3.index)
-            }
-        })
+        doTest(
+            object : Test(unexpected(noneApplicable), missing(typeMismatch3)) {
+                override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                    diagnosedRanges.removeAt(noneApplicable.rangeIndex)
+                    diagnostics.removeAt(typeMismatch3.index)
+                }
+            },
+        )
     }
 
     fun testWrongParameters() {
@@ -179,11 +192,13 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
         val range = asDiagnosticRange(unused, unusedDiagnostic)
         val wrongParameter = wrongParameters(unusedDiagnostic, "OI;UNUSED_VARIABLE(a)", unused.startOffset, unused.endOffset)
 
-        doTest(object : Test(wrongParameter) {
-            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
-                diagnosedRanges[unused.rangeIndex] = range
-            }
-        })
+        doTest(
+            object : Test(wrongParameter) {
+                override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                    diagnosedRanges[unused.rangeIndex] = range
+                }
+            },
+        )
     }
 
     fun testWrongParameterInMultiRange() {
@@ -195,14 +210,16 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
             unusedDiagnostic,
             "OI;UNRESOLVED_REFERENCE(xx)",
             unresolvedReference.startOffset,
-            unresolvedReference.endOffset
+            unresolvedReference.endOffset,
         )
 
-        doTest(object : Test(wrongParameter) {
-            override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
-                diagnosedRanges[unresolvedReference.rangeIndex] = range
-            }
-        })
+        doTest(
+            object : Test(wrongParameter) {
+                override fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>) {
+                    diagnosedRanges[unresolvedReference.rangeIndex] = range
+                }
+            },
+        )
     }
 
     fun testAbstractJetDiagnosticsTest() {

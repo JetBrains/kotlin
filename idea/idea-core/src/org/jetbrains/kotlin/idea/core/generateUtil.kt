@@ -206,7 +206,7 @@ fun <T : KtDeclaration> insertMembersAfter(
     classOrObject: KtClassOrObject,
     members: Collection<T>,
     anchor: PsiElement? = null,
-    getAnchor: (KtDeclaration) -> PsiElement? = { null }
+    getAnchor: (KtDeclaration) -> PsiElement? = { null },
 ): List<T> {
     members.ifEmpty { return emptyList() }
     val project = classOrObject.project
@@ -221,7 +221,7 @@ fun <T : KtDeclaration> insertMembersAfter(
 
             @Suppress("UNCHECKED_CAST")
             SmartPointerManager.createPointer(
-                classOrObject.createPrimaryConstructorParameterListIfAbsent().addParameter(it as KtParameter) as T
+                classOrObject.createPrimaryConstructorParameterListIfAbsent().addParameter(it as KtParameter) as T,
             )
         }
 

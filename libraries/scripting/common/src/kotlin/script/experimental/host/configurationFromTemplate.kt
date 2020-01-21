@@ -31,7 +31,7 @@ fun createCompilationConfigurationFromTemplate(
     baseClassType: KotlinType,
     baseHostConfiguration: ScriptingHostConfiguration,
     contextClass: KClass<*> = ScriptCompilationConfiguration::class,
-    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    body: ScriptCompilationConfiguration.Builder.() -> Unit = {},
 ): ScriptCompilationConfiguration {
 
     val templateClass: KClass<*> = baseClassType.getTemplateClass(baseHostConfiguration, contextClass)
@@ -56,7 +56,7 @@ fun createEvaluationConfigurationFromTemplate(
     baseClassType: KotlinType,
     baseHostConfiguration: ScriptingHostConfiguration,
     contextClass: KClass<*> = ScriptEvaluationConfiguration::class,
-    body: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+    body: ScriptEvaluationConfiguration.Builder.() -> Unit = {},
 ): ScriptEvaluationConfiguration {
 
     val templateClass: KClass<*> = baseClassType.getTemplateClass(baseHostConfiguration, contextClass)
@@ -70,7 +70,7 @@ fun createEvaluationConfigurationFromTemplate(
 }
 
 private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
-    templateClass: KClass<*>, baseClassType: KotlinType, mainAnnotation: KotlinScript
+    templateClass: KClass<*>, baseClassType: KotlinType, mainAnnotation: KotlinScript,
 ) {
     baseClass.replaceOnlyDefault(if (templateClass == baseClassType.fromClass) baseClassType else KotlinType(templateClass))
     fileExtension.replaceOnlyDefault(mainAnnotation.fileExtension)
@@ -83,10 +83,11 @@ private val KClass<*>.kotlinScriptAnnotation: KotlinScript
         ?: when (this@kotlinScriptAnnotation.qualifiedName) {
             // Any is the default template, so use a default annotation
             Any::class.qualifiedName,
-            // transitions to the new scripting API: substituting annotations for standard templates from script-runtime
+                // transitions to the new scripting API: substituting annotations for standard templates from script-runtime
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.SimpleScriptTemplate",
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithArgs",
-            "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithBindings" -> DummyScriptTemplate::class.findAnnotation<KotlinScript>()
+            "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithBindings",
+            -> DummyScriptTemplate::class.findAnnotation<KotlinScript>()
             else -> null
         }
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the ${this}")

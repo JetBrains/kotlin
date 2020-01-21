@@ -19,7 +19,7 @@ import java.io.File
 abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {
 
     protected open fun checkLineMarkersInProject(
-        findFiles: () -> List<PsiFile> = { project.allKotlinFiles().excludeByDirective() }
+        findFiles: () -> List<PsiFile> = { project.allKotlinFiles().excludeByDirective() },
     ) {
         checkFiles(findFiles) {
             checkHighlighting(myEditor, true, false)
@@ -30,7 +30,7 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
     }
 
     protected open fun checkHighlightingInProject(
-        findFiles: () -> List<PsiFile> = { project.allKotlinFiles().excludeByDirective() }
+        findFiles: () -> List<PsiFile> = { project.allKotlinFiles().excludeByDirective() },
     ) {
         checkFiles(findFiles) {
             checkHighlighting(myEditor, true, false)

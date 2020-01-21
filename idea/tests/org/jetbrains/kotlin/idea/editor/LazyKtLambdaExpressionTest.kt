@@ -19,7 +19,7 @@ class LazyKtLambdaExpressionTest : LazyElementTypeTestBase<KtLambdaExpression>(K
     fun testChangeAfterArrow() = noReparse("val t = { a: Int -> <caret> }", 'a')
     fun testDeleteIrrelevantArrow() = noReparse(
         "val t = { a: Int -> (1..3).filter { b -><caret> b > 2 } }",
-        EditorTestUtil.BACKSPACE_FAKE_CHAR
+        EditorTestUtil.BACKSPACE_FAKE_CHAR,
     )
 
     fun testReformatNearLambdaStart() = noReparse("val t = {<caret>a: Int -> }", ' ')

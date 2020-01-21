@@ -61,7 +61,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
                 TypeTable(classProto.typeTable),
                 VersionRequirementTable.create(classProto.versionRequirementTable),
                 metadataVersion,
-                containerSource = null
+                containerSource = null,
             )
         }
 
@@ -83,7 +83,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
          * but the metadata is still serialized for kotlin-reflect 1.0 to work (see BuiltInsSerializer.kt).
          */
         val BLACK_LIST = setOf(
-            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.cloneable.toSafe())
+            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.cloneable.toSafe()),
         )
     }
 }

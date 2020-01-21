@@ -35,7 +35,10 @@ open class CompiledScriptJarsCache(val scriptToFile: (SourceCode, ScriptCompilat
         }
         val classLoader = URLClassLoader(
             arrayOf(file.toURI().toURL()),
-            scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.get(ScriptingHostConfiguration.jvm.baseClassLoader)
+            scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.get(
+                ScriptingHostConfiguration.jvm
+                    .baseClassLoader,
+            ),
         )
 
         return createScriptFromClassLoader(className, classLoader)
@@ -44,7 +47,7 @@ open class CompiledScriptJarsCache(val scriptToFile: (SourceCode, ScriptCompilat
     override fun store(
         compiledScript: CompiledScript<*>,
         script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ) {
         val file = scriptToFile(script, scriptCompilationConfiguration)
             ?: throw IllegalArgumentException("Unable to find a mapping to a file for the script $script")

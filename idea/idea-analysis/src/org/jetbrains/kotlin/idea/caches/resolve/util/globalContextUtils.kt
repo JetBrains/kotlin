@@ -16,7 +16,7 @@ private fun GlobalContextImpl.contextWithCompositeExceptionTracker(debugName: St
     val newExceptionTracker = CompositeExceptionTracker(this.exceptionTracker)
     return GlobalContextImpl(
         storageManager.replaceExceptionHandling(debugName, newExceptionTracker),
-        newExceptionTracker
+        newExceptionTracker,
     )
 }
 
@@ -24,7 +24,7 @@ private fun GlobalContextImpl.contextWithNewLockAndCompositeExceptionTracker(deb
     val newExceptionTracker = CompositeExceptionTracker(this.exceptionTracker)
     return GlobalContextImpl(
         LockBasedStorageManager.createWithExceptionHandling(debugName, newExceptionTracker),
-        newExceptionTracker
+        newExceptionTracker,
     )
 }
 

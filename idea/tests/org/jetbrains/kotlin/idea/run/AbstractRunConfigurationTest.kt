@@ -69,7 +69,7 @@ abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCod
         val srcDir: VirtualFile?,
         val testDir: VirtualFile?,
         val srcOutputDir: VirtualFile,
-        val testOutputDir: VirtualFile
+        val testOutputDir: VirtualFile,
     )
 
     protected fun moduleDirPath(moduleName: String) = "${testDataPath}${getTestName(false)}/$moduleName"

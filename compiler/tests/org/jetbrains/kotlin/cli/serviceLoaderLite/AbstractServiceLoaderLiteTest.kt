@@ -73,6 +73,6 @@ abstract class AbstractServiceLoaderLiteTest : TestCaseWithTmpdir() {
 
     protected fun processors(content: String) = Entry(
         "META-INF/services/" + Processor::class.java.name,
-        content
+        content,
     )
 }

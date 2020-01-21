@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 abstract class ConeCallConflictResolver {
     fun chooseMaximallySpecificCandidates(
         candidates: Collection<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
     ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates.toSet(), discriminateGenerics)
 
     abstract fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
     ): Set<Candidate>
 }
 

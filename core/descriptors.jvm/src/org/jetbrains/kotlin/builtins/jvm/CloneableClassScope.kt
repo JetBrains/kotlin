@@ -16,15 +16,15 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 class CloneableClassScope(
     storageManager: StorageManager,
-    containingClass: ClassDescriptor
+    containingClass: ClassDescriptor,
 ) : GivenFunctionsMemberScope(storageManager, containingClass) {
     override fun computeDeclaredFunctions(): List<FunctionDescriptor> = listOf(
         SimpleFunctionDescriptorImpl.create(containingClass, Annotations.EMPTY, CLONE_NAME, DECLARATION, SourceElement.NO_SOURCE).apply {
             initialize(
                 null, containingClass.thisAsReceiverParameter, emptyList(), emptyList(), containingClass.builtIns.anyType,
-                Modality.OPEN, Visibilities.PROTECTED
+                Modality.OPEN, Visibilities.PROTECTED,
             )
-        }
+        },
     )
 
     companion object {

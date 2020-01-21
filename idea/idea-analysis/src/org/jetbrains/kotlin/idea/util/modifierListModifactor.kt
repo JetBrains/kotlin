@@ -29,7 +29,7 @@ fun KtModifierListOwner.addAnnotation(
     annotationFqName: FqName,
     annotationInnerText: String? = null,
     whiteSpaceText: String = "\n",
-    addToExistingAnnotation: ((KtAnnotationEntry) -> Boolean)? = null
+    addToExistingAnnotation: ((KtAnnotationEntry) -> Boolean)? = null,
 ): Boolean {
     val annotationText = when (annotationInnerText) {
         null -> "@${annotationFqName.asString()}"

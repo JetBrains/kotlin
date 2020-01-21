@@ -50,7 +50,7 @@ private sealed class UserDataModuleContainer {
 
 private fun collectModuleInfoByUserData(
     project: Project,
-    container: UserDataModuleContainer
+    container: UserDataModuleContainer,
 ): List<IdeaModuleInfo> {
     fun forModule(): ModuleSourceInfo? {
         val rootType = container.getUserData(MODULE_ROOT_TYPE_KEY) ?: return null
@@ -82,9 +82,9 @@ private fun collectModuleInfoByUserData(
 
 fun collectModuleInfoByUserData(
     project: Project,
-    virtualFile: VirtualFile
+    virtualFile: VirtualFile,
 ): List<IdeaModuleInfo> = collectModuleInfoByUserData(project, ForVirtualFile(virtualFile, project))
 
 fun collectModuleInfoByUserData(
-    psiElement: PsiElement
+    psiElement: PsiElement,
 ): List<IdeaModuleInfo> = collectModuleInfoByUserData(psiElement.project, ForPsiElement(psiElement))

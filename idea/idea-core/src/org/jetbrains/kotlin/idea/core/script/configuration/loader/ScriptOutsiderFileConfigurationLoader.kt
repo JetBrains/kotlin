@@ -17,14 +17,14 @@ internal class ScriptOutsiderFileConfigurationLoader(val project: Project) :
         isFirstLoad: Boolean,
         ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
-        context: ScriptConfigurationLoadingContext
+        context: ScriptConfigurationLoadingContext,
     ): Boolean {
         if (!isFirstLoad) return false
 
         val virtualFile = ktFile.originalFile.virtualFile
         val fileOrigin = OutsidersPsiFileSupportUtils.getOutsiderFileOrigin(
             project,
-            virtualFile
+            virtualFile,
         ) ?: return false
 
         val original = context.getCachedConfiguration(fileOrigin)
@@ -34,8 +34,8 @@ internal class ScriptOutsiderFileConfigurationLoader(val project: Project) :
                 ScriptConfigurationSnapshot(
                     original.inputs,
                     listOf(),
-                    original.configuration
-                )
+                    original.configuration,
+                ),
             )
         }
 

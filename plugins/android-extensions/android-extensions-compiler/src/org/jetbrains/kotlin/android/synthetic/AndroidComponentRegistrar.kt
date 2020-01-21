@@ -69,10 +69,12 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
         val PACKAGE_OPTION = CliOption("package", "<fq name>", "Application package", required = false)
         val EXPERIMENTAL_OPTION = CliOption("experimental", "true/false", "Enable experimental features", required = false)
         val DEFAULT_CACHE_IMPL_OPTION = CliOption(
-                "defaultCacheImplementation", "hashMap/sparseArray/none", "Default cache implementation for module", required = false)
+            "defaultCacheImplementation", "hashMap/sparseArray/none", "Default cache implementation for module", required = false,
+        )
 
         val FEATURES_OPTION = CliOption(
-                "features", AndroidExtensionsFeature.values().joinToString(" | "), "Enabled features", required = false)
+            "features", AndroidExtensionsFeature.values().joinToString(" | "), "Enabled features", required = false,
+        )
 
         /* This option is just for saving Android Extensions status in Kotlin facet. It should not be supported from CLI. */
         val ENABLED_OPTION: CliOption = CliOption("enabled", "true/false", "Enable Android Extensions", required = false)
@@ -127,17 +129,25 @@ class AndroidComponentRegistrar : ComponentRegistrar {
             val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage, variants)
             project.registerService(AndroidLayoutXmlFileManager::class.java, layoutXmlFileManager)
 
-            ExpressionCodegenExtension.registerExtension(project,
-                    CliAndroidExtensionsExpressionCodegenExtension(isExperimental, globalCacheImpl))
+            ExpressionCodegenExtension.registerExtension(
+                project,
+                CliAndroidExtensionsExpressionCodegenExtension(isExperimental, globalCacheImpl),
+            )
 
-            StorageComponentContainerContributor.registerExtension(project,
-                    AndroidExtensionPropertiesComponentContainerContributor())
+            StorageComponentContainerContributor.registerExtension(
+                project,
+                AndroidExtensionPropertiesComponentContainerContributor(),
+            )
 
-            ClassBuilderInterceptorExtension.registerExtension(project,
-                    CliAndroidOnDestroyClassBuilderInterceptorExtension(globalCacheImpl))
+            ClassBuilderInterceptorExtension.registerExtension(
+                project,
+                CliAndroidOnDestroyClassBuilderInterceptorExtension(globalCacheImpl),
+            )
 
-            PackageFragmentProviderExtension.registerExtension(project,
-                    CliAndroidPackageFragmentProviderExtension(isExperimental))
+            PackageFragmentProviderExtension.registerExtension(
+                project,
+                CliAndroidPackageFragmentProviderExtension(isExperimental),
+            )
         }
 
         fun parseCacheImplementationType(s: String?): CacheImplementation = when (s) {
@@ -163,7 +173,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
 
 class AndroidExtensionPropertiesComponentContainerContributor : StorageComponentContainerContributor {
     override fun registerModuleComponents(
-        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor,
     ) {
         if (!platform.isJvm()) return
 

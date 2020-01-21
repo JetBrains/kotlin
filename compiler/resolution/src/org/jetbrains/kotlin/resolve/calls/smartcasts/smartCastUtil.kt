@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 fun getReceiverValueWithSmartCast(
     receiverArgument: ReceiverValue?,
-    smartCastType: KotlinType?
+    smartCastType: KotlinType?,
 ) = smartCastType?.let { type -> SmartCastReceiverValue(type, original = null) } ?: receiverArgument
 
 private class SmartCastReceiverValue(private val type: KotlinType, original: SmartCastReceiverValue?) : ReceiverValue {

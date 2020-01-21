@@ -54,8 +54,11 @@ internal class ProjectJob(project: Project) {
     internal val sharedJob: Job = Job()
 
     init {
-        Disposer.register(project, Disposable {
-            sharedJob.cancel()
-        })
+        Disposer.register(
+            project,
+            Disposable {
+                sharedJob.cancel()
+            },
+        )
     }
 }

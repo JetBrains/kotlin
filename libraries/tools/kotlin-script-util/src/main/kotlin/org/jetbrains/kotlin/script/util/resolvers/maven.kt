@@ -58,7 +58,7 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): GenericReposit
                     groupId.orNullIfBlank(),
                     artifactId.orNullIfBlank(),
                     null,
-                    version.orNullIfBlank()
+                    version.orNullIfBlank(),
                 )
             } else {
                 val coordinatesString = string
@@ -91,8 +91,8 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): GenericReposit
                 RemoteRepository(
                     if (repositoryCoordinates.name.isValidParam()) repositoryCoordinates.name else url.host,
                     "default",
-                    url.toString()
-                )
+                    url.toString(),
+                ),
             )
             return true
         }

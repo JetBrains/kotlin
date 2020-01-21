@@ -80,7 +80,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
                                 this,
                                 separator = "",
                                 prefix = if (isDuplicated) "DUPLICATE: " else "",
-                                postfix = "\n"
+                                postfix = "\n",
                             ) { it.render() }
                         }
                     }

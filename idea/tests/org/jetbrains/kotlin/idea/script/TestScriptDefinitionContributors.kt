@@ -25,7 +25,7 @@ class CustomScriptTemplateProvider(val environment: Environment) : ScriptDefinit
             templateClasspath = listOfNotNull(environment["template-classes"] as? File),
             baseHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                 getEnvironment { environment }
-            }
+            },
         ).asSequence()
 
 }
@@ -40,6 +40,6 @@ class FromTextTemplateProvider(val environment: Map<String, Any?>) : ScriptDefin
             templateClasspath = listOfNotNull(environment["template-classes"] as? File),
             baseHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                 getEnvironment { environment }
-            }
+            },
         ).asSequence()
 }

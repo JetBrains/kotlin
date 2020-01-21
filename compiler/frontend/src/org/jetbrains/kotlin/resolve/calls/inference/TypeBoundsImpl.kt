@@ -49,7 +49,7 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
     private fun filterBounds(
         bounds: Collection<Bound>,
         kind: BoundKind,
-        errorValues: MutableCollection<KotlinType>? = null
+        errorValues: MutableCollection<KotlinType>? = null,
     ): Set<KotlinType> {
         val result = LinkedHashSet<KotlinType>()
         for (bound in bounds) {

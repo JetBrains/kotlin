@@ -36,7 +36,7 @@ object DefaultCheckerInTailrec : DeclarationChecker {
                         it,
                         context.trace.bindingContext,
                         false,
-                        context.languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
+                        context.languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals),
                     )?.let { const ->
                         val type = const.getType(descriptor.module)
                         return@filter !(KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(type) ||

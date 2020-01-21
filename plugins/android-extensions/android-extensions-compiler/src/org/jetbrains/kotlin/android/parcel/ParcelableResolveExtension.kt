@@ -45,19 +45,19 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
         }
 
         fun createMethod(
-                classDescriptor: ClassDescriptor,
-                componentKind: ParcelableSyntheticComponent.ComponentKind,
-                modality: Modality,
-                returnType: KotlinType,
-                vararg parameters: Pair<String, KotlinType>
+            classDescriptor: ClassDescriptor,
+            componentKind: ParcelableSyntheticComponent.ComponentKind,
+            modality: Modality,
+            returnType: KotlinType,
+            vararg parameters: Pair<String, KotlinType>,
         ): SimpleFunctionDescriptor {
             val functionDescriptor = object : ParcelableSyntheticComponent, SimpleFunctionDescriptorImpl(
-                    classDescriptor,
-                    null,
-                    Annotations.EMPTY,
-                    Name.identifier(componentKind.methodName),
-                    CallableMemberDescriptor.Kind.SYNTHESIZED,
-                    classDescriptor.source
+                classDescriptor,
+                null,
+                Annotations.EMPTY,
+                Name.identifier(componentKind.methodName),
+                CallableMemberDescriptor.Kind.SYNTHESIZED,
+                classDescriptor.source,
             ) {
                 override val componentKind = componentKind
             }
@@ -65,22 +65,24 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
             val valueParameters = parameters.mapIndexed { index, (name, type) -> functionDescriptor.makeValueParameter(name, type, index) }
 
             functionDescriptor.initialize(
-                    null, classDescriptor.thisAsReceiverParameter, emptyList(), valueParameters,
-                    returnType, modality, Visibilities.PUBLIC)
+                null, classDescriptor.thisAsReceiverParameter, emptyList(), valueParameters,
+                returnType, modality, Visibilities.PUBLIC,
+            )
 
             return functionDescriptor
         }
 
         private fun FunctionDescriptor.makeValueParameter(name: String, type: KotlinType, index: Int): ValueParameterDescriptor {
             return ValueParameterDescriptorImpl(
-                    this, null, index, Annotations.EMPTY, Name.identifier(name), type, false, false, false, null, this.source)
+                this, null, index, Annotations.EMPTY, Name.identifier(name), type, false, false, false, null, this.source,
+            )
         }
     }
 
     @Deprecated(
         "@Parcelize is now available in non-experimental setups as well.",
         replaceWith = ReplaceWith("true"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.ERROR,
     )
     protected open fun isExperimental(element: KtElement) = true
 
@@ -91,7 +93,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
         name: Name,
         bindingContext: BindingContext,
         fromSupertypes: List<SimpleFunctionDescriptor>,
-        result: MutableCollection<SimpleFunctionDescriptor>
+        result: MutableCollection<SimpleFunctionDescriptor>,
     ) {
         if (name.asString() == DESCRIBE_CONTENTS.methodName
             && thisDescriptor.isParcelize
@@ -107,7 +109,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
             val parcelClassType = resolveParcelClassType(thisDescriptor.module) ?: ErrorUtils.createErrorType("Unresolved 'Parcel' type")
             result += createMethod(
                 thisDescriptor, WRITE_TO_PARCEL, Modality.OPEN,
-                builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType
+                builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType,
             )
         }
     }

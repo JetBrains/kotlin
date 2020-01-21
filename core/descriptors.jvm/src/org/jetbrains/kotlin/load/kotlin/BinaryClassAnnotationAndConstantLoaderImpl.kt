@@ -35,9 +35,9 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     private val module: ModuleDescriptor,
     private val notFoundClasses: NotFoundClasses,
     storageManager: StorageManager,
-    kotlinClassFinder: KotlinClassFinder
+    kotlinClassFinder: KotlinClassFinder,
 ) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>>(
-    storageManager, kotlinClassFinder
+    storageManager, kotlinClassFinder,
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
 
@@ -74,7 +74,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     override fun loadAnnotation(
         annotationClassId: ClassId,
         source: SourceElement,
-        result: MutableList<AnnotationDescriptor>
+        result: MutableList<AnnotationDescriptor>,
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         val annotationClass = resolveClass(annotationClassId)
 

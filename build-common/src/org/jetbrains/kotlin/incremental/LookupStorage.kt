@@ -32,7 +32,7 @@ import java.util.*
 
 open class LookupStorage(
     targetDataDir: File,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
 ) : BasicMapsOwner(targetDataDir) {
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5

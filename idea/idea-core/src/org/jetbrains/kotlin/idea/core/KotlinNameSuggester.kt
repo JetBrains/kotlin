@@ -44,7 +44,7 @@ object KotlinNameSuggester {
         type: KotlinType?,
         bindingContext: BindingContext?,
         validator: (String) -> Boolean,
-        defaultName: String?
+        defaultName: String?,
     ): Collection<String> {
         val result = LinkedHashSet<String>()
 
@@ -76,7 +76,7 @@ object KotlinNameSuggester {
     fun suggestNamesByExpressionOnly(
         expression: KtExpression,
         bindingContext: BindingContext?,
-        validator: (String) -> Boolean, defaultName: String? = null
+        validator: (String) -> Boolean, defaultName: String? = null,
     ): List<String> {
         val result = ArrayList<String>()
 
@@ -93,7 +93,7 @@ object KotlinNameSuggester {
         collection: KtExpression,
         elementType: KotlinType,
         bindingContext: BindingContext?,
-        validator: (String) -> Boolean, defaultName: String?
+        validator: (String) -> Boolean, defaultName: String?,
     ): Collection<String> {
         val result = LinkedHashSet<String>()
 
@@ -114,7 +114,7 @@ object KotlinNameSuggester {
         fqName: FqName,
         ignoreCompanion: Boolean = true,
         validator: (String) -> Boolean = { true },
-        defaultName: () -> String? = { null }
+        defaultName: () -> String? = { null },
     ): Collection<String> {
         val result = LinkedHashSet<String>()
 
@@ -319,7 +319,7 @@ object KotlinNameSuggester {
     private fun MutableCollection<String>.addNamesByExpression(
         expression: KtExpression?,
         bindingContext: BindingContext?,
-        validator: (String) -> Boolean
+        validator: (String) -> Boolean,
     ) {
         if (expression == null) return
 
@@ -330,7 +330,7 @@ object KotlinNameSuggester {
     private fun MutableCollection<String>.addNamesByValueArgument(
         expression: KtExpression,
         bindingContext: BindingContext?,
-        validator: (String) -> Boolean
+        validator: (String) -> Boolean,
     ) {
         if (bindingContext == null) return
         val argumentExpression = expression.getOutermostParenthesizerOrThis()

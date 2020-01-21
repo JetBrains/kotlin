@@ -48,14 +48,15 @@ class ProtoBufConsistencyTest : TestCase() {
 
         for ((key, descriptors) in extensions.asMap().entries) {
             if (descriptors.size > 1) {
-                fail("""
+                fail(
+                    """
 Several extensions to the same message type with the same index were found.
 This will cause different hard-to-debug problems if these extensions are used at the same time during (de-)serialization of the message.
 Consider changing the indices in the corresponding .proto definition files.
 Message type: ${key.messageType.simpleName}
 Index: ${key.index}
 Extensions found: ${descriptors.map { it.name }}
-"""
+""",
                 )
             }
         }

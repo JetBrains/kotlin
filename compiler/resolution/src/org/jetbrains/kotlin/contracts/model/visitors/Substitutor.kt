@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.contracts.model.structure.*
 class Substitutor(
     private val substitutions: Map<ESVariable, Computation>,
     private val typeSubstitution: ESTypeSubstitution,
-    private val reducer: Reducer
+    private val reducer: Reducer,
 ) : ESExpressionVisitor<Computation?> {
     override fun visitIs(isOperator: ESIs): Computation? {
         val arg = isOperator.left.accept(this) ?: return null

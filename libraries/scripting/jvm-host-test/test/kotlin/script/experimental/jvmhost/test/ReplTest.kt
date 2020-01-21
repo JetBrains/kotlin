@@ -34,9 +34,9 @@ class ReplTest : TestCase() {
                 sequenceOf(
                     "val x = 3",
                     "x + 4",
-                    "println(\"x = \$x\")"
+                    "println(\"x = \$x\")",
                 ),
-                sequenceOf(null, 7, null)
+                sequenceOf(null, 7, null),
             )
         }
         Assert.assertEquals("x = 3", out)
@@ -50,9 +50,9 @@ class ReplTest : TestCase() {
             sequenceOf(
                 "val x = 5",
                 "x + 6",
-                "res1 * 2"
+                "res1 * 2",
             ),
-            sequenceOf(null, 11, 22)
+            sequenceOf(null, 11, 22),
         )
     }
 
@@ -64,9 +64,9 @@ class ReplTest : TestCase() {
             sequenceOf(
                 "val x = 5",
                 "x + 6",
-                "if (x < 10) res1 * 2 else x"
+                "if (x < 10) res1 * 2 else x",
             ),
-            sequenceOf(null, 11, 22)
+            sequenceOf(null, 11, 22),
         )
     }
 
@@ -83,9 +83,9 @@ class ReplTest : TestCase() {
             sequenceOf(
                 "val x = 4",
                 "x + prop1",
-                "res1 * 3"
+                "res1 * 3",
             ),
-            sequenceOf(null, 7, 21)
+            sequenceOf(null, 7, 21),
         )
     }
 
@@ -97,9 +97,9 @@ class ReplTest : TestCase() {
             sequenceOf(
                 "throw RuntimeException(\"abc\")",
                 "val x = 3",
-                "x + 1"
+                "x + 1",
             ),
-            sequenceOf(RuntimeException("abc"), null, 4)
+            sequenceOf(RuntimeException("abc"), null, 4),
         )
     }
 }
@@ -107,7 +107,7 @@ class ReplTest : TestCase() {
 fun evaluateInRepl(
     compilationConfiguration: ScriptCompilationConfiguration,
     evaluationConfiguration: ScriptEvaluationConfiguration?,
-    snippets: Sequence<String>
+    snippets: Sequence<String>,
 ): Sequence<ResultWithDiagnostics<EvaluationResult>> {
     val replCompilerProxy =
         KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
@@ -143,7 +143,7 @@ fun chechEvaluateInRepl(
     compilationConfiguration: ScriptCompilationConfiguration,
     evaluationConfiguration: ScriptEvaluationConfiguration?,
     snippets: Sequence<String>,
-    expected: Sequence<Any?>
+    expected: Sequence<Any?>,
 ) {
     val expectedIter = expected.iterator()
     evaluateInRepl(compilationConfiguration, evaluationConfiguration, snippets).forEachIndexed { index, res ->
@@ -155,12 +155,12 @@ fun chechEvaluateInRepl(
                     is ResultValue.Value -> Assert.assertEquals(
                         "#$index: Expected $expectedVal, got $resVal",
                         expectedVal,
-                        resVal.value
+                        resVal.value,
                     )
                     is ResultValue.Unit -> Assert.assertTrue("#$index: Expected $expectedVal, got Unit", expectedVal == null)
                     is ResultValue.Error -> Assert.assertTrue(
                         "#$index: Expected $expectedVal, got Error: ${resVal.error}",
-                        expectedVal is Throwable && expectedVal.message == resVal.error.message
+                        expectedVal is Throwable && expectedVal.message == resVal.error.message,
                     )
                     else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $resVal", expectedVal == null)
                 }

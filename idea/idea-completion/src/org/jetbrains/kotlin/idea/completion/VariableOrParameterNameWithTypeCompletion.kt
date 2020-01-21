@@ -53,7 +53,7 @@ class VariableOrParameterNameWithTypeCompletion(
     private val lookupElementFactory: BasicLookupElementFactory,
     private val prefixMatcher: PrefixMatcher,
     private val resolutionFacade: ResolutionFacade,
-    private val withType: Boolean
+    private val withType: Boolean,
 ) {
     private val userPrefixes: List<String>
     private val classNamePrefixMatchers: List<PrefixMatcher>
@@ -95,10 +95,10 @@ class VariableOrParameterNameWithTypeCompletion(
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
             AllClassesCompletion(
                 parameters, indicesHelper, classNameMatcher, resolutionFacade, { !it.isSingleton },
-                includeTypeAliases = true, includeJavaClassesNotToBeUsed = false
+                includeTypeAliases = true, includeJavaClassesNotToBeUsed = false,
             ).collect(
                 { addSuggestionsForClassifier(it, userPrefix, notImported = true) },
-                { addSuggestionsForJavaClass(it, userPrefix, notImported = true) }
+                { addSuggestionsForJavaClass(it, userPrefix, notImported = true) },
             )
 
             collector.flushToResultSet()
@@ -108,11 +108,11 @@ class VariableOrParameterNameWithTypeCompletion(
     fun addFromParametersInFile(
         position: PsiElement,
         resolutionFacade: ResolutionFacade,
-        visibilityFilter: (DeclarationDescriptor) -> Boolean
+        visibilityFilter: (DeclarationDescriptor) -> Boolean,
     ) {
         val lookupElementToCount = LinkedHashMap<LookupElement, Pair<Int, String>>()
         position.containingFile.forEachDescendantOfType<KtParameter>(
-            canGoInside = { it !is KtExpression || it is KtDeclaration } // we analyze parameters inside bodies to not resolve too much
+            canGoInside = { it !is KtExpression || it is KtDeclaration }, // we analyze parameters inside bodies to not resolve too much
         ) { parameter ->
             ProgressManager.checkCanceled()
 
@@ -198,7 +198,7 @@ class VariableOrParameterNameWithTypeCompletion(
         private val parameterName: String,
         private val type: Type,
         typeLookupElement: LookupElement,
-        private val shouldInsertType: Boolean
+        private val shouldInsertType: Boolean,
     ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
 
         companion object {

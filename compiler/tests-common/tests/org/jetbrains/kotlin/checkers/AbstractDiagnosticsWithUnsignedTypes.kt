@@ -21,6 +21,6 @@ abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() 
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
             ApiVersion.KOTLIN_1_3,
             LanguageVersion.KOTLIN_1_3,
-            mapOf(AnalysisFlags.useExperimental to listOf("kotlin.ExperimentalUnsignedTypes"))
+            mapOf(AnalysisFlags.useExperimental to listOf("kotlin.ExperimentalUnsignedTypes")),
         )
 }

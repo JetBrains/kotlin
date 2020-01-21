@@ -31,7 +31,7 @@ object CompletionFUSCollector {
         val fileType: FileTypeStats? = null,
         val finishReason: FinishReasonStats? = null,
         val selectedItem: Int? = null,
-        val invocationCount: Int? = null
+        val invocationCount: Int? = null,
     )
 
     fun log(completionStatsData: CompletionStatsData?) {

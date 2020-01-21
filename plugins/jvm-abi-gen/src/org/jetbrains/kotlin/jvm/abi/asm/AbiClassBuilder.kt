@@ -25,7 +25,7 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
         name: String,
         desc: String,
         signature: String?,
-        exceptions: Array<out String>?
+        exceptions: Array<out String>?,
     ): MethodVisitor {
         // if both descriptor's and access's visibilities are private, we can generate an empty method
         // 1. we need to check a descriptor, because inline reified functions
@@ -46,7 +46,7 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
             name = name,
             desc = desc,
             signature = signature,
-            exceptions = exceptions
+            exceptions = exceptions,
         )
     }
 
@@ -56,7 +56,7 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
         name: String,
         desc: String,
         signature: String?,
-        value: Any?
+        value: Any?,
     ): FieldVisitor {
         if (isPrivate(access) && !isInlineOrContainingInline(origin.descriptor)) return EMPTY_FIELD_VISITOR
 
@@ -70,7 +70,7 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
         name: String,
         signature: String?,
         superName: String,
-        interfaces: Array<out String>
+        interfaces: Array<out String>,
     ) {
         if (isPrivate(access)) return
 

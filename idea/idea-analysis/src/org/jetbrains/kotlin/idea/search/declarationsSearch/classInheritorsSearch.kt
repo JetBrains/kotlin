@@ -38,8 +38,10 @@ fun HierarchySearchRequest<*>.searchInheritors(): Query<PsiClass> {
         psiClass,
         searchScope,
         searchDeeply,
-        /* checkInheritance = */ true,
-        /* includeAnonymous = */ true
+        /* checkInheritance = */
+        true,
+        /* includeAnonymous = */
+        true,
     )
 }
 

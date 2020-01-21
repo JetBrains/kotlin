@@ -23,5 +23,5 @@ data class IncompatibleVersionErrorData<out T : BinaryVersion>(
     val actualVersion: T,
     val expectedVersion: T,
     val filePath: String,
-    val classId: ClassId
+    val classId: ClassId,
 )

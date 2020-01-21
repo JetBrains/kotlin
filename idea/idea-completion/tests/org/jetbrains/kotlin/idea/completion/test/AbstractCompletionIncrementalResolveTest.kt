@@ -44,7 +44,7 @@ abstract class AbstractCompletionIncrementalResolveTest : KotlinLightCodeInsight
             val backspaceCount = InTextDirectivesUtils.getPrefixedInt(document.text, BACKSPACES_DIRECTIVE_PREFIX)
             assertTrue(
                 "At least one of \"$TYPE_DIRECTIVE_PREFIX\" and \"$BACKSPACES_DIRECTIVE_PREFIX\" should be defined",
-                textToType != null || backspaceCount != null
+                textToType != null || backspaceCount != null,
             )
 
             val beforeMarker = document.createRangeMarker(beforeMarkerOffset, beforeMarkerOffset + BEFORE_MARKER.length)
@@ -86,7 +86,7 @@ abstract class AbstractCompletionIncrementalResolveTest : KotlinLightCodeInsight
                 FileUtil.loadFile(file, true),
                 JvmPlatforms.unspecifiedJvmPlatform,
                 { completionType, count -> myFixture.complete(completionType, count) },
-                additionalValidDirectives = listOf(TYPE_DIRECTIVE_PREFIX, BACKSPACES_DIRECTIVE_PREFIX)
+                additionalValidDirectives = listOf(TYPE_DIRECTIVE_PREFIX, BACKSPACES_DIRECTIVE_PREFIX),
             )
 
             KotlinTestUtils.assertEqualsToFile(File(file.parent, file.nameWithoutExtension + ".log"), testLog.toString())

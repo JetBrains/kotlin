@@ -55,7 +55,7 @@ class TestCasesGenerator {
             val typeAndValue = getRandomTypeAndValue()
             printer.println(
                 "val ${randomString(Random.nextLong(5, 15))}: " +
-                        "${typeAndValue.first} = ${typeAndValue.second} \n"
+                        "${typeAndValue.first} = ${typeAndValue.second} \n",
             )
         }
     }
@@ -86,14 +86,18 @@ class TestCasesGenerator {
 fun main() {
     TestCasesGenerator().generateData(
         {
-            createClass(10,
+            createClass(
+                10,
+                {
+                    createClass(
+                        100,
                         {
-                            createClass(100,
-                                        {
-                                            createClass(100)
-                                        })
-                        })
-        }
+                            createClass(100)
+                        },
+                    )
+                },
+            )
+        },
     )
 }
 

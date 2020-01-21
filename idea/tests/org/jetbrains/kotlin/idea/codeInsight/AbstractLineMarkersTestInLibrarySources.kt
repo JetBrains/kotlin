@@ -66,7 +66,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
             for (file in libraryOriginal.walkTopDown().filter { !it.isDirectory }) {
                 myFixture.openFileInEditor(fileSystem.findFileByPath(file.absolutePath)!!)
                 val data = ExpectedHighlightingData(
-                    myFixture.editor.document, false, false, false, myFixture.file
+                    myFixture.editor.document, false, false, false, myFixture.file,
                 )
                 data.init()
 

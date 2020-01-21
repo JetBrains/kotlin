@@ -62,7 +62,7 @@ class UnimplementedKotlinInterfaceMemberAnnotator : Annotator {
         val key = if (psiClass is PsiEnumConstantInitializer) "enum.constant.should.implement.method" else "class.must.be.abstract"
         val message = JavaErrorMessages.message(
             key, HighlightUtil.formatClass(psiClass, false), JavaHighlightUtil.formatMethod(method),
-            HighlightUtil.formatClass(method.containingClass, false)
+            HighlightUtil.formatClass(method.containingClass, false),
         )
         val errorAnnotation = holder.createErrorAnnotation(getClassDeclarationTextRange(psiClass), message)
         registerFixes(errorAnnotation, psiClass)

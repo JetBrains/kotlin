@@ -39,7 +39,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         if (scriptDefinitions.isNotEmpty()) {
             configureScriptDefinitions(
-                scriptDefinitions, configuration, this::class.java.classLoader, MessageCollector.NONE, defaultJvmScriptingHostConfiguration
+                scriptDefinitions, configuration, this::class.java.classLoader, MessageCollector.NONE, defaultJvmScriptingHostConfiguration,
             )
         }
 
@@ -64,7 +64,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
                         with(PathUtil.kotlinPathsForDistDirectory) {
                             arrayOf(
                                 KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-                                KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
+                                KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR,
                             ).mapNotNull { File(libPath, it).takeIf(File::exists) }
                         }
         }
@@ -131,7 +131,8 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 object TestScriptWithReceiversConfiguration : ScriptCompilationConfiguration(
     {
         implicitReceivers(String::class)
-    })
+    },
+)
 
 @Suppress("unused")
 @KotlinScript(compilationConfiguration = TestScriptWithReceiversConfiguration::class)
@@ -140,7 +141,8 @@ abstract class TestScriptWithReceivers
 object TestScriptWithSimpleEnvVarsConfiguration : ScriptCompilationConfiguration(
     {
         providedProperties("stringVar1" to String::class)
-    })
+    },
+)
 
 @Suppress("unused")
 @KotlinScript(compilationConfiguration = TestScriptWithSimpleEnvVarsConfiguration::class)

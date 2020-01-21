@@ -20,7 +20,7 @@ abstract class AbstractReplTestRunner : TestCase() {
         val lines = listOf(
             "var x = 38",
             "var y = 99",
-            "4 + 1"
+            "4 + 1",
         )
         Assert.assertEquals(5, compileAndEval(lines))
     }
@@ -30,7 +30,7 @@ abstract class AbstractReplTestRunner : TestCase() {
         val lines = listOf(
             "var x = 7",
             "var y = 32",
-            "x + y"
+            "x + y",
         )
         Assert.assertEquals(39, compileAndEval(lines))
     }
@@ -41,7 +41,7 @@ abstract class AbstractReplTestRunner : TestCase() {
             "var x = 2",
             "var y = 3",
             "fun foo(x: Int, unused: Int) = x + y",
-            "foo(x, x) * foo(y, y)"
+            "foo(x, x) * foo(y, y)",
         )
         Assert.assertEquals(30, compileAndEval(lines))
     }
@@ -51,7 +51,7 @@ abstract class AbstractReplTestRunner : TestCase() {
         val lines = listOf(
             "var a = 4",
             "var b = 6",
-            "listOf(a, 5, b).last()"
+            "listOf(a, 5, b).last()",
         )
         Assert.assertEquals(6, compileAndEval(lines))
     }
@@ -62,7 +62,7 @@ abstract class AbstractReplTestRunner : TestCase() {
             "fun foo(i: Int) = i + 2",
             "fun foo(s: String) = s",
             "class C {fun foo(s: String) = s + s}",
-            "foo(\"x\") + foo(2) + C().foo(\"class\")"
+            "foo(\"x\") + foo(2) + C().foo(\"class\")",
         )
         Assert.assertEquals("x4classclass", compileAndEval(lines))
     }
@@ -82,7 +82,7 @@ abstract class AbstractReplTestRunner : TestCase() {
                 return "OK"
             },
             box()
-            """
+            """,
         )
         Assert.assertEquals("OK", compileAndEval(lines))
     }
@@ -98,7 +98,7 @@ abstract class AbstractReplTestRunner : TestCase() {
             """,
             "fun bar(f: () -> String) = foo(f)()",
             "fun box(): String = bar { \"OK\" }",
-            "box()"
+            "box()",
         )
         Assert.assertEquals("OK", compileAndEval(lines))
     }
@@ -117,7 +117,7 @@ abstract class AbstractReplTestRunner : TestCase() {
                 return "error"
             }
             """,
-            "test()"
+            "test()",
         )
         Assert.assertEquals("OK", compileAndEval(lines))
     }
@@ -130,7 +130,7 @@ abstract class AbstractReplTestRunner : TestCase() {
             val f: Boolean = list is List<Int>
             """,
             "val s = list is List<Int>",
-            "f.toString() + s.toString()"
+            "f.toString() + s.toString()",
         )
         Assert.assertEquals("truetrue", compileAndEval(lines))
     }
@@ -152,7 +152,7 @@ abstract class AbstractReplTestRunner : TestCase() {
                 return A().bar() * 2
             }
             foo()
-            """
+            """,
         )
         Assert.assertEquals(10, compileAndEval(lines))
     }
@@ -162,7 +162,7 @@ abstract class AbstractReplTestRunner : TestCase() {
         val lines = listOf(
             "fun evaluateScript() = 5",
             "fun foo(i: Int) = i + evaluateScript()",
-            "foo(5)"
+            "foo(5)",
         )
         Assert.assertEquals(10, compileAndEval(lines))
     }
@@ -174,7 +174,7 @@ abstract class AbstractReplTestRunner : TestCase() {
             val a = listOf(1, 2, 3, 4, 5)
             val str = "" + kotlin.math.PI
             str + a.subList(2, 3).toString() + a.lastIndexOf(4)
-            """
+            """,
         )
         Assert.assertEquals("3.141592653589793[3]3", compileAndEval(lines))
     }
@@ -206,7 +206,7 @@ abstract class AbstractReplTestRunner : TestCase() {
             }
             
             result
-            """
+            """,
         )
         Assert.assertEquals("10#$@123456_81goo", compileAndEval(lines))
     }

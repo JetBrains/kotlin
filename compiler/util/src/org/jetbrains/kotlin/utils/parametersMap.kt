@@ -33,14 +33,14 @@ fun tryCreateCallableMapping(callable: KCallable<*>, args: List<Any?>): Map<KPar
     tryCreateCallableMapping(
         callable,
         args.map { NamedArgument(null, it) }.iterator(),
-        AnyArgsConverter()
+        AnyArgsConverter(),
     )
 
 fun tryCreateCallableMappingFromStringArgs(callable: KCallable<*>, args: List<String>): Map<KParameter, Any?>? =
     tryCreateCallableMapping(
         callable,
         args.map { NamedArgument(null, it) }.iterator(),
-        StringArgsConverter()
+        StringArgsConverter(),
     )
 
 fun tryCreateCallableMappingFromNamedArgs(callable: KCallable<*>, args: List<Pair<String?, Any?>>): Map<KParameter, Any?>? =
@@ -49,10 +49,10 @@ fun tryCreateCallableMappingFromNamedArgs(callable: KCallable<*>, args: List<Pai
         args.map {
             NamedArgument(
                 it.first,
-                it.second
+                it.second,
             )
         }.iterator(),
-        AnyArgsConverter()
+        AnyArgsConverter(),
     )
 
 // ------------------------------------------------
@@ -224,7 +224,7 @@ private class AnyArgsConverter : ArgsConverter<Any> {
     }
 
     override fun tryConvertVararg(
-        parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>
+        parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>,
     ): ArgsConverter.Result {
 
         val parameterType = parameter.type

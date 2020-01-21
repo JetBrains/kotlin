@@ -41,11 +41,11 @@ var KtFile.doNotComplete: Boolean? by UserDataProperty(Key.create("DO_NOT_COMPLE
 class KotlinCompletionContributor : CompletionContributor() {
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(
         psiElement().withText(""),
-        psiElement().withElementType(elementType().oneOf(KtTokens.FLOAT_LITERAL, KtTokens.INTEGER_LITERAL))
+        psiElement().withElementType(elementType().oneOf(KtTokens.FLOAT_LITERAL, KtTokens.INTEGER_LITERAL)),
     )
     private val AFTER_INTEGER_LITERAL_AND_DOT = psiElement().afterLeafSkipping(
         psiElement().withText("."),
-        psiElement().withElementType(elementType().oneOf(KtTokens.INTEGER_LITERAL))
+        psiElement().withElementType(elementType().oneOf(KtTokens.INTEGER_LITERAL)),
     )
 
     companion object {
@@ -129,7 +129,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                     if (argumentList != null) {
                         context.offsetMap.addOffset(
                             SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET,
-                            argumentList.rightParenthesis?.textRange?.startOffset ?: argumentList.endOffset
+                            argumentList.rightParenthesis?.textRange?.startOffset ?: argumentList.endOffset,
                         )
                     }
                 }
@@ -198,9 +198,9 @@ class KotlinCompletionContributor : CompletionContributor() {
             KtTokens.COMMA, KtTokens.DOT, KtTokens.QUEST, KtTokens.COLON,
             KtTokens.IN_KEYWORD, KtTokens.OUT_KEYWORD,
             KtTokens.LPAR, KtTokens.RPAR, KtTokens.ARROW,
-            TokenType.ERROR_ELEMENT
+            TokenType.ERROR_ELEMENT,
         ),
-        KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+        KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET,
     )
 
     private fun specialExtensionReceiverDummyIdentifier(tokenBefore: PsiElement?): String? {
@@ -258,8 +258,10 @@ class KotlinCompletionContributor : CompletionContributor() {
                     // correctedOffset      ^
                     val correctedOffset = correctedPosition.endOffset - CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED.length
                     val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
-                    doComplete(correctedParameters, toFromOriginalFileMapper, result,
-                               lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
+                    doComplete(
+                        correctedParameters, toFromOriginalFileMapper, result,
+                        lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) },
+                    )
                     return
                 }
             }
@@ -272,7 +274,7 @@ class KotlinCompletionContributor : CompletionContributor() {
         parameters: CompletionParameters,
         toFromOriginalFileMapper: ToFromOriginalFileMapper,
         result: CompletionResultSet,
-        lookupElementPostProcessor: ((LookupElement) -> LookupElement)? = null
+        lookupElementPostProcessor: ((LookupElement) -> LookupElement)? = null,
     ) {
         val name = parameters.originalFile.virtualFile?.name ?: "default.kts"
         completionStatsData = completionStatsData?.copy(
@@ -286,7 +288,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 name.endsWith(".gradle.kts") -> FileTypeStats.GRADLEKTS
                 else -> FileTypeStats.KTS
             },
-            invocationCount = parameters.invocationCount
+            invocationCount = parameters.invocationCount,
         )
         val position = parameters.position
         if (position.getNonStrictParentOfType<PsiComment>() != null) {
@@ -336,7 +338,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                     javaGettersAndSetters = true,
                     javaClassesNotToBeUsed = false,
                     staticMembers = parameters.invocationCount > 0,
-                    dataClassComponentFunctions = true
+                    dataClassComponentFunctions = true,
                 )
 
                 val newSession = BasicCompletionSession(newConfiguration, parameters, toFromOriginalFileMapper, result)
@@ -442,9 +444,9 @@ class KotlinCompletionContributor : CompletionContributor() {
         TokenSet.create(
             KtTokens.IDENTIFIER, KtTokens.LT, KtTokens.GT,
             KtTokens.COMMA, KtTokens.DOT, KtTokens.QUEST, KtTokens.COLON,
-            KtTokens.LPAR, KtTokens.RPAR, KtTokens.ARROW
+            KtTokens.LPAR, KtTokens.RPAR, KtTokens.ARROW,
         ),
-        KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+        KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET,
     )
 
     // if the leaf could be located inside type argument list of a call (if parsed properly)

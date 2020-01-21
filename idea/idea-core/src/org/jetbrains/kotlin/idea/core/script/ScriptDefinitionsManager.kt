@@ -222,7 +222,7 @@ fun loadDefinitionsFromTemplates(
      * Script template dependencies naturally become (part of) dependencies of the script which is not always desired for resolver dependencies.
      * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
      */
-    additionalResolverClasspath: List<File> = emptyList()
+    additionalResolverClasspath: List<File> = emptyList(),
 ): List<ScriptDefinition> {
     val classpath = templateClasspath + additionalResolverClasspath
     LOG.info("[kts] loading script definitions $templateClassNames using cp: ${classpath.joinToString(File.pathSeparator)}")
@@ -300,7 +300,7 @@ interface ScriptDefinitionSourceAsContributor : ScriptDefinitionContributor, Scr
 @Deprecated("migrating to new configuration refinement: convert all contributors to ScriptDefinitionsSource/ScriptDefinitionsProvider")
 class ScriptDefinitionSourceFromContributor(
     val contributor: ScriptDefinitionContributor,
-    val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration
+    val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
 ) : ScriptDefinitionsSource {
     override val definitions: Sequence<ScriptDefinition>
         get() =
@@ -336,7 +336,7 @@ class StandardIdeScriptDefinition internal constructor(project: Project) : Kotli
 class BundledKotlinScriptDependenciesResolver(private val project: Project) : DependenciesResolver {
     override fun resolve(
         scriptContents: ScriptContents,
-        environment: Environment
+        environment: Environment,
     ): DependenciesResolver.ResolveResult {
         val virtualFile = scriptContents.file?.let { VfsUtil.findFileByIoFile(it, true) }
 

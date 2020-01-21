@@ -36,7 +36,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
         val inputValueArguments: Boolean,
         val argumentText: String = "",
         val lambdaInfo: GenerateLambdaInfo? = null,
-        val argumentsOnly: Boolean = false
+        val argumentsOnly: Boolean = false,
     ) : KotlinFunctionInsertHandler(callType) {
         init {
             if (lambdaInfo != null) {
@@ -51,7 +51,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             inputValueArguments: Boolean = this.inputValueArguments,
             argumentText: String = this.argumentText,
             lambdaInfo: GenerateLambdaInfo? = this.lambdaInfo,
-            argumentsOnly: Boolean = this.argumentsOnly
+            argumentsOnly: Boolean = this.argumentsOnly,
         ) = Normal(callType, inputTypeArguments, inputValueArguments, argumentText, lambdaInfo, argumentsOnly)
 
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -180,7 +180,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                     placeholderRange,
                     lambdaInfo.lambdaType,
                     explicitParameterTypes,
-                    signatureOnly = false
+                    signatureOnly = false,
                 )
                 return
             }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.isEffectivelyFinal
 
 class InlineAnalyzerExtension(
     private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
 ) : AnalyzerExtensions.AnalyzerExtension {
 
     override fun process(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
@@ -63,7 +63,7 @@ class InlineAnalyzerExtension(
     private fun notSupportedInInlineCheck(
         descriptor: CallableMemberDescriptor,
         functionOrProperty: KtCallableDeclaration,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         val visitor = object : KtVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
@@ -90,7 +90,7 @@ class InlineAnalyzerExtension(
     private fun checkDefaults(
         functionDescriptor: FunctionDescriptor,
         function: KtFunction,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         val ktParameters = function.valueParameters
         for (parameter in functionDescriptor.valueParameters) {
@@ -103,8 +103,8 @@ class InlineAnalyzerExtension(
                         trace.report(
                             Errors.NOT_YET_SUPPORTED_IN_INLINE.on(
                                 ktParameter,
-                                "Functional parameters with inherited default values"
-                            )
+                                "Functional parameters with inherited default values",
+                            ),
                         )
                     } else {
                         checkDefaultValue(trace, parameter, ktParameter)
@@ -118,8 +118,8 @@ class InlineAnalyzerExtension(
                     trace.report(
                         Errors.NOT_YET_SUPPORTED_IN_INLINE.on(
                             ktParameter,
-                            "Suspend functional parameters with default values"
-                        )
+                            "Suspend functional parameters with default values",
+                        ),
                     )
                 }
             }
@@ -137,7 +137,7 @@ class InlineAnalyzerExtension(
     private fun checkModalityAndOverrides(
         callableDescriptor: CallableMemberDescriptor,
         functionOrProperty: KtCallableDeclaration,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         if (callableDescriptor.containingDeclaration is PackageFragmentDescriptor) {
             return
@@ -191,7 +191,7 @@ class InlineAnalyzerExtension(
         parameter: ParameterDescriptor,
         expression: KtElement,
         functionDescriptor: CallableDescriptor,
-        trace: BindingTrace?
+        trace: BindingTrace?,
     ): Boolean {
         if (InlineUtil.isInlineParameterExceptNullability(parameter)) {
             if (parameter.type.isMarkedNullable) {

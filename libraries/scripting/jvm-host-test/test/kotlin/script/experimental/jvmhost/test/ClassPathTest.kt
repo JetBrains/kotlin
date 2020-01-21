@@ -50,7 +50,7 @@ class ClassPathTest : TestCase() {
         val cl = URLClassLoader(
             (emulatedClasspath.map { File(root1, it).apply { mkdirs() }.toURI().toURL() }
                     + jar.toURI().toURL()).toTypedArray(),
-            null
+            null,
         )
         val cp = cl.classPathFromTypicalResourceUrls().toList().map { it.canonicalFile }
 
@@ -67,7 +67,7 @@ class ClassPathTest : TestCase() {
             val files = listOf(
                 File(tempDir, "projX/classes"),
                 File(tempDir, "projX/test-classes"),
-                File(tempDir, "projY/classes")
+                File(tempDir, "projY/classes"),
             )
             files.forEach { it.mkdirs() }
 
@@ -88,19 +88,19 @@ class ClassPathTest : TestCase() {
         val expectedSuffix = File("classes/kotlin/test").path
         assertTrue(
             "Path should end with $expectedSuffix, got: $cpFromThis",
-            cpFromThis!!.first().absoluteFile.path.endsWith(expectedSuffix)
+            cpFromThis!!.first().absoluteFile.path.endsWith(expectedSuffix),
         )
     }
 }
 
 private val emulatedCollectionFiles = arrayOf(
     "classes/a/b.class",
-    "lib/c-d.jar"
+    "lib/c-d.jar",
 )
 
 private val emulatedClasspath = arrayOf(
     "module1/classes/kotlin/main/",
-    "module2/classes/java/test/"
+    "module2/classes/java/test/",
 )
 
 fun File.createCollectionJar(fileNames: Array<String>, infDirName: String) {

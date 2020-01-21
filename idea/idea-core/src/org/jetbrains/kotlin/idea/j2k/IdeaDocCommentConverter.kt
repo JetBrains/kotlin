@@ -42,7 +42,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
         }
 
         val htmlFile = PsiFileFactory.getInstance(docComment.project).createFileFromText(
-            "javadoc.html", HtmlFileType.INSTANCE, html
+            "javadoc.html", HtmlFileType.INSTANCE, html,
         )
         val htmlToMarkdownConverter = HtmlToMarkdownConverter()
         htmlFile.accept(htmlToMarkdownConverter)

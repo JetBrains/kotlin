@@ -21,7 +21,7 @@ object ArrayLiteralsInAnnotationItems {
 
     private fun MutableCollection<LookupElement>.addForUsage(
         expectedInfos: Collection<ExpectedInfo>,
-        position: PsiElement
+        position: PsiElement,
     ) {
         if (position.getParentOfType<KtAnnotationEntry>(false) != null) {
             expectedInfos.asSequence()
@@ -33,7 +33,7 @@ object ArrayLiteralsInAnnotationItems {
 
     private fun MutableCollection<LookupElement>.addForDefaultArguments(
         expectedInfos: Collection<ExpectedInfo>,
-        position: PsiElement
+        position: PsiElement,
     ) {
 
         // CLASS [MODIFIER_LIST, PRIMARY_CONSTRUCTOR [VALUE_PARAMETER_LIST [VALUE_PARAMETER [..., REFERENCE_EXPRESSION=position]]]]

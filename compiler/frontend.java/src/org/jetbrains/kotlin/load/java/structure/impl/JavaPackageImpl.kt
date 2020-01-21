@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JavaPackageImpl(
-        psiPackage: PsiPackage, private val scope: GlobalSearchScope
+    psiPackage: PsiPackage, private val scope: GlobalSearchScope,
 ) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage, MapBasedJavaAnnotationOwner {
 
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {

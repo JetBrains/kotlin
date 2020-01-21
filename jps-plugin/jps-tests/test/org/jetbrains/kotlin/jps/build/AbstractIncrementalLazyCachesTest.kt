@@ -91,7 +91,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
             printer,
             paths,
             KotlinDataContainerTarget,
-            kotlinCompileContext.lookupsCacheAttributesManager.versionManagerForTesting.versionFileForTesting
+            kotlinCompileContext.lookupsCacheAttributesManager.versionManagerForTesting.versionFileForTesting,
         )
 
         data class TargetInChunk(val chunk: KotlinChunk, val target: KotlinModuleBuildTarget<*>)
@@ -108,7 +108,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
                 printer, paths, target.jpsModuleBuildTarget,
                 target.localCacheVersionManager.versionFileForTesting,
                 metaBuildInfo,
-                subdirectory = KOTLIN_CACHE_DIRECTORY_NAME
+                subdirectory = KOTLIN_CACHE_DIRECTORY_NAME,
             )
         }
 
@@ -121,7 +121,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         paths: BuildDataPaths,
         target: BuildTarget<*>,
         vararg cacheVersionsFiles: File,
-        subdirectory: String? = null
+        subdirectory: String? = null,
     ) {
         p.println(target)
         p.pushIndent()

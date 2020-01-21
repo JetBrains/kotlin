@@ -27,7 +27,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession, protected val o
 
     protected fun similarFunctionsOrBothProperties(
         overrideCandidate: FirCallableMemberDeclaration<*>,
-        baseDeclaration: FirCallableMemberDeclaration<*>
+        baseDeclaration: FirCallableMemberDeclaration<*>,
     ): Boolean {
         return when (overrideCandidate) {
             is FirSimpleFunction -> when (baseDeclaration) {

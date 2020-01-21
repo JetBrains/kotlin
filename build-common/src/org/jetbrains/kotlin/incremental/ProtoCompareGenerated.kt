@@ -34,7 +34,7 @@ open class ProtoCompareGenerated(
     val oldNameResolver: NameResolver,
     val newNameResolver: NameResolver,
     oldTypeTable: ProtoBuf.TypeTable?,
-    newTypeTable: ProtoBuf.TypeTable?
+    newTypeTable: ProtoBuf.TypeTable?,
 ) {
     private val strings = Interner<String>()
     val oldStringIndexesMap: MutableMap<Int, Int> = hashMapOf()

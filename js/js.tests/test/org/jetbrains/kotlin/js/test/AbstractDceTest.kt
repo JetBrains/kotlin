@@ -26,8 +26,10 @@ abstract class AbstractDceTest : TestCase() {
     fun doTest(filePath: String) {
         val file = File(filePath)
         val fileContents = file.readText()
-        val inputFile = InputFile(InputResource.file(filePath), null,
-                                  File(pathToOutputDir, file.relativeTo(File(pathToTestDir)).path).path, "main")
+        val inputFile = InputFile(
+            InputResource.file(filePath), null,
+            File(pathToOutputDir, file.relativeTo(File(pathToTestDir)).path).path, "main",
+        )
         val dceResult = DeadCodeElimination.run(setOf(inputFile), extractDeclarations(REQUEST_REACHABLE_PATTERN, fileContents)) { _, _ -> }
         val reachableNodeStrings = dceResult.reachableNodes.map { it.toString().removePrefix("<unknown>.") }.toSet()
 

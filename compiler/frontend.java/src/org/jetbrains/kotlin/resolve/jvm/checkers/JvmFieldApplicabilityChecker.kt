@@ -87,7 +87,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
 
     private fun isInterfaceCompanionWithPublicJvmFieldProperties(companionObject: ClassDescriptor): Boolean {
         for (next in companionObject.unsubstitutedMemberScope.getContributedDescriptors(
-            DescriptorKindFilter.VARIABLES, MemberScope.ALL_NAME_FILTER
+            DescriptorKindFilter.VARIABLES, MemberScope.ALL_NAME_FILTER,
         )) {
             if (next !is PropertyDescriptor) continue
 

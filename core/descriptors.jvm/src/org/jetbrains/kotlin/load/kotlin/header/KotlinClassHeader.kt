@@ -31,7 +31,7 @@ class KotlinClassHeader(
     val strings: Array<String>?,
     private val extraString: String?,
     val extraInt: Int,
-    val packageName: String?
+    val packageName: String?,
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {

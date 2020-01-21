@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.storage.getValue
 
 open class DeserializedAnnotations(
     storageManager: StorageManager,
-    compute: () -> List<AnnotationDescriptor>
+    compute: () -> List<AnnotationDescriptor>,
 ) : Annotations {
     private val annotations by storageManager.createLazyValue(compute)
 
@@ -34,7 +34,7 @@ open class DeserializedAnnotations(
 
 class NonEmptyDeserializedAnnotations(
     storageManager: StorageManager,
-    compute: () -> List<AnnotationDescriptor>
+    compute: () -> List<AnnotationDescriptor>,
 ) : DeserializedAnnotations(storageManager, compute) {
     override fun isEmpty(): Boolean = false
 }

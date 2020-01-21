@@ -35,7 +35,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MI
 class SerializableIrGenerator(
     val irClass: IrClass,
     override val compilerContext: SerializationPluginContext,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
@@ -84,8 +84,8 @@ class SerializableIrGenerator(
                         irBinOp(
                             OperatorNameConventions.AND,
                             irGet(seenVars[bitMaskSlotAt(index)]),
-                            irInt(1 shl (index % 32))
-                        )
+                            irInt(1 shl (index % 32)),
+                        ),
                     )
 
                 +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
@@ -116,7 +116,7 @@ class SerializableIrGenerator(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
-            ctorRef
+            ctorRef,
         )
         call.insertTypeArgumentsForSuperClass(superClass)
         +call
@@ -135,7 +135,7 @@ class SerializableIrGenerator(
     private fun IrBlockBodyBuilder.generateSuperSerializableCall(
         superClass: ClassDescriptor,
         allValueParameters: List<IrValueParameter>,
-        propertiesStart: Int
+        propertiesStart: Int,
     ): Int {
         check(superClass.isInternalSerializable)
         val superCtorRef = compilerContext.symbolTable.serializableSyntheticConstructor(superClass)
@@ -148,7 +148,7 @@ class SerializableIrGenerator(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
-            superCtorRef
+            superCtorRef,
         )
         arguments.forEachIndexed { index, parameter -> call.putValueArgument(index, irGet(parameter)) }
         call.insertTypeArgumentsForSuperClass(superClass)
@@ -164,7 +164,7 @@ class SerializableIrGenerator(
         fun generate(
             irClass: IrClass,
             context: SerializationPluginContext,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
         ) {
             val serializableClass = irClass.descriptor
 
@@ -175,7 +175,8 @@ class SerializableIrGenerator(
             else if (serializableClass.serializableAnnotationIsUseless) {
                 throw CompilationException(
                     "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
-                            "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
+                            "Provide serializer manually via e.g. companion object",
+                    null, serializableClass.findPsi(),
                 )
             }
         }

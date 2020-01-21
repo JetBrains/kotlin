@@ -26,7 +26,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 class SerializerForEnumsGenerator(
     irClass: IrClass,
     compilerContext: SerializationPluginContext,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ) :
     SerializerIrGenerator(irClass, compilerContext, bindingContext) {
 
@@ -67,7 +67,7 @@ class SerializerForEnumsGenerator(
 
     override fun IrBlockBodyBuilder.instantiateNewDescriptor(
         serialDescImplClass: ClassDescriptor,
-        correctThis: IrExpression
+        correctThis: IrExpression,
     ): IrExpression {
         val serialDescForEnums = serializerDescriptor
             .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM)
@@ -76,14 +76,14 @@ class SerializerForEnumsGenerator(
         return irInvoke(
             null, ctor,
             irString(serialName),
-            typeHint = ctor.descriptor.returnType.toIrType()
+            typeHint = ctor.descriptor.returnType.toIrType(),
         )
     }
 
     override fun IrBlockBodyBuilder.addElementsContentToDescriptor(
         serialDescImplClass: ClassDescriptor,
         localDescriptor: IrVariable,
-        addFunction: IrFunctionSymbol
+        addFunction: IrFunctionSymbol,
     ) {
         val enumEntries = serializableDescriptor.enumEntries()
         for (entry in enumEntries) {
@@ -94,14 +94,14 @@ class SerializerForEnumsGenerator(
                 addFunction,
                 irString(serialName),
                 irBoolean(false),
-                typeHint = compilerContext.irBuiltIns.unitType
+                typeHint = compilerContext.irBuiltIns.unitType,
             )
             +call
             // serialDesc.pushAnnotation(...)
             copySerialInfoAnnotationsToDescriptor(
                 entry.annotations.mapNotNull(compilerContext.typeTranslator.constantValueGenerator::generateAnnotationConstructorCall),
                 localDescriptor,
-                serialDescImplClass.referenceMethod(CallingConventions.addAnnotation)
+                serialDescImplClass.referenceMethod(CallingConventions.addAnnotation),
             )
         }
     }

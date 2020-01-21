@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 
 abstract class FirAbstractTreeTransformerWithSuperTypes(
     phase: FirResolvePhase,
-    reversedScopePriority: Boolean
+    reversedScopePriority: Boolean,
 ) : FirAbstractTreeTransformer<Nothing?>(phase) {
     protected val towerScope = FirCompositeScope(mutableListOf(), reversedPriority = reversedScopePriority)
 
@@ -33,7 +33,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
 
     protected fun resolveNestedClassesSupertypes(
         regularClass: FirRegularClass,
-        data: Nothing?
+        data: Nothing?,
     ): CompositeTransformResult<FirStatement> {
         return withScopeCleanup {
             // ? Is it Ok to use original file session here ?

@@ -170,12 +170,13 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
     fun testAddKotlinReflect() {
         configureRuntime("actualRuntime")
         myFixture.configureByText(
-            "foo.kt", """class Foo(val prop: Any) {
+            "foo.kt",
+            """class Foo(val prop: Any) {
                 fun func() {}
             }
 
             fun y01() = Foo::prop.gett<caret>er
-            """
+            """,
         )
         myFixture.launchAction(myFixture.findSingleIntention("Add kotlin-reflect.jar to the classpath"))
         val kotlinRuntime = KotlinJavaModuleConfigurator.instance.getKotlinLibrary(module)!!

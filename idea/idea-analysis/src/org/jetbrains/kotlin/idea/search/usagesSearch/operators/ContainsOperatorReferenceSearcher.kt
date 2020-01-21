@@ -32,14 +32,14 @@ class ContainsOperatorReferenceSearcher(
     searchScope: SearchScope,
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
-    options: KotlinReferencesSearchOptions
+    options: KotlinReferencesSearchOptions,
 ) : OperatorReferenceSearcher<KtOperationReferenceExpression>(
     targetFunction,
     searchScope,
     consumer,
     optimizer,
     options,
-    wordsToSearch = listOf("in")
+    wordsToSearch = listOf("in"),
 ) {
     private companion object {
         private val OPERATION_TOKENS = setOf(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)

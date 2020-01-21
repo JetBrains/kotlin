@@ -59,19 +59,19 @@ fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): Idea
     collectInfosByVirtualFile(
         project, virtualFile,
         treatAsLibrarySource = false,
-        onOccurrence = { return@getModuleInfoByVirtualFile it }
+        onOccurrence = { return@getModuleInfoByVirtualFile it },
     )
 
 fun getBinaryLibrariesModuleInfos(project: Project, virtualFile: VirtualFile) =
     collectModuleInfosByType<BinaryModuleInfo>(
         project,
-        virtualFile
+        virtualFile,
     )
 
 fun getLibrarySourcesModuleInfos(project: Project, virtualFile: VirtualFile) =
     collectModuleInfosByType<LibrarySourceInfo>(
         project,
-        virtualFile
+        virtualFile,
     )
 
 fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): ModuleSourceInfo? {
@@ -93,7 +93,7 @@ private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean) -> T
 private sealed class ModuleInfoCollector<out T>(
     val onResult: (IdeaModuleInfo?) -> T,
     val onFailure: (String) -> T,
-    val virtualFileProcessor: VirtualFileProcessor<T>
+    val virtualFileProcessor: VirtualFileProcessor<T>,
 ) {
     object NotNullTakeFirst : ModuleInfoCollector<IdeaModuleInfo>(
         onResult = { it ?: NotUnderContentRootModuleInfo },
@@ -105,11 +105,11 @@ private sealed class ModuleInfoCollector<out T>(
             collectInfosByVirtualFile(
                 project,
                 virtualFile,
-                isLibrarySource
+                isLibrarySource,
             ) {
                 return@processor it ?: NotUnderContentRootModuleInfo
             }
-        }
+        },
     )
 
     object NullableTakeFirst : ModuleInfoCollector<IdeaModuleInfo?>(
@@ -122,9 +122,9 @@ private sealed class ModuleInfoCollector<out T>(
             collectInfosByVirtualFile(
                 project,
                 virtualFile,
-                isLibrarySource
+                isLibrarySource,
             ) { return@processor it }
-        }
+        },
     )
 
     object ToSequence : ModuleInfoCollector<Sequence<IdeaModuleInfo>>(
@@ -138,10 +138,10 @@ private sealed class ModuleInfoCollector<out T>(
                 collectInfosByVirtualFile(
                     project,
                     virtualFile,
-                    isLibrarySource
+                    isLibrarySource,
                 ) { yieldIfNotNull(it) }
             }
-        }
+        },
     )
 }
 
@@ -200,7 +200,7 @@ private fun <T> PsiElement.collectInfos(c: ModuleInfoCollector<T>): T {
     return c.virtualFileProcessor(
         project,
         virtualFile,
-        (containingFile as? KtFile)?.isCompiled ?: false
+        (containingFile as? KtFile)?.isCompiled ?: false,
     )
 }
 
@@ -210,7 +210,7 @@ private fun <T> KtLightElement<*, *>.processLightElement(c: ModuleInfoCollector<
         return c.virtualFileProcessor(
             project,
             containingFile.virtualFile.sure { "Decompiled class should be build from physical file" },
-            false
+            false,
         )
     }
 
@@ -227,7 +227,7 @@ private inline fun <T> collectInfosByVirtualFile(
     project: Project,
     virtualFile: VirtualFile,
     treatAsLibrarySource: Boolean,
-    onOccurrence: (IdeaModuleInfo?) -> T
+    onOccurrence: (IdeaModuleInfo?) -> T,
 ): T {
     collectModuleInfoByUserData(project, virtualFile).map(onOccurrence)
 
@@ -290,7 +290,7 @@ private inline fun <reified T : IdeaModuleInfo> collectModuleInfosByType(project
 private fun OrderEntry.toIdeaModuleInfo(
     project: Project,
     virtualFile: VirtualFile,
-    treatAsLibrarySource: Boolean = false
+    treatAsLibrarySource: Boolean = false,
 ): List<IdeaModuleInfo> {
     if (this is ModuleOrderEntry) return emptyList()
     if (!isValid) return emptyList()

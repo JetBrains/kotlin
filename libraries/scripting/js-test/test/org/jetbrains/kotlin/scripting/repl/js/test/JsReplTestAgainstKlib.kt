@@ -29,7 +29,7 @@ class JsReplTestAgainstKlib : AbstractJsReplTest() {
             nameTables,
             dependencies,
             ReplCodeAnalyzer.ResettableAnalyzerState(),
-            symbolTable
+            symbolTable,
         )
     }
 

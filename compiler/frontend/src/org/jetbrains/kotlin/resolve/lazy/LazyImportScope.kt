@@ -81,7 +81,7 @@ class ImportResolutionComponents(
     val moduleDescriptor: ModuleDescriptor,
     val platformToKotlinClassMap: PlatformToKotlinClassMap,
     val languageVersionSettings: LanguageVersionSettings,
-    val deprecationResolver: DeprecationResolver
+    val deprecationResolver: DeprecationResolver,
 )
 
 open class LazyImportResolver<I : KtImportInfo>(
@@ -89,12 +89,12 @@ open class LazyImportResolver<I : KtImportInfo>(
     val indexedImports: IndexedImports<I>,
     val excludedImportNames: Collection<FqName>,
     val traceForImportResolve: BindingTrace,
-    val packageFragment: PackageFragmentDescriptor?
+    val packageFragment: PackageFragmentDescriptor?,
 ) {
     private val importedScopesProvider = with(components) {
         storageManager.createMemoizedFunctionWithNullableValues { directive: KtImportInfo ->
             qualifiedExpressionResolver.processImportReference(
-                directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment
+                directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment,
             )
         }
     }
@@ -133,9 +133,9 @@ class LazyImportResolverForKtImportDirective(
     indexedImports: IndexedImports<KtImportDirective>,
     excludedImportNames: Collection<FqName>,
     traceForImportResolve: BindingTrace,
-    packageFragment: PackageFragmentDescriptor?
+    packageFragment: PackageFragmentDescriptor?,
 ) : LazyImportResolver<KtImportDirective>(
-    components, indexedImports, excludedImportNames, traceForImportResolve, packageFragment
+    components, indexedImports, excludedImportNames, traceForImportResolve, packageFragment,
 ), ImportForceResolver {
 
     private val forceResolveImportDirective = components.storageManager.createMemoizedFunction { directive: KtImportDirective ->
@@ -143,7 +143,7 @@ class LazyImportResolverForKtImportDirective(
         if (scope is LazyExplicitImportScope) {
             val allDescriptors = scope.storeReferencesToDescriptors()
             PlatformClassesMappedToKotlinChecker.checkPlatformClassesMappedToKotlin(
-                components.platformToKotlinClassMap, traceForImportResolve, directive, allDescriptors
+                components.platformToKotlinClassMap, traceForImportResolve, directive, allDescriptors,
             )
         }
 
@@ -209,7 +209,7 @@ class LazyImportScope(
     private val importResolver: LazyImportResolver<*>,
     private val secondaryImportResolver: LazyImportResolver<*>?,
     private val filteringKind: LazyImportScope.FilteringKind,
-    private val debugName: String
+    private val debugName: String,
 ) : ImportingScope {
 
     enum class FilteringKind {
@@ -268,7 +268,7 @@ class LazyImportScope(
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
-        changeNamesForAliased: Boolean
+        changeNamesForAliased: Boolean,
     ): Collection<DeclarationDescriptor> {
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()

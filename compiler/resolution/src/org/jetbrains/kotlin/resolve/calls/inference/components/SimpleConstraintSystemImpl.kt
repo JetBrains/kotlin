@@ -61,7 +61,7 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIn
             subType,
             superType,
             @Suppress("DEPRECATION")
-            org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+            org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition,
         )
     }
 

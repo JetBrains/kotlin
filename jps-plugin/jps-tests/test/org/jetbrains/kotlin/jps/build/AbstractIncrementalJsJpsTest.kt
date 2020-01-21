@@ -33,7 +33,7 @@ abstract class AbstractIncrementalJsJpsTest : AbstractIncrementalJpsTest() {
 
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
-                JpsKotlinFacetModuleExtension(facet)
+                JpsKotlinFacetModuleExtension(facet),
             )
         }
     }

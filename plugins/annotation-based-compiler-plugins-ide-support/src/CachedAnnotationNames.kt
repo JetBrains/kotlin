@@ -27,7 +27,7 @@ class CachedAnnotationNames(project: Project, private val annotationOptionPrefix
     private val cache: CachedValue<ConcurrentMap<Module, List<String>>> = cachedValue(project) {
         CachedValueProvider.Result.create(
             ContainerUtil.createConcurrentWeakMap<Module, List<String>>(),
-            ProjectRootModificationTracker.getInstance(project)
+            ProjectRootModificationTracker.getInstance(project),
         )
     }
 

@@ -17,30 +17,33 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "times" to "Multiplies this value by the other value.",
             "div" to "Divides this value by the other value.",
             "mod" to "Calculates the remainder of dividing this value by the other value.",
-            "rem" to "Calculates the remainder of dividing this value by the other value."
+            "rem" to "Calculates the remainder of dividing this value by the other value.",
         )
         internal val unaryOperators: Map<String, String> = mapOf(
             "inc" to "Increments this value.",
             "dec" to "Decrements this value.",
             "unaryPlus" to "Returns this value.",
-            "unaryMinus" to "Returns the negative of this value.")
+            "unaryMinus" to "Returns the negative of this value.",
+        )
         internal val shiftOperators: Map<String, String> = mapOf(
             "shl" to "Shifts this value left by the [bitCount] number of bits.",
             "shr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.",
-            "ushr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.")
+            "ushr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.",
+        )
         internal val bitwiseOperators: Map<String, String> = mapOf(
             "and" to "Performs a bitwise AND operation between the two values.",
             "or" to "Performs a bitwise OR operation between the two values.",
-            "xor" to "Performs a bitwise XOR operation between the two values.")
+            "xor" to "Performs a bitwise XOR operation between the two values.",
+        )
     }
     private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
-            PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
-            PrimitiveType.FLOAT to "single-precision 32-bit IEEE 754 floating point number",
-            PrimitiveType.LONG to "64-bit signed integer",
-            PrimitiveType.INT to "32-bit signed integer",
-            PrimitiveType.SHORT to "16-bit signed integer",
-            PrimitiveType.BYTE to "8-bit signed integer",
-            PrimitiveType.CHAR to "16-bit Unicode character"
+        PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
+        PrimitiveType.FLOAT to "single-precision 32-bit IEEE 754 floating point number",
+        PrimitiveType.LONG to "64-bit signed integer",
+        PrimitiveType.INT to "32-bit signed integer",
+        PrimitiveType.SHORT to "16-bit signed integer",
+        PrimitiveType.BYTE to "8-bit signed integer",
+        PrimitiveType.CHAR to "16-bit Unicode character",
     )
 
     private fun primitiveConstants(type: PrimitiveType): List<Any> = when (type) {
@@ -62,7 +65,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.print("    companion object {")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
                 //val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(kind)
-                out.println("""
+                out.println(
+                    """
         /**
          * A constant holding the smallest *positive* nonzero value of $className.
          */
@@ -86,11 +90,13 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         /**
          * A constant holding the "not a number" value of $className.
          */
-        public val NaN: $className""")
+        public val NaN: $className""",
+                )
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
                 val (minValue, maxValue) = primitiveConstants(kind)
-                out.println("""
+                out.println(
+                    """
         /**
          * A constant holding the minimum value an instance of $className can have.
          */
@@ -99,10 +105,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         /**
          * A constant holding the maximum value an instance of $className can have.
          */
-        public const val MAX_VALUE: $className = $maxValue""")
+        public const val MAX_VALUE: $className = $maxValue""",
+                )
             }
             if (kind.isIntegral) {
-                out.println("""
+                out.println(
+                    """
         /**
          * The number of bytes used to represent an instance of $className in a binary form.
          */
@@ -113,7 +121,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          * The number of bits used to represent an instance of $className in a binary form.
          */
         @SinceKotlin("1.3")
-        public const val SIZE_BITS: Int = ${kind.bitSize}""")
+        public const val SIZE_BITS: Int = ${kind.bitSize}""",
+                )
             }
             out.println("""    }""")
 
@@ -145,12 +154,14 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateCompareTo(thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
-            out.println("""
+            out.println(
+                """
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
-     */""")
+     */""",
+            )
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
             out.println("operator fun compareTo(other: ${otherKind.capitalized}): Int")

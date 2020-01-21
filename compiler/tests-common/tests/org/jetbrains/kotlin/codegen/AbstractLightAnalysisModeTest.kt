@@ -53,7 +53,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         assert(!relativePath.startsWith(".."))
 
         val configuration = createConfiguration(
-            configurationKind, getJdkKind(files), listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
+            configurationKind, getJdkKind(files), listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files,
         )
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
@@ -71,27 +71,30 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         val classInternalNames = classFileFactory.generationState.bindingContext
             .getSliceContents(CodegenBinding.ASM_TYPE).map { it.value.internalName to it.key }.toMap()
 
-        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, object : ListAnalysisFilter() {
-            override fun shouldWriteClass(access: Int, name: String): Boolean {
-                val classDescriptor = classInternalNames[name]
-                if (classDescriptor != null && shouldFilterClass(classDescriptor)) {
-                    return false
+        return BytecodeListingTextCollectingVisitor.getText(
+            classFileFactory,
+            object : ListAnalysisFilter() {
+                override fun shouldWriteClass(access: Int, name: String): Boolean {
+                    val classDescriptor = classInternalNames[name]
+                    if (classDescriptor != null && shouldFilterClass(classDescriptor)) {
+                        return false
+                    }
+                    return super.shouldWriteClass(access, name)
                 }
-                return super.shouldWriteClass(access, name)
-            }
 
-            override fun shouldWriteInnerClass(name: String): Boolean {
-                val classDescriptor = classInternalNames[name]
-                if (classDescriptor != null && shouldFilterClass(classDescriptor)) {
-                    return false
+                override fun shouldWriteInnerClass(name: String): Boolean {
+                    val classDescriptor = classInternalNames[name]
+                    if (classDescriptor != null && shouldFilterClass(classDescriptor)) {
+                        return false
+                    }
+                    return super.shouldWriteInnerClass(name)
                 }
-                return super.shouldWriteInnerClass(name)
-            }
 
-            private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
-                return descriptor.visibility == Visibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
-            }
-        })
+                private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
+                    return descriptor.visibility == Visibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
+                }
+            },
+        )
     }
 
     private open class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {

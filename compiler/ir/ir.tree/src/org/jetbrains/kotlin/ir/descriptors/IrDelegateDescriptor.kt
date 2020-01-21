@@ -47,24 +47,32 @@ abstract class IrDelegateDescriptorBase(
     containingDeclaration: DeclarationDescriptor,
     name: Name,
     delegateType: KotlinType,
-    annotations: Annotations = Annotations.EMPTY
+    annotations: Annotations = Annotations.EMPTY,
 ) :
     PropertyDescriptorImpl(
         containingDeclaration,
-        /* original = */ null,
+        /* original = */
+        null,
         annotations,
         Modality.FINAL,
         Visibilities.PRIVATE,
-        /* isVar = */ false,
+        /* isVar = */
+        false,
         name,
         CallableMemberDescriptor.Kind.SYNTHESIZED,
         SourceElement.NO_SOURCE,
-        /* lateInit = */ false,
-        /* isConst = */ false,
-        /* isExpect = */ false,
-        /* isActual = */ false,
-        /* isExternal = */ false,
-        /* isDelegated = */ true
+        /* lateInit = */
+        false,
+        /* isConst = */
+        false,
+        /* isExpect = */
+        false,
+        /* isActual = */
+        false,
+        /* isExternal = */
+        false,
+        /* isDelegated = */
+        true,
     ) {
     init {
         setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null)
@@ -91,25 +99,25 @@ abstract class IrDelegateDescriptorBase(
 class IrPropertyDelegateDescriptorImpl(
     override val correspondingProperty: PropertyDescriptor,
     delegateType: KotlinType,
-    override val kPropertyType: KotlinType
+    override val kPropertyType: KotlinType,
 ) :
     IrDelegateDescriptorBase(
         correspondingProperty.containingDeclaration,
         getDelegateName(correspondingProperty.name),
         delegateType,
-        correspondingProperty.delegateField?.annotations ?: Annotations.EMPTY
+        correspondingProperty.delegateField?.annotations ?: Annotations.EMPTY,
     ),
     IrPropertyDelegateDescriptor
 
 class IrImplementingDelegateDescriptorImpl(
     containingDeclaration: ClassDescriptor,
     delegateType: KotlinType,
-    override val correspondingSuperType: KotlinType
+    override val correspondingSuperType: KotlinType,
 ) :
     IrDelegateDescriptorBase(
         containingDeclaration,
         getDelegateName(containingDeclaration, correspondingSuperType),
-        delegateType
+        delegateType,
     ),
     IrImplementingDelegateDescriptor
 
@@ -120,20 +128,20 @@ internal fun getDelegateName(classDescriptor: ClassDescriptor, superType: Kotlin
     Name.identifier(
         classDescriptor.name.asString() + "\$" +
                 (superType.constructor.declarationDescriptor?.name ?: "\$") +
-                "\$delegate"
+                "\$delegate",
     )
 
 class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     override val correspondingLocalProperty: VariableDescriptorWithAccessors,
     delegateType: KotlinType,
-    override val kPropertyType: KotlinType
+    override val kPropertyType: KotlinType,
 ) : IrLocalDelegatedPropertyDelegateDescriptor,
     VariableDescriptorImpl(
         correspondingLocalProperty.containingDeclaration,
         Annotations.EMPTY,
         getDelegateName(correspondingLocalProperty.name),
         delegateType,
-        org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+        org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE,
     ) {
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null

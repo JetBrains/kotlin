@@ -37,7 +37,7 @@ import kotlin.script.experimental.jvm.impl.toDependencies
 internal fun VirtualFile.loadAnnotations(
     acceptedAnnotations: List<KClass<out Annotation>>,
     project: Project,
-    classLoader: ClassLoader?
+    classLoader: ClassLoader?,
 ): List<Annotation> =
 // TODO_R: report error on failure to load annotation class
     ApplicationManager.getApplication().runReadAction<List<Annotation>> {
@@ -88,7 +88,7 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
     LightVirtualFile(
         name,
         KotlinLanguage.INSTANCE,
-        StringUtil.convertLineSeparators(text)
+        StringUtil.convertLineSeparators(text),
     ) {
 
     init {
@@ -120,7 +120,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
 
     class FromCompilationConfiguration(
         script: SourceCode,
-        override val configuration: ScriptCompilationConfiguration?
+        override val configuration: ScriptCompilationConfiguration?,
     ) : ScriptCompilationConfigurationWrapper(script) {
 
         // TODO: check whether implemented optimization for frequent calls makes sense here
@@ -160,7 +160,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
     class FromLegacy(
         script: SourceCode,
         override val legacyDependencies: ScriptDependencies?,
-        val definition: ScriptDefinition?
+        val definition: ScriptDefinition?,
     ) : ScriptCompilationConfigurationWrapper(script) {
 
         override val dependenciesClassPath: List<File>
@@ -215,7 +215,7 @@ typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCom
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
     definition: ScriptDefinition,
-    project: Project
+    project: Project,
 ): ScriptCompilationConfigurationResult {
     // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
@@ -231,7 +231,7 @@ fun refineScriptCompilationConfiguration(
             }.onSuccess {
                 ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
                     ktFileSource,
-                    it.adjustByDefinition(definition)
+                    it.adjustByDefinition(definition),
                 ).asSuccess()
             }
     } else {
@@ -258,13 +258,13 @@ fun refineScriptCompilationConfiguration(
         }
         return if (result is DependenciesResolver.ResolveResult.Failure)
             makeFailureResult(
-                result.reports.mapToDiagnostics()
+                result.reports.mapToDiagnostics(),
             )
         else
             ScriptCompilationConfigurationWrapper.FromLegacy(
                 ktFileSource,
                 result.dependencies?.adjustByDefinition(definition),
-                definition
+                definition,
             ).asSuccess(result.reports.mapToDiagnostics())
     }
 }
@@ -289,13 +289,14 @@ internal fun makeScriptContents(
     file: VirtualFile,
     legacyDefinition: KotlinScriptDefinition,
     project: Project,
-    classLoader: ClassLoader?
+    classLoader: ClassLoader?,
 ): ScriptContentLoader.BasicScriptContents =
     ScriptContentLoader.BasicScriptContents(
         file,
         getAnnotations = {
             file.loadAnnotations(legacyDefinition.acceptedAnnotations, project, classLoader)
-        })
+        },
+    )
 
 fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
     if (this is VirtualFileScriptSource) return virtualFile
@@ -341,7 +342,7 @@ fun getScriptCollectedData(
     scriptFile: KtFile,
     compilationConfiguration: ScriptCompilationConfiguration,
     project: Project,
-    contextClassLoader: ClassLoader?
+    contextClassLoader: ClassLoader?,
 ): ScriptCollectedData {
     val hostConfiguration =
         compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
@@ -357,13 +358,13 @@ fun getScriptCollectedData(
     val annotations = scriptFile.annotationEntries.construct(contextClassLoader, acceptedAnnotations, project)
     return ScriptCollectedData(
         mapOf(
-            ScriptCollectedData.foundAnnotations to annotations
-        )
+            ScriptCollectedData.foundAnnotations to annotations,
+        ),
     )
 }
 
 private fun Iterable<KtAnnotationEntry>.construct(
-    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project
+    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project,
 ): List<Annotation> =
     mapNotNull { psiAnn ->
         // TODO: consider advanced matching using semantic similar to actual resolving
@@ -374,7 +375,7 @@ private fun Iterable<KtAnnotationEntry>.construct(
             (constructAnnotation(
                 psiAnn,
                 (classLoader ?: ClassLoader.getSystemClassLoader()).loadClass(it.qualifiedName).kotlin as KClass<out Annotation>,
-                project
+                project,
             ))
         }
     }

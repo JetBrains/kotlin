@@ -56,7 +56,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
     }
 
     internal data class Constraint(
-        val kind: ConstraintKind, val subtype: KotlinType, val superType: KotlinType, val position: ConstraintPosition
+        val kind: ConstraintKind, val subtype: KotlinType, val superType: KotlinType, val position: ConstraintPosition,
     )
 
     enum class ConstraintKind(val bound: TypeBounds.BoundKind) {
@@ -80,7 +80,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
     }
 
     override fun registerTypeVariables(
-        call: CallHandle, typeParameters: Collection<TypeParameterDescriptor>, external: Boolean
+        call: CallHandle, typeParameters: Collection<TypeParameterDescriptor>, external: Boolean,
     ): TypeSubstitutor {
         if (typeParameters.isEmpty()) return storeSubstitutor(call, TypeSubstitutor.EMPTY)
 
@@ -91,7 +91,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         } else {
             val freshTypeParameters = ArrayList<TypeParameterDescriptor>(typeParameters.size)
             DescriptorSubstitutor.substituteTypeParameters(
-                typeParameters.toList(), TypeSubstitution.EMPTY, typeParameters.first().containingDeclaration, freshTypeParameters
+                typeParameters.toList(), TypeSubstitution.EMPTY, typeParameters.first().containingDeclaration, freshTypeParameters,
             )
             freshTypeParameters.zip(typeParameters).map {
                 val (fresh, original) = it
@@ -112,11 +112,12 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         }
 
         return storeSubstitutor(
-            call, TypeSubstitutor.create(
+            call,
+            TypeSubstitutor.create(
                 TypeConstructorSubstitution.createByParametersMap(
-                    typeParameters.zip(typeVariables.map { it.type }.defaultProjections()).toMap()
-                )
-            )
+                    typeParameters.zip(typeVariables.map { it.type }.defaultProjections()).toMap(),
+                ),
+            ),
         )
     }
 
@@ -132,7 +133,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
             SUB_TYPE,
             constrainingType,
             subjectType,
-            ConstraintContext(constraintPosition, initial = true, initialReduction = true)
+            ConstraintContext(constraintPosition, initial = true, initialReduction = true),
         )
     }
 
@@ -140,53 +141,59 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         constraintKind: ConstraintKind,
         subType: KotlinType?,
         superType: KotlinType?,
-        constraintContext: ConstraintContext
+        constraintContext: ConstraintContext,
     ) {
         val constraintPosition = constraintContext.position
 
         // when processing nested constraints, `derivedFrom` information should be reset
         val newConstraintContext = ConstraintContext(
             constraintContext.position, derivedFrom = null, initial = false,
-            initialReduction = constraintContext.initialReduction
+            initialReduction = constraintContext.initialReduction,
         )
-        val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
-            private var depth = 0
+        val typeCheckingProcedure = TypeCheckingProcedure(
+            object : TypeCheckingProcedureCallbacks {
+                private var depth = 0
 
-            override fun assertEqualTypes(a: KotlinType, b: KotlinType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
-                depth++
-                doAddConstraint(EQUAL, a, b, newConstraintContext, typeCheckingProcedure)
-                depth--
-                return true
+                override fun assertEqualTypes(a: KotlinType, b: KotlinType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
+                    depth++
+                    doAddConstraint(EQUAL, a, b, newConstraintContext, typeCheckingProcedure)
+                    depth--
+                    return true
 
-            }
+                }
 
-            override fun assertEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
-                return a == b
-            }
+                override fun assertEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
+                    return a == b
+                }
 
-            override fun assertSubtype(subtype: KotlinType, supertype: KotlinType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
-                depth++
-                doAddConstraint(SUB_TYPE, subtype, supertype, newConstraintContext, typeCheckingProcedure)
-                depth--
-                return true
-            }
-
-            override fun capture(type: KotlinType, typeProjection: TypeProjection): Boolean {
-                if (isMyTypeVariable(typeProjection.type) || depth > 0) return false
-                val myTypeVariable = getMyTypeVariable(type)
-
-                if (myTypeVariable != null && constraintPosition.isParameter()) {
-                    generateTypeParameterCaptureConstraint(myTypeVariable, typeProjection, newConstraintContext, type.isMarkedNullable)
+                override fun assertSubtype(
+                    subtype: KotlinType,
+                    supertype: KotlinType,
+                    typeCheckingProcedure: TypeCheckingProcedure,
+                ): Boolean {
+                    depth++
+                    doAddConstraint(SUB_TYPE, subtype, supertype, newConstraintContext, typeCheckingProcedure)
+                    depth--
                     return true
                 }
-                return false
-            }
 
-            override fun noCorrespondingSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {
-                errors.add(newTypeInferenceOrParameterConstraintError(constraintPosition))
-                return true
-            }
-        })
+                override fun capture(type: KotlinType, typeProjection: TypeProjection): Boolean {
+                    if (isMyTypeVariable(typeProjection.type) || depth > 0) return false
+                    val myTypeVariable = getMyTypeVariable(type)
+
+                    if (myTypeVariable != null && constraintPosition.isParameter()) {
+                        generateTypeParameterCaptureConstraint(myTypeVariable, typeProjection, newConstraintContext, type.isMarkedNullable)
+                        return true
+                    }
+                    return false
+                }
+
+                override fun noCorrespondingSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {
+                    errors.add(newTypeInferenceOrParameterConstraintError(constraintPosition))
+                    return true
+                }
+            },
+        )
         doAddConstraint(constraintKind, subType, superType, constraintContext, typeCheckingProcedure)
     }
 
@@ -207,7 +214,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         subType: KotlinType?,
         superType: KotlinType?,
         constraintContext: ConstraintContext,
-        typeCheckingProcedure: TypeCheckingProcedure
+        typeCheckingProcedure: TypeCheckingProcedure,
     ) {
         val constraintPosition = constraintContext.position
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
@@ -271,11 +278,11 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         typeVariable: TypeVariable,
         constrainingType: KotlinType,
         kind: TypeBounds.BoundKind,
-        constraintContext: ConstraintContext
+        constraintContext: ConstraintContext,
     ) {
         val bound = Bound(
             typeVariable, constrainingType, kind, constraintContext.position,
-            constrainingType.isProper(), constraintContext.derivedFrom ?: emptySet()
+            constrainingType.isProper(), constraintContext.derivedFrom ?: emptySet(),
         )
         val typeBounds = getTypeBounds(typeVariable)
         if (typeBounds.bounds.contains(bound)) return
@@ -296,7 +303,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         parameterType: KotlinType,
         constrainingType: KotlinType,
         boundKind: TypeBounds.BoundKind,
-        constraintContext: ConstraintContext
+        constraintContext: ConstraintContext,
     ) {
         val typeVariable = getMyTypeVariable(parameterType)!!
 
@@ -340,7 +347,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         typeVariable: TypeVariable,
         constrainingTypeProjection: TypeProjection,
         constraintContext: ConstraintContext,
-        isTypeMarkedNullable: Boolean
+        isTypeMarkedNullable: Boolean,
     ) {
         if (!typeVariable.originalTypeParameter.upperBounds.let { it.size == 1 && it.single().isDefaultBound() } &&
             constrainingTypeProjection.projectionKind == Variance.IN_VARIANCE) {
@@ -377,7 +384,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         constraintKind: ConstraintKind,
         subType: KotlinType,
         superType: KotlinType,
-        position: ConstraintPosition
+        position: ConstraintPosition,
     ) {
         initialConstraints.add(Constraint(constraintKind, subType, superType, position))
     }
@@ -402,13 +409,13 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         if (!Collections.disjoint(typeVariableSubstitutors.keys, other.typeVariableSubstitutors.keys)) {
             throw IllegalArgumentException(
                 "Combining two constraint systems only makes sense when they were created for different calls. " +
-                        "Calls of the first system: ${typeVariableSubstitutors.keys}, second: ${other.typeVariableSubstitutors.keys}"
+                        "Calls of the first system: ${typeVariableSubstitutors.keys}, second: ${other.typeVariableSubstitutors.keys}",
             )
         }
         if (!Collections.disjoint(other.allTypeParameterBounds.keys, allTypeParameterBounds.keys)) {
             throw IllegalArgumentException(
                 "Combining two constraint systems only makes sense when they have no common variables. " +
-                        "First system variables: ${allTypeParameterBounds.keys}, second: ${other.allTypeParameterBounds.keys}"
+                        "First system variables: ${allTypeParameterBounds.keys}, second: ${other.allTypeParameterBounds.keys}",
             )
         }
 
@@ -455,7 +462,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
 
 internal fun createTypeForFunctionPlaceholder(
     functionPlaceholder: KotlinType,
-    expectedType: KotlinType
+    expectedType: KotlinType,
 ): KotlinType {
     if (!functionPlaceholder.isFunctionPlaceholder) return functionPlaceholder
 
@@ -476,6 +483,6 @@ internal fun createTypeForFunctionPlaceholder(
     val receiverType = if (isExtension) DONT_CARE else null
     return createFunctionType(
         functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, newArgumentTypes, null, DONT_CARE,
-        suspendFunction = expectedType.isSuspendFunctionType
+        suspendFunction = expectedType.isSuspendFunctionType,
     )
 }

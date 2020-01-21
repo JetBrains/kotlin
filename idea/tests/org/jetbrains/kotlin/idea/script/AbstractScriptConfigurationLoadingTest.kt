@@ -57,7 +57,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
             DefaultScriptConfigurationManagerExtensions.LOADER,
             project,
             FileContentsDependentConfigurationLoader(project),
-            testRootDisposable
+            testRootDisposable,
         )
 
         configureScriptFile("idea/testData/script/definition/loading/async/")
@@ -93,10 +93,12 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         assertEquals(
             "configuration \"$contents\" should be applied",
             StringUtilRt.convertLineSeparators(contents),
-            StringUtilRt.convertLineSeparators(secondConfiguration.defaultImports.single().let {
-                check(it.startsWith("x_"))
-                it.removePrefix("x_")
-            })
+            StringUtilRt.convertLineSeparators(
+                secondConfiguration.defaultImports.single().let {
+                    check(it.startsWith("x_"))
+                    it.removePrefix("x_")
+                },
+            ),
         )
     }
 

@@ -21,7 +21,7 @@ import kotlin.math.min
 internal class KotlinOutputChecker(
     private val testDir: String,
     appPath: String,
-    outputPath: String
+    outputPath: String,
 ) : OutputChecker(appPath, outputPath) {
     companion object {
         @JvmStatic

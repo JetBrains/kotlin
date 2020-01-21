@@ -45,7 +45,7 @@ class FirSupertypeResolverTransformer : FirTransformer<Nothing?>() {
 }
 
 private class FirApplySupertypesTransformer(
-    private val supertypeComputationSession: SupertypeComputationSession
+    private val supertypeComputationSession: SupertypeComputationSession,
 ) : FirDefaultTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
@@ -101,13 +101,13 @@ private fun FirClassLikeDeclaration<*>.typeParametersScope(): FirScope? {
 private fun createScopesForNestedClasses(
     regularClass: FirRegularClass,
     session: FirSession,
-    supertypeComputationSession: SupertypeComputationSession
+    supertypeComputationSession: SupertypeComputationSession,
 ): Collection<FirScope> =
     mutableListOf<FirScope>().apply {
         lookupSuperTypes(
             regularClass,
             lookupInterfaces = false, deep = true, useSiteSession = session,
-            supertypeSupplier = supertypeComputationSession.supertypesSupplier
+            supertypeSupplier = supertypeComputationSession.supertypesSupplier,
         ).asReversed().mapNotNullTo(this) {
             session.firSymbolProvider.getNestedClassifierScope(it.lookupTag.classId)
         }
@@ -127,7 +127,7 @@ fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirType
 private class FirSupertypeResolverVisitor(
     private val session: FirSession,
     private val supertypeComputationSession: SupertypeComputationSession,
-    private val scopeSession: ScopeSession
+    private val scopeSession: ScopeSession,
 ) : FirDefaultVisitorVoid() {
     override fun visitElement(element: FirElement) {}
 
@@ -150,7 +150,7 @@ private class FirSupertypeResolverVisitor(
     private fun resolveAllSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration<*>,
         supertypeRefs: List<FirTypeRef>,
-        visited: MutableSet<FirClassLikeDeclaration<*>> = mutableSetOf()
+        visited: MutableSet<FirClassLikeDeclaration<*>> = mutableSetOf(),
     ) {
         if (!visited.add(classLikeDeclaration)) return
         val supertypes =
@@ -185,12 +185,12 @@ private class FirSupertypeResolverVisitor(
 
     private fun resolveSpecificClassLikeSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration<*>,
-        resolveSuperTypeRefs: (FirTransformer<Nothing?>) -> List<FirTypeRef>
+        resolveSuperTypeRefs: (FirTransformer<Nothing?>) -> List<FirTypeRef>,
     ): List<FirTypeRef> {
         when (val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)) {
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
             is SupertypeComputationStatus.Computing -> return listOf(
-                createErrorTypeRef(classLikeDeclaration, "Loop in supertype definition for ${classLikeDeclaration.symbol.classId}")
+                createErrorTypeRef(classLikeDeclaration, "Loop in supertype definition for ${classLikeDeclaration.symbol.classId}"),
             )
         }
 
@@ -211,7 +211,7 @@ private class FirSupertypeResolverVisitor(
 
     fun resolveSpecificClassLikeSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration<*>,
-        supertypeRefs: List<FirTypeRef>
+        supertypeRefs: List<FirTypeRef>,
     ): List<FirTypeRef> {
         // TODO: this if is a temporary hack for built-in types (because we can't load file for them)
         if (supertypeRefs.all { it is FirResolvedTypeRef }) {
@@ -225,7 +225,7 @@ private class FirSupertypeResolverVisitor(
                 if (superTypeRef.coneTypeSafe<ConeTypeParameterType>() != null)
                     createErrorTypeRef(
                         superTypeRef,
-                        "Type parameter cannot be a super-type: ${superTypeRef.coneTypeUnsafe<ConeTypeParameterType>().render()}"
+                        "Type parameter cannot be a super-type: ${superTypeRef.coneTypeUnsafe<ConeTypeParameterType>().render()}",
                     )
                 else
                     superTypeRef
@@ -245,8 +245,8 @@ private class FirSupertypeResolverVisitor(
                     ?: return@resolveSpecificClassLikeSupertypes listOf(
                         createErrorTypeRef(
                             typeAlias.expandedTypeRef,
-                            "Unresolved expanded typeRef for ${typeAlias.symbol.classId}"
-                        )
+                            "Unresolved expanded typeRef for ${typeAlias.symbol.classId}",
+                        ),
                     )
 
             val type = resolvedTypeRef.type
@@ -341,10 +341,10 @@ private class SupertypeComputationSession {
                         wereChanges = true
                         createErrorTypeRef(
                             typeRef,
-                            "Loop in supertype: ${classLikeDeclaration.symbol.classId} -> ${fir?.symbol?.classId}"
+                            "Loop in supertype: ${classLikeDeclaration.symbol.classId} -> ${fir?.symbol?.classId}",
                         )
                     } else
-                        typeRef
+                        typeRef,
                 )
             }
 
@@ -377,7 +377,7 @@ sealed class SupertypeComputationStatus {
 private typealias ImmutableList<E> = javaslang.collection.List<E>
 
 private class FirImmutableCompositeScope(
-    private val scopes: ImmutableList<FirScope>
+    private val scopes: ImmutableList<FirScope>,
 ) : FirScope() {
 
     fun childScope(newScope: FirScope?) = newScope?.let { FirImmutableCompositeScope(scopes.push(newScope)) } ?: this
@@ -385,7 +385,7 @@ private class FirImmutableCompositeScope(
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         for (scope in scopes) {
             if (!scope.processClassifiersByName(name, processor)) {
@@ -398,7 +398,7 @@ private class FirImmutableCompositeScope(
     private inline fun <T> processComposite(
         process: FirScope.(Name, (T) -> ProcessorAction) -> ProcessorAction,
         name: Name,
-        noinline processor: (T) -> ProcessorAction
+        noinline processor: (T) -> ProcessorAction,
     ): ProcessorAction {
         val unique = mutableSetOf<T>()
         for (scope in scopes) {

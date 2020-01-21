@@ -66,52 +66,54 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         val packageName = file.packageFqName
         state.fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
 
-        file.acceptChildren(object : FirDefaultVisitorVoid() {
-            override fun visitElement(element: FirElement) {}
+        file.acceptChildren(
+            object : FirDefaultVisitorVoid() {
+                override fun visitElement(element: FirElement) {}
 
 
-            override fun visitRegularClass(regularClass: FirRegularClass) {
-                val classId = regularClass.symbol.classId
+                override fun visitRegularClass(regularClass: FirRegularClass) {
+                    val classId = regularClass.symbol.classId
 
-                state.classifierMap[classId] = regularClass
-                state.classifierContainerFileMap[classId] = file
+                    state.classifierMap[classId] = regularClass
+                    state.classifierContainerFileMap[classId] = file
 
-                if (!classId.isNestedClass && !classId.isLocal) {
-                    state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
+                    if (!classId.isNestedClass && !classId.isLocal) {
+                        state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
+                    }
+
+                    regularClass.acceptChildren(this)
                 }
 
-                regularClass.acceptChildren(this)
-            }
+                override fun visitTypeAlias(typeAlias: FirTypeAlias) {
+                    val classId = typeAlias.symbol.classId
+                    state.classifierMap[classId] = typeAlias
+                    state.classifierContainerFileMap[classId] = file
+                }
 
-            override fun visitTypeAlias(typeAlias: FirTypeAlias) {
-                val classId = typeAlias.symbol.classId
-                state.classifierMap[classId] = typeAlias
-                state.classifierContainerFileMap[classId] = file
-            }
+                override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>) {
+                    val symbol = callableDeclaration.symbol
+                    val callableId = symbol.callableId
+                    state.callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
+                    state.callableContainerMap[symbol] = file
+                }
 
-            override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>) {
-                val symbol = callableDeclaration.symbol
-                val callableId = symbol.callableId
-                state.callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
-                state.callableContainerMap[symbol] = file
-            }
+                override fun visitConstructor(constructor: FirConstructor) {
+                    visitCallableDeclaration(constructor)
+                }
 
-            override fun visitConstructor(constructor: FirConstructor) {
-                visitCallableDeclaration(constructor)
-            }
+                override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                    visitCallableDeclaration(simpleFunction)
+                }
 
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
-                visitCallableDeclaration(simpleFunction)
-            }
+                override fun visitProperty(property: FirProperty) {
+                    visitCallableDeclaration(property)
+                }
 
-            override fun visitProperty(property: FirProperty) {
-                visitCallableDeclaration(property)
-            }
-
-            override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-                visitCallableDeclaration(enumEntry)
-            }
-        })
+                override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+                    visitCallableDeclaration(enumEntry)
+                }
+            },
+        )
     }
 
     private val state = State()
@@ -162,7 +164,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
             title: String,
             a: Map<K, V>,
             b: Map<K, V>,
-            equal: (old: V?, new: V?) -> Boolean = { old, new -> old === new }
+            equal: (old: V?, new: V?) -> Boolean = { old, new -> old === new },
         ) {
             var hasTitle = false
             val unionKeys = a.keys + b.keys

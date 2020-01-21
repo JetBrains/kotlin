@@ -46,7 +46,7 @@ import java.io.File
 
 class ExpectedActualDeclarationChecker(
     val moduleStructureOracle: ModuleStructureOracle,
-    val argumentExtractors: Iterable<ActualAnnotationArgumentExtractor>
+    val argumentExtractors: Iterable<ActualAnnotationArgumentExtractor>,
 ) : DeclarationChecker {
     interface ActualAnnotationArgumentExtractor {
         fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
@@ -74,7 +74,7 @@ class ExpectedActualDeclarationChecker(
                 descriptor,
                 context.trace,
                 checkActual,
-                moduleVisibilityFilter = { it in allImplementedModules }
+                moduleVisibilityFilter = { it in allImplementedModules },
             )
         }
     }
@@ -83,7 +83,7 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
-        expectActualTracker: ExpectActualTracker
+        expectActualTracker: ExpectActualTracker,
     ) {
         val allActualizationPaths = moduleStructureOracle.findAllReversedDependsOnPaths(descriptor.module)
         val leafModuleToVisibleModules = allActualizationPaths.groupBy { it.nodes.last() }
@@ -96,7 +96,7 @@ class ExpectedActualDeclarationChecker(
                 trace,
                 leafModule,
                 expectActualTracker,
-                moduleVisibilityFilter = { it in modulesVisibleFromLeaf }
+                moduleVisibilityFilter = { it in modulesVisibleFromLeaf },
             )
         }
 
@@ -120,7 +120,7 @@ class ExpectedActualDeclarationChecker(
         for (path in allActualizationPaths) {
             val modulesOnThisPath = path.nodes.toSet()
             checkExpectedDeclarationHasAtMostOneActual(
-                reportOn, descriptor, trace, path, moduleVisibilityFilter = { it in modulesOnThisPath }
+                reportOn, descriptor, trace, path, moduleVisibilityFilter = { it in modulesOnThisPath },
             )
         }
     }
@@ -130,7 +130,7 @@ class ExpectedActualDeclarationChecker(
         descriptor: MemberDescriptor,
         trace: BindingTrace,
         path: ModulePath,
-        moduleVisibilityFilter: ModuleFilter
+        moduleVisibilityFilter: ModuleFilter,
     ) {
         val compatibility = path.nodes
             .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it, moduleVisibilityFilter) }
@@ -147,13 +147,15 @@ class ExpectedActualDeclarationChecker(
             .distinct()
 
         if (atLeastWeaklyCompatibleActuals.size > 1) {
-            trace.report(Errors.AMBIGUOUS_ACTUALS.on(
-                reportOn,
-                descriptor,
-                atLeastWeaklyCompatibleActuals
-                    .map { it.module }
-                    .sortedBy { it.name.asString() }
-            ))
+            trace.report(
+                Errors.AMBIGUOUS_ACTUALS.on(
+                    reportOn,
+                    descriptor,
+                    atLeastWeaklyCompatibleActuals
+                        .map { it.module }
+                        .sortedBy { it.name.asString() },
+                ),
+            )
         }
     }
 
@@ -163,7 +165,7 @@ class ExpectedActualDeclarationChecker(
         trace: BindingTrace,
         module: ModuleDescriptor,
         expectActualTracker: ExpectActualTracker,
-        moduleVisibilityFilter: ModuleFilter
+        moduleVisibilityFilter: ModuleFilter,
     ) {
         // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
@@ -194,7 +196,7 @@ class ExpectedActualDeclarationChecker(
     }
 
     private fun MemberDescriptor.hasNoActualWithDiagnostic(
-        compatibility: Map<Compatibility, List<MemberDescriptor>>
+        compatibility: Map<Compatibility, List<MemberDescriptor>>,
     ): Boolean {
         return compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
             val expectedOnes = ExpectedActualResolver.findExpectedForActual(actual, module)
@@ -223,7 +225,7 @@ class ExpectedActualDeclarationChecker(
         descriptor: MemberDescriptor,
         trace: BindingTrace,
         checkActual: Boolean,
-        moduleVisibilityFilter: ModuleFilter
+        moduleVisibilityFilter: ModuleFilter,
     ) {
         val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, descriptor.module, moduleVisibilityFilter)
             ?: return
@@ -256,7 +258,7 @@ class ExpectedActualDeclarationChecker(
             // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
             // later when this checker is called for them
             fun hasSingleActualSuspect(
-                expectedWithIncompatibility: Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>
+                expectedWithIncompatibility: Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>,
             ): Boolean {
                 val (expectedMember, incompatibility) = expectedWithIncompatibility
                 val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
@@ -265,7 +267,7 @@ class ExpectedActualDeclarationChecker(
                         !incompatibility.allStrongIncompatibilities() &&
                         ExpectedActualResolver.findExpectedForActual(
                             actualMember,
-                            expectedMember.module
+                            expectedMember.module,
                         )?.values?.singleOrNull()?.singleOrNull() == expectedMember
             }
 
@@ -277,8 +279,8 @@ class ExpectedActualDeclarationChecker(
                         ?: (descriptor as ClassDescriptor)
                 trace.report(
                     Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.on(
-                        reportOn, classDescriptor, nonTrivialUnfulfilled
-                    )
+                        reportOn, classDescriptor, nonTrivialUnfulfilled,
+                    ),
                 )
             }
         } else if (Compatible !in compatibility) {
@@ -304,7 +306,7 @@ class ExpectedActualDeclarationChecker(
         compatibility: Map<Compatibility, List<MemberDescriptor>>,
         trace: BindingTrace,
         reportOn: KtNamedDeclaration,
-        descriptor: MemberDescriptor
+        descriptor: MemberDescriptor,
     ) {
         val filesWithAtLeastWeaklyCompatibleExpects = compatibility.asSequence()
             .filter { (compatibility, _) ->
@@ -349,7 +351,7 @@ class ExpectedActualDeclarationChecker(
         }
 
     private fun checkAnnotationConstructors(
-        expected: ConstructorDescriptor, actual: ConstructorDescriptor, trace: BindingTrace, reportOn: PsiElement
+        expected: ConstructorDescriptor, actual: ConstructorDescriptor, trace: BindingTrace, reportOn: PsiElement,
     ) {
         for (expectedParameterDescriptor in expected.valueParameters) {
             // Actual parameter with the same name is guaranteed to exist because this method is only called for compatible annotations
@@ -374,7 +376,7 @@ class ExpectedActualDeclarationChecker(
     }
 
     private fun getActualAnnotationParameterValue(
-        actualParameter: ValueParameterDescriptor, bindingContext: BindingContext, expectedType: KotlinType
+        actualParameter: ValueParameterDescriptor, bindingContext: BindingContext, expectedType: KotlinType,
     ): ConstantValue<*>? {
         val declaration = DescriptorToSourceUtils.descriptorToDeclaration(actualParameter)
         if (declaration is KtParameter) {

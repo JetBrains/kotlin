@@ -70,7 +70,7 @@ class JvmBuiltIns(storageManager: StorageManager, kind: Kind) : KotlinBuiltIns(s
             {
                 ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" }
                 isAdditionalBuiltInsFeatureSupported
-            }
+            },
         )
     }
 

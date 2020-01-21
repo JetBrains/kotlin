@@ -59,7 +59,7 @@ fun getModificationsToPerform(
     testDataDir: File,
     moduleNames: Collection<String>?,
     allowNoFilesWithSuffixInTestData: Boolean,
-    touchPolicy: TouchPolicy
+    touchPolicy: TouchPolicy,
 ): List<List<Modification>> {
 
     fun getModificationsForIteration(newSuffix: String, touchSuffix: String, deleteSuffix: String): List<Modification> {
@@ -89,7 +89,7 @@ fun getModificationsToPerform(
         val rules = mapOf<String, (String, File) -> Modification>(
             newSuffix to { path, file -> ModifyContent(path, file) },
             touchSuffix to { path, _ -> TouchFile(path, touchPolicy) },
-            deleteSuffix to { path, _ -> DeleteFile(path) }
+            deleteSuffix to { path, _ -> DeleteFile(path) },
         )
 
         val modifications = ArrayList<Modification>()

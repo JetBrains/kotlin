@@ -19,7 +19,7 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testNavigateToCommonDeclarationWhenPlatformSpecificOverloadAvailable() {
         doTest(
             "fun some() { <caret>mapOf(1 to 2, 3 to 4) }",
-            "Maps.kt"
+            "Maps.kt",
         )
     }
 
@@ -27,7 +27,7 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testNavigateToJVMSpecificationWithoutExpectActual() {
         doTest(
             "fun some() { <caret>mapOf(1 to 2) }",
-            "MapsJVM.kt"
+            "MapsJVM.kt",
         )
     }
 
@@ -42,19 +42,19 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
 
             // actual typealiases in JVM:
             "ArrayList<String>",
-            "HashSet<String>"
+            "HashSet<String>",
         )
 
         for (type in checkedTypes) {
             doTest("fun some() { val collection: <caret>$type? = null }") { navigationElement ->
                 TestCase.assertTrue(
                     "$navigationElement is not instance of ${KtClassOrObject::class} or ${KtTypeAlias::class}",
-                    navigationElement is KtClassOrObject || navigationElement is KtTypeAlias
+                    navigationElement is KtClassOrObject || navigationElement is KtTypeAlias,
                 )
 
                 TestCase.assertTrue(
                     "$navigationElement is not actual declaration",
-                    (navigationElement as KtModifierListOwner).hasActualModifier()
+                    (navigationElement as KtModifierListOwner).hasActualModifier(),
                 )
             }
         }
@@ -64,7 +64,7 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testRefToPrintlnWithJVM() {
         doTest(
             "fun foo() { <caret>println() }",
-            "Console.kt"
+            "Console.kt",
         )
     }
 
@@ -72,7 +72,7 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testRefToPrintlnWithJS() {
         doTest(
             "fun foo() { <caret>println() }",
-            "console.kt"
+            "console.kt",
         )
     }
 
@@ -80,7 +80,7 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testRefToPrintlnWithJVMAndJS() {
         doTest(
             "fun foo() { <caret>println() }",
-            "Console.kt"
+            "Console.kt",
         )
     }
 
@@ -88,7 +88,7 @@ class LightNavigateToStdlibSourceTest : KotlinLightCodeInsightFixtureTestCase() 
     fun testRefToPrintlnWithJSAndJVM() {
         doTest(
             "fun foo() { <caret>println() }",
-            "console.kt"
+            "console.kt",
         )
     }
 

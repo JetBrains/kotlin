@@ -90,7 +90,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             lazyOperationsLog = LazyOperationsLog(HASH_SANITIZER)
             storageManager = LoggingStorageManager(
                 LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker),
-                lazyOperationsLog.addRecordFunction
+                lazyOperationsLog.addRecordFunction,
             )
         } else {
             storageManager = LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker)
@@ -113,7 +113,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     CompilerTestLanguageVersionSettings(
                         DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
                         if (coroutinesPackage.contains("experimental")) ApiVersion.KOTLIN_1_2 else ApiVersion.KOTLIN_1_3,
-                        if (coroutinesPackage.contains("experimental")) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3
+                        if (coroutinesPackage.contains("experimental")) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3,
                     )
                 else loadLanguageVersionSettings(testFilesInModule)
 
@@ -124,7 +124,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
                 moduleContext, ktFiles, NoScopeRecordCliBindingTrace(),
-                languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule)
+                languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule),
             )
             if (oldModule != result.moduleDescriptor) {
                 // For common modules, we use DefaultAnalyzerFacade who creates ModuleDescriptor instances by itself
@@ -188,7 +188,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 actualText,
                 shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule,
                 languageVersionSettingsByModule[module]!!,
-                moduleDescriptor
+                moduleDescriptor,
             )
         }
 
@@ -212,7 +212,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         exceptionFromDynamicCallDescriptorsValidation?.let { throw it }
 
         performAdditionalChecksAfterDiagnostics(
-            testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
+            testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule,
         )
         checkOriginalAndFirTestdataIdentity(testDataFile)
     }
@@ -237,10 +237,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val postfix = when {
             InTextDirectivesUtils.isDirectiveDefined(originalTestFileText, "// JAVAC_EXPECTED_FILE") &&
-                    environment.configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC) -> ".javac.txt"
+                    environment.configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC),
+            -> ".javac.txt"
 
             InTextDirectivesUtils.isDirectiveDefined(originalTestFileText, "// NI_EXPECTED_FILE") &&
-                    files.any { it.newInferenceEnabled } && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI -> ".ni.txt"
+                    files.any { it.newInferenceEnabled } && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI,
+            -> ".ni.txt"
 
             else -> ".txt"
         }
@@ -254,7 +256,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         moduleFiles: Map<TestModule?, List<TestFile>>,
         moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
         moduleBindings: Map<TestModule?, BindingContext>,
-        languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>
+        languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>,
     ) {
         // To be overridden by diagnostic-like tests.
     }
@@ -267,7 +269,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 if (result != null && result != current) {
                     Assert.fail(
                         "More than one file in the module has $LANGUAGE_DIRECTIVE or $API_VERSION_DIRECTIVE directive specified. " +
-                                "This is not supported. Please move all directives into one file"
+                                "This is not supported. Please move all directives into one file",
                     )
                 }
                 result = current
@@ -284,7 +286,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         return CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
             LanguageVersionSettingsImpl.DEFAULT.apiVersion,
-            LanguageVersionSettingsImpl.DEFAULT.languageVersion
+            LanguageVersionSettingsImpl.DEFAULT.languageVersion,
         )
     }
 
@@ -296,7 +298,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 if (result != null && result != current) {
                     Assert.fail(
                         "More than one file in the module has $JVM_TARGET directive specified. " +
-                                "This is not supported. Please move all directives into one file"
+                                "This is not supported. Please move all directives into one file",
                     )
                 }
                 result = current
@@ -344,7 +346,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         moduleTrace: BindingTrace,
         languageVersionSettings: LanguageVersionSettings,
         separateModules: Boolean,
-        jvmTarget: JvmTarget
+        jvmTarget: JvmTarget,
     ): AnalysisResult {
         @Suppress("NAME_SHADOWING")
         var files = files
@@ -365,7 +367,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     this.languageVersionSettings = languageVersionSettings
                     this.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
                 },
-                environment::createPackagePartProvider
+                environment::createPackagePartProvider,
             )
         }
 
@@ -376,8 +378,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
                 mapOf(
-                    MODULE_FILES to files
-                )
+                    MODULE_FILES to files,
+                ),
             ) { _ ->
                 // TODO
                 MetadataPartProvider.Empty
@@ -401,7 +403,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             ExpectActualTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             languageVersionSettings,
-            useBuiltInsProvider = true
+            useBuiltInsProvider = true,
         )
 
         container.initJvmBuiltInsForTopDownAnalysis()
@@ -411,9 +413,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             CompositePackageFragmentProvider(
                 listOf(
                     container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
-                    container.get<JavaDescriptorResolver>().packageFragmentProvider
-                )
-            )
+                    container.get<JavaDescriptorResolver>().packageFragmentProvider,
+                ),
+            ),
         )
 
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
@@ -445,7 +447,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         expectedFile: File,
         testFiles: List<TestFile>,
         modules: Map<TestModule?, ModuleDescriptorImpl>,
-        coroutinesPackage: String
+        coroutinesPackage: String,
     ) {
         if (skipDescriptorsValidation()) return
         if (testFiles.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT") }) {
@@ -466,15 +468,17 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val textByPackage = packages.keysToMap { StringBuilder() }
 
-        val sortedModules = modules.keys.sortedWith(Comparator { x, y ->
-            when {
-                x == null && y == null -> 0
-                x == null && y != null -> -1
-                x != null && y == null -> 1
-                x != null && y != null -> x.compareTo(y)
-                else -> error("Unreachable")
-            }
-        })
+        val sortedModules = modules.keys.sortedWith(
+            Comparator { x, y ->
+                when {
+                    x == null && y == null -> 0
+                    x == null && y != null -> -1
+                    x != null && y == null -> 1
+                    x != null && y != null -> x.compareTo(y)
+                    else -> error("Unreachable")
+                }
+            },
+        )
 
         for ((packageName, packageText) in textByPackage.entries) {
             val module = sortedModules.iterator()
@@ -532,7 +536,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
     private fun createdAffectedPackagesConfiguration(
         testFiles: List<TestFile>,
-        modules: Collection<ModuleDescriptor>
+        modules: Collection<ModuleDescriptor>,
     ): RecursiveDescriptorComparator.Configuration {
         val packagesNames = (
                 testFiles.filter { it.ktFile == null }
@@ -564,7 +568,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
     private fun createModules(
         groupedByModule: Map<TestModule?, List<TestFile>>,
-        storageManager: StorageManager
+        storageManager: StorageManager,
     ): MutableMap<TestModule?, ModuleDescriptorImpl> {
         val modules = HashMap<TestModule?, ModuleDescriptorImpl>()
 
@@ -612,7 +616,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun checkAllResolvedCallsAreCompleted(
         ktFiles: List<KtFile>,
         bindingContext: BindingContext,
-        configuredLanguageVersionSettings: LanguageVersionSettings
+        configuredLanguageVersionSettings: LanguageVersionSettings,
     ) {
         if (ktFiles.any { file -> AnalyzingUtils.getSyntaxErrorRanges(file).isNotEmpty() }) return
 
@@ -635,7 +639,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                         unresolvedCallsOnElements.joinToString(separator = "\n") { element ->
                             val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
                             "'${element.text}'$lineAndColumn"
-                        }
+                        },
             )
         }
 
@@ -644,23 +648,23 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
     private fun checkResolvedCallsInDiagnostics(
         bindingContext: BindingContext,
-        configuredLanguageVersionSettings: LanguageVersionSettings
+        configuredLanguageVersionSettings: LanguageVersionSettings,
     ) {
         val diagnosticsStoringResolvedCalls1 = setOf(
             OVERLOAD_RESOLUTION_AMBIGUITY, NONE_APPLICABLE, CANNOT_COMPLETE_RESOLVE, UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY
+            ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY,
         )
         val diagnosticsStoringResolvedCalls2 = setOf(
-            COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
+            COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
         )
 
         for (diagnostic in bindingContext.diagnostics) {
             when (diagnostic.factory) {
                 in diagnosticsStoringResolvedCalls1 -> assertResolvedCallsAreCompleted(
-                    diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls1).a, configuredLanguageVersionSettings
+                    diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls1).a, configuredLanguageVersionSettings,
                 )
                 in diagnosticsStoringResolvedCalls2 -> assertResolvedCallsAreCompleted(
-                    diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls2).b, configuredLanguageVersionSettings
+                    diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls2).b, configuredLanguageVersionSettings,
                 )
             }
         }
@@ -669,14 +673,16 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun assertResolvedCallsAreCompleted(
         diagnostic: Diagnostic,
         resolvedCalls: Collection<ResolvedCall<*>>,
-        configuredLanguageVersionSettings: LanguageVersionSettings
+        configuredLanguageVersionSettings: LanguageVersionSettings,
     ) {
         val element = diagnostic.psiElement
         val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
         if (configuredLanguageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return
 
-        assertTrue("Resolved calls stored in ${diagnostic.factory.name}\nfor '${element.text}'$lineAndColumn are not completed",
-                   resolvedCalls.all { (it as MutableResolvedCall<*>).isCompleted })
+        assertTrue(
+            "Resolved calls stored in ${diagnostic.factory.name}\nfor '${element.text}'$lineAndColumn are not completed",
+            resolvedCalls.all { (it as MutableResolvedCall<*>).isCompleted },
+        )
     }
 
     companion object {

@@ -60,7 +60,7 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
         innerPerfTest(WARM_UP) {
             myFixture.configureByText(
                 KotlinFileType.INSTANCE,
-                "class Foo {\n    private val value: String? = n<caret>\n}"
+                "class Foo {\n    private val value: String? = n<caret>\n}",
             )
         }
     }
@@ -83,7 +83,7 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
             val backspaceCount = InTextDirectivesUtils.getPrefixedInt(document.text, BACKSPACES_DIRECTIVE_PREFIX)
             assertTrue(
                 "At least one of \"$TYPE_DIRECTIVE_PREFIX\" and \"$BACKSPACES_DIRECTIVE_PREFIX\" should be defined",
-                textToType != null || backspaceCount != null
+                textToType != null || backspaceCount != null,
             )
 
             val beforeMarker = document.createRangeMarker(beforeMarkerOffset, beforeMarkerOffset + BEFORE_MARKER.length)

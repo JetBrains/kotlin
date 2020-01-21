@@ -37,7 +37,7 @@ fun ModuleChunk.toKotlinChunk(context: CompileContext): KotlinChunk? =
 fun ModuleBuildTarget(module: JpsModule, isTests: Boolean) =
     ModuleBuildTarget(
         module,
-        if (isTests) JavaModuleBuildTargetType.TEST else JavaModuleBuildTargetType.PRODUCTION
+        if (isTests) JavaModuleBuildTargetType.TEST else JavaModuleBuildTargetType.PRODUCTION,
     )
 
 val JpsModule.productionBuildTarget

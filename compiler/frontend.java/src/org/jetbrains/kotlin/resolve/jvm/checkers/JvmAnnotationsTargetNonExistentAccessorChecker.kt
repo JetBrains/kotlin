@@ -72,7 +72,7 @@ class JvmAnnotationsTargetNonExistentAccessorChecker : DeclarationChecker {
     private fun reportOnAnnotationWithNonSourceRetention(
         entry: KtAnnotationEntry,
         declarationName: String,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         val annotationDescriptor = context.trace[BindingContext.ANNOTATION, entry] ?: return
         if (annotationDescriptor.annotationClass?.getAnnotationRetention() == KotlinRetention.SOURCE) return

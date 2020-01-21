@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 
 abstract class FirPartialBodyResolveTransformer(
-    val transformer: FirBodyResolveTransformer
+    val transformer: FirBodyResolveTransformer,
 ) : FirAbstractBodyResolveTransformer(transformer.transformerPhase) {
     @Suppress("OVERRIDE_BY_INLINE")
     final override inline val components: BodyResolveTransformerComponents get() = transformer.components

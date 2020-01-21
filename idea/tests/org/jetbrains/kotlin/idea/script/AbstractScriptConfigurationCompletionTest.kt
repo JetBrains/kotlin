@@ -19,6 +19,7 @@ abstract class AbstractScriptConfigurationCompletionTest : AbstractScriptConfigu
                 setType(completionType)
                 complete(count)
                 myItems
-            })
+            },
+        )
     }
 }

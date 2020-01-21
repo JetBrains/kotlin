@@ -12,7 +12,7 @@ class RunTestMethodModel(
     private val targetBackend: TargetBackend,
     private val testMethodName: String,
     private val testRunnerMethodName: String,
-    private val additionalRunnerArguments: List<String> = emptyList()
+    private val additionalRunnerArguments: List<String> = emptyList(),
 ) : MethodModel {
     override val name = METHOD_NAME
     override val dataString: String? = null

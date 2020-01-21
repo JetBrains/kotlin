@@ -40,7 +40,7 @@ import kotlin.reflect.jvm.isAccessible
 abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     "",
     "kt",
-    KotlinParserDefinition()
+    KotlinParserDefinition(),
 ) {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 

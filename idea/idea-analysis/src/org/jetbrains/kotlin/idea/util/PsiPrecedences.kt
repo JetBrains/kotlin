@@ -37,7 +37,8 @@ object PsiPrecedences {
         return when (expression) {
             is KtAnnotatedExpression,
             is KtLabeledExpression,
-            is KtPrefixExpression -> PRECEDENCE_OF_PREFIX_EXPRESSION
+            is KtPrefixExpression,
+            -> PRECEDENCE_OF_PREFIX_EXPRESSION
             is KtPostfixExpression -> PRECEDENCE_OF_POSTFIX_EXPRESSION
             is KtOperationExpression -> {
                 val operation = expression.operationReference.getReferencedNameElementType()

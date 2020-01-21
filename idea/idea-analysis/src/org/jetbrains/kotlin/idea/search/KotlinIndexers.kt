@@ -52,7 +52,7 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer) : Ba
     private companion object {
         private val CODE_TOKENS = TokenSet.orSet(
             TokenSet.create(*ALL_SEARCHABLE_OPERATIONS.toTypedArray()),
-            TokenSet.create(KtTokens.IDENTIFIER)
+            TokenSet.create(KtTokens.IDENTIFIER),
         )
 
         private val COMMENT_TOKENS = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
@@ -77,7 +77,7 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer) : Ba
                             null,
                             prevTokenStart,
                             prevTokenEnd,
-                            KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT.toInt()
+                            KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT.toInt(),
                         )
                     }
                 }

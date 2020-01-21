@@ -15,7 +15,7 @@ package org.jetbrains.kotlin.jps.incremental
 data class CacheAttributesDiff<Attrs: Any>(
     val manager: CacheAttributesManager<Attrs>,
     val actual: Attrs?,
-    val expected: Attrs?
+    val expected: Attrs?,
 ) {
     val status: CacheStatus
         get() =

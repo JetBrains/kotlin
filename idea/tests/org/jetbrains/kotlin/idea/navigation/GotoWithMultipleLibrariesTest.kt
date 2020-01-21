@@ -24,21 +24,21 @@ class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
     fun testOneHasSourceAndOneDoesNot() {
         doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
             withSource = 1,
-            noSource = 1
+            noSource = 1,
         )
     }
 
     fun testOneHasSourceAndManyDoNot() {
         doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
             withSource = 1,
-            noSource = 3
+            noSource = 3,
         )
     }
 
     fun testSeveralWithSource() {
         doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
             withSource = 2,
-            noSource = 2
+            noSource = 2,
         )
     }
 

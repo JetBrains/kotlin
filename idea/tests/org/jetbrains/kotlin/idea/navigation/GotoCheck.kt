@@ -22,13 +22,13 @@ object GotoCheck {
         model: FilteringGotoByModel<Language>,
         editor: Editor,
         nonProjectSymbols: Boolean = false,
-        checkNavigation: Boolean = false
+        checkNavigation: Boolean = false,
     ) {
         val documentText = editor.document.text
         val searchTextList = InTextDirectivesUtils.findListWithPrefixes(documentText, "// SEARCH_TEXT:")
         Assert.assertFalse(
             "There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
-            searchTextList.isEmpty()
+            searchTextList.isEmpty(),
         )
 
         val expectedReferences =

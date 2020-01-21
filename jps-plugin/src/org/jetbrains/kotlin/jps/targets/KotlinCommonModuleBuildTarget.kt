@@ -46,7 +46,7 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ): Boolean {
         require(chunk.representativeTarget == this)
 
@@ -59,7 +59,7 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
             environment,
             destination,
             dependenciesOutputDirs + libraryFiles,
-            sourceFiles // incremental K2MetadataCompiler not supported yet
+            sourceFiles, // incremental K2MetadataCompiler not supported yet
         )
 
         return true
@@ -90,7 +90,7 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
     private fun addDependencyMetaFile(
         module: JpsModule,
         result: MutableList<String>,
-        isTests: Boolean
+        isTests: Boolean,
     ) {
         val dependencyBuildTarget = kotlinContext.targetsBinding[ModuleBuildTarget(module, isTests)]
 

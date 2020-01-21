@@ -23,7 +23,7 @@ import kotlin.script.experimental.util.PropertiesCollection
 
 class ScriptCompilationConfigurationFromDefinition(
     val hostConfiguration: ScriptingHostConfiguration,
-    val scriptDefinition: KotlinScriptDefinition
+    val scriptDefinition: KotlinScriptDefinition,
 ) : ScriptCompilationConfiguration(
     {
         hostConfiguration(hostConfiguration)
@@ -46,7 +46,7 @@ class ScriptCompilationConfigurationFromDefinition(
                         ScriptContentsFromRefinementContext(context),
                         context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
                             it[ScriptingHostConfiguration.getEnvironment]?.invoke()
-                        }.orEmpty()
+                        }.orEmpty(),
                     )
 
                     val reports = resolveResult.reports.map { ScriptDiagnostic(it.message, mapLegacyDiagnosticSeverity(it.severity)) }
@@ -71,7 +71,7 @@ class ScriptCompilationConfigurationFromDefinition(
                 }
             }
         }
-    }
+    },
 )
 
 private class ScriptContentsFromRefinementContext(val context: ScriptConfigurationRefinementContext) : ScriptContents {

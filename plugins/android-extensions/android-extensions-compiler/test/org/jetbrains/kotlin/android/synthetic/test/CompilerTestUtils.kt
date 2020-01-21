@@ -40,7 +40,7 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
     ExpressionCodegenExtension.registerExtension(project, CliAndroidExtensionsExpressionCodegenExtension(true, CacheImplementation.DEFAULT))
     StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
     ClassBuilderInterceptorExtension.registerExtension(
-        project, CliAndroidOnDestroyClassBuilderInterceptorExtension(CacheImplementation.DEFAULT)
+        project, CliAndroidOnDestroyClassBuilderInterceptorExtension(CacheImplementation.DEFAULT),
     )
     PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension(true))
 

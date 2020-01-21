@@ -73,7 +73,7 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return DFS.ifAny(
         listOf(this),
         { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
-        { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
+        { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault },
     )
 }
 
@@ -115,7 +115,7 @@ val ValueParameterDescriptor.isActualParameterWithCorrespondingExpectedDefault: 
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
     parameter: ParameterDescriptor,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
@@ -126,7 +126,7 @@ private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInFunction(
     parameter: ParameterDescriptor,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)) return false
 

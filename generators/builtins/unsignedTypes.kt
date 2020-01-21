@@ -17,7 +17,7 @@ import java.io.PrintWriter
 
 fun generateUnsignedTypes(
     targetDir: File,
-    generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit
+    generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit,
 ) {
     for (type in UnsignedType.values()) {
         generate(File(targetDir, "kotlin/${type.capitalized}.kt")) { UnsignedTypeGenerator(type, it) }
@@ -47,7 +47,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("@ExperimentalUnsignedTypes")
         out.println("public inline class $className @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
-        out.println("""    companion object {
+        out.println(
+            """    companion object {
         /**
          * A constant holding the minimum value an instance of $className can have.
          */
@@ -67,7 +68,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
          * The number of bits used to represent an instance of $className in a binary form.
          */
         public const val SIZE_BITS: Int = ${type.byteSize * 8}
-    }""")
+    }""",
+        )
 
         generateCompareTo()
 
@@ -96,12 +98,14 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
     private fun generateCompareTo() {
         for (otherType in UnsignedType.values()) {
-            out.println("""
+            out.println(
+                """
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
-     */""")
+     */""",
+            )
             out.println("    @kotlin.internal.InlineOnly")
             if (otherType == type)
                 out.println("""    @Suppress("OVERRIDE_BY_INLINE")""")
@@ -232,11 +236,13 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline fun to$signed(): $signed = ")
-            out.println(when {
-                otherType < type -> "data.to$signed()"
-                otherType == type -> "data"
-                else -> "data.to$signed() and ${type.mask}"
-            })
+            out.println(
+                when {
+                    otherType < type -> "data.to$signed()"
+                    otherType == type -> "data"
+                    else -> "data.to$signed() and ${type.mask}"
+                },
+            )
         }
         out.println()
 
@@ -266,11 +272,13 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline fun to$name(): $name = ")
-            out.println(when {
-                otherType > type -> "${otherType.capitalized}(data.to${otherType.asSigned.capitalized}() and ${type.mask})"
-                otherType == type -> "this"
-                else -> "data.to${otherType.capitalized}()"
-            })
+            out.println(
+                when {
+                    otherType > type -> "${otherType.capitalized}(data.to${otherType.asSigned.capitalized}() and ${type.mask})"
+                    otherType == type -> "this"
+                    else -> "data.to${otherType.capitalized}()"
+                },
+            )
         }
         out.println()
     }
@@ -331,10 +339,12 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println("@ExperimentalUnsignedTypes")
             out.println("@kotlin.internal.InlineOnly")
             out.print("public inline fun $otherSigned.to$className(): $className = ")
-            out.println(when {
-                otherType == type -> "$className(this)"
-                else -> "$className(this.to$thisSigned())"
-            })
+            out.println(
+                when {
+                    otherType == type -> "$className(this)"
+                    else -> "$className(this.to$thisSigned())"
+                },
+            )
         }
 
         if (type == UnsignedType.UBYTE || type == UnsignedType.USHORT)
@@ -352,7 +362,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                  * The fractional part, if any, is rounded down towards zero.
                  * Returns zero if this `$otherName` value is negative or `NaN`, [$className.MAX_VALUE] if it's bigger than `$className.MAX_VALUE`.
                  */
-                """.trimIndent()
+                """.trimIndent(),
             )
             out.println("@SinceKotlin(\"1.3\")")
             out.println("@ExperimentalUnsignedTypes")
@@ -469,13 +479,14 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         return (elements as Collection<*>).all { it is $elementType && storage.contains(it.to$storageElementType()) }
     }
 
-    override fun isEmpty(): Boolean = this.storage.size == 0"""
+    override fun isEmpty(): Boolean = this.storage.size == 0""",
         )
 
         out.println("}")
 
         // TODO: Make inline constructor, like in ByteArray
-        out.println("""
+        out.println(
+            """
 /**
  * Creates a new array of the specified [size], where each element is calculated by calling the specified
  * [init] function.
@@ -493,7 +504,7 @@ public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elements"""
+public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elements""",
         )
     }
 }
@@ -584,7 +595,10 @@ internal constructor(
                 first == other.first && last == other.last && step == other.step)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt()) + ${hashCodeConversion("step", isSigned = true)}.toInt())
+        if (isEmpty()) -1 else (31 * (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt()) + ${hashCodeConversion(
+                "step",
+                isSigned = true,
+            )}.toInt())
 
     override fun toString(): String = if (step > 0) "${'$'}first..${'$'}last step ${'$'}step" else "${'$'}first downTo ${'$'}last step ${'$'}{-step}"
 
@@ -627,7 +641,7 @@ private class ${elementType}ProgressionIterator(first: $elementType, last: $elem
         return value
     }
 }
-"""
+""",
         )
     }
 

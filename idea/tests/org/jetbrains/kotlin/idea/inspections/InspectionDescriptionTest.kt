@@ -41,7 +41,7 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
                 errors.append(
                     "Short names must be unique: " + shortName + "\n" +
                             "inspection: '" + desc(tool) + "\n" +
-                            "        and '" + desc(toolWrapper)
+                            "        and '" + desc(toolWrapper),
                 )
             }
             shortNames.put(shortName, toolWrapper)
@@ -81,7 +81,7 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
                 errors.append(
                     "Short names must be unique: '" + shortName + "':\n" +
                             "inspection: '" + ep1.implementationClass + "' in '" + ep1.pluginDescriptor + "'\n" +
-                            ";       and '" + ep.implementationClass + "' in '" + ep.pluginDescriptor + "'"
+                            ";       and '" + ep.implementationClass + "' in '" + ep.pluginDescriptor + "'",
                 )
             }
             shortNames.put(shortName, ep)
@@ -132,7 +132,7 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
         attributeName: String,
         xmlValue: String?,
         defaultXmlValue: String?,
-        javaValue: String?
+        javaValue: String?,
     ) {
         if (StringUtil.isNotEmpty(xmlValue)) {
             if (javaValue != xmlValue) {

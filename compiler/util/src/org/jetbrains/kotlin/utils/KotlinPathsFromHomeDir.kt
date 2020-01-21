@@ -21,7 +21,7 @@ import kotlin.collections.*
 import java.io.File
 
 class KotlinPathsFromHomeDir(
-    override val homePath: File // kotlinc directory
+    override val homePath: File, // kotlinc directory
 ) : KotlinPathsFromBaseDirectory(File(homePath, "lib")) {
 
     // TODO: extend when needed

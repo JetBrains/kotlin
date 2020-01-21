@@ -43,7 +43,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MI
 class SerializableJsTranslator(
     val declaration: KtPureClassOrObject,
     val descriptor: ClassDescriptor,
-    val context: TranslationContext
+    val context: TranslationContext,
 ) : SerializableCodegen(descriptor, context.bindingContext()) {
 
     private val initMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(declaration, descriptor.getSuperClassNotAny())
@@ -66,9 +66,9 @@ class SerializableJsTranslator(
                     thiz.name,
                     JsAstUtils.or(
                         markerAsThis,
-                        Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef())
-                    )
-                )
+                        Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef()),
+                    ),
+                ),
             )
             val serializableProperties = properties.serializableProperties
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
@@ -82,7 +82,7 @@ class SerializableJsTranslator(
                         superClass,
                         jsFun.parameters.map { it.name.makeRef() },
                         thiz,
-                        seenVarsOffset
+                        seenVarsOffset,
                     )
                 }
                 else -> generateSuperNonSerializableCall(superClass, thiz)
@@ -139,7 +139,7 @@ class SerializableJsTranslator(
         superClass: ClassDescriptor,
         parameters: List<JsExpression>,
         thisParameter: JsExpression,
-        propertiesStart: Int
+        propertiesStart: Int,
     ): Int {
         val constrDesc = superClass.constructors.single(ClassConstructorDescriptor::isSerializationCtor)
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
@@ -161,14 +161,15 @@ class SerializableJsTranslator(
             declaration: KtPureClassOrObject,
             serializableClass: ClassDescriptor,
             translator: DeclarationBodyVisitor,
-            context: TranslationContext
+            context: TranslationContext,
         ) {
             if (serializableClass.isInternalSerializable)
                 SerializableJsTranslator(declaration, serializableClass, context).generate()
             else if (serializableClass.serializableAnnotationIsUseless) {
                 throw CompilationException(
                     "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
-                            "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
+                            "Provide serializer manually via e.g. companion object",
+                    null, serializableClass.findPsi(),
                 )
             }
         }

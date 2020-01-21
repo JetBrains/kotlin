@@ -94,8 +94,10 @@ class Analyzer(private val context: Context) : JsVisitor() {
                 when {
                     // Object.defineProperty()
                     context.isObjectDefineProperty(function) ->
-                        handleObjectDefineProperty(x, expression.arguments.getOrNull(0), expression.arguments.getOrNull(1),
-                                                   expression.arguments.getOrNull(2))
+                        handleObjectDefineProperty(
+                            x, expression.arguments.getOrNull(0), expression.arguments.getOrNull(1),
+                            expression.arguments.getOrNull(2),
+                        )
 
                     // Kotlin.defineModule()
                     context.isDefineModule(function) ->
@@ -108,8 +110,10 @@ class Analyzer(private val context: Context) : JsVisitor() {
         }
     }
 
-    private fun handleObjectDefineProperty(statement: JsStatement, target: JsExpression?, propertyName: JsExpression?,
-                                           propertyDescriptor: JsExpression?) {
+    private fun handleObjectDefineProperty(
+        statement: JsStatement, target: JsExpression?, propertyName: JsExpression?,
+        propertyDescriptor: JsExpression?,
+    ) {
         if (target == null || propertyName !is JsStringLiteral || propertyDescriptor == null) return
         val targetNode = context.extractNode(target) ?: return
 
@@ -400,25 +404,27 @@ class Analyzer(private val context: Context) : JsVisitor() {
     // However, we need first to ensure that f always occurs as an invocation qualifier, which is checked with this function
     private fun isProperFunctionalParameter(body: JsStatement, parameter: JsParameter): Boolean {
         var result = true
-        body.accept(object : RecursiveJsVisitor() {
-            override fun visitInvocation(invocation: JsInvocation) {
-                val qualifier = invocation.qualifier
-                if (qualifier is JsNameRef && qualifier.qualifier == null && qualifier.name == parameter.name) {
-                    if (invocation.arguments.all { context.extractNode(it) != null }) {
-                        return
+        body.accept(
+            object : RecursiveJsVisitor() {
+                override fun visitInvocation(invocation: JsInvocation) {
+                    val qualifier = invocation.qualifier
+                    if (qualifier is JsNameRef && qualifier.qualifier == null && qualifier.name == parameter.name) {
+                        if (invocation.arguments.all { context.extractNode(it) != null }) {
+                            return
+                        }
                     }
+                    if (context.isAmdDefine(qualifier)) return
+                    super.visitInvocation(invocation)
                 }
-                if (context.isAmdDefine(qualifier)) return
-                super.visitInvocation(invocation)
-            }
 
-            override fun visitNameRef(nameRef: JsNameRef) {
-                if (nameRef.name == parameter.name) {
-                    result = false
+                override fun visitNameRef(nameRef: JsNameRef) {
+                    if (nameRef.name == parameter.name) {
+                        result = false
+                    }
+                    super.visitNameRef(nameRef)
                 }
-                super.visitNameRef(nameRef)
-            }
-        })
+            },
+        )
         return result
     }
 }

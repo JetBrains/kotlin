@@ -31,7 +31,7 @@ class CliDeclarationProviderFactoryService(private val sourceFiles: Collection<K
         storageManager: StorageManager,
         syntheticFiles: Collection<KtFile>,
         filesScope: GlobalSearchScope,
-        moduleInfo: ModuleInfo
+        moduleInfo: ModuleInfo,
     ): DeclarationProviderFactory {
         val allFiles = ArrayList<KtFile>()
         sourceFiles.filterTo(allFiles) {

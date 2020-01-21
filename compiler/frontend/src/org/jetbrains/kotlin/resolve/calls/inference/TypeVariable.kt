@@ -26,7 +26,7 @@ class TypeVariable(
     val call: CallHandle,
     internal val freshTypeParameter: TypeParameterDescriptor,
     val originalTypeParameter: TypeParameterDescriptor,
-    val isExternal: Boolean
+    val isExternal: Boolean,
 ) {
     val name: Name get() = originalTypeParameter.name
 

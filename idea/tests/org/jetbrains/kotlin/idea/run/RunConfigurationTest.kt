@@ -43,7 +43,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testMainInTest() {
         val createResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
         configureLanguageAndApiVersion(
-            createResult.module.project, createResult.module, LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString
+            createResult.module.project, createResult.module, LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString,
         )
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, addJdk(testRootDisposable, ::mockJdk))
 
@@ -79,13 +79,13 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
 
                     assertNotNull(
                         "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
-                        KotlinRunConfigurationProducer.getEntryPointContainer(function)
+                        KotlinRunConfigurationProducer.getEntryPointContainer(function),
                     )
                 } else {
                     try {
                         createConfigurationFromMain(function.fqName?.asString()!!).checkConfiguration()
                         fail(
-                            "$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()"
+                            "$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()",
                         )
                     } catch (expected: Throwable) {
                     }
@@ -93,12 +93,12 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                     if (function.containingFile.text.startsWith("// entryPointExists")) {
                         assertNotNull(
                             "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
-                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function),
                         )
                     } else {
                         assertNull(
                             "Kotlin configuration producer shouldn't produce configuration for ${function.fqName?.asString()}",
-                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function),
                         )
                     }
                 }
@@ -108,11 +108,13 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         createResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
             val psiFile = PsiManager.getInstance(createResult.module.project).findFile(it)
             if (psiFile is KtFile) {
-                psiFile.acceptChildren(object : KtVisitorVoid() {
-                    override fun visitNamedFunction(function: KtNamedFunction) {
-                        functionVisitor(function)
-                    }
-                })
+                psiFile.acceptChildren(
+                    object : KtVisitorVoid() {
+                        override fun visitNamedFunction(function: KtNamedFunction) {
+                            functionVisitor(function)
+                        }
+                    },
+                )
             }
         }
     }
@@ -126,7 +128,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, testProjectJdk)
 
         val moduleWithDependencySrcDir = configureModule(
-            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency
+            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency,
         ).srcOutputDir
 
         ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
@@ -241,7 +243,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                             actualClasses.add(actualClass)
                         }
                     }
-                }
+                },
             )
             assertEquals(expectedClasses, actualClasses)
         } finally {

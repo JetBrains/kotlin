@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.compose
 
 class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
     phase = FirResolvePhase.TYPES,
-    reversedScopePriority = true
+    reversedScopePriority = true,
 ) {
     override lateinit var session: FirSession
 

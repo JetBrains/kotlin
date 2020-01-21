@@ -48,7 +48,7 @@ class FirResolveBench(val withProgress: Boolean) {
         val errorQualifiedAccessTypes: Int,
         val fileCount: Int,
         val errorTypesReports: Map<String, ErrorTypeReport>,
-        val timePerTransformer: Map<String, Measure>
+        val timePerTransformer: Map<String, Measure>,
     ) {
         val totalTypes: Int = unresolvedTypes + resolvedTypes
         val goodTypes: Int = resolvedTypes - errorTypes - implicitTypes
@@ -74,7 +74,7 @@ class FirResolveBench(val withProgress: Boolean) {
         var cpu: Long = 0,
         var gcTime: Long = 0,
         var gcCollections: Int = 0,
-        var files: Int = 0
+        var files: Int = 0,
     )
 
     val timePerTransformer = mutableMapOf<KClass<*>, Measure>()
@@ -95,7 +95,7 @@ class FirResolveBench(val withProgress: Boolean) {
 
     fun buildFiles(
         builder: RawFirBuilder,
-        ktFiles: List<KtFile>
+        ktFiles: List<KtFile>,
     ): List<FirFile> {
         return ktFiles.map { file ->
             val before = vmStateSnapshot()
@@ -115,7 +115,7 @@ class FirResolveBench(val withProgress: Boolean) {
 
     fun buildFiles(
         builder: LightTree2Fir,
-        files: List<File>
+        files: List<File>,
     ): List<FirFile> {
         return files.map { file ->
             val before = vmStateSnapshot()
@@ -177,7 +177,7 @@ class FirResolveBench(val withProgress: Boolean) {
 
     fun processFiles(
         firFiles: List<FirFile>,
-        transformers: List<FirTransformer<Nothing?>>
+        transformers: List<FirTransformer<Nothing?>>,
     ) {
         fileCount += firFiles.size
         try {
@@ -199,93 +199,95 @@ class FirResolveBench(val withProgress: Boolean) {
             val fileDocumentManager = FileDocumentManager.getInstance()
 
             firFiles.forEach {
-                it.accept(object : FirDefaultVisitorVoid() {
+                it.accept(
+                    object : FirDefaultVisitorVoid() {
 
-                    fun reportProblem(problem: String, psi: PsiElement) {
-                        val document = try {
-                            fileDocumentManager.getDocument(psi.containingFile.virtualFile)
-                        } catch (t: Throwable) {
-                            throw Exception("for file ${psi.containingFile}", t)
+                        fun reportProblem(problem: String, psi: PsiElement) {
+                            val document = try {
+                                fileDocumentManager.getDocument(psi.containingFile.virtualFile)
+                            } catch (t: Throwable) {
+                                throw Exception("for file ${psi.containingFile}", t)
+                            }
+                            val line = (document?.getLineNumber(psi.startOffset) ?: 0)
+                            val char = psi.startOffset - (document?.getLineStartOffset(line) ?: 0)
+                            val report = "e: ${psi.containingFile?.virtualFile?.path}: (${line + 1}:$char): $problem"
+                            errorTypesReports.getOrPut(problem) { ErrorTypeReport(report) }.count++
                         }
-                        val line = (document?.getLineNumber(psi.startOffset) ?: 0)
-                        val char = psi.startOffset - (document?.getLineStartOffset(line) ?: 0)
-                        val report = "e: ${psi.containingFile?.virtualFile?.path}: (${line + 1}:$char): $problem"
-                        errorTypesReports.getOrPut(problem) { ErrorTypeReport(report) }.count++
-                    }
 
-                    override fun visitElement(element: FirElement) {
-                        element.acceptChildren(this)
-                    }
+                        override fun visitElement(element: FirElement) {
+                            element.acceptChildren(this)
+                        }
 
-                    override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                        val typeRef = functionCall.typeRef
-                        val callee = functionCall.calleeReference
-                        if (typeRef is FirResolvedTypeRef) {
-                            val type = typeRef.type
-                            if (type is ConeKotlinErrorType) {
-                                errorFunctionCallTypes++
-                                val psi = callee.psi
-                                if (callee is FirErrorNamedReference && psi != null) {
-                                    reportProblem(callee.diagnostic.reason, psi)
+                        override fun visitFunctionCall(functionCall: FirFunctionCall) {
+                            val typeRef = functionCall.typeRef
+                            val callee = functionCall.calleeReference
+                            if (typeRef is FirResolvedTypeRef) {
+                                val type = typeRef.type
+                                if (type is ConeKotlinErrorType) {
+                                    errorFunctionCallTypes++
+                                    val psi = callee.psi
+                                    if (callee is FirErrorNamedReference && psi != null) {
+                                        reportProblem(callee.diagnostic.reason, psi)
+                                    }
                                 }
                             }
+
+                            visitElement(functionCall)
                         }
 
-                        visitElement(functionCall)
-                    }
-
-                    override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-                        val typeRef = qualifiedAccessExpression.typeRef
-                        val callee = qualifiedAccessExpression.calleeReference
-                        if (typeRef is FirResolvedTypeRef) {
-                            val type = typeRef.type
-                            if (type is ConeKotlinErrorType) {
-                                errorQualifiedAccessTypes++
-                                val psi = callee.psi
-                                if (callee is FirErrorNamedReference && psi != null) {
-                                    reportProblem(callee.diagnostic.reason, psi)
+                        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+                            val typeRef = qualifiedAccessExpression.typeRef
+                            val callee = qualifiedAccessExpression.calleeReference
+                            if (typeRef is FirResolvedTypeRef) {
+                                val type = typeRef.type
+                                if (type is ConeKotlinErrorType) {
+                                    errorQualifiedAccessTypes++
+                                    val psi = callee.psi
+                                    if (callee is FirErrorNamedReference && psi != null) {
+                                        reportProblem(callee.diagnostic.reason, psi)
+                                    }
                                 }
                             }
+
+                            visitElement(qualifiedAccessExpression)
                         }
 
-                        visitElement(qualifiedAccessExpression)
-                    }
+                        override fun visitTypeRef(typeRef: FirTypeRef) {
+                            unresolvedTypes++
 
-                    override fun visitTypeRef(typeRef: FirTypeRef) {
-                        unresolvedTypes++
-
-                        if (typeRef.psi != null) {
-                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic is FirStubDiagnostic) {
-                                return
-                            }
-                            val psi = typeRef.psi!!
-                            val problem = "${typeRef::class.simpleName}: ${typeRef.render()}"
-                            reportProblem(problem, psi)
-                        }
-                    }
-
-                    override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
-                        visitTypeRef(implicitTypeRef)
-                    }
-
-                    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-                        resolvedTypes++
-                        val type = resolvedTypeRef.type
-                        if (type is ConeKotlinErrorType || type is ConeClassErrorType) {
-                            if (resolvedTypeRef.psi == null) {
-                                implicitTypes++
-                            } else {
-                                errorTypes++
-                                if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is FirStubDiagnostic) {
+                            if (typeRef.psi != null) {
+                                if (typeRef is FirErrorTypeRef && typeRef.diagnostic is FirStubDiagnostic) {
                                     return
                                 }
-                                val psi = resolvedTypeRef.psi!!
-                                val problem = "${resolvedTypeRef::class.simpleName} -> ${type::class.simpleName}: ${type.render()}"
+                                val psi = typeRef.psi!!
+                                val problem = "${typeRef::class.simpleName}: ${typeRef.render()}"
                                 reportProblem(problem, psi)
                             }
                         }
-                    }
-                })
+
+                        override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
+                            visitTypeRef(implicitTypeRef)
+                        }
+
+                        override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+                            resolvedTypes++
+                            val type = resolvedTypeRef.type
+                            if (type is ConeKotlinErrorType || type is ConeClassErrorType) {
+                                if (resolvedTypeRef.psi == null) {
+                                    implicitTypes++
+                                } else {
+                                    errorTypes++
+                                    if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is FirStubDiagnostic) {
+                                        return
+                                    }
+                                    val psi = resolvedTypeRef.psi!!
+                                    val problem = "${resolvedTypeRef::class.simpleName} -> ${type::class.simpleName}: ${type.render()}"
+                                    reportProblem(problem, psi)
+                                }
+                            }
+                        }
+                    },
+                )
             }
         }
 
@@ -308,7 +310,7 @@ class FirResolveBench(val withProgress: Boolean) {
         errorQualifiedAccessTypes,
         fileCount,
         errorTypesReports,
-        timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!!.toString() }
+        timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!!.toString() },
     )
 }
 
@@ -317,7 +319,7 @@ fun doFirResolveTestBench(
     transformers: List<FirTransformer<Nothing?>>,
     gc: Boolean = true,
     withProgress: Boolean = false,
-    silent: Boolean = true
+    silent: Boolean = true,
 ) {
 
     if (gc) {

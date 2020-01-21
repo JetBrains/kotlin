@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 @State(
     name = "KotlinScriptingSettings",
-    storages = [Storage("kotlinScripting.xml")]
+    storages = [Storage("kotlinScripting.xml")],
 )
 class KotlinScriptingSettings : PersistentStateComponent<Element> {
     var isAutoReloadEnabled = false
@@ -36,14 +36,14 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
         if (isAutoReloadEnabled) {
             definitionsRootElement.addOptionTag(
                 KotlinScriptingSettings::isAutoReloadEnabled.name,
-                isAutoReloadEnabled.toString()
+                isAutoReloadEnabled.toString(),
             )
         }
 
         if (suppressDefinitionsCheck) {
             definitionsRootElement.addOptionTag(
                 KotlinScriptingSettings::suppressDefinitionsCheck.name,
-                suppressDefinitionsCheck.toString()
+                suppressDefinitionsCheck.toString(),
             )
         }
 
@@ -96,7 +96,7 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
 
     private fun Element.toKey() = KotlinScriptDefinitionKey(
         getAttributeValue(KotlinScriptDefinitionKey::definitionName.name),
-        getAttributeValue(KotlinScriptDefinitionKey::className.name)
+        getAttributeValue(KotlinScriptDefinitionKey::className.name),
     )
 
     private fun ScriptDefinition.toKey() =

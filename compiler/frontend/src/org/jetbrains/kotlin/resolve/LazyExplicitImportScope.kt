@@ -32,7 +32,7 @@ class LazyExplicitImportScope(
     private val packageFragmentForVisibilityCheck: PackageFragmentDescriptor?,
     private val declaredName: Name,
     private val aliasName: Name,
-    private val storeReferences: (Collection<DeclarationDescriptor>) -> Unit
+    private val storeReferences: (Collection<DeclarationDescriptor>) -> Unit,
 ) : BaseImportingScope(null) {
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
@@ -60,7 +60,7 @@ class LazyExplicitImportScope(
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
-        changeNamesForAliased: Boolean
+        changeNamesForAliased: Boolean,
     ): Collection<DeclarationDescriptor> {
         val descriptors = SmartList<DeclarationDescriptor>()
 
@@ -112,7 +112,7 @@ class LazyExplicitImportScope(
 
     private fun <D : CallableMemberDescriptor> collectCallableMemberDescriptors(
         location: LookupLocation,
-        getDescriptors: MemberScope.(Name, LookupLocation) -> Collection<D>
+        getDescriptors: MemberScope.(Name, LookupLocation) -> Collection<D>,
     ): Collection<D> {
         val descriptors = SmartList<D>()
 
@@ -129,7 +129,7 @@ class LazyExplicitImportScope(
                 if (packageOrClassDescriptor.kind == ClassKind.OBJECT) {
                     descriptors.addAll(
                         packageOrClassDescriptor.unsubstitutedMemberScope.getDescriptors(declaredName, location)
-                            .mapNotNull { it.asImportedFromObjectIfPossible() }
+                            .mapNotNull { it.asImportedFromObjectIfPossible() },
                     )
                 }
             }

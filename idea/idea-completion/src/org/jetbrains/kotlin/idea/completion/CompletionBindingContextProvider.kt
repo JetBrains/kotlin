@@ -59,7 +59,7 @@ class CompletionBindingContextProvider(project: Project) {
         val moduleDescriptor: ModuleDescriptor,
         val statementResolutionScope: LexicalScope,
         val statementDataFlowInfo: DataFlowInfo,
-        val debugText: String
+        val debugText: String,
     )
 
     private data class PsiElementData(val element: PsiElement, val level: Int)
@@ -78,10 +78,10 @@ class CompletionBindingContextProvider(project: Project) {
         {
             CachedValueProvider.Result.create(
                 DataHolder(),
-                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
+                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
             )
         },
-        false
+        false,
     )
 
 
@@ -122,7 +122,7 @@ class CompletionBindingContextProvider(project: Project) {
                     scope = prevCompletionData.statementResolutionScope,
                     contextExpression = block,
                     dataFlowInfo = prevCompletionData.statementDataFlowInfo,
-                    isStatement = true
+                    isStatement = true,
                 )
                 // we do not update prevCompletionDataCache because the same data should work
                 return CompositeBindingContext.create(listOf(statementContext, prevCompletionData.bindingContext))
@@ -142,7 +142,7 @@ class CompletionBindingContextProvider(project: Project) {
                 resolutionFacade.moduleDescriptor,
                 resolutionScope,
                 dataFlowInfo,
-                debugText = position.text
+                debugText = position.text,
             )
         } else {
             null

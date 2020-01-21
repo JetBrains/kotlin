@@ -43,7 +43,7 @@ object ConstModifierChecker : DeclarationChecker {
     private fun checkCanBeConst(
         declaration: KtDeclaration,
         constModifierPsiElement: PsiElement,
-        descriptor: VariableDescriptor
+        descriptor: VariableDescriptor,
     ): ConstApplicability {
         if (descriptor.isVar) {
             return Errors.WRONG_MODIFIER_TARGET.on(constModifierPsiElement, KtTokens.CONST_KEYWORD, "vars").nonApplicable()

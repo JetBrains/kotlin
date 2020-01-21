@@ -58,7 +58,7 @@ abstract class AbstractFirDiagnosticsWithCfgTest : AbstractFirDiagnosticsTest() 
 
     private class FirControlFlowGraphRenderVisitor(
         private val simpleBuilder: StringBuilder,
-        private val dotBuilder: StringBuilder
+        private val dotBuilder: StringBuilder,
     ) : FirVisitorVoid() {
         private var indexOffset = 0
         private var clusterCounter = 0

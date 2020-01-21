@@ -34,7 +34,7 @@ class IteratorOperatorReferenceSearcher(
     searchScope: SearchScope,
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
-    options: KotlinReferencesSearchOptions
+    options: KotlinReferencesSearchOptions,
 ) : OperatorReferenceSearcher<KtForExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {

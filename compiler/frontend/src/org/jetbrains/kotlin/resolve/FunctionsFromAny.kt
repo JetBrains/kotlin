@@ -22,11 +22,11 @@ object FunctionsFromAny {
     fun shouldAddEquals(
         name: Name,
         declaredFunctions: Collection<SimpleFunctionDescriptor>,
-        fromSupertypes: List<SimpleFunctionDescriptor>
+        fromSupertypes: List<SimpleFunctionDescriptor>,
     ): Boolean {
         return name == EQUALS_METHOD_NAME && shouldAddFunctionFromAny(
             declaredFunctions,
-            fromSupertypes
+            fromSupertypes,
         ) { function ->
             val parameters = function.valueParameters
             parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.first().type)
@@ -36,11 +36,11 @@ object FunctionsFromAny {
     fun shouldAddHashCode(
         name: Name,
         declaredFunctions: Collection<SimpleFunctionDescriptor>,
-        fromSupertypes: List<SimpleFunctionDescriptor>
+        fromSupertypes: List<SimpleFunctionDescriptor>,
     ): Boolean {
         return name == HASH_CODE_METHOD_NAME && shouldAddFunctionFromAny(
             declaredFunctions,
-            fromSupertypes
+            fromSupertypes,
         ) {
             it.valueParameters.isEmpty()
         }
@@ -49,11 +49,11 @@ object FunctionsFromAny {
     fun shouldAddToString(
         name: Name,
         declaredFunctions: Collection<SimpleFunctionDescriptor>,
-        fromSupertypes: List<SimpleFunctionDescriptor>
+        fromSupertypes: List<SimpleFunctionDescriptor>,
     ): Boolean {
         return name == TO_STRING_METHOD_NAME && shouldAddFunctionFromAny(
             declaredFunctions,
-            fromSupertypes
+            fromSupertypes,
         ) {
             it.valueParameters.isEmpty()
         }
@@ -70,7 +70,7 @@ object FunctionsFromAny {
 
     private fun doCreateFunctionFromAny(classDescriptor: ClassDescriptor, name: Name): SimpleFunctionDescriptor {
         val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-            classDescriptor, Annotations.EMPTY, name, CallableMemberDescriptor.Kind.SYNTHESIZED, classDescriptor.source
+            classDescriptor, Annotations.EMPTY, name, CallableMemberDescriptor.Kind.SYNTHESIZED, classDescriptor.source,
         )
 
         val functionFromAny = classDescriptor.builtIns.any.getMemberScope(emptyList())
@@ -83,16 +83,16 @@ object FunctionsFromAny {
             functionFromAny.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
             functionFromAny.returnType,
             Modality.OPEN,
-            Visibilities.PUBLIC
+            Visibilities.PUBLIC,
         )
 
         return functionDescriptor
     }
 
     private fun shouldAddFunctionFromAny(
-        declaredFunctions: Collection   <SimpleFunctionDescriptor>,
+        declaredFunctions: Collection<SimpleFunctionDescriptor>,
         fromSupertypes: List<SimpleFunctionDescriptor>,
-        checkParameters: (FunctionDescriptor) -> Boolean
+        checkParameters: (FunctionDescriptor) -> Boolean,
     ): Boolean {
         // Add 'equals', 'hashCode', 'toString' iff there is no such declared member AND there is no such final member in supertypes
         return declaredFunctions.none(checkParameters) &&

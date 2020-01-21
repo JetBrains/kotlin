@@ -14,7 +14,7 @@ data class GCInfo(val name: String, val gcTime: Long, val collections: Long) {
     operator fun minus(other: GCInfo): GCInfo {
         return this.copy(
             gcTime = gcTime - other.gcTime,
-            collections = collections - other.collections
+            collections = collections - other.collections,
         )
     }
 }
@@ -26,7 +26,7 @@ data class VMCounters(val userTime: Long, val cpuTime: Long, val gcInfo: Map<Str
         return VMCounters(
             userTime - other.userTime,
             cpuTime - other.cpuTime,
-            merge(gcInfo, other.gcInfo) { a, b -> a - b }
+            merge(gcInfo, other.gcInfo) { a, b -> a - b },
         )
     }
 
@@ -53,6 +53,7 @@ fun vmStateSnapshot(): VMCounters {
 
     return VMCounters(
         threadMXBean.threadUserTime(), threadMXBean.threadCpuTime(),
-        ManagementFactoryHelper.getGarbageCollectorMXBeans().associate { it.name to GCInfo(it.name, it.collectionTime, it.collectionCount) }
+        ManagementFactoryHelper.getGarbageCollectorMXBeans()
+            .associate { it.name to GCInfo(it.name, it.collectionTime, it.collectionCount) },
     )
 }

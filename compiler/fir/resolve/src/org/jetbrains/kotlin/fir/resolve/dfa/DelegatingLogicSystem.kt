@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 class DelegatingFlow(
     val previousFlow: DelegatingFlow?,
     val approvedInfos: MutableApprovedInfos = mutableMapOf(),
-    val conditionalInfos: ConditionalInfos = ArrayListMultimap.create()
+    val conditionalInfos: ConditionalInfos = ArrayListMultimap.create(),
 ) : Flow {
     val level: Int = previousFlow?.level?.plus(1) ?: 0
 
@@ -143,7 +143,7 @@ abstract class DelegatingLogicSystem(context: ConeInferenceContext) : LogicSyste
         leftFlow: Flow,
         leftVariable: DataFlowVariable,
         rightFlow: Flow,
-        rightVariable: DataFlowVariable
+        rightVariable: DataFlowVariable,
     ): InfoForBooleanOperator {
         require(leftFlow is DelegatingFlow && rightFlow is DelegatingFlow)
         val parent = lowestCommonFlow(leftFlow, rightFlow)
@@ -151,7 +151,7 @@ abstract class DelegatingLogicSystem(context: ConeInferenceContext) : LogicSyste
         return InfoForBooleanOperator(
             leftFlow.previousFlow!!.conditionalInfosFromTopFlow()[leftVariable],
             rightFlow.conditionalInfosFromTopFlow()[rightVariable],
-            rightFlow.approvedInfosUntilParent(parent)
+            rightFlow.approvedInfosUntilParent(parent),
         )
     }
 

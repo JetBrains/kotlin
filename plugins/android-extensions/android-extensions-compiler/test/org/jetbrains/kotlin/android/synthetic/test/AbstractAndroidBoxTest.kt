@@ -92,7 +92,7 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         myFiles = CodegenTestFiles.create(
             myEnvironment!!.project,
             ArrayUtil.toStringArray(files),
-            KotlinTestUtils.getHomeDirectory() + "/plugins/android-extensions/android-extensions-compiler/testData"
+            KotlinTestUtils.getHomeDirectory() + "/plugins/android-extensions/android-extensions-compiler/testData",
         )
         blackBox(true)
     }

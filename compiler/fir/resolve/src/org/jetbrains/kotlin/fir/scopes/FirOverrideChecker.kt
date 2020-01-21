@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 interface FirOverrideChecker {
     fun isOverriddenFunction(
         overrideCandidate: FirSimpleFunction,
-        baseDeclaration: FirSimpleFunction
+        baseDeclaration: FirSimpleFunction,
     ): Boolean
 
     fun isOverriddenProperty(
         overrideCandidate: FirCallableMemberDeclaration<*>, // NB: in Java it can be a function which overrides accessor
-        baseDeclaration: FirProperty
+        baseDeclaration: FirProperty,
     ): Boolean
 }

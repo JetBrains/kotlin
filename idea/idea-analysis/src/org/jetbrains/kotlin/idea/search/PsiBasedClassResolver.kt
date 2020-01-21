@@ -71,9 +71,10 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
                 {
                     CachedValueProvider.Result(
                         PsiBasedClassResolver(target),
-                        KotlinCodeBlockModificationListener.getInstance(target.project).kotlinOutOfCodeBlockTracker
+                        KotlinCodeBlockModificationListener.getInstance(target.project).kotlinOutOfCodeBlockTracker,
                     )
-                }, false
+                },
+                false,
             )
 
             target.putUserData(PSI_BASED_CLASS_RESOLVER_KEY, cachedValue)
@@ -250,6 +251,6 @@ private fun KtFile.getDefaultImports(): List<ImportPath> {
     val moduleInfo = getNullableModuleInfo() ?: return emptyList()
     return TargetPlatformDetector.getPlatform(this).findAnalyzerServices.getDefaultImports(
         IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project),
-        includeLowPriorityImports = true
+        includeLowPriorityImports = true,
     )
 }

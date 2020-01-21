@@ -25,7 +25,7 @@ abstract class AbstractFirUseSiteMemberScope(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     protected val superTypesScope: FirScope,
-    protected val declaredMemberScope: FirScope
+    protected val declaredMemberScope: FirScope,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
@@ -41,7 +41,7 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     private fun doProcessFunctions(
-        name: Name
+        name: Name,
     ): Collection<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         if (!declaredMemberScope.processFunctionsByName(name) {
@@ -107,7 +107,7 @@ abstract class AbstractFirUseSiteMemberScope(
             firSimpleFunction.receiverTypeRef,
             firSimpleFunction.name,
             firSimpleFunction.status,
-            newSymbol
+            newSymbol,
         )
 
     protected open fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterImpl =
@@ -121,13 +121,13 @@ abstract class AbstractFirUseSiteMemberScope(
                 newDefaultValue,
                 isCrossinline,
                 isNoinline,
-                isVararg
+                isVararg,
             )
         }
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         if (!declaredMemberScope.processClassifiersByName(name, processor)) {
             return ProcessorAction.STOP

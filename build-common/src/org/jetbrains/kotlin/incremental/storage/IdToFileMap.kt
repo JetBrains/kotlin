@@ -22,7 +22,7 @@ import java.io.File
 
 internal class IdToFileMap(
     file: File,
-    private val pathConverter: FileToPathConverter
+    private val pathConverter: FileToPathConverter,
 ) : BasicMap<Int, String>(file, ExternalIntegerKeyDescriptor(), EnumeratorStringDescriptor.INSTANCE) {
     override fun dumpKey(key: Int): String = key.toString()
 

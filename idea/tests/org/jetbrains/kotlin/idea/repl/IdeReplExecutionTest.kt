@@ -43,9 +43,11 @@ class IdeReplExecutionTest : PlatformTestCase() {
     }
 
     private fun checkOutput(expectedOutput: String) {
-        val output = getReplOutput(textOnTimeOut = {
-            "Only ${consoleRunner.commandHistory.processedEntriesCount} commands were processed"
-        }) { consoleRunner.commandHistory.processedEntriesCount >= commandsSent }
+        val output = getReplOutput(
+            textOnTimeOut = {
+                "Only ${consoleRunner.commandHistory.processedEntriesCount} commands were processed"
+            },
+        ) { consoleRunner.commandHistory.processedEntriesCount >= commandsSent }
         assertTrue(output.trim().endsWith(expectedOutput), "'$expectedOutput' should be printed but document text is:\n$output")
     }
 
@@ -53,7 +55,7 @@ class IdeReplExecutionTest : PlatformTestCase() {
         maxIterations: Int = 50,
         sleepTime: Long = 500,
         textOnTimeOut: () -> String,
-        predicate: () -> Boolean
+        predicate: () -> Boolean,
     ): String {
         for (i in 1..maxIterations) {
             UIUtil.dispatchAllInvocationEvents()
@@ -121,7 +123,7 @@ class IdeReplExecutionTest : PlatformTestCase() {
         sendCommand(
             "fun f() {\n" +
                     "    println(\"$printText\")\n" +
-                    "}\n"
+                    "}\n",
         )
         sendCommand("f()")
 
@@ -145,7 +147,7 @@ class IdeReplExecutionTest : PlatformTestCase() {
 
         sendCommand(
             "val a = readLine()\n" +
-                    "val b = readLine()"
+                    "val b = readLine()",
         )
         sendCommand(readLineTextA)
         sendCommand(readLineTextB)

@@ -24,7 +24,7 @@ class PrimitiveNumericComparisonInfo(
     val leftPrimitiveType: KotlinType,
     val rightPrimitiveType: KotlinType,
     val leftType: KotlinType,
-    val rightType: KotlinType
+    val rightType: KotlinType,
 )
 
 object PrimitiveNumericComparisonCallChecker : CallChecker {
@@ -49,7 +49,7 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
         trace: BindingTrace,
         leftTypes: List<KotlinType>,
         rightTypes: List<KotlinType>,
-        comparison: KtExpression
+        comparison: KtExpression,
     ) {
         val leftPrimitiveOrNullableType = leftTypes.findPrimitiveOrNullablePrimitiveType() ?: return
         val rightPrimitiveOrNullableType = rightTypes.findPrimitiveOrNullablePrimitiveType() ?: return
@@ -63,8 +63,8 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
             PrimitiveNumericComparisonInfo(
                 leastCommonType,
                 leftPrimitiveType, rightPrimitiveType,
-                leftPrimitiveOrNullableType, rightPrimitiveOrNullableType
-            )
+                leftPrimitiveOrNullableType, rightPrimitiveOrNullableType,
+            ),
         )
     }
 
@@ -91,7 +91,7 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
     private fun CallCheckerContext.getStableTypesForExpression(expression: KtExpression): List<KotlinType> {
         val type = trace.bindingContext.getType(expression) ?: return emptyList()
         val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
-            expression, type, trace.bindingContext, resolutionContext.scope.ownerDescriptor
+            expression, type, trace.bindingContext, resolutionContext.scope.ownerDescriptor,
         )
         val dataFlowInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)?.dataFlowInfo ?: return emptyList()
         val stableTypes = dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings)

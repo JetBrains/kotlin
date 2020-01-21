@@ -53,7 +53,7 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
             setUp {
                 val file1 = myFixture.configureByText(
                     "src.kt",
-                    "class Foo {\n    <selection>private val value: String? = n<caret></selection>\n}"
+                    "class Foo {\n    <selection>private val value: String? = n<caret></selection>\n}",
                 )
                 val file2 = myFixture.configureByText("target.kt", "<caret>")
                 it.setUpValue = Pair(file1, file2)

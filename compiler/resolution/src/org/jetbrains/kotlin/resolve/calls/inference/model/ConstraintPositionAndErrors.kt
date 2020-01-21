@@ -65,7 +65,7 @@ class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : Const
 
 class LHSArgumentConstraintPosition(
     val argument: CallableReferenceKotlinCallArgument,
-    val receiver: DetailedReceiver
+    val receiver: DetailedReceiver,
 ) : ConstraintPosition() {
     override fun toString(): String {
         return "LHS receiver $receiver"
@@ -84,7 +84,7 @@ class DelegatedPropertyConstraintPosition(val topLevelCall: KotlinCall) : Constr
 
 class IncorporationConstraintPosition(
     val from: ConstraintPosition,
-    val initialConstraint: InitialConstraint
+    val initialConstraint: InitialConstraint,
 ) : ConstraintPosition() {
     override fun toString() =
         "Incorporate $initialConstraint from position $from"
@@ -104,22 +104,22 @@ abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidate
 class NewConstraintError(
     val lowerType: KotlinTypeMarker,
     val upperType: KotlinTypeMarker,
-    val position: IncorporationConstraintPosition
+    val position: IncorporationConstraintPosition,
 ) : ConstraintSystemCallDiagnostic(if (position.from is ReceiverConstraintPosition) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
 
 class CapturedTypeFromSubtyping(
     val typeVariable: TypeVariableMarker,
     val constraintType: KotlinTypeMarker,
-    val position: ConstraintPosition
+    val position: ConstraintPosition,
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
 class NotEnoughInformationForTypeParameter(
     val typeVariable: TypeVariableMarker,
-    val resolvedAtom: ResolvedAtom
+    val resolvedAtom: ResolvedAtom,
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
 class ConstrainingTypeIsError(
     val typeVariable: TypeVariableMarker,
     val constraintType: KotlinTypeMarker,
-    val position: IncorporationConstraintPosition
+    val position: IncorporationConstraintPosition,
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)

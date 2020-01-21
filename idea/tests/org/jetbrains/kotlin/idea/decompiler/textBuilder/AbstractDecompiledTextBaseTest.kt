@@ -23,7 +23,7 @@ abstract class AbstractDecompiledTextBaseTest(
     baseDirectory: String,
     private val isJsLibrary: Boolean = false,
     private val allowKotlinPackage: Boolean = false,
-    private val withRuntime: Boolean = false
+    private val withRuntime: Boolean = false,
 ) : KotlinLightCodeInsightFixtureTestCase() {
     protected val TEST_DATA_PATH: String = PluginTestCaseBase.getTestDataPathBase() + baseDirectory
 
@@ -60,15 +60,17 @@ abstract class AbstractDecompiledTextBaseTest(
             false,
             withRuntime,
             isJsLibrary,
-            allowKotlinPackage
+            allowKotlinPackage,
         )
     }
 
     private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {
-        clsFile.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitErrorElement(element: PsiErrorElement) {
-                fail("Decompiled file should not contain error elements!\n${element.getElementTextWithContext()}")
-            }
-        })
+        clsFile.accept(
+            object : PsiRecursiveElementVisitor() {
+                override fun visitErrorElement(element: PsiErrorElement) {
+                    fail("Decompiled file should not contain error elements!\n${element.getElementTextWithContext()}")
+                }
+            },
+        )
     }
 }

@@ -135,7 +135,7 @@ internal inline fun RTableContext.RTableRowContext.timeCell(
     time: Long,
     outputUnit: TableTimeUnit = TableTimeUnit.MS,
     inputUnit: TableTimeUnit = TableTimeUnit.NS,
-    fractionDigits: Int = outputUnit.fractionDigits
+    fractionDigits: Int = outputUnit.fractionDigits,
 ) {
     val df = DecimalFormat()
     df.maximumFractionDigits = fractionDigits

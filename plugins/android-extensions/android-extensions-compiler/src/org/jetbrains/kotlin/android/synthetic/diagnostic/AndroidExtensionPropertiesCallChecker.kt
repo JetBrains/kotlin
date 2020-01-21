@@ -64,9 +64,9 @@ class AndroidExtensionPropertiesCallChecker : CallChecker {
     }
 
     private fun DiagnosticSink.checkPartiallyDefinedResource(
-            resolvedCall: ResolvedCall<*>,
-            property: AndroidSyntheticProperty,
-            context: CallCheckerContext
+        resolvedCall: ResolvedCall<*>,
+        property: AndroidSyntheticProperty,
+        context: CallCheckerContext,
     ) {
         if (!property.resource.partiallyDefined) return
         val calleeExpression = resolvedCall.call.calleeExpression ?: return

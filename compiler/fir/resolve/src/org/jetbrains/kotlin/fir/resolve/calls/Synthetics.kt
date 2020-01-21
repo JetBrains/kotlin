@@ -23,16 +23,16 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 
 class SyntheticPropertySymbol(
     callableId: CallableId,
-    override val accessorId: CallableId
+    override val accessorId: CallableId,
 ) : FirNamedFunctionSymbol(callableId), AccessorSymbol, SyntheticSymbol
 
 class FirSyntheticFunctionSymbol(
-    callableId: CallableId
+    callableId: CallableId,
 ) : FirNamedFunctionSymbol(callableId), SyntheticSymbol
 
 class FirSyntheticPropertiesScope(
     val session: FirSession,
-    private val baseScope: FirScope
+    private val baseScope: FirScope,
 ) : FirScope() {
 
     val synthetic: MutableMap<FirCallableSymbol<*>, FirVariableSymbol<*>> = mutableMapOf()
@@ -40,7 +40,7 @@ class FirSyntheticPropertiesScope(
     private fun checkGetAndCreateSynthetic(
         name: Name,
         symbol: FirFunctionSymbol<*>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         val fir = symbol.fir as? FirSimpleFunction ?: return ProcessorAction.NEXT
 
@@ -49,7 +49,7 @@ class FirSyntheticPropertiesScope(
 
         val synthetic = SyntheticPropertySymbol(
             accessorId = symbol.callableId,
-            callableId = CallableId(symbol.callableId.packageName, symbol.callableId.className, name)
+            callableId = CallableId(symbol.callableId.packageName, symbol.callableId.className, name),
         )
         synthetic.bind(fir)
 
@@ -76,7 +76,7 @@ class FirSyntheticPropertiesScope(
             return listOfNotNull(
                 Name.identifier(GETTER_PREFIX + capitalizedAsciiName),
                 if (capitalizedFirstWordName == capitalizedAsciiName) null else Name.identifier(GETTER_PREFIX + capitalizedFirstWordName),
-                name.takeIf { identifier.startsWith(IS_PREFIX) }
+                name.takeIf { identifier.startsWith(IS_PREFIX) },
             ).filter {
                 propertyNameByGetMethodName(it) == name
             }

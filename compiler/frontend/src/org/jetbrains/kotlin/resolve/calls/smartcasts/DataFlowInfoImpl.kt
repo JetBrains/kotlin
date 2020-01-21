@@ -42,7 +42,7 @@ private fun <K, V> ImmutableMultimap<K, V>.put(key: K, value: V): ImmutableMulti
 
 internal class DataFlowInfoImpl private constructor(
     override val completeNullabilityInfo: ImmutableMap<DataFlowValue, Nullability>,
-    override val completeTypeInfo: ImmutableMultimap<DataFlowValue, KotlinType>
+    override val completeTypeInfo: ImmutableMultimap<DataFlowValue, KotlinType>,
 ) : DataFlowInfo {
 
     constructor() : this(EMPTY_NULLABILITY_INFO, EMPTY_TYPE_INFO)
@@ -65,7 +65,7 @@ internal class DataFlowInfoImpl private constructor(
         languageVersionSettings: LanguageVersionSettings,
         newTypeInfoBuilder: SetMultimap<DataFlowValue, KotlinType>? = null,
         // XXX: set to false only as a workaround for OI, see KT-26357 for details (in NI everything works automagically)
-        recordUnstable: Boolean = true
+        recordUnstable: Boolean = true,
     ) {
         if (value.isStable || recordUnstable) {
             map[value] = nullability
@@ -80,7 +80,7 @@ internal class DataFlowInfoImpl private constructor(
                         val receiverValue = DataFlowValue(identifierInfo.receiverInfo, receiverType)
                         putNullabilityAndTypeInfo(
                             map, receiverValue, nullability,
-                            languageVersionSettings, newTypeInfoBuilder, recordUnstable = recordUnstable
+                            languageVersionSettings, newTypeInfoBuilder, recordUnstable = recordUnstable,
                         )
                     }
                 }
@@ -93,7 +93,7 @@ internal class DataFlowInfoImpl private constructor(
                         val subjectValue = DataFlowValue(identifierInfo.subjectInfo, subjectType)
                         putNullabilityAndTypeInfo(
                             map, subjectValue, nullability,
-                            languageVersionSettings, newTypeInfoBuilder, recordUnstable = false
+                            languageVersionSettings, newTypeInfoBuilder, recordUnstable = false,
                         )
                         if (subjectValue.isStable) {
                             newTypeInfoBuilder?.put(subjectValue, targetType)
@@ -103,7 +103,7 @@ internal class DataFlowInfoImpl private constructor(
                 is IdentifierInfo.Variable -> identifierInfo.bound?.let {
                     putNullabilityAndTypeInfo(
                         map, it, nullability,
-                        languageVersionSettings, newTypeInfoBuilder, recordUnstable = recordUnstable
+                        languageVersionSettings, newTypeInfoBuilder, recordUnstable = recordUnstable,
                     )
                 }
             }
@@ -117,7 +117,7 @@ internal class DataFlowInfoImpl private constructor(
     private fun getCollectedTypes(
         key: DataFlowValue,
         enrichWithNotNull: Boolean,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): Set<KotlinType> {
         val types = completeTypeInfo[key].getOrElse(ImmutableLinkedHashSet.empty())
         if (!enrichWithNotNull || getCollectedNullability(key).canBeNull()) {
@@ -183,11 +183,11 @@ internal class DataFlowInfoImpl private constructor(
     }
 
     override fun equate(
-        a: DataFlowValue, b: DataFlowValue, identityEquals: Boolean, languageVersionSettings: LanguageVersionSettings
+        a: DataFlowValue, b: DataFlowValue, identityEquals: Boolean, languageVersionSettings: LanguageVersionSettings,
     ): DataFlowInfo = equateOrDisequate(a, b, languageVersionSettings, identityEquals, isEquate = true)
 
     override fun disequate(
-        a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings
+        a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings,
     ): DataFlowInfo = equateOrDisequate(a, b, languageVersionSettings, identityEquals = false, isEquate = false)
 
     private fun equateOrDisequate(
@@ -195,7 +195,7 @@ internal class DataFlowInfoImpl private constructor(
         b: DataFlowValue,
         languageVersionSettings: LanguageVersionSettings,
         identityEquals: Boolean,
-        isEquate: Boolean
+        isEquate: Boolean,
     ): DataFlowInfo {
         val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         val newTypeInfoBuilder = newTypeInfoBuilder()
@@ -210,7 +210,7 @@ internal class DataFlowInfoImpl private constructor(
             a,
             newANullability,
             languageVersionSettings,
-            newTypeInfoBuilder
+            newTypeInfoBuilder,
         )
 
         putNullabilityAndTypeInfo(
@@ -218,7 +218,7 @@ internal class DataFlowInfoImpl private constructor(
             b,
             newBNullability,
             languageVersionSettings,
-            newTypeInfoBuilder
+            newTypeInfoBuilder,
         )
 
         var changed = getCollectedNullability(a) != newANullability || getCollectedNullability(b) != newBNullability
@@ -243,7 +243,7 @@ internal class DataFlowInfoImpl private constructor(
     }
 
     override fun establishSubtyping(
-        value: DataFlowValue, type: KotlinType, languageVersionSettings: LanguageVersionSettings
+        value: DataFlowValue, type: KotlinType, languageVersionSettings: LanguageVersionSettings,
     ): DataFlowInfo {
         if (value.type == type) return this
         if (getCollectedTypes(value, languageVersionSettings).contains(type)) return this
@@ -264,7 +264,7 @@ internal class DataFlowInfoImpl private constructor(
         return create(
             this,
             nullabilityInfo,
-            listOf(Tuple2(value, listOf(type)))
+            listOf(Tuple2(value, listOf(type))),
         )
     }
 
@@ -327,7 +327,7 @@ internal class DataFlowInfoImpl private constructor(
                 newTypeInfoBuilder.putAll(
                     key,
                     myTypeInfo[key].getOrNull().intersectConsideringNothing(otherTypeInfo[key].getOrNull())
-                        ?: ImmutableLinkedHashSet.empty()
+                        ?: ImmutableLinkedHashSet.empty(),
                 )
             }
         }
@@ -349,12 +349,12 @@ internal class DataFlowInfoImpl private constructor(
         private fun create(
             parent: DataFlowInfo?,
             updatedNullabilityInfo: Map<DataFlowValue, Nullability>,
-            updatedTypeInfo: SetMultimap<DataFlowValue, KotlinType>
+            updatedTypeInfo: SetMultimap<DataFlowValue, KotlinType>,
         ): DataFlowInfo =
             create(
                 parent,
                 updatedNullabilityInfo,
-                updatedTypeInfo.asMap().entries.map { Tuple2(it.key, it.value) }
+                updatedTypeInfo.asMap().entries.map { Tuple2(it.key, it.value) },
             )
 
         private fun create(
@@ -362,7 +362,7 @@ internal class DataFlowInfoImpl private constructor(
             updatedNullabilityInfo: Map<DataFlowValue, Nullability>,
             // NB: typeInfo must be mutable here!
             updatedTypeInfo: Iterable<Tuple2<DataFlowValue, out Iterable<KotlinType>>>,
-            valueToClearPreviousTypeInfo: DataFlowValue? = null
+            valueToClearPreviousTypeInfo: DataFlowValue? = null,
         ): DataFlowInfo {
             if (updatedNullabilityInfo.isEmpty() && updatedTypeInfo.none() && valueToClearPreviousTypeInfo == null) {
                 return parent ?: DataFlowInfo.EMPTY
@@ -370,7 +370,7 @@ internal class DataFlowInfoImpl private constructor(
 
             val resultingNullabilityInfo =
                 updatedNullabilityInfo.entries.fold(
-                    parent?.completeNullabilityInfo ?: EMPTY_NULLABILITY_INFO
+                    parent?.completeNullabilityInfo ?: EMPTY_NULLABILITY_INFO,
                 ) { result, (dataFlowValue, nullability) ->
                     if (dataFlowValue.immanentNullability != nullability)
                         result.put(dataFlowValue, nullability)

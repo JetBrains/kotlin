@@ -31,11 +31,11 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
         val expectedOutOfBlock = expectedOutOfBlockResult
         val isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(
             ktFile.text,
-            SKIP_ANALYZE_CHECK_DIRECTIVE
+            SKIP_ANALYZE_CHECK_DIRECTIVE,
         )
         assertTrue(
             "It's allowed to skip check with analyze only for tests where out-of-block is expected",
-            !isSkipCheckDefined || expectedOutOfBlock
+            !isSkipCheckDefined || expectedOutOfBlock,
         )
         val tracker =
             PsiManager.getInstance(myFixture.project).modificationTracker as PsiModificationTrackerImpl
@@ -53,12 +53,12 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
         val modificationCountAfterType = tracker.modificationCount
         assertTrue(
             "Modification tracker should always be changed after type",
-            modificationCountBeforeType != modificationCountAfterType
+            modificationCountBeforeType != modificationCountAfterType,
         )
         assertEquals(
             "Result for out of block test is differs from expected on element in file:\n"
                     + FileUtil.loadFile(testDataFile()),
-            expectedOutOfBlock, oobBeforeType != oobAfterCount
+            expectedOutOfBlock, oobBeforeType != oobAfterCount,
         )
         checkForUnexpectedErrors(ktFile)
 
@@ -94,17 +94,17 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
             val expressionProcessed = processed === java.lang.Boolean.TRUE
             assertEquals(
                 "Expected out-of-block should result expression analyzed and vise versa", expectedOutOfBlock,
-                expressionProcessed
+                expressionProcessed,
             )
         } else if (updateElement !is PsiComment && kDoc == null) { // comments could be ignored from analyze
             val declarationProcessed =
                 context.get(
                     BindingContext.DECLARATION_TO_DESCRIPTOR,
-                    ktDeclaration
+                    ktDeclaration,
                 ) != null
             assertEquals(
                 "Expected out-of-block should result declaration analyzed and vise versa", expectedOutOfBlock,
-                declarationProcessed
+                declarationProcessed,
             )
         }
     }
@@ -122,13 +122,13 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
             val text = myFixture.getDocument(myFixture.file).text
             val outOfCodeBlockDirective = InTextDirectivesUtils.findStringWithPrefixes(
                 text,
-                OUT_OF_CODE_BLOCK_DIRECTIVE
+                OUT_OF_CODE_BLOCK_DIRECTIVE,
             )
             assertNotNull(
                 "${fileName()}: Expectation of code block result test should be configured with " +
                         "\"// " + OUT_OF_CODE_BLOCK_DIRECTIVE + " TRUE\" or " +
                         "\"// " + OUT_OF_CODE_BLOCK_DIRECTIVE + " FALSE\" directive in the file",
-                outOfCodeBlockDirective
+                outOfCodeBlockDirective,
             )
             return outOfCodeBlockDirective?.toBoolean() ?: false
         }

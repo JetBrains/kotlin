@@ -35,7 +35,7 @@ import java.awt.Font
 
 class BasicLookupElementFactory(
     private val project: Project,
-    val insertHandlerProvider: InsertHandlerProvider
+    val insertHandlerProvider: InsertHandlerProvider,
 ) {
     companion object {
         // we skip parameter names in functional types in most of cases for shortness
@@ -49,7 +49,7 @@ class BasicLookupElementFactory(
         descriptor: DeclarationDescriptor,
         qualifyNestedClasses: Boolean = false,
         includeClassTypeArguments: Boolean = true,
-        parametersAndTypeGrayed: Boolean = false
+        parametersAndTypeGrayed: Boolean = false,
     ): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
@@ -61,7 +61,7 @@ class BasicLookupElementFactory(
     fun createLookupElementForJavaClass(
         psiClass: PsiClass,
         qualifyNestedClasses: Boolean = false,
-        includeClassTypeArguments: Boolean = true
+        includeClassTypeArguments: Boolean = true,
     ): LookupElement {
         val lookupObject = object : DeclarationLookupObjectImpl(null) {
             override val psiElement: PsiElement?
@@ -118,7 +118,7 @@ class BasicLookupElementFactory(
         descriptor: DeclarationDescriptor,
         qualifyNestedClasses: Boolean,
         includeClassTypeArguments: Boolean,
-        parametersAndTypeGrayed: Boolean
+        parametersAndTypeGrayed: Boolean,
     ): LookupElement {
         if (descriptor is JavaClassDescriptor) {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
@@ -162,7 +162,7 @@ class BasicLookupElementFactory(
                     override val psiElement by lazy {
                         DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) ?: DescriptorToSourceUtilsIde.getAnyDeclaration(
                             project,
-                            descriptor
+                            descriptor,
                         )
                     }
 
@@ -182,7 +182,7 @@ class BasicLookupElementFactory(
                 val returnType = descriptor.returnType
                 element = element.withTypeText(
                     if (returnType != null) SHORT_NAMES_RENDERER.renderType(returnType) else "",
-                    parametersAndTypeGrayed
+                    parametersAndTypeGrayed,
                 )
 
                 val insertsLambda = (insertHandler as? KotlinFunctionInsertHandler.Normal)?.lambdaInfo != null
@@ -192,7 +192,7 @@ class BasicLookupElementFactory(
 
                 element = element.appendTailText(
                     SHORT_NAMES_RENDERER.renderFunctionParameters(descriptor),
-                    parametersAndTypeGrayed || insertsLambda
+                    parametersAndTypeGrayed || insertsLambda,
                 )
             }
 

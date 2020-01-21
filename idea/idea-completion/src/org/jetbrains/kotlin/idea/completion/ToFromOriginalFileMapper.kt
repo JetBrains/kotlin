@@ -16,7 +16,7 @@ import kotlin.math.min
 class ToFromOriginalFileMapper private constructor(
     val originalFile: KtFile,
     val syntheticFile: KtFile,
-    val completionOffset: Int
+    val completionOffset: Int,
 ) {
     companion object {
         fun create(parameters: CompletionParameters): ToFromOriginalFileMapper {
@@ -38,10 +38,13 @@ class ToFromOriginalFileMapper private constructor(
         val syntheticText = syntheticFile.text
         val originalSubSequence = originalText.take(completionOffset)
         val syntheticSubSequence = syntheticText.take(completionOffset)
-        checkWithAttachment(originalSubSequence == syntheticSubSequence, {
-            "original subText [len: ${originalSubSequence.length}]" +
-                    " does not match synthetic subText [len: ${syntheticSubSequence.length}]"
-        }) {
+        checkWithAttachment(
+            originalSubSequence == syntheticSubSequence,
+            {
+                "original subText [len: ${originalSubSequence.length}]" +
+                        " does not match synthetic subText [len: ${syntheticSubSequence.length}]"
+            },
+        ) {
             it.withAttachment("original subText", originalSubSequence.toString())
                 .withAttachment("synthetic subText", syntheticSubSequence.toString())
         }

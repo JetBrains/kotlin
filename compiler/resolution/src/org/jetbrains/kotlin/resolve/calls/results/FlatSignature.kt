@@ -50,7 +50,7 @@ class FlatSignature<out T> constructor(
     val hasVarargs: Boolean,
     val numDefaults: Int,
     val isExpect: Boolean,
-    val isSyntheticMember: Boolean
+    val isSyntheticMember: Boolean,
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 
@@ -61,7 +61,7 @@ class FlatSignature<out T> constructor(
             numDefaults: Int,
             // Reflection type for callable references with bound receiver doesn't contain receiver type
             hasBoundExtensionReceiver: Boolean,
-            reflectionType: UnwrappedType
+            reflectionType: UnwrappedType,
         ): FlatSignature<T> {
             // Note that receiver is taking over descriptor, not reflection type
             // This is correct as extension receiver can't have any defaults/varargs/coercions, so there is no need to use reflection type
@@ -69,7 +69,7 @@ class FlatSignature<out T> constructor(
             // have transient receiver which is not the same in its signature
             val receiver = descriptor.extensionReceiverParameter?.type
             val parameters = reflectionType.getValueParameterTypesFromCallableReflectionType(
-                receiver != null && !hasBoundExtensionReceiver
+                receiver != null && !hasBoundExtensionReceiver,
             ).map { it.type }
 
             return FlatSignature(
@@ -80,7 +80,7 @@ class FlatSignature<out T> constructor(
                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                 numDefaults = numDefaults,
                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
-                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>,
             )
         }
 
@@ -88,7 +88,7 @@ class FlatSignature<out T> constructor(
             origin: T,
             descriptor: CallableDescriptor,
             numDefaults: Int,
-            parameterTypes: List<KotlinType?>
+            parameterTypes: List<KotlinType?>,
         ): FlatSignature<T> {
             val extensionReceiverType = descriptor.extensionReceiverParameter?.type
 
@@ -101,12 +101,12 @@ class FlatSignature<out T> constructor(
                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                 numDefaults = numDefaults,
                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
-                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>,
             )
         }
 
         fun <D : CallableDescriptor> createFromCallableDescriptor(
-            descriptor: D
+            descriptor: D,
         ): FlatSignature<D> =
             create(descriptor, descriptor, numDefaults = 0, parameterTypes = descriptor.valueParameters.map { it.argumentValueType })
 
@@ -119,7 +119,7 @@ class FlatSignature<out T> constructor(
                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                 numDefaults = descriptor.valueParameters.count { it.hasDefaultValue() },
                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
-                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>,
             )
 
         val ValueParameterDescriptor.argumentValueType get() = varargElementType ?: type
@@ -142,7 +142,7 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
     specific: FlatSignature<T>,
     general: FlatSignature<T>,
     callbacks: SpecificityComparisonCallbacks,
-    specificityComparator: TypeSpecificityComparator
+    specificityComparator: TypeSpecificityComparator,
 ): Boolean {
     if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
     if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false

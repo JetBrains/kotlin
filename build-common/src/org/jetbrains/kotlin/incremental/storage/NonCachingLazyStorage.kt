@@ -25,7 +25,7 @@ import java.io.File
 class NonCachingLazyStorage<K, V>(
     private val storageFile: File,
     private val keyDescriptor: KeyDescriptor<K>,
-    private val valueExternalizer: DataExternalizer<V>
+    private val valueExternalizer: DataExternalizer<V>,
 ) : LazyStorage<K, V> {
     @Volatile
     private var storage: JpsPersistentHashMap<K, V>? = null

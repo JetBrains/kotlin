@@ -235,8 +235,8 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             testDataPath + "${getTestName(true)}/lib", "lib",
             extraOptions = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexperimental=lib.ExperimentalAPI"
-            )
+                "-Xexperimental=lib.ExperimentalAPI",
+            ),
         )
 
         module("usage").addLibrary(lib)
@@ -248,8 +248,8 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             testDataPath + "${getTestName(true)}/lib", "lib", false,
             extraOptions = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexperimental=lib.ExperimentalAPI"
-            )
+                "-Xexperimental=lib.ExperimentalAPI",
+            ),
         )
 
         val usageModule = module("usage")
@@ -265,12 +265,12 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         val libOld = MockLibraryUtil.compileJvmLibraryToJar(
             testDataPath + "${getTestName(true)}/libOld", "libOld",
-            extraOptions = listOf("-language-version", "1.2", "-api-version", "1.2")
+            extraOptions = listOf("-language-version", "1.2", "-api-version", "1.2"),
         )
 
         val libNew = MockLibraryUtil.compileJvmLibraryToJar(
             testDataPath + "${getTestName(true)}/libNew", "libNew",
-            extraOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
+            extraOptions = listOf("-language-version", "1.3", "-api-version", "1.3"),
         )
 
         val moduleNew = module("moduleNew").setupKotlinFacet {

@@ -12,5 +12,5 @@ abstract class AbstractIrWasmBoxWasmTest : BasicWasmBoxTest(BasicBoxTest.TEST_DA
 
 abstract class AbstractIrCodegenBoxWasmTest : BasicWasmBoxTest(
     "compiler/testData/codegen/box/",
-    "codegen/wasmBox/"
+    "codegen/wasmBox/",
 )

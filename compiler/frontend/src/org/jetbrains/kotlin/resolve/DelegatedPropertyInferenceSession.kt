@@ -31,9 +31,9 @@ class DelegatedPropertyInferenceSession(
     postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     callComponents: KotlinCallComponents,
-    builtIns: KotlinBuiltIns
+    builtIns: KotlinBuiltIns,
 ) : ManyCandidatesResolver<FunctionDescriptor>(
-    psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
+    psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns,
 ) {
 
     override fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
@@ -81,7 +81,7 @@ class DelegatedPropertyInferenceSession(
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
@@ -101,7 +101,7 @@ object InferenceSessionForExistingCandidates : InferenceSession {
     override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false

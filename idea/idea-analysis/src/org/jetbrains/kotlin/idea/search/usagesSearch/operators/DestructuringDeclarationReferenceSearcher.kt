@@ -35,14 +35,14 @@ class DestructuringDeclarationReferenceSearcher(
     searchScope: SearchScope,
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
-    options: KotlinReferencesSearchOptions
+    options: KotlinReferencesSearchOptions,
 ) : OperatorReferenceSearcher<KtDestructuringDeclaration>(
     targetDeclaration,
     searchScope,
     consumer,
     optimizer,
     options,
-    wordsToSearch = listOf("(")
+    wordsToSearch = listOf("("),
 ) {
 
     override fun resolveTargetToDescriptor(): FunctionDescriptor? {

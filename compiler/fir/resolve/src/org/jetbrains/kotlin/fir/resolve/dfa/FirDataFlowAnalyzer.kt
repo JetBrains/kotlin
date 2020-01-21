@@ -163,16 +163,16 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                     flow,
                     expressionVariable,
                     ConditionalFirDataFlowInfo(
-                        EqTrue, operandVariable, chooseInfo(true)
-                    )
+                        EqTrue, operandVariable, chooseInfo(true),
+                    ),
                 )
 
                 logicSystem.addConditionalInfo(
                     flow,
                     expressionVariable,
                     ConditionalFirDataFlowInfo(
-                        EqFalse, operandVariable, chooseInfo(false)
-                    )
+                        EqFalse, operandVariable, chooseInfo(false),
+                    ),
                 )
             }
 
@@ -186,15 +186,15 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                     flow,
                     expressionVariable,
                     ConditionalFirDataFlowInfo(
-                        NotEqNull, operandVariable, FirDataFlowInfo(setOf(type), emptySet())
-                    )
+                        NotEqNull, operandVariable, FirDataFlowInfo(setOf(type), emptySet()),
+                    ),
                 )
                 logicSystem.addConditionalInfo(
                     flow,
                     expressionVariable,
                     ConditionalFirDataFlowInfo(
-                        EqNull, operandVariable, FirDataFlowInfo(emptySet(), setOf(type))
-                    )
+                        EqNull, operandVariable, FirDataFlowInfo(emptySet(), setOf(type)),
+                    ),
                 )
             }
 
@@ -241,11 +241,12 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             operandVariables.forEach { operandVariable ->
                 logicSystem.addConditionalInfo(
                     flow,
-                    expressionVariable, ConditionalFirDataFlowInfo(
+                    expressionVariable,
+                    ConditionalFirDataFlowInfo(
                         isEq.toEqBoolean(),
                         operandVariable,
-                        FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
-                    )
+                        FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet()),
+                    ),
                 )
             }
         }
@@ -290,15 +291,15 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                     flow,
                     expressionVariable,
                     ConditionalFirDataFlowInfo(
-                        EqTrue, variable, info
-                    )
+                        EqTrue, variable, info,
+                    ),
                 )
                 logicSystem.addConditionalInfo(
                     flow,
                     expressionVariable,
                     ConditionalFirDataFlowInfo(
-                        EqFalse, variable, info.invert()
-                    )
+                        EqFalse, variable, info.invert(),
+                    ),
                 )
             }
             node.flow = flow
@@ -316,11 +317,12 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         operandVariables.forEach { operandVariable ->
             logicSystem.addConditionalInfo(
                 flow,
-                expressionVariable, ConditionalFirDataFlowInfo(
+                expressionVariable,
+                ConditionalFirDataFlowInfo(
                     condition,
                     operandVariable,
-                    FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
-                )
+                    FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet()),
+                ),
             )
             // TODO: design do we need casts to Nothing?
             /*
@@ -351,7 +353,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         logicSystem.addApprovedInfo(
             node.flow,
             operandVariable,
-            FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
+            FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet()),
         )
     }
 
@@ -370,7 +372,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                 EqFalse,
                 node.flow,
                 shouldForkFlow = true,
-                shouldRemoveSynthetics = true
+                shouldRemoveSynthetics = true,
             )
         }
     }
@@ -386,7 +388,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             EqTrue,
             conditionExitNode.flow,
             shouldForkFlow = true,
-            shouldRemoveSynthetics = false
+            shouldRemoveSynthetics = false,
         )
     }
 
@@ -407,7 +409,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                     EqFalse,
                     syntheticElseNode.flow,
                     shouldForkFlow = true,
-                    shouldRemoveSynthetics = true
+                    shouldRemoveSynthetics = true,
                 )
             }
 
@@ -441,7 +443,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                 EqTrue,
                 loopBlockEnterNode.flow,
                 shouldForkFlow = false,
-                shouldRemoveSynthetics = true
+                shouldRemoveSynthetics = true,
             )
         }
     }
@@ -589,7 +591,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
                         EqTrue,
                         lastNode.flow,
                         shouldForkFlow = false,
-                        shouldRemoveSynthetics = true
+                        shouldRemoveSynthetics = true,
                     )
                 }
 
@@ -681,7 +683,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             logicSystem.addApprovedInfo(
                 node.flow,
                 lhsVariable,
-                FirDataFlowInfo(setOf(type), emptySet())
+                FirDataFlowInfo(setOf(type), emptySet()),
             )
             return
         } else {
@@ -732,14 +734,14 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             if (isAnd) EqTrue else EqFalse,
             parentFlow,
             shouldForkFlow = true,
-            shouldRemoveSynthetics = false
+            shouldRemoveSynthetics = false,
         )
     }
 
     private fun exitBinaryBooleanOperator(
         binaryLogicExpression: FirBinaryLogicExpression,
         node: AbstractBinaryExitNode<*>,
-        isAnd: Boolean
+        isAnd: Boolean,
     ) {
         val bothEvaluated = if (isAnd) EqTrue else EqFalse
         val onlyLeftEvaluated = bothEvaluated.invert()
@@ -757,7 +759,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
             flowFromLeft,
             leftVariable,
             flowFromRight,
-            rightVariable
+            rightVariable,
         )
 
         // left && right == True

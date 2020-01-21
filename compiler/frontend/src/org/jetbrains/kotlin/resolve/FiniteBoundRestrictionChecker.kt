@@ -34,7 +34,7 @@ object FiniteBoundRestrictionChecker {
     fun check(
         declaration: KtClass,
         classDescriptor: ClassDescriptor,
-        diagnosticHolder: DiagnosticSink
+        diagnosticHolder: DiagnosticSink,
     ) {
         val typeConstructor = classDescriptor.typeConstructor
         if (typeConstructor.parameters.isEmpty()) return

@@ -96,7 +96,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                         if (forceUsePackageFolder) {
                             val packageName = fileText.substring(
                                 "package".length,
-                                fileText.indexOfAny(charArrayOf(';', '\n'))
+                                fileText.indexOfAny(charArrayOf(';', '\n')),
                             ).trim()
                             val projectFileName = packageName.replace('.', '/') + "/" + file.name
                             addFileToProject(projectFileName, fileText)
@@ -126,15 +126,19 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 val presentation = runInspection(
                     inspectionClass, project,
                     settings = settingsElement,
-                    files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path
+                    files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path,
                 )
 
                 if (afterFiles.isNotEmpty()) {
                     presentation.problemDescriptors.forEach { problem ->
                         problem.fixes?.forEach {
-                            CommandProcessor.getInstance().executeCommand(project, {
-                                runWriteAction { it.applyFix(project, problem) }
-                            }, it.name, it.familyName)
+                            CommandProcessor.getInstance().executeCommand(
+                                project,
+                                {
+                                    runWriteAction { it.applyFix(project, problem) }
+                                },
+                                it.name, it.familyName,
+                            )
                         }
                     }
 

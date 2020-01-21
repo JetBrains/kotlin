@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.storage.StorageManager
 
 class IncrementalPackagePartProvider(
-        private val parent: PackagePartProvider,
-        incrementalCaches: List<IncrementalCache>,
-        storageManager: StorageManager
+    private val parent: PackagePartProvider,
+    incrementalCaches: List<IncrementalCache>,
+    storageManager: StorageManager,
 ) : PackagePartProvider {
     lateinit var deserializationConfiguration: DeserializationConfiguration
 

@@ -26,10 +26,10 @@ const val SANITIZE_PARENTHESES = "SANITIZE_PARENTHESES"
 const val CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION = "CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION"
 
 data class CompilerTestLanguageVersionSettings(
-        private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
-        override val apiVersion: ApiVersion,
-        override val languageVersion: LanguageVersion,
-        val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
+    private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
+    override val apiVersion: ApiVersion,
+    override val languageVersion: LanguageVersion,
+    val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
 ) : LanguageVersionSettings {
     val extraLanguageFeatures = specificFeaturesForTests() + initialLanguageFeatures
     private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion, emptyMap(), extraLanguageFeatures)
@@ -66,10 +66,13 @@ fun parseLanguageVersionSettings(directives: Map<String, String>): CompilerTestL
         analysisFlag(AnalysisFlags.allowResultReturnType, if (ALLOW_RESULT_RETURN_TYPE in directives) true else null),
         analysisFlag(JvmAnalysisFlags.inheritMultifileParts, if (INHERIT_MULTIFILE_PARTS in directives) true else null),
         analysisFlag(JvmAnalysisFlags.sanitizeParentheses, if (SANITIZE_PARENTHESES in directives) true else null),
-        analysisFlag(AnalysisFlags.constraintSystemForOverloadResolution, directives[CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION]?.let {
-            ConstraintSystemForOverloadResolutionMode.valueOf(it)
-        }),
-        analysisFlag(AnalysisFlags.explicitApiVersion, if (apiVersionString != null) true else null)
+        analysisFlag(
+            AnalysisFlags.constraintSystemForOverloadResolution,
+            directives[CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION]?.let {
+                ConstraintSystemForOverloadResolutionMode.valueOf(it)
+            },
+        ),
+        analysisFlag(AnalysisFlags.explicitApiVersion, if (apiVersionString != null) true else null),
     )
 
     if (apiVersionString == null && languageFeaturesString == null && analysisFlags.isEmpty()) {
@@ -120,11 +123,11 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
     val matcher = languagePattern.matcher(directives)
     if (!matcher.find()) {
         Assert.fail(
-                "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
-                "found: '$directives'\n" +
-                "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
-                "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
-                "and language feature names are names of enum entries in LanguageFeature enum class"
+            "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
+                    "found: '$directives'\n" +
+                    "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
+                    "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
+                    "and language feature names are names of enum entries in LanguageFeature enum class",
         )
     }
 
@@ -138,8 +141,8 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
         }
         val name = matcher.group(2)
         val feature = LanguageFeature.fromString(name) ?: throw AssertionError(
-                "Language feature not found, please check spelling: $name\n" +
-                "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}"
+            "Language feature not found, please check spelling: $name\n" +
+                    "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}",
         )
         if (values.put(feature, mode) != null) {
             Assert.fail("Duplicate entry for the language feature: $name")

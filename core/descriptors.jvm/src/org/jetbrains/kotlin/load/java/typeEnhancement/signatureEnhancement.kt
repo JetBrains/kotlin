@@ -41,12 +41,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 data class NullabilityQualifierWithMigrationStatus(
     val qualifier: NullabilityQualifier,
-    val isForWarningOnly: Boolean = false
+    val isForWarningOnly: Boolean = false,
 )
 
 class SignatureEnhancement(
     private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
-    private val jsr305State: Jsr305State
+    private val jsr305State: Jsr305State,
 ) {
 
     private fun AnnotationDescriptor.extractNullabilityTypeFromArgument(): NullabilityQualifierWithMigrationStatus? {
@@ -76,7 +76,7 @@ class SignatureEnhancement(
     }
 
     private fun extractNullabilityFromKnownAnnotations(
-        annotationDescriptor: AnnotationDescriptor
+        annotationDescriptor: AnnotationDescriptor,
     ): NullabilityQualifierWithMigrationStatus? {
         val annotationFqName = annotationDescriptor.fqName ?: return null
 
@@ -93,12 +93,12 @@ class SignatureEnhancement(
 
             annotationFqName == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
                 NullabilityQualifier.NOT_NULL,
-                isForWarningOnly = true
+                isForWarningOnly = true,
             )
 
             annotationFqName == ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
                 NullabilityQualifier.NULLABLE,
-                isForWarningOnly = true
+                isForWarningOnly = true,
             )
             else -> null
         }?.let { migrationStatus ->
@@ -141,7 +141,7 @@ class SignatureEnhancement(
                     parameterDescriptor =
                     annotationOwnerForMember.safeAs<FunctionDescriptor>()
                         ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
-                    methodContext = memberContext
+                    methodContext = memberContext,
                 ) { it.extensionReceiverParameter!!.type }.enhance()
             else null
 
@@ -177,7 +177,7 @@ class SignatureEnhancement(
                 if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
                     AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
                 else
-                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
+                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE,
             ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
         val containsFunctionN = receiverTypeEnhancement?.containsFunctionN == true || returnTypeEnhancement.containsFunctionN ||
@@ -197,7 +197,7 @@ class SignatureEnhancement(
                 receiverTypeEnhancement?.type,
                 valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) },
                 returnTypeEnhancement.type,
-                additionalUserData
+                additionalUserData,
             ) as D
         }
 
@@ -220,7 +220,7 @@ class SignatureEnhancement(
         private val fromOverridden: Collection<KotlinType>,
         private val isCovariant: Boolean,
         private val containerContext: LazyJavaResolverContext,
-        private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
+        private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
     ) {
 
         private val isForVarargParameter get() = typeContainer.safeAs<ValueParameterDescriptor>()?.varargElementType != null
@@ -264,13 +264,13 @@ class SignatureEnhancement(
                     mapping.isMutable(upper) -> MutabilityQualifier.MUTABLE
                     else -> null
                 },
-                isNotNullTypeParameter = unwrap() is NotNullTypeParameter
+                isNotNullTypeParameter = unwrap() is NotNullTypeParameter,
             )
         }
 
         private fun KotlinType.extractQualifiersFromAnnotations(
             isHeadTypeConstructor: Boolean,
-            defaultQualifiersForType: JavaTypeQualifiers?
+            defaultQualifiersForType: JavaTypeQualifiers?,
         ): JavaTypeQualifiers {
             val composedAnnotation =
                 if (isHeadTypeConstructor && typeContainer != null)
@@ -294,7 +294,7 @@ class SignatureEnhancement(
                     ?: defaultTypeQualifier?.nullability?.let {
                         NullabilityQualifierWithMigrationStatus(
                             defaultTypeQualifier.nullability,
-                            defaultTypeQualifier.isNullabilityQualifierForWarning
+                            defaultTypeQualifier.isNullabilityQualifierForWarning,
                         )
                     }
 
@@ -302,14 +302,14 @@ class SignatureEnhancement(
                 nullabilityInfo?.qualifier,
                 uniqueNotNull(
                     READ_ONLY_ANNOTATIONS.ifPresent(
-                        MutabilityQualifier.READ_ONLY
+                        MutabilityQualifier.READ_ONLY,
                     ),
                     MUTABLE_ANNOTATIONS.ifPresent(
-                        MutabilityQualifier.MUTABLE
-                    )
+                        MutabilityQualifier.MUTABLE,
+                    ),
                 ),
                 isNotNullTypeParameter = nullabilityInfo?.qualifier == NullabilityQualifier.NOT_NULL && isTypeParameter(),
-                isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
+                isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true,
             )
         }
 
@@ -354,8 +354,8 @@ class SignatureEnhancement(
                     TypeAndDefaultQualifiers(
                         type,
                         c.defaultTypeQualifiers
-                            ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE)
-                    )
+                            ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE),
+                    ),
                 )
 
                 for (arg in type.arguments) {
@@ -375,7 +375,7 @@ class SignatureEnhancement(
         private fun KotlinType.computeQualifiersForOverride(
             fromSupertypes: Collection<KotlinType>,
             defaultQualifiersForType: JavaTypeQualifiers?,
-            isHeadTypeConstructor: Boolean
+            isHeadTypeConstructor: Boolean,
         ): JavaTypeQualifiers {
             val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
             val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
@@ -407,14 +407,14 @@ class SignatureEnhancement(
 
                 return createJavaTypeQualifiers(
                     nullabilityWithWarning, mutability,
-                    forWarning = true, isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
+                    forWarning = true, isAnyNonNullTypeParameter = isAnyNonNullTypeParameter,
                 )
             }
 
             return createJavaTypeQualifiers(
                 nullability, mutability,
                 forWarning = nullability == null,
-                isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
+                isAnyNonNullTypeParameter = isAnyNonNullTypeParameter,
             )
         }
 
@@ -423,26 +423,26 @@ class SignatureEnhancement(
     private open class PartEnhancementResult(
         val type: KotlinType,
         val wereChanges: Boolean,
-        val containsFunctionN: Boolean
+        val containsFunctionN: Boolean,
     )
 
     private class ValueParameterEnhancementResult(
         type: KotlinType,
         val hasDefaultValue: Boolean,
         wereChanges: Boolean,
-        containsFunctionN: Boolean
+        containsFunctionN: Boolean,
     ) : PartEnhancementResult(type, wereChanges, containsFunctionN)
 
     private fun CallableMemberDescriptor.partsForValueParameter(
         // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
         parameterDescriptor: ValueParameterDescriptor?,
         methodContext: LazyJavaResolverContext,
-        collector: (CallableMemberDescriptor) -> KotlinType
+        collector: (CallableMemberDescriptor) -> KotlinType,
     ) = parts(
         parameterDescriptor, false,
         parameterDescriptor?.let { methodContext.copyWithNewDefaultTypeQualifiers(it.annotations) } ?: methodContext,
         AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER,
-        collector
+        collector,
     )
 
     private fun CallableMemberDescriptor.parts(
@@ -450,7 +450,7 @@ class SignatureEnhancement(
         isCovariant: Boolean,
         containerContext: LazyJavaResolverContext,
         containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
-        collector: (CallableMemberDescriptor) -> KotlinType
+        collector: (CallableMemberDescriptor) -> KotlinType,
     ): SignatureParts {
         return SignatureParts(
             typeContainer,
@@ -461,7 +461,7 @@ class SignatureEnhancement(
             isCovariant,
             // recompute default type qualifiers using type annotations
             containerContext.copyWithNewDefaultTypeQualifiers(collector(this).annotations),
-            containerApplicabilityType
+            containerApplicabilityType,
         )
     }
 }
@@ -470,7 +470,7 @@ fun createJavaTypeQualifiers(
     nullability: NullabilityQualifier?,
     mutability: MutabilityQualifier?,
     forWarning: Boolean,
-    isAnyNonNullTypeParameter: Boolean
+    isAnyNonNullTypeParameter: Boolean,
 ): JavaTypeQualifiers {
     if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
         return JavaTypeQualifiers(nullability, mutability, false, forWarning)
@@ -500,5 +500,5 @@ fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Bo
 
 private data class TypeAndDefaultQualifiers(
     val type: KotlinType,
-    val defaultQualifiers: JavaTypeQualifiers?
+    val defaultQualifiers: JavaTypeQualifiers?,
 )

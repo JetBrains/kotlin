@@ -28,14 +28,14 @@ interface AdditionalTypeChecker {
         expression: KtExpression,
         expressionType: KotlinType,
         expressionTypeWithSmartCast: KotlinType,
-        c: ResolutionContext<*>
+        c: ResolutionContext<*>,
     )
 
     fun checkReceiver(
         receiverParameter: ReceiverParameterDescriptor,
         receiverArgument: ReceiverValue,
         safeAccess: Boolean,
-        c: CallResolutionContext<*>
+        c: CallResolutionContext<*>,
     ) {
     }
 

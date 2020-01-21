@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 data class ScriptModuleInfo(
     val project: Project,
     val scriptFile: VirtualFile,
-    val scriptDefinition: ScriptDefinition
+    val scriptDefinition: ScriptDefinition,
 ) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
@@ -86,7 +86,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     class ForFile(
         project: Project,
         val scriptFile: VirtualFile,
-        val scriptDefinition: ScriptDefinition
+        val scriptDefinition: ScriptDefinition,
     ) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
             get() {
@@ -96,7 +96,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
         override fun contentScope(): GlobalSearchScope {
             // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
             return KotlinSourceFilterScope.libraryClassFiles(
-                ScriptConfigurationManager.getInstance(project).getScriptDependenciesClassFilesScope(scriptFile), project
+                ScriptConfigurationManager.getInstance(project).getScriptDependenciesClassFilesScope(scriptFile), project,
             )
         }
     }
@@ -111,7 +111,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
 
         override fun contentScope(): GlobalSearchScope {
             return KotlinSourceFilterScope.libraryClassFiles(
-                ScriptConfigurationManager.getInstance(project).getAllScriptsDependenciesClassFilesScope(), project
+                ScriptConfigurationManager.getInstance(project).getAllScriptsDependenciesClassFilesScope(), project,
             )
         }
     }
@@ -124,7 +124,7 @@ sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo
         get() = ScriptDependenciesInfo.ForProject(project)
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
-        ScriptConfigurationManager.getInstance(project).getAllScriptDependenciesSourcesScope(), project
+        ScriptConfigurationManager.getInstance(project).getAllScriptDependenciesSourcesScope(), project,
     )
 
     override fun hashCode() = project.hashCode()

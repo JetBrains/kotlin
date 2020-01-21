@@ -31,35 +31,41 @@ class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testLoadingKotlinFromDifferentModules() {
-        val aFile = createFile("m1/K.kt",
-                               """
+        val aFile = createFile(
+            "m1/K.kt",
+            """
                                    package m1;
 
                                    interface K {
                                    }
-                               """)
-        createFile("m1/J.java",
-                               """
+                               """,
+        )
+        createFile(
+            "m1/J.java",
+            """
                                    package m1;
 
                                    public interface J {
                                        K bar();
                                    }
-                               """)
+                               """,
+        )
         val a = addModule("m1", PathUtil.getParentPath(aFile))
 
-        val bFile = createFile("m2/m2.kt",
-                               """
+        val bFile = createFile(
+            "m2/m2.kt",
+            """
                                     import m1.J;
                                     import m1.K;
 
                                     interface M2: J {
                                         override fun bar(): K
                                     }
-                               """)
+                               """,
+        )
         val b = addModule("b", PathUtil.getParentPath(bFile))
         JpsJavaExtensionService.getInstance().getOrCreateDependencyExtension(
-                b.dependenciesList.addModuleDependency(a)
+            b.dependenciesList.addModuleDependency(a),
         ).isExported = false
 
         addKotlinStdlibDependency()

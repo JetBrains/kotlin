@@ -53,7 +53,7 @@ class SuspensionPointInsideMutexLockChecker : CallChecker {
         child: PsiElement,
         insideLambda: Boolean,
         reportOn: PsiElement,
-        resolvedCall: ResolvedCall<*>
+        resolvedCall: ResolvedCall<*>,
     ): Boolean {
         val call = context.trace[BindingContext.CALL, parent.calleeExpression] ?: return false
         val resolved = context.trace[BindingContext.RESOLVED_CALL, call] ?: return false

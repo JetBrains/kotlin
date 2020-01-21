@@ -16,7 +16,7 @@ abstract class AbstractPerformanceNewJavaToKotlinCopyPasteConversionTest :
         if (!noConversionExpected) {
             kotlin.test.assertEquals(
                 noConversionExpected, !ConvertJavaCopyPasteProcessor.conversionPerformed,
-                if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested"
+                if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested",
             )
         }
         // as well output of nj2k could be slightly different to output of j2k those test data is used

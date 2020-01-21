@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 internal class KotlinPresetEntry(
     val presetName: String,
     val presetType: TypeName,
-    val targetType: TypeName
+    val targetType: TypeName,
 )
 
 internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, targetType)
@@ -38,19 +38,19 @@ internal object NativeFQNames {
 internal val jvmPresetEntry = KotlinPresetEntry(
     "jvm",
     typeName("$MPP_PACKAGE.KotlinJvmTargetPreset"),
-    typeName("org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget")
+    typeName("org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget"),
 )
 
 internal val jsPresetEntry = KotlinPresetEntry(
     "js",
     typeName("$MPP_PACKAGE.KotlinJsTargetPreset"),
-    typeName("org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget")
+    typeName("org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget"),
 )
 
 internal val androidPresetEntry = KotlinPresetEntry(
     "android",
     typeName("$MPP_PACKAGE.KotlinAndroidTargetPreset"),
-    typeName("$MPP_PACKAGE.KotlinAndroidTarget")
+    typeName("$MPP_PACKAGE.KotlinAndroidTarget"),
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
@@ -77,5 +77,5 @@ internal val nativePresetEntries = HostManager().targets
 internal val allPresetEntries = listOf(
     jvmPresetEntry,
     jsPresetEntry,
-    androidPresetEntry
+    androidPresetEntry,
 ) + nativePresetEntries

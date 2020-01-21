@@ -24,7 +24,7 @@ data class ScriptDiagnostic(
     val severity: Severity = Severity.ERROR,
     val sourcePath: String? = null,
     val location: SourceCode.Location? = null,
-    val exception: Throwable? = null
+    val exception: Throwable? = null,
 ) : Serializable {
     /**
      * The diagnostic severity
@@ -45,7 +45,7 @@ data class ScriptDiagnostic(
         withSeverity: Boolean = true,
         withLocation: Boolean = true,
         withException: Boolean = true,
-        withStackTrace: Boolean = false
+        withStackTrace: Boolean = false,
     ): String = buildString {
         if (withSeverity) {
             append(severity.name)
@@ -93,7 +93,7 @@ sealed class ResultWithDiagnostics<out R> {
      */
     data class Success<out R>(
         val value: R,
-        override val reports: List<ScriptDiagnostic> = listOf()
+        override val reports: List<ScriptDiagnostic> = listOf(),
     ) : ResultWithDiagnostics<R>()
 
     /**
@@ -101,7 +101,7 @@ sealed class ResultWithDiagnostics<out R> {
      * @param reports diagnostics associated with the failure
      */
     data class Failure(
-        override val reports: List<ScriptDiagnostic>
+        override val reports: List<ScriptDiagnostic>,
     ) : ResultWithDiagnostics<Nothing>() {
         constructor(vararg reports: ScriptDiagnostic) : this(reports.asList())
     }
@@ -207,7 +207,7 @@ fun Throwable.asDiagnostics(
     customMessage: String? = null,
     path: String? = null,
     location: SourceCode.Location? = null,
-    severity: ScriptDiagnostic.Severity = ScriptDiagnostic.Severity.ERROR
+    severity: ScriptDiagnostic.Severity = ScriptDiagnostic.Severity.ERROR,
 ): ScriptDiagnostic =
     ScriptDiagnostic(customMessage ?: message ?: "$this", severity, path, location, this)
 
@@ -239,7 +239,7 @@ inline fun <R> ResultWithDiagnostics<R>.valueOr(body: (ResultWithDiagnostics.Fai
 fun <R> ResultWithDiagnostics<R>.valueOrThrow(): R = valueOr {
     throw RuntimeException(
         reports.joinToString("\n") { it.exception?.toString() ?: it.message },
-        reports.find { it.exception != null }?.exception
+        reports.find { it.exception != null }?.exception,
     )
 }
 

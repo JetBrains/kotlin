@@ -51,11 +51,11 @@ class DelegationChecker : DeclarationChecker {
         classDeclaration: KtClassOrObject,
         delegatedDescriptor: CallableMemberDescriptor,
         delegatedToDescriptor: CallableMemberDescriptor,
-        diagnosticHolder: DiagnosticSink
+        diagnosticHolder: DiagnosticSink,
     ) {
         val reachableFromDelegated =
             OverridingUtil.filterOutOverridden(
-                DescriptorUtils.getAllOverriddenDescriptors(delegatedDescriptor).filter { it.kind.isReal }.toSet()
+                DescriptorUtils.getAllOverriddenDescriptors(delegatedDescriptor).filter { it.kind.isReal }.toSet(),
             ) - DescriptorUtils.unwrapFakeOverride(delegatedToDescriptor).original
 
         val nonAbstractReachable = reachableFromDelegated.filter { it.modality == Modality.OPEN }
@@ -66,8 +66,8 @@ class DelegationChecker : DeclarationChecker {
                 DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE.on(
                     classDeclaration,
                     delegatedDescriptor,
-                    nonAbstractReachable
-                )
+                    nonAbstractReachable,
+                ),
             )
         }
     }

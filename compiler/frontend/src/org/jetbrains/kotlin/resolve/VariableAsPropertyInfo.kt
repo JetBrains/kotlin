@@ -25,7 +25,7 @@ class VariableAsPropertyInfo(
     val propertySetter: KtPropertyAccessor?,
     val variableType: KotlinType?,
     val hasBody: Boolean,
-    val hasDelegate: Boolean
+    val hasDelegate: Boolean,
 ) {
     companion object {
         fun createFromDestructuringDeclarationEntry(type: KotlinType): VariableAsPropertyInfo {

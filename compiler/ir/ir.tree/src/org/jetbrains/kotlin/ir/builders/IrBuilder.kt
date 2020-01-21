@@ -33,21 +33,21 @@ import java.util.*
 abstract class IrBuilder(
     override val context: IrGeneratorContext,
     var startOffset: Int,
-    var endOffset: Int
+    var endOffset: Int,
 ) : IrGenerator
 
 abstract class IrBuilderWithScope(
     context: IrGeneratorContext,
     override val scope: Scope,
     startOffset: Int,
-    endOffset: Int
+    endOffset: Int,
 ) : IrBuilder(context, startOffset, endOffset), IrGeneratorWithScope
 
 abstract class IrStatementsBuilder<out T : IrElement>(
     context: IrGeneratorContext,
     scope: Scope,
     startOffset: Int,
-    endOffset: Int
+    endOffset: Int,
 ) : IrBuilderWithScope(context, scope, startOffset, endOffset), IrGeneratorWithScope {
     operator fun IrStatement.unaryPlus() {
         addStatement(this)
@@ -61,7 +61,7 @@ open class IrBlockBodyBuilder(
     context: IrGeneratorContext,
     scope: Scope,
     startOffset: Int,
-    endOffset: Int
+    endOffset: Int,
 ) : IrStatementsBuilder<IrBlockBody>(context, scope, startOffset, endOffset) {
     private val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
 
@@ -86,7 +86,7 @@ class IrBlockBuilder(
     endOffset: Int,
     val origin: IrStatementOrigin? = null,
     var resultType: IrType? = null,
-    val isTransparent:Boolean = false
+    val isTransparent: Boolean = false,
 ) : IrStatementsBuilder<IrContainerExpression>(context, scope, startOffset, endOffset) {
 
     private val statements = ArrayList<IrStatement>()
@@ -115,7 +115,7 @@ class IrSingleStatementBuilder(
     scope: Scope,
     startOffset: Int,
     endOffset: Int,
-    val origin: IrStatementOrigin? = null
+    val origin: IrStatementOrigin? = null,
 ) : IrBuilderWithScope(context, scope, startOffset, endOffset) {
 
     inline fun <T : IrElement> build(statementBuilder: IrSingleStatementBuilder.() -> T): T =
@@ -126,14 +126,14 @@ inline fun <T : IrElement> IrGeneratorWithScope.buildStatement(
     startOffset: Int,
     endOffset: Int,
     origin: IrStatementOrigin?,
-    builder: IrSingleStatementBuilder.() -> T
+    builder: IrSingleStatementBuilder.() -> T,
 ) =
     IrSingleStatementBuilder(context, scope, startOffset, endOffset, origin).builder()
 
 inline fun <T : IrElement> IrGeneratorWithScope.buildStatement(
     startOffset: Int,
     endOffset: Int,
-    builder: IrSingleStatementBuilder.() -> T
+    builder: IrSingleStatementBuilder.() -> T,
 ) =
     IrSingleStatementBuilder(context, scope, startOffset, endOffset).builder()
 
@@ -146,35 +146,35 @@ inline fun IrGeneratorWithScope.irBlock(
     startOffset: Int, endOffset: Int,
     origin: IrStatementOrigin? = null,
     resultType: IrType? = null,
-    body: IrBlockBuilder.() -> Unit
+    body: IrBlockBuilder.() -> Unit,
 ): IrExpression =
     IrBlockBuilder(
         context, scope,
         startOffset,
         endOffset,
-        origin, resultType
+        origin, resultType,
     ).block(body)
 
 inline fun IrGeneratorWithScope.irComposite(
     startOffset: Int, endOffset: Int,
     origin: IrStatementOrigin? = null,
     resultType: IrType? = null,
-    body: IrBlockBuilder.() -> Unit
+    body: IrBlockBuilder.() -> Unit,
 ): IrExpression =
     IrBlockBuilder(
         context, scope,
         startOffset,
         endOffset,
-        origin, resultType, true
+        origin, resultType, true,
     ).block(body)
 
 inline fun IrGeneratorWithScope.irBlockBody(
     startOffset: Int, endOffset: Int,
-    body: IrBlockBodyBuilder.() -> Unit
+    body: IrBlockBodyBuilder.() -> Unit,
 ): IrBlockBody =
     IrBlockBodyBuilder(
         context, scope,
         startOffset,
-        endOffset
+        endOffset,
     ).blockBody(body)
 

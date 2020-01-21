@@ -35,7 +35,7 @@ private data class OldPackageAndNew(val oldFqName: FqName, val newFqName: FqName
 internal fun patchFilesAndAddTest(
     testFile: File,
     testFiles: List<CodegenTestCase.TestFile>,
-    filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
+    filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter,
 ): FqName? {
     if (testFiles.any { it.name.endsWith(".java") }) {
         //TODO support java files
@@ -53,7 +53,7 @@ internal fun patchFilesAndAddTest(
             fileName,
             changePackage(newPackagePrefix, it.content, oldPackage),
             oldPackage.get(),
-            getGeneratedClassName(File(fileName), it.content, newPackagePrefix, oldPackage.get())
+            getGeneratedClassName(File(fileName), it.content, newPackagePrefix, oldPackage.get()),
         )
     }
     val packages =
@@ -110,7 +110,7 @@ internal fun patchFilesAndAddTest(
 
     filesHolder.addTest(
         resultFiles.filter { resultFile -> resultFile.name.endsWith(".kt") || resultFile.name.endsWith(".kts") },
-        TestInfo("", boxFiles.last().newClassId, testFile)
+        TestInfo("", boxFiles.last().newClassId, testFile),
     )
 
     return boxFiles.last().newClassId
@@ -165,7 +165,7 @@ private fun patchClassForName(className: FqName, oldPackage: FqName, text: Strin
     if (!conservativeRenameSchemeheme && !oldPackage.isRoot) return text
     return text.replace(
         ("Class\\.forName\\(\"" + oldPackage.child(className.shortName()).asString()).toRegex(),
-        "Class.forName(\"" + className.asString()
+        "Class.forName(\"" + className.asString(),
     )
 }
 
@@ -174,7 +174,7 @@ private fun patchPackages(newPackage: FqName, oldPackage: FqName, text: String):
 
     val regexp = "([^A-Za-z0-9.])" + (oldPackage.asString() + ".").replace(".", "\\.")
     return text.replace(
-        regexp.toRegex(), "$1" + newPackage.asString() + "."
+        regexp.toRegex(), "$1" + newPackage.asString() + ".",
     )
 }
 
@@ -194,7 +194,7 @@ private fun String.patchSelfImports(newPackage: FqName): String {
         if (classOrObjectPattern.matcher(newText).find()) {
             newText = newText.replace(
                 "import $possibleSelfImport",
-                "import " + newPackage.child(Name.identifier(possibleSelfImport)).asString()
+                "import " + newPackage.child(Name.identifier(possibleSelfImport)).asString(),
             )
         }
     }

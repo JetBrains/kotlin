@@ -18,6 +18,6 @@ abstract class AbstractDiagnosticsWithExplicitApi : AbstractDiagnosticsTest() {
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
             LanguageVersionSettingsImpl.DEFAULT.apiVersion,
             LanguageVersionSettingsImpl.DEFAULT.languageVersion,
-            mapOf(AnalysisFlags.explicitApiMode to ExplicitApiMode.STRICT)
+            mapOf(AnalysisFlags.explicitApiMode to ExplicitApiMode.STRICT),
         )
 }

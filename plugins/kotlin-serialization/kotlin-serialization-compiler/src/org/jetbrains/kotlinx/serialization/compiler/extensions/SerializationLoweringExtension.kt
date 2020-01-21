@@ -25,22 +25,24 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGener
  * Copy of [runOnFilePostfix], but this implementation first lowers declaration, then its children.
  */
 fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
+    irFile.acceptVoid(
+        object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
 
-        override fun visitClass(declaration: IrClass) {
-            lower(declaration)
-            declaration.acceptChildrenVoid(this)
-        }
-    })
+            override fun visitClass(declaration: IrClass) {
+                lower(declaration)
+                declaration.acceptChildrenVoid(this)
+            }
+        },
+    )
 }
 
 typealias SerializationPluginContext = IrPluginContext
 
 private class SerializerClassLowering(
-    val context: SerializationPluginContext
+    val context: SerializationPluginContext,
 ) :
     IrElementTransformerVoid(), ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -53,7 +55,7 @@ private class SerializerClassLowering(
 open class SerializationLoweringExtension : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
-        pluginContext: IrPluginContext
+        pluginContext: IrPluginContext,
     ) {
         val serializerClassLowering = SerializerClassLowering(pluginContext)
         for (file in moduleFragment.files)

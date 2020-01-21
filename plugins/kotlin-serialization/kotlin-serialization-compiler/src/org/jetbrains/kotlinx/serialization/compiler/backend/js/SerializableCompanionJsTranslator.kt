@@ -33,7 +33,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 class SerializableCompanionJsTranslator(
     declaration: ClassDescriptor,
     val translator: DeclarationBodyVisitor,
-    val context: TranslationContext
+    val context: TranslationContext,
 ) : SerializableCompanionCodegen(declaration, context.bindingContext()) {
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
@@ -41,8 +41,8 @@ class SerializableCompanionJsTranslator(
             val serializer = requireNotNull(
                 findTypeSerializer(
                     serializableDescriptor.module,
-                    serializableDescriptor.toSimpleType()
-                )
+                    serializableDescriptor.toSimpleType(),
+                ),
             )
             val args = jsFun.parameters.map { JsNameRef(it.name) }
             val stmt =
@@ -54,7 +54,8 @@ class SerializableCompanionJsTranslator(
                         serializableDescriptor.defaultType,
                         genericGetter = { it, _ ->
                             args[it]
-                        })
+                        },
+                    ),
                 )
             +JsReturn(stmt)
         }

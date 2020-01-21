@@ -25,7 +25,7 @@ import java.io.File
 class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDescriptor>(JavaModuleBuildTargetType.ALL_TYPES) {
     override fun getAdditionalRoots(
         target: BuildTarget<JavaSourceRootDescriptor>,
-        dataPaths: BuildDataPaths?
+        dataPaths: BuildDataPaths?,
     ): List<JavaSourceRootDescriptor> {
         val moduleBuildTarget = target as? ModuleBuildTarget ?: return listOf()
         val module = moduleBuildTarget.module
@@ -47,8 +47,8 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
                     false,
                     false,
                     it.properties.packagePrefix,
-                    setOf()
-                )
+                    setOf(),
+                ),
             )
         }
 
@@ -70,7 +70,7 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
     private fun addModuleSourceRoots(
         result: MutableList<JavaSourceRootDescriptor>,
         module: JpsModule,
-        target: ModuleBuildTarget
+        target: ModuleBuildTarget,
     ) {
         for (commonSourceRoot in module.sourceRoots) {
             val isCommonTestsRootType = commonSourceRoot.rootType.isTestsRootType
@@ -84,8 +84,8 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
                         javaSourceRootProperties?.isForGeneratedSources ?: false,
                         false,
                         javaSourceRootProperties?.packagePrefix ?: "",
-                        setOf()
-                    )
+                        setOf(),
+                    ),
                 )
             }
         }
@@ -108,5 +108,5 @@ class KotlinIncludedModuleSourceRoot(
     isGenerated: Boolean,
     isTemp: Boolean,
     packagePrefix: String,
-    excludes: Set<File>
+    excludes: Set<File>,
 ) : JavaSourceRootDescriptor(root, target, isGenerated, isTemp, packagePrefix, excludes)

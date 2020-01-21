@@ -29,7 +29,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
 
     private fun loadPossiblyConditionalEffect(
         proto: ProtoBuf.Effect,
-        owner: FirContractDescriptionOwner
+        owner: FirContractDescriptionOwner,
     ): ConeEffectDeclaration? {
         if (proto.hasConclusionOfConditionalEffect()) {
             val conclusion = loadExpression(proto.conclusionOfConditionalEffect, owner) ?: return null

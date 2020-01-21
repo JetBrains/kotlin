@@ -52,11 +52,11 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
     private fun runTestAndCopyKotlinCaches(
         projectWorkingDir: File,
         dirToCopyKotlinCaches: File,
-        testMethod: KFunction1<RelocatableCacheTestCase, Unit>
+        testMethod: KFunction1<RelocatableCacheTestCase, Unit>,
     ) {
         val testCase = object : RelocatableCacheTestCase(
             projectWorkingDir = projectWorkingDir,
-            dirToCopyKotlinCaches = dirToCopyKotlinCaches
+            dirToCopyKotlinCaches = dirToCopyKotlinCaches,
         ) {
             override fun getName(): String = testMethod.name
         }
@@ -73,7 +73,7 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
 // the class should not be executed directly (hence it's abstract)
 abstract class RelocatableCacheTestCase(
     private val projectWorkingDir: File,
-    private val dirToCopyKotlinCaches: File
+    private val dirToCopyKotlinCaches: File,
 ) : KotlinJpsBuildTestBase() {
     val exposedPrivateApi = ExposedPrivateApi()
 
@@ -83,7 +83,7 @@ abstract class RelocatableCacheTestCase(
 
         assertFilesExistInOutput(
             myProject.modules.single(),
-            "MainKt.class", "Foo.class", "FooChild.class", "utils/Utils.class"
+            "MainKt.class", "Foo.class", "FooChild.class", "utils/Utils.class",
         )
     }
 
@@ -130,7 +130,7 @@ abstract class RelocatableCacheTestCase(
             descriptor.model,
             descriptor.moduleExcludeIndex,
             descriptor.ignoredFileIndex,
-            descriptor.dataManager.dataPaths
+            descriptor.dataManager.dataPaths,
         )
 
         return rootDescriptors.any { it is JavaSourceRootDescriptor && it.containsKotlinSources() }

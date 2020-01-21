@@ -29,9 +29,9 @@ import kotlin.script.templates.DEFAULT_SCRIPT_FILE_PATTERN
 import kotlin.script.templates.ScriptTemplateDefinition
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
-        template: KClass<out Any>,
-        val environment: Map<String, Any?>? = null,
-        val templateClasspath: List<File> = emptyList()
+    template: KClass<out Any>,
+    val environment: Map<String, Any?>? = null,
+    val templateClasspath: List<File> = emptyList(),
 ) : KotlinScriptDefinition(template) {
     val scriptFilePattern by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val pattern =

@@ -59,7 +59,7 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
     ProtoPath("build-common/src/java_descriptors.proto"),
     ProtoPath("compiler/util-klib-metadata/src/KlibMetadataProtoBuf.proto"),
-    ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false)
+    ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false),
 )
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.proto")
@@ -103,7 +103,7 @@ private fun checkVersion() {
 private fun execProtoc(protoPath: String, outPath: String) {
     val commandLine = GeneralCommandLine(
         listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") +
-                PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }
+                PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" },
     )
     println("running $commandLine")
     val processOutput = ExecUtil.execAndGetOutput(commandLine)
@@ -152,7 +152,7 @@ private fun renamePackagesInSingleFile(javaFile: File) {
             line.replace("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
                 // Memory footprint optimizations: do not allocate too big bytes buffers that effectively remain unused
                 .replace("            unknownFieldsOutput);", "            unknownFieldsOutput, 1);")
-        }
+        },
     )
 }
 
@@ -172,7 +172,7 @@ private fun modifyForDebug(protoPath: ProtoPath): String {
     var text = File(protoPath.file).readText()
         .replace(
             "option java_outer_classname = \"${protoPath.className}\"",
-            "option java_outer_classname = \"${protoPath.debugClassName}\""
+            "option java_outer_classname = \"${protoPath.debugClassName}\"",
         ) // give different name for class
         .replace("option optimize_for = LITE_RUNTIME;", "") // using default instead
     (listOf(EXT_OPTIONS_PROTO_PATH) + PROTO_PATHS).forEach {

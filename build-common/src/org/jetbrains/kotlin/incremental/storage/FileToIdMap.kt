@@ -20,7 +20,7 @@ import java.io.File
 
 internal class FileToIdMap(
     file: File,
-    private val pathConverter: FileToPathConverter
+    private val pathConverter: FileToPathConverter,
 ) : BasicStringMap<Int>(file, IntExternalizer) {
     override fun dumpValue(value: Int): String = value.toString()
 

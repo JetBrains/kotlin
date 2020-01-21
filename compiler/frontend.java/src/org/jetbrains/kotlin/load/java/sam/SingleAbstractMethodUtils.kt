@@ -36,17 +36,18 @@ internal fun nonProjectionParametrization(samType: SimpleType): SimpleType? {
     val parametersSet = parameters.toSet()
 
     return samType.replace(
-            newArguments = samType.arguments.zip(parameters).map {
-                val (projection, parameter) = it
-                when {
-                    projection.projectionKind == Variance.INVARIANT -> projection
+        newArguments = samType.arguments.zip(parameters).map {
+            val (projection, parameter) = it
+            when {
+                projection.projectionKind == Variance.INVARIANT -> projection
 
-                    projection.isStarProjection ->
-                        parameter.upperBounds.first().takeUnless {
-                            t -> t.contains { it.constructor.declarationDescriptor in parametersSet }
-                        }?.asTypeProjection() ?: return@nonProjectionParametrization null
+                projection.isStarProjection ->
+                    parameter.upperBounds.first().takeUnless { t ->
+                        t.contains { it.constructor.declarationDescriptor in parametersSet }
+                    }?.asTypeProjection() ?: return@nonProjectionParametrization null
 
-                    else -> projection.type.asTypeProjection()
-                }
-            })
+                else -> projection.type.asTypeProjection()
+            }
+        },
+    )
 }

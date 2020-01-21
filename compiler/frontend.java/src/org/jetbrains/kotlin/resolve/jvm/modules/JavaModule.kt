@@ -81,9 +81,9 @@ interface JavaModule {
     }
 
     class Explicit(
-            val moduleInfo: JavaModuleInfo,
-            override val moduleRoots: List<Root>,
-            override val moduleInfoFile: VirtualFile
+        val moduleInfo: JavaModuleInfo,
+        override val moduleRoots: List<Root>,
+        override val moduleInfoFile: VirtualFile,
     ) : JavaModule {
         override val name: String
             get() = moduleInfo.moduleName

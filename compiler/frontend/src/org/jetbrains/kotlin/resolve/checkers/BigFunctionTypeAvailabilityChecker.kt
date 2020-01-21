@@ -22,8 +22,8 @@ object BigFunctionTypeAvailabilityChecker : ClassifierUsageChecker {
         }) {
             context.trace.report(
                 Errors.UNSUPPORTED_FEATURE.on(
-                    element, LanguageFeature.FunctionTypesWithBigArity to context.languageVersionSettings
-                )
+                    element, LanguageFeature.FunctionTypesWithBigArity to context.languageVersionSettings,
+                ),
             )
         }
     }

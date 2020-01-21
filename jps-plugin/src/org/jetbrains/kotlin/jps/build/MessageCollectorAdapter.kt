@@ -17,7 +17,7 @@ import java.io.File
 
 class MessageCollectorAdapter(
     private val context: CompileContext,
-    private val kotlinTarget: KotlinModuleBuildTarget<*>?
+    private val kotlinTarget: KotlinModuleBuildTarget<*>?,
 ) : MessageCollector {
     private var hasErrors = false
 
@@ -45,8 +45,8 @@ class MessageCollectorAdapter(
                     location?.path,
                     -1, -1, -1,
                     location?.line?.toLong() ?: -1,
-                    location?.column?.toLong() ?: -1
-                )
+                    location?.column?.toLong() ?: -1,
+                ),
             )
         } else {
             val path = if (location != null) "${location.path}:${location.line}:${location.column}: " else ""

@@ -30,7 +30,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         classDescriptorFactories: Iterable<ClassDescriptorFactory>,
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
         additionalClassPartsProvider: AdditionalClassPartsProvider,
-        isFallback: Boolean
+        isFallback: Boolean,
     ): PackageFragmentProvider {
         return createBuiltInPackageFragmentProvider(
             storageManager,
@@ -40,7 +40,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
             platformDependentDeclarationFilter,
             additionalClassPartsProvider,
             isFallback,
-            resourceLoader::loadResource
+            resourceLoader::loadResource,
         )
     }
 
@@ -52,7 +52,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
         additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
         isFallback: Boolean,
-        loadResource: (String) -> InputStream?
+        loadResource: (String) -> InputStream?,
     ): PackageFragmentProvider {
         val packageFragments = packageFqNames.map { fqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
@@ -80,7 +80,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
             additionalClassPartsProvider,
             platformDependentDeclarationFilter,
             BuiltInSerializerProtocol.extensionRegistry,
-            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
         )
 
         for (packageFragment in packageFragments) {

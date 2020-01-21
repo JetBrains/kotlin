@@ -66,7 +66,7 @@ fun createLibraryWithLongPaths(project: Project): Library {
             for (i in 0..maxCommandlineLengthWindows / maxFilenameLengthWindows) {
                 val tmpFile = VirtualFileManager.constructUrl(
                     LocalFileSystem.getInstance().protocol,
-                    FileUtil.createTempDirectory("file$i", "a".repeat(maxFilenameLengthWindows)).path
+                    FileUtil.createTempDirectory("file$i", "a".repeat(maxFilenameLengthWindows)).path,
                 )
                 addRoot(tmpFile, OrderRootType.CLASSES)
             }

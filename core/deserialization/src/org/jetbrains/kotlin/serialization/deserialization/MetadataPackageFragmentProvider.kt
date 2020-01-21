@@ -45,7 +45,7 @@ class MetadataPackageFragmentProvider(
     private val metadataPartProvider: MetadataPartProvider,
     contractDeserializer: ContractDeserializer,
     kotlinTypeChecker: NewKotlinTypeChecker,
-    samConversionResolver: SamConversionResolver
+    samConversionResolver: SamConversionResolver,
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
@@ -65,7 +65,7 @@ class MetadataPackageFragmentProvider(
             AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
             BuiltInSerializerProtocol.extensionRegistry,
             kotlinTypeChecker,
-            samConversionResolver
+            samConversionResolver,
         )
     }
 
@@ -80,7 +80,7 @@ class MetadataPackageFragment(
     storageManager: StorageManager,
     module: ModuleDescriptor,
     private val metadataPartProvider: MetadataPartProvider,
-    private val finder: KotlinMetadataFinder
+    private val finder: KotlinMetadataFinder,
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
     override val classDataFinder = ClassDataFinder { classId ->
         val topLevelClassId = generateSequence(classId, ClassId::getOuterClassId).last()
@@ -110,23 +110,27 @@ class MetadataPackageFragment(
             val stream = finder.findMetadata(ClassId(fqName, Name.identifier(partName))) ?: continue
             val (proto, nameResolver, version) = readProto(stream)
 
-            scopes.add(DeserializedPackageMemberScope(
-                this, proto.`package`, nameResolver, version, containerSource = null, components = components,
-                classNames = { emptyList() }
-            ))
+            scopes.add(
+                DeserializedPackageMemberScope(
+                    this, proto.`package`, nameResolver, version, containerSource = null, components = components,
+                    classNames = { emptyList() },
+                ),
+            )
         }
 
         // Also add the deserialized scope that can load all classes from this package
-        scopes.add(object : DeserializedPackageMemberScope(
-            this, ProtoBuf.Package.getDefaultInstance(),
-            NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
-            BuiltInsBinaryVersion.INSTANCE, // Exact version does not matter here
-            containerSource = null, components = components, classNames = { emptyList() }
-        ) {
-            override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
-            override fun definitelyDoesNotContainName(name: Name) = false
-            override fun getClassifierNames(): Set<Name>? = null
-        })
+        scopes.add(
+            object : DeserializedPackageMemberScope(
+                this, ProtoBuf.Package.getDefaultInstance(),
+                NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
+                BuiltInsBinaryVersion.INSTANCE, // Exact version does not matter here
+                containerSource = null, components = components, classNames = { emptyList() },
+            ) {
+                override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
+                override fun definitelyDoesNotContainName(name: Name) = false
+                override fun getClassifierNames(): Set<Name>? = null
+            },
+        )
 
         return ChainedMemberScope.create("Metadata scope", scopes)
     }
@@ -146,7 +150,7 @@ class MetadataPackageFragment(
             throw UnsupportedOperationException(
                 "Kotlin metadata definition format version is not supported: " +
                         "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                        "Please update Kotlin"
+                        "Please update Kotlin",
             )
         }
 

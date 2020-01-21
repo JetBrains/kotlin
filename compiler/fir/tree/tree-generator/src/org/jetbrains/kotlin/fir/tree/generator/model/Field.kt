@@ -99,7 +99,7 @@ class SimpleField(
     override val packageName: String?,
     val customType: Importable? = null,
     override val nullable: Boolean,
-    override val withReplace: Boolean
+    override val withReplace: Boolean,
 ) : Field() {
     override val isFirType: Boolean = false
     override val fullQualifiedName: String?
@@ -114,7 +114,7 @@ class SimpleField(
             packageName,
             customType,
             nullable,
-            withReplace
+            withReplace,
         )
     }
 
@@ -124,7 +124,7 @@ class SimpleField(
         newType.packageName,
         customType,
         nullable,
-        withReplace
+        withReplace,
     ).also {
         updateFieldsInCopy(it)
     }
@@ -134,7 +134,7 @@ class FirField(
     override val name: String,
     val element: AbstractElement,
     override val nullable: Boolean,
-    override val withReplace: Boolean
+    override val withReplace: Boolean,
 ) : Field() {
     override val type: String get() = element.type
     override val packageName: String? get() = element.packageName
@@ -147,7 +147,7 @@ class FirField(
             name,
             element,
             nullable,
-            withReplace
+            withReplace,
         )
     }
 }
@@ -157,7 +157,7 @@ class FirField(
 class FieldList(
     override val name: String,
     val baseType: Importable,
-    override val withReplace: Boolean
+    override val withReplace: Boolean,
 ) : Field() {
     override val defaultValue: String? get() = if (isMutable) "mutableListOf()" else "emptyListOf()"
     override val packageName: String? get() = baseType.packageName
@@ -173,7 +173,7 @@ class FieldList(
         return FieldList(
             name,
             baseType,
-            withReplace
+            withReplace,
         )
     }
 

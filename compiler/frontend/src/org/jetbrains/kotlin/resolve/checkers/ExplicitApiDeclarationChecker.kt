@@ -31,7 +31,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         state: ExplicitApiMode,
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptorWithVisibility,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         val modifier = declaration.visibilityModifier()
         if (modifier != null) return
@@ -49,7 +49,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         state: ExplicitApiMode,
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptor,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         if (declaration !is KtCallableDeclaration) return
         if (!returnTypeCheckIsApplicable(declaration)) return
@@ -58,7 +58,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             declaration, descriptor,
             checkForPublicApi = true,
             checkForInternal = false,
-            checkForPrivate = false
+            checkForPrivate = false,
         )
         if (shouldReport) {
             val diagnostic =
@@ -93,7 +93,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             descriptor: DeclarationDescriptor?,
             checkForPublicApi: Boolean,
             checkForInternal: Boolean,
-            checkForPrivate: Boolean
+            checkForPrivate: Boolean,
         ): Boolean {
             if (element.containingClassOrObject?.isLocal == true) return false
             if (element is KtFunction && element.isLocal) return false

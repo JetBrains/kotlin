@@ -25,7 +25,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
 
         override fun transformAnonymousFunction(
             anonymousFunction: FirAnonymousFunction,
-            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>,
         ): CompositeTransformResult<FirStatement> {
             val kind = data.second ?: data.first[anonymousFunction]
             if (kind != null) {
@@ -36,7 +36,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
 
         override fun transformLambdaArgumentExpression(
             lambdaArgumentExpression: FirLambdaArgumentExpression,
-            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>,
         ): CompositeTransformResult<FirStatement> {
             return data.first[lambdaArgumentExpression]?.let {
                 (lambdaArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()
@@ -45,7 +45,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
 
         override fun transformNamedArgumentExpression(
             namedArgumentExpression: FirNamedArgumentExpression,
-            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>,
         ): CompositeTransformResult<FirStatement> {
             return data.first[namedArgumentExpression]?.let {
                 (namedArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()

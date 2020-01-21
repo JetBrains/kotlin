@@ -36,5 +36,5 @@ class RttiExpressionInformation(
     val subject: KtElement,
     val sourceType: KotlinType?,
     val targetType: KotlinType?,
-    val operation: RttiOperation
+    val operation: RttiOperation,
 )

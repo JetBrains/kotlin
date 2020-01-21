@@ -24,7 +24,7 @@ open class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
     constructor(
-        vararg baseConfigurations: ScriptEvaluationConfiguration, body: Builder.() -> Unit = {}
+        vararg baseConfigurations: ScriptEvaluationConfiguration, body: Builder.() -> Unit = {},
     ) : this(baseConfigurations.asIterable(), body)
 
     class Builder internal constructor(baseEvaluationConfigurations: Iterable<ScriptEvaluationConfiguration>) :
@@ -114,14 +114,14 @@ typealias RefineScriptEvaluationConfigurationHandler =
             (ScriptEvaluationConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptEvaluationConfiguration>
 
 data class RefineEvaluationConfigurationData(
-    val handler: RefineScriptEvaluationConfigurationHandler
+    val handler: RefineScriptEvaluationConfigurationHandler,
 ) : Serializable {
     companion object { private const val serialVersionUID: Long = 1L }
 }
 
 fun ScriptEvaluationConfiguration.refineBeforeEvaluation(
     script: CompiledScript<*>,
-    contextData: ScriptEvaluationContextData? = null
+    contextData: ScriptEvaluationContextData? = null,
 ): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
     val hostConfiguration = get(ScriptEvaluationConfiguration.hostConfiguration)
     val baseContextData = hostConfiguration?.get(ScriptingHostConfiguration.getEvaluationContext)?.invoke(hostConfiguration)
@@ -192,6 +192,6 @@ interface ScriptEvaluator {
      */
     suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration.Default
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration.Default,
     ): ResultWithDiagnostics<EvaluationResult>
 }

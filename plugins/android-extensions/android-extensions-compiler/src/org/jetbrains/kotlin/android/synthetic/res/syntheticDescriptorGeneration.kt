@@ -39,25 +39,26 @@ private class XmlSourceElement(override val psi: PsiElement) : PsiSourceElement
 
 internal fun genClearCacheFunction(packageFragmentDescriptor: PackageFragmentDescriptor, receiverType: KotlinType): SimpleFunctionDescriptor {
     val function = object : AndroidSyntheticFunction, SimpleFunctionDescriptorImpl(
-            packageFragmentDescriptor,
-            null,
-            Annotations.EMPTY,
-            Name.identifier(AndroidConst.CLEAR_FUNCTION_NAME),
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            SourceElement.NO_SOURCE) {}
+        packageFragmentDescriptor,
+        null,
+        Annotations.EMPTY,
+        Name.identifier(AndroidConst.CLEAR_FUNCTION_NAME),
+        CallableMemberDescriptor.Kind.SYNTHESIZED,
+        SourceElement.NO_SOURCE,
+    ) {}
 
     val unitType = packageFragmentDescriptor.builtIns.unitType
     return function.initialize(
         DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, Annotations.EMPTY),
-        null, emptyList(), emptyList(), unitType, Modality.FINAL, Visibilities.PUBLIC
+        null, emptyList(), emptyList(), unitType, Modality.FINAL, Visibilities.PUBLIC,
     )
 }
 
 internal fun genPropertyForWidget(
-        packageFragmentDescriptor: AndroidSyntheticPackageFragmentDescriptor,
-        receiverType: KotlinType,
-        resolvedWidget: ResolvedWidget,
-        context: SyntheticElementResolveContext
+    packageFragmentDescriptor: AndroidSyntheticPackageFragmentDescriptor,
+    receiverType: KotlinType,
+    resolvedWidget: ResolvedWidget,
+    context: SyntheticElementResolveContext,
 ): PropertyDescriptor {
     val sourceEl = resolvedWidget.widget.sourceElement?.element?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
 
@@ -70,7 +71,8 @@ internal fun genPropertyForWidget(
         }
         else {
             KotlinTypeFactory.simpleNotNullType(
-                    Annotations.EMPTY, classDescriptor, defaultType.constructor.parameters.map(::StarProjectionImpl))
+                Annotations.EMPTY, classDescriptor, defaultType.constructor.parameters.map(::StarProjectionImpl),
+            )
         }
     } ?: context.view
 
@@ -78,39 +80,45 @@ internal fun genPropertyForWidget(
 }
 
 internal fun genPropertyForFragment(
-        packageFragmentDescriptor: AndroidSyntheticPackageFragmentDescriptor,
-        receiverType: KotlinType,
-        type: SimpleType,
-        fragment: AndroidResource.Fragment
+    packageFragmentDescriptor: AndroidSyntheticPackageFragmentDescriptor,
+    receiverType: KotlinType,
+    type: SimpleType,
+    fragment: AndroidResource.Fragment,
 ): PropertyDescriptor {
     val sourceElement = fragment.sourceElement?.element?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
     return genProperty(fragment, receiverType, type, packageFragmentDescriptor, sourceElement, null)
 }
 
 private fun genProperty(
-        resource: AndroidResource,
-        receiverType: KotlinType,
-        type: SimpleType,
-        containingDeclaration: AndroidSyntheticPackageFragmentDescriptor,
-        sourceElement: SourceElement,
-        errorType: String?
+    resource: AndroidResource,
+    receiverType: KotlinType,
+    type: SimpleType,
+    containingDeclaration: AndroidSyntheticPackageFragmentDescriptor,
+    sourceElement: SourceElement,
+    errorType: String?,
 ): PropertyDescriptor {
     val property = object : AndroidSyntheticProperty, PropertyDescriptorImpl(
-            containingDeclaration,
-            null,
-            Annotations.EMPTY,
-            Modality.FINAL,
-            Visibilities.PUBLIC,
-            false,
-            Name.identifier(resource.id.name),
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            sourceElement,
-            /* lateInit = */ false,
-            /* isConst = */ false,
-            /* isExpect = */ false,
-            /* isActual = */ false,
-            /* isExternal = */ false,
-            /* isDelegated = */ false
+        containingDeclaration,
+        null,
+        Annotations.EMPTY,
+        Modality.FINAL,
+        Visibilities.PUBLIC,
+        false,
+        Name.identifier(resource.id.name),
+        CallableMemberDescriptor.Kind.SYNTHESIZED,
+        sourceElement,
+        /* lateInit = */
+        false,
+        /* isConst = */
+        false,
+        /* isExpect = */
+        false,
+        /* isActual = */
+        false,
+        /* isExternal = */
+        false,
+        /* isDelegated = */
+        false,
     ) {
         override val errorType = errorType
         override val shouldBeCached = type.shouldBeCached
@@ -120,23 +128,27 @@ private fun genProperty(
     // todo support (Mutable)List
     val flexibleType = KotlinTypeFactory.flexibleType(type, type.makeNullableAsSpecified(true))
     property.setType(
-            flexibleType,
-            emptyList<TypeParameterDescriptor>(),
-            null,
-            DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY)
+        flexibleType,
+        emptyList<TypeParameterDescriptor>(),
+        null,
+        DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY),
     )
 
     val getter = PropertyGetterDescriptorImpl(
-            property,
-            Annotations.EMPTY,
-            Modality.FINAL,
-            Visibilities.PUBLIC,
-            /* isDefault = */ false,
-            /* isExternal = */ false,
-            /* isInline = */ false,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            /* original = */ null,
-            SourceElement.NO_SOURCE
+        property,
+        Annotations.EMPTY,
+        Modality.FINAL,
+        Visibilities.PUBLIC,
+        /* isDefault = */
+        false,
+        /* isExternal = */
+        false,
+        /* isInline = */
+        false,
+        CallableMemberDescriptor.Kind.SYNTHESIZED,
+        /* original = */
+        null,
+        SourceElement.NO_SOURCE,
     )
 
     getter.initialize(null)

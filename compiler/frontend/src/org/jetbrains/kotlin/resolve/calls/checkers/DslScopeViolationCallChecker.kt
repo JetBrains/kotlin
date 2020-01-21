@@ -45,7 +45,7 @@ object DslScopeViolationCallChecker : CallChecker {
         callImplicitReceiver: ReceiverValue,
         resolvedCall: ResolvedCall<*>,
         reportOn: PsiElement,
-        context: CallCheckerContext
+        context: CallCheckerContext,
     ) {
         val receiversUntilOneFromTheCall =
             context.scope.parentsWithSelf

@@ -36,13 +36,13 @@ import java.util.*
 class MultipleArgumentsItemProvider(
     private val bindingContext: BindingContext,
     private val smartCastCalculator: SmartCastCalculator,
-    private val resolutionFacade: ResolutionFacade
+    private val resolutionFacade: ResolutionFacade,
 ) {
 
     fun addToCollection(
         collection: MutableCollection<LookupElement>,
         expectedInfos: Collection<ExpectedInfo>,
-        context: KtExpression
+        context: KtExpression,
     ) {
         val resolutionScope = context.getResolutionScope(bindingContext, resolutionFacade)
 

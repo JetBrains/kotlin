@@ -31,7 +31,7 @@ import java.util.*
  */
 internal class DefaultBackgroundExecutor(
     val project: Project,
-    val rootsManager: ScriptClassRootsIndexer
+    val rootsManager: ScriptClassRootsIndexer,
 ) : BackgroundExecutor {
     companion object {
         const val PROGRESS_INDICATOR_DELAY = 1000
@@ -83,7 +83,7 @@ internal class DefaultBackgroundExecutor(
                             longRunningAlaramRequested = false
                             requireUnderProgressWorker()
                         },
-                        PROGRESS_INDICATOR_DELAY
+                        PROGRESS_INDICATOR_DELAY,
                     )
                 }
             }
@@ -226,9 +226,12 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            BackgroundTaskUtil.executeOnPooledThread(project, Runnable {
-                run()
-            })
+            BackgroundTaskUtil.executeOnPooledThread(
+                project,
+                Runnable {
+                    run()
+                },
+            )
         }
 
         override fun close() {

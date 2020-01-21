@@ -18,7 +18,7 @@ object KotlinPluginUtil {
     private val KNOWN_KOTLIN_PLUGIN_IDS = listOf(
         "org.jetbrains.kotlin",
         "org.jetbrains.kotlin.native.clion",
-        "org.jetbrains.kotlin.native.appcode"
+        "org.jetbrains.kotlin.native.appcode",
     )
 
     private val KOTLIN_PLUGIN_INFO: KotlinPluginInfo by lazy {

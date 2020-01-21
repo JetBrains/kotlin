@@ -18,7 +18,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             doFirResolveTestBench(
                 firFiles,
                 FirTotalResolveTransformer().transformers,
-                gc = false
+                gc = false,
             )
         }
         val allFirFiles = firFilesPerSession.values.flatten()
@@ -31,7 +31,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         val expectedPath = testDataFile.absolutePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(
             File(expectedPath),
-            firFileDump
+            firFileDump,
         )
     }
 

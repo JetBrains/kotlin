@@ -100,7 +100,7 @@ fun PsiParameter.getParameterDescriptor(resolutionFacade: ResolutionFacade): Val
 
 fun PsiClass.resolveToDescriptor(
     resolutionFacade: ResolutionFacade,
-    declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
+    declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it },
 ): ClassDescriptor? {
     return if (this is KtLightClass && this !is KtLightClassForDecompiledDeclaration) {
         val origin = this.kotlinOrigin ?: return null
@@ -154,7 +154,7 @@ fun PsiElement.hasJavaResolutionFacade(): Boolean = this.originalElement.contain
 fun PsiElement.javaResolutionFacade() =
     KotlinCacheService.getInstance(project).getResolutionFacadeByFile(
         this.originalElement.containingFile ?: reportCouldNotCreateJavaFacade(),
-        JvmPlatforms.unspecifiedJvmPlatform
+        JvmPlatforms.unspecifiedJvmPlatform,
     )
 
 private fun PsiElement.reportCouldNotCreateJavaFacade(): Nothing =
@@ -164,6 +164,6 @@ private fun PsiElement.reportCouldNotCreateJavaFacade(): Nothing =
                     "same as originalElement = ${this === this.originalElement}" +
                     "class = ${javaClass.name}, text = $text, containingFile = ${containingFile?.name}\n" +
                     "originalElement.class = ${originalElement.javaClass.name}, originalElement.text = ${originalElement.text}), " +
-                    "originalElement.containingFile = ${originalElement.containingFile?.name}"
+                    "originalElement.containingFile = ${originalElement.containingFile?.name}",
         )
     }

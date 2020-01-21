@@ -15,7 +15,7 @@ class DeprecatedLexicalScope(private val workerScope: LexicalScope) : LexicalSco
 
     override fun getContributedClassifierIncludeDeprecated(
         name: Name,
-        location: LookupLocation
+        location: LookupLocation,
     ): DescriptorWithDeprecation<ClassifierDescriptor>? {
         return workerScope.getContributedClassifier(name, location)?.let { DescriptorWithDeprecation.createDeprecated(it) }
     }
@@ -26,7 +26,7 @@ class DeprecatedMemberScope(private val workerScope: MemberScope) : MemberScope 
 
     override fun getContributedClassifierIncludeDeprecated(
         name: Name,
-        location: LookupLocation
+        location: LookupLocation,
     ): DescriptorWithDeprecation<ClassifierDescriptor>? {
         return workerScope.getContributedClassifier(name, location)?.let { DescriptorWithDeprecation.createDeprecated(it) }
     }

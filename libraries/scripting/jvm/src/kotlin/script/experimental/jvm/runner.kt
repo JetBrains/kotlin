@@ -20,7 +20,7 @@ fun runCompiledScript(scriptClass: Class<*>, vararg args: String) {
         createEvaluationConfigurationFromTemplate(
             script.compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!,
             hostConfiguration,
-            scriptClass.kotlin
+            scriptClass.kotlin,
         )
     val evaluationConfiguration = ScriptEvaluationConfiguration(baseEvaluationConfiguration) {
         jvm {

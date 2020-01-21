@@ -25,7 +25,7 @@ abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
         val file = filesToConfigure.first()
         val directive = InTextDirectivesUtils.findLinesWithPrefixesRemoved(
             File("${KotlinTestUtils.getHomeDirectory()}/$folderName/$file").readText(),
-            "// BASE_CLASS: "
+            "// BASE_CLASS: ",
         ).singleOrNull() ?: error("File should contain BASE_CLASS directive")
 
         doHierarchyTest(
@@ -35,9 +35,10 @@ abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
                 TypeHierarchyTreeStructure(
                     project,
                     targetClass,
-                    HierarchyBrowserBaseEx.SCOPE_PROJECT
+                    HierarchyBrowserBaseEx.SCOPE_PROJECT,
                 )
-            }, *filesToConfigure
+            },
+            *filesToConfigure,
         )
     }
 

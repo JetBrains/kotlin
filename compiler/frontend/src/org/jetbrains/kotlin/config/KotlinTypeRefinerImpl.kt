@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 @UseExperimental(TypeRefinement::class)
 class KotlinTypeRefinerImpl(
     private val moduleDescriptor: ModuleDescriptor,
-    storageManager: StorageManager
+    storageManager: StorageManager,
 ) : KotlinTypeRefiner() {
     init {
         moduleDescriptor.getCapability(REFINER_CAPABILITY)?.value = this
@@ -132,7 +132,7 @@ class KotlinTypeRefinerImpl(
                 }
 
                 override fun result() = Unit
-            }
+            },
         )
 
         return result

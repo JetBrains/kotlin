@@ -74,7 +74,7 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
     private fun checkDeclaration(
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink
+        diagnosticHolder: DiagnosticSink,
     ) {
         val container = descriptor.containingDeclaration
         val insideObject = DescriptorUtils.isObject(container)
@@ -92,7 +92,7 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
             } else {
                 diagnosticHolder.report(
                     (if (supportJvmStaticInInterface) ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
-                    else ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION).on(declaration)
+                    else ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION).on(declaration),
                 )
             }
         }
@@ -114,7 +114,7 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
     private fun checkVisibility(
         descriptor: DeclarationDescriptorWithVisibility,
         diagnosticHolder: DiagnosticSink,
-        declaration: KtDeclaration
+        declaration: KtDeclaration,
     ) {
         if (descriptor.visibility != Visibilities.PUBLIC) {
             diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_NON_PUBLIC_MEMBER.on(declaration))
@@ -212,7 +212,7 @@ class OverloadsAnnotationChecker: DeclarationChecker {
     private fun checkDeclaration(
         annotationEntry: KtAnnotationEntry,
         descriptor: DeclarationDescriptor,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         val diagnosticHolder = context.trace
 

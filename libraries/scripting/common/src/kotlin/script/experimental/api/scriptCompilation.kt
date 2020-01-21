@@ -23,7 +23,7 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
     constructor(
-        vararg baseConfigurations: ScriptCompilationConfiguration, body: Builder.() -> Unit = {}
+        vararg baseConfigurations: ScriptCompilationConfiguration, body: Builder.() -> Unit = {},
     ) : this(baseConfigurations.asIterable(), body)
 
     class Builder internal constructor(baseConfigurations: Iterable<ScriptCompilationConfiguration>) :
@@ -242,7 +242,7 @@ typealias SimpleRefineScriptCompilationConfigurationHandler =
             (ScriptConfigurationRefinementContext) -> ScriptCompilationConfiguration
 
 data class RefineConfigurationUnconditionallyData(
-    val handler: RefineScriptCompilationConfigurationHandler
+    val handler: RefineScriptCompilationConfigurationHandler,
 ) : Serializable {
     companion object {
         private const val serialVersionUID: Long = 1L
@@ -251,7 +251,7 @@ data class RefineConfigurationUnconditionallyData(
 
 data class RefineConfigurationOnAnnotationsData(
     val annotations: List<KotlinType>,
-    val handler: RefineScriptCompilationConfigurationHandler
+    val handler: RefineScriptCompilationConfigurationHandler,
 ) : Serializable {
     companion object {
         private const val serialVersionUID: Long = 1L
@@ -261,7 +261,7 @@ data class RefineConfigurationOnAnnotationsData(
 
 fun ScriptCompilationConfiguration.refineBeforeParsing(
     script: SourceCode,
-    collectedData: ScriptCollectedData? = null
+    collectedData: ScriptCollectedData? = null,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
     simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeParsing) { config, refineData ->
         refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
@@ -269,7 +269,7 @@ fun ScriptCompilationConfiguration.refineBeforeParsing(
 
 fun ScriptCompilationConfiguration.refineOnAnnotations(
     script: SourceCode,
-    collectedData: ScriptCollectedData
+    collectedData: ScriptCollectedData,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
     val foundAnnotationNames = collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }
     if (foundAnnotationNames.isNullOrEmpty()) return this.asSuccess()
@@ -287,7 +287,7 @@ fun ScriptCompilationConfiguration.refineOnAnnotations(
 
 fun ScriptCompilationConfiguration.refineBeforeCompiling(
     script: SourceCode,
-    collectedData: ScriptCollectedData? = null
+    collectedData: ScriptCollectedData? = null,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
     simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeCompiling) { config, refineData ->
         refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
@@ -295,7 +295,7 @@ fun ScriptCompilationConfiguration.refineBeforeCompiling(
 
 internal inline fun <Configuration: PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
     key: PropertiesCollection.Key<List<RefineData>>,
-    refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>
+    refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>,
 ): ResultWithDiagnostics<Configuration> = (
         this[key]
             ?.fold(this) { config, refineData ->
@@ -316,7 +316,7 @@ interface ScriptCompiler {
      */
     suspend operator fun invoke(
         script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 

@@ -104,7 +104,7 @@ fun Call.resolveCandidates(
     resolutionFacade: ResolutionFacade,
     expectedType: KotlinType = expectedType(this, bindingContext),
     filterOutWrongReceiver: Boolean = true,
-    filterOutByVisibility: Boolean = true
+    filterOutByVisibility: Boolean = true,
 ): Collection<ResolvedCall<FunctionDescriptor>> {
     val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
     val inDescriptor = resolutionScope.ownerDescriptor
@@ -115,7 +115,7 @@ fun Call.resolveCandidates(
         bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
         false, resolutionFacade.frontendService(),
-        resolutionFacade.frontendService()
+        resolutionFacade.frontendService(),
     ).replaceCollectAllCandidates(true)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 

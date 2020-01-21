@@ -76,7 +76,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     private fun checkEnumExhaustiveness(whenExpression: FirWhenExpression, enum: FirRegularClass, nullable: Boolean): Boolean {
         val data = EnumExhaustivenessData(
             enum.collectEnumEntries().map { it.symbol }.toMutableSet(),
-            !nullable
+            !nullable,
         )
         for (branch in whenExpression.branches) {
             branch.condition.accept(EnumExhaustivenessVisitor, data)
@@ -121,7 +121,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         val data = SealedExhaustivenessData(
             sealedClass.session.firSymbolProvider,
             sealedClass.inheritors.toMutableSet(),
-            !nullable
+            !nullable,
         )
         for (branch in whenExpression.branches) {
             branch.condition.accept(SealedExhaustivenessVisitor, data)
@@ -132,7 +132,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     private class SealedExhaustivenessData(
         val symbolProvider: FirSymbolProvider,
         val remainingInheritors: MutableSet<ClassId>,
-        var containsNull: Boolean
+        var containsNull: Boolean,
     )
 
     private object SealedExhaustivenessVisitor : FirDefaultVisitor<Unit, SealedExhaustivenessData>() {

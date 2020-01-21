@@ -42,7 +42,7 @@ object DeprecatedCallChecker : CallChecker {
     private fun check(
         targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement,
         languageVersionSettings: LanguageVersionSettings,
-        deprecationResolver: DeprecationResolver
+        deprecationResolver: DeprecationResolver,
     ) {
         // Objects will be checked by DeprecatedClassifierUsageChecker
         if (targetDescriptor is FakeCallableDescriptorForObject) return

@@ -49,8 +49,8 @@ object ProtectedSyntheticExtensionCallChecker : CallChecker {
 
         val receiverValue = resolvedCall.extensionReceiver as ReceiverValue
         val receiverTypes = listOf(receiverValue.type) + context.dataFlowInfo.getStableTypes(
-                context.dataFlowValueFactory.createDataFlowValue(receiverValue, context.trace.bindingContext, context.scope.ownerDescriptor),
-                context.languageVersionSettings
+            context.dataFlowValueFactory.createDataFlowValue(receiverValue, context.trace.bindingContext, context.scope.ownerDescriptor),
+            context.languageVersionSettings,
         )
 
         if (receiverTypes.none { Visibilities.isVisible(getReceiverValueWithSmartCast(null, it), sourceFunction, from) }) {

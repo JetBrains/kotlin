@@ -70,7 +70,7 @@ object ProjectRootsUtil {
         project: Project, file: VirtualFile, includeProjectSource: Boolean,
         includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
         includeScriptDependencies: Boolean, includeScriptsOutsideSourceRoots: Boolean,
-        fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+        fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
     ): Boolean {
         val scriptDefinition = file.findScriptDefinition(project)
         val scriptScope = scriptDefinition?.compilationConfiguration?.get(ScriptCompilationConfiguration.ide.acceptedLocations)
@@ -90,7 +90,7 @@ object ProjectRootsUtil {
                 includeLibraryClasses && (includeAll || scriptScope.contains(ScriptAcceptedLocation.Libraries)),
                 includeScriptDependencies && (includeAll || scriptScope.contains(ScriptAcceptedLocation.Libraries)),
                 includeScriptsOutsideSourceRoots && includeAll,
-                fileIndex
+                fileIndex,
             )
         }
         return isInContentWithoutScriptDefinitionCheck(
@@ -101,7 +101,7 @@ object ProjectRootsUtil {
             includeLibraryClasses,
             includeScriptDependencies,
             false,
-            fileIndex
+            fileIndex,
         )
     }
 
@@ -109,7 +109,7 @@ object ProjectRootsUtil {
         project: Project, file: VirtualFile, includeProjectSource: Boolean,
         includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
         includeScriptDependencies: Boolean, includeScriptsOutsideSourceRoots: Boolean,
-        fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+        fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
     ): Boolean {
 
         if (includeProjectSource && fileIndex.isInSourceContentWithoutInjected(file)) return true
@@ -156,7 +156,7 @@ object ProjectRootsUtil {
         includeLibrarySource: Boolean,
         includeLibraryClasses: Boolean,
         includeScriptDependencies: Boolean,
-        includeScriptsOutsideSourceRoots: Boolean
+        includeScriptsOutsideSourceRoots: Boolean,
     ): Boolean = runReadAction {
         val virtualFile = when (element) {
             is PsiDirectory -> element.virtualFile
@@ -171,7 +171,7 @@ object ProjectRootsUtil {
             includeLibrarySource,
             includeLibraryClasses,
             includeScriptDependencies,
-            includeScriptsOutsideSourceRoots
+            includeScriptsOutsideSourceRoots,
         )
     }
 
@@ -184,7 +184,7 @@ object ProjectRootsUtil {
             includeLibrarySource = false,
             includeLibraryClasses = false,
             includeScriptDependencies = false,
-            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots
+            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots,
         )
     }
 
@@ -198,7 +198,7 @@ object ProjectRootsUtil {
             includeLibrarySource = false,
             includeLibraryClasses = false,
             includeScriptDependencies = false,
-            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots
+            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots,
         )
     }
 
@@ -211,7 +211,7 @@ object ProjectRootsUtil {
             includeLibrarySource = true,
             includeLibraryClasses = false,
             includeScriptDependencies = false,
-            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots
+            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots,
         )
     }
 
@@ -223,7 +223,7 @@ object ProjectRootsUtil {
             includeLibrarySource = true,
             includeLibraryClasses = true,
             includeScriptDependencies = true,
-            includeScriptsOutsideSourceRoots = false
+            includeScriptsOutsideSourceRoots = false,
         )
     }
 
@@ -235,7 +235,7 @@ object ProjectRootsUtil {
             includeLibrarySource = false,
             includeLibraryClasses = true,
             includeScriptDependencies = false,
-            includeScriptsOutsideSourceRoots = false
+            includeScriptsOutsideSourceRoots = false,
         )
     }
 
@@ -248,7 +248,7 @@ object ProjectRootsUtil {
             includeLibrarySource = false,
             includeLibraryClasses = true,
             includeScriptDependencies = true,
-            includeScriptsOutsideSourceRoots = false
+            includeScriptsOutsideSourceRoots = false,
         )
     }
 
@@ -261,7 +261,7 @@ object ProjectRootsUtil {
             includeLibrarySource = true,
             includeLibraryClasses = false,
             includeScriptDependencies = true,
-            includeScriptsOutsideSourceRoots = false
+            includeScriptsOutsideSourceRoots = false,
         )
     }
 
@@ -274,7 +274,7 @@ object ProjectRootsUtil {
             includeLibrarySource = true,
             includeLibraryClasses = true,
             includeScriptDependencies = true,
-            includeScriptsOutsideSourceRoots = false
+            includeScriptsOutsideSourceRoots = false,
         )
     }
 }

@@ -49,7 +49,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     fun testNestedClass() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
         KotlinTestUtils.compileKotlinWithJava(
-                listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, testRootDisposable, null
+            listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, testRootDisposable, null,
         )
 
         val environment = createEnvironment(tmpdir)
@@ -68,9 +68,9 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
 
     private fun createEnvironment(tmpdir: File?): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
-                testRootDisposable,
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            testRootDisposable,
+            KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES,
         ).apply {
             // Activate Kotlin light class finder
             JvmResolveUtil.analyze(this)

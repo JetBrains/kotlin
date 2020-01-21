@@ -66,7 +66,7 @@ object GenerationUtils {
         files: List<KtFile>,
         environment: KotlinCoreEnvironment,
         classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
-        trace: BindingTrace = NoScopeRecordCliBindingTrace()
+        trace: BindingTrace = NoScopeRecordCliBindingTrace(),
     ): GenerationState =
         compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
@@ -77,7 +77,7 @@ object GenerationUtils {
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = NoScopeRecordCliBindingTrace()
+        trace: BindingTrace = NoScopeRecordCliBindingTrace(),
     ): GenerationState {
         val project = files.first().project
         val state = if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
@@ -101,7 +101,7 @@ object GenerationUtils {
         files: List<KtFile>,
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     ): GenerationState {
         Extensions.getArea(project)
             .getExtensionPoint(PsiElementFinder.EP_NAME)
@@ -132,11 +132,11 @@ object GenerationUtils {
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
         val generationState = GenerationState.Builder(
-            project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, files, configuration
+            project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, files, configuration,
         ).codegenFactory(
-            codegenFactory
+            codegenFactory,
         ).isIrBackend(
-            true
+            true,
         ).build()
 
         generationState.beforeCompile()
@@ -151,7 +151,7 @@ object GenerationUtils {
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): GenerationState {
         val analysisResult =
             JvmResolveUtil.analyzeAndCheckForErrors(project, files, configuration, packagePartProvider, trace)
@@ -162,11 +162,11 @@ object GenerationUtils {
             classBuilderFactory.classBuilderMode == ClassBuilderMode.FULL && configuration.getBoolean(JVMConfigurationKeys.IR)
         val generationState = GenerationState.Builder(
             project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-            files, configuration
+            files, configuration,
         ).codegenFactory(
             if (isIrBackend)
                 JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
-            else DefaultCodegenFactory
+            else DefaultCodegenFactory,
         ).isIrBackend(isIrBackend).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(generationState)

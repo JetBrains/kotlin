@@ -22,7 +22,7 @@ data class ModuleData(
     val rawClasspath: List<String>,
     val rawSources: List<String>,
     val rawJavaSourceRoots: List<String>,
-    val isCommon: Boolean
+    val isCommon: Boolean,
 ) {
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
 

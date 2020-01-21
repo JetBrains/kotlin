@@ -17,13 +17,15 @@ open class MainActivity2: Activity() {
         libUtil()
 
         var next: Button = findViewById(R.id.Button02) as Button
-        next.setOnClickListener(object: View.OnClickListener {
-            public override fun onClick(view: View): Unit {
-                val intent: Intent = Intent()
-                setResult(Activity.RESULT_OK, intent)
-                finish()
-            }
-        })
+        next.setOnClickListener(
+            object : View.OnClickListener {
+                public override fun onClick(view: View): Unit {
+                    val intent: Intent = Intent()
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+            },
+        )
     }
 
     public override fun onCreateOptionsMenu(menu: Menu?): Boolean {

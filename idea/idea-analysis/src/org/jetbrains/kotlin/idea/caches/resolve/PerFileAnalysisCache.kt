@@ -119,7 +119,7 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                                     depth,
                                     element = inBlockModification,
                                     resolveContext = resolveSession.bindingContext,
-                                    parentContext = resultCtx
+                                    parentContext = resultCtx,
                                 )
                             }
 
@@ -167,7 +167,7 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
     private fun wrapResult(
         oldResult: AnalysisResult,
         newResult: AnalysisResult,
-        elementBindingTrace: StackedCompositeBindingContextTrace
+        elementBindingTrace: StackedCompositeBindingContextTrace,
     ): AnalysisResult {
         val newBindingCtx = elementBindingTrace.stackedContext
         return when {
@@ -176,7 +176,7 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
             else -> AnalysisResult.success(
                 newBindingCtx,
                 oldResult.moduleDescriptor,
-                oldResult.shouldGenerateCode
+                oldResult.shouldGenerateCode,
             )
         }
     }
@@ -198,7 +198,7 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                 codeFragmentAnalyzer,
                 bodyResolveCache,
                 analyzableElement,
-                bindingTrace
+                bindingTrace,
             )
         } catch (e: ProcessCanceledException) {
             throw e
@@ -237,11 +237,11 @@ private class StackedCompositeBindingContextTrace(
     val depth: Int, // depth of stack over original ktFile bindingContext
     val element: KtElement,
     val resolveContext: BindingContext,
-    val parentContext: BindingContext
+    val parentContext: BindingContext,
 ) : DelegatingBindingTrace(
     resolveContext,
     "Stacked trace for resolution of $element",
-    allowSliceRewrite = true
+    allowSliceRewrite = true,
 ) {
     /**
      * Effectively StackedCompositeBindingContext holds up-to-date and partially outdated contexts (parentContext)
@@ -332,7 +332,7 @@ private object KotlinResolveDataProvider {
         KtSuperTypeList::class.java,
         KtTypeParameter::class.java,
         KtParameter::class.java,
-        KtTypeAlias::class.java
+        KtTypeAlias::class.java,
     )
 
     fun findAnalyzableParent(element: KtElement): KtElement {
@@ -346,7 +346,8 @@ private object KotlinResolveDataProvider {
             is KtTypeConstraint,
             is KtSuperTypeList,
             is KtTypeParameter,
-            is KtParameter -> PsiTreeUtil.getParentOfType(topmostElement, KtClassOrObject::class.java, KtCallableDeclaration::class.java)
+            is KtParameter,
+            -> PsiTreeUtil.getParentOfType(topmostElement, KtClassOrObject::class.java, KtCallableDeclaration::class.java)
             else -> topmostElement
         }
         // Primary constructor should never be returned
@@ -368,7 +369,7 @@ private object KotlinResolveDataProvider {
         codeFragmentAnalyzer: CodeFragmentAnalyzer,
         bodyResolveCache: BodyResolveCache,
         analyzableElement: KtElement,
-        bindingTrace: BindingTrace?
+        bindingTrace: BindingTrace?,
     ): AnalysisResult {
         try {
             if (analyzableElement is KtCodeFragment) {
@@ -380,7 +381,7 @@ private object KotlinResolveDataProvider {
             val trace = bindingTrace ?: DelegatingBindingTrace(
                 resolveSession.bindingContext,
                 "Trace for resolution of $analyzableElement",
-                allowSliceRewrite = true
+                allowSliceRewrite = true,
             )
 
             val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
@@ -406,7 +407,7 @@ private object KotlinResolveDataProvider {
                 bodyResolveCache,
                 targetPlatform.findAnalyzerServices,
                 analyzableElement.languageVersionSettings,
-                IdeaModuleStructureOracle()
+                IdeaModuleStructureOracle(),
             ).get<LazyTopDownAnalyzer>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))

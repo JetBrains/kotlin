@@ -31,13 +31,13 @@ abstract class AnnotationResolver {
     fun resolveAnnotationsWithoutArguments(
         scope: LexicalScope,
         modifierList: KtModifierList?,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): Annotations = resolveAnnotationsFromModifierList(scope, modifierList, trace, false)
 
     fun resolveAnnotationsWithArguments(
         scope: LexicalScope,
         modifierList: KtModifierList?,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): Annotations = resolveAnnotationsFromModifierList(scope, modifierList, trace, true)
 
 
@@ -45,7 +45,7 @@ abstract class AnnotationResolver {
         scope: LexicalScope,
         modifierList: KtModifierList?,
         trace: BindingTrace,
-        shouldResolveArguments: Boolean
+        shouldResolveArguments: Boolean,
     ): Annotations {
         if (modifierList == null) {
             return Annotations.EMPTY
@@ -57,20 +57,20 @@ abstract class AnnotationResolver {
     fun resolveAnnotationsWithoutArguments(
         scope: LexicalScope,
         annotationEntries: @JvmSuppressWildcards List<KtAnnotationEntry>,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): Annotations = resolveAnnotationEntries(scope, annotationEntries, trace, false)
 
     fun resolveAnnotationsWithArguments(
         scope: LexicalScope,
         annotationEntries: @JvmSuppressWildcards List<KtAnnotationEntry>,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): Annotations = resolveAnnotationEntries(scope, annotationEntries, trace, true)
 
     protected abstract fun resolveAnnotationEntries(
         scope: LexicalScope,
         annotationEntries: @JvmSuppressWildcards List<KtAnnotationEntry>,
         trace: BindingTrace,
-        shouldResolveArguments: Boolean
+        shouldResolveArguments: Boolean,
     ): Annotations
 
 
@@ -79,12 +79,12 @@ abstract class AnnotationResolver {
     abstract fun resolveAnnotationCall(
         annotationEntry: KtAnnotationEntry,
         scope: LexicalScope,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): OverloadResolutionResults<FunctionDescriptor>
 
     abstract fun getAnnotationArgumentValue(
         trace: BindingTrace,
         valueParameter: ValueParameterDescriptor,
-        resolvedArgument: ResolvedValueArgument
+        resolvedArgument: ResolvedValueArgument,
     ): ConstantValue<*>?
 }

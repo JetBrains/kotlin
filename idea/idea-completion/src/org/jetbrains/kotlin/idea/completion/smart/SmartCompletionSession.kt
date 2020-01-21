@@ -31,7 +31,7 @@ class SmartCompletionSession(
     configuration: CompletionSessionConfiguration,
     parameters: CompletionParameters,
     toFromOriginalFileMapper: ToFromOriginalFileMapper,
-    resultSet: CompletionResultSet
+    resultSet: CompletionResultSet,
 ) : CompletionSession(configuration, parameters, toFromOriginalFileMapper, resultSet) {
 
     override val descriptorKindFilter: DescriptorKindFilter by lazy {
@@ -54,7 +54,7 @@ class SmartCompletionSession(
             SmartCompletion(
                 it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, indicesHelper(false),
                 prefixMatcher, searchScope, toFromOriginalFileMapper,
-                callTypeAndReceiver, isJvmModule
+                callTypeAndReceiver, isJvmModule,
             )
         }
     }
@@ -100,7 +100,7 @@ class SmartCompletionSession(
                 val results = ExtensionFunctionTypeValueCompletion(
                     receiverTypes,
                     callTypeAndReceiver.callType,
-                    lookupElementFactory
+                    lookupElementFactory,
                 ).processVariables(contextVariablesProvider)
                 for ((invokeDescriptor, factory) in results) {
                     collector.addElements(filter(invokeDescriptor, factory))
@@ -151,7 +151,7 @@ class SmartCompletionSession(
                         variants.notImportedExtensions.forEach {
                             collector.addElements(
                                 filter(it, lookupElementFactory).map { element -> element.withReceiverCast() },
-                                notImported = true
+                                notImported = true,
                             )
                         }
                         flushToResultSet()
@@ -211,12 +211,12 @@ class SmartCompletionSession(
         KindWeigher.toString(),
         NameSimilarityWeigher,
         SmartCompletionPriorityWeigher,
-        CallableReferenceWeigher(callTypeAndReceiver.callType)
+        CallableReferenceWeigher(callTypeAndReceiver.callType),
     )
 
     override fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory =
         super.createLookupElementFactory(contextVariablesProvider).copy(
-            standardLookupElementsPostProcessor = { wrapStandardLookupElement(it) }
+            standardLookupElementsPostProcessor = { wrapStandardLookupElement(it) },
         )
 
     private fun wrapStandardLookupElement(lookupElement: LookupElement): LookupElement {

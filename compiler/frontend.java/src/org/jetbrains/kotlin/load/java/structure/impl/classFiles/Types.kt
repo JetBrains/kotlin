@@ -29,9 +29,9 @@ internal class PlainJavaWildcardType(override val bound: JavaType?, override val
 internal class PlainJavaPrimitiveType(override val type: PrimitiveType?) : JavaPrimitiveType
 
 internal class PlainJavaClassifierType(
-        // calculation of classifier and canonicalText
-        classifierComputation: () -> ClassifierResolutionContext.Result,
-        override val typeArguments: List<JavaType>
+    // calculation of classifier and canonicalText
+    classifierComputation: () -> ClassifierResolutionContext.Result,
+    override val typeArguments: List<JavaType>,
 ) : JavaClassifierType {
     private val classifierResolverResult by lazy(LazyThreadSafetyMode.NONE, classifierComputation)
 

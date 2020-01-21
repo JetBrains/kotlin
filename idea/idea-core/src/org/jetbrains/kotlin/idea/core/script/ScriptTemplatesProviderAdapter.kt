@@ -25,6 +25,6 @@ class ScriptTemplatesProviderAdapter(private val templatesProvider: ScriptTempla
                         templatesProvider.environment
                     }
                 },
-                templatesProvider.additionalResolverClasspath
+                templatesProvider.additionalResolverClasspath,
             ).asSequence()
 }

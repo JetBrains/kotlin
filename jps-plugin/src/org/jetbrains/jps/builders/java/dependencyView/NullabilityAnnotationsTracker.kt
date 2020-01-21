@@ -33,7 +33,7 @@ internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
         context: DependencyContext,
         method: MethodRepr,
         annotationsDiff: Difference.Specifier<ClassType, Difference>,
-        paramAnnotationsDiff: Difference.Specifier<ParamAnnotation, Difference>
+        paramAnnotationsDiff: Difference.Specifier<ParamAnnotation, Difference>,
     ): Set<Recompile> {
         val changedAnnotations = annotationsDiff.addedOrRemoved() +
                 paramAnnotationsDiff.addedOrRemoved().map { it.type }
@@ -45,7 +45,7 @@ internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
     override fun fieldAnnotationsChanged(
         context: NamingContext,
         field: FieldRepr,
-        annotationsDiff: Difference.Specifier<ClassType, Difference>
+        annotationsDiff: Difference.Specifier<ClassType, Difference>,
     ): Set<Recompile> {
         return handleNullAnnotationsChanges(context, field, annotationsDiff.addedOrRemoved())
     }
@@ -53,7 +53,7 @@ internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
     private fun handleNullAnnotationsChanges(
         context: NamingContext,
         protoMember: ProtoMember,
-        annotations: Sequence<TypeRepr.ClassType>
+        annotations: Sequence<TypeRepr.ClassType>,
     ): Set<Recompile> {
         val nullabilityAnnotations = TIntHashSet(this.annotations.toIntArray { context.get(it) })
         val changedNullAnnotation = annotations.firstOrNull { nullabilityAnnotations.contains(it.className) }

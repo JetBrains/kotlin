@@ -34,8 +34,8 @@ object JvmOverridesBackwardCompatibilityHelper : OverridesBackwardCompatibilityH
     }
 
     private fun isPlatformSpecificDescriptorThatCanBeImplicitlyOverridden(
-            overriddenDescriptor: CallableMemberDescriptor,
-            visitedDescriptors: MutableSet<CallableMemberDescriptor>
+        overriddenDescriptor: CallableMemberDescriptor,
+        visitedDescriptors: MutableSet<CallableMemberDescriptor>,
     ): Boolean {
         if (overriddenDescriptor.modality == Modality.FINAL) return false
 
@@ -44,7 +44,8 @@ object JvmOverridesBackwardCompatibilityHelper : OverridesBackwardCompatibilityH
 
         when (overriddenDescriptor.kind) {
             CallableMemberDescriptor.Kind.DELEGATION,
-            CallableMemberDescriptor.Kind.FAKE_OVERRIDE ->
+            CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+            ->
                 return isOverridingOnlyDescriptorsThatCanBeImplicitlyOverridden(overriddenDescriptor, visitedDescriptors)
 
             CallableMemberDescriptor.Kind.DECLARATION -> {
@@ -72,8 +73,8 @@ object JvmOverridesBackwardCompatibilityHelper : OverridesBackwardCompatibilityH
     }
 
     private fun isOverridingOnlyDescriptorsThatCanBeImplicitlyOverridden(
-            overriddenDescriptor: CallableMemberDescriptor,
-            visitedDescriptors: MutableSet<CallableMemberDescriptor>
+        overriddenDescriptor: CallableMemberDescriptor,
+        visitedDescriptors: MutableSet<CallableMemberDescriptor>,
     ): Boolean =
             overriddenDescriptor.overriddenDescriptors.all {
                 isPlatformSpecificDescriptorThatCanBeImplicitlyOverridden(it, visitedDescriptors)

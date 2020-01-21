@@ -19,7 +19,7 @@ class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest(
         runTest {
             TestCase.assertEquals(
                 "Icon.kt",
-                navigationElementForReferenceInLibrarySource("lib.kt", "Icon").containingFile.name
+                navigationElementForReferenceInLibrarySource("lib.kt", "Icon").containingFile.name,
             )
         }
     }
@@ -30,7 +30,7 @@ class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest(
             true,
             true,
             true,
-            false
+            false,
         )
     }
 }

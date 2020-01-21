@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.model.*
 
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
-    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
         fun isProperType(type: KotlinTypeMarker): Boolean
@@ -45,7 +45,7 @@ class ResultTypeResolver(
     private fun findResultTypeOrNull(
         c: Context,
         variableWithConstraints: VariableWithConstraints,
-        direction: ResolveDirection
+        direction: ResolveDirection,
     ): KotlinTypeMarker? {
         findResultIfThereIsEqualsConstraint(c, variableWithConstraints)?.let { return it }
 
@@ -61,7 +61,7 @@ class ResultTypeResolver(
     private fun Context.resultType(
         firstCandidate: KotlinTypeMarker?,
         secondCandidate: KotlinTypeMarker?,
-        variableWithConstraints: VariableWithConstraints
+        variableWithConstraints: VariableWithConstraints,
     ): KotlinTypeMarker? {
         if (firstCandidate == null || secondCandidate == null) return firstCandidate ?: secondCandidate
 
@@ -130,7 +130,7 @@ class ResultTypeResolver(
 
             return typeApproximator.approximateToSuperType(
                 commonSuperType,
-                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation,
             ) ?: commonSuperType
         }
 
@@ -183,7 +183,7 @@ class ResultTypeResolver(
 
             return typeApproximator.approximateToSubType(
                 upperType,
-                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation,
             ) ?: upperType
         }
         return null

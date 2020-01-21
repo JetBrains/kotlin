@@ -13,12 +13,12 @@ fun ModuleMapping.Companion.loadModuleMapping(
     bytes: ByteArray?,
     debugName: String,
     configuration: DeserializationConfiguration,
-    reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit
+    reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit,
 ): ModuleMapping =
     loadModuleMapping(
         bytes,
         debugName,
         configuration.skipMetadataVersionCheck,
         configuration.isJvmPackageNameSupported,
-        reportIncompatibleVersionError
+        reportIncompatibleVersionError,
     )

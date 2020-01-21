@@ -27,7 +27,7 @@ fun PropertyDescriptor.asImportedFromObject(original: PropertyImportedFromObject
 
 abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemberDescriptor>(
     val callableFromObject: TCallable,
-    private val originalOrNull: TCallable?
+    private val originalOrNull: TCallable?,
 ) : CallableDescriptor {
 
     val containingObject = callableFromObject.containingDeclaration as ClassDescriptor
@@ -39,7 +39,7 @@ abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemb
 // members imported from object should be wrapped to not require dispatch receiver
 class FunctionImportedFromObject(
     functionFromObject: FunctionDescriptor,
-    originalOrNull: FunctionDescriptor? = null
+    originalOrNull: FunctionDescriptor? = null,
 ) : ImportedFromObjectCallableDescriptor<FunctionDescriptor>(functionFromObject, originalOrNull),
     FunctionDescriptor by functionFromObject {
 
@@ -52,7 +52,7 @@ class FunctionImportedFromObject(
 
     override fun copy(
         newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
+        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean,
     ): FunctionDescriptor {
         throw UnsupportedOperationException("copy() should not be called on ${this::class.java.simpleName}, was called for $this")
     }
@@ -60,7 +60,7 @@ class FunctionImportedFromObject(
 
 class PropertyImportedFromObject(
     propertyFromObject: PropertyDescriptor,
-    originalOrNull: PropertyDescriptor? = null
+    originalOrNull: PropertyDescriptor? = null,
 ) : ImportedFromObjectCallableDescriptor<PropertyDescriptor>(propertyFromObject, originalOrNull),
     PropertyDescriptor by propertyFromObject {
 
@@ -72,7 +72,7 @@ class PropertyImportedFromObject(
 
     override fun copy(
         newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
+        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean,
     ): FunctionDescriptor {
         throw UnsupportedOperationException("copy() should not be called on ${this::class.java.simpleName}, was called for $this")
     }

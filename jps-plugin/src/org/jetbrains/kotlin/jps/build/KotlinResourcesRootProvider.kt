@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.config.TestResourceKotlinRootType
 class KotlinResourcesRootProvider : AdditionalRootsProviderService<ResourceRootDescriptor>(ResourcesTargetType.ALL_TYPES) {
     override fun getAdditionalRoots(
         target: BuildTarget<ResourceRootDescriptor>,
-        dataPaths: BuildDataPaths?
+        dataPaths: BuildDataPaths?,
     ): List<ResourceRootDescriptor> {
         val moduleBuildTarget = target as? ResourcesTarget ?: return listOf()
         val module = moduleBuildTarget.module
@@ -34,8 +34,8 @@ class KotlinResourcesRootProvider : AdditionalRootsProviderService<ResourceRootD
                     it.file,
                     target,
                     it.properties.packagePrefix,
-                    setOf()
-                )
+                    setOf(),
+                ),
             )
         }
 

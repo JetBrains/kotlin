@@ -34,7 +34,7 @@ class KotlinRequestResultProcessor(
     private val unwrappedElement: PsiElement,
     private val originalElement: PsiElement = unwrappedElement,
     private val filter: (PsiReference) -> Boolean = { true },
-    private val options: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty
+    private val options: KotlinReferencesSearchOptions = KotlinReferencesSearchOptions.Empty,
 ) : RequestResultProcessor(unwrappedElement, originalElement, filter, options) {
     private val referenceService = PsiReferenceService.getService()
 

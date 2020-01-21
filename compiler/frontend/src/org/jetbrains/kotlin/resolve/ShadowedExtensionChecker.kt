@@ -81,8 +81,8 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
                     Errors.EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE.on(
                         declaration,
                         memberProperty,
-                        invokeOperator
-                    )
+                        invokeOperator,
+                    ),
                 )
                 return
             }
@@ -111,20 +111,20 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
 
     private fun getInvokeOperatorShadowingExtensionFunction(
         extension: FunctionDescriptor,
-        member: PropertyDescriptor
+        member: PropertyDescriptor,
     ): FunctionDescriptor? =
         member.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
             .firstOrNull { it.isPublic() && it.isOperator && isExtensionFunctionShadowedByMemberFunction(extension, it) }
 
     private fun isSignatureNotLessSpecific(
         extensionSignature: FlatSignature<FunctionDescriptor>,
-        memberSignature: FlatSignature<FunctionDescriptor>
+        memberSignature: FlatSignature<FunctionDescriptor>,
     ): Boolean =
         ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific(
             extensionSignature,
             memberSignature,
             OverloadabilitySpecificityCallbacks,
-            typeSpecificityComparator
+            typeSpecificityComparator,
         )
 
     private fun checkShadowedExtensionProperty(declaration: KtDeclaration, extensionProperty: PropertyDescriptor, trace: DiagnosticSink) {

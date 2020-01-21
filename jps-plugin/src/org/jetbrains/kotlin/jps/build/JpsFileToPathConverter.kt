@@ -10,5 +10,5 @@ import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService
 import org.jetbrains.kotlin.incremental.storage.RelativeFileToPathConverter
 
 internal class JpsFileToPathConverter(
-    jpsProject: JpsProject
+    jpsProject: JpsProject,
 ) : RelativeFileToPathConverter(JpsModelSerializationDataService.getBaseDirectory(jpsProject))

@@ -61,7 +61,7 @@ interface OverrideMemberChooserObject : ClassMember {
             descriptor: CallableMemberDescriptor,
             immediateSuper: CallableMemberDescriptor,
             bodyType: BodyType,
-            preferConstructorParameter: Boolean = false
+            preferConstructorParameter: Boolean = false,
         ): OverrideMemberChooserObject {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
             return if (declaration != null) {
@@ -76,7 +76,7 @@ interface OverrideMemberChooserObject : ClassMember {
             descriptor: CallableMemberDescriptor,
             immediateSuper: CallableMemberDescriptor,
             bodyType: BodyType,
-            preferConstructorParameter: Boolean = false
+            preferConstructorParameter: Boolean = false,
         ): OverrideMemberChooserObject =
             WithDeclaration(descriptor, declaration, immediateSuper, bodyType, preferConstructorParameter)
 
@@ -85,7 +85,7 @@ interface OverrideMemberChooserObject : ClassMember {
             declaration: PsiElement,
             override val immediateSuper: CallableMemberDescriptor,
             override val bodyType: BodyType,
-            override val preferConstructorParameter: Boolean
+            override val preferConstructorParameter: Boolean,
         ) : DescriptorMemberChooserObject(declaration, descriptor), OverrideMemberChooserObject {
 
             override val descriptor: CallableMemberDescriptor
@@ -96,15 +96,15 @@ interface OverrideMemberChooserObject : ClassMember {
             override val descriptor: CallableMemberDescriptor,
             override val immediateSuper: CallableMemberDescriptor,
             override val bodyType: BodyType,
-            override val preferConstructorParameter: Boolean
+            override val preferConstructorParameter: Boolean,
         ) : MemberChooserObjectBase(
-            DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(null, descriptor)
+            DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(null, descriptor),
         ), OverrideMemberChooserObject {
 
             override fun getParentNodeDelegate(): MemberChooserObject? {
                 val parentClassifier = descriptor.containingDeclaration as? ClassifierDescriptor ?: return null
                 return MemberChooserObjectBase(
-                    DescriptorMemberChooserObject.getText(parentClassifier), DescriptorMemberChooserObject.getIcon(null, parentClassifier)
+                    DescriptorMemberChooserObject.getText(parentClassifier), DescriptorMemberChooserObject.getIcon(null, parentClassifier),
                 )
             }
         }
@@ -119,14 +119,14 @@ enum class MemberGenerateMode {
 
 fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject,
-    copyDoc: Boolean
+    copyDoc: Boolean,
 ) = generateMember(targetClass, copyDoc, targetClass.project, mode = MemberGenerateMode.OVERRIDE)
 
 fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject?,
     copyDoc: Boolean,
     project: Project,
-    mode: MemberGenerateMode
+    mode: MemberGenerateMode,
 ): KtCallableDeclaration {
     val descriptor = immediateSuper
 
@@ -272,7 +272,7 @@ private fun generateProperty(
     descriptor: PropertyDescriptor,
     renderer: DescriptorRenderer,
     bodyType: OverrideMemberChooserObject.BodyType,
-    forceOverride: Boolean
+    forceOverride: Boolean,
 ): KtProperty {
     val newDescriptor = descriptor.wrap(forceOverride)
 
@@ -297,7 +297,7 @@ private fun generateConstructorParameter(
     project: Project,
     descriptor: PropertyDescriptor,
     renderer: DescriptorRenderer,
-    forceOverride: Boolean
+    forceOverride: Boolean,
 ): KtParameter {
     val newDescriptor = descriptor.wrap(forceOverride)
     newDescriptor.setSingleOverridden(descriptor)
@@ -309,7 +309,7 @@ private fun generateFunction(
     descriptor: FunctionDescriptor,
     renderer: DescriptorRenderer,
     bodyType: OverrideMemberChooserObject.BodyType,
-    forceOverride: Boolean
+    forceOverride: Boolean,
 ): KtFunction {
     val newDescriptor = descriptor.wrap(forceOverride)
 
@@ -343,7 +343,7 @@ fun generateUnsupportedOrSuperCall(
     project: Project,
     descriptor: CallableMemberDescriptor,
     bodyType: OverrideMemberChooserObject.BodyType,
-    canBeEmpty: Boolean = true
+    canBeEmpty: Boolean = true,
 ): String {
     when (bodyType.effectiveBodyType(canBeEmpty)) {
         EMPTY_OR_TEMPLATE -> return ""
@@ -354,7 +354,7 @@ fun generateUnsupportedOrSuperCall(
                 templateKind,
                 descriptor.name.asString(),
                 descriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
-                null
+                null,
             )
         }
         else -> return buildString {
@@ -364,7 +364,7 @@ fun generateUnsupportedOrSuperCall(
                 append("super")
                 if (bodyType == QUALIFIED_SUPER) {
                     val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(
-                        descriptor.containingDeclaration as ClassifierDescriptor
+                        descriptor.containingDeclaration as ClassifierDescriptor,
                     )
                     append("<").append(superClassFqName).append(">")
                 }

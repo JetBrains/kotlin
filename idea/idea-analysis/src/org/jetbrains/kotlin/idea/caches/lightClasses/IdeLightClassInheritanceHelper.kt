@@ -33,7 +33,7 @@ class IdeLightClassInheritanceHelper : LightClassInheritanceHelper {
     override fun isInheritor(
         lightClass: KtLightClass,
         baseClass: PsiClass,
-        checkDeep: Boolean
+        checkDeep: Boolean,
     ): ImpreciseResolveResult {
         if (baseClass.project.isInDumbMode()) return NO_MATCH
 

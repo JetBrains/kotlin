@@ -44,7 +44,7 @@ open class JvmBuiltInsSettings(
     private val moduleDescriptor: ModuleDescriptor,
     storageManager: StorageManager,
     deferredOwnerModuleDescriptor: () -> ModuleDescriptor,
-    isAdditionalBuiltInsFeatureSupported: () -> Boolean
+    isAdditionalBuiltInsFeatureSupported: () -> Boolean,
 ) : AdditionalClassPartsProvider, PlatformDependentDeclarationFilter {
     private val j2kClassMap = JavaToKotlinClassMap
 
@@ -55,7 +55,7 @@ open class JvmBuiltInsSettings(
     private val cloneableType by storageManager.createLazyValue {
         ownerModuleDescriptor.findNonGenericClassAcrossDependencies(
             JvmBuiltInClassDescriptorFactory.CLONEABLE_CLASS_ID,
-            NotFoundClasses(storageManager, ownerModuleDescriptor)
+            NotFoundClasses(storageManager, ownerModuleDescriptor),
         ).defaultType
     }
 
@@ -64,7 +64,7 @@ open class JvmBuiltInsSettings(
     // Most this properties are lazy because they depends on KotlinBuiltIns initialization that depends on JvmBuiltInsSettings object
     private val notConsideredDeprecation by storageManager.createLazyValue {
         val annotation = moduleDescriptor.builtIns.createDeprecatedAnnotation(
-            "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version"
+            "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version",
         )
         Annotations.create(listOf(annotation))
     }
@@ -79,7 +79,7 @@ open class JvmBuiltInsSettings(
 
         val mockSerializableClass = ClassDescriptorImpl(
             mockJavaIoPackageFragment, Name.identifier("Serializable"), Modality.ABSTRACT, ClassKind.INTERFACE, superTypes,
-            SourceElement.NO_SOURCE, false, this
+            SourceElement.NO_SOURCE, false, this,
         )
 
         mockSerializableClass.initialize(MemberScope.Empty, emptySet(), null)
@@ -107,8 +107,8 @@ open class JvmBuiltInsSettings(
             }
             return listOf(
                 createCloneForArray(
-                    classDescriptor, cloneableType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single()
-                )
+                    classDescriptor, cloneableType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single(),
+                ),
             )
         }
 
@@ -120,8 +120,8 @@ open class JvmBuiltInsSettings(
             val substitutedWithKotlinTypeParameters =
                 additionalMember.substitute(
                     createMappedTypeParametersSubstitution(
-                        additionalMember.containingDeclaration as ClassDescriptor, classDescriptor
-                    ).buildSubstitutor()
+                        additionalMember.containingDeclaration as ClassDescriptor, classDescriptor,
+                    ).buildSubstitutor(),
                 ) as SimpleFunctionDescriptor
 
             substitutedWithKotlinTypeParameters.newCopyBuilder().apply {
@@ -159,7 +159,7 @@ open class JvmBuiltInsSettings(
 
     private fun getAdditionalFunctions(
         classDescriptor: ClassDescriptor,
-        functionsByScope: (MemberScope) -> Collection<SimpleFunctionDescriptor>
+        functionsByScope: (MemberScope) -> Collection<SimpleFunctionDescriptor>,
     ): Collection<SimpleFunctionDescriptor> {
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
@@ -172,7 +172,7 @@ open class JvmBuiltInsSettings(
         val fakeJavaClassDescriptor = javaAnalogueClassesWithCustomSupertypeCache.computeIfAbsent(javaAnalogueDescriptor.fqNameSafe) {
             javaAnalogueDescriptor.copy(
                 javaResolverCache = JavaResolverCache.EMPTY,
-                additionalSupertypeClassDescriptor = kotlinMutableClassIfContainer
+                additionalSupertypeClassDescriptor = kotlinMutableClassIfContainer,
             )
         }
 
@@ -194,7 +194,7 @@ open class JvmBuiltInsSettings(
 
     private fun createCloneForArray(
         arrayClassDescriptor: DeserializedClassDescriptor,
-        cloneFromCloneable: SimpleFunctionDescriptor
+        cloneFromCloneable: SimpleFunctionDescriptor,
     ): SimpleFunctionDescriptor = cloneFromCloneable.newCopyBuilder().apply {
         setOwner(arrayClassDescriptor)
         setVisibility(Visibilities.PUBLIC)
@@ -210,7 +210,7 @@ open class JvmBuiltInsSettings(
 
         return DFS.ifAny<CallableMemberDescriptor>(
             listOf(this),
-            { it.original.overriddenDescriptors }
+            { it.original.overriddenDescriptors },
         ) { overridden ->
             overridden.kind == CallableMemberDescriptor.Kind.DECLARATION &&
                     j2kClassMap.isMutable(overridden.containingDeclaration as ClassDescriptor)
@@ -244,7 +244,8 @@ open class JvmBuiltInsSettings(
                 }
 
                 override fun result() = result ?: JDKMemberStatus.NOT_CONSIDERED
-            })
+            },
+        )
     }
 
     private enum class JDKMemberStatus {
@@ -287,7 +288,7 @@ open class JvmBuiltInsSettings(
                     !KotlinBuiltIns.isDeprecated(javaConstructor) &&
                     SignatureBuildingComponents.signature(
                         javaAnalogueDescriptor,
-                        javaConstructor.computeJvmDescriptor()
+                        javaConstructor.computeJvmDescriptor(),
                     ) !in BLACK_LIST_CONSTRUCTOR_SIGNATURES
         }.map { javaConstructor ->
             javaConstructor.newCopyBuilder().apply {
@@ -296,7 +297,7 @@ open class JvmBuiltInsSettings(
                 setPreserveSourceElement()
                 setSubstitution(substitutor.substitution)
                 if (SignatureBuildingComponents.signature(
-                        javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()
+                        javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor(),
                     ) !in WHITE_LIST_CONSTRUCTOR_SIGNATURES
                 ) {
                     setAdditionalAnnotations(notConsideredDeprecation)
@@ -344,7 +345,7 @@ open class JvmBuiltInsSettings(
         val DROP_LIST_METHOD_SIGNATURES: Set<String> =
             SignatureBuildingComponents.inJavaUtil(
                 "Collection",
-                "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
+                "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;",
             ) + "java/lang/annotation/Annotation.annotationType()Ljava/lang/Class;"
 
         val BLACK_LIST_METHOD_SIGNATURES: Set<String> =
@@ -372,7 +373,7 @@ open class JvmBuiltInsSettings(
                             "substring(I)Ljava/lang/String;", "toCharArray()[C", "toLowerCase()Ljava/lang/String;",
                             "toLowerCase(Ljava/util/Locale;)Ljava/lang/String;", "toUpperCase()Ljava/lang/String;",
                             "toUpperCase(Ljava/util/Locale;)Ljava/lang/String;", "trim()Ljava/lang/String;",
-                            "isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;"
+                            "isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;",
                         ) +
 
                         inJavaLang("Double", "isInfinite()Z", "isNaN()Z") +
@@ -392,17 +393,17 @@ open class JvmBuiltInsSettings(
             signatures {
                 inJavaLang(
                     "CharSequence",
-                    "codePoints()Ljava/util/stream/IntStream;", "chars()Ljava/util/stream/IntStream;"
+                    "codePoints()Ljava/util/stream/IntStream;", "chars()Ljava/util/stream/IntStream;",
                 ) +
 
                         inJavaUtil(
                             "Iterator",
-                            "forEachRemaining(Ljava/util/function/Consumer;)V"
+                            "forEachRemaining(Ljava/util/function/Consumer;)V",
                         ) +
 
                         inJavaLang(
                             "Iterable",
-                            "forEach(Ljava/util/function/Consumer;)V", "spliterator()Ljava/util/Spliterator;"
+                            "forEach(Ljava/util/function/Consumer;)V", "spliterator()Ljava/util/Spliterator;",
                         ) +
 
                         inJavaLang(
@@ -411,18 +412,18 @@ open class JvmBuiltInsSettings(
                             "getLocalizedMessage()Ljava/lang/String;", "printStackTrace()V", "printStackTrace(Ljava/io/PrintStream;)V",
                             "printStackTrace(Ljava/io/PrintWriter;)V", "getStackTrace()[Ljava/lang/StackTraceElement;",
                             "initCause(Ljava/lang/Throwable;)Ljava/lang/Throwable;", "getSuppressed()[Ljava/lang/Throwable;",
-                            "addSuppressed(Ljava/lang/Throwable;)V"
+                            "addSuppressed(Ljava/lang/Throwable;)V",
                         ) +
 
                         inJavaUtil(
                             "Collection",
                             "spliterator()Ljava/util/Spliterator;", "parallelStream()Ljava/util/stream/Stream;",
-                            "stream()Ljava/util/stream/Stream;", "removeIf(Ljava/util/function/Predicate;)Z"
+                            "stream()Ljava/util/stream/Stream;", "removeIf(Ljava/util/function/Predicate;)Z",
                         ) +
 
                         inJavaUtil(
                             "List",
-                            "replaceAll(Ljava/util/function/UnaryOperator;)V"
+                            "replaceAll(Ljava/util/function/UnaryOperator;)V",
                         ) +
 
                         inJavaUtil(
@@ -435,7 +436,7 @@ open class JvmBuiltInsSettings(
                             "replace(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z",
                             "replace(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
                             "computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
-                            "compute(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;"
+                            "compute(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
                         )
             }
 
@@ -454,7 +455,7 @@ open class JvmBuiltInsSettings(
                             "putIfAbsent(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
                             "remove(Ljava/lang/Object;Ljava/lang/Object;)Z", "replaceAll(Ljava/util/function/BiFunction;)V",
                             "replace(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
-                            "replace(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z"
+                            "replace(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z",
                         )
             }
 
@@ -463,15 +464,16 @@ open class JvmBuiltInsSettings(
                 buildPrimitiveStringConstructorsSet() +
                         inJavaLang("Float", *constructors("D")) +
                         inJavaLang(
-                            "String", *constructors(
+                            "String",
+                            *constructors(
                                 "[C", "[CII", "[III", "[BIILjava/lang/String;",
                                 "[BIILjava/nio/charset/Charset;",
                                 "[BLjava/lang/String;",
                                 "[BLjava/nio/charset/Charset;",
                                 "[BII", "[B",
                                 "Ljava/lang/StringBuffer;",
-                                "Ljava/lang/StringBuilder;"
-                            )
+                                "Ljava/lang/StringBuilder;",
+                            ),
                         )
             }
 
@@ -484,7 +486,7 @@ open class JvmBuiltInsSettings(
             signatures {
                 listOf(
                     JvmPrimitiveType.BOOLEAN, JvmPrimitiveType.BYTE, JvmPrimitiveType.DOUBLE, JvmPrimitiveType.FLOAT,
-                    JvmPrimitiveType.BYTE, JvmPrimitiveType.INT, JvmPrimitiveType.LONG, JvmPrimitiveType.SHORT
+                    JvmPrimitiveType.BYTE, JvmPrimitiveType.INT, JvmPrimitiveType.LONG, JvmPrimitiveType.SHORT,
                 ).flatMapTo(LinkedHashSet()) {
                     // java/lang/<Wrapper>.<init>(Ljava/lang/String;)V
                     inJavaLang(it.wrapperFqName.shortName().asString(), *constructors("Ljava/lang/String;"))

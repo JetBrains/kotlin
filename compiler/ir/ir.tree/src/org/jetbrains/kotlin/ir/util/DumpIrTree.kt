@@ -44,7 +44,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = fa
 
 class DumpIrTreeVisitor(
     out: Appendable,
-    normalizeNames: Boolean = false
+    normalizeNames: Boolean = false,
 ) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "  ")
@@ -120,7 +120,7 @@ class DumpIrTreeVisitor(
         printer.println(
             elementRenderer.renderSymbolReference(this).let {
                 if (label != null) "$label: $it" else it
-            }
+            },
         )
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
@@ -361,7 +361,7 @@ class DumpTreeFromSourceLineVisitor(
     val fileEntry: SourceManager.FileEntry,
     private val lineNumber: Int,
     out: Appendable,
-    normalizeNames: Boolean = false
+    normalizeNames: Boolean = false,
 ) : IrElementVisitorVoid {
     private val dumper = DumpIrTreeVisitor(out, normalizeNames)
 

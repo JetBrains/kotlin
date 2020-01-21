@@ -13,13 +13,20 @@ abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCas
     protected fun doTest(testPath: String) {
         configureByFile(getTestName(false) + ".kt", "")
         val shouldFail = testPath.contains("NoSpecifiedType")
-        AstAccessControl.testWithControlledAccessToAst(shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
-            testCompletion(file.text, JvmPlatforms.unspecifiedJvmPlatform, { completionType, invocationCount ->
-                setType(completionType)
-                complete(invocationCount)
-                myItems
-            }, CompletionType.BASIC, 0)
-        })
+        AstAccessControl.testWithControlledAccessToAst(
+            shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(),
+            {
+                testCompletion(
+                    file.text, JvmPlatforms.unspecifiedJvmPlatform,
+                    { completionType, invocationCount ->
+                        setType(completionType)
+                        complete(invocationCount)
+                        myItems
+                    },
+                    CompletionType.BASIC, 0,
+                )
+            },
+        )
     }
 
     override fun getTestDataPath(): String {

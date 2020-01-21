@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 class FirExpressionWithSmartcastImpl(
     override var originalExpression: FirQualifiedAccessExpression,
     override val typeRef: FirTypeRef,
-    override val typesFromSmartcast: Collection<ConeKotlinType>
+    override val typesFromSmartcast: Collection<ConeKotlinType>,
 ) : FirExpressionWithSmartcast() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)

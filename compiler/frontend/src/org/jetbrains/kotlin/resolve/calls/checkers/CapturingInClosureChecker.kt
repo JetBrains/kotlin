@@ -60,7 +60,7 @@ class CapturingInClosureChecker : CallChecker {
         context: BindingContext,
         scopeContainer: DeclarationDescriptor,
         variableParent: DeclarationDescriptor,
-        variable: VariableDescriptor
+        variable: VariableDescriptor,
     ): CaptureKind {
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer)
         if (!InlineUtil.canBeInlineArgument(scopeDeclaration)) return CaptureKind.NOT_INLINE
@@ -97,7 +97,7 @@ class CapturingInClosureChecker : CallChecker {
 
     private fun getCalleeDescriptorAndParameter(
         bindingContext: BindingContext,
-        argument: KtFunction
+        argument: KtFunction,
     ): Pair<CallableDescriptor, ValueParameterDescriptor>? {
         val call = KtPsiUtil.getParentCallIfPresent(argument) ?: return null
         val resolvedCall = call.getResolvedCall(bindingContext) ?: return null

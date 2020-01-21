@@ -190,7 +190,7 @@ fun test1() {
 fun test2(a: String) = js(""" 
 	var r = foo(a);
 	return r;
-""")
+""",)
 ```
 
 is translated to:

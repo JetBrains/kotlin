@@ -37,7 +37,7 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                     // todo discuss lowerIfFlexible and upperIfFlexible
                     KotlinTypeFactory.flexibleType(
                         lowerBound?.lowerIfFlexible() ?: type.lowerBound,
-                        upperBound?.upperIfFlexible() ?: type.upperBound
+                        upperBound?.upperIfFlexible() ?: type.upperBound,
                     ).inheritEnhancement(type)
                 }
             }
@@ -54,7 +54,7 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                 substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType? ->
                     AbbreviatedType(
                         substitutedExpandedType ?: type.expandedType,
-                        substitutedAbbreviation ?: type.abbreviation
+                        substitutedAbbreviation ?: type.abbreviation,
                     )
                 else -> substitutedExpandedType
             }
@@ -85,9 +85,9 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                         capturedType.captureStatus,
                         NewCapturedTypeConstructor(
                             TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
-                            typeParameter = typeConstructor.typeParameter
+                            typeParameter = typeConstructor.typeParameter,
                         ),
-                        lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
+                        lowerType = if (capturedType.lowerType != null) substitutedInnerType else null,
                     )
                 } else {
                     throwExceptionAboutInvalidCapturedSubstitution(capturedType, innerType, substitutedInnerType)
@@ -135,19 +135,19 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
     private fun throwExceptionAboutInvalidCapturedSubstitution(
         capturedType: SimpleType,
         innerType: UnwrappedType,
-        substitutedInnerType: UnwrappedType
+        substitutedInnerType: UnwrappedType,
     ): Nothing =
         throw IllegalStateException(
             "Illegal type substitutor: $this, " +
                     "because for captured type '$capturedType' supertype approximation should be null, but it is: '$innerType'," +
-                    "original supertype: '$substitutedInnerType'"
+                    "original supertype: '$substitutedInnerType'",
         )
 
 
     private fun substituteParametrizedType(
         type: SimpleType,
         keepAnnotation: Boolean,
-        runCapturedChecks: Boolean
+        runCapturedChecks: Boolean,
     ): UnwrappedType? {
         val parameters = type.constructor.parameters
         val arguments = type.arguments

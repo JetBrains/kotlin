@@ -40,16 +40,18 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     }
 
     protected fun compileTestAnnotations(extraClassPath: List<File>): List<File> =
-            listOf(MockLibraryUtil.compileJavaFilesLibraryToJar(
-                TEST_ANNOTATIONS_SOURCE_PATH,
-                "test-foreign-annotations",
-                extraOptions = listOf("-Xallow-kotlin-package"),
-                extraClasspath = extraClassPath.map { it.path }
-        ))
+            listOf(
+                MockLibraryUtil.compileJavaFilesLibraryToJar(
+                    TEST_ANNOTATIONS_SOURCE_PATH,
+                    "test-foreign-annotations",
+                    extraOptions = listOf("-Xallow-kotlin-package"),
+                    extraClasspath = extraClassPath.map { it.path },
+                ),
+            )
 
     protected fun createJarWithForeignAnnotations(): List<File> = listOf(
-            MockLibraryUtil.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations"),
-            ForTestCompileRuntime.jvmAnnotationsForTests()
+        MockLibraryUtil.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations"),
+        ForTestCompileRuntime.jvmAnnotationsForTests(),
     )
 
     override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
@@ -62,10 +64,10 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
         val analysisFlags = loadAnalysisFlags(module)
         return CompilerTestLanguageVersionSettings(
-                DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
-                ApiVersion.LATEST_STABLE,
-                LanguageVersion.LATEST_STABLE,
-                analysisFlags = analysisFlags
+            DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+            ApiVersion.LATEST_STABLE,
+            LanguageVersion.LATEST_STABLE,
+            analysisFlags = analysisFlags,
         )
     }
 

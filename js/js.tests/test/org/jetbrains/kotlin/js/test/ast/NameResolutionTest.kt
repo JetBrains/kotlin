@@ -61,22 +61,24 @@ class NameResolutionTest {
         val originalAst = JsGlobalBlock().apply { statements += parse(originalCode, errorReporter, parserScope, originalName).orEmpty() }
         val expectedAst = JsGlobalBlock().apply { statements += parse(expectedCode, errorReporter, parserScope, expectedName).orEmpty() }
 
-        originalAst.accept(object : RecursiveJsVisitor() {
-            val cache = mutableMapOf<JsName, JsName>()
+        originalAst.accept(
+            object : RecursiveJsVisitor() {
+                val cache = mutableMapOf<JsName, JsName>()
 
-            override fun visitElement(node: JsNode) {
-                super.visitElement(node)
-                if (node is HasName) {
-                    node.name = node.name?.let { name ->
-                        if (name.ident.startsWith("$")) {
-                            cache.getOrPut(name) { JsScope.declareTemporaryName("x") }
-                        } else {
-                            name
+                override fun visitElement(node: JsNode) {
+                    super.visitElement(node)
+                    if (node is HasName) {
+                        node.name = node.name?.let { name ->
+                            if (name.ident.startsWith("$")) {
+                                cache.getOrPut(name) { JsScope.declareTemporaryName("x") }
+                            } else {
+                                name
+                            }
                         }
                     }
                 }
-            }
-        })
+            },
+        )
         renameLabels(originalAst)
         originalAst.resolveTemporaryNames()
 

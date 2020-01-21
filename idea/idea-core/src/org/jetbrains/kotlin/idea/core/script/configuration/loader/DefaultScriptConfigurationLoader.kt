@@ -34,7 +34,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         isFirstLoad: Boolean,
         ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
-        context: ScriptConfigurationLoadingContext
+        context: ScriptConfigurationLoadingContext,
     ): Boolean {
         val virtualFile = ktFile.originalFile.virtualFile
 
@@ -43,7 +43,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         val inputs = getInputsStamp(virtualFile, ktFile)
         val scriptingApiResult = try {
             refineScriptCompilationConfiguration(
-                KtFileScriptSource(ktFile), scriptDefinition, ktFile.project
+                KtFileScriptSource(ktFile), scriptDefinition, ktFile.project,
             )
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
@@ -54,7 +54,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         val result = ScriptConfigurationSnapshot(
             inputs,
             scriptingApiResult.reports,
-            scriptingApiResult.valueOrNull()
+            scriptingApiResult.valueOrNull(),
         )
 
         context.suggestNewConfiguration(virtualFile, result)

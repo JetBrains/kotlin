@@ -96,12 +96,21 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         private fun getMethodsOfClass(classFile: File): Set<String> {
             val result = TreeSet<String>()
-            ClassReader(FileUtil.loadFileBytes(classFile)).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
-                    result.add(name)
-                    return null
-                }
-            }, 0)
+            ClassReader(FileUtil.loadFileBytes(classFile)).accept(
+                object : ClassVisitor(Opcodes.API_VERSION) {
+                    override fun visitMethod(
+                        access: Int,
+                        name: String,
+                        desc: String,
+                        signature: String?,
+                        exceptions: Array<String>?,
+                    ): MethodVisitor? {
+                        result.add(name)
+                        return null
+                    }
+                },
+                0,
+            )
             return result
         }
 
@@ -347,7 +356,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         checkWhen(
             touch("src/foo.kt"), null,
-            arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject"))
+            arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject")),
         )
     }
 
@@ -360,11 +369,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         checkWhen(
             touch("src/foo.kt"), null,
-            arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject"))
+            arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject")),
         )
         checkWhen(
             touch("src/module2/src/foo.kt"), null,
-            arrayOf(klass("module2", "Foo"), module("module2"))
+            arrayOf(klass("module2", "Foo"), module("module2")),
         )
     }
 
@@ -442,10 +451,14 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             checkWhen(touch("src/test2.kt"), null, allClasses)
         }
 
-        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
-                  arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
-                          packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
-                          module("kotlinProject")))
+        checkWhen(
+            arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
+            arrayOf(
+                packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
+                packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
+                module("kotlinProject"),
+            ),
+        )
 
         assertFilesNotExistInOutput(myProject.modules.get(0), "_DefaultPackage.class")
     }
@@ -796,7 +809,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             Lists.newArrayList(findModule("module")),
             false,
             "LibraryWithBadRoots",
-            *(filesToBeReported + otherFiles)
+            *(filesToBeReported + otherFiles),
         )
 
         val result = buildAllModules()
@@ -939,26 +952,33 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         val actual = StringBuilder()
         buildCustom(CanceledStatus.NULL, TestProjectBuilderLogger(), BuildResult()) {
-            project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object : TestingBuildLogger {
-                override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
-                    actual.append("Targets dependent on ${chunk.targets.joinToString()}:\n")
-                    val dependentRecursively = mutableSetOf<KotlinChunk>()
-                    context.kotlin.getChunk(chunk)!!.collectDependentChunksRecursivelyExportedOnly(dependentRecursively)
-                    dependentRecursively.asSequence().map { it.targets.joinToString() }.sorted().joinTo(actual, "\n")
-                    actual.append("\n---------\n")
-                }
+            project.setTestingContext(
+                TestingContext(
+                    LookupTracker.DO_NOTHING,
+                    object : TestingBuildLogger {
+                        override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
+                            actual.append("Targets dependent on ${chunk.targets.joinToString()}:\n")
+                            val dependentRecursively = mutableSetOf<KotlinChunk>()
+                            context.kotlin.getChunk(chunk)!!.collectDependentChunksRecursivelyExportedOnly(dependentRecursively)
+                            dependentRecursively.asSequence().map { it.targets.joinToString() }.sorted().joinTo(actual, "\n")
+                            actual.append("\n---------\n")
+                        }
 
-                override fun afterChunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {}
-                override fun invalidOrUnusedCache(
-                    chunk: KotlinChunk?,
-                    target: KotlinModuleBuildTarget<*>?,
-                    attributesDiff: CacheAttributesDiff<*>
-                ) {}
-                override fun addCustomMessage(message: String) {}
-                override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {}
-                override fun markedAsDirtyBeforeRound(files: Iterable<File>) {}
-                override fun markedAsDirtyAfterRound(files: Iterable<File>) {}
-            }))
+                        override fun afterChunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {}
+                        override fun invalidOrUnusedCache(
+                            chunk: KotlinChunk?,
+                            target: KotlinModuleBuildTarget<*>?,
+                            attributesDiff: CacheAttributesDiff<*>,
+                        ) {
+                        }
+
+                        override fun addCustomMessage(message: String) {}
+                        override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {}
+                        override fun markedAsDirtyBeforeRound(files: Iterable<File>) {}
+                        override fun markedAsDirtyAfterRound(files: Iterable<File>) {}
+                    },
+                ),
+            )
         }
 
         val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
@@ -1003,10 +1023,10 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     private fun getCurrentTestDataRoot() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
 
     private fun buildCustom(
-            canceledStatus: CanceledStatus,
-            logger: TestProjectBuilderLogger,
-            buildResult: BuildResult,
-            setupProject: ProjectDescriptor.() -> Unit = {}
+        canceledStatus: CanceledStatus,
+        logger: TestProjectBuilderLogger,
+        buildResult: BuildResult,
+        setupProject: ProjectDescriptor.() -> Unit = {},
     ) {
         val scopeBuilder = CompileScopeTestBuilder.make().allModules()
         val descriptor = this.createProjectDescriptor(BuildLoggingManager(logger))

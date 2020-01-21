@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
 
 class KotlinScriptDependenciesClassFinder(
-    private val project: Project
+    private val project: Project,
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
     override fun calcClassRoots(): List<VirtualFile> = ScriptConfigurationManager.getInstance(project)
         .getAllScriptsDependenciesClassFiles().toList()
@@ -35,7 +35,7 @@ class KotlinScriptDependenciesClassFinder(
             }
             return findClassInner(
                 parentQualifier.substringBeforeLast('.', ""),
-                listOf(parentQualifier.substringAfterLast('.')) + inners
+                listOf(parentQualifier.substringAfterLast('.')) + inners,
             )
         }
 

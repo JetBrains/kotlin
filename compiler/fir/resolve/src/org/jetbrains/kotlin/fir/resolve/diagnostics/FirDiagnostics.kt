@@ -29,7 +29,7 @@ class FirUnresolvedNameError(val name: Name) : FirDiagnostic() {
 
 class FirInapplicableCandidateError(
     val applicability: CandidateApplicability,
-    val candidates: Collection<CandidateInfo>
+    val candidates: Collection<CandidateInfo>,
 ) : FirDiagnostic() {
     data class CandidateInfo(val symbol: AbstractFirBasedSymbol<*>, val diagnostics: List<KotlinCallDiagnostic>)
 

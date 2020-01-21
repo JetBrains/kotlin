@@ -21,7 +21,7 @@ private val exclusions =
         "kotlin.coroutines.intrinsics",
         "kotlin.coroutines.experimental.jvm.internal",
         "kotlin.coroutines.jvm.internal",
-        "kotlin.reflect.jvm.internal"
+        "kotlin.reflect.jvm.internal",
     )
 
 private fun shouldBeHiddenAsInternalImplementationDetail(fqName: String, locationFqName: String) =

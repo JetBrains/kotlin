@@ -31,6 +31,6 @@ private fun ScriptCompilationConfigurationResult.valueOrError() = valueOr { fail
     else
         throw IllegalStateException(
             "Error retrieving script compilation configuration: ${failure.reports.joinToString { it.message }}",
-            failure.reports.find { it.exception != null }?.exception
+            failure.reports.find { it.exception != null }?.exception,
         )
 }

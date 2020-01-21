@@ -17,13 +17,15 @@ abstract class AbstractScriptDefinitionsOrderTest : AbstractScriptConfigurationT
     fun doTest(path: String) {
         configureScriptFile(path)
 
-        assertException(object : AbstractExceptionCase<ComparisonFailure>() {
-            override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java
+        assertException(
+            object : AbstractExceptionCase<ComparisonFailure>() {
+                override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java
 
-            override fun tryClosure() {
-                checkHighlighting(editor, false, false)
-            }
-        })
+                override fun tryClosure() {
+                    checkHighlighting(editor, false, false)
+                }
+            },
+        )
 
         val definitions = InTextDirectivesUtils.findStringWithPrefixes(myFile.text, "// SCRIPT DEFINITIONS: ")
             ?.split(";")

@@ -26,7 +26,7 @@ abstract class FirDefaultPropertyAccessor(
     propertyTypeRef: FirTypeRef,
     isGetter: Boolean,
     visibility: Visibility,
-    symbol: FirPropertyAccessorSymbol
+    symbol: FirPropertyAccessorSymbol,
 ) : FirPropertyAccessorImpl(source, session, propertyTypeRef, symbol, isGetter, FirDeclarationStatusImpl(visibility, Modality.FINAL)) {
     override var resolvePhase = FirResolvePhase.BODY_RESOLVE
 
@@ -40,7 +40,7 @@ class FirDefaultPropertyGetter(
     session: FirSession,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
-    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
+    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
 ) : FirDefaultPropertyAccessor(source, session, propertyTypeRef, isGetter = true, visibility = visibility, symbol = symbol) {
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
 }
@@ -50,7 +50,7 @@ class FirDefaultPropertySetter(
     session: FirSession,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
-    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
+    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
 ) : FirDefaultPropertyAccessor(source, session, FirImplicitUnitTypeRef(source), isGetter = false, visibility = visibility, symbol = symbol) {
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf(
         FirDefaultSetterValueParameter(
@@ -59,9 +59,9 @@ class FirDefaultPropertySetter(
             propertyTypeRef,
             FirVariableSymbol(
                 CallableId(
-                    FqName.ROOT, Name.special("<default-setter-parameter>")
-                )
-            )
-        )
+                    FqName.ROOT, Name.special("<default-setter-parameter>"),
+                ),
+            ),
+        ),
     )
 }

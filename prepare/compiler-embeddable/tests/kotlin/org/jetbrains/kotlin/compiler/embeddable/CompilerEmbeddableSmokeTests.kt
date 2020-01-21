@@ -72,7 +72,7 @@ public class CompilerSmokeTest {
             compilerClasspath.joinToString(File.pathSeparator),
             COMPILER_CLASS_FQN,
             "-cp",
-            compilationClasspath.joinToString(File.pathSeparator)
+            compilationClasspath.joinToString(File.pathSeparator),
         ) + arguments
         val proc = createProcess(cmd, _workingDir.root)
         return readOutput(proc)

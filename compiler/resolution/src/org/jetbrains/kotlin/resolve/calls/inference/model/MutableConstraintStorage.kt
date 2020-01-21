@@ -20,7 +20,7 @@ import kotlin.collections.LinkedHashMap
 
 class MutableVariableWithConstraints(
     override val typeVariable: TypeVariableMarker,
-    constraints: Collection<Constraint> = emptyList()
+    constraints: Collection<Constraint> = emptyList(),
 ) : VariableWithConstraints {
     override val constraints: List<Constraint>
         get() {
@@ -66,7 +66,7 @@ class MutableVariableWithConstraints(
                 constraint.position,
                 constraint.typeHashCode,
                 derivedFrom = constraint.derivedFrom,
-                isNullabilityConstraint = false
+                isNullabilityConstraint = false,
             )
         else
             constraint

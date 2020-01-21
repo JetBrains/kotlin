@@ -34,7 +34,7 @@ class OverloadResolver(
     private val trace: BindingTrace,
     private val overloadFilter: OverloadFilter,
     private val overloadChecker: OverloadChecker,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ) {
 
     private val mainFunctionDetector = MainFunctionDetector(trace.bindingContext, languageVersionSettings)
@@ -88,14 +88,14 @@ class OverloadResolver(
 
     private fun groupModulePackageMembersByFqName(
         c: BodiesResolveContext,
-        overloadFilter: OverloadFilter
+        overloadFilter: OverloadFilter,
     ): MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot> {
         val packageMembersByName = MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>()
 
         collectModulePackageMembersWithSameName(
             packageMembersByName,
             (c.functions.values as Collection<DeclarationDescriptor>) + c.declaredClasses.values + c.typeAliases.values,
-            overloadFilter
+            overloadFilter,
         ) { scope, name ->
             val functions = scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
             val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
@@ -125,7 +125,7 @@ class OverloadResolver(
         packageMembersByName: MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>,
         interestingDescriptors: Collection<DeclarationDescriptor>,
         overloadFilter: OverloadFilter,
-        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
+        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>,
     ) {
         val observedFQNs = hashSetOf<FqNameUnsafe>()
         for (descriptor in interestingDescriptors) {
@@ -143,7 +143,7 @@ class OverloadResolver(
     private inline fun getModulePackageMembersWithSameName(
         descriptor: DeclarationDescriptor,
         overloadFilter: OverloadFilter,
-        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
+        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>,
     ): Collection<DeclarationDescriptorNonRoot> {
         val containingPackage = descriptor.containingDeclaration
         if (containingPackage !is PackageFragmentDescriptor) {
@@ -168,7 +168,7 @@ class OverloadResolver(
 
     private fun checkOverloadsInClass(
         classDescriptor: ClassDescriptorWithResolutionScopes,
-        nestedClassConstructors: Collection<FunctionDescriptor>
+        nestedClassConstructors: Collection<FunctionDescriptor>,
     ) {
         val functionsByName = MultiMap.create<Name, CallableMemberDescriptor>()
 
@@ -300,7 +300,8 @@ class OverloadResolver(
         for (memberDescriptor in redeclarations) {
             when (memberDescriptor) {
                 is PropertyDescriptor,
-                is ClassifierDescriptor ->
+                is ClassifierDescriptor,
+                ->
                     reportOnDeclaration(trace, memberDescriptor) { Errors.REDECLARATION.on(it, redeclarations) }
                 is FunctionDescriptor ->
                     reportOnDeclaration(trace, memberDescriptor) { Errors.CONFLICTING_OVERLOADS.on(it, redeclarations) }

@@ -33,7 +33,7 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
         candidate: ResolvedCallAtom,
         resultingDescriptor: CallableDescriptor,
         kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
-        diagnostics: Collection<KotlinCallDiagnostic>
+        diagnostics: Collection<KotlinCallDiagnostic>,
     ) {
         reportSmartCasts(candidate, resultingDescriptor, kotlinDiagnosticsHolder, diagnostics)
     }
@@ -41,7 +41,7 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
     private fun createSmartCastDiagnostic(
         candidate: ResolvedCallAtom,
         argument: KotlinCallArgument,
-        expectedResultType: UnwrappedType
+        expectedResultType: UnwrappedType,
     ): SmartCastDiagnostic? {
         if (argument !is ExpressionKotlinCallArgument) return null
 
@@ -58,7 +58,7 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
         candidate: ResolvedCallAtom,
         receiver: SimpleKotlinCallArgument?,
         parameter: ReceiverParameterDescriptor?,
-        diagnostics: Collection<KotlinCallDiagnostic>
+        diagnostics: Collection<KotlinCallDiagnostic>,
     ): SmartCastDiagnostic? {
         if (receiver == null || parameter == null) return null
         val expectedType = parameter.type.unwrap().let { if (receiver.isSafeCall) it.makeNullableAsSpecified(true) else it }
@@ -81,23 +81,23 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
         candidate: ResolvedCallAtom,
         resultingDescriptor: CallableDescriptor,
         kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
-        diagnostics: Collection<KotlinCallDiagnostic>
+        diagnostics: Collection<KotlinCallDiagnostic>,
     ) {
         kotlinDiagnosticsHolder.addDiagnosticIfNotNull(
             reportSmartCastOnReceiver(
                 candidate,
                 candidate.extensionReceiverArgument,
                 resultingDescriptor.extensionReceiverParameter,
-                diagnostics
-            )
+                diagnostics,
+            ),
         )
         kotlinDiagnosticsHolder.addDiagnosticIfNotNull(
             reportSmartCastOnReceiver(
                 candidate,
                 candidate.dispatchReceiverArgument,
                 resultingDescriptor.dispatchReceiverParameter,
-                diagnostics
-            )
+                diagnostics,
+            ),
         )
 
         for (parameter in resultingDescriptor.valueParameters) {

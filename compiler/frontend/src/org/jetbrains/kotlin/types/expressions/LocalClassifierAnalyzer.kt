@@ -69,13 +69,13 @@ class LocalClassifierAnalyzer(
     private val delegationFilter: DelegationFilter,
     private val wrappedTypeFactory: WrappedTypeFactory,
     private val kotlinTypeChecker: NewKotlinTypeChecker,
-    private val samConversionResolver: SamConversionResolver
+    private val samConversionResolver: SamConversionResolver,
 ) {
     fun processClassOrObject(
         scope: LexicalWritableScope?,
         context: ExpressionTypingContext,
         containingDeclaration: DeclarationDescriptor,
-        classOrObject: KtClassOrObject
+        classOrObject: KtClassOrObject,
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
         val project = classOrObject.project
@@ -104,15 +104,15 @@ class LocalClassifierAnalyzer(
                 delegationFilter,
                 wrappedTypeFactory,
                 kotlinTypeChecker,
-                samConversionResolver
+                samConversionResolver,
             ),
-            analyzerServices
+            analyzerServices,
         )
 
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
             TopDownAnalysisMode.LocalDeclarations,
             listOf(classOrObject),
-            context.dataFlowInfo
+            context.dataFlowInfo,
         )
     }
 }
@@ -134,7 +134,7 @@ class LocalClassDescriptorHolder(
     val delegationFilter: DelegationFilter,
     val wrappedTypeFactory: WrappedTypeFactory,
     val kotlinTypeChecker: NewKotlinTypeChecker,
-    val samConversionResolver: SamConversionResolver
+    val samConversionResolver: SamConversionResolver,
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -180,7 +180,7 @@ class LocalClassDescriptorHolder(
                 containingDeclaration,
                 classOrObject.nameAsSafeName,
                 KtClassInfoUtil.createClassOrObjectInfo(classOrObject),
-                classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD),
             )
             writableScope?.addClassifierDescriptor(classDescriptor!!)
         }
@@ -199,7 +199,7 @@ class LocalLazyDeclarationResolver(
     trace: BindingTrace,
     private val localClassDescriptorManager: LocalClassDescriptorHolder,
     topLevelDescriptorProvider: TopLevelDescriptorProvider,
-    absentDescriptorHandler: AbsentDescriptorHandler
+    absentDescriptorHandler: AbsentDescriptorHandler,
 ) : LazyDeclarationResolver(globalContext, trace, topLevelDescriptorProvider, absentDescriptorHandler) {
 
     override fun getClassDescriptor(classOrObject: KtClassOrObject, location: LookupLocation): ClassDescriptor {
@@ -221,7 +221,7 @@ class LocalLazyDeclarationResolver(
 class DeclarationScopeProviderForLocalClassifierAnalyzer(
     lazyDeclarationResolver: LazyDeclarationResolver,
     fileScopeProvider: FileScopeProvider,
-    private val localClassDescriptorManager: LocalClassDescriptorHolder
+    private val localClassDescriptorManager: LocalClassDescriptorHolder,
 ) : DeclarationScopeProviderImpl(lazyDeclarationResolver, fileScopeProvider) {
     override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): LexicalScope {
         if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {

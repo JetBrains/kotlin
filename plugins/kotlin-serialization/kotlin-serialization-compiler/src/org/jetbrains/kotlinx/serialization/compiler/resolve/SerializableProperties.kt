@@ -45,7 +45,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
         fun isPropSerializable(it: PropertyDescriptor) =
             if (serializableClass.isInternalSerializable) !it.annotations.serialTransient
             else !Visibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.serialTransient) || primaryConstructorProperties.contains(
-                it
+                it,
             ))
 
         serializableProperties = descriptorsSequence.filterIsInstance<PropertyDescriptor>()
@@ -55,7 +55,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                 SerializableProperty(
                     prop,
                     primaryConstructorProperties[prop] ?: false,
-                    prop.hasBackingField(bindingContext)
+                    prop.hasBackingField(bindingContext),
                 )
             }
             .filterNot { it.transient }

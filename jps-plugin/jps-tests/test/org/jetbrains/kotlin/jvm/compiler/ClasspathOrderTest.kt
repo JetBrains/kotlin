@@ -51,7 +51,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
             JavaModuleBuildTargetType.PRODUCTION.typeId,
             JavaModuleBuildTargetType.PRODUCTION.isTests,
             setOf(),
-            emptyList()
+            emptyList(),
         ).asText().toString()
 
         val xml = File(tmpdir, "module.xml")

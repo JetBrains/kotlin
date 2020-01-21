@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 abstract class FirAbstractImportingScope(
     session: FirSession,
     protected val scopeSession: ScopeSession,
-    lookupInFir: Boolean
+    lookupInFir: Boolean,
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
 
     // TODO: Rewrite somehow?
@@ -46,7 +46,7 @@ abstract class FirAbstractImportingScope(
         import: FirResolvedImport,
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         val callableId = CallableId(import.packageFqName, import.relativeClassName, name)
 
@@ -58,11 +58,11 @@ abstract class FirAbstractImportingScope(
             val action = when (token) {
                 TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(
                     callableId.callableName,
-                    processor.cast()
+                    processor.cast(),
                 )
                 TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(
                     callableId.callableName,
-                    processor.cast()
+                    processor.cast(),
                 )
                 else -> ProcessorAction.NEXT
             }
@@ -88,20 +88,20 @@ abstract class FirAbstractImportingScope(
     abstract fun <T : FirCallableSymbol<*>> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction,
     ): ProcessorAction
 
     final override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         return processCallables(
             name,
-            TowerScopeLevel.Token.Functions
+            TowerScopeLevel.Token.Functions,
         ) { if (it is FirFunctionSymbol<*>) processor(it) else ProcessorAction.NEXT }
     }
 
     final override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         return processCallables(
             name,
-            TowerScopeLevel.Token.Properties
+            TowerScopeLevel.Token.Properties,
         ) { if (it is FirVariableSymbol<*>) processor(it) else ProcessorAction.NEXT }
     }
 

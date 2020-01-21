@@ -35,7 +35,7 @@ class ClassifierResolutionContext private constructor(
     // that nobody starts resolving classifier until type parameters and inner classes are initialized.
     // Currently it's implemented through laziness in the PlainJavaClassifierType.
     private var typeParameters: ImmutableMap<String, JavaTypeParameter>,
-    private var innerClasses: ImmutableMap<String, InnerClassInfo>
+    private var innerClasses: ImmutableMap<String, InnerClassInfo>,
 ) {
     constructor(classesByQName: ClassIdToJavaClass) : this(classesByQName, ImmutableHashMap.empty(), ImmutableHashMap.empty())
 

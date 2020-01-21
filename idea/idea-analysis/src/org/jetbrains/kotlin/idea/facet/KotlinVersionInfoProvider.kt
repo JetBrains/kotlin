@@ -26,14 +26,14 @@ interface KotlinVersionInfoProvider {
     fun getLibraryVersions(
         module: Module,
         platformKind: IdePlatformKind<*>,
-        rootModel: ModuleRootModel?
+        rootModel: ModuleRootModel?,
     ): Collection<String>
 }
 
 fun getRuntimeLibraryVersions(
     module: Module,
     rootModel: ModuleRootModel?,
-    platformKind: IdePlatformKind<*>
+    platformKind: IdePlatformKind<*>,
 ): Collection<String> = KotlinVersionInfoProvider.EP_NAME
     .extensions
     .map { it.getLibraryVersions(module, platformKind, rootModel) }
@@ -43,7 +43,7 @@ fun getLibraryLanguageLevel(
     module: Module,
     rootModel: ModuleRootModel?,
     platformKind: IdePlatformKind<*>?,
-    coerceRuntimeLibraryVersionToReleased: Boolean = true
+    coerceRuntimeLibraryVersionToReleased: Boolean = true,
 ): LanguageVersion {
     val minVersion = getRuntimeLibraryVersions(module, rootModel, platformKind.orDefault())
         .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
@@ -54,7 +54,7 @@ fun getLibraryLanguageLevel(
 fun getDefaultLanguageLevel(
     module: Module,
     explicitVersion: String? = null,
-    coerceRuntimeLibraryVersionToReleased: Boolean = true
+    coerceRuntimeLibraryVersionToReleased: Boolean = true,
 ): LanguageVersion {
     val libVersion = explicitVersion
         ?: KotlinVersionInfoProvider.EP_NAME.extensions

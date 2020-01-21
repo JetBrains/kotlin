@@ -33,7 +33,7 @@ abstract class DeclarationProviderFactoryService {
         storageManager: StorageManager,
         syntheticFiles: Collection<KtFile>,
         filesScope: GlobalSearchScope,
-        moduleInfo: ModuleInfo
+        moduleInfo: ModuleInfo,
     ): DeclarationProviderFactory
 
     companion object {
@@ -43,7 +43,7 @@ abstract class DeclarationProviderFactoryService {
             storageManager: StorageManager,
             syntheticFiles: Collection<KtFile>,
             moduleContentScope: GlobalSearchScope,
-            moduleInfo: ModuleInfo
+            moduleInfo: ModuleInfo,
         ): DeclarationProviderFactory {
             return ServiceManager.getService(project, DeclarationProviderFactoryService::class.java)!!
                 .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, moduleContentScope), moduleInfo)

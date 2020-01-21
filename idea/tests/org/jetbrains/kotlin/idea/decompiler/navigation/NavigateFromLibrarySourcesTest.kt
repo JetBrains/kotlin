@@ -41,7 +41,7 @@ class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() 
             val lightClass = navigationElement.toLightClass()
             assertTrue(
                 lightClass is KtLightClassForDecompiledDeclaration,
-                "Light classes for decompiled declaration should be provided for library source"
+                "Light classes for decompiled declaration should be provided for library source",
             )
             assertEquals("Foo", lightClass.name)
         }
@@ -59,7 +59,7 @@ class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() 
             true,
             true,
             false,
-            false
+            false,
         )
     }
 

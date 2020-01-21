@@ -33,17 +33,19 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
-    return ContainerForTests(createContainer("Tests", JvmPlatformAnalyzerServices) {
-        configureModule(
-            ModuleContext(module, project, "container for tests"),
-            JvmPlatforms.defaultJvmPlatform,
-            JvmPlatformAnalyzerServices,
-            BindingTraceContext(),
-            LanguageVersionSettingsImpl.DEFAULT
-        )
-        useImpl<AnnotationResolverImpl>()
-        useInstance(ModuleStructureOracle.SingleModule)
-    })
+    return ContainerForTests(
+        createContainer("Tests", JvmPlatformAnalyzerServices) {
+            configureModule(
+                ModuleContext(module, project, "container for tests"),
+                JvmPlatforms.defaultJvmPlatform,
+                JvmPlatformAnalyzerServices,
+                BindingTraceContext(),
+                LanguageVersionSettingsImpl.DEFAULT,
+            )
+            useImpl<AnnotationResolverImpl>()
+            useInstance(ModuleStructureOracle.SingleModule)
+        },
+    )
 }
 
 class ContainerForTests(container: StorageComponentContainer) {

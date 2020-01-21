@@ -20,7 +20,7 @@ abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
         val fileText = psiFile.text
         val expectedLineNumbers = normalize(
             fileText.substring(Regex("// \\d+").find(fileText)!!.range.start + 2)
-                .trim().split(" ").map { it.trim() }.toMutableList()
+                .trim().split(" ").map { it.trim() }.toMutableList(),
         )
         val actualLineNumbers = normalize(extractActualLineNumbersFromBytecode(classFileFactory, false))
         KtUsefulTestCase.assertSameElements(actualLineNumbers, expectedLineNumbers)
@@ -34,7 +34,7 @@ abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
 
     override fun getTestFunLineNumbersMethodVisitor(
         labels: ArrayList<Label>,
-        labels2LineNumbers: java.util.HashMap<Label, String>
+        labels2LineNumbers: java.util.HashMap<Label, String>,
     ): MethodVisitor {
         return object : MethodVisitor(Opcodes.API_VERSION) {
             private var lastLabel: Label? = null

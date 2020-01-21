@@ -12,17 +12,17 @@ abstract class AbstractIrBoxJsTest : BasicIrBoxTest(BasicBoxTest.TEST_DATA_DIR_P
 
 abstract class AbstractIrJsCodegenBoxTest : BasicIrBoxTest(
     "compiler/testData/codegen/box/",
-    "codegen/irBox/"
+    "codegen/irBox/",
 )
 
 abstract class AbstractIrWasmBoxJsTest : BasicIrBoxTest(
     BasicBoxTest.TEST_DATA_DIR_PATH + "wasmBox/",
-    "irWasmBox/"
+    "irWasmBox/",
 )
 
 abstract class BorrowedIrInlineTest(relativePath: String) : BasicIrBoxTest(
     "compiler/testData/codegen/boxInline/$relativePath",
-    "codegen/irBoxInline/$relativePath"
+    "codegen/irBoxInline/$relativePath",
 ) {
     init {
         additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"

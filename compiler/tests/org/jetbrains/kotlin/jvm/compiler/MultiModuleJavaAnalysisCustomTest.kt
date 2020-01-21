@@ -63,7 +63,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     private class TestModule(
         val project: Project,
         val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
-        val _dependencies: TestModule.() -> List<TestModule>
+        val _dependencies: TestModule.() -> List<TestModule>,
     ) : TrackableModuleInfo {
         override fun createModificationTracker(): ModificationTracker = ModificationTracker.NEVER_CHANGED
 
@@ -88,13 +88,13 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             moduleByJavaClass = { javaClass ->
                 val moduleName = javaClass.name.asString().toLowerCase().first().toString()
                 modules.first { it._name == moduleName }
-            }
+            },
         )
 
         val resolverForProject = object : AbstractResolverForProject<TestModule>(
             "test",
             projectContext,
-            modules
+            modules,
         ) {
             override fun sdkDependency(module: TestModule): TestModule? = null
 
@@ -107,13 +107,13 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                 JvmResolverForModuleFactory(
                     platformParameters,
                     CompilerEnvironment,
-                    JvmPlatforms.defaultJvmPlatform
+                    JvmPlatforms.defaultJvmPlatform,
                 ).createResolverForModule(
                     descriptor as ModuleDescriptorImpl,
                     projectContext.withModule(descriptor),
                     modulesContent(moduleInfo),
                     this,
-                    LanguageVersionSettingsImpl.DEFAULT
+                    LanguageVersionSettingsImpl.DEFAULT,
                 )
         }
 
@@ -121,7 +121,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             resolverForProject.descriptorForModule(resolverForProject.allModules.first()),
             resolverForProject.resolverForModule(resolverForProject.allModules.first())
                 .componentProvider.get<LanguageVersionSettings>()
-                .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
+                .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers),
         )
 
         performChecks(resolverForProject, modules)
@@ -201,8 +201,9 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             checkDescriptor(annotationClassDescriptor, callable)
 
             Assert.assertEquals(
-                    "Annotation value arguments number is not equal to number of parameters in $callable",
-                    annotationClassDescriptor.constructors.single().valueParameters.size, it.allValueArguments.size)
+                "Annotation value arguments number is not equal to number of parameters in $callable",
+                annotationClassDescriptor.constructors.single().valueParameters.size, it.allValueArguments.size,
+            )
 
             it.allValueArguments.forEach {
                 val argument = it.value
@@ -230,8 +231,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val expectedModuleName = "<${descriptorName.toLowerCase().first()}>"
         val moduleName = referencedDescriptor.module.name.asString()
         Assert.assertEquals(
-                "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
-                expectedModuleName, moduleName
+            "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
+            expectedModuleName, moduleName,
         )
     }
 

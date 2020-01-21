@@ -87,7 +87,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
                     "override fun getDeclarations(): List<KtDeclaration> {",
                     "val q = import",
-                    note = "in-method getDeclarations-import"
+                    note = "in-method getDeclarations-import",
                 )
 
                 perfTypeAndHighlight(
@@ -96,7 +96,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     "override fun getDeclarations(): List<KtDeclaration> {",
                     "val q = import",
                     typeAfterMarker = false,
-                    note = "out-of-method import"
+                    note = "out-of-method import",
                 )
             }
         }
@@ -111,7 +111,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                 perfCopyAndPaste(
                     stat,
                     sourceFileName = "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
-                    targetFileName = "compiler/psi/src/org/jetbrains/kotlin/psi/KtImportInfo.kt"
+                    targetFileName = "compiler/psi/src/org/jetbrains/kotlin/psi/KtImportInfo.kt",
                 )
             }
         }
@@ -129,7 +129,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     "override fun getDeclarations(): List<KtDeclaration> {",
                     "val q = import",
                     lookupElements = listOf("importDirectives"),
-                    note = "in-method getDeclarations-import"
+                    note = "in-method getDeclarations-import",
                 )
 
                 perfTypeAndAutocomplete(
@@ -139,7 +139,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     "val q = import",
                     typeAfterMarker = false,
                     lookupElements = listOf("importDirectives"),
-                    note = "out-of-method import"
+                    note = "out-of-method import",
                 )
             }
         }
@@ -160,7 +160,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                         "tasks {",
                         "crea",
                         lookupElements = listOf("create"),
-                        note = "tasks-create"
+                        note = "tasks-create",
                     )
                 }
             }
@@ -230,7 +230,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     private fun perfKtsFileAnalysis(
         fileName: String,
         stats: Stats,
-        note: String = ""
+        note: String = "",
     ) {
         val project = myProject!!
         val disposable = Disposer.newDisposable("perfKtsFileAnalysis $fileName")
@@ -261,12 +261,12 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
                 extraStats.printWarmUpTimings(
                     "annotator",
-                    extraTimingsNs.take(warmUpIterations).toTypedArray()
+                    extraTimingsNs.take(warmUpIterations).toTypedArray(),
                 )
 
                 extraStats.appendTimings(
                     "annotator",
-                    extraTimingsNs.drop(warmUpIterations).toTypedArray()
+                    extraTimingsNs.drop(warmUpIterations).toTypedArray(),
                 )
             }
         } finally {
@@ -278,13 +278,13 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         org.jetbrains.kotlin.idea.testFramework.replaceWithCustomHighlighter(
             testRootDisposable,
             KotlinPsiCheckerAndHighlightingUpdater::class.java.name,
-            TestKotlinPsiChecker::class.java.name
+            TestKotlinPsiChecker::class.java.name,
         )
     }
 
     fun perfKtsFileAnalysisSetUp(
         project: Project,
-        fileName: String
+        fileName: String,
     ): (TestData<Fixture, Pair<Long, List<HighlightInfo>>>) -> Unit {
         return {
             val fixture = Fixture.openFixture(project, fileName)
@@ -309,7 +309,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
     fun perfKtsFileAnalysisTearDown(
         extraTimingsNs: MutableList<Map<String, Any>?>,
-        project: Project
+        project: Project,
     ): (TestData<Fixture, Pair<Long, List<HighlightInfo>>>) -> Unit {
         return {
             it.setUpValue?.let { fixture ->
@@ -328,7 +328,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
     class TestKotlinPsiChecker : KotlinPsiChecker() {
         override fun annotate(
-            element: PsiElement, holder: AnnotationHolder
+            element: PsiElement, holder: AnnotationHolder,
         ) {
             super.annotate(element, holder)
             markTimestamp()

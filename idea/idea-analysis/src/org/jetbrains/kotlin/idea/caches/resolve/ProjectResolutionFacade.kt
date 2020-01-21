@@ -33,14 +33,15 @@ internal class ProjectResolutionFacade(
     dependencies: List<Any>,
     private val invalidateOnOOCB: Boolean,
     val syntheticFiles: Collection<KtFile> = listOf(),
-    val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
+    val allModules: Collection<IdeaModuleInfo>? = null, // null means create resolvers for modules from idea model
 ) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
         {
             val resolverProvider = computeModuleResolverProvider()
             CachedValueProvider.Result.create(resolverProvider, resolverForProjectDependencies)
         },
-        /* trackValue = */ false
+        /* trackValue = */
+        false,
     )
 
     private val cachedResolverForProject: ResolverForProject<IdeaModuleInfo>
@@ -53,16 +54,17 @@ internal class ProjectResolutionFacade(
                 override fun createValue(file: KtFile): PerFileAnalysisCache {
                     return PerFileAnalysisCache(
                         file,
-                        resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider
+                        resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider,
                     )
                 }
             }
 
             val allDependencies = resolverForProjectDependencies + listOf(
-                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
+                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
             )
             CachedValueProvider.Result.create(results, allDependencies)
-        }, false
+        },
+        false,
     )
 
     private val resolverForProjectDependencies = dependencies + listOf(globalContext.exceptionTracker)
@@ -93,7 +95,7 @@ internal class ProjectResolutionFacade(
             delegateResolverForProject,
             if (invalidateOnOOCB) KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker else null,
             settings.isReleaseCoroutines,
-            constantSdkDependencyIfAny = if (settings is PlatformAnalysisSettingsImpl) settings.sdk?.let { SdkInfo(project, it) } else null
+            constantSdkDependencyIfAny = if (settings is PlatformAnalysisSettingsImpl) settings.sdk?.let { SdkInfo(project, it) } else null,
         )
 
         return resolverForProject

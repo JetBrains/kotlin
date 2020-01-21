@@ -61,8 +61,8 @@ class FlatLibDirectoryResolver(vararg paths: File) : GenericRepositoryWithBridge
     companion object {
         fun tryCreate(annotation: Repository): FlatLibDirectoryResolver? = tryCreate(
             BasicRepositoryCoordinates(
-                annotation.url.takeUnless(String::isBlank) ?: annotation.value, annotation.id.takeUnless(String::isBlank)
-            )
+                annotation.url.takeUnless(String::isBlank) ?: annotation.value, annotation.id.takeUnless(String::isBlank),
+            ),
         )
 
         fun tryCreate(repositoryCoordinates: GenericRepositoryCoordinates): FlatLibDirectoryResolver? =

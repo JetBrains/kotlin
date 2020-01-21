@@ -30,7 +30,7 @@ fun getFunctionBodyTextFromTemplate(
     kind: TemplateKind,
     name: String?,
     returnType: String,
-    classFqName: FqName? = null
+    classFqName: FqName? = null,
 ): String {
     val fileTemplate = FileTemplateManager.getInstance(project)!!.getCodeTemplate(kind.templateFileName)
 

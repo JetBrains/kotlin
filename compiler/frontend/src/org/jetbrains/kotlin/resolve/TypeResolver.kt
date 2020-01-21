@@ -71,7 +71,7 @@ class TypeResolver(
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
     private val identifierChecker: IdentifierChecker,
     private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
     private val isNonParenthesizedAnnotationsOnFunctionalTypesEnabled =
         languageVersionSettings.getFeatureSupport(LanguageFeature.NonParenthesizedAnnotationsOnFunctionalTypes) == LanguageFeature.State.ENABLED
@@ -84,14 +84,14 @@ class TypeResolver(
         // bare types are not allowed
         return resolveType(
             TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode(), false),
-            typeReference
+            typeReference,
         )
     }
 
     fun resolveAbbreviatedType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace): SimpleType {
         val resolvedType = resolveType(
             TypeResolutionContext(scope, trace, true, false, typeReference.suppressDiagnosticsInDebugMode(), true),
-            typeReference
+            typeReference,
         ).unwrap()
         return when (resolvedType) {
             is DynamicType -> {
@@ -140,7 +140,7 @@ class TypeResolver(
     private fun checkNonParenthesizedAnnotationsOnFunctionalType(
         typeElement: KtFunctionType,
         annotationEntries: List<KtAnnotationEntry>,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         val lastAnnotationEntry = annotationEntries.lastOrNull()
         val isAnnotationsGroupedUsingBrackets =
@@ -230,7 +230,7 @@ class TypeResolver(
         c: TypeResolutionContext,
         annotations: Annotations,
         outerModifierList: KtModifierList?,
-        typeElement: KtTypeElement?
+        typeElement: KtTypeElement?,
     ): PossiblyBareType {
         var result: PossiblyBareType? = null
 
@@ -242,164 +242,166 @@ class TypeResolver(
             checkCoroutinesFeature(languageVersionSettings, c.trace, suspendModifier!!)
         }
 
-        typeElement?.accept(object : KtVisitorVoid() {
-            override fun visitUserType(type: KtUserType) {
-                val qualifierResolutionResult = resolveDescriptorForType(c.scope, type, c.trace, c.isDebuggerContext)
-                val classifier = qualifierResolutionResult.classifierDescriptor
+        typeElement?.accept(
+            object : KtVisitorVoid() {
+                override fun visitUserType(type: KtUserType) {
+                    val qualifierResolutionResult = resolveDescriptorForType(c.scope, type, c.trace, c.isDebuggerContext)
+                    val classifier = qualifierResolutionResult.classifierDescriptor
 
-                if (classifier == null) {
-                    val arguments = resolveTypeProjections(
-                        c, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections
+                    if (classifier == null) {
+                        val arguments = resolveTypeProjections(
+                            c, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections,
+                        )
+                        result = type(ErrorUtils.createUnresolvedType(type.getDebugText(), arguments))
+                        return
+                    }
+
+                    val referenceExpression = type.referenceExpression ?: return
+
+                    checkReservedYield(referenceExpression, c.trace)
+                    c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
+
+                    result = resolveTypeForClassifier(c, classifier, qualifierResolutionResult, type, annotations)
+                }
+
+                override fun visitNullableType(nullableType: KtNullableType) {
+                    val innerModifierList = nullableType.modifierList
+                    if (innerModifierList != null && outerModifierList != null) {
+                        c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(innerModifierList))
+                    }
+
+                    val innerAnnotations = composeAnnotations(annotations, resolveTypeAnnotations(c, nullableType))
+
+                    val innerType = nullableType.innerType
+                    val baseType = resolveTypeElement(c, innerAnnotations, outerModifierList ?: innerModifierList, innerType)
+                    if (baseType.isNullable || innerType is KtNullableType || innerType is KtDynamicType) {
+                        c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
+                    }
+                    result = baseType.makeNullable()
+                }
+
+                override fun visitFunctionType(type: KtFunctionType) {
+                    val receiverTypeRef = type.receiverTypeReference
+                    val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
+
+                    val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
+                    checkParametersOfFunctionType(parameterDescriptors)
+
+                    val returnTypeRef = type.returnTypeReference
+                    val returnType = if (returnTypeRef != null) resolveType(c.noBareTypes(), returnTypeRef)
+                    else moduleDescriptor.builtIns.unitType
+
+                    val parameterList = type.parameterList
+                    if (parameterList?.stub == null) {
+                        TrailingCommaChecker.check(parameterList?.trailingComma, c.trace, languageVersionSettings)
+                    }
+
+                    result = type(
+                        createFunctionType(
+                            moduleDescriptor.builtIns, annotations, receiverType,
+                            parameterDescriptors.map { it.type },
+                            parameterDescriptors.map { it.name },
+                            returnType,
+                            suspendFunction = hasSuspendModifier,
+                        ),
                     )
-                    result = type(ErrorUtils.createUnresolvedType(type.getDebugText(), arguments))
-                    return
                 }
 
-                val referenceExpression = type.referenceExpression ?: return
-
-                checkReservedYield(referenceExpression, c.trace)
-                c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
-
-                result = resolveTypeForClassifier(c, classifier, qualifierResolutionResult, type, annotations)
-            }
-
-            override fun visitNullableType(nullableType: KtNullableType) {
-                val innerModifierList = nullableType.modifierList
-                if (innerModifierList != null && outerModifierList != null) {
-                    c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(innerModifierList))
-                }
-
-                val innerAnnotations = composeAnnotations(annotations, resolveTypeAnnotations(c, nullableType))
-
-                val innerType = nullableType.innerType
-                val baseType = resolveTypeElement(c, innerAnnotations, outerModifierList ?: innerModifierList, innerType)
-                if (baseType.isNullable || innerType is KtNullableType || innerType is KtDynamicType) {
-                    c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
-                }
-                result = baseType.makeNullable()
-            }
-
-            override fun visitFunctionType(type: KtFunctionType) {
-                val receiverTypeRef = type.receiverTypeReference
-                val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
-
-                val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
-                checkParametersOfFunctionType(parameterDescriptors)
-
-                val returnTypeRef = type.returnTypeReference
-                val returnType = if (returnTypeRef != null) resolveType(c.noBareTypes(), returnTypeRef)
-                else moduleDescriptor.builtIns.unitType
-
-                val parameterList = type.parameterList
-                if (parameterList?.stub == null) {
-                    TrailingCommaChecker.check(parameterList?.trailingComma, c.trace, languageVersionSettings)
-                }
-
-                result = type(
-                    createFunctionType(
-                        moduleDescriptor.builtIns, annotations, receiverType,
-                        parameterDescriptors.map { it.type },
-                        parameterDescriptors.map { it.name },
-                        returnType,
-                        suspendFunction = hasSuspendModifier
-                    )
-                )
-            }
-
-            private fun checkParametersOfFunctionType(parameterDescriptors: List<VariableDescriptor>) {
-                val parametersByName = parameterDescriptors.filter { !it.name.isSpecial }.groupBy { it.name }
-                for (parametersGroup in parametersByName.values) {
-                    if (parametersGroup.size < 2) continue
-                    for (parameter in parametersGroup) {
-                        val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
-                        c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
-                    }
-                }
-            }
-
-            private fun resolveParametersOfFunctionType(parameters: List<KtParameter>): List<VariableDescriptor> {
-                class ParameterOfFunctionTypeDescriptor(
-                    containingDeclaration: DeclarationDescriptor,
-                    annotations: Annotations,
-                    name: Name,
-                    type: KotlinType,
-                    source: SourceElement
-                ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
-                    override fun getVisibility() = Visibilities.LOCAL
-
-                    override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
-                        throw UnsupportedOperationException("Should not be called for descriptor of type ${this::class.java}")
-                    }
-
-                    override fun isVar() = false
-
-                    override fun isLateInit() = false
-
-                    override fun getCompileTimeInitializer() = null
-
-                    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
-                        return visitor.visitVariableDescriptor(this, data)
-                    }
-                }
-
-                parameters.forEach {
-                    identifierChecker.checkDeclaration(it, c.trace)
-                    checkParameterInFunctionType(it)
-                }
-                return parameters.map { parameter ->
-                    val parameterType = resolveType(c.noBareTypes(), parameter.typeReference!!)
-                    val descriptor = ParameterOfFunctionTypeDescriptor(
-                        c.scope.ownerDescriptor,
-                        annotationResolver.resolveAnnotationsWithoutArguments(c.scope, parameter.modifierList, c.trace),
-                        parameter.nameAsSafeName,
-                        parameterType,
-                        parameter.toSourceElement()
-                    )
-                    c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
-                    descriptor
-                }
-            }
-
-            override fun visitDynamicType(type: KtDynamicType) {
-                result = type(dynamicCallableDescriptors.dynamicType.replaceAnnotations(annotations))
-                if (!dynamicTypesSettings.dynamicTypesAllowed) {
-                    c.trace.report(UNSUPPORTED.on(type, "Dynamic types are not supported in this context"))
-                }
-            }
-
-            override fun visitSelfType(type: KtSelfType) {
-                c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
-            }
-
-            override fun visitKtElement(element: KtElement) {
-                c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
-            }
-
-            private fun checkParameterInFunctionType(param: KtParameter) {
-                if (param.hasDefaultValue()) {
-                    c.trace.report(Errors.UNSUPPORTED.on(param.defaultValue!!, "default value of parameter in function type"))
-                }
-
-                if (param.name != null) {
-                    for (annotationEntry in param.annotationEntries) {
-                        c.trace.report(Errors.UNSUPPORTED.on(annotationEntry, "annotation on parameter in function type"))
-                    }
-                }
-
-                val modifierList = param.modifierList
-                if (modifierList != null) {
-                    KtTokens.MODIFIER_KEYWORDS_ARRAY
-                        .mapNotNull { modifierList.getModifier(it) }
-                        .forEach {
-                            c.trace.report(Errors.UNSUPPORTED.on(it, "modifier on parameter in function type"))
+                private fun checkParametersOfFunctionType(parameterDescriptors: List<VariableDescriptor>) {
+                    val parametersByName = parameterDescriptors.filter { !it.name.isSpecial }.groupBy { it.name }
+                    for (parametersGroup in parametersByName.values) {
+                        if (parametersGroup.size < 2) continue
+                        for (parameter in parametersGroup) {
+                            val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
+                            c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
                         }
+                    }
                 }
 
-                param.valOrVarKeyword?.let {
-                    c.trace.report(Errors.UNSUPPORTED.on(it, "val or val on parameter in function type"))
+                private fun resolveParametersOfFunctionType(parameters: List<KtParameter>): List<VariableDescriptor> {
+                    class ParameterOfFunctionTypeDescriptor(
+                        containingDeclaration: DeclarationDescriptor,
+                        annotations: Annotations,
+                        name: Name,
+                        type: KotlinType,
+                        source: SourceElement,
+                    ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
+                        override fun getVisibility() = Visibilities.LOCAL
+
+                        override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
+                            throw UnsupportedOperationException("Should not be called for descriptor of type ${this::class.java}")
+                        }
+
+                        override fun isVar() = false
+
+                        override fun isLateInit() = false
+
+                        override fun getCompileTimeInitializer() = null
+
+                        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
+                            return visitor.visitVariableDescriptor(this, data)
+                        }
+                    }
+
+                    parameters.forEach {
+                        identifierChecker.checkDeclaration(it, c.trace)
+                        checkParameterInFunctionType(it)
+                    }
+                    return parameters.map { parameter ->
+                        val parameterType = resolveType(c.noBareTypes(), parameter.typeReference!!)
+                        val descriptor = ParameterOfFunctionTypeDescriptor(
+                            c.scope.ownerDescriptor,
+                            annotationResolver.resolveAnnotationsWithoutArguments(c.scope, parameter.modifierList, c.trace),
+                            parameter.nameAsSafeName,
+                            parameterType,
+                            parameter.toSourceElement(),
+                        )
+                        c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
+                        descriptor
+                    }
                 }
-            }
-        })
+
+                override fun visitDynamicType(type: KtDynamicType) {
+                    result = type(dynamicCallableDescriptors.dynamicType.replaceAnnotations(annotations))
+                    if (!dynamicTypesSettings.dynamicTypesAllowed) {
+                        c.trace.report(UNSUPPORTED.on(type, "Dynamic types are not supported in this context"))
+                    }
+                }
+
+                override fun visitSelfType(type: KtSelfType) {
+                    c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
+                }
+
+                override fun visitKtElement(element: KtElement) {
+                    c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
+                }
+
+                private fun checkParameterInFunctionType(param: KtParameter) {
+                    if (param.hasDefaultValue()) {
+                        c.trace.report(Errors.UNSUPPORTED.on(param.defaultValue!!, "default value of parameter in function type"))
+                    }
+
+                    if (param.name != null) {
+                        for (annotationEntry in param.annotationEntries) {
+                            c.trace.report(Errors.UNSUPPORTED.on(annotationEntry, "annotation on parameter in function type"))
+                        }
+                    }
+
+                    val modifierList = param.modifierList
+                    if (modifierList != null) {
+                        KtTokens.MODIFIER_KEYWORDS_ARRAY
+                            .mapNotNull { modifierList.getModifier(it) }
+                            .forEach {
+                                c.trace.report(Errors.UNSUPPORTED.on(it, "modifier on parameter in function type"))
+                            }
+                    }
+
+                    param.valOrVarKeyword?.let {
+                        c.trace.report(Errors.UNSUPPORTED.on(it, "val or val on parameter in function type"))
+                    }
+                }
+            },
+        )
 
         return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
     }
@@ -411,7 +413,7 @@ class TypeResolver(
         c: TypeResolutionContext, annotations: Annotations,
         typeParameter: TypeParameterDescriptor,
         referenceExpression: KtSimpleNameExpression,
-        typeArgumentList: KtTypeArgumentList?
+        typeArgumentList: KtTypeArgumentList?,
     ): KotlinType {
         val scopeForTypeParameter = getScopeForTypeParameter(c, typeParameter)
 
@@ -433,16 +435,18 @@ class TypeResolver(
                 typeParameter.typeConstructor,
                 listOf(),
                 false,
-                scopeForTypeParameter
+                scopeForTypeParameter,
             )
     }
 
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
         return when {
             c.checkBounds -> TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
-            else -> LazyScopeAdapter(LockBasedStorageManager.NO_LOCKS.createLazyValue {
-                TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
-            })
+            else -> LazyScopeAdapter(
+                LockBasedStorageManager.NO_LOCKS.createLazyValue {
+                    TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
+                },
+            )
         }
     }
 
@@ -451,7 +455,7 @@ class TypeResolver(
         descriptor: ClassifierDescriptor,
         qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult,
         element: KtElement,
-        annotations: Annotations
+        annotations: Annotations,
     ): PossiblyBareType {
         val qualifierParts = qualifierResolutionResult.qualifierParts
 
@@ -478,7 +482,7 @@ class TypeResolver(
     private fun resolveTypeForClass(
         c: TypeResolutionContext, annotations: Annotations,
         classDescriptor: ClassDescriptor, element: KtElement,
-        qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult
+        qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult,
     ): PossiblyBareType {
         val typeConstructor = classDescriptor.typeConstructor
 
@@ -540,7 +544,7 @@ class TypeResolver(
     private fun buildFinalArgumentList(
         argumentsFromUserType: List<TypeProjection>,
         argumentsForOuterClass: List<TypeProjection>?,
-        parameters: List<TypeParameterDescriptor>
+        parameters: List<TypeParameterDescriptor>,
     ): List<TypeProjection> {
         return argumentsFromUserType +
                 (argumentsForOuterClass ?: appendDefaultArgumentsForLocalClassifier(argumentsFromUserType.size, parameters))
@@ -559,7 +563,7 @@ class TypeResolver(
         annotations: Annotations,
         descriptor: TypeAliasDescriptor,
         type: KtElement,
-        qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult
+        qualifierResolutionResult: QualifiedExpressionResolver.TypeQualifierResolutionResult,
     ): PossiblyBareType {
         val typeConstructor = descriptor.typeConstructor
         val projectionFromAllQualifierParts = qualifierResolutionResult.allProjections
@@ -597,7 +601,7 @@ class TypeResolver(
             c.trace,
             type, typeAliasQualifierPart.typeArguments ?: typeAliasQualifierPart.expression,
             descriptor, descriptor.declaredTypeParameters,
-            argumentElementsFromUserType // TODO arguments from inner scope
+            argumentElementsFromUserType, // TODO arguments from inner scope
         )
 
         if (parameters.size != arguments.size) {
@@ -659,7 +663,7 @@ class TypeResolver(
         val typeArgumentsOrTypeName: KtElement?,
         val typeAliasDescriptor: TypeAliasDescriptor,
         typeParameters: List<TypeParameterDescriptor>,
-        typeArguments: List<KtTypeProjection>
+        typeArguments: List<KtTypeProjection>,
     ) : TypeAliasExpansionReportStrategy {
 
         private val mappedArguments = typeParameters.zip(typeArguments).toMap()
@@ -673,7 +677,7 @@ class TypeResolver(
         override fun conflictingProjection(
             typeAlias: TypeAliasDescriptor,
             typeParameter: TypeParameterDescriptor?,
-            substitutedArgument: KotlinType
+            substitutedArgument: KotlinType,
         ) {
             val argumentElement = typeParameter?.let { mappedArguments[it] }
             if (argumentElement != null) {
@@ -693,7 +697,7 @@ class TypeResolver(
             bound: KotlinType,
             unsubstitutedArgument: KotlinType,
             argument: KotlinType,
-            typeParameter: TypeParameterDescriptor
+            typeParameter: TypeParameterDescriptor,
         ) {
             val descriptorForUnsubstitutedArgument = unsubstitutedArgument.constructor.declarationDescriptor
             val argumentElement = mappedArguments[descriptorForUnsubstitutedArgument]
@@ -714,13 +718,13 @@ class TypeResolver(
     private fun createErrorTypeForTypeConstructor(
         c: TypeResolutionContext,
         arguments: List<KtTypeProjection>,
-        typeConstructor: TypeConstructor
+        typeConstructor: TypeConstructor,
     ): PossiblyBareType =
         type(
             ErrorUtils.createErrorTypeWithArguments(
                 typeConstructor.declarationDescriptor?.name?.asString() ?: typeConstructor.toString(),
-                resolveTypeProjectionsWithErrorConstructor(c, arguments)
-            )
+                resolveTypeProjectionsWithErrorConstructor(c, arguments),
+            ),
         )
 
     // Returns true in case when at least one argument for this class could be specified
@@ -750,7 +754,7 @@ class TypeResolver(
     private fun collectArgumentsForClassifierTypeConstructor(
         c: TypeResolutionContext,
         classifierDescriptor: ClassifierDescriptorWithTypeParameters,
-        qualifierParts: List<QualifiedExpressionResolver.ExpressionQualifierPart>
+        qualifierParts: List<QualifiedExpressionResolver.ExpressionQualifierPart>,
     ): Pair<List<KtTypeProjection>, List<TypeProjection>?>? {
         val classifierDescriptorChain = classifierDescriptor.classifierDescriptorsFromInnerToOuter()
         val reversedQualifierParts = qualifierParts.asReversed()
@@ -775,8 +779,8 @@ class TypeResolver(
                 c.trace.report(
                     WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(
                         qualifierPart.typeArguments ?: qualifierPart.expression,
-                        currentParameters.size, classifierDescriptorChain[index]
-                    )
+                        currentParameters.size, classifierDescriptorChain[index],
+                    ),
                 )
                 return null
             }
@@ -789,7 +793,7 @@ class TypeResolver(
         val nonClassQualifierParts =
             reversedQualifierParts.subList(
                 min(classifierChainLastIndex + 1, reversedQualifierParts.size),
-                reversedQualifierParts.size
+                reversedQualifierParts.size,
             )
 
         for ((_, _, typeArguments) in nonClassQualifierParts) {
@@ -815,7 +819,7 @@ class TypeResolver(
 
             if (restArguments == null && typeArgumentsCanBeSpecifiedCount > result.size) {
                 c.trace.report(
-                    OUTER_CLASS_ARGUMENTS_REQUIRED.on(qualifierParts.first().expression, nextParameterOwner)
+                    OUTER_CLASS_ARGUMENTS_REQUIRED.on(qualifierParts.first().expression, nextParameterOwner),
                 )
                 return null
             } else if (restArguments == null) {
@@ -840,13 +844,13 @@ class TypeResolver(
     private fun ClassifierDescriptor?.classifierDescriptorsFromInnerToOuter(): List<ClassifierDescriptorWithTypeParameters> =
         generateSequence(
             { this as? ClassifierDescriptorWithTypeParameters },
-            { it.containingDeclaration as? ClassifierDescriptorWithTypeParameters }
+            { it.containingDeclaration as? ClassifierDescriptorWithTypeParameters },
         ).toList()
 
     private fun resolveTypeProjectionsWithErrorConstructor(
         c: TypeResolutionContext,
         argumentElements: List<KtTypeProjection>,
-        message: String = "Error type for resolving type projections"
+        message: String = "Error type for resolving type projections",
     ) = resolveTypeProjections(c, ErrorUtils.createErrorTypeConstructor(message), argumentElements)
 
     /**
@@ -860,7 +864,7 @@ class TypeResolver(
      */
     private fun appendDefaultArgumentsForLocalClassifier(
         fromIndex: Int,
-        constructorParameters: List<TypeParameterDescriptor>
+        constructorParameters: List<TypeParameterDescriptor>,
     ) = constructorParameters.subList(fromIndex, constructorParameters.size).map {
         TypeProjectionImpl(it.original.defaultType)
     }
@@ -868,7 +872,7 @@ class TypeResolver(
     fun resolveTypeProjections(
         c: TypeResolutionContext,
         constructor: TypeConstructor,
-        argumentElements: List<KtTypeProjection>
+        argumentElements: List<KtTypeProjection>,
     ): List<TypeProjection> {
         return argumentElements.mapIndexed { i, argumentElement ->
             val projectionKind = argumentElement.projectionKind
@@ -901,7 +905,7 @@ class TypeResolver(
     }
 
     private fun LexicalScope.findImplicitOuterClassArguments(
-        outerClass: ClassDescriptor
+        outerClass: ClassDescriptor,
     ): List<TypeProjection>? {
         val enclosingClass = findFirstFromMeAndParent { scope ->
             if (scope is LexicalScope && scope.kind == LexicalScopeKind.CLASS_MEMBER_SCOPE)
@@ -914,11 +918,11 @@ class TypeResolver(
     }
 
     fun resolveClass(
-        scope: LexicalScope, userType: KtUserType, trace: BindingTrace, isDebuggerContext: Boolean
+        scope: LexicalScope, userType: KtUserType, trace: BindingTrace, isDebuggerContext: Boolean,
     ): ClassifierDescriptor? = resolveDescriptorForType(scope, userType, trace, isDebuggerContext).classifierDescriptor
 
     fun resolveDescriptorForType(
-        scope: LexicalScope, userType: KtUserType, trace: BindingTrace, isDebuggerContext: Boolean
+        scope: LexicalScope, userType: KtUserType, trace: BindingTrace, isDebuggerContext: Boolean,
     ): QualifiedExpressionResolver.TypeQualifierResolutionResult {
         if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
             for (typeArgument in userType.qualifier!!.typeArguments) {
@@ -932,7 +936,7 @@ class TypeResolver(
         return qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace, isDebuggerContext).apply {
             if (classifierDescriptor != null) {
                 PlatformClassesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
-                    platformToKotlinClassMap, trace, userType, classifierDescriptor
+                    platformToKotlinClassMap, trace, userType, classifierDescriptor,
                 )
             }
         }

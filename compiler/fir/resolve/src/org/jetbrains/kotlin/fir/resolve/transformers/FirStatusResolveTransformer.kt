@@ -31,14 +31,14 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformDeclarationStatus(
         declarationStatus: FirDeclarationStatus,
-        data: FirDeclarationStatus?
+        data: FirDeclarationStatus?,
     ): CompositeTransformResult<FirDeclarationStatus> {
         return (data ?: declarationStatus).compose()
     }
 
     private inline fun storeClass(
         klass: FirRegularClass,
-        computeResult: () -> CompositeTransformResult<FirDeclaration>
+        computeResult: () -> CompositeTransformResult<FirDeclaration>,
     ): CompositeTransformResult<FirDeclaration> {
         classes += klass
         val result = computeResult()
@@ -62,7 +62,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
-        data: FirDeclarationStatus?
+        data: FirDeclarationStatus?,
     ): CompositeTransformResult<FirStatement> {
         propertyAccessor.transformStatus(this, propertyAccessor.resolveStatus(propertyAccessor.status, containingClass, isLocal = false))
         return transformDeclaration(propertyAccessor, data) as CompositeTransformResult<FirStatement>
@@ -70,7 +70,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformConstructor(
         constructor: FirConstructor,
-        data: FirDeclarationStatus?
+        data: FirDeclarationStatus?,
     ): CompositeTransformResult<FirDeclaration> {
         constructor.transformStatus(this, constructor.resolveStatus(constructor.status, containingClass, isLocal = false))
         return transformDeclaration(constructor, data)
@@ -78,7 +78,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
-        data: FirDeclarationStatus?
+        data: FirDeclarationStatus?,
     ): CompositeTransformResult<FirDeclaration> {
         simpleFunction.transformStatus(this, simpleFunction.resolveStatus(simpleFunction.status, containingClass, isLocal = false))
         return transformDeclaration(simpleFunction, data)
@@ -86,7 +86,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformProperty(
         property: FirProperty,
-        data: FirDeclarationStatus?
+        data: FirDeclarationStatus?,
     ): CompositeTransformResult<FirDeclaration> {
         property.transformStatus(this, property.resolveStatus(property.status, containingClass, isLocal = false))
         return transformDeclaration(property, data)
@@ -98,7 +98,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
-        data: FirDeclarationStatus?
+        data: FirDeclarationStatus?,
     ): CompositeTransformResult<FirStatement> {
         return transformDeclaration(valueParameter, data) as CompositeTransformResult<FirStatement>
     }
@@ -111,7 +111,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
         fun FirDeclaration.resolveStatus(
             status: FirDeclarationStatus,
             containingClass: FirRegularClass?,
-            isLocal: Boolean
+            isLocal: Boolean,
         ): FirDeclarationStatus {
             if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
                 val visibility = when (status.visibility) {

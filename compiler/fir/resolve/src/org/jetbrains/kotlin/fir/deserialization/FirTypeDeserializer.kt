@@ -33,7 +33,7 @@ class FirTypeDeserializer(
     val nameResolver: NameResolver,
     val typeTable: TypeTable,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
-    val parent: FirTypeDeserializer?
+    val parent: FirTypeDeserializer?,
 ) {
 
     private fun computeClassifier(fqNameIndex: Int): ConeClassLikeLookupTag? {
@@ -85,7 +85,7 @@ class FirTypeDeserializer(
                     name,
                     symbol,
                     proto.variance.convertVariance(),
-                    proto.reified
+                    proto.reified,
                 )
                 result[proto.id] = symbol
             }

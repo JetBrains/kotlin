@@ -25,7 +25,7 @@ class FileBasedPackageMemberDeclarationProvider(
     storageManager: StorageManager,
     private val fqName: FqName,
     private val factory: FileBasedDeclarationProviderFactory,
-    private val packageFiles: Collection<KtFile>
+    private val packageFiles: Collection<KtFile>,
 ) : AbstractPsiBasedDeclarationProvider(storageManager), PackageMemberDeclarationProvider {
 
     private val allDeclaredSubPackages = storageManager.createLazyValue<Collection<FqName>> {

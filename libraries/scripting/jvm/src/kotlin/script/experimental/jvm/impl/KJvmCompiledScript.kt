@@ -18,7 +18,7 @@ internal class KJvmCompiledScriptData(
     var compilationConfiguration: ScriptCompilationConfiguration,
     var scriptClassFQName: String,
     var resultField: Pair<String, KotlinType>?,
-    var otherScripts: List<CompiledScript<*>> = emptyList()
+    var otherScripts: List<CompiledScript<*>> = emptyList(),
 ) : Serializable {
 
     private fun writeObject(outputStream: ObjectOutputStream) {
@@ -46,7 +46,7 @@ internal class KJvmCompiledScriptData(
 
 class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
     internal var data: KJvmCompiledScriptData,
-    var compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
+    var compiledModule: KJvmCompiledModule?, // module should be null for imported (other) scripts, so only one reference to the module is kept
 ) : CompiledScript<ScriptBase>, Serializable {
 
     constructor(
@@ -55,10 +55,10 @@ class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
         scriptClassFQName: String,
         resultField: Pair<String, KotlinType>?,
         otherScripts: List<CompiledScript<*>> = emptyList(),
-        compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
+        compiledModule: KJvmCompiledModule?, // module should be null for imported (other) scripts, so only one reference to the module is kept
     ) : this(
         KJvmCompiledScriptData(sourceLocationId, compilationConfiguration, scriptClassFQName, resultField, otherScripts),
-        compiledModule
+        compiledModule,
     )
 
     override val sourceLocationId: String?
@@ -88,8 +88,8 @@ class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
             ScriptDiagnostic(
                 "Unable to instantiate class ${data.scriptClassFQName}",
                 sourcePath = sourceLocationId,
-                exception = e
-            )
+                exception = e,
+            ),
         )
     }
 
@@ -122,7 +122,7 @@ fun KJvmCompiledScript<*>.getOrCreateActualClassloader(evaluationConfiguration: 
     }
 
 fun getConfigurationWithClassloader(
-    script: CompiledScript<*>, baseConfiguration: ScriptEvaluationConfiguration
+    script: CompiledScript<*>, baseConfiguration: ScriptEvaluationConfiguration,
 ): ScriptEvaluationConfiguration =
     if (baseConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
         baseConfiguration

@@ -40,7 +40,7 @@ interface TowerScopeLevel {
         token: Token<T>,
         name: Name,
         explicitReceiver: AbstractExplicitReceiver<*>?,
-        processor: TowerScopeLevelProcessor<T>
+        processor: TowerScopeLevelProcessor<T>,
     ): ProcessorAction
 
     interface TowerScopeLevelProcessor<T : AbstractFirBasedSymbol<*>> {
@@ -48,7 +48,7 @@ interface TowerScopeLevel {
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-            builtInExtensionFunctionReceiverValue: ReceiverValue? = null
+            builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
         ): ProcessorAction
     }
 
@@ -57,7 +57,7 @@ interface TowerScopeLevel {
             token: Token<T>,
             name: Name,
             explicitReceiver: AbstractExplicitReceiver<*>?,
-            processor: TowerScopeLevelProcessor<T>
+            processor: TowerScopeLevelProcessor<T>,
         ): ProcessorAction = ProcessorAction.NEXT
     }
 
@@ -97,12 +97,12 @@ class MemberScopeTowerLevel(
     val dispatchReceiver: ReceiverValue,
     val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null,
     val implicitExtensionInvokeMode: Boolean = false,
-    val scopeSession: ScopeSession
+    val scopeSession: ScopeSession,
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
         explicitExtensionReceiver: AbstractExplicitReceiver<*>?,
-        processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
+        processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction,
     ): ProcessorAction {
         if (implicitExtensionReceiver != null && explicitExtensionReceiver != null) return ProcessorAction.NEXT
         val extensionReceiver = implicitExtensionReceiver ?: explicitExtensionReceiver
@@ -115,7 +115,7 @@ class MemberScopeTowerLevel(
                     if (implicitExtensionInvokeMode) {
                         if (output.consumeCandidate(
                                 candidate, dispatchReceiverValue,
-                                implicitExtensionReceiverValue = implicitExtensionReceiver
+                                implicitExtensionReceiverValue = implicitExtensionReceiver,
                             ).stop()
                         ) {
                             ProcessorAction.STOP
@@ -123,7 +123,7 @@ class MemberScopeTowerLevel(
                             output.consumeCandidate(
                                 candidate, dispatchReceiverValue,
                                 implicitExtensionReceiverValue = null,
-                                builtInExtensionFunctionReceiverValue = implicitExtensionReceiver
+                                builtInExtensionFunctionReceiverValue = implicitExtensionReceiver,
                             )
                         }
                     } else {
@@ -146,7 +146,7 @@ class MemberScopeTowerLevel(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: AbstractExplicitReceiver<*>?,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>,
     ): ProcessorAction {
         val isInvoke = name == OperatorNameConventions.INVOKE && token == TowerScopeLevel.Token.Functions
         if (implicitExtensionInvokeMode && !isInvoke) {
@@ -180,7 +180,7 @@ class ScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
     val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null,
-    private val extensionsOnly: Boolean = false
+    private val extensionsOnly: Boolean = false,
 ) : SessionBasedTowerLevel(session) {
     private fun FirCallableSymbol<*>.hasConsistentReceivers(extensionReceiver: ReceiverValue?): Boolean =
         when {
@@ -194,7 +194,7 @@ class ScopeTowerLevel(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: AbstractExplicitReceiver<*>?,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>,
     ): ProcessorAction {
         if (explicitReceiver != null && implicitExtensionReceiver != null) {
             return ProcessorAction.NEXT
@@ -206,7 +206,7 @@ class ScopeTowerLevel(
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue = null,
-                        implicitExtensionReceiverValue = implicitExtensionReceiver
+                        implicitExtensionReceiverValue = implicitExtensionReceiver,
                     )
                 } else {
                     ProcessorAction.NEXT
@@ -215,12 +215,12 @@ class ScopeTowerLevel(
             TowerScopeLevel.Token.Functions -> scope.processFunctionsAndConstructorsByName(
                 name,
                 session,
-                bodyResolveComponents
+                bodyResolveComponents,
             ) { candidate ->
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue = null,
-                        implicitExtensionReceiverValue = implicitExtensionReceiver
+                        implicitExtensionReceiverValue = implicitExtensionReceiver,
                     )
                 } else {
                     ProcessorAction.NEXT
@@ -229,7 +229,7 @@ class ScopeTowerLevel(
             TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name) {
                 processor.consumeCandidate(
                     it as T, dispatchReceiverValue = null,
-                    implicitExtensionReceiverValue = null
+                    implicitExtensionReceiverValue = null,
                 )
             }
         }

@@ -43,15 +43,16 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
 
     fun testCommon() {
         val manager = configureManager(
-                "package foo;\n" +
-                "\n" +
-                "public class TopLevel {\n" +
-                "public class Inner {\n" +
-                "   public class Inner {}\n" +
-                "}\n" +
-                "\n" +
-                "}",
-                "TopLevel")
+            "package foo;\n" +
+                    "\n" +
+                    "public class TopLevel {\n" +
+                    "public class Inner {\n" +
+                    "   public class Inner {}\n" +
+                    "}\n" +
+                    "\n" +
+                    "}",
+            "TopLevel",
+        )
 
         assertCanFind(manager, "foo", "TopLevel")
         assertCanFind(manager, "foo", "TopLevel.Inner")
@@ -64,31 +65,33 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
 
     fun testInnerClassesWithDollars() {
         val manager = configureManager(
-                "package foo;\n\n" +
-                "public class TopLevel {\n" +
-                "public class I\$nner {\n" +
-                "   public class I\$nner{}\n" +
-                "   public class \$Inner{}\n" +
-                "   public class In\$ne\$r\${}\n" +
-                "   public class Inner\$\${}\n" +
-                "   public class \$\$\$\$\${}\n" +
-                "}\n" +
-                "public class Inner\$ {\n" +
-                "   public class I\$nner{}\n" +
-                "   public class \$Inner{}\n" +
-                "   public class In\$ne\$r\${}\n" +
-                "   public class Inner\$\${}\n" +
-                "   public class \$\$\$\$\${}\n" +
-                "}\n" +
-                "public class In\$ner\$\$ {\n" +
-                "   public class I\$nner{}\n" +
-                "   public class \$Inner{}\n" +
-                "   public class In\$ne\$r\${}\n" +
-                "   public class Inner\$\${}\n" +
-                "   public class \$\$\$\$\${}\n" +
-                "}\n" +
-                "\n" +
-                "}", "TopLevel")
+            "package foo;\n\n" +
+                    "public class TopLevel {\n" +
+                    "public class I\$nner {\n" +
+                    "   public class I\$nner{}\n" +
+                    "   public class \$Inner{}\n" +
+                    "   public class In\$ne\$r\${}\n" +
+                    "   public class Inner\$\${}\n" +
+                    "   public class \$\$\$\$\${}\n" +
+                    "}\n" +
+                    "public class Inner\$ {\n" +
+                    "   public class I\$nner{}\n" +
+                    "   public class \$Inner{}\n" +
+                    "   public class In\$ne\$r\${}\n" +
+                    "   public class Inner\$\${}\n" +
+                    "   public class \$\$\$\$\${}\n" +
+                    "}\n" +
+                    "public class In\$ner\$\$ {\n" +
+                    "   public class I\$nner{}\n" +
+                    "   public class \$Inner{}\n" +
+                    "   public class In\$ne\$r\${}\n" +
+                    "   public class Inner\$\${}\n" +
+                    "   public class \$\$\$\$\${}\n" +
+                    "}\n" +
+                    "\n" +
+                    "}",
+            "TopLevel",
+        )
 
         assertCanFind(manager, "foo", "TopLevel")
 
@@ -136,8 +139,11 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
     }
 
     fun testTopLevelClassWithDollarsAndInners() {
-        val manager = configureManager("package foo;\n\n" + "public class Top\$Level\$\$ {\n" +
-                                       "public class I\$nner {" + "   public class I\$nner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\$\$\$\${}" + "   public class \$Inner{}" + "   public class \${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class Inner {" + "   public class Inner{}" + "}\n" + "\n" + "}", "Top\$Level\$\$")
+        val manager = configureManager(
+            "package foo;\n\n" + "public class Top\$Level\$\$ {\n" +
+                    "public class I\$nner {" + "   public class I\$nner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\$\$\$\${}" + "   public class \$Inner{}" + "   public class \${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class Inner {" + "   public class Inner{}" + "}\n" + "\n" + "}",
+            "Top\$Level\$\$",
+        )
 
         assertCanFind(manager, "foo", "Top\$Level\$\$")
 
@@ -185,7 +191,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         javaFilesDir = KotlinTestUtils.tmpDir("java-file-manager-test")
 
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir)
+            ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir),
         )
 
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -203,10 +209,10 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
 
         val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
         coreJavaFileManager.initialize(
-                JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
-                emptyList(),
-                SingleJavaFileRootsIndex(emptyList()),
-                usePsiClassFilesReading = false
+            JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
+            emptyList(),
+            SingleJavaFileRootsIndex(emptyList()),
+            usePsiClassFilesReading = false,
         )
 
         return coreJavaFileManager
@@ -225,8 +231,10 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         TestCase.assertNotNull("Could not find: $stringRequest", foundByString)
 
         TestCase.assertEquals(foundByClassId, foundByString)
-        TestCase.assertEquals("Found ${foundByClassId.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
-                              foundByClassId.qualifiedName)
+        TestCase.assertEquals(
+            "Found ${foundByClassId.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
+            foundByClassId.qualifiedName,
+        )
     }
 
     private fun assertCannotFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {

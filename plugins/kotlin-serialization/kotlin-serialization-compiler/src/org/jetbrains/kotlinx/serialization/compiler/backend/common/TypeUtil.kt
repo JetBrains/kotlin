@@ -42,7 +42,7 @@ open class SerialTypeInfo(
     val property: SerializableProperty,
     val elementMethodPrefix: String,
     val serializer: ClassDescriptor? = null,
-    val unit: Boolean = false
+    val unit: Boolean = false,
 )
 
 fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType, module: ModuleDescriptor): ClassDescriptor? {
@@ -71,14 +71,14 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
             property,
-            T.getJetTypeFqName(false).removePrefix("kotlin.") // i don't feel so good about it...
+            T.getJetTypeFqName(false).removePrefix("kotlin."), // i don't feel so good about it...
 //          alternative:  KotlinBuiltIns.getPrimitiveType(T)!!.typeName.identifier
         )
         KotlinBuiltIns.isString(T) -> SerialTypeInfo(property, "String")
         KotlinBuiltIns.isUnit(T) -> SerialTypeInfo(property, "Unit", unit = true)
         KotlinBuiltIns.isNonPrimitiveArray(T.toClassDescriptor!!) -> {
             val serializer = property.serializableWith?.toClassDescriptor ?: property.module.findClassAcrossModuleDependencies(
-                referenceArraySerializerId
+                referenceArraySerializerId,
             )
             SerializableInfo(serializer)
         }
@@ -92,7 +92,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
 
 fun AbstractSerialGenerator.allSealedSerializableSubclassesFor(
     klass: ClassDescriptor,
-    module: ModuleDescriptor
+    module: ModuleDescriptor,
 ): Pair<List<KotlinType>, List<ClassDescriptor>> {
     assert(klass.kind == ClassKind.CLASS && klass.modality == Modality.SEALED)
     fun recursiveSealed(klass: ClassDescriptor): Collection<ClassDescriptor> {
@@ -118,7 +118,7 @@ fun ClassDescriptor.serialName(): String {
  */
 fun analyzeSpecialSerializers(
     moduleDescriptor: ModuleDescriptor,
-    annotations: Annotations
+    annotations: Annotations,
 ): ClassDescriptor? = when {
     annotations.hasAnnotation(SerializationAnnotations.contextualFqName) ->
         moduleDescriptor.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
@@ -130,7 +130,7 @@ fun analyzeSpecialSerializers(
 
 fun AbstractSerialGenerator.findTypeSerializerOrContextUnchecked(
     module: ModuleDescriptor,
-    kType: KotlinType
+    kType: KotlinType,
 ): ClassDescriptor? {
     val annotations = kType.annotations
     if (kType.isTypeParameter()) return null
@@ -144,14 +144,14 @@ fun AbstractSerialGenerator.findTypeSerializerOrContextUnchecked(
 fun AbstractSerialGenerator.findTypeSerializerOrContext(
     module: ModuleDescriptor,
     kType: KotlinType,
-    sourceElement: PsiElement? = null
+    sourceElement: PsiElement? = null,
 ): ClassDescriptor? {
     if (kType.isTypeParameter()) return null
     return findTypeSerializerOrContextUnchecked(module, kType) ?: throw CompilationException(
         "Serializer for element of type $kType has not been found.\n" +
                 "To use context serializer as fallback, explicitly annotate element with @ContextualSerialization",
         null,
-        sourceElement
+        sourceElement,
     )
 }
 
@@ -183,7 +183,8 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "kotlin.Pair" -> "PairSerializer"
         "kotlin.Triple" -> "TripleSerializer"
         "kotlin.collections.Collection", "kotlin.collections.List",
-        "kotlin.collections.ArrayList", "kotlin.collections.MutableList" -> "ArrayListSerializer"
+        "kotlin.collections.ArrayList", "kotlin.collections.MutableList",
+        -> "ArrayListSerializer"
         "kotlin.collections.Set", "kotlin.collections.LinkedHashSet", "kotlin.collections.MutableSet" -> "LinkedHashSetSerializer"
         "kotlin.collections.HashSet" -> "HashSetSerializer"
         "kotlin.collections.Map", "kotlin.collections.LinkedHashMap", "kotlin.collections.MutableMap" -> "LinkedHashMapSerializer"
@@ -226,7 +227,7 @@ fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDe
 
 internal fun KtPureClassOrObject.bodyPropertiesDescriptorsMap(
     bindingContext: BindingContext,
-    filterUninitialized: Boolean = true
+    filterUninitialized: Boolean = true,
 ): Map<PropertyDescriptor, KtProperty> = declarations
     .asSequence()
     .filterIsInstance<KtProperty>()

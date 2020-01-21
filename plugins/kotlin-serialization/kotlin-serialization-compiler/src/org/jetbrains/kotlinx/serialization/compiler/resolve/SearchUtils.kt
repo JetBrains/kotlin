@@ -24,7 +24,7 @@ internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean {
     return valueParameters.lastOrNull()?.run {
         name == SerialEntityNames.dummyParamName && type.constructor.declarationDescriptor?.classId == ClassId(
             SerializationPackages.packageFqName,
-            SerialEntityNames.SERIAL_CTOR_MARKER_NAME
+            SerialEntityNames.SERIAL_CTOR_MARKER_NAME,
         )
     } == true
 }
@@ -32,7 +32,7 @@ internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean {
 // finds constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>
 internal fun findSerializerConstructorForTypeArgumentsSerializers(
     serializerDescriptor: ClassDescriptor,
-    onlyIfSynthetic: Boolean = false
+    onlyIfSynthetic: Boolean = false,
 ): ClassConstructorDescriptor? {
     val serializableImplementationTypeArguments = extractKSerializerArgumentFromImplementation(serializerDescriptor)?.arguments
         ?: throw AssertionError("Serializer does not implement KSerializer??")
@@ -53,7 +53,7 @@ inline fun <reified R> Annotations.findAnnotationConstantValue(annotationFqName:
 internal fun Annotations.findAnnotationKotlinTypeValue(
     annotationFqName: FqName,
     moduleForResolve: ModuleDescriptor,
-    property: String
+    property: String,
 ): KotlinType? =
     findAnnotation(annotationFqName)?.let { annotation ->
         val maybeKClass = annotation.allValueArguments.entries.singleOrNull { it.key.asString() == property }?.value as? KClassValue
@@ -73,9 +73,9 @@ private fun ModuleDescriptor.getFromPackage(packageFqName: FqName, classSimpleNa
     findClassAcrossModuleDependencies(
         ClassId(
             packageFqName,
-            Name.identifier(classSimpleName)
-        )
-    )
+            Name.identifier(classSimpleName),
+        ),
+    ),
 ) { "Can't locate class $classSimpleName from package $packageFqName" }
 
 internal fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
@@ -83,9 +83,9 @@ internal fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: S
         module.findClassAcrossModuleDependencies(
             ClassId(
                 SerializationPackages.packageFqName,
-                Name.identifier(classSimpleName)
-            )
-        )
+                Name.identifier(classSimpleName),
+            ),
+        ),
     ) { "Can't locate class $classSimpleName" }
 
 internal fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =

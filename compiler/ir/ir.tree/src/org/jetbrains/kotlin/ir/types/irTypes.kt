@@ -82,13 +82,13 @@ fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArg
         this,
         hasQuestionMark,
         arguments,
-        emptyList()
+        emptyList(),
     )
 
 private fun makeKotlinType(
     classifier: IrClassifierSymbol,
     arguments: List<IrTypeArgument>,
-    hasQuestionMark: Boolean
+    hasQuestionMark: Boolean,
 ): SimpleType {
     val kotlinTypeArguments = arguments.mapIndexed { index, it ->
         when (it) {
@@ -112,7 +112,7 @@ val IrTypeParameter.defaultType: IrType
         symbol,
         hasQuestionMark = false,
         arguments = emptyList(),
-        annotations = emptyList()
+        annotations = emptyList(),
     )
 
 val IrClassSymbol.starProjectedType: IrSimpleType
@@ -120,7 +120,7 @@ val IrClassSymbol.starProjectedType: IrSimpleType
         this,
         hasQuestionMark = false,
         arguments = owner.typeParameters.map { IrStarProjectionImpl },
-        annotations = emptyList()
+        annotations = emptyList(),
     )
 
 fun IrClassifierSymbol.typeWithParameters(parameters: List<IrTypeParameter>): IrSimpleType =
@@ -133,7 +133,7 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
         this,
         false,
         arguments.map { makeTypeProjection(it, Variance.INVARIANT) },
-        emptyList()
+        emptyList(),
     )
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)

@@ -98,7 +98,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
     fun FirExpression.toReturn(baseSource: FirSourceElement? = source, labelName: String? = null): FirReturnExpression {
         return FirReturnExpressionImpl(
             baseSource,
-            this
+            this,
         ).apply {
             target = FirFunctionTarget(labelName)
             if (labelName == null) {
@@ -111,8 +111,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                             source,
                             this@BaseFirBuilder.session,
                             FirSimpleDiagnostic("Cannot bind unlabeled return to a function", DiagnosticKind.ReturnNotAllowed),
-                            FirErrorFunctionSymbol()
-                        )
+                            FirErrorFunctionSymbol(),
+                        ),
                     )
                 }
             } else {
@@ -137,8 +137,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         source,
                         this@BaseFirBuilder.session,
                         FirSimpleDiagnostic("Cannot bind label $labelName to a function", DiagnosticKind.UnresolvedLabel),
-                        FirErrorFunctionSymbol()
-                    )
+                        FirErrorFunctionSymbol(),
+                    ),
                 )
             }
         }
@@ -150,8 +150,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             ConeClassLikeTypeImpl(
                 firClass.symbol.toLookupTag(),
                 firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
-                false
-            )
+                false,
+            ),
         )
     }
 
@@ -180,8 +180,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             } else {
                 target.bind(
                     FirErrorLoop(
-                        expression.getSourceOrNull(), FirSimpleDiagnostic("Cannot bind unlabeled jump to a loop", DiagnosticKind.Syntax)
-                    )
+                        expression.getSourceOrNull(), FirSimpleDiagnostic("Cannot bind unlabeled jump to a loop", DiagnosticKind.Syntax),
+                    ),
                 )
             }
         } else {
@@ -193,8 +193,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             }
             target.bind(
                 FirErrorLoop(
-                    expression.getSourceOrNull(), FirSimpleDiagnostic("Cannot bind label $labelName to a loop", DiagnosticKind.Syntax)
-                )
+                    expression.getSourceOrNull(), FirSimpleDiagnostic("Cannot bind label $labelName to a loop", DiagnosticKind.Syntax),
+                ),
             )
         }
         return this
@@ -220,8 +220,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         expression.getSourceOrNull(),
                         FirSimpleDiagnostic(
                             "Incorrect constant expression: $text",
-                            DiagnosticKind.IllegalConstExpression
-                        )
+                            DiagnosticKind.IllegalConstExpression,
+                        ),
                     )
 
                     hasLongSuffix(text) || hasUnsignedSuffix(text) || hasUnsignedLongSuffix(text) -> {
@@ -237,25 +237,25 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     expression.getSourceOrNull(),
                     kind,
                     convertedText,
-                    FirSimpleDiagnostic("Incorrect integer literal: $text", DiagnosticKind.Syntax)
+                    FirSimpleDiagnostic("Incorrect integer literal: $text", DiagnosticKind.Syntax),
                 )
             }
             FLOAT_CONSTANT ->
                 if (convertedText is Float) {
                     FirConstExpressionImpl(
                         expression.getSourceOrNull(), FirConstKind.Float, convertedText,
-                        FirSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.Syntax)
+                        FirSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.Syntax),
                     )
                 } else {
                     FirConstExpressionImpl(
                         expression.getSourceOrNull(), FirConstKind.Double, convertedText as Double,
-                        FirSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.Syntax)
+                        FirSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.Syntax),
                     )
                 }
             CHARACTER_CONSTANT ->
                 FirConstExpressionImpl(
                     expression.getSourceOrNull(), FirConstKind.Char, text.parseCharacter(),
-                    FirSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.Syntax)
+                    FirSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.Syntax),
                 )
             BOOLEAN_CONSTANT ->
                 FirConstExpressionImpl(expression.getSourceOrNull(), FirConstKind.Boolean, convertedText as Boolean)
@@ -268,7 +268,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
 
     fun Array<out T?>.toInterpolatingCall(
         base: KtStringTemplateExpression?,
-        convertTemplateEntry: T?.(String) -> FirExpression
+        convertTemplateEntry: T?.(String) -> FirExpression,
     ): FirExpression {
         val sb = StringBuilder()
         var hasExpressions = false
@@ -298,7 +298,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 else -> {
                     hasExpressions = true
                     FirErrorExpressionImpl(
-                        entry.getSourceOrNull(), FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
+                        entry.getSourceOrNull(), FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax),
                     )
                 }
             }
@@ -348,7 +348,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         argument: T?,
         callName: Name,
         prefix: Boolean,
-        convert: T.() -> FirExpression
+        convert: T.() -> FirExpression,
     ): FirExpression {
         if (argument == null) {
             return FirErrorExpressionImpl(argument, FirSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax))
@@ -370,7 +370,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     generateResolvedAccessExpression(source, resultVar)
                 else
                     resultInitializer,
-                FirOperation.ASSIGN, convert
+                FirOperation.ASSIGN, convert,
             )
 
             fun appendAssignment() {
@@ -399,7 +399,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
 
     private fun FirModifiableQualifiedAccess.initializeLValue(
         left: T?,
-        convertQualified: T.() -> FirQualifiedAccess?
+        convertQualified: T.() -> FirQualifiedAccess?,
     ): FirReference {
         val tokenType = left?.elementType
         if (left != null) {
@@ -419,7 +419,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     } else {
                         FirErrorNamedReferenceImpl(
                             left.getSourceOrNull(),
-                            FirSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax)
+                            FirSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax),
                         )
                     }
                 }
@@ -429,7 +429,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             }
         }
         return FirErrorNamedReferenceImpl(
-            left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.Syntax)
+            left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.Syntax),
         )
     }
 
@@ -437,7 +437,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         source: FirSourceElement?,
         value: FirExpression,
         operation: FirOperation,
-        convert: T.() -> FirExpression
+        convert: T.() -> FirExpression,
     ): FirStatement {
         val tokenType = this?.elementType
         if (tokenType == PARENTHESIZED) {
@@ -465,7 +465,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             return FirBlockImpl(psiArrayExpression?.toFirSourceElement()).apply {
                 val name = Name.special("<array-set>")
                 statements += generateTemporaryVariable(
-                    this@BaseFirBuilder.session, this@generateAssignment.getSourceOrNull(), name, firArrayAccess.explicitReceiver!!
+                    this@BaseFirBuilder.session, this@generateAssignment.getSourceOrNull(), name, firArrayAccess.explicitReceiver!!,
                 )
                 statements += arraySet.apply { lValue = FirSimpleNamedReference(psiArrayExpression?.toFirSourceElement(), name, null) }
             }
@@ -476,7 +476,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 // TODO: take good psi
                 arguments += this@generateAssignment?.convert() ?:
                         FirErrorExpressionImpl(
-                            null, FirSimpleDiagnostic("Unsupported left value of assignment: ${source?.psi?.text}", DiagnosticKind.Syntax)
+                            null, FirSimpleDiagnostic("Unsupported left value of assignment: ${source?.psi?.text}", DiagnosticKind.Syntax),
                         )
                 arguments += value
             }

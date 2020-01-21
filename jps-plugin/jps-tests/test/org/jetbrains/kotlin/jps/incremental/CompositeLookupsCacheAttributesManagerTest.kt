@@ -20,8 +20,8 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.INVALID,
             manager.loadDiff(
                 actual = null,
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm"))
-            ).status
+                expected = CompositeLookupsCacheAttributes(1, setOf("jvm")),
+            ).status,
         )
     }
 
@@ -31,8 +31,8 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.INVALID,
             manager.loadDiff(
                 actual = null,
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm", "js"))
-            ).status
+                expected = CompositeLookupsCacheAttributes(1, setOf("jvm", "js")),
+            ).status,
         )
     }
 
@@ -42,8 +42,8 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.INVALID,
             manager.loadDiff(
                 actual = CompositeLookupsCacheAttributes(1, setOf("jvm")),
-                expected = CompositeLookupsCacheAttributes(1, setOf("js"))
-            ).status
+                expected = CompositeLookupsCacheAttributes(1, setOf("js")),
+            ).status,
         )
     }
 
@@ -53,8 +53,8 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.VALID,
             manager.loadDiff(
                 actual = CompositeLookupsCacheAttributes(1, setOf("jvm", "js")),
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm"))
-            ).status
+                expected = CompositeLookupsCacheAttributes(1, setOf("jvm")),
+            ).status,
         )
     }
 
@@ -64,8 +64,8 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.INVALID,
             manager.loadDiff(
                 actual = CompositeLookupsCacheAttributes(1, setOf("jvm", "js")),
-                expected = CompositeLookupsCacheAttributes(2, setOf("jvm"))
-            ).status
+                expected = CompositeLookupsCacheAttributes(2, setOf("jvm")),
+            ).status,
         )
     }
 
@@ -75,8 +75,8 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.INVALID,
             manager.loadDiff(
                 actual = CompositeLookupsCacheAttributes(1, setOf("jvm")),
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm", "js"))
-            ).status
+                expected = CompositeLookupsCacheAttributes(1, setOf("jvm", "js")),
+            ).status,
         )
     }
 }

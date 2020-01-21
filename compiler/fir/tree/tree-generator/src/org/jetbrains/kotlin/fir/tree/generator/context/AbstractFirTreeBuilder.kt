@@ -14,7 +14,7 @@ abstract class AbstractFirTreeBuilder {
     companion object {
         val baseFirElement = Element(
             "Element",
-            Element.Kind.Other
+            Element.Kind.Other,
         )
 
         const val string = "String"

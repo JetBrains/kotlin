@@ -31,30 +31,30 @@ fun File.hasParentNamed(baseName: String): Boolean = newHasParentName(baseName)
 fun scriptCompilationClasspathFromContextOrNull(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
-    wholeClasspath: Boolean = false
+    wholeClasspath: Boolean = false,
 ): List<File>? =
     kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull(
-        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath
+        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath,
     )
 
 @Deprecated("Use the function from kotlin.script.experimental.jvm.util")
 fun scriptCompilationClasspathFromContextOrStlib(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
-    wholeClasspath: Boolean = false
+    wholeClasspath: Boolean = false,
 ): List<File> =
     kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib(
-        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath
+        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath,
     )
 
 @Deprecated("Use the function from kotlin.script.experimental.jvm.util")
 fun scriptCompilationClasspathFromContext(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
-    wholeClasspath: Boolean = false
+    wholeClasspath: Boolean = false,
 ): List<File> =
     kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext(
-        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath
+        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath,
     )
 
 @Deprecated("Use the object from kotlin.script.experimental.jvm.util")

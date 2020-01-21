@@ -158,7 +158,7 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
 
     private fun performGenerateCommand(
         classOrObject: KtClassOrObject,
-        selectedElements: List<OverrideMemberChooserObject>
+        selectedElements: List<OverrideMemberChooserObject>,
     ) {
         try {
             val copyDoc = InTextDirectivesUtils.isDirectiveDefined(classOrObject.containingFile.text, "// COPY_DOC")

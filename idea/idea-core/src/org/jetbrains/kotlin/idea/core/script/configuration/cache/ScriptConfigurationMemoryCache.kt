@@ -11,7 +11,7 @@ import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
 open class ScriptConfigurationMemoryCache(
-    val project: Project
+    val project: Project,
 ) : ScriptConfigurationCache {
     companion object {
         const val MAX_SCRIPTS_CACHED = 50
@@ -76,10 +76,11 @@ open class ScriptConfigurationMemoryCache(
     private fun markFileOutOfDate(file: VirtualFile) {
         val old = memoryCache[file] ?: return
         memoryCache.put(
-            file, old.copy(
+            file,
+            old.copy(
                 applied = old.applied?.copy(inputs = CachedConfigurationInputs.OutOfDate),
-                loaded = old.loaded?.copy(inputs = CachedConfigurationInputs.OutOfDate)
-            )
+                loaded = old.loaded?.copy(inputs = CachedConfigurationInputs.OutOfDate),
+            ),
         )
     }
 }

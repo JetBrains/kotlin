@@ -18,7 +18,7 @@ internal data class BinaryType(
     val factoryMethod: String,
     val getMethod: String,
     val findMethod: String,
-    val defaultBaseName: String
+    val defaultBaseName: String,
 )
 
 private fun binaryType(
@@ -26,7 +26,7 @@ private fun binaryType(
     className: String,
     outputKind: String,
     baseMethodName: String,
-    defaultBaseName: String = "project.name"
+    defaultBaseName: String = "project.name",
 ) =
     BinaryType(
         description,
@@ -35,7 +35,7 @@ private fun binaryType(
         baseMethodName,
         "get${baseMethodName.capitalize()}",
         "find${baseMethodName.capitalize()}",
-        defaultBaseName
+        defaultBaseName,
     )
 
 private val nativeBuildTypeClass = typeName("$MPP_PACKAGE.NativeBuildType")
@@ -121,17 +121,17 @@ private fun generateTypedGetters(binaryType: BinaryType): String = with(binaryTy
 fun generateAbstractKotlinNativeBinaryContainer() {
 
     val binaryTypes = listOf(
-        binaryType("an executable","Executable", "EXECUTABLE", "executable"),
-        binaryType("a static library","StaticLibrary", "STATIC", "staticLib"),
-        binaryType("a shared library","SharedLibrary", "DYNAMIC", "sharedLib"),
-        binaryType("an Objective-C framework","Framework", "FRAMEWORK", "framework"),
+        binaryType("an executable", "Executable", "EXECUTABLE", "executable"),
+        binaryType("a static library", "StaticLibrary", "STATIC", "staticLib"),
+        binaryType("a shared library", "SharedLibrary", "DYNAMIC", "sharedLib"),
+        binaryType("an Objective-C framework", "Framework", "FRAMEWORK", "framework"),
         binaryType(
             "a test executable",
             "TestExecutable",
             "TEST",
             "test",
-            defaultBaseName = "\"test\""
-        )
+            defaultBaseName = "\"test\"",
+        ),
     )
 
     val className = typeName("org.jetbrains.kotlin.gradle.dsl.AbstractKotlinNativeBinaryContainer")
@@ -149,7 +149,7 @@ fun generateAbstractKotlinNativeBinaryContainer() {
 
     val classProperties = listOf(
         "abstract val project: Project",
-        "abstract val target: ${typeName(NativeFQNames.Targets.base).shortName()}"
+        "abstract val target: ${typeName(NativeFQNames.Targets.base).shortName()}",
     ).joinToString(separator = "\n") { it.indented(4) }
 
     val nativeBinary = nativeBinaryBaseClass.renderShort()
@@ -159,7 +159,7 @@ fun generateAbstractKotlinNativeBinaryContainer() {
     val buildTypeConstants = listOf(
         "// User-visible constants.",
         "val DEBUG = $nativeBuildType.DEBUG",
-        "val RELEASE = $nativeBuildType.RELEASE"
+        "val RELEASE = $nativeBuildType.RELEASE",
     ).joinToString(separator = "\n") { it.indented(4) }
 
     val baseFactoryFunction = """
@@ -198,7 +198,7 @@ fun generateAbstractKotlinNativeBinaryContainer() {
         namedGetters,
         binaryTypes.joinToString(separator = "\n\n") { generateTypedGetters(it).indented(4) },
         binaryTypes.joinToString(separator = "\n\n") { generateFactoryMethods(it).indented(4) },
-        "}"
+        "}",
     ).joinToString(separator = "\n\n")
 
     val outputSourceRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot"]

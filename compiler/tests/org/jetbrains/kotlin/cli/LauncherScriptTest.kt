@@ -27,12 +27,12 @@ import java.io.File
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
-            executableName: String,
-            vararg args: String,
-            expectedStdout: String = "",
-            expectedStderr: String = "",
-            expectedExitCode: Int = 0,
-            workDirectory: File? = null
+        executableName: String,
+        vararg args: String,
+        expectedStdout: String = "",
+        expectedStderr: String = "",
+        expectedExitCode: Int = 0,
+        workDirectory: File? = null,
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
@@ -65,17 +65,17 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
 
     fun testKotlincSimple() {
         runProcess(
-                "kotlinc",
-                "$testDataDirectory/helloWorld.kt",
-                "-d", tmpdir.path
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path,
         )
     }
 
     fun testKotlincJvmSimple() {
         runProcess(
-                "kotlinc-jvm",
-                "$testDataDirectory/helloWorld.kt",
-                "-d", tmpdir.path
+            "kotlinc-jvm",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path,
         )
     }
 
@@ -84,7 +84,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc-jvm",
             "-script",
             "$testDataDirectory/classPathPropTest.kts",
-            expectedStdout = "kotlin-compiler.jar\n"
+            expectedStdout = "kotlin-compiler.jar\n",
         )
     }
 
@@ -95,58 +95,58 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc",
             "-cp", kotlinTestJar.path,
             "$testDataDirectory/contextClassLoaderTester.kt",
-            "-d", tmpdir.path
+            "-d", tmpdir.path,
         )
 
         runProcess(
             "kotlin",
             "-cp", listOf(tmpdir.path, kotlinTestJar.path).joinToString(File.pathSeparator),
             "ContextClassLoaderTester",
-            expectedStdout = "${kotlinTestJar.name}\n"
+            expectedStdout = "${kotlinTestJar.name}\n",
         )
     }
 
     fun testKotlincJsSimple() {
         runProcess(
-                "kotlinc-js",
-                "$testDataDirectory/emptyMain.kt",
-                "-output", File(tmpdir, "out.js").path
+            "kotlinc-js",
+            "$testDataDirectory/emptyMain.kt",
+            "-output", File(tmpdir, "out.js").path,
         )
     }
 
     fun testKotlinNoReflect() {
         runProcess(
-                "kotlinc",
-                "$testDataDirectory/reflectionUsage.kt",
-                "-d", tmpdir.path
+            "kotlinc",
+            "$testDataDirectory/reflectionUsage.kt",
+            "-d", tmpdir.path,
         )
 
         runProcess(
-                "kotlin",
-                "-cp", tmpdir.path,
-                "-no-reflect",
-                "ReflectionUsageKt",
-                expectedStdout = "no reflection"
+            "kotlin",
+            "-cp", tmpdir.path,
+            "-no-reflect",
+            "ReflectionUsageKt",
+            expectedStdout = "no reflection",
         )
     }
 
     fun testDoNotAppendCurrentDirToNonEmptyClasspath() {
         runProcess(
-                "kotlinc",
-                "$testDataDirectory/helloWorld.kt",
-                "-d", tmpdir.path
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path,
         )
 
         runProcess("kotlin", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
 
         val emptyDir = KotlinTestUtils.tmpDirForTest(this)
         runProcess(
-                "kotlin",
-                "-cp", emptyDir.path,
-                "test.HelloWorldKt",
-                expectedStderr = "error: could not find or load main class test.HelloWorldKt\n",
-                expectedExitCode = 1,
-                workDirectory = tmpdir
+            "kotlin",
+            "-cp", emptyDir.path,
+            "test.HelloWorldKt",
+            expectedStderr = "error: could not find or load main class test.HelloWorldKt\n",
+            expectedExitCode = 1,
+            workDirectory = tmpdir,
         )
     }
 
@@ -158,7 +158,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "--",
             "a",
             "b",
-            expectedStdout = "a, b, 4, 2\n"
+            expectedStdout = "a, b, 4, 2\n",
         )
     }
 }

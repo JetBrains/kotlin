@@ -43,5 +43,5 @@ interface CacheAttributesManager<Attrs : Any> {
 
 fun <Attrs : Any> CacheAttributesManager<Attrs>.loadDiff(
     actual: Attrs? = this.loadActual(),
-    expected: Attrs? = this.expected
+    expected: Attrs? = this.expected,
 ) = CacheAttributesDiff(this, actual, expected)

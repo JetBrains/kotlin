@@ -60,7 +60,7 @@ data class KotlinReferencesSearchOptions(
     val searchForComponentConventions: Boolean = true,
     val searchForOperatorConventions: Boolean = true,
     val searchNamedArguments: Boolean = true,
-    val searchForExpectedUsages: Boolean = true
+    val searchForExpectedUsages: Boolean = true,
 ) {
     fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
 
@@ -74,7 +74,7 @@ class KotlinReferencesSearchParameters(
     scope: SearchScope = runReadAction { elementToSearch.project.allScope() },
     ignoreAccessScope: Boolean = false,
     optimizer: SearchRequestCollector? = null,
-    val kotlinOptions: KotlinReferencesSearchOptions = Empty
+    val kotlinOptions: KotlinReferencesSearchOptions = Empty,
 ) : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer)
 
 class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
@@ -132,7 +132,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 if (name != null) {
                     // Check difference with default scope
                     queryParameters.optimizer.searchWord(
-                        name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, elementToSearch, resultProcessor
+                        name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, elementToSearch, resultProcessor,
                     )
                 }
             }
@@ -141,7 +141,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             val classNameForCompanionObject = elementToSearch.getClassNameForCompanionObject()
             if (classNameForCompanionObject != null) {
                 queryParameters.optimizer.searchWord(
-                    classNameForCompanionObject, effectiveSearchScope, UsageSearchContext.ANY, true, elementToSearch, resultProcessor
+                    classNameForCompanionObject, effectiveSearchScope, UsageSearchContext.ANY, true, elementToSearch, resultProcessor,
                 )
             }
 
@@ -155,7 +155,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
             if (element is KtFunction || element is PsiMethod) {
                 val referenceSearcher = OperatorReferenceSearcher.create(
-                    element, effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions
+                    element, effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions,
                 )
                 if (referenceSearcher != null) {
                     longTasks.add { referenceSearcher.run() }
@@ -193,7 +193,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 namedArgsScope = KotlinSourceFilterScope.sourcesAndLibraries(namedArgsScope, project)
 
                 val filesWithFunctionName = CacheManager.SERVICE.getInstance(project).getVirtualFilesWithWord(
-                    function.name!!, UsageSearchContext.IN_CODE, namedArgsScope, true
+                    function.name!!, UsageSearchContext.IN_CODE, namedArgsScope, true,
                 )
                 namedArgsScope = GlobalSearchScope.filesScope(project, filesWithFunctionName.asList())
             }
@@ -205,7 +205,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT,
                 true,
                 parameter,
-                processor
+                processor,
             )
         }
 
@@ -296,7 +296,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
         private fun searchDataClassComponentUsages(
             containingClass: PsiClass?,
             componentFunctionDescriptor: FunctionDescriptor,
-            kotlinOptions: KotlinReferencesSearchOptions
+            kotlinOptions: KotlinReferencesSearchOptions,
         ) {
             val componentFunction = containingClass?.methods?.firstOrNull {
                 it.name == componentFunctionDescriptor.name.asString() && it.parameterList.parametersCount == 0
@@ -305,7 +305,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 searchNamedElement(componentFunction)
 
                 val searcher = OperatorReferenceSearcher.create(
-                    componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions
+                    componentFunction, queryParameters.effectiveSearchScope, consumer, queryParameters.optimizer, kotlinOptions,
                 )
                 longTasks.add { searcher!!.run() }
             }
@@ -329,7 +329,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
         private fun searchNamedElement(
             element: PsiNamedElement?,
             name: String? = element?.name,
-            modifyScope: ((SearchScope) -> SearchScope)? = null
+            modifyScope: ((SearchScope) -> SearchScope)? = null,
         ) {
             if (name != null && element != null) {
                 val baseScope = queryParameters.effectiveSearchScope(element)
@@ -338,7 +338,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 val resultProcessor = KotlinRequestResultProcessor(
                     element,
                     queryParameters.elementToSearch.namedUnwrappedElement ?: element,
-                    options = kotlinOptions
+                    options = kotlinOptions,
                 )
                 queryParameters.optimizer.searchWord(name, scope, context.toShort(), true, element, resultProcessor)
             }

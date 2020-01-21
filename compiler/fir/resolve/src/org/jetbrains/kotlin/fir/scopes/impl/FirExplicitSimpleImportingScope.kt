@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 class FirExplicitSimpleImportingScope(
     imports: List<FirImport>,
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     override val simpleImports =

@@ -57,21 +57,23 @@ class ReflectionCodeSanityTest : TestCase() {
     fun testNoDelegatedPropertiesInKClassAndKProperties() {
         val badFields = linkedSetOf<Field>()
         for (klass in collectClassesWithSupers(
-                "KClassImpl",
-                "KMutableProperty0Impl",
-                "KMutableProperty1Impl",
-                "KMutableProperty2Impl"
+            "KClassImpl",
+            "KMutableProperty0Impl",
+            "KMutableProperty1Impl",
+            "KMutableProperty2Impl",
         )) {
             badFields.addAll(klass.declaredFields.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
         }
 
         if (badFields.isNotEmpty()) {
-            fail("The fields listed below appear to be delegates for properties.\n" +
-                 "It's highly not recommended to use property delegates in reflection.jvm because a KProperty instance\n" +
-                 "is created for each delegated property and that makes the initialization sequence of reflection\n" +
-                 "implementation classes unpredictable and leads to a deadlock or ExceptionInInitializerError.\n\n" +
-                 "Please un-delegate the corresponding properties:\n\n" +
-                 badFields.joinToString("\n"))
+            fail(
+                "The fields listed below appear to be delegates for properties.\n" +
+                        "It's highly not recommended to use property delegates in reflection.jvm because a KProperty instance\n" +
+                        "is created for each delegated property and that makes the initialization sequence of reflection\n" +
+                        "implementation classes unpredictable and leads to a deadlock or ExceptionInInitializerError.\n\n" +
+                        "Please un-delegate the corresponding properties:\n\n" +
+                        badFields.joinToString("\n"),
+            )
         }
     }
 
@@ -80,8 +82,8 @@ class ReflectionCodeSanityTest : TestCase() {
         // This test checks that these classes have not more fields than a predefined small number, which can usually be calculated as
         // the number of constructor parameters (number of objects needed to initialize an instance) + 1 for 'data', the reflection cache.
         val classesWithMaxAllowedFields = linkedMapOf(
-                "KClassImpl" to 2,   // jClass, data
-                "KPackageImpl" to 3  // jClass, moduleName, data
+            "KClassImpl" to 2,   // jClass, data
+            "KPackageImpl" to 3,  // jClass, moduleName, data
         )
 
         val badClasses = linkedMapOf<Class<*>, Collection<Field>>()
@@ -97,12 +99,14 @@ class ReflectionCodeSanityTest : TestCase() {
         }
 
         if (badClasses.isNotEmpty()) {
-            fail("Some classes in reflection.jvm contain more fields than it is allowed. Please optimize storage in these classes:\n\n" +
-                 badClasses.entries.joinToString("\n") { entry ->
-                     val (klass, fields) = entry
-                     "$klass has ${fields.size} fields but max allowed = ${classesWithMaxAllowedFields[klass.simpleName]}:\n" +
-                     fields.joinToString("\n") { "    $it" }
-                 })
+            fail(
+                "Some classes in reflection.jvm contain more fields than it is allowed. Please optimize storage in these classes:\n\n" +
+                        badClasses.entries.joinToString("\n") { entry ->
+                            val (klass, fields) = entry
+                            "$klass has ${fields.size} fields but max allowed = ${classesWithMaxAllowedFields[klass.simpleName]}:\n" +
+                                    fields.joinToString("\n") { "    $it" }
+                        },
+            )
         }
     }
 }

@@ -31,7 +31,7 @@ abstract class AbstractKotlinBenchmark : AbstractBenchmark() {
         "1Var", "10Var", "100Var", "1000Var", "10_000Var", "100_000Var",
         "1Vin1C", "1Vin10C", "1Vin100C", "1Vin1000C", "1Vin10_000C", "1Vin100_000C",
         "10Vin1C", "10Vin10C", "10Vin100C", "10Vin1000C", "10Vin10_000C",
-        "100Vin1C", "100Vin10C", "100Vin100C", "100Vin1000C"
+        "100Vin1C", "100Vin10C", "100Vin100C", "100Vin1000C",
     )
     var methodName: String = ""
 

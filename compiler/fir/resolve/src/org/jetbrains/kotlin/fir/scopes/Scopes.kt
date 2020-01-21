@@ -19,7 +19,7 @@ fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession,
 fun createImportingScopes(
     file: FirFile,
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ): List<FirScope> {
     return listOf(
         // from low priority to high priority
@@ -32,7 +32,7 @@ fun createImportingScopes(
             FirPackageMemberScope(file.packageFqName, session)
         },
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
-        FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
+        FirExplicitSimpleImportingScope(file.imports, session, scopeSession),
     )
 }
 

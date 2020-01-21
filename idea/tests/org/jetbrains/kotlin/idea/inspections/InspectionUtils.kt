@@ -18,7 +18,7 @@ import com.intellij.testFramework.createGlobalContextForTool
 import org.jdom.Element
 
 fun runInspection(
-    inspection: LocalInspectionTool, project: Project, files: List<VirtualFile>? = null, withTestDir: String? = null
+    inspection: LocalInspectionTool, project: Project, files: List<VirtualFile>? = null, withTestDir: String? = null,
 ): InspectionToolPresentation {
     val wrapper = LocalInspectionToolWrapper(inspection)
 
@@ -39,7 +39,7 @@ fun runInspection(
 
 fun runInspection(
     inspectionClass: Class<*>, project: Project,
-    settings: Element? = null, files: List<VirtualFile>? = null, withTestDir: String? = null
+    settings: Element? = null, files: List<VirtualFile>? = null, withTestDir: String? = null,
 ): InspectionToolPresentation {
     @Suppress("UNCHECKED_CAST")
     val profileEntryClass = inspectionClass as Class<InspectionProfileEntry>

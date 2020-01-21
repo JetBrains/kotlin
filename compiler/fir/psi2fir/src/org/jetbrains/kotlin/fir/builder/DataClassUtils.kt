@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
     session: FirSession, firClass: FirModifiableRegularClass, packageFqName: FqName, classFqName: FqName,
-    firPrimaryConstructor: FirConstructor
+    firPrimaryConstructor: FirConstructor,
 ) {
     var componentIndex = 1
     for ((ktParameter, firProperty) in this) {
@@ -44,7 +44,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
         firClass.addDeclaration(
             FirSimpleFunctionImpl(
                 parameterSource, session, FirImplicitTypeRefImpl(parameterSource),
-                null, name, status, symbol
+                null, name, status, symbol,
             ).apply {
                 val componentFunction = this
                 body = FirSingleExpressionBlock(
@@ -57,15 +57,15 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
                             }
                             calleeReference = FirResolvedNamedReferenceImpl(
                                 parameterSource,
-                                parameterName, firProperty.symbol
+                                parameterName, firProperty.symbol,
                             )
-                        }
+                        },
                     ).apply {
                         target = FirFunctionTarget(null)
                         target.bind(componentFunction)
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 }
@@ -74,7 +74,7 @@ private val copyName = Name.identifier("copy")
 
 fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
     session: FirSession, classOrObject: KtClassOrObject?, firClass: FirModifiableRegularClass, packageFqName: FqName, classFqName: FqName,
-    firPrimaryConstructor: FirConstructor
+    firPrimaryConstructor: FirConstructor,
 ) {
     val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
     val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
@@ -86,7 +86,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
             null,
             copyName,
             status,
-            symbol
+            symbol,
         ).apply {
             for ((ktParameter, firProperty) in this@generateCopyFunction) {
                 val name = firProperty.name
@@ -101,11 +101,11 @@ fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
                         }
                         calleeReference = FirResolvedNamedReferenceImpl(parameterSource, name, firProperty.symbol)
                     },
-                    isCrossinline = false, isNoinline = false, isVararg = false
+                    isCrossinline = false, isNoinline = false, isVararg = false,
                 )
             }
 
             body = FirEmptyExpressionBlock()
-        }
+        },
     )
 }

@@ -23,7 +23,7 @@ interface ScriptConfigurationLoadingContext {
      */
     fun suggestNewConfiguration(
         file: VirtualFile,
-        newResult: ScriptConfigurationSnapshot
+        newResult: ScriptConfigurationSnapshot,
     )
 
     /**
@@ -33,6 +33,6 @@ interface ScriptConfigurationLoadingContext {
      */
     fun saveNewConfiguration(
         file: VirtualFile,
-        newResult: ScriptConfigurationSnapshot
+        newResult: ScriptConfigurationSnapshot,
     )
 }

@@ -58,13 +58,14 @@ class LazyScriptDescriptor(
     val resolveSession: ResolveSession,
     containingDeclaration: DeclarationDescriptor,
     name: Name,
-    internal val scriptInfo: KtScriptInfo
+    internal val scriptInfo: KtScriptInfo,
 ) : ScriptDescriptor, LazyClassDescriptor(
     resolveSession,
     containingDeclaration,
     name,
     scriptInfo,
-    /* isExternal = */ false
+    /* isExternal = */
+    false,
 ) {
     init {
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
@@ -87,7 +88,7 @@ class LazyScriptDescriptor(
                     type,
                     this.thisAsReceiverParameter,
                     this,
-                    expression.toSourceElement()
+                    expression.toSourceElement(),
                 )
             }
         } else null
@@ -134,7 +135,7 @@ class LazyScriptDescriptor(
         scriptingClassGetter()(
             type,
             ScriptDefinition::class, // Assuming that the ScriptDefinition class is loaded in the proper classloader, TODO: consider more reliable way to load or cache classes
-            scriptingHostConfiguration()
+            scriptingHostConfiguration(),
         )
 
     override fun substitute(substitutor: TypeSubstitutor) = this
@@ -144,7 +145,7 @@ class LazyScriptDescriptor(
 
     override fun createMemberScope(
         c: LazyClassContext,
-        declarationProvider: ClassMemberDeclarationProvider
+        declarationProvider: ClassMemberDeclarationProvider,
     ): ScopesHolderForClass<LazyClassMemberScope> =
         ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeChecker.kotlinTypeRefiner) {
             LazyScriptClassMemberScope(
@@ -152,7 +153,7 @@ class LazyScriptDescriptor(
                 c as ResolveSession,
                 declarationProvider,
                 this,
-                c.trace
+                c.trace,
             )
         }
 
@@ -169,7 +170,7 @@ class LazyScriptDescriptor(
             classId,
             typeName,
             if (fqnName.parent().asString().startsWith("kotlin.script.templates.standard")) Errors.MISSING_SCRIPT_STANDARD_TEMPLATE
-            else Errors.MISSING_SCRIPT_BASE_CLASS
+            else Errors.MISSING_SCRIPT_BASE_CLASS,
         )
     }
 
@@ -239,7 +240,7 @@ class LazyScriptDescriptor(
 
     internal fun findTypeDescriptor(
         classId: ClassId?, typeName: String,
-        errorDiagnostic: DiagnosticFactory1<PsiElement, String>?
+        errorDiagnostic: DiagnosticFactory1<PsiElement, String>?,
     ): ClassDescriptor? {
         val typeDescriptor = classId?.let { module.findClassAcrossModuleDependencies(it) }
         if (typeDescriptor == null) {
@@ -254,8 +255,8 @@ class LazyScriptDescriptor(
             resolveSession.trace.report(
                 errorDiagnostic.on(
                     scriptInfo.script.containingFile,
-                    arg
-                )
+                    arg,
+                ),
             )
         }
     }
@@ -283,7 +284,7 @@ class LazyScriptDescriptor(
                 receiverClassDescriptor,
                 true,
                 receiverClassDescriptor.thisAsReceiverParameter,
-                LexicalScopeKind.CLASS_MEMBER_SCOPE
+                LexicalScopeKind.CLASS_MEMBER_SCOPE,
             )
         }
         outerScope

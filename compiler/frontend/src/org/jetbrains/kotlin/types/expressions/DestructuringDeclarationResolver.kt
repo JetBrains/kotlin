@@ -39,14 +39,14 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 class DestructuringDeclarationResolver(
     private val fakeCallResolver: FakeCallResolver,
     private val localVariableResolver: LocalVariableResolver,
-    private val typeResolver: TypeResolver
+    private val typeResolver: TypeResolver,
 ) {
     fun resolveLocalVariablesFromDestructuringDeclaration(
         scope: LexicalScope,
         destructuringDeclaration: KtDestructuringDeclaration,
         receiver: ReceiverValue?,
         initializer: KtExpression?,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ): List<VariableDescriptor> {
         val result = arrayListOf<VariableDescriptor>()
         for ((componentIndex, entry) in destructuringDeclaration.entries.withIndex()) {
@@ -67,9 +67,9 @@ class DestructuringDeclarationResolver(
         destructuringDeclaration: KtDestructuringDeclaration,
         receiver: ReceiverValue?,
         initializer: KtExpression?,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ) = resolveLocalVariablesFromDestructuringDeclaration(
-        writableScope, destructuringDeclaration, receiver, initializer, context
+        writableScope, destructuringDeclaration, receiver, initializer, context,
     ).forEach {
         ExpressionTypingUtils.checkVariableShadowing(writableScope, context.trace, it)
         writableScope.addVariableDescriptor(it)
@@ -80,7 +80,7 @@ class DestructuringDeclarationResolver(
         receiver: ReceiverValue?,
         initializer: KtExpression?,
         context: ExpressionTypingContext,
-        componentIndex: Int
+        componentIndex: Int,
     ): KotlinType {
         val componentName = DataClassDescriptorResolver.createComponentName(componentIndex + 1)
         return resolveComponentFunctionAndGetType(componentName, context, entry, receiver, initializer)
@@ -91,7 +91,7 @@ class DestructuringDeclarationResolver(
         context: ExpressionTypingContext,
         entry: KtDestructuringDeclarationEntry,
         receiver: ReceiverValue?,
-        initializer: KtExpression?
+        initializer: KtExpression?,
     ): KotlinType {
         fun errorType() = ErrorUtils.createErrorType("$componentName() return type")
 
@@ -101,7 +101,7 @@ class DestructuringDeclarationResolver(
         val newContext = context.replaceExpectedType(expectedType).replaceContextDependency(ContextDependency.INDEPENDENT)
         val results = fakeCallResolver.resolveFakeCall(
             newContext, receiver, componentName,
-            entry, initializer ?: entry, FakeCallKind.COMPONENT, emptyList()
+            entry, initializer ?: entry, FakeCallKind.COMPONENT, emptyList(),
         )
 
         if (!results.isSuccess) {
@@ -115,8 +115,8 @@ class DestructuringDeclarationResolver(
             && !KotlinTypeChecker.DEFAULT.isSubtypeOf(functionReturnType, expectedType)) {
             context.trace.report(
                 Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(
-                    initializer ?: entry, componentName, functionReturnType, expectedType
-                )
+                    initializer ?: entry, componentName, functionReturnType, expectedType,
+                ),
             )
         }
         return functionReturnType ?: errorType()

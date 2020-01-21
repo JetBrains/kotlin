@@ -67,7 +67,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
             KotlinFullClassNameIndex.getInstance().get(
                 fqName.asString(),
                 project,
-                KotlinSourceFilterScope.sourceAndClassFiles(searchScope, project)
+                KotlinSourceFilterScope.sourceAndClassFiles(searchScope, project),
             )
         }
     }
@@ -78,20 +78,20 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
                 fqName,
                 KotlinSourceFilterScope.sourceAndClassFiles(
                     searchScope,
-                    project
+                    project,
                 ),
-                project
+                project,
             )
         }
     }
 
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName,
-        searchScope: GlobalSearchScope
+        searchScope: GlobalSearchScope,
     ): Collection<KtClassOrObject> {
         return KotlinTopLevelClassByPackageIndex.getInstance().get(
             packageFqName.asString(), project,
-            KotlinSourceFilterScope.sourceAndClassFiles(searchScope, project)
+            KotlinSourceFilterScope.sourceAndClassFiles(searchScope, project),
         )
     }
 
@@ -100,9 +100,9 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
             fqName,
             KotlinSourceFilterScope.sourceAndClassFiles(
                 scope,
-                project
+                project,
             ),
-            project
+            project,
         )
     }
 
@@ -111,10 +111,10 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
             fqn,
             KotlinSourceFilterScope.sourceAndClassFiles(
                 scope,
-                project
+                project,
             ),
             project,
-            MemberScope.ALL_NAME_FILTER
+            MemberScope.ALL_NAME_FILTER,
         )
     }
 
@@ -152,14 +152,16 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     }
 
     private fun withFakeLightClasses(
-        lightClassForFacade: KtLightClassForFacade
+        lightClassForFacade: KtLightClassForFacade,
     ): List<PsiClass> {
         val lightClasses = ArrayList<PsiClass>()
         lightClasses.add(lightClassForFacade)
         if (lightClassForFacade.files.size > 1) {
-            lightClasses.addAll(lightClassForFacade.files.map {
-                FakeLightClassForFileOfPackage(lightClassForFacade, it)
-            })
+            lightClasses.addAll(
+                lightClassForFacade.files.map {
+                    FakeLightClassForFileOfPackage(lightClassForFacade, it)
+                },
+            )
         }
         return lightClasses
     }
@@ -206,7 +208,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     private fun findPlatformWrapper(fqName: FqName, scope: GlobalSearchScope): PsiClass? {
         return platformMutabilityWrapper(fqName) {
             JavaPsiFacade.getInstance(
-                project
+                project,
             ).findClass(it, scope)
         }
     }
@@ -214,7 +216,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     fun createLightClassForFileFacade(
         facadeFqName: FqName,
         facadeFiles: List<KtFile>,
-        moduleInfo: IdeaModuleInfo
+        moduleInfo: IdeaModuleInfo,
     ): List<PsiClass> {
         val (clsFiles, _) = facadeFiles.partition { it is KtClsFile }
         val facadesFromCls = clsFiles.mapNotNull { createLightClassForDecompiledKotlinFile(it as KtClsFile) }
@@ -224,12 +226,12 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
 
     private fun createFacadesForSourceFiles(
         moduleInfo: IdeaModuleInfo,
-        facadeFqName: FqName
+        facadeFqName: FqName,
     ): List<PsiClass> {
         if (moduleInfo !is ModuleSourceInfo && moduleInfo !is PlatformModuleInfo) return listOf()
 
         val lightClassForFacade = KtLightClassForFacade.createForFacade(
-            psiManager, facadeFqName, moduleInfo.contentScope()
+            psiManager, facadeFqName, moduleInfo.contentScope(),
         )
 
         return if (lightClassForFacade !== null) withFakeLightClasses(lightClassForFacade) else emptyList()
@@ -262,7 +264,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
 
     private fun findCorrespondingLightClass(
         decompiledClassOrObject: KtClassOrObject,
-        rootLightClassForDecompiledFile: KtLightClassForDecompiledDeclaration
+        rootLightClassForDecompiledFile: KtLightClassForDecompiledDeclaration,
     ): KtLightClassForDecompiledDeclaration {
         val relativeFqName = getClassRelativeName(decompiledClassOrObject)
         val iterator = relativeFqName.pathSegments().iterator()
@@ -289,7 +291,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
         val parent = PsiTreeUtil.getParentOfType(
             decompiledClassOrObject,
             KtClassOrObject::class.java,
-            true
+            true,
         )
         if (parent == null) {
             assert(decompiledClassOrObject.isTopLevel())
@@ -305,7 +307,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
 
         val javaClsClass = createClsJavaClassFromVirtualFile(
             file, virtualFile,
-            correspondingClassOrObject = classOrObject
+            correspondingClassOrObject = classOrObject,
         ) ?: return null
 
         return KtLightClassForDecompiledDeclaration(javaClsClass, classOrObject, file)
@@ -314,7 +316,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     private fun createClsJavaClassFromVirtualFile(
         mirrorFile: KtFile,
         classFile: VirtualFile,
-        correspondingClassOrObject: KtClassOrObject?
+        correspondingClassOrObject: KtClassOrObject?,
     ): ClsClassImpl? {
         val javaFileStub = ClsJavaStubByVirtualFileCache.getInstance(project).get(classFile) ?: return null
         javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE

@@ -32,16 +32,16 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
-            interceptedFactory: ClassBuilderFactory,
-            bindingContext: BindingContext,
-            diagnostics: DiagnosticSink
+        interceptedFactory: ClassBuilderFactory,
+        bindingContext: BindingContext,
+        diagnostics: DiagnosticSink,
     ): ClassBuilderFactory {
         return ParcelableClinitClassBuilderFactory(interceptedFactory, bindingContext)
     }
 
     private inner class ParcelableClinitClassBuilderFactory(
-            private val delegateFactory: ClassBuilderFactory,
-            val bindingContext: BindingContext
+        private val delegateFactory: ClassBuilderFactory,
+        val bindingContext: BindingContext,
     ) : ClassBuilderFactory {
 
         override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
@@ -64,9 +64,9 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
     }
 
     private inner class AndroidOnDestroyCollectorClassBuilder(
-            val declarationOrigin: JvmDeclarationOrigin,
-            internal val delegateClassBuilder: ClassBuilder,
-            val bindingContext: BindingContext
+        val declarationOrigin: JvmDeclarationOrigin,
+        internal val delegateClassBuilder: ClassBuilder,
+        val bindingContext: BindingContext,
     ) : DelegatingClassBuilder() {
         private var currentClass: KtClassOrObject? = null
         private var currentClassName: String? = null
@@ -75,13 +75,13 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         override fun getDelegate() = delegateClassBuilder
 
         override fun defineClass(
-                origin: PsiElement?,
-                version: Int,
-                access: Int,
-                name: String,
-                signature: String?,
-                superName: String,
-                interfaces: Array<out String>
+            origin: PsiElement?,
+            version: Int,
+            access: Int,
+            name: String,
+            signature: String?,
+            superName: String,
+            interfaces: Array<out String>,
         ) {
             if (origin is KtClassOrObject) {
                 currentClass = origin
@@ -112,12 +112,12 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         }
 
         override fun newMethod(
-                origin: JvmDeclarationOrigin,
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                exceptions: Array<out String>?
+            origin: JvmDeclarationOrigin,
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            exceptions: Array<out String>?,
         ): MethodVisitor {
             if (name == "<clinit>" && currentClass != null && currentClassName != null) {
                 isClinitGenerated = true
@@ -125,8 +125,9 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
                 if (descriptor != null && declarationOrigin.descriptor == descriptor && descriptor.isParcelize) {
                     return ClinitAwareMethodVisitor(
-                            currentClassName!!,
-                            super.newMethod(origin, access, name, desc, signature, exceptions))
+                        currentClassName!!,
+                        super.newMethod(origin, access, name, desc, signature, exceptions),
+                    )
                 }
             }
 

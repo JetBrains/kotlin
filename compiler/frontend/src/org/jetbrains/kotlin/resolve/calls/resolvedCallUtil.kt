@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 //   val y = other.x // return false for `other.x` as it's receiver is not `this`
 // }
 fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
-    context: BindingContext
+    context: BindingContext,
 ): Boolean {
     val dispatchReceiverValue = dispatchReceiver
     if (resultingDescriptor.dispatchReceiverParameter == null || dispatchReceiverValue == null) return true

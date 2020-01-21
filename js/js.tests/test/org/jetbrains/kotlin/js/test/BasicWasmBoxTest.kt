@@ -40,7 +40,7 @@ private val wasmRuntimeKlib =
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = TEST_DATA_DIR_PATH
+    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
 ) : KotlinTestWithEnvironment() {
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
@@ -67,7 +67,7 @@ abstract class BasicWasmBoxTest(
                 File(outputJsFile),
                 config,
                 testPackage,
-                TEST_FUNCTION
+                TEST_FUNCTION,
             )
 
             spiderMonkey.runFile(outputJsFile)
@@ -89,7 +89,7 @@ abstract class BasicWasmBoxTest(
         outputJsFile: File,
         config: JsConfig,
         testPackage: String?,
-        testFunction: String
+        testFunction: String,
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
         val debugMode = getBoolean("kotlin.js.debugMode")
@@ -103,7 +103,7 @@ abstract class BasicWasmBoxTest(
                 dumpToDirectory = dumpOutputDir.path,
                 toDumpStateAfter = allPhasesSet,
                 toValidateStateAfter = allPhasesSet,
-                dumpOnlyFqName = null
+                dumpOnlyFqName = null,
             )
         } else {
             PhaseConfig(wasmPhases)
@@ -117,7 +117,7 @@ abstract class BasicWasmBoxTest(
             // TODO: Bypass the resolver fow wasm.
             allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
             friendDependencies = emptyList(),
-            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
+            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
         )
 
         outputWatFile.write(compilerResult.wat)

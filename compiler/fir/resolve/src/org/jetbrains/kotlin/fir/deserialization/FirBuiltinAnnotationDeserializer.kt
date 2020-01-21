@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 
 class FirBuiltinAnnotationDeserializer(
-    session: FirSession
+    session: FirSession,
 ) : AbstractAnnotationDeserializer(session) {
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall> {

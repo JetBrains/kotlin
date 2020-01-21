@@ -45,15 +45,15 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
         val typeBinding = testDeclaration.createTypeBindingForReturnType(analyzeResult.bindingContext)
 
         assertEqualsToFile(
-                testFile,
-                buildString {
-                    append(removeLastComment(testKtFile))
-                    append("/*\n")
+            testFile,
+            buildString {
+                append(removeLastComment(testKtFile))
+                append("/*\n")
 
-                    MyPrinter(this).print(typeBinding)
+                MyPrinter(this).print(typeBinding)
 
-                    append("*/")
-                }
+                append("*/")
+            },
         )
     }
 

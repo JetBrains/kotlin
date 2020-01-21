@@ -41,16 +41,21 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(librarySource), tmpdir, environment)
 
         for (classFile in File(tmpdir, "library").listFiles { file -> file.extension == JavaClassFileType.INSTANCE.defaultExtension }) {
-            classFile.writeBytes(transformMetadataInClassFile(classFile.readBytes()) { name, _ ->
-                if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) version else null
-            })
+            classFile.writeBytes(
+                transformMetadataInClassFile(classFile.readBytes()) { name, _ ->
+                    if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) version else null
+                },
+            )
         }
 
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
+        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+            K2JVMCompiler(),
+            listOf(
                 usageSource.path,
                 "-classpath", tmpdir.path,
-                "-d", tmpdir.path
-        ))
+                "-d", tmpdir.path,
+            ),
+        )
 
         assertEquals("Compilation error expected", ExitCode.COMPILATION_ERROR, exitCode)
 
@@ -67,41 +72,44 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
     companion object {
         fun transformMetadataInClassFile(bytes: ByteArray, transform: (fieldName: String, value: Any?) -> Any?): ByteArray {
             val writer = ClassWriter(0)
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION, writer) {
-                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
-                    val superVisitor = super.visitAnnotation(desc, visible)
-                    if (desc == JvmAnnotationNames.METADATA_DESC) {
-                        return object : AnnotationVisitor(Opcodes.API_VERSION, superVisitor) {
-                            override fun visit(name: String, value: Any) {
-                                super.visit(name, transform(name, value) ?: value)
-                            }
+            ClassReader(bytes).accept(
+                object : ClassVisitor(Opcodes.API_VERSION, writer) {
+                    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
+                        val superVisitor = super.visitAnnotation(desc, visible)
+                        if (desc == JvmAnnotationNames.METADATA_DESC) {
+                            return object : AnnotationVisitor(Opcodes.API_VERSION, superVisitor) {
+                                override fun visit(name: String, value: Any) {
+                                    super.visit(name, transform(name, value) ?: value)
+                                }
 
-                            override fun visitArray(name: String): AnnotationVisitor {
-                                val entries = arrayListOf<String>()
-                                val arrayVisitor = { super.visitArray(name) }
-                                return object : AnnotationVisitor(Opcodes.API_VERSION) {
-                                    override fun visit(name: String?, value: Any) {
-                                        entries.add(value as String)
-                                    }
+                                override fun visitArray(name: String): AnnotationVisitor {
+                                    val entries = arrayListOf<String>()
+                                    val arrayVisitor = { super.visitArray(name) }
+                                    return object : AnnotationVisitor(Opcodes.API_VERSION) {
+                                        override fun visit(name: String?, value: Any) {
+                                            entries.add(value as String)
+                                        }
 
-                                    override fun visitEnd() {
-                                        @Suppress("UNCHECKED_CAST")
-                                        val result = transform(name, entries.toTypedArray()) as Array<String>? ?: entries.toTypedArray()
-                                        if (result.isEmpty()) return
-                                        with(arrayVisitor()) {
-                                            for (value in result) {
-                                                visit(null, value)
+                                        override fun visitEnd() {
+                                            @Suppress("UNCHECKED_CAST")
+                                            val result = transform(name, entries.toTypedArray()) as Array<String>? ?: entries.toTypedArray()
+                                            if (result.isEmpty()) return
+                                            with(arrayVisitor()) {
+                                                for (value in result) {
+                                                    visit(null, value)
+                                                }
+                                                visitEnd()
                                             }
-                                            visitEnd()
                                         }
                                     }
                                 }
                             }
                         }
+                        return superVisitor
                     }
-                    return superVisitor
-                }
-            }, 0)
+                },
+                0,
+            )
             return writer.toByteArray()
         }
     }

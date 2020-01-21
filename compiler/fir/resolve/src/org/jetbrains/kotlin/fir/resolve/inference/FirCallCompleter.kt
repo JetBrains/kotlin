@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 class FirCallCompleter(
     private val transformer: FirBodyResolveTransformer,
-    components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
+    components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
 ) : BodyResolveComponents by components {
     private val completer = ConstraintSystemCompleter(components.inferenceComponents)
 
@@ -55,7 +55,7 @@ class FirCallCompleter(
             return if (call is FirFunctionCall) {
                 call.transformArguments(
                     transformer,
-                    ResolutionMode.WithExpectedType(typeRef.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type))
+                    ResolutionMode.WithExpectedType(typeRef.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type)),
                 ) as T
             } else {
                 call
@@ -80,7 +80,7 @@ class FirCallCompleter(
         val analyzer =
             PostponedArgumentsAnalyzer(
                 LambdaAnalyzerImpl(replacements), inferenceComponents, candidate, replacements,
-                transformer.components.callResolver
+                transformer.components.callResolver,
             )
 
         call.transformSingle(InvocationKindTransformer, null)
@@ -98,16 +98,16 @@ class FirCallCompleter(
                     session, finalSubstitutor, returnTypeCalculator,
                     inferenceComponents.approximator,
                     integerOperatorsTypeUpdater,
-                    integerLiteralTypeApproximator
+                    integerLiteralTypeApproximator,
                 ),
-                null
+                null,
             )
         }
         return call.transformSingle(integerOperatorsTypeUpdater, null)
     }
 
     private inner class LambdaAnalyzerImpl(
-        val replacements: MutableMap<FirExpression, FirExpression>
+        val replacements: MutableMap<FirExpression, FirExpression>,
     ) : LambdaAnalyzer {
         override fun analyzeAndGetLambdaReturnArguments(
             lambdaArgument: FirAnonymousFunction,
@@ -116,7 +116,7 @@ class FirCallCompleter(
             parameters: List<ConeKotlinType>,
             expectedReturnType: ConeKotlinType?,
             rawReturnType: ConeKotlinType,
-            stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
+            stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
         ): Pair<List<FirStatement>, InferenceSession> {
 
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
@@ -134,7 +134,7 @@ class FirCallCompleter(
                         defaultValue = null,
                         isCrossinline = false,
                         isNoinline = false,
-                        isVararg = false
+                        isVararg = false,
                     )
                 }
                 else -> null
@@ -149,11 +149,11 @@ class FirCallCompleter(
                 valueParameters = lambdaArgument.valueParameters.mapIndexed { index, parameter ->
                     parameter.transformReturnTypeRef(
                         StoreType,
-                        parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index].approximateLambdaInputType())
+                        parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index].approximateLambdaInputType()),
                     )
                     parameter
                 } + listOfNotNull(itParam),
-                returnTypeRef = expectedReturnTypeRef ?: noExpectedType
+                returnTypeRef = expectedReturnTypeRef ?: noExpectedType,
             )
 
             replacements[lambdaArgument] =
@@ -166,6 +166,6 @@ class FirCallCompleter(
 
     private fun ConeKotlinType.approximateLambdaInputType(): ConeKotlinType =
         inferenceComponents.approximator.approximateToSuperType(
-            this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+            this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
         ) as ConeKotlinType? ?: this
 }

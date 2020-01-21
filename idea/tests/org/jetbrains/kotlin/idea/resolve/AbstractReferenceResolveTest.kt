@@ -104,7 +104,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
             } else {
                 assertTrue(
                     refs.size == 1,
-                    "Must be a single ref: $refs.\nUse $MULTIRESOLVE if you need multiple refs\nUse $REF_EMPTY for an unresolved reference"
+                    "Must be a single ref: $refs.\nUse $MULTIRESOLVE if you need multiple refs\nUse $REF_EMPTY for an unresolved reference",
                 )
                 referenceToString = refs.get(0)
                 Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString)
@@ -124,7 +124,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
             expectedResolveData: ExpectedResolveData,
             offset: Int,
             psiReference: PsiReference?,
-            checkResolvedTo: (PsiElement) -> Unit = {}
+            checkResolvedTo: (PsiElement) -> Unit = {},
         ) {
             val expectedString = expectedResolveData.referenceString
             if (psiReference != null) {
@@ -135,13 +135,14 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
                     assertEquals(
                         "Found reference to '$resolvedToElementStr', but '$expectedString' was expected",
                         expectedString,
-                        resolvedToElementStr
+                        resolvedToElementStr,
                     )
                 } else {
                     if (!expectedResolveData.shouldBeUnresolved()) {
                         assertNull(
                             "Element $psiReference (${psiReference.element
-                                .text}) wasn't resolved to anything, but $expectedString was expected", expectedString
+                                .text}) wasn't resolved to anything, but $expectedString was expected",
+                            expectedString,
                         )
                     }
                 }

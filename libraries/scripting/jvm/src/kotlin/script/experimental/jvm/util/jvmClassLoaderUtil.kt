@@ -144,5 +144,5 @@ internal fun namePatternToRegex(pattern: String): Regex = Regex(
                 }
             }
         }
-    }
+    },
 )

@@ -33,19 +33,21 @@ class WholeProjectLightClassTest : WholeProjectPerformanceTest(), WholeProjectKo
             val result = measureNanoTime {
                 try {
                     // Build light class by PsiFile
-                    psiFile.acceptRecursively(object : KtVisitorVoid() {
-                        override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-                            if (!predicate(classOrObject)) return
-                            val lightClass = classOrObject.toLightClass() as? KtLightClassForSourceDeclaration ?: return
-                            lightClass.superTypes.contentHashCode()
-                            lightClass.fields.contentHashCode()
-                            lightClass.methods.contentHashCode()
-                            // Just to be sure: access types
-                            lightClass.fields.map { it.type }.hashCode()
-                            lightClass.methods.map { it.returnType }.hashCode()
-                            lightClass.hashCode()
-                        }
-                    })
+                    psiFile.acceptRecursively(
+                        object : KtVisitorVoid() {
+                            override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+                                if (!predicate(classOrObject)) return
+                                val lightClass = classOrObject.toLightClass() as? KtLightClassForSourceDeclaration ?: return
+                                lightClass.superTypes.contentHashCode()
+                                lightClass.fields.contentHashCode()
+                                lightClass.methods.contentHashCode()
+                                // Just to be sure: access types
+                                lightClass.fields.map { it.type }.hashCode()
+                                lightClass.methods.map { it.returnType }.hashCode()
+                                lightClass.hashCode()
+                            }
+                        },
+                    )
 
                 } catch (t: Throwable) {
                     t.printStackTrace()

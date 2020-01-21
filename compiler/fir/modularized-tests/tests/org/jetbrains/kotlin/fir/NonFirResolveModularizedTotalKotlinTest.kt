@@ -75,39 +75,44 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, moduleData.classpath, moduleData.javaSourceRoots)
         configuration.addAll(
             CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) },
+        )
 
         if (USE_NI) {
             configuration.languageVersionSettings =
                 LanguageVersionSettingsImpl(
-                    LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_3, specificFeatures = mapOf(
-                        LanguageFeature.NewInference to LanguageFeature.State.ENABLED
-                    )
+                    LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_3,
+                    specificFeatures = mapOf(
+                        LanguageFeature.NewInference to LanguageFeature.State.ENABLED,
+                    ),
                 )
         }
 
         System.getProperty("fir.bench.oldfe.jvm_target")?.let {
             configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))
         }
-        configuration.put(MESSAGE_COLLECTOR_KEY, object : MessageCollector {
-            override fun clear() {
+        configuration.put(
+            MESSAGE_COLLECTOR_KEY,
+            object : MessageCollector {
+                override fun clear() {
 
-            }
+                }
 
-            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-                if (location != null)
-                    print(location.toString())
-                print(":")
-                print(severity)
-                print(":")
-                println(message)
-            }
+                override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+                    if (location != null)
+                        print(location.toString())
+                    print(":")
+                    print(severity)
+                    print(":")
+                    println(message)
+                }
 
-            override fun hasErrors(): Boolean {
-                return false
-            }
+                override fun hasErrors(): Boolean {
+                    return false
+                }
 
-        })
+            },
+        )
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         runAnalysis(moduleData, environment)

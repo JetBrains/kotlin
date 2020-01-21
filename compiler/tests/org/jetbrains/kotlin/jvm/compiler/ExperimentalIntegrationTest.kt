@@ -14,22 +14,24 @@ class ExperimentalIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     fun testJvmExperimentalModule() {
         val lib = compileLibrary(
-            "lib", additionalOptions = listOf(
+            "lib",
+            additionalOptions = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexperimental=lib.ExperimentalAPI"
+                "-Xexperimental=lib.ExperimentalAPI",
             ),
-            checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) }
+            checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) },
         )
         compileKotlin("usage.kt", tmpdir, listOf(lib))
     }
 
     fun testJsExperimentalModule() {
         val lib = compileJsLibrary(
-            "lib", additionalOptions = listOf(
+            "lib",
+            additionalOptions = listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexperimental=lib.ExperimentalAPI"
+                "-Xexperimental=lib.ExperimentalAPI",
             ),
-            checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) }
+            checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) },
         )
         compileKotlin("usage.kt", File(tmpdir, "usage.js"), listOf(lib), K2JSCompiler())
     }

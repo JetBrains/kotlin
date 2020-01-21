@@ -18,7 +18,7 @@ class IrSimpleTypeImpl(
     override val hasQuestionMark: Boolean,
     override val arguments: List<IrTypeArgument>,
     annotations: List<IrConstructorCall>,
-    override val abbreviation: IrTypeAbbreviation? = null
+    override val abbreviation: IrTypeAbbreviation? = null,
 ) : IrTypeBase(kotlinType, annotations, Variance.INVARIANT), IrSimpleType, IrTypeProjection {
 
     constructor(
@@ -26,7 +26,7 @@ class IrSimpleTypeImpl(
         hasQuestionMark: Boolean,
         arguments: List<IrTypeArgument>,
         annotations: List<IrConstructorCall>,
-        abbreviation: IrTypeAbbreviation? = null
+        abbreviation: IrTypeAbbreviation? = null,
     ) : this(null, classifier, hasQuestionMark, arguments, annotations, abbreviation)
 
     override fun equals(other: Any?): Boolean =
@@ -68,7 +68,7 @@ fun IrSimpleTypeBuilder.buildSimpleType() =
         hasQuestionMark,
         arguments,
         annotations,
-        abbreviation
+        abbreviation,
     )
 
 fun IrSimpleTypeBuilder.buildTypeProjection() =
@@ -85,7 +85,7 @@ inline fun IrSimpleType.buildTypeProjection(b: IrSimpleTypeBuilder.() -> Unit): 
 
 class IrTypeProjectionImpl internal constructor(
     override val type: IrType,
-    override val variance: Variance
+    override val variance: Variance,
 ) : IrTypeProjection {
     override fun equals(other: Any?): Boolean =
         other is IrTypeProjectionImpl && type == other.type && variance == other.variance

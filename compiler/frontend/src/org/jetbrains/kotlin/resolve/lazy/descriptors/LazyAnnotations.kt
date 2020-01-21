@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.storage.getValue
 abstract class LazyAnnotationsContext(
     val annotationResolver: AnnotationResolver,
     val storageManager: StorageManager,
-    val trace: BindingTrace
+    val trace: BindingTrace,
 ) {
     abstract val scope: LexicalScope
 }
@@ -45,12 +45,12 @@ class LazyAnnotationsContextImpl(
     annotationResolver: AnnotationResolver,
     storageManager: StorageManager,
     trace: BindingTrace,
-    override val scope: LexicalScope
+    override val scope: LexicalScope,
 ) : LazyAnnotationsContext(annotationResolver, storageManager, trace)
 
 class LazyAnnotations(
     val c: LazyAnnotationsContext,
-    val annotationEntries: List<KtAnnotationEntry>
+    val annotationEntries: List<KtAnnotationEntry>,
 ) : Annotations, LazyEntity {
     override fun isEmpty() = annotationEntries.isEmpty()
 
@@ -70,7 +70,7 @@ class LazyAnnotations(
 
 class LazyAnnotationDescriptor(
     val c: LazyAnnotationsContext,
-    val annotationEntry: KtAnnotationEntry
+    val annotationEntry: KtAnnotationEntry,
 ) : AnnotationDescriptor, LazyEntity {
 
     init {
@@ -110,7 +110,7 @@ class LazyAnnotationDescriptor(
 
     private class FileDescriptorForVisibilityChecks(
         private val source: SourceElement,
-        private val containingDeclaration: DeclarationDescriptor
+        private val containingDeclaration: DeclarationDescriptor,
     ) : DeclarationDescriptorWithSource {
         override val annotations: Annotations get() = Annotations.EMPTY
         override fun getContainingDeclaration() = containingDeclaration

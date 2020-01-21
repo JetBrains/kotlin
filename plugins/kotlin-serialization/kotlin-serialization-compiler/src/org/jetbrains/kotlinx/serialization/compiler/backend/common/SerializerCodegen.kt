@@ -26,7 +26,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializerCodegen(
     protected val serializerDescriptor: ClassDescriptor,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ) : AbstractSerialGenerator(bindingContext, serializerDescriptor) {
     val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
     protected val serialName: String = serializableDescriptor.serialName()
@@ -58,7 +58,7 @@ abstract class SerializerCodegen(
     private fun generateDescriptorGetterIfNeeded(): Boolean {
         val function = getMemberToGenerate(
             serializerDescriptor, SerialEntityNames.GENERATED_DESCRIPTOR_GETTER.identifier,
-            { true }, { true }
+            { true }, { true },
         ) ?: return false
         generateChildSerializersGetter(function)
         return true
@@ -68,11 +68,11 @@ abstract class SerializerCodegen(
 
     protected val generatedSerialDescPropertyDescriptor = getPropertyToGenerate(
         serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
-        serializerDescriptor::checkSerializableClassPropertyResult
+        serializerDescriptor::checkSerializableClassPropertyResult,
     )
     protected val anySerialDescProperty = getProperty(
         serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
-        serializerDescriptor::checkSerializableClassPropertyResult
+        serializerDescriptor::checkSerializableClassPropertyResult,
     ) { true }
 
     val localSerializersFieldsDescriptors: List<PropertyDescriptor> = findLocalSerializersFieldDescriptors()
@@ -124,11 +124,11 @@ abstract class SerializerCodegen(
     private fun getPropertyToGenerate(
         classDescriptor: ClassDescriptor,
         name: String,
-        isReturnTypeOk: (PropertyDescriptor) -> Boolean
+        isReturnTypeOk: (PropertyDescriptor) -> Boolean,
     ): PropertyDescriptor? = getProperty(
         classDescriptor,
         name,
-        isReturnTypeOk
+        isReturnTypeOk,
     ) { kind ->
         kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
     }
@@ -137,10 +137,10 @@ abstract class SerializerCodegen(
         classDescriptor: ClassDescriptor,
         name: String,
         isReturnTypeOk: (PropertyDescriptor) -> Boolean,
-        isKindOk: (CallableMemberDescriptor.Kind) -> Boolean
+        isKindOk: (CallableMemberDescriptor.Kind) -> Boolean,
     ): PropertyDescriptor? = classDescriptor.unsubstitutedMemberScope.getContributedVariables(
         Name.identifier(name),
-        NoLookupLocation.FROM_BACKEND
+        NoLookupLocation.FROM_BACKEND,
     )
         .singleOrNull { property ->
             isKindOk(property.kind) &&
@@ -151,12 +151,12 @@ abstract class SerializerCodegen(
     companion object {
         fun getSyntheticLoadMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = getMemberToGenerate(
             serializerDescriptor, SerialEntityNames.LOAD,
-            serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters
+            serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters,
         )
 
         fun getSyntheticSaveMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = getMemberToGenerate(
             serializerDescriptor, SerialEntityNames.SAVE,
-            serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters
+            serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters,
         )
     }
 }

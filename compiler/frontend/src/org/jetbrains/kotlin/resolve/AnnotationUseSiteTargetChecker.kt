@@ -21,7 +21,7 @@ object AnnotationUseSiteTargetChecker {
         annotated: KtAnnotated,
         descriptor: DeclarationDescriptor,
         trace: BindingTrace,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         trace.checkDeclaration(annotated, descriptor)
 
@@ -44,21 +44,21 @@ object AnnotationUseSiteTargetChecker {
     private fun BindingTrace.checkTypeReference(
         topLevelTypeReference: KtTypeReference,
         languageVersionSettings: LanguageVersionSettings,
-        isReceiver: Boolean
+        isReceiver: Boolean,
     ) {
         checkAsTopLevelTypeReference(topLevelTypeReference, languageVersionSettings, isReceiver)
 
         topLevelTypeReference.acceptChildren(
             typeReferenceRecursiveVisitor { typeReference ->
                 checkAsTopLevelTypeReference(typeReference, languageVersionSettings, isReceiver = false)
-            }
+            },
         )
     }
 
     private fun BindingTrace.checkAsTopLevelTypeReference(
         topLevelTypeReference: KtTypeReference,
         languageVersionSettings: LanguageVersionSettings,
-        isReceiver: Boolean
+        isReceiver: Boolean,
     ) {
         for (annotationEntry in topLevelTypeReference.annotationEntries) {
             val target = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
@@ -83,7 +83,8 @@ object AnnotationUseSiteTargetChecker {
             when (target) {
                 AnnotationUseSiteTarget.FIELD -> checkIfHasBackingField(annotated, descriptor, annotation)
                 AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.PROPERTY_GETTER -> {
+                AnnotationUseSiteTarget.PROPERTY_GETTER,
+                -> {
                 }
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> checkIfDelegatedProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
@@ -117,7 +118,7 @@ object AnnotationUseSiteTargetChecker {
     private fun BindingTrace.checkIfHasBackingField(
         annotated: KtAnnotated,
         descriptor: DeclarationDescriptor,
-        annotation: KtAnnotationEntry
+        annotation: KtAnnotationEntry,
     ) {
         if (annotated is KtProperty && annotated.hasDelegate() &&
             descriptor is PropertyDescriptor && get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) != true) {

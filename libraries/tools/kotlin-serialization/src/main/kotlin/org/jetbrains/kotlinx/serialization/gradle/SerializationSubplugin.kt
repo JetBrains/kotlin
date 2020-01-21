@@ -50,7 +50,7 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
+        kotlinCompilation: KotlinCompilation<*>?,
     ): List<SubpluginOption> {
         return emptyList()
     }

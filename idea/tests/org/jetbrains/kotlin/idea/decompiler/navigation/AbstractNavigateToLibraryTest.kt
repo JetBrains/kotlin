@@ -38,7 +38,7 @@ abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibra
 
     companion object {
         private val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", false
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", false,
         )
     }
 }
@@ -50,7 +50,7 @@ abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTe
 
     protected companion object {
         val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true,
         )
     }
 }
@@ -59,7 +59,7 @@ abstract class AbstractNavigateToLibrarySourceTestWithJS : AbstractNavigateToLib
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinMultiModuleProjectDescriptor(
         "AbstractNavigateToLibrarySourceTestWithJS",
         PROJECT_DESCRIPTOR,
-        KotlinStdJSProjectDescriptor
+        KotlinStdJSProjectDescriptor,
     )
 }
 

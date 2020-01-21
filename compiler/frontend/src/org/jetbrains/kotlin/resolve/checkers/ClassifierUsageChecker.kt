@@ -38,14 +38,14 @@ class ClassifierUsageCheckerContext(
     override val trace: BindingTrace,
     override val languageVersionSettings: LanguageVersionSettings,
     override val deprecationResolver: DeprecationResolver,
-    override val moduleDescriptor: ModuleDescriptor
+    override val moduleDescriptor: ModuleDescriptor,
 ) : CheckerContext
 
 
 fun checkClassifierUsages(
     declarations: Collection<PsiElement>,
     checkers: Iterable<ClassifierUsageChecker>,
-    context: ClassifierUsageCheckerContext
+    context: ClassifierUsageCheckerContext,
 ) {
     val visitor = object : KtTreeVisitorVoid() {
         override fun visitReferenceExpression(expression: KtReferenceExpression) {
@@ -88,7 +88,7 @@ fun checkClassifierUsages(
                 is ClassifierDescriptor ->
                     listOfNotNull(
                         target,
-                        getClassifierUsedToReferenceCompanionObject(target, expression)
+                        getClassifierUsedToReferenceCompanionObject(target, expression),
                     )
 
                 is ClassConstructorDescriptor -> listOf(target.constructedClass)
@@ -118,7 +118,7 @@ fun checkClassifierUsages(
 
         private fun getClassifierUsedToReferenceCompanionObject(
             referencedObject: ClassifierDescriptor,
-            expression: KtReferenceExpression
+            expression: KtReferenceExpression,
         ): ClassifierDescriptor? =
             if (referencedObject.isCompanionObject())
                 context.trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression)

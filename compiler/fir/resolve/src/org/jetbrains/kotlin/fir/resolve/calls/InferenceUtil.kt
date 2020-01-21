@@ -44,7 +44,7 @@ class InferenceComponents(
     val ctx: ConeInferenceContext,
     val session: FirSession,
     val returnTypeCalculator: ReturnTypeCalculator,
-    val scopeSession: ScopeSession
+    val scopeSession: ScopeSession,
 ) {
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {

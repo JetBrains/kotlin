@@ -36,7 +36,7 @@ import java.util.*
 class ArtificialElementInsertHandler(
     private val textBeforeCaret: String,
     private val textAfterCaret: String,
-    private val shortenRefs: Boolean
+    private val shortenRefs: Boolean,
 ) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val offset = context.editor.caretModel.offset
@@ -108,7 +108,7 @@ fun LookupElement.withOptions(options: ItemOptions): LookupElement {
 
 fun LookupElement.addTailAndNameSimilarity(
     matchedExpectedInfos: Collection<ExpectedInfo>,
-    nameSimilarityExpectedInfos: Collection<ExpectedInfo> = matchedExpectedInfos
+    nameSimilarityExpectedInfos: Collection<ExpectedInfo> = matchedExpectedInfos,
 ): LookupElement {
     val lookupElement = addTail(mergeTails(matchedExpectedInfos.map { it.tail }))
     val similarity = calcNameSimilarity(lookupElement.lookupString, nameSimilarityExpectedInfos)
@@ -121,7 +121,7 @@ fun LookupElement.addTailAndNameSimilarity(
 class ExpectedInfoMatch
 private constructor(
     val substitutor: TypeSubstitutor?,
-    val makeNotNullable: Boolean
+    val makeNotNullable: Boolean,
 ) {
     fun isMatch() = substitutor != null && !makeNotNullable
 
@@ -156,13 +156,13 @@ fun <TDescriptor : DeclarationDescriptor?> MutableCollection<LookupElement>.addL
     expectedInfos: Collection<ExpectedInfo>,
     infoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
     noNameSimilarityForReturnItself: Boolean = false,
-    lookupElementFactory: (TDescriptor) -> Collection<LookupElement>
+    lookupElementFactory: (TDescriptor) -> Collection<LookupElement>,
 ) {
     class ItemData(val descriptor: TDescriptor, val itemOptions: ItemOptions) {
         @Suppress("UNCHECKED_CAST")
         override fun equals(other: Any?) = descriptorsEqualWithSubstitution(
             this.descriptor,
-            (other as? ItemData)?.descriptor
+            (other as? ItemData)?.descriptor,
         ) && itemOptions == (other as? ItemData)?.itemOptions
 
         override fun hashCode() = if (this.descriptor != null) this.descriptor.original.hashCode() else 0
@@ -208,7 +208,7 @@ private fun <T : DeclarationDescriptor?> T.substituteFixed(substitutor: TypeSubs
 
 private fun MutableCollection<LookupElement>.addLookupElementsForNullable(
     factory: () -> Collection<LookupElement>,
-    matchedInfos: Collection<ExpectedInfo>
+    matchedInfos: Collection<ExpectedInfo>,
 ) {
     fun LookupElement.postProcess(): LookupElement {
         var element = this
@@ -252,7 +252,7 @@ fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade,
         this,
         lhs,
         resolutionFacade.getFrontendService(ReflectionTypes::class.java),
-        resolutionFacade.moduleDescriptor
+        resolutionFacade.moduleDescriptor,
     )?.toFuzzyType(emptyList())
 }
 
@@ -296,7 +296,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
     smartCastCalculator: SmartCastCalculator,
     callTypeAndReceiver: CallTypeAndReceiver<*, *>,
     resolutionFacade: ResolutionFacade,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ): Collection<FuzzyType> {
     if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE) {
         val lhs = callTypeAndReceiver.receiver?.let { bindingContext[BindingContext.DOUBLE_COLON_LHS, it] }

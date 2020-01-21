@@ -55,7 +55,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
             val type = FirErrorTypeRefImpl(
                 expression.source,
-                FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported", DiagnosticKind.InferenceError)
+                FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported", DiagnosticKind.InferenceError),
             )
             expression.resultType = type
         }
@@ -64,7 +64,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         qualifiedAccessExpression.annotations.forEach { it.accept(this, data) }
         var result = when (val callee = qualifiedAccessExpression.calleeReference) {
@@ -75,7 +75,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     callee.replaceBoundSymbol(it)
                 }
                 qualifiedAccessExpression.resultType = FirResolvedTypeRefImpl(
-                    null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName")
+                    null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName"),
                 )
                 qualifiedAccessExpression
             }
@@ -92,7 +92,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                         val superTypeRefFromStack = implicitReceiverStack.lastDispatchReceiver()
                             ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
                             ?: FirErrorTypeRefImpl(
-                                qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype)
+                                qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype),
                             )
                         qualifiedAccessExpression.resultType = superTypeRefFromStack
                         callee.replaceSuperTypeRef(superTypeRefFromStack)
@@ -185,7 +185,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         return transformQualifiedAccessExpression(thisReceiverExpression, data)
     }
@@ -214,7 +214,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 calleeReference = FirSimpleNamedReference(
                     operatorCall.source,
                     name,
-                    candidateSymbol = null
+                    candidateSymbol = null,
                 )
             }
 
@@ -247,7 +247,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 }
                 else -> FirErrorExpressionImpl(
                     operatorCall.source,
-                    FirOperatorAmbiguityError(listOf(operatorCallReference.resolvedSymbol, assignCallReference.resolvedSymbol))
+                    FirOperatorAmbiguityError(listOf(operatorCallReference.resolvedSymbol, assignCallReference.resolvedSymbol)),
                 ).compose()
             }
         }
@@ -257,7 +257,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         val symbolProvider = session.firSymbolProvider
         val resolved = (transformExpression(typeOperatorCall, data).single as FirTypeOperatorCall)
@@ -273,8 +273,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 resolved.resultType =
                     resolved.conversionTypeRef.withReplacedConeType(
                         resolved.conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(
-                            ConeNullability.NULLABLE, session.inferenceContext
-                        )
+                            ConeNullability.NULLABLE, session.inferenceContext,
+                        ),
                     )
             }
             else -> error("Unknown type operator")
@@ -285,7 +285,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformCheckNotNullCall(
         checkNotNullCall: FirCheckNotNullCall,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         // Resolve the return type of a call to the synthetic function with signature:
         //   fun <K> checkNotNull(arg: K?): K
@@ -310,7 +310,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformBinaryLogicExpression(
         binaryLogicExpression: FirBinaryLogicExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         val booleanType = binaryLogicExpression.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type)
         return when (binaryLogicExpression.kind) {
@@ -330,7 +330,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         // val resolvedAssignment = transformCallee(variableAssignment)
         variableAssignment.annotations.forEach { it.accept(this, data) }
@@ -351,7 +351,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformCallableReferenceAccess(
         callableReferenceAccess: FirCallableReferenceAccess,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         if (callableReferenceAccess.calleeReference is FirResolvedNamedReference) {
             return callableReferenceAccess.compose()
@@ -370,7 +370,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         if (data !is ResolutionMode.ContextDependent) {
             val resolvedReference =
                 components.syntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall(
-                    callableReferenceAccess, data.expectedType
+                    callableReferenceAccess, data.expectedType,
                 ) ?: callableReferenceAccess
 
             return resolvedReference.compose()
@@ -393,7 +393,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                         Array((symbol.phasedFir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0) {
                             ConeStarProjection
                         },
-                        isNullable = false
+                        isNullable = false,
                     )
                 } else {
                     null
@@ -411,14 +411,14 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         transformedGetClassCall.resultType =
             FirResolvedTypeRefImpl(
                 null,
-                kClassSymbol.constructType(arrayOf(typeOfExpression), false)
+                kClassSymbol.constructType(arrayOf(typeOfExpression), false),
             )
         return transformedGetClassCall.compose()
     }
 
     override fun transformWrappedDelegateExpression(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         transformExpression(wrappedDelegateExpression, data)
         with(wrappedDelegateExpression) {
@@ -460,7 +460,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
                     constExpression.resultType = FirErrorTypeRefImpl(
                         constExpression.source,
-                        FirTypeMismatchError(expectedType, integerLiteralType.getApproximatedType())
+                        FirTypeMismatchError(expectedType, integerLiteralType.getApproximatedType()),
                     )
                     return constExpression.compose()
                 }
@@ -500,14 +500,14 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 else -> this as ConeKotlinType
             }
             FirTypeProjectionWithVarianceImpl(
-                null, FirResolvedTypeRefImpl(null, type), variance
+                null, FirResolvedTypeRefImpl(null, type), variance,
             )
         }
     }
 
     override fun transformDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         if (transformer.implicitTypeOnly) return delegatedConstructorCall.compose()
         delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)

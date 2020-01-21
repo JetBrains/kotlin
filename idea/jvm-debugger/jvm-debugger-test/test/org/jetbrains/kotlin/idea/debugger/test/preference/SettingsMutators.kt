@@ -35,7 +35,7 @@ internal val SettingsMutators: List<SettingsMutator<*>> = listOf(
     DexSettingsMutator(EMULATE_DEX),
     KotlinVariablesModeSettingsMutator,
     JvmTargetSettingsMutator,
-    ForceRankingSettingsMutator
+    ForceRankingSettingsMutator,
 )
 
 private class DexSettingsMutator(key: DebuggerPreferenceKey<Boolean>) : SettingsMutator<Boolean>(key) {
@@ -48,7 +48,7 @@ private class DexSettingsMutator(key: DebuggerPreferenceKey<Boolean>) : Settings
 
 private class DebuggerSettingsMutator<T : Any>(
     key: DebuggerPreferenceKey<T>,
-    private val prop: KMutableProperty1<DebuggerSettings, T>
+    private val prop: KMutableProperty1<DebuggerSettings, T>,
 ) : SettingsMutator<T>(key) {
     override fun setValue(value: T, project: Project): T {
         val debuggerSettings = DebuggerSettings.getInstance()
@@ -60,7 +60,7 @@ private class DebuggerSettingsMutator<T : Any>(
 
 private class KotlinSettingsMutator<T : Any>(
     key: DebuggerPreferenceKey<T>,
-    private val prop: KMutableProperty1<KotlinDebuggerSettings, T>
+    private val prop: KMutableProperty1<KotlinDebuggerSettings, T>,
 ) : SettingsMutator<T>(key) {
     override fun setValue(value: T, project: Project): T {
         val debuggerSettings = KotlinDebuggerSettings.getInstance()

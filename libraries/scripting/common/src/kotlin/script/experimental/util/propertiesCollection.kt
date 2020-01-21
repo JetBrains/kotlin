@@ -17,7 +17,7 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
 
     open class Key<T>(
         val name: String,
-        @Transient val getDefaultValue: PropertiesCollection.() -> T?
+        @Transient val getDefaultValue: PropertiesCollection.() -> T?,
     ) : Serializable {
 
         constructor(name: String, defaultValue: T? = null) : this(name, { defaultValue })
@@ -34,7 +34,7 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
 
     class TransientKey<T>(
         name: String,
-        getDefaultValue: PropertiesCollection.() -> T?
+        getDefaultValue: PropertiesCollection.() -> T?,
     ) : Key<T>(name, getDefaultValue)
 
     class PropertyKeyDelegate<T>(private val getDefaultValue: PropertiesCollection.() -> T?, val isTransient: Boolean = false) {

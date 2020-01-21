@@ -48,20 +48,20 @@ class KDocCompletionContributor : CompletionContributor() {
     init {
         extend(
             CompletionType.BASIC, psiElement().inside(KDocName::class.java),
-            KDocNameCompletionProvider
+            KDocNameCompletionProvider,
         )
 
         extend(
             CompletionType.BASIC,
             psiElement().afterLeaf(
-                StandardPatterns.or(psiElement(KDocTokens.LEADING_ASTERISK), psiElement(KDocTokens.START))
+                StandardPatterns.or(psiElement(KDocTokens.LEADING_ASTERISK), psiElement(KDocTokens.START)),
             ),
-            KDocTagCompletionProvider
+            KDocTagCompletionProvider,
         )
 
         extend(
             CompletionType.BASIC,
-            psiElement(KDocTokens.TAG_NAME), KDocTagCompletionProvider
+            psiElement(KDocTokens.TAG_NAME), KDocTagCompletionProvider,
         )
     }
 }
@@ -75,7 +75,7 @@ object KDocNameCompletionProvider : CompletionProvider<CompletionParameters>() {
 class KDocNameCompletionSession(
     parameters: CompletionParameters,
     toFromOriginalFileMapper: ToFromOriginalFileMapper,
-    resultSet: CompletionResultSet
+    resultSet: CompletionResultSet,
 ) : CompletionSession(CompletionSessionConfiguration(parameters), parameters, toFromOriginalFileMapper, resultSet) {
 
     override val descriptorKindFilter: DescriptorKindFilter? get() = null
@@ -96,7 +96,7 @@ class KDocNameCompletionSession(
 
     private fun addParamCompletions(
         position: KDocName,
-        declarationDescriptor: DeclarationDescriptor
+        declarationDescriptor: DeclarationDescriptor,
     ) {
         val section = position.getContainingSection()
         val documentedParameters = section.findTagsByName("param").map { it.getSubjectName() }.toSet()
@@ -109,7 +109,7 @@ class KDocNameCompletionSession(
 
     private fun collectDescriptorsForLinkCompletion(
         declarationDescriptor: DeclarationDescriptor,
-        kDocLink: KDocLink
+        kDocLink: KDocLink,
     ): Collection<DeclarationDescriptor> {
         val contextScope = getKDocLinkResolutionScope(resolutionFacade, declarationDescriptor)
 
@@ -130,11 +130,13 @@ class KDocNameCompletionSession(
     private fun addLinkCompletions(declarationDescriptor: DeclarationDescriptor, kDocLink: KDocLink) {
         collectDescriptorsForLinkCompletion(declarationDescriptor, kDocLink).forEach {
             val element = basicLookupElementFactory.createLookupElement(it, parametersAndTypeGrayed = true)
-            collector.addElement(object : LookupElementDecorator<LookupElement>(element) {
-                override fun handleInsert(context: InsertionContext) {
-                    // insert only plain name here, no qualifier/parentheses/etc.
-                }
-            })
+            collector.addElement(
+                object : LookupElementDecorator<LookupElement>(element) {
+                    override fun handleInsert(context: InsertionContext) {
+                        // insert only plain name here, no qualifier/parentheses/etc.
+                    }
+                },
+            )
         }
     }
 }
@@ -146,7 +148,7 @@ object KDocTagCompletionProvider : CompletionProvider<CompletionParameters>() {
             parameters.position.containingFile,
             parameters.offset,
             StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
-            StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@')
+            StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@'),
         )
 
         if (parameters.isAutoPopup && prefix.isEmpty()) return

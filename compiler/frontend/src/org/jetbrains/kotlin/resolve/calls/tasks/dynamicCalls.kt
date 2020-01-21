@@ -93,18 +93,24 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             name,
             CallableMemberDescriptor.Kind.DECLARATION,
             SourceElement.NO_SOURCE,
-            /* lateInit = */ false,
-            /* isConst = */ false,
-            /* isExpect = */ false,
-            /* isActual = */ false,
-            /* isExternal = */ false,
-            /* isDelegated = */ false
+            /* lateInit = */
+            false,
+            /* isConst = */
+            false,
+            /* isExpect = */
+            false,
+            /* isActual = */
+            false,
+            /* isExternal = */
+            false,
+            /* isDelegated = */
+            false,
         )
         propertyDescriptor.setType(
             dynamicType,
             createTypeParameters(propertyDescriptor, call),
             createDynamicDispatchReceiverParameter(propertyDescriptor),
-            null
+            null,
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
@@ -122,7 +128,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             Annotations.EMPTY,
             name,
             CallableMemberDescriptor.Kind.DECLARATION,
-            SourceElement.NO_SOURCE
+            SourceElement.NO_SOURCE,
         )
         functionDescriptor.initialize(
             null,
@@ -131,7 +137,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             createValueParameters(functionDescriptor, call),
             dynamicType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            Visibilities.PUBLIC,
         )
         functionDescriptor.setHasSynthesizedParameterNames(true)
         return functionDescriptor
@@ -142,7 +148,8 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
     }
 
     private fun createTypeParameters(owner: DeclarationDescriptor, call: Call): List<TypeParameterDescriptor> =
-        call.typeArguments.indices.map { index
+        call.typeArguments.indices.map {
+                index,
             ->
             TypeParameterDescriptorImpl.createWithDefaultBound(
                 owner,
@@ -151,7 +158,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
                 Variance.INVARIANT,
                 Name.identifier("T$index"),
                 index,
-                storageManager
+                storageManager,
             )
         }
 
@@ -169,12 +176,15 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
                     Annotations.EMPTY,
                     arg.getArgumentName()?.asName ?: Name.identifier("p$index"),
                     outType,
-                    /* declaresDefaultValue = */ false,
-                    /* isCrossinline = */ false,
-                    /* isNoinline = */ false,
+                    /* declaresDefaultValue = */
+                    false,
+                    /* isCrossinline = */
+                    false,
+                    /* isNoinline = */
+                    false,
                     varargElementType,
-                    SourceElement.NO_SOURCE
-                )
+                    SourceElement.NO_SOURCE,
+                ),
             )
         }
 
@@ -219,7 +229,8 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
                     addParameter(
                         funLiteralArg,
                         funLiteralArg.getLambdaExpression()?.let { getFunctionType(it) } ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE,
-                        null)
+                        null,
+                    )
                 }
 
                 break

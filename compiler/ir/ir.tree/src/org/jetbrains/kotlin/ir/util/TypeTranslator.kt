@@ -28,7 +28,7 @@ class TypeTranslator(
     val languageVersionSettings: LanguageVersionSettings,
     builtIns: KotlinBuiltIns,
     private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
-    private val enterTableScope: Boolean = false
+    private val enterTableScope: Boolean = false,
 ) {
 
     private val typeApproximatorForNI = TypeApproximator(builtIns)
@@ -112,7 +112,7 @@ class TypeTranslator(
             symbolTable.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,
             translateTypeArguments(this.arguments),
-            translateTypeAnnotations(this.annotations)
+            translateTypeAnnotations(this.annotations),
         )
     }
 
@@ -141,7 +141,7 @@ class TypeTranslator(
                 typeApproximatorForNI.approximateDeclarationType(
                     ktType,
                     local = false,
-                    languageVersionSettings = languageVersionSettings
+                    languageVersionSettings = languageVersionSettings,
                 )
             else
                 approximateCapturedTypes(ktType).upper

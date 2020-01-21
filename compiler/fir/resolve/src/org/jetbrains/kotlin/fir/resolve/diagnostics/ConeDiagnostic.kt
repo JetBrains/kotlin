@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.psi
 
 class ConeDiagnostic(
     val diagnostic: Diagnostic,
-    val source: FirSourceElement
+    val source: FirSourceElement,
 )
 
 inline fun <reified E : PsiElement> DiagnosticFactory0<E>.onSource(source: FirSourceElement): ConeDiagnostic? {

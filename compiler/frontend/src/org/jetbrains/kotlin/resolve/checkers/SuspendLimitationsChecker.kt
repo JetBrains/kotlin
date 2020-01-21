@@ -32,7 +32,7 @@ object SuspendLimitationsChecker : DeclarationChecker {
     private val UNSUPPORTED_OPERATOR_NAMES = setOf(
         OperatorNameConventions.CONTAINS,
         OperatorNameConventions.GET, OperatorNameConventions.SET,
-        OperatorNameConventions.PROVIDE_DELEGATE, OperatorNameConventions.GET_VALUE, OperatorNameConventions.SET_VALUE
+        OperatorNameConventions.PROVIDE_DELEGATE, OperatorNameConventions.GET_VALUE, OperatorNameConventions.SET_VALUE,
     )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {

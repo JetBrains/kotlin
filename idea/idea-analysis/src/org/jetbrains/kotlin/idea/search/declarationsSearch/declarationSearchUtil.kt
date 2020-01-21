@@ -42,7 +42,7 @@ abstract class DeclarationsSearch<T : PsiElement, R : DeclarationSearchRequest<T
                 override fun processQuery(queryParameters: R, consumer: Processor<in T>) {
                     doSearch(queryParameters, consumer)
                 }
-            }
+            },
         )
     }
 
@@ -59,7 +59,7 @@ abstract class DeclarationsSearch<T : PsiElement, R : DeclarationSearchRequest<T
 class HierarchySearchRequest<T : PsiElement>(
     override val originalElement: T,
     override val searchScope: SearchScope,
-    val searchDeeply: Boolean = true
+    val searchDeeply: Boolean = true,
 ) : SearchRequestWithElement<T> {
     fun <U : PsiElement> copy(newOriginalElement: U): HierarchySearchRequest<U> =
         HierarchySearchRequest(newOriginalElement, searchScope, searchDeeply)
@@ -102,7 +102,7 @@ fun <T : PsiElement> Processor<in T>.consumeHierarchy(request: SearchRequestWith
 }
 
 abstract class HierarchySearch<T : PsiElement>(
-    private val traverser: HierarchyTraverser<T>
+    private val traverser: HierarchyTraverser<T>,
 ) : DeclarationsSearch<T, HierarchySearchRequest<T>>() {
     protected open fun doSearchAll(request: HierarchySearchRequest<T>, consumer: Processor<in T>) {
         consumer.consumeHierarchy(request, traverser)

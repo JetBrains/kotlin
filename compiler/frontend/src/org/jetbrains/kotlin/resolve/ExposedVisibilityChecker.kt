@@ -32,7 +32,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
         diagnostic: DiagnosticFactory3<E, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>,
         element: E,
         elementVisibility: EffectiveVisibility,
-        restrictingDescriptor: DescriptorWithRelation
+        restrictingDescriptor: DescriptorWithRelation,
     ) {
         trace?.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingDescriptor.effectiveVisibility()))
     }
@@ -50,14 +50,16 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
     fun checkDeclarationWithVisibility(
         modifierListOwner: KtModifierListOwner,
         descriptor: DeclarationDescriptorWithVisibility,
-        visibility: Visibility
+        visibility: Visibility,
     ): Boolean {
         return when {
             modifierListOwner is KtFunction &&
-                    descriptor is FunctionDescriptor -> checkFunction(modifierListOwner, descriptor, visibility)
+                    descriptor is FunctionDescriptor,
+            -> checkFunction(modifierListOwner, descriptor, visibility)
 
             modifierListOwner is KtProperty &&
-                    descriptor is PropertyDescriptor -> checkProperty(modifierListOwner, descriptor, visibility)
+                    descriptor is PropertyDescriptor,
+            -> checkProperty(modifierListOwner, descriptor, visibility)
 
             else -> true
         }
@@ -78,7 +80,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
         function: KtFunction,
         functionDescriptor: FunctionDescriptor,
         // for checking situation with modified basic visibility
-        visibility: Visibility = functionDescriptor.visibility
+        visibility: Visibility = functionDescriptor.visibility,
     ): Boolean {
         val functionVisibility = functionDescriptor.effectiveVisibility(visibility)
         var result = true
@@ -102,7 +104,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
                     val restrictingByProperty = parameterDescriptor.type.leastPermissiveDescriptor(propertyOrClassVisibility)
                     if (restrictingByProperty != null) {
                         reportExposure(
-                            EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR, valueParameter, propertyOrClassVisibility, restrictingByProperty
+                            EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR, valueParameter, propertyOrClassVisibility, restrictingByProperty,
                         )
                         result = false
                     }
@@ -116,7 +118,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
         property: KtProperty,
         propertyDescriptor: PropertyDescriptor,
         // for checking situation with modified basic visibility
-        visibility: Visibility = propertyDescriptor.visibility
+        visibility: Visibility = propertyDescriptor.visibility,
     ): Boolean {
         val propertyVisibility = propertyDescriptor.effectiveVisibility(visibility)
         val restricting = propertyDescriptor.type.leastPermissiveDescriptor(propertyVisibility)
@@ -155,7 +157,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
             val restricting = superType.leastPermissiveDescriptor(classVisibility)
             if (restricting != null) {
                 reportExposure(
-                    if (isInterface) EXPOSED_SUPER_INTERFACE else EXPOSED_SUPER_CLASS, delegationList[i], classVisibility, restricting
+                    if (isInterface) EXPOSED_SUPER_INTERFACE else EXPOSED_SUPER_CLASS, delegationList[i], classVisibility, restricting,
                 )
                 result = false
             }

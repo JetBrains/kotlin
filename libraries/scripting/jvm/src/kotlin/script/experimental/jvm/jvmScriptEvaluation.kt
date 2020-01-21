@@ -30,7 +30,7 @@ val JvmScriptEvaluationConfigurationKeys.baseClassLoader by PropertiesCollection
         get(ScriptEvaluationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jvm.baseClassLoader)
             ?: Thread.currentThread().contextClassLoader
     },
-    isTransient = true
+    isTransient = true,
 )
 
 /**
@@ -47,7 +47,7 @@ val JvmScriptEvaluationConfigurationKeys.mainArguments by PropertiesCollection.k
 internal val JvmScriptEvaluationConfigurationKeys.actualClassLoader by PropertiesCollection.key<ClassLoader?>(isTransient = true)
 
 internal val JvmScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>(
-    isTransient = true
+    isTransient = true,
 )
 
 val ScriptEvaluationConfigurationKeys.jvm get() = JvmScriptEvaluationConfigurationBuilder()

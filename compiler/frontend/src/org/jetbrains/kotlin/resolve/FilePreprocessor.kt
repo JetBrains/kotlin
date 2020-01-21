@@ -16,7 +16,7 @@ interface FilePreprocessorExtension {
 
 class FilePreprocessor(
     private val trace: BindingTrace,
-    private val extensions: Iterable<FilePreprocessorExtension>
+    private val extensions: Iterable<FilePreprocessorExtension>,
 ) {
     fun preprocessFile(file: KtFile) {
         registerFileByPackage(file)
@@ -34,7 +34,7 @@ class FilePreprocessor(
 }
 
 fun <K, T> BindingTrace.addElementToSlice(
-    slice: WritableSlice<K, MutableCollection<T>>, key: K, element: T
+    slice: WritableSlice<K, MutableCollection<T>>, key: K, element: T,
 ) {
     val elements = get(slice, key) ?: Sets.newIdentityHashSet()
     elements.add(element)

@@ -84,7 +84,7 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
     private fun findInterfaceMember(
         descriptorToSearch: ClassDescriptor,
         startExpression: KtSuperExpression,
-        bindingContext: BindingContext
+        bindingContext: BindingContext,
     ): CallableMemberDescriptor? {
         val parents = generateSequence({ startExpression.parent }) { it.parent }
         parents.fold<PsiElement, PsiElement>(startExpression) { child, parent ->
@@ -107,7 +107,7 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
 
     private fun getSuperCallLabelTarget(
         bindingContext: BindingContext,
-        expression: KtSuperExpression
+        expression: KtSuperExpression,
     ): ClassDescriptor? {
         val thisTypeForSuperCall = bindingContext.get(BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression) ?: return null
         val descriptor = thisTypeForSuperCall.constructor.declarationDescriptor

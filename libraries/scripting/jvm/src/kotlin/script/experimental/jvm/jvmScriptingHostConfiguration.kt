@@ -33,7 +33,7 @@ val JvmScriptingHostConfigurationKeys.baseClassLoader by PropertiesCollection.ke
             URLClassLoader(it.toClassPathOrEmpty().map { f -> f.toURI().toURL() }.toTypedArray())
         }
     },
-    isTransient = true
+    isTransient = true,
 )
 
 @Suppress("unused")
@@ -79,7 +79,9 @@ class JvmGetScriptingClass : GetScriptingClass, Serializable {
             dependencies = newDeps
         } else {
             if (newDeps != dependencies) throw IllegalArgumentException(
-                "scripting configuration dependencies changed:\nold: ${dependencies?.joinToString { (it as? JvmDependency)?.classpath.toString() }}\nnew: ${newDeps?.joinToString { (it as? JvmDependency)?.classpath.toString() }}"
+                "scripting configuration dependencies changed:\nold: ${dependencies?.joinToString {
+                    (it as? JvmDependency)?.classpath.toString()
+                }}\nnew: ${newDeps?.joinToString { (it as? JvmDependency)?.classpath.toString() }}",
             )
         }
 

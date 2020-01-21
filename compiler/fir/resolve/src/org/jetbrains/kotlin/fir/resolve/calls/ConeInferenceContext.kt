@@ -53,18 +53,18 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
-        nullable: Boolean
+        nullable: Boolean,
     ): SimpleTypeMarker {
         require(constructor is FirClassifierSymbol<*>)
         return when (constructor) {
             is FirClassLikeSymbol<*> -> ConeClassLikeTypeImpl(
                 constructor.toLookupTag(),
                 (arguments as List<ConeKotlinTypeProjection>).toTypedArray(),
-                nullable
+                nullable,
             )
             is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(
                 constructor.toLookupTag(),
-                nullable
+                nullable,
             )
             else -> error("!")
         }
@@ -86,7 +86,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun newBaseTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
     ): AbstractTypeCheckerContext =
         ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)
 
@@ -123,7 +123,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     private fun KotlinTypeMarker?.containsInternal(
         predicate: (KotlinTypeMarker) -> Boolean,
-        visited: HashSet<KotlinTypeMarker> = hashSetOf()
+        visited: HashSet<KotlinTypeMarker> = hashSetOf(),
     ): Boolean {
         if (this == null) return false
         if (!visited.add(this)) return false
@@ -209,14 +209,14 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         constructorProjection: TypeArgumentMarker,
         constructorSupertypes: List<KotlinTypeMarker>,
         lowerType: KotlinTypeMarker?,
-        captureStatus: CaptureStatus
+        captureStatus: CaptureStatus,
     ): CapturedTypeMarker {
         require(lowerType is ConeKotlinType?)
         require(constructorProjection is ConeKotlinTypeProjection)
         return ConeCapturedType(
             captureStatus,
             lowerType,
-            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes.cast())
+            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes.cast()),
         )
     }
 

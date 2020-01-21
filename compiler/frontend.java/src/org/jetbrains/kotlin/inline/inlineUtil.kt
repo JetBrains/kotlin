@@ -37,10 +37,11 @@ fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
             inlineAccessorsJvmNames(classProto.propertyList, nameResolver)
         }
         KotlinClassHeader.Kind.FILE_FACADE,
-        KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+        KotlinClassHeader.Kind.MULTIFILE_CLASS_PART,
+        -> {
             val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
             inlineFunctionsJvmNames(packageProto.functionList, nameResolver, packageProto.typeTable) +
-            inlineAccessorsJvmNames(packageProto.propertyList, nameResolver)
+                    inlineAccessorsJvmNames(packageProto.propertyList, nameResolver)
         }
         else -> emptySet()
     }

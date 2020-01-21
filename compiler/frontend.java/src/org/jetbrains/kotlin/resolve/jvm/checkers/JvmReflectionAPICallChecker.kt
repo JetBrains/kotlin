@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.storage.getValue
 class JvmReflectionAPICallChecker(
     private val module: ModuleDescriptor,
     reflectionTypes: ReflectionTypes,
-    storageManager: StorageManager
+    storageManager: StorageManager,
 ) : AbstractReflectionApiCallChecker(reflectionTypes, storageManager) {
     override fun isAllowedKClassMember(name: Name): Boolean =
         super.isAllowedKClassMember(name) || name.asString() == "qualifiedName"

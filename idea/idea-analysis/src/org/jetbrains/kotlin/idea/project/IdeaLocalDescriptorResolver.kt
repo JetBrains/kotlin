@@ -17,23 +17,23 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 class IdeaLocalDescriptorResolver(
     private val resolveElementCache: ResolveElementCache,
-    private val absentDescriptorHandler: AbsentDescriptorHandler
+    private val absentDescriptorHandler: AbsentDescriptorHandler,
 ) : LocalDescriptorResolver {
     override fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor {
         val context = resolveElementCache.resolveToElements(listOf(declaration), BodyResolveMode.FULL)
         return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) ?: absentDescriptorHandler.diagnoseDescriptorNotFound(
-            declaration
+            declaration,
         )
     }
 }
 
 class IdeaAbsentDescriptorHandler(
-    private val declarationProviderFactory: DeclarationProviderFactory
+    private val declarationProviderFactory: DeclarationProviderFactory,
 ) : AbsentDescriptorHandler {
     override fun diagnoseDescriptorNotFound(declaration: KtDeclaration): DeclarationDescriptor {
         throw NoDescriptorForDeclarationException(
             declaration,
-            (declarationProviderFactory as? PluginDeclarationProviderFactory)?.debugToString()
+            (declarationProviderFactory as? PluginDeclarationProviderFactory)?.debugToString(),
         )
     }
 }

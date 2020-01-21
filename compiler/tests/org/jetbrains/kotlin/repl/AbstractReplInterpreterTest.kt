@@ -88,7 +88,7 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
         loadScriptingPlugin(configuration)
         val repl = ReplInterpreter(
             testRootDisposable, configuration,
-            ConsoleReplConfiguration()
+            ConsoleReplConfiguration(),
         )
 
         for ((code, expected) in loadLines(File(path))) {
@@ -107,9 +107,9 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
             }
 
             Assert.assertEquals(
-                    "After evaluation of: $code",
-                    StringUtil.convertLineSeparators(expected).replaceFirst(TRAILING_NEWLINE_REGEX, ""),
-                    StringUtil.convertLineSeparators(actual).replaceFirst(TRAILING_NEWLINE_REGEX, "")
+                "After evaluation of: $code",
+                StringUtil.convertLineSeparators(expected).replaceFirst(TRAILING_NEWLINE_REGEX, ""),
+                StringUtil.convertLineSeparators(actual).replaceFirst(TRAILING_NEWLINE_REGEX, ""),
             )
         }
     }

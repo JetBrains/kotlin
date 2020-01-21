@@ -39,7 +39,7 @@ data class JvmBuildMetaInfo(
     val bytecodeVersionPatch: Int,
     override val ownVersion: Int,
     override val coroutinesVersion: Int,
-    override val multiplatformVersion: Int
+    override val multiplatformVersion: Int,
 ) : BuildMetaInfo {
     companion object : BuildMetaInfoFactory<JvmBuildMetaInfo>(JvmBuildMetaInfo::class) {
         override fun create(
@@ -54,7 +54,7 @@ data class JvmBuildMetaInfo(
             ownVersion: Int,
             coroutinesVersion: Int,
             multiplatformVersion: Int,
-            metadataVersionArray: IntArray?
+            metadataVersionArray: IntArray?,
         ): JvmBuildMetaInfo {
             val metadataVersion = metadataVersionArray?.let(::JvmMetadataVersion) ?: JvmMetadataVersion.INSTANCE
             return JvmBuildMetaInfo(
@@ -74,7 +74,7 @@ data class JvmBuildMetaInfo(
                 bytecodeVersionPatch = JvmBytecodeBinaryVersion.INSTANCE.patch,
                 ownVersion = ownVersion,
                 coroutinesVersion = coroutinesVersion,
-                multiplatformVersion = multiplatformVersion
+                multiplatformVersion = multiplatformVersion,
             )
         }
     }

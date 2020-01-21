@@ -18,7 +18,7 @@ class ScriptProvidedPropertyDescriptor(
     typeDescriptor: ClassDescriptor,
     receiver: ReceiverParameterDescriptor?,
     isVar: Boolean,
-    script: ScriptDescriptor
+    script: ScriptDescriptor,
 ) : PropertyDescriptorImpl(
     script,
     null,
@@ -29,14 +29,16 @@ class ScriptProvidedPropertyDescriptor(
     name,
     CallableMemberDescriptor.Kind.SYNTHESIZED,
     SourceElement.NO_SOURCE,
-    /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false,
-    /* isDelegated = */ false
+    /* lateInit = */
+    false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false,
+    /* isDelegated = */
+    false,
 ) {
     init {
         setType(typeDescriptor.defaultType, emptyList(), receiver, null)
         initialize(
             makePropertyGetterDescriptor(),
-            if (!isVar) null else makePropertySetterDescriptor()
+            if (!isVar) null else makePropertySetterDescriptor(),
         )
     }
 }
@@ -53,7 +55,7 @@ private fun PropertyDescriptorImpl.makePropertyGetterDescriptor() =
         false,
         this.kind,
         null,
-        SourceElement.NO_SOURCE
+        SourceElement.NO_SOURCE,
     ).also {
         it.initialize(returnType)
     }
@@ -70,7 +72,7 @@ private fun PropertyDescriptorImpl.makePropertySetterDescriptor() =
         false,
         this.kind,
         null,
-        SourceElement.NO_SOURCE
+        SourceElement.NO_SOURCE,
     ).also {
         it.initialize(
             ValueParameterDescriptorImpl(
@@ -85,7 +87,7 @@ private fun PropertyDescriptorImpl.makePropertySetterDescriptor() =
                 false, /* isNoinline = */
                 false,
                 null,
-                SourceElement.NO_SOURCE
-            )
+                SourceElement.NO_SOURCE,
+            ),
         )
     }

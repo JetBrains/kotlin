@@ -104,7 +104,7 @@ fun createKeywordConstructLookupElement(
     project: Project,
     keyword: String,
     fileTextToReformat: String,
-    trimSpacesAroundCaret: Boolean = false
+    trimSpacesAroundCaret: Boolean = false,
 ): LookupElement {
     val file = KtPsiFactory(project).createFile(fileTextToReformat)
     CodeStyleManager.getInstance(project).reformat(file)
@@ -163,9 +163,9 @@ fun createKeywordConstructLookupElement(
                         insertionContext.document.getText(
                             TextRange.from(
                                 sibling.startOffset,
-                                1
-                            )
-                        )
+                                1,
+                            ),
+                        ),
                     )
                 ) {
                     insertionContext.editor.moveCaret(sibling.startOffset + 1)

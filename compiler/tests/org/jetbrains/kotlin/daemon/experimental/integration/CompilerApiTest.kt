@@ -77,23 +77,25 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     val compilerClassPath = listOf(
         File(compilerLibDir, "kotlin-compiler.jar"),
         File(compilerLibDir, "kotlin-daemon.jar"),
-        File(compilerLibDir, "ktor-network-1.0.1.jar")
+        File(compilerLibDir, "ktor-network-1.0.1.jar"),
     )
     val scriptRuntimeClassPath = listOf(
         File(compilerLibDir, "kotlin-runtime.jar"),
-        File(compilerLibDir, "kotlin-script-runtime.jar")
+        File(compilerLibDir, "kotlin-script-runtime.jar"),
     )
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
     private fun compileLocally(
         messageCollector: TestMessageCollector,
-        vararg args: String
+        vararg args: String,
     ): Pair<Int, Collection<OutputMessageUtil.Output>> {
         val application = ApplicationManager.getApplication()
         try {
-            val code = K2JVMCompiler().exec(messageCollector,
-                                            Services.EMPTY,
-                                            K2JVMCompilerArguments().apply { K2JVMCompiler().parseArguments(args, this) }).code
+            val code = K2JVMCompiler().exec(
+                messageCollector,
+                Services.EMPTY,
+                K2JVMCompilerArguments().apply { K2JVMCompiler().parseArguments(args, this) },
+            ).code
             val outputs = messageCollector.messages.filter { it.severity == CompilerMessageSeverity.OUTPUT }.mapNotNull {
                 OutputMessageUtil.parseOutputMessage(it.message)?.let { outs ->
                     outs.outputFile?.let { OutputMessageUtil.Output(outs.sourceFiles, it) }
@@ -111,7 +113,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         daemonJVMOptions: DaemonJVMOptions,
         daemonOptions: DaemonOptions,
         messageCollector: MessageCollector,
-        vararg args: String
+        vararg args: String,
     ): Pair<Int, Collection<OutputMessageUtil.Output>> = runBlocking {
 
         log.info("kotlinCompilerClient.connectToCompileService() call")
@@ -121,7 +123,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             daemonJVMOptions,
             daemonOptions,
             DaemonReportingTargets(messageCollector = messageCollector),
-            autostart = true
+            autostart = true,
         )
         log.info("kotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
 
@@ -143,7 +145,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             args,
             messageCollector,
             { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
-            reportSeverity = ReportSeverity.DEBUG
+            reportSeverity = ReportSeverity.DEBUG,
         )
         code to outputs
     }
@@ -158,7 +160,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         logName: String?,
         scriptClassName: String,
         classpath: List<File>,
-        vararg arguments: String
+        vararg arguments: String,
     ) {
 
         val cl = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
@@ -179,7 +181,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val (code, outputs) = compileLocally(
             messageCollector, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath,
-            "-d", jar, "-Xreport-output-files"
+            "-d", jar, "-Xreport-output-files",
         )
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
@@ -207,7 +209,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val daemonOptions = DaemonOptions(
                 runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
                 verbose = true,
-                reportPerf = true
+                reportPerf = true,
             )
             log.info("daemonOptions assigned")
 
@@ -216,7 +218,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${externalLogFile.loggerCompatiblePath}\"",
                 inheritMemoryLimits = false,
                 inheritOtherJvmOptions = false,
-                inheritAdditionalProperties = false
+                inheritAdditionalProperties = false,
             )
             log.info("daemonJVMOptions created")
 
@@ -236,7 +238,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     File(getHelloAppBaseDir(), "hello.kt").absolutePath,
                     "-d",
                     jar,
-                    "-Xreport-output-files"
+                    "-Xreport-output-files",
                 )
                 log.info("compileOnDaemon called")
 
@@ -258,7 +260,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
             "-d",
             tmpdir.absolutePath,
-            "-Xreport-output-files"
+            "-Xreport-output-files",
         )
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
@@ -271,11 +273,11 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val daemonOptions = DaemonOptions(
                 runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
                 verbose = true,
-                reportPerf = true
+                reportPerf = true,
             )
             val daemonJVMOptions = configureDaemonJVMOptions(
                 "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${externalLogFile.loggerCompatiblePath}\"",
-                inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false
+                inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false,
             )
             try {
                 val (code, outputs) = compileOnDaemon(
@@ -287,7 +289,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
                     "-Xreport-output-files",
                     "-d",
-                    tmpdir.absolutePath
+                    tmpdir.absolutePath,
                 )
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())

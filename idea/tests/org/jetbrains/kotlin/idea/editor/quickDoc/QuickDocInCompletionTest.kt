@@ -39,7 +39,7 @@ class QuickDocInCompletionTest : KotlinLightCodeInsightFixtureTestCase() {
         val lookupElements = myFixture.completeBasic()
         val lookupObject = lookupElements.first().`object`
         return KotlinQuickDocumentationProvider().getDocumentationElementForLookupItem(
-            myFixture.psiManager, lookupObject, null
+            myFixture.psiManager, lookupObject, null,
         )
     }
 }

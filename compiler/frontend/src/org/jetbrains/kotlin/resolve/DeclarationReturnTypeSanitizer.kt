@@ -28,7 +28,7 @@ interface DeclarationReturnTypeSanitizer {
         inferred: UnwrappedType,
         wrappedTypeFactory: WrappedTypeFactory,
         trace: BindingTrace,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): UnwrappedType
 
     object Default : DeclarationReturnTypeSanitizer {
@@ -36,7 +36,7 @@ interface DeclarationReturnTypeSanitizer {
             inferred: UnwrappedType,
             wrappedTypeFactory: WrappedTypeFactory,
             trace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
         ) = inferred
     }
 }

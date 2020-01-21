@@ -115,7 +115,7 @@ fun PsiSearchHelper.isCheapEnoughToSearchConsideringOperators(
     name: String,
     scope: GlobalSearchScope,
     fileToIgnoreOccurrencesIn: PsiFile?,
-    progress: ProgressIndicator?
+    progress: ProgressIndicator?,
 ): PsiSearchHelper.SearchCostResult {
     if (OperatorConventions.isConventionName(Name.identifier(name))) {
         return PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES
@@ -136,7 +136,7 @@ fun findScriptsWithUsages(declaration: KtNamedDeclaration): List<KtFile> {
             IdIndex.NAME,
             setOf(IdIndexEntry(name, true)),
             collector,
-            scope
+            scope,
         )
     }
     return collector.results

@@ -63,7 +63,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         configureDaemonJVMOptions(
             inheritMemoryLimits = true,
             inheritOtherJvmOptions = true,
-            inheritAdditionalProperties = true
+            inheritAdditionalProperties = true,
         )
     }
 
@@ -75,7 +75,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         get() = findPortForSocket(
             COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
             COMPILE_DAEMON_PORTS_RANGE_START,
-            COMPILE_DAEMON_PORTS_RANGE_END
+            COMPILE_DAEMON_PORTS_RANGE_END,
         )
 
     private val timer by lazy { Timer(true) }
@@ -86,10 +86,10 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         File(
             runFileDir,
             makeRunFilenameString(
-                    timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                    digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
-                    port = port.toString()
-            )
+                timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
+                port = port.toString(),
+            ),
         )
     }
 
@@ -115,17 +115,17 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
             filter = { _, _ -> true },
             report = { _, msg -> log.info(msg) },
             useRMI = true,
-            useSockets = true
+            useSockets = true,
         ).toList()
     }
 
     private fun getOldDaemonsOrRMIWrappers() = runBlocking {
         walkDaemons(
-                File(daemonOptions.runFilesPathOrDefault),
-                compilerId,
-                runFile,
-                filter = { _, _ -> true },
-                report = { _, msg -> log.info(msg) }
+            File(daemonOptions.runFilesPathOrDefault),
+            compilerId,
+            runFile,
+            filter = { _, _ -> true },
+            report = { _, msg -> log.info(msg) },
         ).toList()
     }
 
@@ -142,7 +142,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 daemonJVMOptions,
                 serverPort.port,
                 timer,
-                onShutdown
+                onShutdown,
             ).let {
                 log.info("service created")
                 it.startDaemonElections()
@@ -153,9 +153,9 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
 
     private fun runOldServer() {
         val (registry, serverPort) = findPortAndCreateRegistry(
-                COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
-                COMPILE_DAEMON_PORTS_RANGE_START,
-                COMPILE_DAEMON_PORTS_RANGE_END
+            COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
+            COMPILE_DAEMON_PORTS_RANGE_START,
+            COMPILE_DAEMON_PORTS_RANGE_END,
         )
         val compilerSelector = object : CompilerSelector {
             private val jvm by lazy { K2JVMCompiler() }
@@ -176,7 +176,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
             daemonJVMOptions = daemonJVMOptions,
             port = serverPort,
             timer = timer,
-            onShutdown = onShutdown
+            onShutdown = onShutdown,
         ).let {
             it.startDaemonElections()
             it.configurePeriodicActivities()
@@ -185,7 +185,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
 
     val comparator = compareByDescending<DaemonWithMetadataAsync, DaemonJVMOptions>(
         DaemonJVMOptionsMemoryComparator(),
-        { it.jvmOptions }
+        { it.jvmOptions },
     )
         .thenBy {
             when (it.daemon) {
@@ -203,7 +203,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         registerClient: (Daemon) -> Unit,
         port: (Daemon) -> Int,
         expectedDaemonCount: Int?,
-        extraAction: (Daemon) -> Unit = {}
+        extraAction: (Daemon) -> Unit = {},
     ) {
         val daemons = getDaemons()
         log.info("daemons (${daemons.size}) : ${daemons.map { (it ?: 0)::class.java.name }.toList()}\n\n")
@@ -211,7 +211,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
             log.info("expected $it daemons, found ${daemons.size}")
             assertTrue(
                 "daemons.size : ${daemons.size}, but expected : $expectedDaemonCount",
-                daemons.size == it
+                daemons.size == it,
             )
         }
         val daemon = chooseDaemon(daemons)
@@ -234,7 +234,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         registerClient = { d -> runBlocking { d.registerClient(generateClient()) } },
         port = { d -> d.serverPort },
         expectedDaemonCount = serverType.instancesNumber,
-        extraAction = extraAction
+        extraAction = extraAction,
     )
 
     private fun expectOldDaemon(shouldCheckNumber: Boolean = true, extraAction: (CompileService) -> Unit = {}) = expectDaemon(
@@ -244,7 +244,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         { d -> d.registerClient(generateClient()) },
         { _ -> -1 },
         1.takeIf { shouldCheckNumber },
-        extraAction
+        extraAction,
     )
 
     private val clientFiles = arrayListOf<File>()
@@ -346,7 +346,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
                     msgCollector,
                     { _, _ -> },
-                    findCallbackServerSocket()
+                    findCallbackServerSocket(),
                 )
                 services.runServer()
                 val servicesClient = services.clientSide
@@ -363,22 +363,22 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                                     "-include-runtime",
                                     File(KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp", "hello.kt").absolutePath,
                                     "-d",
-                                    jar
+                                    jar,
                                 ),
                                 CompilationOptions(
-                                        CompilerMode.NON_INCREMENTAL_COMPILER,
-                                        CompileService.TargetPlatform.JVM,
-                                        arrayOf(
-                                                ReportCategory.COMPILER_MESSAGE.code,
-                                                ReportCategory.DAEMON_MESSAGE.code,
-                                                ReportCategory.EXCEPTION.code,
-                                                ReportCategory.OUTPUT_MESSAGE.code
+                                    CompilerMode.NON_INCREMENTAL_COMPILER,
+                                    CompileService.TargetPlatform.JVM,
+                                    arrayOf(
+                                        ReportCategory.COMPILER_MESSAGE.code,
+                                        ReportCategory.DAEMON_MESSAGE.code,
+                                        ReportCategory.EXCEPTION.code,
+                                        ReportCategory.OUTPUT_MESSAGE.code,
                                     ),
-                                        ReportSeverity.INFO.code,
-                                        emptyArray()
+                                    ReportSeverity.INFO.code,
+                                    emptyArray(),
                                 ),
                                 servicesClient,
-                                compResultsClient
+                                compResultsClient,
                             ).get()
                         codes[i] = code
                     }

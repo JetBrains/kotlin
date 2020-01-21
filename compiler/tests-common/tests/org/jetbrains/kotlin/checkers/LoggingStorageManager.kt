@@ -22,15 +22,16 @@ import java.lang.reflect.Field
 import java.lang.reflect.GenericDeclaration
 
 class LoggingStorageManager(
-        private val delegate: StorageManager,
-        private val callHandler: (lambda: Any, call: LoggingStorageManager.CallData) -> Unit) : ObservableStorageManager(delegate) {
+    private val delegate: StorageManager,
+    private val callHandler: (lambda: Any, call: LoggingStorageManager.CallData) -> Unit,
+) : ObservableStorageManager(delegate) {
 
     class CallData(
-            val fieldOwner: Any?,
-            val field: Field?,
-            val lambdaCreatedIn: GenericDeclaration?,
-            val arguments: List<Any?>,
-            val result: Any?
+        val fieldOwner: Any?,
+        val field: Field?,
+        val lambdaCreatedIn: GenericDeclaration?,
+        val arguments: List<Any?>,
+        val result: Any?,
     )
 
     // Creating objects here because we need a reference to it

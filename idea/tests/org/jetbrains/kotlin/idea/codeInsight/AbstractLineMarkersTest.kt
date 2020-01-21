@@ -43,7 +43,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         project: Project,
         documentToAnalyze: Document,
         expectedHighlighting: ExpectedHighlightingData,
-        expectedFile: File
+        expectedFile: File,
     ): List<LineMarkerInfo<*>> {
         myFixture.doHighlighting()
 
@@ -88,7 +88,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
 
         fun assertNavigationElements(project: Project, file: KtFile, markers: List<LineMarkerInfo<*>>) {
             val navigationDataComments = KotlinTestUtils.getLastCommentsInFile(
-                file, KotlinTestUtils.CommentType.BLOCK_COMMENT, false
+                file, KotlinTestUtils.CommentType.BLOCK_COMMENT, false,
             )
             if (navigationDataComments.isEmpty()) return
 
@@ -99,7 +99,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
 
                 TestCase.assertNotNull(
                     String.format("Can't find marker for navigation check with description \"%s\"", description),
-                    navigateMarker
+                    navigateMarker,
                 )
 
                 val handler = navigateMarker!!.navigationHandler
@@ -119,14 +119,14 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         private fun getLineMarkerDescription(navigationComment: String): String {
             val firstLineEnd = navigationComment.indexOf("\n")
             TestCase.assertTrue(
-                "The first line in block comment must contain description of marker for navigation check", firstLineEnd != -1
+                "The first line in block comment must contain description of marker for navigation check", firstLineEnd != -1,
             )
 
             var navigationMarkerText = navigationComment.substring(0, firstLineEnd)
 
             TestCase.assertTrue(
                 String.format("Add %s directive in first line of comment", LINE_MARKER_PREFIX),
-                navigationMarkerText.startsWith(LINE_MARKER_PREFIX)
+                navigationMarkerText.startsWith(LINE_MARKER_PREFIX),
             )
 
             navigationMarkerText = navigationMarkerText.substring(LINE_MARKER_PREFIX.length)
@@ -141,7 +141,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
 
             TestCase.assertTrue(
                 String.format("Marker %s is expected before navigation data", TARGETS_PREFIX),
-                expectedNavigationText.startsWith(TARGETS_PREFIX)
+                expectedNavigationText.startsWith(TARGETS_PREFIX),
             )
 
             expectedNavigationText = expectedNavigationText.substring(expectedNavigationText.indexOf("\n") + 1)
@@ -153,7 +153,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
             project: Project,
             documentToAnalyze: Document,
             expectedHighlighting: ExpectedHighlightingData,
-            expectedFile: File
+            expectedFile: File,
         ): MutableList<LineMarkerInfo<*>> {
             val markers = DaemonCodeAnalyzerImpl.getLineMarkers(documentToAnalyze, project)
 
@@ -174,7 +174,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
                         error.message + "\n" + failure.message,
                         failure.expected,
                         failure.actual,
-                        failure.filePath
+                        failure.filePath,
                     )
                 }
             }

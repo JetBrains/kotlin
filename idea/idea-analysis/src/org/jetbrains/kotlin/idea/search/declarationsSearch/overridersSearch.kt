@@ -74,7 +74,8 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
                 DirectClassInheritorsSearch.search(
                     current,
                     current.project.allScope(),
-                    /* includeAnonymous = */ true
+                    /* includeAnonymous = */
+                    true,
                 )
 
             override fun shouldDescend(element: PsiClass): Boolean =
@@ -121,39 +122,41 @@ private fun forEachKotlinOverride(
     ktClass: KtClass,
     members: List<KtNamedDeclaration>,
     scope: SearchScope,
-    processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean
+    processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean,
 ): Boolean {
     val baseClassDescriptor = runReadAction { ktClass.unsafeResolveToDescriptor() as ClassDescriptor }
     val baseDescriptors =
         runReadAction { members.mapNotNull { it.unsafeResolveToDescriptor() as? CallableMemberDescriptor }.filter { it.isOverridable } }
     if (baseDescriptors.isEmpty()) return true
 
-    HierarchySearchRequest(ktClass, scope, true).searchInheritors().forEach(Processor { psiClass ->
-        val inheritor = psiClass.unwrapped as? KtClassOrObject ?: return@Processor true
-        runReadAction {
-            val inheritorDescriptor = inheritor.unsafeResolveToDescriptor() as ClassDescriptor
-            val substitutor =
-                getTypeSubstitutor(baseClassDescriptor.defaultType, inheritorDescriptor.defaultType) ?: return@runReadAction true
-            baseDescriptors.forEach {
-                val superMember = it.source.getPsi()!!
-                val overridingDescriptor = (it.substitute(substitutor) as? CallableMemberDescriptor)?.let { memberDescriptor ->
-                    inheritorDescriptor.findCallableMemberBySignature(memberDescriptor)
+    HierarchySearchRequest(ktClass, scope, true).searchInheritors().forEach(
+        Processor { psiClass ->
+            val inheritor = psiClass.unwrapped as? KtClassOrObject ?: return@Processor true
+            runReadAction {
+                val inheritorDescriptor = inheritor.unsafeResolveToDescriptor() as ClassDescriptor
+                val substitutor =
+                    getTypeSubstitutor(baseClassDescriptor.defaultType, inheritorDescriptor.defaultType) ?: return@runReadAction true
+                baseDescriptors.forEach {
+                    val superMember = it.source.getPsi()!!
+                    val overridingDescriptor = (it.substitute(substitutor) as? CallableMemberDescriptor)?.let { memberDescriptor ->
+                        inheritorDescriptor.findCallableMemberBySignature(memberDescriptor)
+                    }
+                    val overridingMember = overridingDescriptor?.source?.getPsi()
+                    if (overridingMember != null) {
+                        if (!processor(superMember, overridingMember)) return@runReadAction false
+                    }
                 }
-                val overridingMember = overridingDescriptor?.source?.getPsi()
-                if (overridingMember != null) {
-                    if (!processor(superMember, overridingMember)) return@runReadAction false
-                }
+                true
             }
-            true
-        }
-    })
+        },
+    )
 
     return true
 }
 
 fun KtNamedDeclaration.forEachOverridingElement(
     scope: SearchScope = runReadAction { useScope },
-    processor: (PsiElement, PsiElement) -> Boolean
+    processor: (PsiElement, PsiElement) -> Boolean,
 ): Boolean {
     val ktClass = runReadAction { containingClassOrObject as? KtClass } ?: return true
 
@@ -166,7 +169,7 @@ fun KtNamedDeclaration.forEachOverridingElement(
 
 fun PsiMethod.forEachOverridingMethod(
     scope: SearchScope = runReadAction { useScope },
-    processor: (PsiMethod) -> Boolean
+    processor: (PsiMethod) -> Boolean,
 ): Boolean {
     if (this !is KtFakeLightMethod) {
         if (!OverridingMethodsSearch.search(this, scope.excludeKotlinSources(), true).forEach(processor)) return false
@@ -182,7 +185,7 @@ fun PsiMethod.forEachOverridingMethod(
 
 fun PsiMethod.forEachImplementation(
     scope: SearchScope = runReadAction { useScope },
-    processor: (PsiElement) -> Boolean
+    processor: (PsiElement) -> Boolean,
 ): Boolean {
     return forEachOverridingMethod(scope, processor)
             && FunctionalExpressionSearch.search(this, scope.excludeKotlinSources()).forEach(processor)

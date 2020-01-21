@@ -60,8 +60,8 @@ object LateinitModifierApplicabilityChecker {
             trace.report(
                 Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
                     modifier,
-                    "is not allowed on $variables of a type with nullable upper bound"
-                )
+                    "is not allowed on $variables of a type with nullable upper bound",
+                ),
             )
         }
 
@@ -96,8 +96,8 @@ object LateinitModifierApplicabilityChecker {
                     trace.report(
                         Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
                             modifier,
-                            "is not allowed on properties with a custom getter or setter"
-                        )
+                            "is not allowed on properties with a custom getter or setter",
+                        ),
                     )
                 } else if (!isAbstract && !hasBackingField) {
                     trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties without backing field"))

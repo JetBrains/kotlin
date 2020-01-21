@@ -21,12 +21,12 @@ import org.junit.Test
 
 class SerializationUtilsTest : TestCase() {
     data class TestPropertyTypes(
-            val intNull: Int?,
-            val int: Int,
-            val stringNull: String?,
-            val string: String,
-            val boolNull: Boolean?,
-            val bool: Boolean
+        val intNull: Int?,
+        val int: Int,
+        val stringNull: String?,
+        val string: String,
+        val boolNull: Boolean?,
+        val bool: Boolean,
     )
 
     @Test

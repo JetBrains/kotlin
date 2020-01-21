@@ -167,7 +167,8 @@ object CallableWeigher : LookupElementWeigher("kotlin.callableWeight") {
             CallableWeightEnum.thisClassMember,
             CallableWeightEnum.baseClassMember,
             CallableWeightEnum.thisTypeExtension,
-            CallableWeightEnum.baseTypeExtension -> Weight1.memberOrExtension
+            CallableWeightEnum.baseTypeExtension,
+            -> Weight1.memberOrExtension
 
             CallableWeightEnum.globalOrStatic -> Weight1.globalOrStatic
 
@@ -261,7 +262,7 @@ class SmartCompletionInBasicWeigher(
     private val smartCompletion: SmartCompletion,
     private val callTypeAndReceiver: CallTypeAndReceiver<*, *>,
     private val resolutionFacade: ResolutionFacade,
-    private val bindingContext: BindingContext
+    private val bindingContext: BindingContext,
 ) : LookupElementWeigher("kotlin.smartInBasic", true, false) {
 
     companion object {
@@ -308,7 +309,7 @@ class SmartCompletionInBasicWeigher(
                     smartCastCalculator,
                     callTypeAndReceiver,
                     resolutionFacade,
-                    bindingContext
+                    bindingContext,
                 ) to descriptor.name
             }
 

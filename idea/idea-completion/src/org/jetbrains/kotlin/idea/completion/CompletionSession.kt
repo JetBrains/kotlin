@@ -58,7 +58,7 @@ class CompletionSessionConfiguration(
     val javaGettersAndSetters: Boolean,
     val javaClassesNotToBeUsed: Boolean,
     val staticMembers: Boolean,
-    val dataClassComponentFunctions: Boolean
+    val dataClassComponentFunctions: Boolean,
 )
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
@@ -67,14 +67,14 @@ fun CompletionSessionConfiguration(parameters: CompletionParameters) = Completio
     javaGettersAndSetters = parameters.invocationCount >= 2,
     javaClassesNotToBeUsed = parameters.invocationCount >= 2,
     staticMembers = parameters.invocationCount >= 2,
-    dataClassComponentFunctions = parameters.invocationCount >= 2
+    dataClassComponentFunctions = parameters.invocationCount >= 2,
 )
 
 abstract class CompletionSession(
     protected val configuration: CompletionSessionConfiguration,
     protected val parameters: CompletionParameters,
     protected val toFromOriginalFileMapper: ToFromOriginalFileMapper,
-    resultSet: CompletionResultSet
+    resultSet: CompletionResultSet,
 ) {
     init {
         CompletionBenchmarkSink.instance.onCompletionStarted(this)
@@ -117,7 +117,7 @@ abstract class CompletionSession(
         parameters.position.containingFile,
         parameters.offset,
         kotlinIdentifierPartPattern or singleCharPattern('@'),
-        kotlinIdentifierStartPattern
+        kotlinIdentifierStartPattern,
     )!!
 
     protected val prefixMatcher = CamelHumpMatcher(prefix)
@@ -134,7 +134,7 @@ abstract class CompletionSession(
         resolutionFacade,
         moduleDescriptor,
         isVisibleFilter,
-        NotPropertiesService.getNotProperties(position)
+        NotPropertiesService.getNotProperties(position),
     )
 
     protected val callTypeAndReceiver =
@@ -151,7 +151,7 @@ abstract class CompletionSession(
             { CompletionBenchmarkSink.instance.onFlush(this) },
             prefixMatcher, parameters, resultSet,
             createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter,
-            moduleDescriptor.platform.isCommon()
+            moduleDescriptor.platform.isCommon(),
         )
     }
 
@@ -166,7 +166,7 @@ abstract class CompletionSession(
             filter,
             filterOutPrivate = !mayIncludeInaccessible,
             declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) },
-            file = file
+            file = file,
         )
     }
 
@@ -226,9 +226,11 @@ abstract class CompletionSession(
 
     private fun _complete(): Boolean {
         // we restart completion when prefix becomes "get" or "set" to ensure that properties get lower priority comparing to get/set functions (see KT-12299)
-        val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("get or set prefix") {
-            override fun accepts(prefix: String, context: ProcessingContext?) = prefix == "get" || prefix == "set"
-        })
+        val prefixPattern = StandardPatterns.string().with(
+            object : PatternCondition<String>("get or set prefix") {
+                override fun accepts(prefix: String, context: ProcessingContext?) = prefix == "get" || prefix == "set"
+            },
+        )
         collector.restartCompletionOnPrefixChange(prefixPattern)
 
         val statisticsContext = calcContextForStatisticsInfo()
@@ -264,7 +266,7 @@ abstract class CompletionSession(
             "stats", DeprecatedWeigher, PriorityWeigher, PreferGetSetMethodsToPropertyWeigher,
             NotImportedWeigher(importableFqNameClassifier),
             NotImportedStaticMemberWeigher(importableFqNameClassifier),
-            KindWeigher, CallableWeigher
+            KindWeigher, CallableWeigher,
         )
 
         sorter = sorter.weighAfter("stats", VariableOrFunctionWeigher, ImportedWeigher(importableFqNameClassifier))
@@ -317,7 +319,7 @@ abstract class CompletionSession(
         ReferenceVariantsCollector(
             referenceVariantsHelper, indicesHelper(true), prefixMatcher,
             nameExpression, callTypeAndReceiver, resolutionFacade, bindingContext,
-            importableFqNameClassifier, configuration
+            importableFqNameClassifier, configuration,
         )
     } else {
         null
@@ -350,7 +352,7 @@ abstract class CompletionSession(
         val (variants, notImportedExtensions) = ReferenceVariantsCollector(
             referenceVariantsHelper, indicesHelper(true), prefixMatcher,
             nameExpression!!, callTypeAndReceiver, resolutionFacade, bindingContext,
-            importableFqNameClassifier, configuration, runtimeReceiver = expressionReceiver
+            importableFqNameClassifier, configuration, runtimeReceiver = expressionReceiver,
         ).collectReferenceVariants(descriptorKindFilter!!)
         val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants.imported)
         val filteredNotImportedExtensions =
@@ -362,7 +364,7 @@ abstract class CompletionSession(
 
     private fun <TDescriptor : DeclarationDescriptor> filterVariantsForRuntimeReceiverType(
         runtimeVariants: Collection<TDescriptor>,
-        baseVariants: Collection<TDescriptor>
+        baseVariants: Collection<TDescriptor>,
     ): Collection<TDescriptor> {
         val baseVariantsByName = baseVariants.groupBy { it.name }
         val result = ArrayList<TDescriptor>()
@@ -409,19 +411,19 @@ abstract class CompletionSession(
     protected open fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
         return LookupElementFactory(
             basicLookupElementFactory, receiverTypes,
-            callTypeAndReceiver.callType, inDescriptor, contextVariablesProvider
+            callTypeAndReceiver.callType, inDescriptor, contextVariablesProvider,
         )
     }
 
     protected fun detectReceiverTypes(
         bindingContext: BindingContext,
         nameExpression: KtSimpleNameExpression,
-        callTypeAndReceiver: CallTypeAndReceiver<*, *>
+        callTypeAndReceiver: CallTypeAndReceiver<*, *>,
     ): List<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
             bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
             stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
-            withImplicitReceiversWhenExplicitPresent = true
+            withImplicitReceiversWhenExplicitPresent = true,
         )
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {

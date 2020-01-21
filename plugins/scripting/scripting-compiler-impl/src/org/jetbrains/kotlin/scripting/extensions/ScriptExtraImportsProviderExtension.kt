@@ -33,7 +33,7 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
                 ?.getScriptConfiguration(file.originalFile as KtFile)
             refinedConfiguration?.defaultImports?.map {
                 ScriptExtraImportImpl(
-                    ImportPath.fromString(it)
+                    ImportPath.fromString(it),
                 )
             }
         }.orEmpty()

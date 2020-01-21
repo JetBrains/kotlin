@@ -76,7 +76,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
                 name: String,
                 desc: String,
                 signature: String?,
-                exceptions: Array<String>?
+                exceptions: Array<String>?,
             ): MethodVisitor {
                 return getTestFunLineNumbersMethodVisitor(labels, labels2LineNumbers)
             }
@@ -91,7 +91,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
 
     protected open fun getTestFunLineNumbersMethodVisitor(
         labels: ArrayList<Label>,
-        labels2LineNumbers: HashMap<Label, String>
+        labels2LineNumbers: HashMap<Label, String>,
     ): MethodVisitor {
         return object : MethodVisitor(Opcodes.API_VERSION) {
             private var lastLabel: Label? = null
@@ -117,23 +117,26 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         val result = ArrayList<String>()
         val visitedLabels = HashSet<String>()
 
-        reader.accept(object : ClassVisitor(Opcodes.API_VERSION) {
-            override fun visitMethod(
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                exceptions: Array<String>?
-            ): MethodVisitor {
-                return object : MethodVisitor(Opcodes.API_VERSION) {
-                    override fun visitLineNumber(line: Int, label: Label) {
-                        val overrides = !visitedLabels.add(label.toString())
+        reader.accept(
+            object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    desc: String,
+                    signature: String?,
+                    exceptions: Array<String>?,
+                ): MethodVisitor {
+                    return object : MethodVisitor(Opcodes.API_VERSION) {
+                        override fun visitLineNumber(line: Int, label: Label) {
+                            val overrides = !visitedLabels.add(label.toString())
 
-                        result.add((if (overrides) "+" else "") + line)
+                            result.add((if (overrides) "+" else "") + line)
+                        }
                     }
                 }
-            }
-        }, ClassReader.SKIP_FRAMES)
+            },
+            ClassReader.SKIP_FRAMES,
+        )
         return result
     }
 
@@ -159,7 +162,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         private fun createLineNumberDeclaration() =
             TestFile(
                 "$LINE_NUMBER_FUN.kt",
-                "package test;\n\npublic fun $LINE_NUMBER_FUN(): Int = 0\n"
+                "package test;\n\npublic fun $LINE_NUMBER_FUN(): Int = 0\n",
             )
 
         private fun getActualLineNumbersAsString(lines: List<String>) =

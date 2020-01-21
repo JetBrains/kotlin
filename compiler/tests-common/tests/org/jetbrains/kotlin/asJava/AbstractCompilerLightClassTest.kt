@@ -43,7 +43,7 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Void
             expectedFile,
             file,
             { fqname -> findLightClass(allowFrontendExceptions, environment, fqname) },
-            LightClassTestCommon::removeEmptyDefaultImpls
+            LightClassTestCommon::removeEmptyDefaultImpls,
         )
     }
 

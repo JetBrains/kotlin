@@ -23,7 +23,7 @@ import java.util.*
 class ExtensionFunctionTypeValueCompletion(
     private val receiverTypes: Collection<ReceiverType>,
     private val callType: CallType<*>,
-    private val lookupElementFactory: LookupElementFactory
+    private val lookupElementFactory: LookupElementFactory,
 ) {
     data class Result(val invokeDescriptor: FunctionDescriptor, val factory: AbstractLookupElementFactory)
 
@@ -42,7 +42,7 @@ class ExtensionFunctionTypeValueCompletion(
                     val factory = object : AbstractLookupElementFactory {
                         override fun createStandardLookupElementsForDescriptor(
                             descriptor: DeclarationDescriptor,
-                            useReceiverTypes: Boolean
+                            useReceiverTypes: Boolean,
                         ): Collection<LookupElement> {
                             if (!useReceiverTypes) return emptyList()
                             descriptor as FunctionDescriptor // should be descriptor for "invoke"
@@ -78,7 +78,7 @@ class ExtensionFunctionTypeValueCompletion(
                             useReceiverTypes: Boolean,
                             qualifyNestedClasses: Boolean,
                             includeClassTypeArguments: Boolean,
-                            parametersAndTypeGrayed: Boolean
+                            parametersAndTypeGrayed: Boolean,
                         ): LookupElement? = null
                     }
 

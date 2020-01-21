@@ -158,8 +158,8 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
     }
 
     private class TestModule(
-            val name: String,
-            dependencies: List<String>
+        val name: String,
+        dependencies: List<String>,
     ) {
         val dependencies = dependencies.toMutableList()
         val files = mutableListOf<TestFile>()

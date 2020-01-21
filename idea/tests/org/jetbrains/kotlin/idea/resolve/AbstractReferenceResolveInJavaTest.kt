@@ -42,11 +42,11 @@ abstract class AbstractReferenceToCompiledKotlinResolveInJavaTest : AbstractRefe
         val navigationElement = element.navigationElement
         Assert.assertFalse(
             "Reference should not navigate to a light element\nWas: ${navigationElement::class.java.simpleName}",
-            navigationElement is KtLightElement<*, *>
+            navigationElement is KtLightElement<*, *>,
         )
         Assert.assertTrue(
             "Reference should navigate to a kotlin declaration\nWas: ${navigationElement::class.java.simpleName}",
-            navigationElement is KtDeclaration || navigationElement is KtClsFile
+            navigationElement is KtDeclaration || navigationElement is KtClsFile,
         )
     }
 }

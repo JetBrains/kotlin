@@ -36,7 +36,7 @@ abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtu
             val psiFile = PsiManager.getInstance(project).findFile(this)
             Assert.assertNull(
                 "PSI files for $fileKind classes should not be build, is was build for: ${this.presentableName}",
-                psiFile
+                psiFile,
             )
         }
     }
@@ -53,7 +53,7 @@ abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtu
         Assert.assertTrue(
             "Should find at least one file of kind ($fileKind). This assertion can fail in following scenarios:\n" +
                     "1. Test data is bad and doesn't cover this case.\n2. ABI has changed and test no longer checks anything.",
-            foundAtLeastOneFile
+            foundAtLeastOneFile,
         )
     }
 

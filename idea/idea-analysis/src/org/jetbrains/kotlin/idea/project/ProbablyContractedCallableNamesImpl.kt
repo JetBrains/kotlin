@@ -20,10 +20,10 @@ class ProbablyContractedCallableNamesImpl(project: Project) : ProbablyContracted
                 project.runReadActionInSmartMode {
                     KotlinProbablyContractedFunctionShortNameIndex.getInstance().getAllKeys(project)
                 },
-                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
+                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
             )
         },
-        false
+        false,
     )
 
     override fun isProbablyContractedCallableName(name: String): Boolean = name in functionNames.value

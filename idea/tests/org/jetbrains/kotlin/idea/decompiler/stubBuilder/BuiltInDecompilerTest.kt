@@ -59,7 +59,7 @@ class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() 
         val serializedStub = doTest("test")
         KotlinTestUtils.assertEqualsToFile(
             File(testDataPath + "test.text"),
-            myFixture.file.text.replace(BuiltInsBinaryVersion.INSTANCE.toString(), "\$VERSION\$")
+            myFixture.file.text.replace(BuiltInsBinaryVersion.INSTANCE.toString(), "\$VERSION\$"),
         )
         KotlinTestUtils.assertEqualsToFile(File(testDataPath + "test.stubs"), serializedStub)
     }

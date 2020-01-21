@@ -59,8 +59,8 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
             diagnosticHolder.report(
                 Errors.INVALID_CHARACTERS.on(
                     reportOn() ?: return,
-                    "contains illegal characters: ${INVALID_CHARS.intersect(text.toSet()).joinToString("")}"
-                )
+                    "contains illegal characters: ${INVALID_CHARS.intersect(text.toSet()).joinToString("")}",
+                ),
             )
         }
     }

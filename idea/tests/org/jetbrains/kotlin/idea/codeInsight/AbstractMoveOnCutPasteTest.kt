@@ -65,18 +65,18 @@ abstract class AbstractMoveOnCutPasteTest : AbstractCopyPasteTest() {
             if (dependencyPsiFile != null) {
                 KotlinTestUtils.assertEqualsToFile(
                     testDataFile(dependencyFileName.replace(".kt", ".expected.kt")),
-                    dependencyPsiFile.dumpTextWithErrors()
+                    dependencyPsiFile.dumpTextWithErrors(),
                 )
             }
 
             KotlinTestUtils.assertEqualsToFile(
                 testDataFile(sourceFileName.replace(".kt", ".expected.kt")),
-                sourcePsiFile.dumpTextWithErrors()
+                sourcePsiFile.dumpTextWithErrors(),
             )
             if (targetPsiFile != null) {
                 KotlinTestUtils.assertEqualsToFile(
                     testDataFile(targetFileName.replace(".kt", ".expected.kt")),
-                    targetPsiFile.dumpTextWithErrors()
+                    targetPsiFile.dumpTextWithErrors(),
                 )
             }
         }

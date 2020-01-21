@@ -50,14 +50,14 @@ class LocalVariableResolver(
     private val variableTypeAndInitializerResolver: VariableTypeAndInitializerResolver,
     private val delegatedPropertyResolver: DelegatedPropertyResolver,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
 ) {
 
     fun process(
         property: KtProperty,
         typingContext: ExpressionTypingContext,
         scope: LexicalScope,
-        facade: ExpressionTypingFacade
+        facade: ExpressionTypingFacade,
     ): Pair<KotlinTypeInfo, VariableDescriptor> {
         val context = typingContext.replaceContextDependency(ContextDependency.INDEPENDENT).replaceScope(scope)
         val receiverTypeRef = property.receiverTypeReference
@@ -84,8 +84,8 @@ class LocalVariableResolver(
                 context.trace.report(
                     UNSUPPORTED_FEATURE.on(
                         property.delegate!!,
-                        LanguageFeature.LocalDelegatedProperties to languageVersionSettings
-                    )
+                        LanguageFeature.LocalDelegatedProperties to languageVersionSettings,
+                    ),
                 )
             }
 
@@ -97,7 +97,7 @@ class LocalVariableResolver(
                     delegateExpression,
                     typingContext.scope,
                     typingContext.inferenceSession,
-                    typingContext.trace
+                    typingContext.trace,
                 )
                 propertyDescriptor.getter?.updateAccessorFlagsFromResolvedCallForDelegatedProperty(typingContext.trace)
                 propertyDescriptor.setter?.updateAccessorFlagsFromResolvedCallForDelegatedProperty(typingContext.trace)
@@ -122,15 +122,15 @@ class LocalVariableResolver(
                 if (property.typeReference == null) {
                     val variableDataFlowValue = dataFlowValueFactory.createDataFlowValueForProperty(
                         property, propertyDescriptor, context.trace.bindingContext,
-                        DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor)
+                        DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor),
                     )
                     // We cannot say here anything new about initializerDataFlowValue
                     // except it has the same value as variableDataFlowValue
                     typeInfo = typeInfo.replaceDataFlowInfo(
                         dataFlowInfo.assign(
                             variableDataFlowValue, initializerDataFlowValue,
-                            languageVersionSettings
-                        )
+                            languageVersionSettings,
+                        ),
                     )
                 }
             }
@@ -157,7 +157,7 @@ class LocalVariableResolver(
         variable: KtVariableDeclaration,
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): VariableDescriptor {
         val containingDeclaration = scope.ownerDescriptor
         val result: VariableDescriptorWithInitializerImpl
@@ -172,16 +172,21 @@ class LocalVariableResolver(
                 KtPsiUtil.safeName(variable.name),
                 CallableMemberDescriptor.Kind.DECLARATION,
                 variable.toSourceElement(),
-                /* lateInit = */ false,
-                /* isConst = */ false,
-                /* isExpect = */ false,
-                /* isActual = */ false,
-                /* isExternal = */ false,
-                variable is KtProperty && variable.hasDelegate()
+                /* lateInit = */
+                false,
+                /* isConst = */
+                false,
+                /* isExpect = */
+                false,
+                /* isActual = */
+                false,
+                /* isExternal = */
+                false,
+                variable is KtProperty && variable.hasDelegate(),
             )
             // For a local variable the type must not be deferred
             type = variableTypeAndInitializerResolver.resolveType(
-                propertyDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true
+                propertyDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true,
             )
 
             val receiverParameter = (containingDeclaration as ScriptDescriptor).thisAsReceiverParameter
@@ -193,7 +198,7 @@ class LocalVariableResolver(
             val variableDescriptor = resolveLocalVariableDescriptorWithType(scope, variable, null, trace)
             // For a local variable the type must not be deferred
             type = variableTypeAndInitializerResolver.resolveType(
-                variableDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true
+                variableDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true,
             )
             variableDescriptor.setOutType(type)
             result = variableDescriptor
@@ -223,7 +228,7 @@ class LocalVariableResolver(
         scope: LexicalScope,
         variable: KtVariableDeclaration,
         type: KotlinType?,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): LocalVariableDescriptor {
         val hasDelegate = variable is KtProperty && variable.hasDelegate()
         val hasLateinit = variable.hasModifier(KtTokens.LATEINIT_KEYWORD)
@@ -240,7 +245,7 @@ class LocalVariableResolver(
             variable.isVar,
             hasDelegate,
             hasLateinit,
-            variable.toSourceElement()
+            variable.toSourceElement(),
         )
         trace.record(BindingContext.VARIABLE, variable, variableDescriptor)
         return variableDescriptor

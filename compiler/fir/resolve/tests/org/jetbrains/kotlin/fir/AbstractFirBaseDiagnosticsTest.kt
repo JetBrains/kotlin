@@ -73,14 +73,15 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         val allProjectScope = GlobalSearchScope.allScope(project)
         FirLibrarySession.create(
             builtInsModuleInfo, sessionProvider, allProjectScope, project,
-            environment.createPackagePartProvider(allProjectScope)
+            environment.createPackagePartProvider(allProjectScope),
         )
 
         val configToSession = modules.mapValues { (config, info) ->
             val moduleFiles = groupedByModule.getValue(config)
             val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
                 project,
-                moduleFiles.mapNotNull { it.ktFile })
+                moduleFiles.mapNotNull { it.ktFile },
+            )
             FirJavaModuleBasedSession(info, sessionProvider, scope)
         }
 
@@ -122,7 +123,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
     protected abstract fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>)
 
     private fun createModules(
-        groupedByModule: Map<TestModule?, List<TestFile>>
+        groupedByModule: Map<TestModule?, List<TestFile>>,
     ): MutableMap<TestModule?, ModuleInfo> {
         val modules =
             HashMap<TestModule?, ModuleInfo>()
@@ -196,7 +197,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
     protected fun TestFile.getActualText(
         coneDiagnostics: Iterable<ConeDiagnostic>,
-        actualText: StringBuilder
+        actualText: StringBuilder,
     ): Boolean {
         val ktFile = this.ktFile
         if (ktFile == null) {
@@ -225,15 +226,15 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                     override fun missingDiagnostic(
                         diagnostic: TextDiagnostic,
                         expectedStart: Int,
-                        expectedEnd: Int
+                        expectedEnd: Int,
                     ) {
                         val message =
                             "Missing " + diagnostic.description + PsiDiagnosticUtils.atLocation(
                                 ktFile,
                                 TextRange(
                                     expectedStart,
-                                    expectedEnd
-                                )
+                                    expectedEnd,
+                                ),
                             )
                         System.err.println(message)
                         ok[0] = false
@@ -243,15 +244,15 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                         expectedDiagnostic: TextDiagnostic,
                         actualDiagnostic: TextDiagnostic,
                         start: Int,
-                        end: Int
+                        end: Int,
                     ) {
                         val message = "Parameters of diagnostic not equal at position " +
                                 PsiDiagnosticUtils.atLocation(
                                     ktFile,
                                     TextRange(
                                         start,
-                                        end
-                                    )
+                                        end,
+                                    ),
                                 ) +
                                 ". Expected: ${expectedDiagnostic.asString()}, actual: $actualDiagnostic"
                         System.err.println(message)
@@ -261,15 +262,15 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                     override fun unexpectedDiagnostic(
                         diagnostic: TextDiagnostic,
                         actualStart: Int,
-                        actualEnd: Int
+                        actualEnd: Int,
                     ) {
                         val message =
                             "Unexpected ${diagnostic.description}${PsiDiagnosticUtils.atLocation(
                                 ktFile,
                                 TextRange(
                                     actualStart,
-                                    actualEnd
-                                )
+                                    actualEnd,
+                                ),
                             )}"
                         System.err.println(message)
                         ok[0] = false
@@ -278,17 +279,18 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                     fun updateUncheckedDiagnostics(
                         diagnostic: TextDiagnostic,
                         start: Int,
-                        end: Int
+                        end: Int,
                     ) {
                         uncheckedDiagnostics.add(
                             PositionalTextDiagnostic(
                                 diagnostic,
                                 start,
-                                end
-                            )
+                                end,
+                            ),
                         )
                     }
-                })
+                },
+            )
 
         actualText.append(
             CheckerTestUtil.addDiagnosticMarkersToText(
@@ -298,8 +300,8 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 { file -> file.text },
                 uncheckedDiagnostics,
                 false,
-                false
-            )
+                false,
+            ),
         )
 
         stripExtras(actualText)

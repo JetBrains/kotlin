@@ -30,7 +30,7 @@ object PublishedApiUsageChecker {
     fun check(
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptor,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         if (descriptor !is DeclarationDescriptorWithVisibility || descriptor.visibility == Visibilities.INTERNAL) return
         // Don't report the diagnostic twice

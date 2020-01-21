@@ -38,7 +38,7 @@ class ValueParameterData(val type: KotlinType, val hasDefaultValue: Boolean)
 fun copyValueParameters(
     newValueParametersTypes: Collection<ValueParameterData>,
     oldValueParameters: Collection<ValueParameterDescriptor>,
-    newOwner: CallableDescriptor
+    newOwner: CallableDescriptor,
 ): List<ValueParameterDescriptor> {
     assert(newValueParametersTypes.size == oldValueParameters.size) {
         "Different value parameters sizes: Enhanced = ${newValueParametersTypes.size}, Old = ${oldValueParameters.size}"
@@ -56,7 +56,7 @@ fun copyValueParameters(
             oldParameter.isCrossinline,
             oldParameter.isNoinline,
             if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newParameter.type) else null,
-            oldParameter.source
+            oldParameter.source,
         )
     }
 }

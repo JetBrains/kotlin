@@ -29,9 +29,9 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
 import java.io.IOException
 
 class JavaModuleInfo(
-        val moduleName: String,
-        val requires: List<Requires>,
-        val exports: List<Exports>
+    val moduleName: String,
+    val requires: List<Requires>,
+    val exports: List<Exports>,
 ) {
     data class Requires(val moduleName: String, val isTransitive: Boolean)
 
@@ -43,17 +43,17 @@ class JavaModuleInfo(
     companion object {
         fun create(psiJavaModule: PsiJavaModule): JavaModuleInfo {
             return JavaModuleInfo(
-                    psiJavaModule.name,
-                    psiJavaModule.requires.mapNotNull { statement ->
-                        statement.moduleName?.let { moduleName ->
-                            JavaModuleInfo.Requires(moduleName, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
-                        }
-                    },
-                    psiJavaModule.exports.mapNotNull { statement ->
-                        statement.packageName?.let { packageName ->
-                            JavaModuleInfo.Exports(FqName(packageName), statement.moduleNames)
-                        }
+                psiJavaModule.name,
+                psiJavaModule.requires.mapNotNull { statement ->
+                    statement.moduleName?.let { moduleName ->
+                        JavaModuleInfo.Requires(moduleName, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
                     }
+                },
+                psiJavaModule.exports.mapNotNull { statement ->
+                    statement.packageName?.let { packageName ->
+                        JavaModuleInfo.Exports(FqName(packageName), statement.moduleNames)
+                    }
+                },
             )
         }
 
@@ -65,27 +65,30 @@ class JavaModuleInfo(
             val exports = arrayListOf<Exports>()
 
             try {
-                ClassReader(contents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                    override fun visitModule(name: String, access: Int, version: String?): ModuleVisitor {
-                        moduleName = name
+                ClassReader(contents).accept(
+                    object : ClassVisitor(Opcodes.API_VERSION) {
+                        override fun visitModule(name: String, access: Int, version: String?): ModuleVisitor {
+                            moduleName = name
 
-                        return object : ModuleVisitor(Opcodes.API_VERSION) {
-                            override fun visitRequire(module: String, access: Int, version: String?) {
-                                requires.add(Requires(module, (access and ACC_TRANSITIVE) != 0))
-                            }
+                            return object : ModuleVisitor(Opcodes.API_VERSION) {
+                                override fun visitRequire(module: String, access: Int, version: String?) {
+                                    requires.add(Requires(module, (access and ACC_TRANSITIVE) != 0))
+                                }
 
-                            override fun visitExport(packageFqName: String, access: Int, modules: Array<String>?) {
-                                // For some reason, '/' is the delimiter in packageFqName here
-                                exports.add(Exports(FqName(packageFqName.replace('/', '.')), modules?.toList().orEmpty()))
+                                override fun visitExport(packageFqName: String, access: Int, modules: Array<String>?) {
+                                    // For some reason, '/' is the delimiter in packageFqName here
+                                    exports.add(Exports(FqName(packageFqName.replace('/', '.')), modules?.toList().orEmpty()))
+                                }
                             }
                         }
-                    }
-                }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
+                    },
+                    ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES,
+                )
             } catch (e: Exception) {
                 throw IllegalStateException(
                     "Could not load module definition from: $file. The file might be broken " +
                             "by incorrect post-processing via bytecode tools. Please remove this file from the classpath.",
-                    e
+                    e,
                 )
             }
 

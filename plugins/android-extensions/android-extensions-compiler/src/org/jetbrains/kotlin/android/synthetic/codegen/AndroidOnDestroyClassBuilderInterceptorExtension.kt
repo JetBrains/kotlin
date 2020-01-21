@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.psi.KtElement
 
 abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
-            interceptedFactory: ClassBuilderFactory,
-            bindingContext: BindingContext,
-            diagnostics: DiagnosticSink
+        interceptedFactory: ClassBuilderFactory,
+        bindingContext: BindingContext,
+        diagnostics: DiagnosticSink,
     ): ClassBuilderFactory {
         return AndroidOnDestroyClassBuilderFactory(interceptedFactory, bindingContext)
     }
@@ -45,8 +45,8 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
     abstract fun getGlobalCacheImpl(element: KtElement): CacheImplementation
 
     private inner class AndroidOnDestroyClassBuilderFactory(
-            private val delegateFactory: ClassBuilderFactory,
-            val bindingContext: BindingContext
+        private val delegateFactory: ClassBuilderFactory,
+        val bindingContext: BindingContext,
     ) : ClassBuilderFactory {
 
         override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
@@ -69,8 +69,8 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
     }
 
     private inner class AndroidOnDestroyCollectorClassBuilder(
-            internal val delegateClassBuilder: ClassBuilder,
-            val bindingContext: BindingContext
+        internal val delegateClassBuilder: ClassBuilder,
+        val bindingContext: BindingContext,
     ) : DelegatingClassBuilder() {
         private var currentClass: KtClass? = null
         private var currentClassName: String? = null
@@ -78,13 +78,13 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
         override fun getDelegate() = delegateClassBuilder
 
         override fun defineClass(
-                origin: PsiElement?,
-                version: Int,
-                access: Int,
-                name: String,
-                signature: String?,
-                superName: String,
-                interfaces: Array<out String>
+            origin: PsiElement?,
+            version: Int,
+            access: Int,
+            name: String,
+            signature: String?,
+            superName: String,
+            interfaces: Array<out String>,
         ) {
             if (origin is KtClass) {
                 currentClass = origin
@@ -94,12 +94,12 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
         }
 
         override fun newMethod(
-                origin: JvmDeclarationOrigin,
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                exceptions: Array<out String>?
+            origin: JvmDeclarationOrigin,
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            exceptions: Array<out String>?,
         ): MethodVisitor {
             return object : MethodVisitor(Opcodes.API_VERSION, super.newMethod(origin, access, name, desc, signature, exceptions)) {
                 override fun visitInsn(opcode: Int) {

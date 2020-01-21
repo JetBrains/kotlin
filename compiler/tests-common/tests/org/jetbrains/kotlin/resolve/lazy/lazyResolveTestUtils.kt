@@ -35,16 +35,16 @@ import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 fun createResolveSessionForFiles(
-        project: Project,
-        syntheticFiles: Collection<KtFile>,
-        addBuiltIns: Boolean
+    project: Project,
+    syntheticFiles: Collection<KtFile>,
+    addBuiltIns: Boolean,
 ): ResolveSession {
     val projectContext = ProjectContext(project, "lazy resolve test utils")
     val testModule =
         TestModule(project, addBuiltIns)
     val platformParameters = JvmPlatformParameters(
         packagePartProviderFactory = { PackagePartProvider.Empty },
-        moduleByJavaClass = { testModule }
+        moduleByJavaClass = { testModule },
     )
 
     val resolverForProject = ResolverForSingleModuleProject(
@@ -53,7 +53,7 @@ fun createResolveSessionForFiles(
         testModule,
         JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform),
         GlobalSearchScope.allScope(project),
-        syntheticFiles = syntheticFiles
+        syntheticFiles = syntheticFiles,
     )
 
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()

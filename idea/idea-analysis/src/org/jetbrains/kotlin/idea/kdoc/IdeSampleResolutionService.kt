@@ -30,7 +30,7 @@ class IdeSampleResolutionService(val project: Project) : SampleResolutionService
         context: BindingContext,
         fromDescriptor: DeclarationDescriptor,
         resolutionFacade: ResolutionFacade,
-        qualifiedName: List<String>
+        qualifiedName: List<String>,
     ): Collection<DeclarationDescriptor> {
 
         val scope = KotlinSourceFilterScope.projectAndLibrariesSources(GlobalSearchScope.projectScope(project), project)
@@ -59,7 +59,7 @@ private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("
 private class GlobalSyntheticPackageViewDescriptor(
     override val fqName: FqName,
     private val project: Project,
-    private val scope: GlobalSearchScope
+    private val scope: GlobalSearchScope,
 ) : PackageViewDescriptor {
     override fun getContainingDeclaration(): PackageViewDescriptor? =
         if (fqName.isOneSegmentFQN()) null else GlobalSyntheticPackageViewDescriptor(fqName.parent(), project, scope)
@@ -109,7 +109,7 @@ private class GlobalSyntheticPackageViewDescriptor(
 
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
         ): Collection<DeclarationDescriptor> = (getClassesByNameFilter(nameFilter) +
                 getFunctionsByNameFilter(nameFilter) +
                 getSubpackages(nameFilter)

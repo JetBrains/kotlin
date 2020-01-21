@@ -32,7 +32,7 @@ import java.util.*
 data class Difference(
     val isClassAffected: Boolean = false,
     val areSubclassesAffected: Boolean = false,
-    val changedMembersNames: Set<String> = emptySet()
+    val changedMembersNames: Set<String> = emptySet(),
 )
 
 sealed class ProtoData
@@ -57,8 +57,8 @@ internal val MessageLite.isPrivate: Boolean
                 is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.TypeAlias -> Flags.VISIBILITY.get(flags)
                 else -> error("Unknown message: $this")
-            }
-        )
+            },
+        ),
     )
 
 private fun MessageLite.name(nameResolver: NameResolver): String {
@@ -86,7 +86,7 @@ abstract class DifferenceCalculator {
                 it.getHashCode(
                     compareObject::oldGetIndexOfString,
                     compareObject::oldGetIndexOfClassId,
-                    compareObject::oldGetTypeById
+                    compareObject::oldGetTypeById,
                 )
             }
         val newMap =
@@ -94,7 +94,7 @@ abstract class DifferenceCalculator {
                 it.getHashCode(
                     compareObject::newGetIndexOfString,
                     compareObject::newGetIndexOfClassId,
-                    compareObject::newGetTypeById
+                    compareObject::newGetTypeById,
                 )
             }
 
@@ -116,7 +116,7 @@ abstract class DifferenceCalculator {
 
     private fun calcDifferenceForEqualHashes(
         oldList: List<MessageLite>,
-        newList: List<MessageLite>
+        newList: List<MessageLite>,
     ): Collection<String> {
         val result = hashSetOf<String>()
         val newSet = HashSet(newList)
@@ -139,7 +139,7 @@ abstract class DifferenceCalculator {
 
     protected fun calcDifferenceForNames(
         oldList: List<Int>,
-        newList: List<Int>
+        newList: List<Int>,
     ): Collection<String> {
         val oldNames = oldList.map { compareObject.oldNameResolver.getString(it) }.toSet()
         val newNames = newList.map { compareObject.newNameResolver.getString(it) }.toSet()
@@ -169,13 +169,13 @@ abstract class DifferenceCalculator {
 
 class DifferenceCalculatorForClass(
     private val oldData: ClassProtoData,
-    private val newData: ClassProtoData
+    private val newData: ClassProtoData,
 ) : DifferenceCalculator() {
     override val compareObject = ProtoCompareGenerated(
         oldNameResolver = oldData.nameResolver,
         newNameResolver = newData.nameResolver,
         oldTypeTable = oldData.proto.typeTableOrNull,
-        newTypeTable = newData.proto.typeTableOrNull
+        newTypeTable = newData.proto.typeTableOrNull,
     )
 
     override fun difference(): Difference {
@@ -240,7 +240,8 @@ class DifferenceCalculatorForClass(
                     areSubclassesAffected = true
                 }
                 ProtoBufClassKind.VERSION_REQUIREMENT_LIST,
-                ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
+                ProtoBufClassKind.VERSION_REQUIREMENT_TABLE,
+                -> {
                     // TODO
                 }
                 ProtoBufClassKind.FLAGS,
@@ -248,12 +249,14 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.TYPE_PARAMETER_LIST,
                 ProtoBufClassKind.SUPERTYPE_LIST,
                 ProtoBufClassKind.SUPERTYPE_ID_LIST,
-                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST -> {
+                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST,
+                -> {
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME,
-                ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID -> {
+                ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID,
+                -> {
                     // TODO
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST -> {
@@ -282,13 +285,13 @@ class DifferenceCalculatorForClass(
 
 class DifferenceCalculatorForPackageFacade(
     private val oldData: PackagePartProtoData,
-    private val newData: PackagePartProtoData
+    private val newData: PackagePartProtoData,
 ) : DifferenceCalculator() {
     override val compareObject = ProtoCompareGenerated(
         oldNameResolver = oldData.nameResolver,
         newNameResolver = newData.nameResolver,
         oldTypeTable = oldData.proto.typeTableOrNull,
-        newTypeTable = newData.proto.typeTableOrNull
+        newTypeTable = newData.proto.typeTableOrNull,
     )
 
     override fun difference(): Difference {
@@ -316,7 +319,8 @@ class DifferenceCalculatorForPackageFacade(
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
                 ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE,
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
-                ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME -> {
+                ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME,
+                -> {
                     // TODO
                 }
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST -> {

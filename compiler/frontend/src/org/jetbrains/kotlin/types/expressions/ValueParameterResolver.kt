@@ -37,21 +37,21 @@ class ValueParameterResolver(
     private val expressionTypingServices: ExpressionTypingServices,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
 ) {
     fun resolveValueParameters(
         valueParameters: List<KtParameter>,
         valueParameterDescriptors: List<ValueParameterDescriptor>,
         declaringScope: LexicalScope,
         dataFlowInfo: DataFlowInfo,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         val scopeForDefaultValue =
             LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
 
         val contextForDefaultValue = ExpressionTypingContext.newContext(
             trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
-            languageVersionSettings, dataFlowValueFactory
+            languageVersionSettings, dataFlowValueFactory,
         )
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
@@ -63,7 +63,7 @@ class ValueParameterResolver(
     private fun resolveDefaultValue(
         valueParameterDescriptor: ValueParameterDescriptor,
         parameter: KtParameter,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ) {
         if (!valueParameterDescriptor.declaresDefaultValue()) return
         val defaultValue = parameter.defaultValue ?: return

@@ -59,13 +59,13 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         if (candidateFiles.isEmpty()) {
             throw AssertionError(
                 ".inspection file is not found for " + testDataFile +
-                        "\nAdd it to base directory of test data. It should contain fully-qualified name of inspection class."
+                        "\nAdd it to base directory of test data. It should contain fully-qualified name of inspection class.",
             )
         }
         if (candidateFiles.size > 1) {
             throw AssertionError(
                 "Several .inspection files are available for " + testDataFile +
-                        "\nPlease remove some of them\n" + candidateFiles
+                        "\nPlease remove some of them\n" + candidateFiles,
             )
         }
 
@@ -130,7 +130,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         inspection: AbstractKotlinInspection,
         expectedProblemString: String?,
         expectedHighlightString: String?,
-        localFixTextString: String?
+        localFixTextString: String?,
     ): Boolean {
         val problemExpected = expectedProblemString == null || expectedProblemString != "none"
         myFixture.enableInspections(inspection::class.java)
@@ -143,14 +143,16 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
 
         val caretOffset = myFixture.caretOffset
         val highlightInfos = CodeInsightTestFixtureImpl.instantiateAndRun(
-            file, editor, intArrayOf(
+            file, editor,
+            intArrayOf(
                 Pass.LINE_MARKERS,
                 Pass.EXTERNAL_TOOLS,
                 Pass.POPUP_HINTS,
                 Pass.UPDATE_ALL,
                 Pass.UPDATE_FOLDING,
-                Pass.WOLF
-            ), (file as? KtFile)?.isScript() == true
+                Pass.WOLF,
+            ),
+            (file as? KtFile)?.isScript() == true,
         ).filter { it.description != null && caretOffset in it.startOffset..it.endOffset }
 
         Assert.assertTrue(
@@ -159,7 +161,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                         "Detected problems: ${highlightInfos.joinToString { it.description }}"
             else
                 "Expected at least one problem at caret",
-            problemExpected == highlightInfos.isNotEmpty()
+            problemExpected == highlightInfos.isNotEmpty(),
         )
         if (!problemExpected || highlightInfos.isEmpty()) return false
         highlightInfos
@@ -168,7 +170,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
                 val description = it.description
                 Assert.assertTrue(
                     "Problem description should not contain 'can': $description",
-                    " can " !in description
+                    " can " !in description,
                 )
             }
 
@@ -176,7 +178,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             Assert.assertTrue(
                 "Expected the following problem at caret: $expectedProblemString\n" +
                         "Active problems: ${highlightInfos.joinToString { it.description }}",
-                highlightInfos.any { it.description == expectedProblemString }
+                highlightInfos.any { it.description == expectedProblemString },
             )
         }
         val expectedHighlightType = when (expectedHighlightString) {
@@ -188,7 +190,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             Assert.assertTrue(
                 "Expected the following problem highlight type: $expectedHighlightType\n" +
                         "Actual type: ${highlightInfos.joinToString { it.type.toString() }}",
-                highlightInfos.all { expectedHighlightType in it.type.toString() }
+                highlightInfos.all { expectedHighlightType in it.type.toString() },
             )
         }
 
@@ -206,7 +208,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         TestCase.assertTrue(
             "No fix action $fixDescription\n" +
                     "Available actions: $availableDescription",
-            localFixActions.isNotEmpty()
+            localFixActions.isNotEmpty(),
         )
 
         val localFixAction = localFixActions.singleOrNull { it !is EmptyIntentionAction }
@@ -217,7 +219,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         TestCase.assertTrue(
             "More than one fix action $fixDescription\n" +
                     "Available actions: $availableDescription",
-            localFixAction != null
+            localFixAction != null,
         )
 
         project.executeWriteCommand(localFixAction!!.text, null) {
@@ -228,13 +230,13 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
 
     private fun doTestFor(mainFilePath: String, inspection: AbstractKotlinInspection, fileText: String) {
         val expectedProblemString = InTextDirectivesUtils.findStringWithPrefixes(
-            fileText, "// $expectedProblemDirectiveName: "
+            fileText, "// $expectedProblemDirectiveName: ",
         )
         val expectedHighlightString = InTextDirectivesUtils.findStringWithPrefixes(
-            fileText, "// $expectedProblemHighlightType: "
+            fileText, "// $expectedProblemHighlightType: ",
         )
         val localFixTextString = InTextDirectivesUtils.findStringWithPrefixes(
-            fileText, "// $fixTextDirectiveName: "
+            fileText, "// $fixTextDirectiveName: ",
         )
 
         if (!runInspectionWithFixesAndCheck(inspection, expectedProblemString, expectedHighlightString, localFixTextString)) {
@@ -247,7 +249,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         } catch (e: ComparisonFailure) {
             KotlinTestUtils.assertEqualsToFile(
                 File(testDataPath, canonicalPathToExpectedFile),
-                editor.document.text
+                editor.document.text,
             )
         }
     }

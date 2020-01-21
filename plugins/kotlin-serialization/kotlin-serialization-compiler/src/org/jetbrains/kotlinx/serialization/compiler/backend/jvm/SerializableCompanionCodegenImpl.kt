@@ -40,8 +40,8 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
         val serial = requireNotNull(
             findTypeSerializer(
                 serializableDescriptor.module,
-                serializableDescriptor.toSimpleType()
-            )
+                serializableDescriptor.toSimpleType(),
+            ),
         )
         classCodegen.generateMethod(methodDescriptor) { _, _ ->
             stackValueSerializerInstance(
@@ -50,7 +50,7 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
                 serializableDescriptor.defaultType,
                 serial,
                 this,
-                null
+                null,
             ) { it, _ ->
                 load(it + 1, kSerializerType)
             }

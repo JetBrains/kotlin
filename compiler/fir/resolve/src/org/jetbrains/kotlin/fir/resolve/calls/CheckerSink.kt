@@ -17,7 +17,7 @@ abstract class CheckerSink {
     @Deprecated(
         "This function yields unconditionally, exposed only for yieldIfNeed",
         level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith("yieldIfNeed")
+        replaceWith = ReplaceWith("yieldIfNeed"),
     )
     abstract suspend fun yield()
 }

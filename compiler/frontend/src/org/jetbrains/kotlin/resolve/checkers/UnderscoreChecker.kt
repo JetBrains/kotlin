@@ -32,7 +32,7 @@ object UnderscoreChecker : DeclarationChecker {
         identifier: PsiElement?,
         diagnosticHolder: DiagnosticSink,
         languageVersionSettings: LanguageVersionSettings,
-        allowSingleUnderscore: Boolean = false
+        allowSingleUnderscore: Boolean = false,
     ) {
         if (identifier == null || identifier.text.isEmpty()) return
         val isValidSingleUnderscore = allowSingleUnderscore && identifier.text == "_"
@@ -42,8 +42,8 @@ object UnderscoreChecker : DeclarationChecker {
             diagnosticHolder.report(
                 Errors.UNSUPPORTED_FEATURE.on(
                     identifier,
-                    LanguageFeature.SingleUnderscoreForParameterName to languageVersionSettings
-                )
+                    LanguageFeature.SingleUnderscoreForParameterName to languageVersionSettings,
+                ),
             )
         }
     }
@@ -53,7 +53,7 @@ object UnderscoreChecker : DeclarationChecker {
         declaration: KtNamedDeclaration,
         diagnosticHolder: DiagnosticSink,
         languageVersionSettings: LanguageVersionSettings,
-        allowSingleUnderscore: Boolean = false
+        allowSingleUnderscore: Boolean = false,
     ) {
         checkIdentifier(declaration.nameIdentifier, diagnosticHolder, languageVersionSettings, allowSingleUnderscore)
     }
@@ -64,7 +64,7 @@ object UnderscoreChecker : DeclarationChecker {
             for (parameter in declaration.valueParameters) {
                 checkNamed(
                     parameter, context.trace, context.languageVersionSettings,
-                    allowSingleUnderscore = descriptor is FunctionExpressionDescriptor
+                    allowSingleUnderscore = descriptor is FunctionExpressionDescriptor,
                 )
             }
         }

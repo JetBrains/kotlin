@@ -55,7 +55,7 @@ interface IdentifierInfo {
     class Variable(
         val variable: VariableDescriptor,
         override val kind: DataFlowValue.Kind,
-        val bound: DataFlowValue?
+        val bound: DataFlowValue?,
     ) : IdentifierInfo {
         override val canBeBound
             get() = kind == STABLE_VALUE
@@ -63,7 +63,7 @@ interface IdentifierInfo {
         override fun equals(other: Any?) =
             other is Variable &&
                     DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
-                        variable, other.variable, allowCopiesFromTheSameDeclaration = true
+                        variable, other.variable, allowCopiesFromTheSameDeclaration = true,
                     )
 
         override fun hashCode() = variable.name.hashCode() * 31 + variable.containingDeclaration.original.hashCode()
@@ -91,7 +91,7 @@ interface IdentifierInfo {
         val receiverInfo: IdentifierInfo,
         val selectorInfo: IdentifierInfo,
         val safe: Boolean,
-        val receiverType: KotlinType?
+        val receiverType: KotlinType?,
     ) : IdentifierInfo {
 
         override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind == STABLE_VALUE) selectorInfo.kind else OTHER
@@ -136,7 +136,7 @@ internal fun getIdForStableIdentifier(
     expression: KtExpression?,
     bindingContext: BindingContext,
     containingDeclarationOrModule: DeclarationDescriptor,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): IdentifierInfo {
     if (expression != null) {
         val deparenthesized = KtPsiUtil.deparenthesize(expression)
@@ -153,7 +153,7 @@ internal fun getIdForStableIdentifier(
 
             qualified(
                 receiverInfo, bindingContext.getType(receiverExpression),
-                selectorInfo, expression.operationSign === KtTokens.SAFE_ACCESS
+                selectorInfo, expression.operationSign === KtTokens.SAFE_ACCESS,
             )
         }
 
@@ -167,7 +167,7 @@ internal fun getIdForStableIdentifier(
                 IdentifierInfo.SafeCast(
                     getIdForStableIdentifier(subjectExpression, bindingContext, containingDeclarationOrModule, languageVersionSettings),
                     bindingContext.getType(subjectExpression),
-                    bindingContext[BindingContext.TYPE, targetTypeReference]
+                    bindingContext[BindingContext.TYPE, targetTypeReference],
                 )
             }
         }
@@ -188,9 +188,9 @@ internal fun getIdForStableIdentifier(
                         expression.baseExpression,
                         bindingContext,
                         containingDeclarationOrModule,
-                        languageVersionSettings
+                        languageVersionSettings,
                     ),
-                    operationType
+                    operationType,
                 )
             else
                 IdentifierInfo.NO
@@ -204,7 +204,7 @@ private fun getIdForSimpleNameExpression(
     simpleNameExpression: KtSimpleNameExpression,
     bindingContext: BindingContext,
     containingDeclarationOrModule: DeclarationDescriptor,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): IdentifierInfo {
     val declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, simpleNameExpression)
     return when (declarationDescriptor) {
@@ -219,7 +219,7 @@ private fun getIdForSimpleNameExpression(
             val selectorInfo = IdentifierInfo.Variable(
                 declarationDescriptor,
                 declarationDescriptor.variableKind(usageModuleDescriptor, bindingContext, simpleNameExpression, languageVersionSettings),
-                bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, declarationDescriptor]
+                bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, declarationDescriptor],
             )
 
             val implicitReceiver = resolvedCall?.dispatchReceiver
@@ -233,7 +233,7 @@ private fun getIdForSimpleNameExpression(
                 } else {
                     qualified(
                         receiverInfo, implicitReceiver.type,
-                        selectorInfo, resolvedCall.call.isSafeCall()
+                        selectorInfo, resolvedCall.call.isSafeCall(),
                     )
                 }
             }

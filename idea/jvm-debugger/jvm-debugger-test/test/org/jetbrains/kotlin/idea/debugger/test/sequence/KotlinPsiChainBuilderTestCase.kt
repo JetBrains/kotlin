@@ -40,7 +40,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
                     module,
                     stdLibName,
                     stdLibPath.parent,
-                    stdLibPath.name
+                    stdLibPath.name,
                 )
             }
         }

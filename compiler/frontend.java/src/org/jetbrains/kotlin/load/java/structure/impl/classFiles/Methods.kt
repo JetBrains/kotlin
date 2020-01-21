@@ -29,11 +29,11 @@ import java.text.CharacterIterator
 import java.text.StringCharacterIterator
 
 abstract class BinaryJavaMethodBase(
-        override val access: Int,
-        override val containingClass: JavaClass,
-        val valueParameters: List<BinaryJavaValueParameter>,
-        val typeParameters: List<JavaTypeParameter>,
-        override val name: Name
+    override val access: Int,
+    override val containingClass: JavaClass,
+    val valueParameters: List<BinaryJavaValueParameter>,
+    val typeParameters: List<JavaTypeParameter>,
+    override val name: Name,
 ) : JavaMember, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
     override val annotationsByFqName by buildLazyValueForMap()
 
@@ -41,19 +41,19 @@ abstract class BinaryJavaMethodBase(
 
     companion object {
         private class MethodInfo(
-                val returnType: JavaType,
-                val typeParameters: List<JavaTypeParameter>,
-                val valueParameterTypes: List<JavaType>
+            val returnType: JavaType,
+            val typeParameters: List<JavaTypeParameter>,
+            val valueParameterTypes: List<JavaType>,
         )
 
         fun create(
-                name: String,
-                access: Int,
-                desc: String,
-                signature: String?,
-                containingClass: JavaClass,
-                parentContext: ClassifierResolutionContext,
-                signatureParser: BinaryClassSignatureParser
+            name: String,
+            access: Int,
+            desc: String,
+            signature: String?,
+            containingClass: JavaClass,
+            parentContext: ClassifierResolutionContext,
+            signatureParser: BinaryClassSignatureParser,
         ): Pair<JavaMember, MethodVisitor> {
             val isConstructor = "<init>" == name
             val isVarargs = access.isSet(Opcodes.ACC_VARARGS)
@@ -94,10 +94,10 @@ abstract class BinaryJavaMethodBase(
                         BinaryJavaConstructor(access, containingClass, parameterList, info.typeParameters)
                     else
                         BinaryJavaMethod(
-                                access, containingClass,
-                                parameterList.compact(),
-                                info.typeParameters,
-                                Name.identifier(name), info.returnType
+                            access, containingClass,
+                            parameterList.compact(),
+                            info.typeParameters,
+                            Name.identifier(name), info.returnType,
                         )
 
             val paramIgnoreCount = when {
@@ -112,14 +112,14 @@ abstract class BinaryJavaMethodBase(
                         parentContext,
                         signatureParser,
                         paramIgnoreCount,
-                        Type.getArgumentTypes(desc).size
+                        Type.getArgumentTypes(desc).size,
                     )
         }
 
         private fun parseMethodDescription(
-                desc: String,
-                context: ClassifierResolutionContext,
-                signatureParser: BinaryClassSignatureParser
+            desc: String,
+            context: ClassifierResolutionContext,
+            signatureParser: BinaryClassSignatureParser,
         ): MethodInfo {
             val returnType = signatureParser.mapAsmType(Type.getReturnType(desc), context)
             val parameterTypes = Type.getArgumentTypes(desc).map { signatureParser.mapAsmType(it, context) }
@@ -128,9 +128,9 @@ abstract class BinaryJavaMethodBase(
         }
 
         private fun parseMethodSignature(
-                signature: String,
-                signatureParser: BinaryClassSignatureParser,
-                context: ClassifierResolutionContext
+            signature: String,
+            signatureParser: BinaryClassSignatureParser,
+            context: ClassifierResolutionContext,
         ): MethodInfo {
             val iterator = StringCharacterIterator(signature)
             val typeParameters = signatureParser.parseTypeParametersDeclaration(iterator, context)
@@ -160,20 +160,20 @@ abstract class BinaryJavaMethodBase(
 }
 
 class BinaryJavaMethod(
-        flags: Int,
-        containingClass: JavaClass,
-        valueParameters: List<BinaryJavaValueParameter>,
-        typeParameters: List<JavaTypeParameter>,
-        name: Name,
-        override val returnType: JavaType
+    flags: Int,
+    containingClass: JavaClass,
+    valueParameters: List<BinaryJavaValueParameter>,
+    typeParameters: List<JavaTypeParameter>,
+    name: Name,
+    override val returnType: JavaType,
 ) : BinaryJavaMethodBase(
-        flags, containingClass, valueParameters, typeParameters, name
+    flags, containingClass, valueParameters, typeParameters, name,
 ), JavaMethod {
     override var annotationParameterDefaultValue: JavaAnnotationArgument? = null
         internal set(value) {
             if (field != null) {
                 throw AssertionError(
-                    "Annotation method cannot have two default values: $this (old=$field, new=$value)"
+                    "Annotation method cannot have two default values: $this (old=$field, new=$value)",
                 )
             }
             field = value
@@ -181,11 +181,11 @@ class BinaryJavaMethod(
 }
 
 class BinaryJavaConstructor(
-        flags: Int,
-        containingClass: JavaClass,
-        valueParameters: List<BinaryJavaValueParameter>,
-        typeParameters: List<JavaTypeParameter>
+    flags: Int,
+    containingClass: JavaClass,
+    valueParameters: List<BinaryJavaValueParameter>,
+    typeParameters: List<JavaTypeParameter>,
 ) : BinaryJavaMethodBase(
-        flags, containingClass, valueParameters, typeParameters,
-        SpecialNames.NO_NAME_PROVIDED
+    flags, containingClass, valueParameters, typeParameters,
+    SpecialNames.NO_NAME_PROVIDED,
 ), JavaConstructor

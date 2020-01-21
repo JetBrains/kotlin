@@ -13,20 +13,20 @@ enum class DefaultImportPriority {
     HIGH {
         override fun getAllDefaultImports(
             platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
         ): List<ImportPath>? =
             platformDependentAnalyzerServices?.getDefaultImports(languageVersionSettings, includeLowPriorityImports = false)
     },
     LOW {
         override fun getAllDefaultImports(
             platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
         ): List<ImportPath>? =
             platformDependentAnalyzerServices?.defaultLowPriorityImports
     };
 
     abstract fun getAllDefaultImports(
         platformDependentAnalyzerServices: PlatformDependentAnalyzerServices?,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): List<ImportPath>?
 }

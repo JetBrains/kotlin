@@ -17,7 +17,7 @@ import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 open class ScriptDependenciesProvider constructor(
-    protected val project: Project
+    protected val project: Project,
 ) {
 
     @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)

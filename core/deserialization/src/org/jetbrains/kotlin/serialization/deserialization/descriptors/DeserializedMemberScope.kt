@@ -42,7 +42,7 @@ abstract class DeserializedMemberScope protected constructor(
     functionList: Collection<ProtoBuf.Function>,
     propertyList: Collection<ProtoBuf.Property>,
     typeAliasList: Collection<ProtoBuf.TypeAlias>,
-    classNames: () -> Collection<Name>
+    classNames: () -> Collection<Name>,
 ) : MemberScopeImpl() {
 
     private val functionProtosBytes = functionList.groupByName { it.name }.packToByteArray()
@@ -90,7 +90,7 @@ abstract class DeserializedMemberScope protected constructor(
     }
 
     private inline fun <M : MessageLite> Collection<M>.groupByName(
-        getNameIndex: (M) -> Int
+        getNameIndex: (M) -> Int,
     ) = groupBy { c.nameResolver.getName(getNameIndex(it)) }
 
     private fun computeFunctions(name: Name) =
@@ -99,7 +99,7 @@ abstract class DeserializedMemberScope protected constructor(
             functionProtosBytes,
             ProtoBuf.Function.PARSER,
             { c.memberDeserializer.loadFunction(it) },
-            { computeNonDeclaredFunctions(name, it) }
+            { computeNonDeclaredFunctions(name, it) },
         )
 
     private inline fun <M : MessageLite, D : DeclarationDescriptor> computeDescriptors(
@@ -107,7 +107,7 @@ abstract class DeserializedMemberScope protected constructor(
         bytesByName: Map<Name, ByteArray>,
         parser: Parser<M>,
         factory: (M) -> D,
-        computeNonDeclared: (MutableCollection<D>) -> Unit
+        computeNonDeclared: (MutableCollection<D>) -> Unit,
     ): Collection<D> =
         computeDescriptors(
             bytesByName[name]?.let {
@@ -117,13 +117,13 @@ abstract class DeserializedMemberScope protected constructor(
                 }.toList()
             } ?: emptyList(),
             factory,
-            computeNonDeclared
+            computeNonDeclared,
         )
 
     private inline fun <M : MessageLite, D : DeclarationDescriptor> computeDescriptors(
         protos: Collection<M>,
         factory: (M) -> D,
-        computeNonDeclared: (MutableCollection<D>) -> Unit
+        computeNonDeclared: (MutableCollection<D>) -> Unit,
     ): Collection<D> {
         val descriptors = protos.mapTo(arrayListOf(), factory)
 
@@ -145,7 +145,7 @@ abstract class DeserializedMemberScope protected constructor(
             propertyProtosBytes,
             ProtoBuf.Property.PARSER,
             { c.memberDeserializer.loadProperty(it) },
-            { computeNonDeclaredProperties(name, it) }
+            { computeNonDeclaredProperties(name, it) },
         )
 
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
@@ -155,7 +155,7 @@ abstract class DeserializedMemberScope protected constructor(
         val byteArray = typeAliasBytes[name] ?: return null
         val proto =
             ProtoBuf.TypeAlias.parseDelimitedFrom(
-                ByteArrayInputStream(byteArray), c.components.extensionRegistryLite
+                ByteArrayInputStream(byteArray), c.components.extensionRegistryLite,
             ) ?: return null
         return c.memberDeserializer.loadTypeAlias(proto)
     }
@@ -168,7 +168,7 @@ abstract class DeserializedMemberScope protected constructor(
     protected fun computeDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
-        location: LookupLocation
+        location: LookupLocation,
     ): Collection<DeclarationDescriptor> {
         //NOTE: descriptors should be in the same order they were serialized in
         // see MemberComparator
@@ -203,13 +203,13 @@ abstract class DeserializedMemberScope protected constructor(
         result: MutableCollection<DeclarationDescriptor>,
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
-        location: LookupLocation
+        location: LookupLocation,
     ) {
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
             addMembers(
                 getVariableNames(),
                 nameFilter,
-                result
+                result,
             ) { getContributedVariables(it, location) }
         }
 
@@ -217,7 +217,7 @@ abstract class DeserializedMemberScope protected constructor(
             addMembers(
                 getFunctionNames(),
                 nameFilter,
-                result
+                result,
             ) { getContributedFunctions(it, location) }
         }
     }
@@ -226,7 +226,7 @@ abstract class DeserializedMemberScope protected constructor(
         names: Collection<Name>,
         nameFilter: (Name) -> Boolean,
         result: MutableCollection<DeclarationDescriptor>,
-        descriptorsByName: (Name) -> Collection<DeclarationDescriptor>
+        descriptorsByName: (Name) -> Collection<DeclarationDescriptor>,
     ) {
         val subResult = ArrayList<DeclarationDescriptor>()
         for (name in names) {

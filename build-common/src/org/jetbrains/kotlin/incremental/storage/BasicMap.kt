@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 abstract class BasicMap<K : Comparable<K>, V>(
-        storageFile: File,
-        keyDescriptor: KeyDescriptor<K>,
-        valueExternalizer: DataExternalizer<V>
+    storageFile: File,
+    keyDescriptor: KeyDescriptor<K>,
+    valueExternalizer: DataExternalizer<V>,
 ) {
     protected val storage: LazyStorage<K, V>
     private val nonCachingStorage = System.getProperty("kotlin.jps.non.caching.storage")?.toBoolean() ?: false
@@ -77,13 +77,13 @@ abstract class BasicMap<K : Comparable<K>, V>(
 }
 
 abstract class BasicStringMap<V>(
-        storageFile: File,
-        keyDescriptor: KeyDescriptor<String>,
-        valueExternalizer: DataExternalizer<V>
+    storageFile: File,
+    keyDescriptor: KeyDescriptor<String>,
+    valueExternalizer: DataExternalizer<V>,
 ) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer) {
     constructor(
-            storageFile: File,
-            valueExternalizer: DataExternalizer<V>
+        storageFile: File,
+        valueExternalizer: DataExternalizer<V>,
     ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer)
 
     override fun dumpKey(key: String): String = key

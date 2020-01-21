@@ -43,58 +43,62 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
         val inspections = parseInspectionsToEnable(virtualFile.path, actionFileText).toTypedArray()
         enableInspectionTools(*inspections)
 
-        CommandProcessor.getInstance().executeCommand(project, {
-            var expectedErrorMessage = ""
-            try {
-                val actionHint = ActionHint.parse(actionFile, actionFileText)
-                val text = actionHint.expectedText
+        CommandProcessor.getInstance().executeCommand(
+            project,
+            {
+                var expectedErrorMessage = ""
+                try {
+                    val actionHint = ActionHint.parse(actionFile, actionFileText)
+                    val text = actionHint.expectedText
 
-                val actionShouldBeAvailable = actionHint.shouldPresent()
+                    val actionShouldBeAvailable = actionHint.shouldPresent()
 
-                expectedErrorMessage = InTextDirectivesUtils.findListWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ")
-                    .joinToString(separator = "\n")
+                    expectedErrorMessage = InTextDirectivesUtils.findListWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ")
+                        .joinToString(separator = "\n")
 
-                TypeAccessibilityChecker.testLog = StringBuilder()
-                val log = try {
-                    AbstractQuickFixMultiFileTest.doAction(
-                        text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
-                        InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
-                    )
-                    TypeAccessibilityChecker.testLog.toString()
-                } finally {
-                    TypeAccessibilityChecker.testLog = null
+                    TypeAccessibilityChecker.testLog = StringBuilder()
+                    val log = try {
+                        AbstractQuickFixMultiFileTest.doAction(
+                            text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
+                            InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION"),
+                        )
+                        TypeAccessibilityChecker.testLog.toString()
+                    } finally {
+                        TypeAccessibilityChecker.testLog = null
+                    }
+
+                    if (actionFile is KtFile) {
+                        DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
+                    }
+
+                    if (actionShouldBeAvailable) {
+                        compareToExpected(dirPath)
+                    }
+
+                    UsefulTestCase.assertEmpty(expectedErrorMessage)
+                    val logFile = File("${dirPath}log.log")
+                    if (log.isNotEmpty()) {
+                        KotlinTestUtils.assertEqualsToFile(logFile, log)
+                    } else {
+                        TestCase.assertFalse(logFile.exists())
+                    }
+
+                } catch (e: ComparisonFailure) {
+                    throw e
+                } catch (e: AssertionError) {
+                    throw e
+                } catch (e: Throwable) {
+                    if (expectedErrorMessage.isEmpty()) {
+                        e.printStackTrace()
+                        TestCase.fail(getTestName(true))
+                    } else {
+                        Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
+                        compareToExpected(dirPath)
+                    }
                 }
-
-                if (actionFile is KtFile) {
-                    DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
-                }
-
-                if (actionShouldBeAvailable) {
-                    compareToExpected(dirPath)
-                }
-
-                UsefulTestCase.assertEmpty(expectedErrorMessage)
-                val logFile = File("${dirPath}log.log")
-                if (log.isNotEmpty()) {
-                    KotlinTestUtils.assertEqualsToFile(logFile, log)
-                } else {
-                    TestCase.assertFalse(logFile.exists())
-                }
-
-            } catch (e: ComparisonFailure) {
-                throw e
-            } catch (e: AssertionError) {
-                throw e
-            } catch (e: Throwable) {
-                if (expectedErrorMessage.isEmpty()) {
-                    e.printStackTrace()
-                    TestCase.fail(getTestName(true))
-                } else {
-                    Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
-                    compareToExpected(dirPath)
-                }
-            }
-        }, "", "")
+            },
+            "", "",
+        )
     }
 
     private fun compareToExpected(directory: String) {

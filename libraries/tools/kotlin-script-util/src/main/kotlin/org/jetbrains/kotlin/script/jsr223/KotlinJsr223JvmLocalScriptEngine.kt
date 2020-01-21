@@ -36,18 +36,19 @@ import javax.script.ScriptEngineFactory
 import kotlin.reflect.KClass
 
 class KotlinJsr223JvmLocalScriptEngine(
-        factory: ScriptEngineFactory,
-        val templateClasspath: List<File>,
-        templateClassName: String,
-        val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
-        val scriptArgsTypes: Array<out KClass<out Any>>?
+    factory: ScriptEngineFactory,
+    val templateClasspath: List<File>,
+    templateClassName: String,
+    val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+    val scriptArgsTypes: Array<out KClass<out Any>>?,
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
     override val replCompiler: ReplCompiler by lazy {
        GenericReplCompiler(
-               makeScriptDefinition(templateClasspath, templateClassName),
-               makeCompilerConfiguration(),
-               PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
+           makeScriptDefinition(templateClasspath, templateClassName),
+           makeCompilerConfiguration(),
+           PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false),
+       )
     }
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
     private val localEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext(), scriptArgsTypes)) }
@@ -72,7 +73,7 @@ class KotlinJsr223JvmLocalScriptEngine(
         add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         languageVersionSettings = LanguageVersionSettingsImpl(
-                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlags.skipMetadataVersionCheck to true)
+            LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlags.skipMetadataVersionCheck to true),
         )
     }
 }

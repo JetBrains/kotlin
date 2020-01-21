@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
-    private val symbolTable: ReferenceSymbolTable
+    private val symbolTable: ReferenceSymbolTable,
 ) {
 
     lateinit var typeTranslator: TypeTranslator
@@ -38,7 +38,7 @@ class ConstantValueGenerator(
         startOffset: Int,
         endOffset: Int,
         constantValue: ConstantValue<*>,
-        varargElementType: KotlinType? = null
+        varargElementType: KotlinType? = null,
     ): IrExpression =
         // Assertion is safe here because annotation calls and class literals are not allowed in constant initializers
         generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, constantValue, varargElementType)!!
@@ -50,7 +50,7 @@ class ConstantValueGenerator(
         startOffset: Int,
         endOffset: Int,
         constantValue: ConstantValue<*>,
-        varargElementType: KotlinType? = null
+        varargElementType: KotlinType? = null,
     ): IrExpression? {
         val constantKtType = constantValue.getType(moduleDescriptor)
         val constantType = constantKtType.toIrType()
@@ -79,7 +79,7 @@ class ConstantValueGenerator(
                     arrayElementType.toIrType(),
                     constantValue.value.mapNotNull {
                         generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, it, null)
-                    }
+                    },
                 )
             }
 
@@ -101,7 +101,7 @@ class ConstantValueGenerator(
                 IrGetEnumValueImpl(
                     startOffset, endOffset,
                     constantType,
-                    symbolTable.referenceEnumEntry(enumEntryDescriptor)
+                    symbolTable.referenceEnumEntry(enumEntryDescriptor),
                 )
             }
 
@@ -118,7 +118,7 @@ class ConstantValueGenerator(
                         startOffset, endOffset,
                         constantValue.getType(moduleDescriptor).toIrType(),
                         classifierDescriptor.defaultType.toIrType().classifierOrFail,
-                        classifierKtType.toIrType()
+                        classifierKtType.toIrType(),
                     )
                 }
             }
@@ -151,7 +151,7 @@ class ConstantValueGenerator(
         val irCall = IrConstructorCallImpl.fromSymbolDescriptor(
             startOffset, endOffset,
             annotationType.toIrType(),
-            primaryConstructorSymbol
+            primaryConstructorSymbol,
         )
 
         for (valueParameter in primaryConstructorDescriptor.valueParameters) {
@@ -161,7 +161,7 @@ class ConstantValueGenerator(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 argumentValue,
-                valueParameter.varargElementType
+                valueParameter.varargElementType,
             )
             if (irArgument != null) {
                 irCall.putValueArgument(argumentIndex, irArgument)

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.*
 class IrBuiltIns(
     val builtIns: KotlinBuiltIns,
     private val typeTranslator: TypeTranslator,
-    outerSymbolTable: SymbolTable? = null
+    outerSymbolTable: SymbolTable? = null,
 ) {
     val languageVersionSettings = typeTranslator.languageVersionSettings
 
@@ -94,11 +94,11 @@ class IrBuiltIns(
             Annotations.EMPTY,
             name,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
-            SourceElement.NO_SOURCE
+            SourceElement.NO_SOURCE,
         ).apply {
             typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T0"),
-                0, SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
+                0, SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS,
             ).apply {
                 addUpperBound(any)
                 setInitialized()
@@ -108,7 +108,7 @@ class IrBuiltIns(
 
             valueParameterDescriptor = ValueParameterDescriptorImpl(
                 this, null, 0, Annotations.EMPTY, Name.identifier("arg0"), valueKotlinType,
-                false, false, false, null, SourceElement.NO_SOURCE
+                false, false, false, null, SourceElement.NO_SOURCE,
             )
 
             returnKotlinType = typeParameterDescriptor.typeConstructor.makeNonNullType()
@@ -259,7 +259,7 @@ class IrBuiltIns(
         PrimitiveType.INT to intType,
         PrimitiveType.FLOAT to floatType,
         PrimitiveType.LONG to longType,
-        PrimitiveType.DOUBLE to doubleType
+        PrimitiveType.DOUBLE to doubleType,
     )
 
     val lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(OperatorNames.LESS)

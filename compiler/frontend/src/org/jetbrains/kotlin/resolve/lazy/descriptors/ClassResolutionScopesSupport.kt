@@ -32,7 +32,7 @@ class ClassResolutionScopesSupport(
     private val classDescriptor: ClassDescriptor,
     storageManager: StorageManager,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val getOuterScope: () -> LexicalScope
+    private val getOuterScope: () -> LexicalScope,
 ) {
     private fun scopeWithGenerics(parent: LexicalScope): LexicalScopeImpl {
         return LexicalScopeImpl(parent, classDescriptor, false, null, LexicalScopeKind.CLASS_HEADER) {
@@ -70,7 +70,7 @@ class ClassResolutionScopesSupport(
             classDescriptor,
             true,
             classDescriptor.thisAsReceiverParameter,
-            LexicalScopeKind.CLASS_MEMBER_SCOPE
+            LexicalScopeKind.CLASS_MEMBER_SCOPE,
         )
     }
 
@@ -88,7 +88,7 @@ class ClassResolutionScopesSupport(
         ownerDescriptor: DeclarationDescriptor,
         classDescriptor: ClassDescriptor,
         withCompanionObject: Boolean = true,
-        isDeprecated: Boolean = false
+        isDeprecated: Boolean = false,
     ): LexicalScope {
         val companionObjectDescriptor = classDescriptor.companionObjectDescriptor?.takeIf { withCompanionObject }
         val staticScopes = ArrayList<MemberScope>(3)
@@ -105,7 +105,7 @@ class ClassResolutionScopesSupport(
             implicitReceiver = companionObjectDescriptor?.thisAsReceiverParameter,
             kind = LexicalScopeKind.CLASS_INHERITANCE,
             memberScopes = staticScopes,
-            isStaticScope = true
+            isStaticScope = true,
         )
 
         return if (isDeprecated) DeprecatedLexicalScope(lexicalChainedScope) else lexicalChainedScope
@@ -125,7 +125,7 @@ class ClassResolutionScopesSupport(
 
     private fun ClassDescriptor.packScopesOfCompanionSupertypes(
         parent: LexicalScope,
-        ownerDescriptor: DeclarationDescriptor
+        ownerDescriptor: DeclarationDescriptor,
     ): LexicalScope? {
         if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion)) return null
         return getAllSuperclassesWithoutAny().asReversed().fold(parent) { scope, currentClass ->
@@ -144,14 +144,14 @@ class ClassResolutionScopesSupport(
 fun scopeForInitializerResolution(
     classDescriptor: LazyClassDescriptor,
     parentDescriptor: DeclarationDescriptor,
-    primaryConstructorParameters: List<KtParameter>
+    primaryConstructorParameters: List<KtParameter>,
 ): LexicalScope {
     return LexicalScopeImpl(
         classDescriptor.scopeForMemberDeclarationResolution,
         parentDescriptor,
         false,
         null,
-        LexicalScopeKind.CLASS_INITIALIZER
+        LexicalScopeKind.CLASS_INITIALIZER,
     ) {
         if (primaryConstructorParameters.isNotEmpty()) {
             val parameterDescriptors = classDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters

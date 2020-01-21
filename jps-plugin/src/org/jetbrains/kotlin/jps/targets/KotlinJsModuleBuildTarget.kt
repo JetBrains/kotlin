@@ -66,7 +66,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
         builder: Services.Builder,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker
+        exceptActualTracer: ExpectActualTracker,
     ) {
         super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer)
 
@@ -78,7 +78,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
 
                 register(
                     IncrementalDataProvider::class.java,
-                    IncrementalDataProviderFromCache(cache)
+                    IncrementalDataProviderFromCache(cache),
                 )
             }
         }
@@ -87,7 +87,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ): Boolean {
         require(chunk.representativeTarget == this)
 
@@ -111,7 +111,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
             sourceMapRoots,
             libraries,
             friendBuildTargetsMetaFiles,
-            outputFile
+            outputFile,
         )
 
         return true
@@ -126,7 +126,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
             val outputLibraryRuntimeDirectory = File(outputDir, module.kotlinCompilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
             JsLibraryUtils.copyJsFilesFromLibraries(
                 libraryFiles, outputLibraryRuntimeDirectory,
-                copySourceMap = module.k2JsCompilerArguments.sourceMap
+                copySourceMap = module.k2JsCompilerArguments.sourceMap,
             )
         }
     }
@@ -192,7 +192,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
     private fun addDependencyMetaFile(
         module: JpsModule,
         result: MutableList<String>,
-        isTests: Boolean
+        isTests: Boolean,
     ) {
         val dependencyBuildTarget = kotlinContext.targetsBinding[ModuleBuildTarget(module, isTests)]
 
@@ -215,7 +215,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
         jpsIncrementalCache: JpsIncrementalCache,
         files: List<GeneratedFile>,
         changesCollector: ChangesCollector,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
     ) {
         super.updateCaches(dirtyFilesHolder, jpsIncrementalCache, files, changesCollector, environment)
 

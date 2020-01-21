@@ -41,7 +41,7 @@ class DiagnosticReporterByTrackingStrategy(
     val psiKotlinCall: PSIKotlinCall,
     val dataFlowValueFactory: DataFlowValueFactory,
     val allDiagnostics: List<KotlinCallDiagnostic>,
-    private val smartCastManager: SmartCastManager
+    private val smartCastManager: SmartCastManager,
 ) : DiagnosticReporter {
     private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -56,7 +56,7 @@ class DiagnosticReporterByTrackingStrategy(
             VisibilityError::class.java -> tracingStrategy.invisibleMember(trace, (diagnostic as VisibilityError).invisibleMember)
             NoValueForParameter::class.java -> tracingStrategy.noValueForParameter(
                 trace,
-                (diagnostic as NoValueForParameter).parameterDescriptor
+                (diagnostic as NoValueForParameter).parameterDescriptor,
             )
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
             AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
@@ -172,8 +172,8 @@ class DiagnosticReporterByTrackingStrategy(
                 diagnostic.argument.psiExpression?.let {
                     trace.report(
                         UNSUPPORTED_FEATURE.on(
-                            it, LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to context.languageVersionSettings
-                        )
+                            it, LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to context.languageVersionSettings,
+                        ),
                     )
                 }
 
@@ -202,8 +202,8 @@ class DiagnosticReporterByTrackingStrategy(
             NamedArgumentNotAllowed::class.java -> trace.report(
                 NAMED_ARGUMENTS_NOT_ALLOWED.on(
                     nameReference,
-                    if ((diagnostic as NamedArgumentNotAllowed).descriptor is FunctionInvokeDescriptor) INVOKE_ON_FUNCTION_TYPE else NON_KOTLIN_FUNCTION
-                )
+                    if ((diagnostic as NamedArgumentNotAllowed).descriptor is FunctionInvokeDescriptor) INVOKE_ON_FUNCTION_TYPE else NON_KOTLIN_FUNCTION,
+                ),
             )
             ArgumentPassedTwice::class.java -> trace.report(ARGUMENT_PASSED_TWICE.on(nameReference))
         }
@@ -226,13 +226,13 @@ class DiagnosticReporterByTrackingStrategy(
                 val context = context.replaceDataFlowInfo(expressionArgument.dataFlowInfoBeforeThisArgument)
                 val argumentExpression = KtPsiUtil.getLastElementDeparenthesized(
                     expressionArgument.valueArgument.getArgumentExpression(),
-                    context.statementFilter
+                    context.statementFilter,
                 )
                 val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
                 val call = if (call.callElement is KtBinaryExpression) null else call
                 smartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
-                    recordExpressionType = false
+                    recordExpressionType = false,
                 )
             }
             is ReceiverExpressionKotlinCallArgument -> {
@@ -241,7 +241,7 @@ class DiagnosticReporterByTrackingStrategy(
                 val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, context)
                 smartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
-                    recordExpressionType = true
+                    recordExpressionType = true,
                 )
             }
             else -> null
@@ -302,8 +302,8 @@ class DiagnosticReporterByTrackingStrategy(
                         Errors.TYPE_MISMATCH.on(
                             deparenthesized,
                             constraintError.upperKotlinType,
-                            constraintError.lowerKotlinType
-                        )
+                            constraintError.lowerKotlinType,
+                        ),
                     )
                 }
 
@@ -314,8 +314,8 @@ class DiagnosticReporterByTrackingStrategy(
                             Errors.TYPE_MISMATCH.on(
                                 it,
                                 constraintError.upperKotlinType,
-                                constraintError.lowerKotlinType
-                            )
+                                constraintError.lowerKotlinType,
+                            ),
                         )
                     }
                 }
@@ -326,8 +326,8 @@ class DiagnosticReporterByTrackingStrategy(
                         UPPER_BOUND_VIOLATED.on(
                             typeArgumentReference,
                             constraintError.upperKotlinType,
-                            constraintError.lowerKotlinType
-                        )
+                            constraintError.lowerKotlinType,
+                        ),
                     )
                 }
 
@@ -344,8 +344,8 @@ class DiagnosticReporterByTrackingStrategy(
                         TYPE_MISMATCH.on(
                             expression,
                             constraintError.upperKotlinType,
-                            constraintError.lowerKotlinType
-                        )
+                            constraintError.lowerKotlinType,
+                        ),
                     )
                 }
             }
@@ -362,8 +362,8 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.reportDiagnosticOnce(
                         NEW_INFERENCE_ERROR.on(
                             expression,
-                            "Capture type from subtyping ${capturedError.constraintType} for variable ${capturedError.typeVariable}"
-                        )
+                            "Capture type from subtyping ${capturedError.constraintType} for variable ${capturedError.typeVariable}",
+                        ),
                     )
                 }
             }

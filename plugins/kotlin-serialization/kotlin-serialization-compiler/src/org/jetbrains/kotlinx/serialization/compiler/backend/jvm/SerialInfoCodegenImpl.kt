@@ -44,24 +44,29 @@ class SerialInfoCodegenImpl(val codegen: ImplementationBodyCodegen, val thisClas
         props.forEach { prop ->
             val propType = codegen.typeMapper.mapType(prop.type)
             val propFieldName = "_" + prop.name.identifier
-            codegen.v.newField(OtherOrigin(codegen.myClass.psiOrParent), Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC,
-                               propFieldName, propType.descriptor, null, null)
+            codegen.v.newField(
+                OtherOrigin(codegen.myClass.psiOrParent), Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC,
+                propFieldName, propType.descriptor, null, null,
+            )
             val f = SimpleFunctionDescriptorImpl.create(thisClass, Annotations.EMPTY, prop.name, CallableMemberDescriptor.Kind.SYNTHESIZED, thisClass.source)
             f.initialize(null, thisClass.thisAsReceiverParameter, emptyList(), emptyList(), prop.type, Modality.FINAL, Visibilities.PUBLIC)
-            codegen.generateMethod(f, { _, _ ->
-                load(0, thisAsmType)
-                getfield(thisAsmType.internalName, propFieldName, propType.descriptor)
-                areturn(propType)
-            })
+            codegen.generateMethod(
+                f,
+                { _, _ ->
+                    load(0, thisAsmType)
+                    getfield(thisAsmType.internalName, propFieldName, propType.descriptor)
+                    areturn(propType)
+                },
+            )
         }
     }
 
     private fun generateConstructor(props: List<PropertyDescriptor>) {
         val constr = ClassConstructorDescriptorImpl.createSynthesized(
-                thisClass,
-                Annotations.EMPTY,
-                false,
-                thisClass.source
+            thisClass,
+            Annotations.EMPTY,
+            false,
+            thisClass.source,
         )
         val args = mutableListOf<ValueParameterDescriptor>()
         var i = 0
@@ -69,26 +74,29 @@ class SerialInfoCodegenImpl(val codegen: ImplementationBodyCodegen, val thisClas
             args.add(ValueParameterDescriptorImpl(constr, null, i++, Annotations.EMPTY, prop.name, prop.type, false, false, false, null, constr.source))
         }
         constr.initialize(
-                args,
-                Visibilities.PUBLIC
+            args,
+            Visibilities.PUBLIC,
         )
 
         constr.returnType = thisClass.defaultType
 
-        codegen.generateMethod(constr, { _, _ ->
-            load(0, thisAsmType)
-            invokespecial("java/lang/Object", "<init>", "()V", false)
-            var varOffset = 1
-            props.forEach { prop ->
-                val propType = codegen.typeMapper.mapType(prop.type)
-                val propFieldName = "_" + prop.name.identifier
+        codegen.generateMethod(
+            constr,
+            { _, _ ->
                 load(0, thisAsmType)
-                load(varOffset, propType)
-                putfield(thisAsmType.internalName, propFieldName, propType.descriptor)
-                varOffset += propType.size
-            }
-            areturn(Type.VOID_TYPE)
-        })
+                invokespecial("java/lang/Object", "<init>", "()V", false)
+                var varOffset = 1
+                props.forEach { prop ->
+                    val propType = codegen.typeMapper.mapType(prop.type)
+                    val propFieldName = "_" + prop.name.identifier
+                    load(0, thisAsmType)
+                    load(varOffset, propType)
+                    putfield(thisAsmType.internalName, propFieldName, propType.descriptor)
+                    varOffset += propType.size
+                }
+                areturn(Type.VOID_TYPE)
+            },
+        )
     }
 
     companion object {

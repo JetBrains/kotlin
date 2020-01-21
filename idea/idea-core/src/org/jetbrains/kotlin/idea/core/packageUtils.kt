@@ -166,7 +166,7 @@ fun findOrCreateDirectoryForPackage(module: Module, packageName: String): PsiDir
         val sourceDirectories = directoryList.toTypedArray()
         DirectoryChooserUtil.selectDirectory(
             project, sourceDirectories, null,
-            File.separatorChar + packageName.replace('.', File.separatorChar)
+            File.separatorChar + packageName.replace('.', File.separatorChar),
         ) ?: return null
     }
 

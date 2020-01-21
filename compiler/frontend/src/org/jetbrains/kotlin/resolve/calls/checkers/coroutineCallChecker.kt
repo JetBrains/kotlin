@@ -100,15 +100,15 @@ object CoroutineSuspendCallChecker : CallChecker {
                     context.trace.report(
                         Errors.UNSUPPORTED.on(
                             reportOn,
-                            "experimental coroutineContext of release coroutine: use kotlin.coroutines.coroutineContext instead"
-                        )
+                            "experimental coroutineContext of release coroutine: use kotlin.coroutines.coroutineContext instead",
+                        ),
                     )
                 }
 
                 context.trace.record(
                     BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL,
                     resolvedCall.call,
-                    enclosingSuspendFunction
+                    enclosingSuspendFunction,
                 )
 
                 checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
@@ -121,14 +121,14 @@ object CoroutineSuspendCallChecker : CallChecker {
                     is FunctionDescriptor -> context.trace.report(
                         Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(
                             reportOn,
-                            resolvedCall.candidateDescriptor
-                        )
+                            resolvedCall.candidateDescriptor,
+                        ),
                     )
                     is PropertyDescriptor -> context.trace.report(
                         Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS.on(
                             reportOn,
-                            resolvedCall.candidateDescriptor
-                        )
+                            resolvedCall.candidateDescriptor,
+                        ),
                     )
                 }
             }
@@ -179,7 +179,7 @@ private fun checkRestrictsSuspension(
     enclosingSuspendCallableDescriptor: CallableDescriptor,
     resolvedCall: ResolvedCall<*>,
     reportOn: PsiElement,
-    context: CallCheckerContext
+    context: CallCheckerContext,
 ) {
     fun ReceiverValue.isRestrictsSuspensionReceiver() = type.isRestrictsSuspensionReceiver(context.languageVersionSettings)
 

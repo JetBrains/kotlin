@@ -26,7 +26,7 @@ class TypeDeserializer(
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     private val debugName: String,
     private val containerPresentableName: String,
-    var experimentalSuspendFunctionTypeEncountered: Boolean = false
+    var experimentalSuspendFunctionTypeEncountered: Boolean = false,
 ) {
     private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues { fqNameIndex ->
         computeClassDescriptor(fqNameIndex)
@@ -114,7 +114,7 @@ class TypeDeserializer(
             proto.hasTypeParameter() ->
                 typeParameterTypeConstructor(proto.typeParameter)
                     ?: ErrorUtils.createErrorTypeConstructor(
-                        "Unknown type parameter ${proto.typeParameter}. Please try recompiling module containing \"$containerPresentableName\""
+                        "Unknown type parameter ${proto.typeParameter}. Please try recompiling module containing \"$containerPresentableName\"",
                     )
             proto.hasTypeParameterName() -> {
                 val container = c.containingDeclaration
@@ -131,7 +131,7 @@ class TypeDeserializer(
         annotations: Annotations,
         functionTypeConstructor: TypeConstructor,
         arguments: List<TypeProjection>,
-        nullable: Boolean
+        nullable: Boolean,
     ): SimpleType {
         val result = when (functionTypeConstructor.parameters.size - arguments.size) {
             0 -> createSuspendFunctionTypeForBasicCase(annotations, functionTypeConstructor, arguments, nullable)
@@ -143,7 +143,7 @@ class TypeDeserializer(
                         annotations,
                         functionTypeConstructor.builtIns.getSuspendFunction(arity).typeConstructor,
                         arguments,
-                        nullable
+                        nullable,
                     )
                 } else {
                     null
@@ -153,7 +153,7 @@ class TypeDeserializer(
         }
         return result ?: ErrorUtils.createErrorTypeWithArguments(
             "Bad suspend function in metadata with constructor: $functionTypeConstructor",
-            arguments
+            arguments,
         )
     }
 
@@ -161,7 +161,7 @@ class TypeDeserializer(
         annotations: Annotations,
         functionTypeConstructor: TypeConstructor,
         arguments: List<TypeProjection>,
-        nullable: Boolean
+        nullable: Boolean,
     ): SimpleType? {
         val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
         return if (!functionType.isFunctionType) null
@@ -195,7 +195,7 @@ class TypeDeserializer(
 
     private fun createSimpleSuspendFunctionType(
         funType: KotlinType,
-        suspendReturnType: KotlinType
+        suspendReturnType: KotlinType,
     ): SimpleType {
         return createFunctionType(
             funType.builtIns,
@@ -205,7 +205,7 @@ class TypeDeserializer(
             // TODO: names
             null,
             suspendReturnType,
-            suspendFunction = true
+            suspendFunction = true,
         ).makeNullableAsSpecified(funType.isMarkedNullable)
     }
 

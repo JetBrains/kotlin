@@ -29,7 +29,7 @@ class KotlinNameSuggestionProvider : NameSuggestionProvider {
     override fun getSuggestedNames(
         element: PsiElement,
         nameSuggestionContext: PsiElement?,
-        result: MutableSet<String>
+        result: MutableSet<String>,
     ): SuggestedNameInfo? {
         if (element is KtCallableDeclaration) {
             val context = nameSuggestionContext ?: element.parent
@@ -71,7 +71,7 @@ class KotlinNameSuggestionProvider : NameSuggestionProvider {
                         name,
                         JavaCodeStyleManager.getInstance(element.project).getVariableKind(psiVariable),
                         psiVariable.name,
-                        psiVariable.type
+                        psiVariable.type,
                     )
                 }
             }

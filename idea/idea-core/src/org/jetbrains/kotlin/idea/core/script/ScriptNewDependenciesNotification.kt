@@ -31,7 +31,7 @@ fun VirtualFile.removeScriptDependenciesNotificationPanel(project: Project) {
 fun VirtualFile.addScriptDependenciesNotificationPanel(
     compilationConfigurationResult: ScriptCompilationConfigurationWrapper,
     project: Project,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     withSelectedEditor(project) { manager ->
         val existingPanel = notificationPanel
@@ -80,7 +80,7 @@ private var FileEditor.notificationPanel: NewScriptDependenciesNotificationPanel
 private class NewScriptDependenciesNotificationPanel(
     val onClick: () -> Unit,
     val compilationConfigurationResult: ScriptCompilationConfigurationWrapper,
-    project: Project
+    project: Project,
 ) : EditorNotificationPanel() {
 
     init {

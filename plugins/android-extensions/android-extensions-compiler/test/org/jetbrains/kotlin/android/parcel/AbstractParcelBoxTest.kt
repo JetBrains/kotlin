@@ -145,7 +145,7 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
                 "-classpath",
                 (libraryClasspath + dirForTestClasses).joinToString(File.pathSeparator),
                 JUnitCore::class.java.name,
-                JUNIT_GENERATED_TEST_CLASS_FQNAME
+                JUNIT_GENERATED_TEST_CLASS_FQNAME,
             ).inheritIO().start()
 
             process.waitFor(3, TimeUnit.MINUTES)

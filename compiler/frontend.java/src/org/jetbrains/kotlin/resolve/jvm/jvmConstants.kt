@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
 fun getCompileTimeConstant(
-        expression: KtExpression,
-        bindingContext: BindingContext,
-        takeUpConstValsAsConst: Boolean,
-        shouldInlineConstVals: Boolean
+    expression: KtExpression,
+    bindingContext: BindingContext,
+    takeUpConstValsAsConst: Boolean,
+    shouldInlineConstVals: Boolean,
 ): ConstantValue<*>? {
     val compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
     if (compileTimeValue == null || compileTimeValue.usesNonConstValAsConstant) {

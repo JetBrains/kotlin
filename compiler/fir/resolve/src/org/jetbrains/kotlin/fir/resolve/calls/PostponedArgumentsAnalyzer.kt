@@ -31,7 +31,7 @@ interface LambdaAnalyzer {
         parameters: List<ConeKotlinType>,
         expectedReturnType: ConeKotlinType?, // null means, that return type is not proper i.e. it depends on some type variables
         rawReturnType: ConeKotlinType,
-        stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
+        stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
     ): Pair<List<FirStatement>, InferenceSession>
 }
 
@@ -41,13 +41,13 @@ class PostponedArgumentsAnalyzer(
     private val components: InferenceComponents,
     private val candidate: Candidate,
     private val replacements: MutableMap<FirExpression, FirExpression>,
-    private val callResolver: FirCallResolver
+    private val callResolver: FirCallResolver,
 ) {
 
     fun analyze(
         c: PostponedArgumentsAnalyzer.Context,
 //        resolutionCallbacks: KotlinResolutionCallbacks,
-        argument: PostponedResolvedAtomMarker
+        argument: PostponedResolvedAtomMarker,
         //diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
         when (argument) {
@@ -80,14 +80,14 @@ class PostponedArgumentsAnalyzer(
             candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
                 FirErrorNamedReferenceImpl(
                     callableReferenceAccess.source,
-                    FirUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
+                    FirUnresolvedReferenceError(callableReferenceAccess.calleeReference.name),
                 )
             else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, candidate)
         }
 
         val transformedCalleeReference = callableReferenceAccess.transformCalleeReference(
             StoreNameReference,
-            namedReference
+            namedReference,
         ).apply {
             if (candidate != null) {
                 replaceTypeRef(FirResolvedTypeRefImpl(null, candidate.resultingTypeForCallableReference!!))
@@ -99,7 +99,7 @@ class PostponedArgumentsAnalyzer(
 
     private fun analyzeLambda(
         c: PostponedArgumentsAnalyzer.Context,
-        lambda: ResolvedLambdaAtom//,
+        lambda: ResolvedLambdaAtom,//,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ) {
         val unitType = components.session.builtinTypes.unitType.type//Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
@@ -128,7 +128,7 @@ class PostponedArgumentsAnalyzer(
             parameters,
             expectedTypeForReturnArguments,
             rawReturnType,
-            stubsForPostponedVariables
+            stubsForPostponedVariables,
         )
 
         returnArguments.forEach { c.addSubsystemFromExpression(it) }
@@ -146,7 +146,7 @@ class PostponedArgumentsAnalyzer(
                 checkerSink,
                 isReceiver = false,
                 isDispatch = false,
-                isSafeCall = false
+                isSafeCall = false,
             )
 //            resolveKtPrimitive(
 //                c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false
@@ -159,12 +159,12 @@ class PostponedArgumentsAnalyzer(
             c.getBuilder().addSubtypeConstraint(
                 lambdaReturnType,
                 unitType, /*LambdaArgumentConstraintPosition(lambda)*/
-                SimpleConstraintSystemConstraintPosition
+                SimpleConstraintSystemConstraintPosition,
             )
             c.getBuilder().addSubtypeConstraint(
                 unitType,
                 lambdaReturnType, /*LambdaArgumentConstraintPosition(lambda)*/
-                SimpleConstraintSystemConstraintPosition
+                SimpleConstraintSystemConstraintPosition,
             )
         }
 

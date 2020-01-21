@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class IrBuiltinsPackageFragmentDescriptorImpl(
     val containingModule: ModuleDescriptor,
-    override val fqName: FqName
+    override val fqName: FqName,
 ) : PackageFragmentDescriptor {
     private val shortName = fqName.shortName()
 

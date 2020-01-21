@@ -84,7 +84,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             commonSources = emptyList(),
             javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
             classpath = listOf(outDir, ForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
-            friendDirs = emptyList()
+            friendDirs = emptyList(),
         )
 
         val args = K2JVMCompilerArguments().apply {
@@ -123,7 +123,13 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
         if (header != null) {
             register(
                 IncrementalDataProvider::class.java,
-                IncrementalDataProviderImpl(header!!, packageParts, JsMetadataVersion.INSTANCE.toArray(), emptyMap(), emptyMap()) // TODO pass correct metadata
+                IncrementalDataProviderImpl(
+                    header!!,
+                    packageParts,
+                    JsMetadataVersion.INSTANCE.toArray(),
+                    emptyMap(),
+                    emptyMap(),
+                ), // TODO pass correct metadata
             )
         }
 
@@ -241,7 +247,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val exitCode: String,
         val errors: List<String>,
         val compiledFiles: Iterable<File>,
-        val lookups: Map<File, List<LookupInfo>>
+        val lookups: Map<File, List<LookupInfo>>,
     )
 
     private fun make(filesToCompile: Iterable<File>): CompilerOutput {
@@ -293,8 +299,8 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
                     val name =
                             when {
                                 rest.startsWith(it.name) || // same name
-                                rest.startsWith("$" + it.name) || // backing field
-                                DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
+                                        rest.startsWith("$" + it.name) || // backing field
+                                        DECLARATION_STARTS_WITH.any { rest.startsWith(it) }, // it's declaration
                                 -> ""
                                 else -> "(" + it.name + ")"
                             }

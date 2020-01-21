@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class PreliminaryDeclarationVisitor(
     val declaration: KtDeclaration,
-    val languageVersionSettings: LanguageVersionSettings
+    val languageVersionSettings: LanguageVersionSettings,
 ) : AssignedVariablesSearcher() {
 
     override fun writers(variableDescriptor: VariableDescriptor): MutableSet<Writer> {
@@ -55,7 +55,7 @@ class PreliminaryDeclarationVisitor(
             if (trace.get(BindingContext.PRELIMINARY_VISITOR, visitorOwner) != null) return
             trace.record(
                 BindingContext.PRELIMINARY_VISITOR, visitorOwner,
-                PreliminaryDeclarationVisitor(visitorOwner, languageVersionSettings)
+                PreliminaryDeclarationVisitor(visitorOwner, languageVersionSettings),
             )
         }
 

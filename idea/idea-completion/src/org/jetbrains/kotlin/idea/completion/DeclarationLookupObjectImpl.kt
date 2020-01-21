@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
  * Position will be used for sorting
  */
 abstract class DeclarationLookupObjectImpl(
-    final override val descriptor: DeclarationDescriptor?
+    final override val descriptor: DeclarationDescriptor?,
 ) : DeclarationLookupObject {
     override val name: Name?
         get() = descriptor?.name ?: (psiElement as? PsiNamedElement)?.name?.let { Name.identifier(it) }

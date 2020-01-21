@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 abstract class KotlinVersionStringAnnotationValueChecker(
-    private val annotationFqName: FqName
+    private val annotationFqName: FqName,
 ) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val annotation = descriptor.annotations.findAnnotation(annotationFqName) ?: return
@@ -47,7 +47,7 @@ abstract class KotlinVersionStringAnnotationValueChecker(
         annotation: AnnotationDescriptor,
         version: String,
         diagnosticHolder: DiagnosticSink,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ) {
     }
 
@@ -62,7 +62,7 @@ object SinceKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChe
         annotation: AnnotationDescriptor,
         version: String,
         diagnosticHolder: DiagnosticSink,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         val apiVersion = ApiVersion.parse(version)
         val specified = languageVersionSettings.apiVersion
@@ -70,8 +70,8 @@ object SinceKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChe
             diagnosticHolder.report(
                 Errors.NEWER_VERSION_IN_SINCE_KOTLIN.on(
                     annotation.source.getPsi() ?: declaration,
-                    specified.versionString
-                )
+                    specified.versionString,
+                ),
             )
         }
     }

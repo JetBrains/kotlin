@@ -10,7 +10,7 @@ import java.io.File
 
 class ComplementarySourceFilesMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
+    private val pathConverter: FileToPathConverter,
 ) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
 
     operator fun set(sourceFile: File, complementaryFiles: Collection<File>) {

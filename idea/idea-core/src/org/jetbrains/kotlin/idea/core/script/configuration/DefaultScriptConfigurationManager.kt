@@ -167,7 +167,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
         file: KtFile,
         isFirstLoad: Boolean,
         loadEvenWillNotBeApplied: Boolean,
-        forceSync: Boolean
+        forceSync: Boolean,
     ) {
         val virtualFile = file.originalFile.virtualFile ?: return
 
@@ -233,7 +233,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
     private fun suggestOrSaveConfiguration(
         file: VirtualFile,
         newResult: ScriptConfigurationSnapshot,
-        skipNotification: Boolean
+        skipNotification: Boolean,
     ) {
         saveLock.withLock {
             debug(file) { "configuration received = $newResult" }
@@ -279,7 +279,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                                 rootsIndexer.transaction {
                                     setAppliedConfiguration(file, newResult)
                                 }
-                            }
+                            },
                         )
                     }
                 }
@@ -289,7 +289,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 
     private fun saveReports(
         file: VirtualFile,
-        newReports: List<ScriptDiagnostic>
+        newReports: List<ScriptDiagnostic>,
     ) {
         val oldReports = IdeScriptReportSink.getReports(file)
         if (oldReports != newReports) {

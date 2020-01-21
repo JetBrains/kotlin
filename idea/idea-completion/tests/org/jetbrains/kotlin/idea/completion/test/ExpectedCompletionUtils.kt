@@ -83,7 +83,7 @@ object ExpectedCompletionUtils {
             const val MODULE_NAME: String = "module"
             val validKeys: Set<String> = setOf(
                 LOOKUP_STRING, ALL_LOOKUP_STRINGS, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT,
-                PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES, MODULE_NAME
+                PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES, MODULE_NAME,
             )
         }
     }
@@ -134,7 +134,7 @@ object ExpectedCompletionUtils {
         RUNTIME_TYPE,
         COMPLETION_TYPE_PREFIX,
         LightClassComputationControl.LIGHT_CLASS_DIRECTIVE,
-        AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE
+        AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE,
     )
 
     fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> = when {
@@ -210,7 +210,7 @@ object ExpectedCompletionUtils {
         expected: Array<CompletionProposal>,
         items: Array<LookupElement>,
         checkOrder: Boolean,
-        nothingElse: Boolean
+        nothingElse: Boolean,
     ) {
         val itemsInformation = getItemsInformation(items)
         val allItemsString = listToString(itemsInformation)
@@ -230,7 +230,7 @@ object ExpectedCompletionUtils {
 
                     Assert.assertTrue(
                         "Invalid order of existent elements in $allItemsString",
-                        !checkOrder || index > indexOfPrevious
+                        !checkOrder || index > indexOfPrevious,
                     )
                     indexOfPrevious = index
 
@@ -259,7 +259,7 @@ object ExpectedCompletionUtils {
         if (prefixedInt != null) {
             Assert.assertNull(
                 "There shouldn't be $NUMBER_LINE_PREFIX and $platformNumberPrefix prefixes set in same time",
-                InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX)
+                InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX),
             )
             return prefixedInt
         }
@@ -275,7 +275,7 @@ object ExpectedCompletionUtils {
             for (proposal in itemsInformation) {
                 Assert.assertFalse(
                     "Unexpected '$unexpectedProposal' presented in\n$allItemsString",
-                    proposal.matches(unexpectedProposal)
+                    proposal.matches(unexpectedProposal),
                 )
             }
         }

@@ -25,14 +25,14 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
         val foreignAnnotationsJar = MockLibraryUtil.compileJvmLibraryToJar("third-party/annotations", "foreign-annotations")
         val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
             "idea/testData/highlighterJsr305/library", "jsr305-library",
-            extraClasspath = listOf(foreignAnnotationsJar.absolutePath)
+            extraClasspath = listOf(foreignAnnotationsJar.absolutePath),
         )
         return object : KotlinJdkAndLibraryProjectDescriptor(
             listOf(
                 ForTestCompileRuntime.runtimeJarForTests(),
                 foreignAnnotationsJar,
-                libraryJar
-            )
+                libraryJar,
+            ),
         ) {
             override fun configureModule(module: Module, model: ModifiableRootModel) {
                 super.configureModule(module, model)

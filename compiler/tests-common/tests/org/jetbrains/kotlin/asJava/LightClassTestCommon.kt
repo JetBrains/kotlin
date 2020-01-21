@@ -22,7 +22,7 @@ object LightClassTestCommon {
         expectedFile: File,
         testDataFile: File,
         findLightClass: (String) -> PsiClass?,
-        normalizeText: (String) -> String
+        normalizeText: (String) -> String,
     ) {
         val text = FileUtil.loadFile(testDataFile, true)
         val matcher = SUBJECT_FQ_NAME_PATTERN.matcher(text)

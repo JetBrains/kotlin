@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.name.Name
 class FirLazyNestedClassifierScope(
     val classId: ClassId,
     private val existingNames: List<Name>,
-    private val symbolProvider: FirSymbolProvider
+    private val symbolProvider: FirSymbolProvider,
 ) : FirScope() {
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         if (name !in existingNames) {
             return ProcessorAction.NONE

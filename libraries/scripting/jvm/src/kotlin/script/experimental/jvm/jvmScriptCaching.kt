@@ -16,11 +16,11 @@ interface CompiledJvmScriptsCache {
 
     object NoCache : CompiledJvmScriptsCache {
         override fun get(
-            script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
+            script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration,
         ): CompiledScript<*>? = null
 
         override fun store(
-            compiledScript: CompiledScript<*>, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
+            compiledScript: CompiledScript<*>, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration,
         ) {
         }
     }

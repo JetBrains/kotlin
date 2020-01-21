@@ -26,7 +26,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
             if (compiledScript !is KJvmCompiledScript<*>)
@@ -44,7 +44,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
-                e.asDiagnostics("Cannot generate script classes: ${e.message}", path = compiledScript.sourceLocationId)
+                e.asDiagnostics("Cannot generate script classes: ${e.message}", path = compiledScript.sourceLocationId),
             )
         }
     }
@@ -60,7 +60,7 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
     val dependenciesForMain = scriptCompilationClasspathFromContext(
         KotlinPaths.Jar.ScriptingLib.baseName, KotlinPaths.Jar.ScriptingJvmLib.baseName, KotlinPaths.Jar.CoroutinesCore.baseName,
         classLoader = this::class.java.classLoader,
-        wholeClasspath = false
+        wholeClasspath = false,
     )
     val dependencies = (dependenciesFromScript + dependenciesForMain).distinct()
     FileOutputStream(outputJar).use { fileStream ->
@@ -94,7 +94,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
             if (compiledScript !is KJvmCompiledScript<*>)
@@ -103,7 +103,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
-                e.asDiagnostics("Cannot generate script jar: ${e.message}", path = compiledScript.sourceLocationId)
+                e.asDiagnostics("Cannot generate script jar: ${e.message}", path = compiledScript.sourceLocationId),
             )
         }
     }

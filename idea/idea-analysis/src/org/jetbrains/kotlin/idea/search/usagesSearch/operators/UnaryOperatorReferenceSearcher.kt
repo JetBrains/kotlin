@@ -35,14 +35,14 @@ class UnaryOperatorReferenceSearcher(
     searchScope: SearchScope,
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
-    options: KotlinReferencesSearchOptions
+    options: KotlinReferencesSearchOptions,
 ) : OperatorReferenceSearcher<KtUnaryExpression>(
     targetFunction,
     searchScope,
     consumer,
     optimizer,
     options,
-    wordsToSearch = listOf(operationToken.value)
+    wordsToSearch = listOf(operationToken.value),
 ) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {

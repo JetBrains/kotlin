@@ -39,7 +39,7 @@ import java.io.File
 open class IncrementalJsCache(
     cachesDir: File,
     pathConverter: FileToPathConverter,
-    serializerProtocol: SerializerExtensionProtocol
+    serializerProtocol: SerializerExtensionProtocol,
 ) : AbstractIncrementalCache<FqName>(cachesDir, pathConverter) {
     companion object {
         private const val TRANSLATION_RESULT_MAP = "translation-result"
@@ -197,7 +197,7 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
 private class TranslationResultMap(
     storageFile: File,
     private val pathConverter: FileToPathConverter,
-    private val protoData: ProtoDataProvider
+    private val protoData: ProtoDataProvider,
 ) :
     BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer) {
     override fun dumpValue(value: TranslationResultValue): String =
@@ -264,7 +264,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
 
 private class IrTranslationResultMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
+    private val pathConverter: FileToPathConverter,
 ) :
     BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer) {
     override fun dumpValue(value: IrTranslationResultValue): String =
@@ -283,7 +283,7 @@ private class IrTranslationResultMap(
         newStrings: ByteArray,
         newDeclarations: ByteArray,
         newBodies: ByteArray,
-        fqn: ByteArray
+        fqn: ByteArray,
     ) {
         storage[pathConverter.toPath(sourceFile)] =
             IrTranslationResultValue(newFiledata, newSymbols, newTypes, newStrings, newDeclarations, newBodies, fqn)
@@ -345,7 +345,7 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
 
 private class InlineFunctionsMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
+    private val pathConverter: FileToPathConverter,
 ) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
     fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
         val key = pathConverter.toPath(srcFile)

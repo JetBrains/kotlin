@@ -95,14 +95,14 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         scriptingClassGetter(
             type,
             KotlinScriptDefinition::class, // Assuming that the KotlinScriptDefinition class is loaded in the proper classloader
-            hostConfiguration
+            hostConfiguration,
         )
 }
 
 
 class KotlinScriptDefinitionAdapterFromNewAPI(
     override val scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    override val hostConfiguration: ScriptingHostConfiguration
+    override val hostConfiguration: ScriptingHostConfiguration,
 ) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
 
     override val name: String get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: super.name

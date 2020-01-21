@@ -49,7 +49,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val toString = "\"\$first..\$last\""
 
             out.println(
-"""/**
+                """/**
  * A range of values of type `$t`.
  */
 public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t> {
@@ -72,7 +72,8 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
         /** An empty range of values of type $t. */
         public val EMPTY: $range = $range($emptyBounds)
     }
-}""")
+}""",
+            )
             out.println()
         }
     }

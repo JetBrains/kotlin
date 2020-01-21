@@ -41,7 +41,7 @@ interface DumpedPluginModel {
 
 class DumpedPluginModelImpl(
     override val className: String,
-    override val args: Array<*>
+    override val args: Array<*>,
 ) : DumpedPluginModel, Serializable {
     constructor(clazz: Class<*>, vararg args: Any?) : this(clazz.canonicalName, args)
 }
@@ -71,9 +71,10 @@ abstract class AnnotationBasedPluginProjectResolverExtension<T : AnnotationBased
     override fun getExtraProjectModelClasses() = setOf(modelClass)
 
     override fun getToolingExtensionsClasses() = setOf(
-            modelClass,
-            AnnotationBasedPluginProjectResolverExtension::class.java,
-            Unit::class.java)
+        modelClass,
+        AnnotationBasedPluginProjectResolverExtension::class.java,
+        Unit::class.java,
+    )
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         val model = resolverCtx.getExtraProject(gradleModule, modelClass)

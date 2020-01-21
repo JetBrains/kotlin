@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 class FirNamedReferenceWithCandidate(
     source: FirSourceElement?,
     name: Name,
-    val candidate: Candidate
+    val candidate: Candidate,
 ) : FirSimpleNamedReference(source, name, candidate.symbol) {
     override val candidateSymbol: AbstractFirBasedSymbol<*>
         get() = candidate.symbol

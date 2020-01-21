@@ -44,7 +44,7 @@ class CompositePlatformDiagnosticSuppressor(private val suppressors: List<Platfo
 }
 
 class PlatformDiagnosticSuppressorClashesResolver : PlatformExtensionsClashResolver<PlatformDiagnosticSuppressor>(
-    PlatformDiagnosticSuppressor::class.java
+    PlatformDiagnosticSuppressor::class.java,
 ) {
     override fun resolveExtensionsClash(extensions: List<PlatformDiagnosticSuppressor>): PlatformDiagnosticSuppressor =
         CompositePlatformDiagnosticSuppressor(extensions)

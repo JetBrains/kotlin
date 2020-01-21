@@ -47,7 +47,7 @@ interface IncrementalCacheCommon {
  */
 abstract class AbstractIncrementalCache<ClassName>(
     workingDir: File,
-    protected val pathConverter: FileToPathConverter
+    protected val pathConverter: FileToPathConverter,
 ) : BasicMapsOwner(workingDir), IncrementalCacheCommon {
     companion object {
         private val SUBTYPES = "subtypes"
@@ -157,7 +157,7 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     protected class ClassFqNameToSourceMap(
         storageFile: File,
-        private val pathConverter: FileToPathConverter
+        private val pathConverter: FileToPathConverter,
     ) :
         BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
         operator fun set(fqName: FqName, sourceFile: File) {

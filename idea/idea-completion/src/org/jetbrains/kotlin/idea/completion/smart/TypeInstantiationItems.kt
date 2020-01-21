@@ -54,12 +54,12 @@ class TypeInstantiationItems(
     val inheritorSearchScope: GlobalSearchScope,
     val lookupElementFactory: LookupElementFactory,
     val forOrdinaryCompletion: Boolean,
-    val indicesHelper: KotlinIndicesHelper
+    val indicesHelper: KotlinIndicesHelper,
 ) {
     fun addTo(
         items: MutableCollection<LookupElement>,
         inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
-        expectedInfos: Collection<ExpectedInfo>
+        expectedInfos: Collection<ExpectedInfo>,
     ) {
         val expectedInfosGrouped = LinkedHashMap<FuzzyType, MutableList<ExpectedInfo>>()
         for (expectedInfo in expectedInfos) {
@@ -78,7 +78,7 @@ class TypeInstantiationItems(
         items: MutableCollection<LookupElement>,
         inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
         fuzzyType: FuzzyType,
-        tail: Tail?
+        tail: Tail?,
     ) {
         if (fuzzyType.type.isFunctionType) return // do not show "object: ..." for function types
 
@@ -118,7 +118,7 @@ class TypeInstantiationItems(
         kotlinClassDescriptor: ClassDescriptor,
         typeArgs: List<TypeProjection>,
         freeParameters: Collection<TypeParameterDescriptor>,
-        tail: Tail?
+        tail: Tail?,
     ) {
         val _declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(resolutionFacade.project, descriptor) ?: return
         val declaration = if (_declaration is KtDeclaration)
@@ -233,7 +233,7 @@ class TypeInstantiationItems(
                     CallType.DEFAULT,
                     inputTypeArguments = false,
                     inputValueArguments = false,
-                    argumentsOnly = true
+                    argumentsOnly = true,
                 )
 
                 1 -> (lookupElementFactory.insertHandlerProvider
@@ -243,7 +243,7 @@ class TypeInstantiationItems(
                     CallType.DEFAULT,
                     inputTypeArguments = false,
                     inputValueArguments = true,
-                    argumentsOnly = true
+                    argumentsOnly = true,
                 )
             }
 
@@ -310,7 +310,7 @@ class TypeInstantiationItems(
         collection: MutableCollection<LookupElement>,
         classifier: ClassifierDescriptorWithTypeParameters,
         classDescriptor: ClassDescriptor?,
-        tail: Tail?
+        tail: Tail?,
     ) {
         if (classDescriptor?.kind == ClassKind.INTERFACE) {
             val samConstructor = run {
@@ -321,7 +321,7 @@ class TypeInstantiationItems(
                 }
                 scope.collectSyntheticStaticMembersAndConstructors(
                         resolutionFacade,
-                        DescriptorKindFilter.FUNCTIONS
+                        DescriptorKindFilter.FUNCTIONS,
                     ) { classifier.name == it }
                     .filterIsInstance<SamConstructorDescriptor>()
                     .singleOrNull() ?: return
@@ -337,7 +337,7 @@ class TypeInstantiationItems(
         classDescriptor: ClassDescriptor,
         typeArgs: List<TypeProjection>,
         private val freeParameters: Collection<TypeParameterDescriptor>,
-        private val tail: Tail?
+        private val tail: Tail?,
     ) : InheritanceItemsSearcher {
 
         private val baseHasTypeArgs = classDescriptor.declaredTypeParameters.isNotEmpty()
@@ -348,7 +348,7 @@ class TypeInstantiationItems(
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
                 val descriptor = inheritor.resolveToDescriptor(
-                    resolutionFacade
+                    resolutionFacade,
                 ) { toFromOriginalFileMapper.toSyntheticFile(it) } ?: continue
                 if (!visibilityFilter(descriptor)) continue
 

@@ -24,11 +24,11 @@ import java.util.*
 abstract class TypesWithOperatorDetector(
     private val name: Name,
     private val scope: LexicalScope,
-    private val indicesHelper: KotlinIndicesHelper?
+    private val indicesHelper: KotlinIndicesHelper?,
 ) {
     protected abstract fun checkIsSuitableByType(
         operator: FunctionDescriptor,
-        freeTypeParams: Collection<TypeParameterDescriptor>
+        freeTypeParams: Collection<TypeParameterDescriptor>,
     ): TypeSubstitutor?
 
     private val cache = HashMap<FuzzyType, Pair<FunctionDescriptor, TypeSubstitutor>?>()
@@ -100,12 +100,12 @@ abstract class TypesWithOperatorDetector(
 class TypesWithContainsDetector(
     scope: LexicalScope,
     indicesHelper: KotlinIndicesHelper?,
-    private val argumentType: KotlinType
+    private val argumentType: KotlinType,
 ) : TypesWithOperatorDetector(OperatorNameConventions.CONTAINS, scope, indicesHelper) {
 
     override fun checkIsSuitableByType(
         operator: FunctionDescriptor,
-        freeTypeParams: Collection<TypeParameterDescriptor>
+        freeTypeParams: Collection<TypeParameterDescriptor>,
     ): TypeSubstitutor? {
         val parameter = operator.valueParameters.single()
         val fuzzyParameterType = parameter.type.toFuzzyType(operator.typeParameters + freeTypeParams)
@@ -117,12 +117,12 @@ class TypesWithGetValueDetector(
     scope: LexicalScope,
     indicesHelper: KotlinIndicesHelper?,
     private val propertyOwnerType: FuzzyType,
-    private val propertyType: FuzzyType?
+    private val propertyType: FuzzyType?,
 ) : TypesWithOperatorDetector(OperatorNameConventions.GET_VALUE, scope, indicesHelper) {
 
     override fun checkIsSuitableByType(
         operator: FunctionDescriptor,
-        freeTypeParams: Collection<TypeParameterDescriptor>
+        freeTypeParams: Collection<TypeParameterDescriptor>,
     ): TypeSubstitutor? {
         val paramType = operator.valueParameters.first().type.toFuzzyType(freeTypeParams)
         val substitutor = paramType.checkIsSuperTypeOf(propertyOwnerType) ?: return null
@@ -138,12 +138,12 @@ class TypesWithGetValueDetector(
 class TypesWithSetValueDetector(
     scope: LexicalScope,
     indicesHelper: KotlinIndicesHelper?,
-    private val propertyOwnerType: FuzzyType
+    private val propertyOwnerType: FuzzyType,
 ) : TypesWithOperatorDetector(OperatorNameConventions.SET_VALUE, scope, indicesHelper) {
 
     override fun checkIsSuitableByType(
         operator: FunctionDescriptor,
-        freeTypeParams: Collection<TypeParameterDescriptor>
+        freeTypeParams: Collection<TypeParameterDescriptor>,
     ): TypeSubstitutor? {
         val paramType = operator.valueParameters.first().type.toFuzzyType(freeTypeParams)
         return paramType.checkIsSuperTypeOf(propertyOwnerType)

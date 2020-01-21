@@ -53,7 +53,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
         name: Name,
         ctx: LazyClassContext,
         declarationProvider: ClassMemberDeclarationProvider,
-        result: MutableSet<ClassDescriptor>
+        result: MutableSet<ClassDescriptor>,
     ) {
         if (thisDescriptor.annotations.hasAnnotation(serialInfoFqName) && name == SerialEntityNames.IMPL_NAME)
             result.add(KSerializerDescriptorResolver.addSerialInfoImplClass(thisDescriptor, declarationProvider, ctx))
@@ -78,7 +78,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     override fun generateSyntheticSecondaryConstructors(
         thisDescriptor: ClassDescriptor,
         bindingContext: BindingContext,
-        result: MutableCollection<ClassConstructorDescriptor>
+        result: MutableCollection<ClassConstructorDescriptor>,
     ) {
         if (thisDescriptor.isInternalSerializable) {
             // do not add synthetic deserialization constructor if .deserialize method is customized
@@ -92,7 +92,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
         name: Name,
         bindingContext: BindingContext,
         fromSupertypes: List<SimpleFunctionDescriptor>,
-        result: MutableCollection<SimpleFunctionDescriptor>
+        result: MutableCollection<SimpleFunctionDescriptor>,
     ) {
         KSerializerDescriptorResolver.generateSerializerMethods(thisDescriptor, fromSupertypes, name, result)
         KSerializerDescriptorResolver.generateCompanionObjectMethods(thisDescriptor, name, result)
@@ -103,7 +103,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
         name: Name,
         bindingContext: BindingContext,
         fromSupertypes: ArrayList<PropertyDescriptor>,
-        result: MutableSet<PropertyDescriptor>
+        result: MutableSet<PropertyDescriptor>,
     ) {
         KSerializerDescriptorResolver.generateDescriptorsForAnnotationImpl(thisDescriptor, fromSupertypes, result)
         KSerializerDescriptorResolver.generateSerializerProperties(thisDescriptor, fromSupertypes, name, result)

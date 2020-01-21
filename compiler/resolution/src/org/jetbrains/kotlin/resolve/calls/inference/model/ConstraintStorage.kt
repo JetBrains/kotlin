@@ -70,7 +70,7 @@ class Constraint(
     val typeHashCode: Int = type.hashCode(),
     val derivedFrom: Set<TypeVariableMarker>,
     val isNullabilityConstraint: Boolean,
-    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null
+    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -100,7 +100,7 @@ class InitialConstraint(
     val a: KotlinTypeMarker,
     val b: KotlinTypeMarker,
     val constraintKind: ConstraintKind, // see [checkConstraint]
-    val position: ConstraintPosition
+    val position: ConstraintPosition,
 ) {
     override fun toString(): String {
         val sign =
@@ -123,7 +123,7 @@ fun checkConstraint(
     context: TypeCheckerProviderContext,
     constraintType: KotlinTypeMarker,
     constraintKind: ConstraintKind,
-    resultType: KotlinTypeMarker
+    resultType: KotlinTypeMarker,
 ): Boolean {
 
 

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 open class FirDeclarationStatusImpl(
     override val visibility: Visibility,
-    override val modality: Modality?
+    override val modality: Modality?,
 ) : FirPureAbstractElement(), FirDeclarationStatus {
     override val source: FirSourceElement? get() = null
     protected var flags: Int = 0

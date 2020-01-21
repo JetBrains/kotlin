@@ -54,9 +54,10 @@ class KtFileClassProviderImpl(val project: Project) : KtFileClassProvider {
                 listOf(
                     KtLightClassForFacade.createForSyntheticFile(
                         PsiManager.getInstance(
-                            file.project
-                        ), fileClassFqName, file
-                    )
+                            file.project,
+                        ),
+                        fileClassFqName, file,
+                    ),
                 )
 
             jvmClassInfo.withJvmMultifileClass ->
@@ -64,7 +65,7 @@ class KtFileClassProviderImpl(val project: Project) : KtFileClassProvider {
 
             file.hasTopLevelCallables() ->
                 (kotlinAsJavaSupport as IDEKotlinAsJavaSupport).createLightClassForFileFacade(
-                    fileClassFqName, listOf(file), moduleInfo
+                    fileClassFqName, listOf(file), moduleInfo,
                 )
 
             else -> emptyList<PsiClass>()

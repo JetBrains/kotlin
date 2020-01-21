@@ -63,13 +63,14 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeArgument.typeRef.coneTypeUnsafe(),
-                    SimpleConstraintSystemConstraintPosition // TODO
+                    SimpleConstraintSystemConstraintPosition, // TODO
                 )
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeParameter.bounds.firstOrNull()?.coneTypeUnsafe()
-                        ?: sink.components.session.builtinTypes.nullableAnyType.type, //StandardClassIds.Any(sink.components.session.firSymbolProvider).constructType(emptyArray(), true),
-                    SimpleConstraintSystemConstraintPosition
+                        ?: sink.components.session.builtinTypes.nullableAnyType
+                            .type, //StandardClassIds.Any(sink.components.session.firSymbolProvider).constructType(emptyArray(), true),
+                    SimpleConstraintSystemConstraintPosition,
                 )
                 else -> assert(typeArgument == FirTypePlaceholderProjection) {
                     "Unexpected typeArgument: ${typeArgument.renderWithType()}"
@@ -83,7 +84,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     declaration: FirTypeParametersOwner,
     candidate: Candidate,
-    csBuilder: ConstraintSystemOperation
+    csBuilder: ConstraintSystemOperation,
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
 
     val typeParameters = declaration.typeParameters
@@ -97,7 +98,7 @@ fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     }
 
     fun TypeParameterBasedTypeVariable.addSubtypeConstraint(
-        upperBound: ConeKotlinType//,
+        upperBound: ConeKotlinType,//,
         //position: DeclaredUpperBoundConstraintPosition
     ) {
         csBuilder.addSubtypeConstraint(defaultType, toFreshVariables.substituteOrSelf(upperBound), FirDeclaredUpperBoundConstraintPosition())

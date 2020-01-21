@@ -137,7 +137,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
             project,
             arrayOf(scriptFile),
             JavaPsiFacade.getInstance(project).findPackage("dest")!!.directories[0],
-            false, true, null, null
+            false, true, null, null,
         ).run()
     }
 

@@ -85,7 +85,8 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
         val text = editor.document.text
         editor.selectionModel.setSelection(
             initialMarker?.let { marker -> text.indexOf(marker) } ?: 0,
-            finalMarker?.let { marker -> text.indexOf(marker) } ?: text.length)
+            finalMarker?.let { marker -> text.indexOf(marker) } ?: text.length,
+        )
     }
 
     private fun selectEditor() {
@@ -128,7 +129,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
                     .plus(XmlSchemaProvider.EP_NAME.extensions)
                     .plus(XmlFileNSInfoProvider.EP_NAME.extensions)
                     .plus(ExternalAnnotatorsFilter.EXTENSION_POINT_NAME.extensions)
-                    .plus(IndexPatternBuilder.EP_NAME.extensions).isNotEmpty()
+                    .plus(IndexPatternBuilder.EP_NAME.extensions).isNotEmpty(),
             )
 
             // side effect: to load script definitions"
@@ -169,14 +170,14 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             val virtualFiles = FilenameIndex.getVirtualFilesByName(
                     project,
                     baseFileName, true,
-                    GlobalSearchScope.projectScope(project)
+                    GlobalSearchScope.projectScope(project),
                 )
                 .filter { it.canonicalPath?.contains("/$projectBaseName/$name") ?: false }.toList()
 
             assertEquals(
                 "expected the only file with name '$name'\n, it were: [${virtualFiles.map { it.canonicalPath }.joinToString("\n")}]",
                 1,
-                virtualFiles.size
+                virtualFiles.size,
             )
             return virtualFiles.iterator().next().toPsiFile(project)!!
         }
@@ -216,7 +217,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             insertString: String,
             surroundItems: String = "\n",
             lookupElements: List<String>,
-            revertChangesAtTheEnd: Boolean = true
+            revertChangesAtTheEnd: Boolean = true,
         ) {
             val fileInEditor = openFileInEditor(project, fileName)
             val editor = EditorFactory.getInstance().getEditors(fileInEditor.document, project)[0]

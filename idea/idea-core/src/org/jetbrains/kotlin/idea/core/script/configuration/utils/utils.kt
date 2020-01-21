@@ -18,7 +18,7 @@ import kotlin.script.experimental.jvm.jvm
 
 fun Project.getKtFile(
     virtualFile: VirtualFile?,
-    ktFile: KtFile? = null
+    ktFile: KtFile? = null,
 ): KtFile? {
     if (virtualFile == null) return null
     if (ktFile != null) {

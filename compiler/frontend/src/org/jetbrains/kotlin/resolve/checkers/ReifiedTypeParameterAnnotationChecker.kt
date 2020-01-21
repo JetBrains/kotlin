@@ -43,7 +43,7 @@ class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
 
     private fun checkTypeParameterDescriptorsAreNotReified(
         typeParameterDescriptors: List<TypeParameterDescriptor>,
-        diagnosticHolder: DiagnosticSink
+        diagnosticHolder: DiagnosticSink,
     ) {
         for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified }) {
             val typeParameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(reifiedTypeParameterDescriptor)
@@ -51,8 +51,8 @@ class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
 
             diagnosticHolder.report(
                 Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(
-                    typeParameterDeclaration.modifierList!!.getModifier(KtTokens.REIFIED_KEYWORD)!!
-                )
+                    typeParameterDeclaration.modifierList!!.getModifier(KtTokens.REIFIED_KEYWORD)!!,
+                ),
             )
         }
     }

@@ -22,7 +22,7 @@ import kotlin.script.templates.standard.ScriptTemplateWithBindings
 @Suppress("unused")
 @KotlinScript(
     compilationConfiguration = KotlinJsr223DefaultScriptCompilationConfiguration::class,
-    evaluationConfiguration = KotlinJsr223DefaultScriptEvaluationConfiguration::class
+    evaluationConfiguration = KotlinJsr223DefaultScriptEvaluationConfiguration::class,
 )
 abstract class KotlinJsr223DefaultScript(val jsr223Bindings: Bindings) : ScriptTemplateWithBindings(jsr223Bindings) {
 
@@ -66,11 +66,11 @@ object KotlinJsr223DefaultScriptCompilationConfiguration : ScriptCompilationConf
         jsr223 {
             importAllBindings(true)
         }
-    }
+    },
 )
 
 object KotlinJsr223DefaultScriptEvaluationConfiguration : ScriptEvaluationConfiguration(
     {
         refineConfigurationBeforeEvaluate(::configureProvidedPropertiesFromJsr223Context)
-    }
+    },
 )

@@ -44,7 +44,7 @@ object ModifierCheckerCore {
     private val defaultVisibilityTargets = EnumSet.of(
         CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS,
         MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
-        MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR, TYPEALIAS
+        MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR, TYPEALIAS,
     )
 
     val possibleTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
@@ -60,7 +60,7 @@ object ModifierCheckerCore {
         INTERNAL_KEYWORD to defaultVisibilityTargets,
         PROTECTED_KEYWORD to EnumSet.of(
             CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS,
-            MEMBER_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, MEMBER_PROPERTY, CONSTRUCTOR, TYPEALIAS
+            MEMBER_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, MEMBER_PROPERTY, CONSTRUCTOR, TYPEALIAS,
         ),
         IN_KEYWORD to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
         OUT_KEYWORD to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
@@ -91,7 +91,7 @@ object ModifierCheckerCore {
             INTERFACE,
             ENUM_CLASS,
             ANNOTATION_CLASS,
-            TYPEALIAS
+            TYPEALIAS,
         ),
         EXPECT_KEYWORD to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, CLASS_ONLY, OBJECT, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
         ACTUAL_KEYWORD to EnumSet.of(
@@ -105,9 +105,9 @@ object ModifierCheckerCore {
             INTERFACE,
             ENUM_CLASS,
             ANNOTATION_CLASS,
-            TYPEALIAS
+            TYPEALIAS,
         ),
-        FUN_KEYWORD to EnumSet.of(INTERFACE)
+        FUN_KEYWORD to EnumSet.of(INTERFACE),
     )
 
     private val featureDependencies = mapOf(
@@ -118,7 +118,7 @@ object ModifierCheckerCore {
         EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         LATEINIT_KEYWORD to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables),
-        FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion)
+        FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion),
     )
 
     private val featureDependenciesTargets = mapOf(
@@ -126,7 +126,7 @@ object ModifierCheckerCore {
         LanguageFeature.LateinitLocalVariables to setOf(LOCAL_VARIABLE),
         LanguageFeature.LateinitTopLevelProperties to setOf(TOP_LEVEL_PROPERTY),
         LanguageFeature.InlineClasses to setOf(CLASS_ONLY),
-        LanguageFeature.FunctionalInterfaceConversion to setOf(INTERFACE)
+        LanguageFeature.FunctionalInterfaceConversion to setOf(INTERFACE),
     )
 
     // NOTE: deprecated targets must be possible!
@@ -134,18 +134,18 @@ object ModifierCheckerCore {
 
     private val deprecatedModifierMap = mapOf(
         HEADER_KEYWORD to EXPECT_KEYWORD,
-        IMPL_KEYWORD to ACTUAL_KEYWORD
+        IMPL_KEYWORD to ACTUAL_KEYWORD,
     )
 
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-        OPEN_KEYWORD to EnumSet.of(INTERFACE)
+        OPEN_KEYWORD to EnumSet.of(INTERFACE),
     )
 
     private val possibleParentTargetPredicateMap = mapOf<KtModifierKeywordToken, TargetAllowedPredicate>(
         INNER_KEYWORD to or(
             always(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS),
-            ifSupported(LanguageFeature.InnerClassInEnumEntryClass, ENUM_ENTRY)
+            ifSupported(LanguageFeature.InnerClassInEnumEntryClass, ENUM_ENTRY),
         ),
         OVERRIDE_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, INTERFACE, ENUM_CLASS, ENUM_ENTRY),
         PROTECTED_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
@@ -153,7 +153,7 @@ object ModifierCheckerCore {
         PRIVATE_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
         COMPANION_KEYWORD to always(CLASS_ONLY, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
         FINAL_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE),
-        VARARG_KEYWORD to always(CONSTRUCTOR, FUNCTION, CLASS)
+        VARARG_KEYWORD to always(CONSTRUCTOR, FUNCTION, CLASS),
     )
 
     private val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
@@ -161,7 +161,7 @@ object ModifierCheckerCore {
     fun isPossibleParentTarget(
         modifier: KtModifierKeywordToken,
         parentTarget: KotlinTarget,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         deprecatedParentTargetMap[modifier]?.let {
             if (parentTarget in it) return false
@@ -223,16 +223,16 @@ object ModifierCheckerCore {
 
     private fun redundantRegister(
         sufficient: KtModifierKeywordToken,
-        redundant: KtModifierKeywordToken
+        redundant: KtModifierKeywordToken,
     ): Map<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility> {
         return mapOf(
             Pair(sufficient, redundant) to Compatibility.REDUNDANT,
-            Pair(redundant, sufficient) to Compatibility.REVERSE_REDUNDANT
+            Pair(redundant, sufficient) to Compatibility.REVERSE_REDUNDANT,
         )
     }
 
     private fun compatibilityRegister(
-        compatibility: Compatibility, vararg list: KtModifierKeywordToken
+        compatibility: Compatibility, vararg list: KtModifierKeywordToken,
     ): Map<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility> {
         val result = hashMapOf<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility>()
         for (first in list) {
@@ -265,7 +265,7 @@ object ModifierCheckerCore {
         firstNode: ASTNode,
         secondNode: ASTNode,
         owner: PsiElement,
-        incorrectNodes: MutableSet<ASTNode>
+        incorrectNodes: MutableSet<ASTNode>,
     ) {
         val first = firstNode.elementType as KtModifierKeywordToken
         val second = secondNode.elementType as KtModifierKeywordToken
@@ -317,16 +317,16 @@ object ModifierCheckerCore {
                     Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(
                         node.psi,
                         modifier,
-                        actualTargets.firstOrNull()?.description ?: "this"
-                    )
+                        actualTargets.firstOrNull()?.description ?: "this",
+                    ),
                 )
             actualTargets.any { it in redundantTargets } ->
                 trace.report(
                     Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(
                         node.psi,
                         modifier,
-                        actualTargets.firstOrNull()?.description ?: "this"
-                    )
+                        actualTargets.firstOrNull()?.description ?: "this",
+                    ),
                 )
         }
         return true
@@ -336,7 +336,7 @@ object ModifierCheckerCore {
         trace: BindingTrace,
         node: ASTNode,
         languageVersionSettings: LanguageVersionSettings,
-        actualTargets: List<KotlinTarget>
+        actualTargets: List<KotlinTarget>,
     ): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
 
@@ -381,7 +381,7 @@ object ModifierCheckerCore {
         trace: BindingTrace,
         node: ASTNode,
         parentDescriptor: DeclarationDescriptor?,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
@@ -397,8 +397,8 @@ object ModifierCheckerCore {
                 Errors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION.on(
                     node.psi,
                     modifier,
-                    actualParents.firstOrNull()?.description ?: "this scope"
-                )
+                    actualParents.firstOrNull()?.description ?: "this scope",
+                ),
             )
             return true
         }
@@ -408,8 +408,8 @@ object ModifierCheckerCore {
             Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(
                 node.psi,
                 modifier,
-                actualParents.firstOrNull()?.description ?: "this scope"
-            )
+                actualParents.firstOrNull()?.description ?: "this scope",
+            ),
         )
         return false
     }
@@ -421,7 +421,7 @@ object ModifierCheckerCore {
         trace: BindingTrace,
         parentDescriptor: DeclarationDescriptor?,
         actualTargets: List<KotlinTarget>,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         if (list.stub != null) return
 
@@ -451,7 +451,7 @@ object ModifierCheckerCore {
         listOwner: KtModifierListOwner,
         trace: BindingTrace,
         descriptor: DeclarationDescriptor?,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         if (listOwner is KtDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
@@ -462,7 +462,7 @@ object ModifierCheckerCore {
             }
         }
         val actualTargets = AnnotationChecker.getDeclarationSiteActualTargetList(
-            listOwner, descriptor as? ClassDescriptor, trace.bindingContext
+            listOwner, descriptor as? ClassDescriptor, trace.bindingContext,
         )
         val list = listOwner.modifierList ?: return
         checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets, languageVersionSettings)

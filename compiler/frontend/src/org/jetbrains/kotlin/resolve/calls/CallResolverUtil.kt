@@ -126,7 +126,7 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
 
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
         receiverType.annotations, receiverTypeConstructor, fakeTypeArguments,
-        receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true)
+        receiverType.isMarkedNullable, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true),
     )
 }
 
@@ -187,7 +187,7 @@ fun getEffectiveExpectedType(
     parameterDescriptor: ValueParameterDescriptor,
     resolvedArgument: ResolvedValueArgument,
     languageVersionSettings: LanguageVersionSettings,
-    trace: BindingTrace
+    trace: BindingTrace,
 ): KotlinType {
     val argument = resolvedArgument.arguments.singleOrNull()
     return if (argument != null)
@@ -199,7 +199,7 @@ fun getEffectiveExpectedType(
 fun getEffectiveExpectedType(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
-    context: ResolutionContext<*>
+    context: ResolutionContext<*>,
 ): KotlinType {
     return getEffectiveExpectedTypeForSingleArgument(parameterDescriptor, argument, context.languageVersionSettings, context.trace)
 }
@@ -208,7 +208,7 @@ fun getEffectiveExpectedTypeForSingleArgument(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
     languageVersionSettings: LanguageVersionSettings,
-    trace: BindingTrace
+    trace: BindingTrace,
 ): KotlinType {
     if (argument.getSpreadElement() != null) {
         // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
@@ -233,7 +233,7 @@ private fun arrayAssignmentToVarargInNamedFormInAnnotation(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
     languageVersionSettings: LanguageVersionSettings,
-    trace: BindingTrace
+    trace: BindingTrace,
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
@@ -246,7 +246,7 @@ private fun arrayAssignmentToVarargInNamedFormInFunction(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
     languageVersionSettings: LanguageVersionSettings,
-    trace: BindingTrace
+    trace: BindingTrace,
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)) return false
 
@@ -266,7 +266,7 @@ fun createResolutionCandidatesForConstructors(
     call: Call,
     typeWithConstructors: KotlinType,
     useKnownTypeSubstitutor: Boolean,
-    syntheticScopes: SyntheticScopes
+    syntheticScopes: SyntheticScopes,
 ): List<ResolutionCandidate<ConstructorDescriptor>> {
     val classWithConstructors = typeWithConstructors.constructor.declarationDescriptor as ClassDescriptor
 
@@ -274,7 +274,7 @@ fun createResolutionCandidatesForConstructors(
     val knownSubstitutor =
         if (useKnownTypeSubstitutor)
             TypeSubstitutor.create(
-                (unwrappedType as? AbbreviatedType)?.abbreviation ?: unwrappedType
+                (unwrappedType as? AbbreviatedType)?.abbreviation ?: unwrappedType,
             )
         else null
 

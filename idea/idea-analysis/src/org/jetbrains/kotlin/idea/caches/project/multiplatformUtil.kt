@@ -120,7 +120,7 @@ val Module.implementedModules: List<Module>
 private fun Module.findOldFashionedImplementedModuleNames(): List<String> {
     val facet = FacetManager.getInstance(this).findFacet(
         KotlinFacetType.TYPE_ID,
-        FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName
+        FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName,
     )
     return facet?.configuration?.settings?.implementedModuleNames ?: emptyList()
 }

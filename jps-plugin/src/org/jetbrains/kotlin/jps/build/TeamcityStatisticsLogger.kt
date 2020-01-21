@@ -65,7 +65,7 @@ class TeamcityStatisticsLogger {
     private fun printPerChunkStatistics(moduleChunk: ModuleChunk, timeToCompileNs: Long) {
         printStatisticMessage(
             "${KotlinBuilder.KOTLIN_BUILDER_NAME} for ${moduleChunk.presentableShortName} compilation time, ms",
-            timeToCompileNs.nanosToMillis().toString()
+            timeToCompileNs.nanosToMillis().toString(),
         )
     }
 
@@ -74,7 +74,7 @@ class TeamcityStatisticsLogger {
 
         printStatisticMessage(
             "${KotlinBuilder.KOTLIN_BUILDER_NAME} total compilation time, ms",
-            totalTime.get().nanosToMillis().toString()
+            totalTime.get().nanosToMillis().toString(),
         )
     }
 

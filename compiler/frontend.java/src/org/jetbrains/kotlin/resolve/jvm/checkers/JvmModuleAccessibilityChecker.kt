@@ -58,10 +58,10 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
     }
 
     private fun diagnosticFor(
-            targetClassOrPackage: ClassOrPackageFragmentDescriptor,
-            originalDescriptor: DeclarationDescriptorWithSource?,
-            fileFromOurModule: VirtualFile?,
-            reportOn: PsiElement
+        targetClassOrPackage: ClassOrPackageFragmentDescriptor,
+        originalDescriptor: DeclarationDescriptorWithSource?,
+        fileFromOurModule: VirtualFile?,
+        reportOn: PsiElement,
     ): Diagnostic? {
         val referencedFile = findVirtualFile(targetClassOrPackage, originalDescriptor) ?: return null
 
@@ -82,8 +82,8 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
     }
 
     private fun findVirtualFile(
-            descriptor: ClassOrPackageFragmentDescriptor,
-            originalDescriptor: DeclarationDescriptorWithSource?
+        descriptor: ClassOrPackageFragmentDescriptor,
+        originalDescriptor: DeclarationDescriptorWithSource?,
     ): VirtualFile? {
         val source = descriptor.source
         when (source) {

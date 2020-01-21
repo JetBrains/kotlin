@@ -38,7 +38,10 @@ object ApiVersionCallChecker : CallChecker {
         val accessibility = targetDescriptor.checkSinceKotlinVersionAccessibility(context.languageVersionSettings)
         if (accessibility is SinceKotlinAccessibility.NotAccessible) {
             context.trace.report(
-                API_NOT_AVAILABLE.on(element, accessibility.version.versionString, context.languageVersionSettings.apiVersion.versionString)
+                API_NOT_AVAILABLE.on(element,
+                                     accessibility.version.versionString,
+                                     context.languageVersionSettings.apiVersion.versionString,
+                ),
             )
         }
 

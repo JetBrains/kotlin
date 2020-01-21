@@ -43,7 +43,7 @@ class KotlinJsr223DefaultScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
             scriptCompilationClasspathFromContext(
                 classLoader = currentClassLoader,
                 wholeClasspath = true,
-                unpackJarCollections = true
+                unpackJarCollections = true,
             ).also {
                 lastClassLoader = currentClassLoader
                 lastClassPath = it
@@ -64,7 +64,7 @@ class KotlinJsr223DefaultScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
                     }
                 }
             },
-            evaluationConfiguration
+            evaluationConfiguration,
         ) { ScriptArgsWithTypes(arrayOf(it.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class)) }
 }
 

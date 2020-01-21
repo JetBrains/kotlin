@@ -23,7 +23,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             ConfigurationKind.ALL,
             files,
             TestJdkKind.MOCK_JDK,
-            *listOfNotNull(writeJavaFiles(files)).toTypedArray()
+            *listOfNotNull(writeJavaFiles(files)).toTypedArray(),
         )
         loadMultiFiles(files)
 
@@ -97,7 +97,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             text: String,
             expectedOccurrences: List<OccurrenceInfo>,
             currentBackend: TargetBackend,
-            reportProblems: Boolean
+            reportProblems: Boolean,
         ) {
             val expected = StringBuilder()
             val actual = StringBuilder()

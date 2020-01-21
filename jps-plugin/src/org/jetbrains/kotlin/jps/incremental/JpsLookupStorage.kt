@@ -30,7 +30,7 @@ private object LookupStorageLock
 
 class JpsLookupStorageManager(
     private val buildDataManager: BuildDataManager,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
 ) {
     private val storageProvider = JpsLookupStorageProvider(pathConverter)
 
@@ -58,7 +58,7 @@ class JpsLookupStorageManager(
     }
 
     private class JpsLookupStorageProvider(
-        private val pathConverter: FileToPathConverter
+        private val pathConverter: FileToPathConverter,
     ) : StorageProvider<JpsLookupStorage>() {
         override fun createStorage(targetDataDir: File): JpsLookupStorage =
             JpsLookupStorage(targetDataDir, pathConverter)
@@ -66,6 +66,6 @@ class JpsLookupStorageManager(
 
     private class JpsLookupStorage(
         targetDataDir: File,
-        pathConverter: FileToPathConverter
+        pathConverter: FileToPathConverter,
     ) : StorageOwner, LookupStorage(targetDataDir, pathConverter)
 }

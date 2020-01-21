@@ -19,7 +19,7 @@ import java.io.IOException
  */
 class CacheVersionManager(
     private val versionFile: File,
-    expectedOwnVersion: Int?
+    expectedOwnVersion: Int?,
 ) : CacheAttributesManager<CacheVersion> {
     override val expected: CacheVersion? =
         if (expectedOwnVersion == null) null
@@ -58,7 +58,7 @@ fun CacheVersion(own: Int, bytecode: JvmBytecodeBinaryVersion, metadata: JvmMeta
     return CacheVersion(
         own * 1000000 +
                 bytecode.major * 10000 + bytecode.minor * 100 +
-                metadata.major * 1000 + metadata.minor
+                metadata.major * 1000 + metadata.minor,
     )
 }
 
@@ -69,13 +69,13 @@ data class CacheVersion(val intValue: Int) {
     val bytecode: JvmBytecodeBinaryVersion
         get() = JvmBytecodeBinaryVersion(
             intValue / 10000 % 10,
-            intValue / 100 % 10
+            intValue / 100 % 10,
         )
 
     val metadata: JvmMetadataVersion
         get() = JvmMetadataVersion(
             intValue / 1000 % 10,
-            intValue / 1 % 100
+            intValue / 1 % 100,
         )
 
     override fun toString(): String = "CacheVersion(caches: $own, bytecode: $bytecode, metadata: $metadata)"

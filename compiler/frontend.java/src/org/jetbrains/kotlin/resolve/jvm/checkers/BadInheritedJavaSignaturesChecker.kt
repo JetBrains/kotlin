@@ -39,8 +39,8 @@ object BadInheritedJavaSignaturesChecker : DeclarationChecker {
             context.trace.report(
                 Errors.UNSUPPORTED.on(
                     reportOn,
-                    "Inheritance of a Java member referencing '${JavaToKotlinClassMap.FUNCTION_N_FQ_NAME}': $renderedDescriptor"
-                )
+                    "Inheritance of a Java member referencing '${JavaToKotlinClassMap.FUNCTION_N_FQ_NAME}': $renderedDescriptor",
+                ),
             )
         }
     }

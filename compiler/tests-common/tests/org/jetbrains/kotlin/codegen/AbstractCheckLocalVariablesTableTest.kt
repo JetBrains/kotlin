@@ -78,7 +78,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
     private fun doCompare(
         testFileLines: List<String>,
-        actualLocalVariables: List<LocalVariable>
+        actualLocalVariables: List<LocalVariable>,
     ) {
         val actual = getActualVariablesAsString(actualLocalVariables)
         val expected = getExpectedVariablesAsString(testFileLines)
@@ -86,7 +86,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             throw ComparisonFailure(
                 "Variables differ from expected",
                 expected,
-                actual
+                actual,
             )
         }
     }
@@ -118,7 +118,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         val type: String,
         val index: Int,
         val startLabelNumber: Int,
-        val endLabelNumber: Int
+        val endLabelNumber: Int,
     ) {
 
         override fun toString(): String {
@@ -153,7 +153,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                 var methodsFound = mutableListOf<String>()
 
                 override fun visitMethod(
-                    access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
+                    access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?,
                 ): MethodVisitor? {
                     return if (methodName == name + desc) {
                         methodFound = true
@@ -165,7 +165,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                             private val labelToNumber: MutableMap<Label, Int> = mutableMapOf()
 
                             override fun visitLocalVariable(
-                                name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
+                                name: String, desc: String, signature: String?, start: Label, end: Label, index: Int,
                             ) {
                                 readVariables.add(LocalVariable(name, desc, index, labelToNumber[start]!!, labelToNumber[end]!!))
                             }
@@ -185,7 +185,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
             TestCase.assertTrue(
                 "Method not found: $methodName. Methods found were: ${visitor.methodsFound.joinToString()}",
-                visitor.methodFound
+                visitor.methodFound,
             )
             return visitor.readVariables
         }
@@ -205,7 +205,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                 var endsWithUnconditionalJump: Boolean = false,
                 var localsTable: MutableMap<Int, String> = mutableMapOf(),
                 var localsAtEntry: MutableMap<Int, String> = mutableMapOf(),
-                val localsInstructions: MutableList<Instruction> = mutableListOf()
+                val localsInstructions: MutableList<Instruction> = mutableListOf(),
             ) {
                 fun addInstruction(index: Int, opcode: Int) {
                     localsInstructions.add(
@@ -221,7 +221,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                             Opcodes.DSTORE -> Store(index, "D")
                             Opcodes.ASTORE -> Store(index, "Ljava/lang/Object;")
                             else -> throw Exception("Unsupported var instruction: $opcode")
-                        }
+                        },
                     )
                 }
             }
@@ -265,7 +265,8 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                             Type.CHAR_TYPE,
                             Type.BYTE_TYPE,
                             Type.SHORT_TYPE,
-                            Type.INT_TYPE -> "I"
+                            Type.INT_TYPE,
+                            -> "I"
                             Type.FLOAT_TYPE-> "F"
                             Type.DOUBLE_TYPE -> "D"
                             Type.LONG_TYPE -> "J";
@@ -276,7 +277,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                 }
 
                 override fun visitMethod(
-                    access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
+                    access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?,
                 ): MethodVisitor? {
                     return if (methodName == name + desc) {
                         methodFound = true
@@ -312,7 +313,8 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                                     Opcodes.IF_ACMPEQ,
                                     Opcodes.IF_ACMPNE,
                                     Opcodes.IFNULL,
-                                    Opcodes.IFNONNULL -> {
+                                    Opcodes.IFNONNULL,
+                                    -> {
                                         val target = ensureBlock(label!!)
                                         val fallthrough = BasicBlock()
                                         fallthrough.localsTable = currentLocalsTable.toMutableMap()

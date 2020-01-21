@@ -44,8 +44,8 @@ import java.io.File
 val CONVERTING_JAVA_CLASSES_TO_PROTO = PerformanceCounter.create("Converting Java sources to proto")
 
 class JavaClassesTrackerImpl(
-        private val cache: IncrementalJvmCache,
-        private val untrackedJavaClasses: Set<ClassId>
+    private val cache: IncrementalJvmCache,
+    private val untrackedJavaClasses: Set<ClassId>,
 ) : JavaClassesTracker {
     private val classToSourceSerialized: MutableMap<ClassId, SerializedJavaClassWithSource> = hashMapOf()
 
@@ -101,7 +101,7 @@ fun JavaClassDescriptor.convertToProto(): SerializedJavaClassWithSource {
         throw IllegalStateException(
             "Error during writing proto for descriptor: ${DescriptorRenderer.DEBUG_TEXT.render(this)}\n" +
                     "Source file: $file",
-            e
+            e,
         )
     }
 
@@ -111,17 +111,17 @@ fun JavaClassDescriptor.convertToProto(): SerializedJavaClassWithSource {
 }
 
 class SerializedJavaClass(
-        val proto: ProtoBuf.Class,
-        val stringTable: ProtoBuf.StringTable,
-        val qualifiedNameTable: ProtoBuf.QualifiedNameTable
+    val proto: ProtoBuf.Class,
+    val stringTable: ProtoBuf.StringTable,
+    val qualifiedNameTable: ProtoBuf.QualifiedNameTable,
 ) {
     val classId: ClassId
         get() = NameResolverImpl(stringTable, qualifiedNameTable).getClassId(proto.fqName)
 }
 
 data class SerializedJavaClassWithSource(
-        val source: File,
-        val proto: SerializedJavaClass
+    val source: File,
+    val proto: SerializedJavaClass,
 )
 
 fun SerializedJavaClass.toProtoData() = ClassProtoData(proto, NameResolverImpl(stringTable, qualifiedNameTable))

@@ -22,7 +22,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
         val fqName = ClassId(
             prefix.packageFqName,
             parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
-            false
+            false,
         )
         return symbolProvider.getClassLikeSymbolByFqName(fqName)
     }

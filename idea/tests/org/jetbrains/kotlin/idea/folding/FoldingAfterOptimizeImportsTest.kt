@@ -43,7 +43,7 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
             getFoldingRegion(0).checkRegion(false, findStringWithPrefixes("// REGION BEFORE: "))
 
             fixture.project.executeWriteCommand(
-                "Optimize import in tests"
+                "Optimize import in tests",
             ) { KotlinImportOptimizer().processFile(fixture.file).run() }
 
             getFoldingRegion(0).checkRegion(false, findStringWithPrefixes("// REGION AFTER: "))

@@ -28,8 +28,8 @@ object ApiVersionClassifierUsageChecker : ClassifierUsageChecker {
         if (accessibility is SinceKotlinAccessibility.NotAccessible) {
             context.trace.report(
                 Errors.API_NOT_AVAILABLE.on(
-                    element, accessibility.version.versionString, context.languageVersionSettings.apiVersion.versionString
-                )
+                    element, accessibility.version.versionString, context.languageVersionSettings.apiVersion.versionString,
+                ),
             )
         }
     }

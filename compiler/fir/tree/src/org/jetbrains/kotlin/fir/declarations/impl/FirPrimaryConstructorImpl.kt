@@ -17,7 +17,7 @@ class FirPrimaryConstructorImpl(
     returnTypeRef: FirTypeRef,
     receiverTypeRef: FirTypeRef?,
     status: FirDeclarationStatus,
-    symbol: FirConstructorSymbol
+    symbol: FirConstructorSymbol,
 ) : FirConstructorImpl(source, session, returnTypeRef, receiverTypeRef, status, symbol) {
     override val isPrimary: Boolean get() = true
 }

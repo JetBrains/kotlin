@@ -23,8 +23,8 @@ class JvmReplCompiler(
     val scriptCompilationConfiguration: ScriptCompilationConfiguration,
     val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     val replCompilerProxy: KJvmReplCompilerProxy = KJvmReplCompilerImpl(
-        hostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)
-    )
+        hostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration),
+    ),
 ) : ReplCompiler {
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = JvmReplCompilerState(replCompilerProxy, lock)
@@ -36,7 +36,7 @@ class JvmReplCompiler(
             replCompilerProxy.checkSyntax(
                 codeLine.toSourceCode(scriptCompilationConfiguration),
                 compilation.baseScriptCompilationConfiguration,
-                compilation.environment.project
+                compilation.environment.project,
             )
         when {
             // TODO: implement diagnostics rendering
@@ -61,7 +61,7 @@ class JvmReplCompiler(
                     res.value.resultField != null,
                     emptyList(),
                     res.value.resultField?.second?.typeName,
-                    res.value
+                    res.value,
                 )
             else -> ReplCompileResult.Error(res.reports.joinToString("\n") { it.message })
         }
@@ -71,12 +71,12 @@ class JvmReplCompiler(
 
 internal class SourceCodeFromReplCodeLine(
     val codeLine: ReplCodeLine,
-    compilationConfiguration: ScriptCompilationConfiguration
+    compilationConfiguration: ScriptCompilationConfiguration,
 ) : SourceCode {
     override val text: String get() = codeLine.code
     override val name: String =
         "${compilationConfiguration[ScriptCompilationConfiguration.repl.makeSnippetIdentifier]!!(
-            compilationConfiguration, ReplSnippetIdImpl(codeLine.no, codeLine.generation, 0)
+            compilationConfiguration, ReplSnippetIdImpl(codeLine.no, codeLine.generation, 0),
         )}.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}"
     override val locationId: String? = null
 }

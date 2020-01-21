@@ -30,7 +30,7 @@ import java.io.Serializable
 
 internal class JpsCompilerServicesFacadeImpl(
     private val env: JpsCompilerEnvironment,
-    port: Int = SOCKET_ANY_FREE_PORT
+    port: Int = SOCKET_ANY_FREE_PORT,
 ) : CompilerCallbackServicesFacadeServer(
     env.services[IncrementalCompilationComponents::class.java],
     env.services[LookupTracker::class.java],
@@ -38,13 +38,13 @@ internal class JpsCompilerServicesFacadeImpl(
     env.services[ExpectActualTracker::class.java],
     env.services[IncrementalResultsConsumer::class.java],
     env.services[IncrementalDataProvider::class.java],
-    port
+    port,
 ), JpsCompilerServicesFacade {
 
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         env.messageCollector.reportFromDaemon(
             { outFile, srcFiles -> env.outputItemsCollector.add(srcFiles, outFile) },
-            category, severity, message, attachment
+            category, severity, message, attachment,
         )
     }
 }

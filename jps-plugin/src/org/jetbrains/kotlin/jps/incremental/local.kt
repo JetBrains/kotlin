@@ -13,5 +13,5 @@ private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
 fun localCacheVersionManager(dataRoot: File, isCachesEnabled: Boolean) =
     CacheVersionManager(
         File(dataRoot, NORMAL_VERSION_FILE_NAME),
-        if (isCachesEnabled) NORMAL_VERSION else null
+        if (isCachesEnabled) NORMAL_VERSION else null,
     )

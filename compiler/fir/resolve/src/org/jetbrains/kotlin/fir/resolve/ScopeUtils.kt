@@ -38,7 +38,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             FirCompositeScope(
                 fir.bounds.mapNotNullTo(mutableListOf()) {
                     it.coneTypeUnsafe<ConeKotlinType>().scope(useSiteSession, scopeSession)
-                }
+                },
             )
         }
         is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession)
@@ -46,7 +46,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
         is ConeIntersectionType -> FirCompositeScope(
             intersectedTypes.mapNotNullTo(mutableListOf()) {
                 it.scope(useSiteSession, scopeSession)
-            }
+            },
         )
         is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession)
         is ConeIntegerLiteralType -> {
@@ -54,7 +54,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             @Suppress("USELESS_CAST") // TODO: remove once fixed: https://youtrack.jetbrains.com/issue/KT-35635
             scopeSession.getOrBuild(
                 FirIntegerLiteralTypeScope.ILT_SYMBOL,
-                FirIntegerLiteralTypeScope.SCOPE_SESSION_KEY
+                FirIntegerLiteralTypeScope.SCOPE_SESSION_KEY,
             ) {
                 FirIntegerLiteralTypeScope(useSiteSession)
             } as FirScope
@@ -69,10 +69,10 @@ fun FirRegularClass.defaultType(): ConeClassLikeTypeImpl {
         typeParameters.map {
             ConeTypeParameterTypeImpl(
                 it.symbol.toLookupTag(),
-                isNullable = false
+                isNullable = false,
             )
         }.toTypedArray(),
-        isNullable = false
+        isNullable = false,
     )
 }
 
@@ -80,6 +80,6 @@ fun FirAnonymousObject.defaultType(): ConeClassLikeTypeImpl {
     return ConeClassLikeTypeImpl(
         symbol.toLookupTag(),
         emptyArray(),
-        isNullable = false
+        isNullable = false,
     )
 }

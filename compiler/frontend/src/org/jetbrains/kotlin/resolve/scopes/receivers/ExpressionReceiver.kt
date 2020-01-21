@@ -26,7 +26,7 @@ interface ExpressionReceiver : ReceiverValue {
 
     companion object {
         private open class ExpressionReceiverImpl(
-            override val expression: KtExpression, type: KotlinType, original: ReceiverValue?
+            override val expression: KtExpression, type: KotlinType, original: ReceiverValue?,
         ) : AbstractReceiverValue(type, original), ExpressionReceiver {
             override fun replaceType(newType: KotlinType) = ExpressionReceiverImpl(expression, newType, original)
 
@@ -37,7 +37,7 @@ interface ExpressionReceiver : ReceiverValue {
             override val classDescriptor: ClassDescriptor,
             expression: KtExpression,
             type: KotlinType,
-            original: ReceiverValue?
+            original: ReceiverValue?,
         ) : ExpressionReceiverImpl(expression, type, original), ThisClassReceiver {
             override fun replaceType(newType: KotlinType) = ThisExpressionClassReceiver(classDescriptor, expression, newType, original)
         }
@@ -46,7 +46,7 @@ interface ExpressionReceiver : ReceiverValue {
             override val thisType: KotlinType,
             expression: KtExpression,
             type: KotlinType,
-            original: ReceiverValue?
+            original: ReceiverValue?,
         ) : ExpressionReceiverImpl(expression, type, original), SuperCallReceiverValue {
             override fun replaceType(newType: KotlinType) = SuperExpressionReceiver(thisType, expression, newType, original)
         }
@@ -54,7 +54,7 @@ interface ExpressionReceiver : ReceiverValue {
         fun create(
             expression: KtExpression,
             type: KotlinType,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
         ): ExpressionReceiver {
             var referenceExpression: KtReferenceExpression? = null
             if (expression is KtThisExpression) {

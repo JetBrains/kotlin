@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
-    protected val inferenceComponents: InferenceComponents
+    protected val inferenceComponents: InferenceComponents,
 ) : ConeCallConflictResolver() {
     protected fun Collection<Candidate>.setIfOneOrEmpty(): Set<Candidate>? = when (size) {
         0 -> emptySet()
@@ -29,7 +29,7 @@ abstract class AbstractConeCallConflictResolver(
     protected fun compareCallsByUsedArguments(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
     ): Boolean {
         if (discriminateGenerics) {
             val isGeneric1 = call1.isGeneric
@@ -48,7 +48,7 @@ abstract class AbstractConeCallConflictResolver(
             call1,
             call2,
             SpecificityComparisonWithNumerics,
-            specificityComparator
+            specificityComparator,
         )
     }
 
@@ -102,7 +102,7 @@ abstract class AbstractConeCallConflictResolver(
             false,
             0,
             (variable as? FirProperty)?.isExpect == true,
-            false // TODO
+            false, // TODO
         )
     }
 
@@ -116,7 +116,7 @@ abstract class AbstractConeCallConflictResolver(
             constructor.valueParameters.any { it.isVararg },
             constructor.valueParameters.count { it.defaultValue != null },
             constructor.isExpect,
-            false // TODO
+            false, // TODO
         )
     }
 
@@ -129,7 +129,7 @@ abstract class AbstractConeCallConflictResolver(
             function.valueParameters.any { it.isVararg },
             function.valueParameters.count { it.defaultValue != null },
             function.isExpect,
-            false // TODO
+            false, // TODO
         )
     }
 
@@ -141,7 +141,7 @@ abstract class AbstractConeCallConflictResolver(
 
     private fun computeParameterTypes(
         call: Candidate,
-        function: FirFunction<*>
+        function: FirFunction<*>,
     ): List<ConeKotlinType> {
         return (call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
             ?: (listOfNotNull(function.receiverTypeRef?.coneTypeUnsafe()) +
@@ -157,7 +157,7 @@ abstract class AbstractConeCallConflictResolver(
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (klass as? FirRegularClass)?.isExpect == true,
-            isSyntheticMember = false
+            isSyntheticMember = false,
         )
     }
 

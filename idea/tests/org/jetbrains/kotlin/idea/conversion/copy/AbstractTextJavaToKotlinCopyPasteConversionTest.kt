@@ -52,7 +52,7 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopy
 
         kotlin.test.assertEquals(
             noConversionExpected, !ConvertTextJavaCopyPasteProcessor.conversionPerformed,
-            if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested"
+            if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested",
         )
 
         val expectedFile = File(testPath().replace(".txt", ".expected.kt"))

@@ -28,7 +28,7 @@ class LookupElementsCollector(
     resultSet: CompletionResultSet,
     sorter: CompletionSorter,
     private val filter: ((LookupElement) -> Boolean)?,
-    private val allowExpectDeclarations: Boolean
+    private val allowExpectDeclarations: Boolean,
 ) {
 
     var bestMatchingDegree = Int.MIN_VALUE
@@ -64,7 +64,7 @@ class LookupElementsCollector(
         lookupElementFactory: AbstractLookupElementFactory,
         notImported: Boolean = false,
         withReceiverCast: Boolean = false,
-        prohibitDuplicates: Boolean = false
+        prohibitDuplicates: Boolean = false,
     ) {
         for (descriptor in descriptors) {
             addDescriptorElements(descriptor, lookupElementFactory, notImported, withReceiverCast, prohibitDuplicates)
@@ -76,7 +76,7 @@ class LookupElementsCollector(
         lookupElementFactory: AbstractLookupElementFactory,
         notImported: Boolean = false,
         withReceiverCast: Boolean = false,
-        prohibitDuplicates: Boolean = false
+        prohibitDuplicates: Boolean = false,
     ) {
         if (prohibitDuplicates && descriptor is CallableDescriptor && unwrapIfImportedFromObject(descriptor) in processedCallables) return
 
@@ -167,7 +167,7 @@ private class JustTypingLookupElementDecorator(element: LookupElement, private v
 
 private class DeclarationLookupObjectLookupElementDecorator(
     element: LookupElement,
-    private val declarationLookupObject: DeclarationLookupObject
+    private val declarationLookupObject: DeclarationLookupObject,
 ) : LookupElementDecorator<LookupElement>(element) {
     override fun getPsiElement() = declarationLookupObject.psiElement
 }

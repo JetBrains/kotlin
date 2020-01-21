@@ -31,20 +31,20 @@ constructor(private val languageVersionSettings: LanguageVersionSettings) : Data
     // Receivers
     override fun createDataFlowValue(
         receiverValue: ReceiverValue,
-        resolutionContext: ResolutionContext<*>
+        resolutionContext: ResolutionContext<*>,
     ) = createDataFlowValue(receiverValue, resolutionContext.trace.bindingContext, resolutionContext.scope.ownerDescriptor)
 
     override fun createDataFlowValue(
         receiverValue: ReceiverValue,
         bindingContext: BindingContext,
-        containingDeclarationOrModule: DeclarationDescriptor
+        containingDeclarationOrModule: DeclarationDescriptor,
     ) = when (receiverValue) {
         is TransientReceiver, is ImplicitReceiver -> createDataFlowValueForStableReceiver(receiverValue)
         is ExpressionReceiver -> createDataFlowValue(
             receiverValue.expression,
             receiverValue.getType(),
             bindingContext,
-            containingDeclarationOrModule
+            containingDeclarationOrModule,
         )
         else -> throw UnsupportedOperationException("Unsupported receiver value: " + receiverValue::class.java.name)
     }
@@ -58,12 +58,12 @@ constructor(private val languageVersionSettings: LanguageVersionSettings) : Data
         property: KtProperty,
         variableDescriptor: VariableDescriptor,
         bindingContext: BindingContext,
-        usageContainingModule: ModuleDescriptor?
+        usageContainingModule: ModuleDescriptor?,
     ): DataFlowValue {
         val identifierInfo = IdentifierInfo.Variable(
             variableDescriptor,
             variableDescriptor.variableKind(usageContainingModule, bindingContext, property, languageVersionSettings),
-            bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, variableDescriptor]
+            bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, variableDescriptor],
         )
         return DataFlowValue(identifierInfo, variableDescriptor.type)
     }
@@ -73,14 +73,14 @@ constructor(private val languageVersionSettings: LanguageVersionSettings) : Data
     override fun createDataFlowValue(
         expression: KtExpression,
         type: KotlinType,
-        resolutionContext: ResolutionContext<*>
+        resolutionContext: ResolutionContext<*>,
     ) = createDataFlowValue(expression, type, resolutionContext.trace.bindingContext, resolutionContext.scope.ownerDescriptor)
 
     override fun createDataFlowValue(
         expression: KtExpression,
         type: KotlinType,
         bindingContext: BindingContext,
-        containingDeclarationOrModule: DeclarationDescriptor
+        containingDeclarationOrModule: DeclarationDescriptor,
     ): DataFlowValue {
         return when {
             expression is KtConstantExpression && expression.node.elementType === KtNodeTypes.NULL ->

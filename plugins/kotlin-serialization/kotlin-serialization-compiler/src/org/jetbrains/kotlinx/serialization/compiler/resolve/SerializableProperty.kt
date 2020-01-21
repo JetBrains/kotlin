@@ -29,7 +29,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.analyzeSpecia
 class SerializableProperty(
     val descriptor: PropertyDescriptor,
     val isConstructorParameterWithDefault: Boolean,
-    hasBackingField: Boolean
+    hasBackingField: Boolean,
 ) {
     val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
     val type = descriptor.type

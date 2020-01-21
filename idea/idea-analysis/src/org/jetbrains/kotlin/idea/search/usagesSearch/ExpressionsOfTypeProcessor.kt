@@ -58,7 +58,7 @@ class ExpressionsOfTypeProcessor(
     private val searchScope: SearchScope,
     private val project: Project,
     private val possibleMatchHandler: (KtExpression) -> Unit,
-    private val possibleMatchesInScopeHandler: (SearchScope) -> Unit
+    private val possibleMatchesInScopeHandler: (SearchScope) -> Unit,
 ) {
     /** For tests only */
     enum class Mode {
@@ -128,7 +128,7 @@ class ExpressionsOfTypeProcessor(
         if (runReadAction {
                 searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(
                     KotlinFileType.INSTANCE,
-                    searchScope
+                    searchScope,
                 )
             }) return
 
@@ -253,10 +253,12 @@ class ExpressionsOfTypeProcessor(
     private enum class ReferenceProcessor(val handler: (ExpressionsOfTypeProcessor, PsiReference) -> Boolean) {
         CallableOfOurType(ExpressionsOfTypeProcessor::processReferenceToCallableOfOurType),
 
-        ProcessLambdasInCalls({ processor, reference ->
-                                  (reference.element as? KtReferenceExpression)?.let { processor.processLambdasForCallableReference(it) }
-                                  true
-                              })
+        ProcessLambdasInCalls(
+            { processor, reference ->
+                (reference.element as? KtReferenceExpression)?.let { processor.processLambdasForCallableReference(it) }
+                true
+            },
+        )
     }
 
     private class StaticMemberRequestResultProcessor(val psiMember: PsiMember, classes: List<PsiClass>) :
@@ -320,14 +322,14 @@ class ExpressionsOfTypeProcessor(
         data class ProcessStaticCallableUsagesTask(
             val member: PsiMember,
             val memberScope: SearchScope,
-            val taskProcessor: ReferenceProcessor
+            val taskProcessor: ReferenceProcessor,
         ) : Task {
             override fun perform() {
                 // This class will look through the whole hierarchy anyway, so shouldn't be a big overhead here
                 val inheritanceClasses = ClassInheritorsSearch.search(
                     declarationClass,
                     classUseScope(declarationClass),
-                    true, true, false
+                    true, true, false,
                 ).findAll()
 
                 val classes = (inheritanceClasses + declarationClass).filter {
@@ -344,7 +346,7 @@ class ExpressionsOfTypeProcessor(
                     testLog { "Searched references to static $memberName in non-Java files by request $request" }
                     searchRequestCollector.searchWord(
                         request,
-                        classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor
+                        classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor,
                     )
 
                     val qualifiedName = runReadAction { klass.qualifiedName }
@@ -354,7 +356,7 @@ class ExpressionsOfTypeProcessor(
                         testLog { "Searched references to static $memberName in non-Java files by request $importAllUnderRequest" }
                         searchRequestCollector.searchWord(
                             importAllUnderRequest,
-                            classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor
+                            classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor,
                         )
                     }
                 }
@@ -394,7 +396,7 @@ class ExpressionsOfTypeProcessor(
         data class ProcessCallableUsagesTask(
             val declaration: PsiElement,
             val processor: ReferenceProcessor,
-            val scope: SearchScope
+            val scope: SearchScope,
         ) : Task {
             override fun perform() {
                 if (scope is LocalSearchScope) {
@@ -404,7 +406,7 @@ class ExpressionsOfTypeProcessor(
                 }
 
                 val searchParameters = KotlinReferencesSearchParameters(
-                    declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false)
+                    declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false),
                 )
                 searchReferences(searchParameters) { reference ->
                     val processed = processor.handler(this@ExpressionsOfTypeProcessor, reference)
@@ -641,7 +643,8 @@ class ExpressionsOfTypeProcessor(
         for (parent in element.parents) {
             when (parent) {
                 is PsiCodeBlock,
-                is PsiExpression ->
+                is PsiExpression,
+                ->
                     break@ParentsLoop // ignore local usages
 
                 is PsiMethod -> {
@@ -927,14 +930,16 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun searchReferences(parameters: ReferencesSearch.SearchParameters, processor: (PsiReference) -> Boolean) {
-        ReferencesSearch.search(parameters).forEach(Processor { ref ->
-            runReadAction {
-                if (ref.element.isValid) {
-                    processor(ref)
-                } else {
-                    true
+        ReferencesSearch.search(parameters).forEach(
+            Processor { ref ->
+                runReadAction {
+                    if (ref.element.isValid) {
+                        processor(ref)
+                    } else {
+                        true
+                    }
                 }
-            }
-        })
+            },
+        )
     }
 }

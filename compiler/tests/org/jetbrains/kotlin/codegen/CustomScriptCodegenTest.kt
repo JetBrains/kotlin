@@ -52,7 +52,7 @@ class CustomScriptCodegenTest : CodegenTestCase() {
                     with(PathUtil.kotlinPathsForDistDirectory) {
                         arrayOf(
                             KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-                            KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
+                            KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR,
                         ).mapNotNull { jarName -> File(libPath, jarName).also { assertTrue("$it not found", it.exists()) } }
                     }
 
@@ -61,20 +61,20 @@ class CustomScriptCodegenTest : CodegenTestCase() {
             TestJdkKind.MOCK_JDK,
             additionalDependencies,
             emptyList(),
-            emptyList()
+            emptyList(),
         )
 
         if (scriptDefinitions.isNotEmpty()) {
             configureScriptDefinitions(
                 scriptDefinitions.asList(), configuration, this::class.java.classLoader,
-                MessageCollector.NONE, defaultJvmScriptingHostConfiguration
+                MessageCollector.NONE, defaultJvmScriptingHostConfiguration,
             )
         }
 
         loadScriptingPlugin(configuration)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
-            testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+            testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES,
         )
     }
 }

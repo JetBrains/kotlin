@@ -24,7 +24,7 @@ interface ContextVariablesProvider {
 
 class RealContextVariablesProvider(
     private val referenceVariantsHelper: ReferenceVariantsHelper,
-    private val contextElement: PsiElement
+    private val contextElement: PsiElement,
 ) : ContextVariablesProvider {
 
     val allFunctionTypeVariables by lazy {
@@ -38,7 +38,8 @@ class RealContextVariablesProvider(
             contextElement,
             CallTypeAndReceiver.DEFAULT,
             descriptorFilter,
-            nameFilter = { true }).map { it as VariableDescriptor }
+            nameFilter = { true },
+        ).map { it as VariableDescriptor }
     }
 
     override fun functionTypeVariables(requiredType: FuzzyType): Collection<Pair<VariableDescriptor, TypeSubstitutor>> {

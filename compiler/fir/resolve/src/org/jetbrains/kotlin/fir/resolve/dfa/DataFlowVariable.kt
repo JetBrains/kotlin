@@ -27,7 +27,7 @@ class SyntheticDataFlowVariable(index: Int, fir: FirElement) : DataFlowVariable(
 class AliasedDataFlowVariable(
     index: Int,
     fir: FirElement,
-    var delegate: RealDataFlowVariable
+    var delegate: RealDataFlowVariable,
 ) : RealDataFlowVariable(index, fir, delegate.isThisReference)
 
 // -------------------------------------------------------------------------------------------------------------------------

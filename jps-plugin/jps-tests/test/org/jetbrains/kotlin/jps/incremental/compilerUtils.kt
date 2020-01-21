@@ -29,7 +29,7 @@ import java.io.*
 fun createTestingCompilerEnvironment(
     messageCollector: MessageCollector,
     outputItemsCollector: OutputItemsCollectorImpl,
-    services: Services
+    services: Services,
 ): JpsCompilerEnvironment {
     val paths = PathUtil.kotlinPathsForDistDirectory
 
@@ -40,7 +40,7 @@ fun createTestingCompilerEnvironment(
         KotlinBuilder.classesToLoadByParent,
         wrappedMessageCollector,
         outputItemsCollector,
-        MockProgressReporter
+        MockProgressReporter,
     )
 }
 

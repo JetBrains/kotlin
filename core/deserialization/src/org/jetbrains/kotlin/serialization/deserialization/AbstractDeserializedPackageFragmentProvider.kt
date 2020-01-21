@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 abstract class AbstractDeserializedPackageFragmentProvider(
     protected val storageManager: StorageManager,
     protected val finder: KotlinMetadataFinder,
-    protected val moduleDescriptor: ModuleDescriptor
+    protected val moduleDescriptor: ModuleDescriptor,
 ) : PackageFragmentProvider {
     protected lateinit var components: DeserializationComponents
 

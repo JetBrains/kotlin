@@ -178,8 +178,8 @@ object PathStringDescriptor : EnumeratorStringDescriptor() {
 }
 
 open class CollectionExternalizer<T>(
-        private val elementExternalizer: DataExternalizer<T>,
-        private val newCollection: () -> MutableCollection<T>
+    private val elementExternalizer: DataExternalizer<T>,
+    private val newCollection: () -> MutableCollection<T>,
 ) : DataExternalizer<Collection<T>> {
     override fun read(input: DataInput): Collection<T> {
         val result = newCollection()

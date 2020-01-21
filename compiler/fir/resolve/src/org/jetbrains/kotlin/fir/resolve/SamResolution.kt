@@ -45,7 +45,7 @@ val SAM_PARAMETER_NAME = Name.identifier("block")
 
 class FirSamResolverImpl(
     private val firSession: FirSession,
-    private val scopeSession: ScopeSession
+    private val scopeSession: ScopeSession,
 ) : FirSamResolver {
 
     private val resolvedFunctionType: MutableMap<FirRegularClass, Any> = mutableMapOf()
@@ -56,13 +56,14 @@ class FirSamResolverImpl(
             is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type)
             is ConeFlexibleType -> ConeFlexibleType(
                 getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
-                getFunctionTypeForPossibleSamType(type.upperBound) ?: return null
+                getFunctionTypeForPossibleSamType(type.upperBound) ?: return null,
             )
             is ConeClassErrorType, is ConeStubType -> null
             // TODO: support those types as well
             is ConeTypeParameterType, is ConeTypeVariableType,
             is ConeCapturedType, is ConeDefinitelyNotNullType, is ConeIntersectionType,
-            is ConeIntegerLiteralType -> null
+            is ConeIntegerLiteralType,
+            -> null
             // TODO: Thing of getting rid of this branch since ConeLookupTagBasedType should be a sealed class
             is ConeLookupTagBasedType -> null
         }
@@ -80,12 +81,14 @@ class FirSamResolverImpl(
             substitutorByMap(
                 firRegularClass.typeParameters
                     .map { it.symbol }
-                    .zip(type.typeArguments.map {
-                        (it as? ConeTypedProjection)?.type
-                            ?: firSession.builtinTypes.nullableAnyType.type
-                        //ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
-                    })
-                    .toMap()
+                    .zip(
+                        type.typeArguments.map {
+                            (it as? ConeTypedProjection)?.type
+                                ?: firSession.builtinTypes.nullableAnyType.type
+                            //ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
+                        },
+                    )
+                    .toMap(),
             )
 
         val result =
@@ -114,8 +117,8 @@ class FirSamResolverImpl(
             CallableId(
                 classId.packageFqName,
                 classId.relativeClassName.parent().takeIf { !it.isRoot },
-                classId.shortClassName
-            )
+                classId.shortClassName,
+            ),
         )
 
         val newTypeParameters = firRegularClass.typeParameters.map { typeParameter ->
@@ -125,7 +128,7 @@ class FirSamResolverImpl(
                 typeParameter.name,
                 FirTypeParameterSymbol(),
                 Variance.INVARIANT,
-                isReified = false
+                isReified = false,
             ).apply {
                 annotations += typeParameter.annotations
             }
@@ -138,14 +141,14 @@ class FirSamResolverImpl(
         val substitutor = substitutorByMap(
             firRegularClass.typeParameters
                 .map { it.symbol }
-                .zip(newTypeParameterTypes).toMap()
+                .zip(newTypeParameterTypes).toMap(),
         )
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
             newTypeParameter.bounds += oldTypeParameter.bounds.mapNotNull { typeRef ->
                 FirResolvedTypeRefImpl(
                     typeRef.source,
-                    substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null)
+                    substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null),
                 )
             }
         }
@@ -153,7 +156,7 @@ class FirSamResolverImpl(
         val substitutedFunctionType = substitutor.substituteOrSelf(functionType)
         val substitutedReturnType =
             ConeClassLikeTypeImpl(
-                firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isNullable = false
+                firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isNullable = false,
             )
 
         val status = FirDeclarationStatusImpl(firRegularClass.visibility, Modality.FINAL).apply {
@@ -175,7 +178,7 @@ class FirSamResolverImpl(
             null,
             classId.shortClassName,
             status,
-            symbol
+            symbol,
         ).apply {
             valueParameters += listOf(
                 FirValueParameterImpl(
@@ -187,8 +190,8 @@ class FirSamResolverImpl(
                     defaultValue = null,
                     isCrossinline = false,
                     isNoinline = false,
-                    isVararg = false
-                )
+                    isVararg = false,
+                ),
             )
             typeParameters += newTypeParameters
             resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -212,7 +215,7 @@ class FirSamResolverImpl(
 
 private fun FirRegularClass.getSingleAbstractMethodOrNull(
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ): FirSimpleFunction? {
     // TODO: restrict to Java interfaces
     if (classKind != ClassKind.INTERFACE || hasMoreThenOneAbstractFunctionOrHasAbstractProperty()) return null
@@ -243,7 +246,7 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
 private fun FirRegularClass.findSingleAbstractMethodByNames(
     session: FirSession,
     scopeSession: ScopeSession,
-    samCandidateNames: Set<Name>
+    samCandidateNames: Set<Name>,
 ): FirSimpleFunction? {
     var resultMethod: FirSimpleFunction? = null
     var metIncorrectMember = false
@@ -350,6 +353,6 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagB
 
     return createFunctionalType(
         parameterTypes, receiverType = null,
-        rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $this")
+        rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $this"),
     )
 }

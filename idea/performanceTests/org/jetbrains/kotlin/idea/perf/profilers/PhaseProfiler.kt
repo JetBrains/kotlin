@@ -19,7 +19,7 @@ object DummyPhaseProfiler : PhaseProfiler {
 class ActualPhaseProfiler(
     private val activityName: String,
     private val profilerPath: String,
-    private val profilerHandler: ProfilerHandler
+    private val profilerHandler: ProfilerHandler,
 ) :
     PhaseProfiler {
     override fun start() {

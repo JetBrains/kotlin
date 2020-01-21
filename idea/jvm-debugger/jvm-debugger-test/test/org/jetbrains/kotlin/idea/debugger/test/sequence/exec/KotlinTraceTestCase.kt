@@ -53,73 +53,80 @@ abstract class KotlinTraceTestCase : KotlinDescriptorTestCaseWithStepping() {
 
         val chainSelector = DEFAULT_CHAIN_SELECTOR
 
-        session.addSessionListener(object : XDebugSessionListener {
-            override fun sessionPaused() {
-                if (completed.getAndSet(true)) {
-                    resume()
-                    return
-                }
-                try {
-                    sessionPausedImpl()
-                } catch (t: Throwable) {
-                    println("Exception caught: $t, ${t.message}", ProcessOutputTypes.SYSTEM)
-                    t.printStackTrace()
+        session.addSessionListener(
+            object : XDebugSessionListener {
+                override fun sessionPaused() {
+                    if (completed.getAndSet(true)) {
+                        resume()
+                        return
+                    }
+                    try {
+                        sessionPausedImpl()
+                    } catch (t: Throwable) {
+                        println("Exception caught: $t, ${t.message}", ProcessOutputTypes.SYSTEM)
+                        t.printStackTrace()
 
-                    resume()
-                }
-
-            }
-
-            private fun sessionPausedImpl() {
-                printContext(debugProcess.debuggerContext)
-                val chain = ApplicationManager.getApplication().runReadAction(
-                    Computable<StreamChain> {
-                        val elementAtBreakpoint = positionResolver.getNearestElementToBreakpoint(session)
-                        val chains = if (elementAtBreakpoint == null) null else chainBuilder.build(elementAtBreakpoint)
-                        if (chains == null || chains.isEmpty()) null else chainSelector.select(chains)
-                    })
-
-                if (chain == null) {
-                    complete(null, null, null, FailureReason.CHAIN_CONSTRUCTION)
-                    return
-                }
-
-                EvaluateExpressionTracer(session, expressionBuilder, resultInterpreter).trace(chain, object : TracingCallback {
-                    override fun evaluated(result: TracingResult, context: EvaluationContextImpl) {
-                        complete(chain, result, null, null)
+                        resume()
                     }
 
-                    override fun evaluationFailed(traceExpression: String, message: String) {
-                        complete(chain, null, message, FailureReason.EVALUATION)
-                    }
-
-                    override fun compilationFailed(traceExpression: String, message: String) {
-                        complete(chain, null, message, FailureReason.COMPILATION)
-                    }
-                })
-            }
-
-            private fun complete(chain: StreamChain?, result: TracingResult?, error: String?, errorReason: FailureReason?) {
-                try {
-                    if (error != null) {
-                        assertNotNull(errorReason)
-                        assertNotNull(chain)
-                        throw AssertionError(error)
-                    } else {
-                        assertNull(errorReason)
-                        handleSuccess(chain, result)
-                    }
-                } catch (t: Throwable) {
-                    println("Exception caught: " + t + ", " + t.message, ProcessOutputTypes.SYSTEM)
-                } finally {
-                    resume()
                 }
-            }
 
-            private fun resume() {
-                ApplicationManager.getApplication().invokeLater { session.resume() }
-            }
-        }, testRootDisposable)
+                private fun sessionPausedImpl() {
+                    printContext(debugProcess.debuggerContext)
+                    val chain = ApplicationManager.getApplication().runReadAction(
+                        Computable<StreamChain> {
+                            val elementAtBreakpoint = positionResolver.getNearestElementToBreakpoint(session)
+                            val chains = if (elementAtBreakpoint == null) null else chainBuilder.build(elementAtBreakpoint)
+                            if (chains == null || chains.isEmpty()) null else chainSelector.select(chains)
+                        },
+                    )
+
+                    if (chain == null) {
+                        complete(null, null, null, FailureReason.CHAIN_CONSTRUCTION)
+                        return
+                    }
+
+                    EvaluateExpressionTracer(session, expressionBuilder, resultInterpreter).trace(
+                        chain,
+                        object : TracingCallback {
+                            override fun evaluated(result: TracingResult, context: EvaluationContextImpl) {
+                                complete(chain, result, null, null)
+                            }
+
+                            override fun evaluationFailed(traceExpression: String, message: String) {
+                                complete(chain, null, message, FailureReason.EVALUATION)
+                            }
+
+                            override fun compilationFailed(traceExpression: String, message: String) {
+                                complete(chain, null, message, FailureReason.COMPILATION)
+                            }
+                        },
+                    )
+                }
+
+                private fun complete(chain: StreamChain?, result: TracingResult?, error: String?, errorReason: FailureReason?) {
+                    try {
+                        if (error != null) {
+                            assertNotNull(errorReason)
+                            assertNotNull(chain)
+                            throw AssertionError(error)
+                        } else {
+                            assertNull(errorReason)
+                            handleSuccess(chain, result)
+                        }
+                    } catch (t: Throwable) {
+                        println("Exception caught: " + t + ", " + t.message, ProcessOutputTypes.SYSTEM)
+                    } finally {
+                        resume()
+                    }
+                }
+
+                private fun resume() {
+                    ApplicationManager.getApplication().invokeLater { session.resume() }
+                }
+            },
+            testRootDisposable,
+        )
     }
 
     private fun getPositionResolver(): DebuggerPositionResolver {

@@ -42,7 +42,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
     override fun resolveToSymbol(
         typeRef: FirTypeRef,
-        scope: FirScope
+        scope: FirScope,
     ): FirClassifierSymbol<*>? {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag?.let(symbolProvider::getSymbolByLookupTag)
@@ -95,13 +95,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
         return ConeClassLikeTypeImpl(
             resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), session).toLookupTag(),
             parameters.toTypedArray(),
-            typeRef.isMarkedNullable
+            typeRef.isMarkedNullable,
         )
     }
 
     override fun resolveType(
         typeRef: FirTypeRef,
-        scope: FirScope
+        scope: FirScope,
     ): ConeKotlinType {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.type

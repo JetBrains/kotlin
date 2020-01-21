@@ -38,10 +38,10 @@ import org.jetbrains.kotlin.types.KotlinType
 object JvmArrayVariableInLoopAssignmentChecker : AdditionalTypeChecker {
 
     override fun checkType(
-            expression: KtExpression,
-            expressionType: KotlinType,
-            expressionTypeWithSmartCast: KotlinType,
-            c: ResolutionContext<*>
+        expression: KtExpression,
+        expressionType: KotlinType,
+        expressionTypeWithSmartCast: KotlinType,
+        c: ResolutionContext<*>,
     ) {
         if (c.languageVersionSettings.supportsFeature(LanguageFeature.ProperForInArrayLoopRangeVariableAssignmentSemantic)) return
 
@@ -67,9 +67,9 @@ object JvmArrayVariableInLoopAssignmentChecker : AdditionalTypeChecker {
     }
 
     private fun isOuterForLoopRangeVariable(
-            expression: KtExpression,
-            variableDescriptor: CallableDescriptor,
-            c: ResolutionContext<*>
+        expression: KtExpression,
+        variableDescriptor: CallableDescriptor,
+        c: ResolutionContext<*>,
     ): Boolean {
         for (parent in expression.parents) {
             if (parent is KtForExpression) {

@@ -21,7 +21,7 @@ class BasicAbsentDescriptorHandler : AbsentDescriptorHandler {
 class NoDescriptorForDeclarationException @JvmOverloads constructor(declaration: KtDeclaration, additionalDetails: String? = null) :
     KotlinExceptionWithAttachments(
         "Descriptor wasn't found for declaration $declaration"
-                + (additionalDetails?.let { "\n---------------------------------------------------\n$it" } ?: "")
+                + (additionalDetails?.let { "\n---------------------------------------------------\n$it" } ?: ""),
     ) {
     init {
         withAttachment("declaration.kt", declaration.getElementTextWithContext())

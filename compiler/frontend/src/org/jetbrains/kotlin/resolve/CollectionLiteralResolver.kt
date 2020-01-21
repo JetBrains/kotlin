@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 class CollectionLiteralResolver(
     val module: ModuleDescriptor,
     val callResolver: CallResolver,
-    val languageVersionSettings: LanguageVersionSettings
+    val languageVersionSettings: LanguageVersionSettings,
 ) {
     companion object {
         val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
@@ -53,7 +53,7 @@ class CollectionLiteralResolver(
             PrimitiveType.SHORT to Name.identifier("shortArrayOf"),
             PrimitiveType.FLOAT to Name.identifier("floatArrayOf"),
             PrimitiveType.LONG to Name.identifier("longArrayOf"),
-            PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf")
+            PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf"),
         )
 
         val ARRAY_OF_FUNCTION = Name.identifier("arrayOf")
@@ -61,7 +61,7 @@ class CollectionLiteralResolver(
 
     fun resolveCollectionLiteral(
         collectionLiteralExpression: KtCollectionLiteralExpression,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ): KotlinTypeInfo {
         if (!isInsideAnnotationEntryOrClass(collectionLiteralExpression)) {
             context.trace.report(UNSUPPORTED.on(collectionLiteralExpression, "Collection literals outside of annotations"))
@@ -74,7 +74,7 @@ class CollectionLiteralResolver(
 
     private fun resolveCollectionLiteralSpecialMethod(
         expression: KtCollectionLiteralExpression,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ): KotlinTypeInfo {
         val call = CallMaker.makeCallForCollectionLiteral(expression)
         val callName = getArrayFunctionCallName(context.expectedType)
@@ -82,8 +82,8 @@ class CollectionLiteralResolver(
         if (functionDescriptors.isEmpty()) {
             context.trace.report(
                 MISSING_STDLIB.on(
-                    expression, "Collection literal call '$callName()' is unresolved"
-                )
+                    expression, "Collection literal call '$callName()' is unresolved",
+                ),
             )
             return noTypeInfo(context)
         }
@@ -100,7 +100,7 @@ class CollectionLiteralResolver(
 
     private fun getFunctionDescriptorForCollectionLiteral(
         expression: KtCollectionLiteralExpression,
-        callName: Name
+        callName: Name,
     ): Collection<SimpleFunctionDescriptor> {
         val memberScopeOfKotlinPackage = module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME).memberScope
         return memberScopeOfKotlinPackage.getContributedFunctions(callName, KotlinLookupLocation(expression))

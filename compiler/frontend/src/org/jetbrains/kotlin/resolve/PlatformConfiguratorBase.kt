@@ -35,7 +35,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     ExplicitApiDeclarationChecker(),
     TailrecFunctionChecker,
     TrailingCommaDeclarationChecker,
-    MissingDependencySupertypeChecker.ForDeclarations
+    MissingDependencySupertypeChecker.ForDeclarations,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
@@ -48,12 +48,12 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker,
     UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
     NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(), TypeOfChecker,
-    MissingDependencySupertypeChecker.ForCalls
+    MissingDependencySupertypeChecker.ForCalls,
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
     DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage,
-    OptionalExpectationUsageChecker()
+    OptionalExpectationUsageChecker(),
 )
 private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>()
 
@@ -68,7 +68,7 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
      */
     PlatformExtensionsClashResolver.FallbackToDefault(TypeSpecificityComparator.NONE, TypeSpecificityComparator::class.java),
 
-    PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java)
+    PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java),
 )
 
 fun StorageComponentContainer.configureDefaultCheckers() {
@@ -94,7 +94,7 @@ abstract class PlatformConfiguratorBase(
     private val platformToKotlinClassMap: PlatformToKotlinClassMap? = null,
     private val delegationFilter: DelegationFilter? = null,
     private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
-    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
+    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null,
 ) : PlatformConfigurator {
     override val platformSpecificContainer = composeContainer(this::class.java.simpleName) {
         configureDefaultCheckers()

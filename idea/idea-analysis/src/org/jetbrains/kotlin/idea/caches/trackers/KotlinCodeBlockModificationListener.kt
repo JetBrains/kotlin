@@ -41,7 +41,7 @@ val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 class KotlinCodeBlockModificationListener(
     modificationTracker: PsiModificationTracker,
     project: Project,
-    private val treeAspect: TreeAspect
+    private val treeAspect: TreeAspect,
 ) : PsiTreeChangePreprocessor {
     private val modificationTrackerImpl = modificationTracker as PsiModificationTrackerImpl
 
@@ -78,64 +78,69 @@ class KotlinCodeBlockModificationListener(
             (PsiManager.getInstance(project) as PsiManagerImpl).addTreeChangePreprocessor(this)
         }
 
-        model.addModelListener(object : PomModelListener {
-            override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
-                return aspect == treeAspect
-            }
-
-            override fun modelChanged(event: PomModelEvent) {
-                val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
-                val ktFile = changeSet.rootElement.psi.containingFile as? KtFile ?: return
-
-                incFileModificationCount(ktFile)
-
-                val changedElements = changeSet.changedElements
-
-                // skip change if it contains only virtual/fake change
-                if (changedElements.isNotEmpty() &&
-                    // ignore formatting (whitespaces etc) change
-                    (isFormattingChange(changeSet) ||
-                            // ignore comment change
-                            isCommentChange(changeSet) ||
-                            changedElements.all { !it.psi.isPhysical })
-                ) return
-
-                val inBlockChange = inBlockModifications(changedElements)
-
-                if (!inBlockChange) {
-                    messageBusConnection.deliverImmediately()
-
-                    if (ktFile.isPhysical && !isReplLine(ktFile.virtualFile)) {
-                        if (isLanguageTrackerEnabled) {
-                            kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
-                            perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile, true)
-                        } else {
-                            perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile, false)
-                            // Increment counter and process changes in PsiModificationTracker.Listener
-                            modificationTrackerImpl.incCounter()
-                        }
-                    }
-
-                    incOutOfBlockModificationCount(ktFile)
+        model.addModelListener(
+            object : PomModelListener {
+                override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
+                    return aspect == treeAspect
                 }
-            }
-        })
+
+                override fun modelChanged(event: PomModelEvent) {
+                    val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
+                    val ktFile = changeSet.rootElement.psi.containingFile as? KtFile ?: return
+
+                    incFileModificationCount(ktFile)
+
+                    val changedElements = changeSet.changedElements
+
+                    // skip change if it contains only virtual/fake change
+                    if (changedElements.isNotEmpty() &&
+                        // ignore formatting (whitespaces etc) change
+                        (isFormattingChange(changeSet) ||
+                                // ignore comment change
+                                isCommentChange(changeSet) ||
+                                changedElements.all { !it.psi.isPhysical })
+                    ) return
+
+                    val inBlockChange = inBlockModifications(changedElements)
+
+                    if (!inBlockChange) {
+                        messageBusConnection.deliverImmediately()
+
+                        if (ktFile.isPhysical && !isReplLine(ktFile.virtualFile)) {
+                            if (isLanguageTrackerEnabled) {
+                                kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
+                                perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile, true)
+                            } else {
+                                perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile, false)
+                                // Increment counter and process changes in PsiModificationTracker.Listener
+                                modificationTrackerImpl.incCounter()
+                            }
+                        }
+
+                        incOutOfBlockModificationCount(ktFile)
+                    }
+                }
+            },
+        )
 
         @Suppress("UnstableApiUsage")
-        messageBusConnection.subscribe(PsiModificationTracker.TOPIC, PsiModificationTracker.Listener {
-            if (isLanguageTrackerEnabled) {
-                val kotlinTrackerInternalIDECount =
-                    modificationTrackerImpl.forLanguage(KotlinLanguage.INSTANCE).modificationCount
-                if (kotlinModificationTracker == kotlinTrackerInternalIDECount) {
-                    // Some update that we are not sure is from Kotlin language, as Kotlin language tracker wasn't changed
-                    kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
-                } else {
-                    kotlinModificationTracker = kotlinTrackerInternalIDECount
+        messageBusConnection.subscribe(
+            PsiModificationTracker.TOPIC,
+            PsiModificationTracker.Listener {
+                if (isLanguageTrackerEnabled) {
+                    val kotlinTrackerInternalIDECount =
+                        modificationTrackerImpl.forLanguage(KotlinLanguage.INSTANCE).modificationCount
+                    if (kotlinModificationTracker == kotlinTrackerInternalIDECount) {
+                        // Some update that we are not sure is from Kotlin language, as Kotlin language tracker wasn't changed
+                        kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
+                    } else {
+                        kotlinModificationTracker = kotlinTrackerInternalIDECount
+                    }
                 }
-            }
 
-            perModuleOutOfCodeBlockTrackerUpdater.onPsiModificationTrackerUpdate(customIncrement)
-        })
+                perModuleOutOfCodeBlockTrackerUpdater.onPsiModificationTrackerUpdate(customIncrement)
+            },
+        )
     }
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
@@ -342,7 +347,7 @@ class KotlinCodeBlockModificationListener(
             KtNamedFunction::class.java,
             KtClassInitializer::class.java,
             KtSecondaryConstructor::class.java,
-            KtScriptInitializer::class.java
+            KtScriptInitializer::class.java,
         )
 
         fun getInstance(project: Project): KotlinCodeBlockModificationListener =

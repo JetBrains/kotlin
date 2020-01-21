@@ -13,7 +13,7 @@ import kotlin.script.experimental.jvm.util.matchMaybeVersionedFile
 class AutoloadedScriptDefinitions(
     private val hostConfiguration: ScriptingHostConfiguration,
     private val baseClassloader: ClassLoader,
-    private val messageReporter: MessageReporter
+    private val messageReporter: MessageReporter,
 ) : ScriptDefinitionsSource {
 
     private val basePath by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -34,8 +34,8 @@ class AutoloadedScriptDefinitions(
                     emptyList(),
                     baseClassloader,
                     hostConfiguration,
-                    messageReporter
-                )
+                    messageReporter,
+                ),
             )
         }
     }

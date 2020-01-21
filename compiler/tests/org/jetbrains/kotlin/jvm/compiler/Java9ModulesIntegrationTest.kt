@@ -19,18 +19,18 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         get() = "compiler/testData/javaModules/"
 
     private fun module(
-            name: String,
-            modulePath: List<File> = emptyList(),
-            addModules: List<String> = emptyList(),
-            additionalKotlinArguments: List<String> = emptyList(),
-            manifest: Manifest? = null
+        name: String,
+        modulePath: List<File> = emptyList(),
+        addModules: List<String> = emptyList(),
+        additionalKotlinArguments: List<String> = emptyList(),
+        manifest: Manifest? = null,
     ): File {
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
             "-jdk-home", KotlinTestUtils.getJdk9Home().path,
             "-jvm-target", "1.8",
-            "-Xmodule-path=$paths"
+            "-Xmodule-path=$paths",
         )
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
@@ -38,21 +38,21 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         kotlinOptions += additionalKotlinArguments
 
         return compileLibrary(
-                name,
-                additionalOptions = kotlinOptions,
-                compileJava = { _, javaFiles, outputDir ->
-                    val javaOptions = mutableListOf(
-                            "-d", outputDir.path,
-                            "--module-path", paths
-                    )
-                    if (addModules.isNotEmpty()) {
-                        javaOptions += "--add-modules"
-                        javaOptions += addModules.joinToString()
-                    }
-                    KotlinTestUtils.compileJavaFilesExternallyWithJava9(javaFiles, javaOptions)
-                },
-                checkKotlinOutput = checkKotlinOutput(name),
-                manifest = manifest
+            name,
+            additionalOptions = kotlinOptions,
+            compileJava = { _, javaFiles, outputDir ->
+                val javaOptions = mutableListOf(
+                    "-d", outputDir.path,
+                    "--module-path", paths,
+                )
+                if (addModules.isNotEmpty()) {
+                    javaOptions += "--add-modules"
+                    javaOptions += addModules.joinToString()
+                }
+                KotlinTestUtils.compileJavaFilesExternallyWithJava9(javaFiles, javaOptions)
+            },
+            checkKotlinOutput = checkKotlinOutput(name),
+            manifest = manifest,
         )
     }
 
@@ -62,11 +62,11 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     private fun createMultiReleaseJar(jdk9Home: File, destination: File, mainRoot: File, java9Root: File): File {
         val command = listOf<String>(
-                File(jdk9Home, "bin/jar").path,
-                "--create", "--file=$destination",
-                "-C", mainRoot.path, ".",
-                "--release", "9",
-                "-C", java9Root.path, "."
+            File(jdk9Home, "bin/jar").path,
+            "--create", "--file=$destination",
+            "-C", mainRoot.path, ".",
+            "--release", "9",
+            "-C", java9Root.path, ".",
         )
 
         val process = ProcessBuilder().command(command).inheritIO().start()
@@ -155,13 +155,13 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val kotlinOptions = mutableListOf(
             "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
             "-jdk-home", KotlinTestUtils.getJdk9Home().path,
-            "-Xmodule-path=${a.path}"
+            "-Xmodule-path=${a.path}",
         )
         compileLibrary(
-                "moduleB",
-                additionalOptions = kotlinOptions,
-                compileJava = { _, _, _ -> error("No .java files in moduleB in this test") },
-                checkKotlinOutput = checkKotlinOutput("moduleB")
+            "moduleB",
+            additionalOptions = kotlinOptions,
+            compileJava = { _, _, _ -> error("No .java files in moduleB in this test") },
+            checkKotlinOutput = checkKotlinOutput("moduleB"),
         )
     }
 
@@ -176,7 +176,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
         // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found
         val libraryJar = createMultiReleaseJar(
-            KotlinTestUtils.getJdk9Home(), File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9
+            KotlinTestUtils.getJdk9Home(), File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9,
         )
 
         module("main", listOf(libraryJar))
@@ -187,10 +187,13 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val m1 = File(tmpdir, ".auto--mat1c-_-!@#\$%^&()m0d_ule--1.0..0-release..jar")
         module("automatic-module1").renameTo(m1)
 
-        val m2 = module("automatic-module2", manifest = Manifest().apply {
-            mainAttributes.putValue("Manifest-Version", "1.0")
-            mainAttributes.putValue("Automatic-Module-Name", "automodule2")
-        })
+        val m2 = module(
+            "automatic-module2",
+            manifest = Manifest().apply {
+                mainAttributes.putValue("Manifest-Version", "1.0")
+                mainAttributes.putValue("Automatic-Module-Name", "automodule2")
+            },
+        )
 
         module("main", listOf(m1, m2))
     }
@@ -238,7 +241,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val buildFile = AbstractCliTest.replacePathsInBuildXml(
             "-Xbuild-file=${File(testDataDirectory, "build.xml").path}",
             testDataDirectory.absolutePath,
-            tmpdir.absolutePath
+            tmpdir.absolutePath,
         )
         module("usage", additionalKotlinArguments = listOf("-no-stdlib", buildFile))
     }
@@ -251,7 +254,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             "-p",
             "${ForTestCompileRuntime.runtimeJarForTests().path}${File.pathSeparator}${jar.path}",
             "-m",
-            "usage/some.module.withsome.packages.UsageKt"
+            "usage/some.module.withsome.packages.UsageKt",
         )
 
         val process = ProcessBuilder().command(command).start()

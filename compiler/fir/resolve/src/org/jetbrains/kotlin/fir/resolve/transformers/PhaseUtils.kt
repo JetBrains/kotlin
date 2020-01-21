@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 fun <D> AbstractFirBasedSymbol<D>.phasedFir(
-    requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS,
 ): D where D : FirDeclaration, D : FirSymbolOwner<D> {
     val result = this.fir
     val availablePhase = result.resolvePhase

@@ -27,7 +27,7 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
     // Even that Nothing(?) is the most specific type for subtype, it doesn't bring valuable information to the user,
     // therefore it is discriminated in favor of supertype
     fun isSuitableResultedType(
-        resultType: KotlinTypeMarker
+        resultType: KotlinTypeMarker,
     ): Boolean {
         return !resultType.typeConstructor().isNothingConstructor()
     }
@@ -41,7 +41,7 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
         baseConstraint: Constraint,
         otherConstraint: Constraint,
         generatedConstraintType: KotlinTypeMarker,
-        isSubtype: Boolean
+        isSubtype: Boolean,
     ): Boolean {
         if (isSubtype && (generatedConstraintType.isNothing() || generatedConstraintType.isFlexibleNothing())) return true
         if (!isSubtype && generatedConstraintType.isNullableAny()) return true

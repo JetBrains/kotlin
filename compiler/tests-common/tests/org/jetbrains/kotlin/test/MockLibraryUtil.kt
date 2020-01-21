@@ -43,45 +43,52 @@ object MockLibraryUtil {
     @JvmStatic
     @JvmOverloads
     fun compileJvmLibraryToJar(
-            sourcesPath: String,
-            jarName: String,
-            addSources: Boolean = false,
-            allowKotlinSources: Boolean = true,
-            extraOptions: List<String> = emptyList(),
-            extraClasspath: List<String> = emptyList(),
-            useJava9: Boolean = false
+        sourcesPath: String,
+        jarName: String,
+        addSources: Boolean = false,
+        allowKotlinSources: Boolean = true,
+        extraOptions: List<String> = emptyList(),
+        extraClasspath: List<String> = emptyList(),
+        useJava9: Boolean = false,
     ): File {
         return compileLibraryToJar(
-            sourcesPath, KotlinTestUtils.tmpDirForReusableFolder("testLibrary-" + jarName), jarName, addSources, allowKotlinSources, extraOptions, extraClasspath
-            , useJava9)}
+            sourcesPath,
+            KotlinTestUtils.tmpDirForReusableFolder("testLibrary-" + jarName),
+            jarName,
+            addSources,
+            allowKotlinSources,
+            extraOptions,
+            extraClasspath,
+            useJava9,
+        )}
 
     @JvmStatic
     @JvmOverloads
     fun compileJavaFilesLibraryToJar(
-            sourcesPath: String,
-            jarName: String,
-            addSources: Boolean = false,
-            extraOptions: List<String> = emptyList(),
-            extraClasspath: List<String> = emptyList()
+        sourcesPath: String,
+        jarName: String,
+        addSources: Boolean = false,
+        extraOptions: List<String> = emptyList(),
+        extraClasspath: List<String> = emptyList(),
     ): File {
         return compileJvmLibraryToJar(
-                sourcesPath, jarName, addSources,
-                allowKotlinSources = false,
-                extraClasspath = extraClasspath, extraOptions = extraOptions
+            sourcesPath, jarName, addSources,
+            allowKotlinSources = false,
+            extraClasspath = extraClasspath, extraOptions = extraOptions,
         )
     }
 
     @JvmStatic
     @JvmOverloads
     fun compileLibraryToJar(
-            sourcesPath: String,
-            contentDir: File,
-            jarName: String,
-            addSources: Boolean = false,
-            allowKotlinSources: Boolean = true,
-            extraOptions: List<String> = emptyList(),
-            extraClasspath: List<String> = emptyList(),
-            useJava9: Boolean = false
+        sourcesPath: String,
+        contentDir: File,
+        jarName: String,
+        addSources: Boolean = false,
+        allowKotlinSources: Boolean = true,
+        extraOptions: List<String> = emptyList(),
+        extraClasspath: List<String> = emptyList(),
+        useJava9: Boolean = false,
     ): File {
         val classesDir = File(contentDir, "classes")
 
@@ -108,8 +115,8 @@ object MockLibraryUtil {
             }
 
             val options = listOf(
-                    "-classpath", classpath.joinToString(File.pathSeparator),
-                    "-d", classesDir.path
+                "-classpath", classpath.joinToString(File.pathSeparator),
+                "-d", classesDir.path,
             )
 
             val compile =
@@ -169,10 +176,10 @@ object MockLibraryUtil {
     @JvmStatic
     @JvmOverloads
     fun compileKotlin(
-            sourcesPath: String,
-            outDir: File,
-            extraOptions: List<String> = emptyList(),
-            vararg extraClasspath: String
+        sourcesPath: String,
+        outDir: File,
+        extraOptions: List<String> = emptyList(),
+        vararg extraClasspath: String,
     ) {
         val classpath = mutableListOf<String>()
         if (File(sourcesPath).isDirectory) {
@@ -181,9 +188,9 @@ object MockLibraryUtil {
         classpath += extraClasspath
 
         val args = mutableListOf(
-                sourcesPath,
-                "-d", outDir.absolutePath,
-                "-classpath", classpath.joinToString(File.pathSeparator)
+            sourcesPath,
+            "-d", outDir.absolutePath,
+            "-classpath", classpath.joinToString(File.pathSeparator),
         ) + extraOptions
 
         runJvmCompiler(args)
@@ -214,8 +221,8 @@ object MockLibraryUtil {
     @Synchronized
     private fun createCompilerClassLoader(): ClassLoader {
         return ClassPreloadingUtils.preloadClasses(
-                listOf(PathUtil.kotlinPathsForDistDirectory.compilerPath),
-                Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
+            listOf(PathUtil.kotlinPathsForDistDirectory.compilerPath),
+            Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null,
         )
     }
 }

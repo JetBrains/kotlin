@@ -25,11 +25,11 @@ import kotlin.system.measureTimeMillis
 class KotlinTargetsIndex(
     val byJpsTarget: Map<ModuleBuildTarget, KotlinModuleBuildTarget<*>>,
     val chunks: List<KotlinChunk>,
-    val chunksByJpsRepresentativeTarget: Map<ModuleBuildTarget, KotlinChunk>
+    val chunksByJpsRepresentativeTarget: Map<ModuleBuildTarget, KotlinChunk>,
 )
 
 internal class KotlinTargetsIndexBuilder internal constructor(
-    private val uninitializedContext: KotlinCompileContext
+    private val uninitializedContext: KotlinCompileContext,
 ) {
     private val byJpsModuleBuildTarget = mutableMapOf<ModuleBuildTarget, KotlinModuleBuildTarget<*>>()
     private val isKotlinJsStdlibJar = mutableMapOf<String, Boolean>()
@@ -64,7 +64,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
         return KotlinTargetsIndex(
             byJpsModuleBuildTarget,
             chunks,
-            chunks.associateBy { it.representativeTarget.jpsModuleBuildTarget }
+            chunks.associateBy { it.representativeTarget.jpsModuleBuildTarget },
         )
     }
 

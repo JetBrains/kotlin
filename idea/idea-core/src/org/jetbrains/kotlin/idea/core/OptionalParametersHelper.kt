@@ -30,7 +30,7 @@ object OptionalParametersHelper {
     fun detectArgumentsToDropForDefaults(
         resolvedCall: ResolvedCall<out CallableDescriptor>,
         project: Project,
-        canDrop: (ValueArgument) -> Boolean = { true }
+        canDrop: (ValueArgument) -> Boolean = { true },
     ): Collection<ValueArgument> {
         if (!resolvedCall.isReallySuccess()) return emptyList()
         val descriptor = resolvedCall.resultingDescriptor
@@ -56,7 +56,7 @@ object OptionalParametersHelper {
 
     private fun ValueArgument.matchesDefault(
         resolvedCall: ResolvedCall<out CallableDescriptor>,
-        parameterToDefaultValue: Map<ValueParameterDescriptor, DefaultValue>
+        parameterToDefaultValue: Map<ValueParameterDescriptor, DefaultValue>,
     ): Boolean {
         val parameter = resolvedCall.getParameterForArgument(this) ?: return false
         val defaultValue = parameterToDefaultValue[parameter] ?: return false
@@ -103,7 +103,7 @@ object OptionalParametersHelper {
 
     data class DefaultValue(
         val expression: KtExpression,
-        val parameterUsages: Map<ValueParameterDescriptor, Collection<KtExpression>>
+        val parameterUsages: Map<ValueParameterDescriptor, Collection<KtExpression>>,
     )
 
     fun defaultParameterValueExpression(parameter: ValueParameterDescriptor, project: Project): KtExpression? {

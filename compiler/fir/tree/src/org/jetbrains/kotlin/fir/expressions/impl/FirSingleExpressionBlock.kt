@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 class FirSingleExpressionBlock(
-    var statement: FirStatement
+    var statement: FirStatement,
 ) : FirBlock(), FirAbstractAnnotatedElement {
     override val source: FirSourceElement ? get() = statement.source
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

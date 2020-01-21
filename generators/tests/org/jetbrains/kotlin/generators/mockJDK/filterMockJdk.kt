@@ -17,7 +17,7 @@ import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
 fun main() = removeInterfacesFromMockJdkClassfiles(
-    mockJdkRuntimeJar = File("compiler/testData/mockJDK/jre/lib/rt.jar")
+    mockJdkRuntimeJar = File("compiler/testData/mockJDK/jre/lib/rt.jar"),
 )
 
 internal fun removeInterfacesFromMockJdkClassfiles(mockJdkRuntimeJar: File) {
@@ -29,7 +29,7 @@ internal fun removeInterfacesFromMockJdkClassfiles(mockJdkRuntimeJar: File) {
         File(System.getProperty("java.io.tmpdir")),
         "mockJdk",
         "",
-        true
+        true,
     )
     val copyJar = File(tmpdir, "rt.jar")
     FileUtil.copy(mockJdkRuntimeJar, copyJar)
@@ -55,7 +55,7 @@ private fun transformJar(sourceJar: JarFile, targetJar: JarOutputStream) {
 
             classReader.accept(
                 InterfacesFilter(classWriter),
-                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES // Only implemented interfaces matter
+                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES, // Only implemented interfaces matter
             )
 
             targetJar.putNextEntry(ZipEntry(entry.name))

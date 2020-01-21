@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 
 abstract class AbstractIncrementalJvmJpsTest(
-    allowNoFilesWithSuffixInTestData: Boolean = false
+    allowNoFilesWithSuffixInTestData: Boolean = false,
 ) : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = allowNoFilesWithSuffixInTestData) {
     override fun overrideModuleSettings() {
         myProject.k2JvmCompilerArguments = K2JVMCompilerArguments().also {

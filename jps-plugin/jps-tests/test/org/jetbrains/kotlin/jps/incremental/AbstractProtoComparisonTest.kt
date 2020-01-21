@@ -62,7 +62,7 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
                         oldNameResolver = oldData.nameResolver,
                         newNameResolver = newData.nameResolver,
                         oldTypeTable = oldData.proto.typeTableOrNull,
-                        newTypeTable = newData.proto.typeTableOrNull
+                        newTypeTable = newData.proto.typeTableOrNull,
                     ).difference(oldData.proto, newData.proto)
                 }
                 oldData is PackagePartProtoData && newData is PackagePartProtoData -> {
@@ -70,7 +70,7 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
                         oldNameResolver = oldData.nameResolver,
                         newNameResolver = newData.nameResolver,
                         oldTypeTable = oldData.proto.typeTableOrNull,
-                        newTypeTable = newData.proto.typeTableOrNull
+                        newTypeTable = newData.proto.typeTableOrNull,
                     ).difference(oldData.proto, newData.proto)
                 }
                 else -> null

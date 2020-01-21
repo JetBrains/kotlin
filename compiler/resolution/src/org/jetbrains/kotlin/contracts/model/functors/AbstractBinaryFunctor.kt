@@ -56,6 +56,6 @@ abstract class AbstractBinaryFunctor : AbstractFunctor() {
 
     protected abstract fun invokeWithReturningEffects(
         left: List<ConditionalEffect>,
-        right: List<ConditionalEffect>
+        right: List<ConditionalEffect>,
     ): List<ConditionalEffect>
 }

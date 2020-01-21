@@ -34,7 +34,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         if (declaration.returnTypeRef is FirComputingImplicitTypeRef) {
             declaration.transformReturnTypeRef(
                 TransformImplicitType,
-                FirErrorTypeRefImpl(null, FirSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes))
+                FirErrorTypeRefImpl(null, FirSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes)),
             )
             return declaration.returnTypeRef as FirResolvedTypeRef
         }
@@ -49,8 +49,8 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
                 TransformImplicitType,
                 FirErrorTypeRefImpl(
                     null,
-                    FirSimpleDiagnostic("Unsupported: implicit VP type")
-                )
+                    FirSimpleDiagnostic("Unsupported: implicit VP type"),
+                ),
             )
         }
         val returnTypeRef = declaration.returnTypeRef
@@ -76,13 +76,13 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
 
         declaration.transformReturnTypeRef(
             TransformImplicitType,
-            FirComputingImplicitTypeRef
+            FirComputingImplicitTypeRef,
         )
 
         val transformer = FirDesignatedBodyResolveTransformer(
             (listOf(file) + outerClasses.filterNotNull().asReversed() + listOf(declaration)).iterator(),
             file.session,
-            scopeSession
+            scopeSession,
         )
 
         file.transform<FirElement, ResolutionMode>(transformer, ResolutionMode.ContextDependent)

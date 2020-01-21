@@ -72,7 +72,8 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
                         PsiElementChecker.checkPsiElementStructure(this)
                     }
                 }
-            })
+            },
+        )
     }
 
     private fun lazinessModeByFileText(): LightClassLazinessChecker.Mode {
@@ -102,7 +103,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
 
         val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
             testFile!!.canonicalPath, libName(),
-            extraClasspath = listOf(ForTestCompileRuntime.jetbrainsAnnotationsForTests().path)
+            extraClasspath = listOf(ForTestCompileRuntime.jetbrainsAnnotationsForTests().path),
         )
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)
@@ -113,13 +114,16 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
     fun doTest(testDataPath: String) {
         val testDataFile = File(testDataPath)
         val expectedFile = KotlinTestUtils.replaceExtension(
-            testDataFile, "compiled.java"
+            testDataFile, "compiled.java",
         ).let { if (it.exists()) it else KotlinTestUtils.replaceExtension(testDataFile, "java") }
-        testLightClass(expectedFile, testDataFile, { it }, {
-            findClass(it, null, project)?.apply {
-                PsiElementChecker.checkPsiElementStructure(this)
-            }
-        })
+        testLightClass(
+            expectedFile, testDataFile, { it },
+            {
+                findClass(it, null, project)?.apply {
+                    PsiElementChecker.checkPsiElementStructure(this)
+                }
+            },
+        )
     }
 }
 
@@ -138,7 +142,7 @@ private fun testLightClass(expected: File, testData: File, normalize: (String) -
                 .replace("java.lang.String[] strings", "java.lang.String[] p")
                 .removeLinesStartingWith("@" + JvmAnnotationNames.METADATA_FQ_NAME.asString())
                 .run(normalize)
-        }
+        },
     )
 }
 
@@ -149,7 +153,7 @@ private fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiCla
 
     return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project)) ?: PsiTreeUtil.findChildrenOfType(
             ktFile,
-            KtClassOrObject::class.java
+            KtClassOrObject::class.java,
         )
         .find { fqName.endsWith(it.nameAsName!!.asString()) }
         ?.let { KtLightClassForSourceDeclaration.create(it) }
@@ -275,15 +279,15 @@ object LightClassLazinessChecker {
                     "Missing $fqName annotation in '${modifierListOwner}' have only ${annotations?.joinToString(
                         ", ",
                         "[",
-                        "]"
-                    ) { it.toString() }}"
+                        "]",
+                    ) { it.toString() }}",
                 )
             }
             clsAnnotations.zip(lightAnnotations).forEach { (clsAnnotation, lightAnnotation) ->
                 if (lightAnnotation !is KtLightNullabilityAnnotation<*>)
                     assertNotNull(
                         lightAnnotation!!.nameReferenceElement,
-                        "nameReferenceElement should be not null for $lightAnnotation of ${lightAnnotation.javaClass}"
+                        "nameReferenceElement should be not null for $lightAnnotation of ${lightAnnotation.javaClass}",
                     )
                 if (lightAnnotation is KtLightAbstractAnnotation) {
                     assertEquals(clsAnnotation.values(), lightAnnotation.values())
@@ -300,7 +304,7 @@ object LightClassLazinessChecker {
     private data class ClassInfo(
         val fieldNames: Collection<String>,
         val methodNames: Collection<String>,
-        val modifiers: List<String>
+        val modifiers: List<String>,
     )
 
     private fun classInfo(psiClass: PsiClass) = with(psiClass) {
@@ -310,14 +314,14 @@ object LightClassLazinessChecker {
 
     private data class FieldInfo(
         val name: String,
-        val modifiers: List<String>
+        val modifiers: List<String>,
     )
 
     private fun fieldInfo(field: PsiField) = with(field) {
         checkModifierList(modifierList!!)
 
         FieldInfo(
-            name, PsiModifier.MODIFIERS.asList().filter { modifierList!!.hasModifierProperty(it) }
+            name, PsiModifier.MODIFIERS.asList().filter { modifierList!!.hasModifierProperty(it) },
         )
     }
 
@@ -326,7 +330,7 @@ object LightClassLazinessChecker {
         val modifiers: List<String>,
         val isConstructor: Boolean,
         val parameterCount: Int,
-        val isVarargs: Boolean
+        val isVarargs: Boolean,
     )
 
     private fun methodInfo(method: PsiMethod, lazinessMode: Mode) = with(method) {
@@ -334,7 +338,7 @@ object LightClassLazinessChecker {
 
         MethodInfo(
             name, relevantModifiers(lazinessMode),
-            isConstructor, method.parameterList.parametersCount, isVarArgs
+            isConstructor, method.parameterList.parametersCount, isVarArgs,
         )
     }
 

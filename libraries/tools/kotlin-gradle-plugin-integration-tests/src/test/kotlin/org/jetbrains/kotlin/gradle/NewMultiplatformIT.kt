@@ -66,17 +66,17 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testLibAndApp() = doTestLibAndApp(
         "sample-lib",
-        "sample-app"
+        "sample-app",
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
-        "sample-app-gradle-kotlin-dsl"
+        "sample-app-gradle-kotlin-dsl",
     )
 
     private fun doTestLibAndApp(
-        libProjectName: String, appProjectName: String
+        libProjectName: String, appProjectName: String,
     ) {
         val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "new-mpp-lib-and-app")
         val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "new-mpp-lib-and-app")
@@ -108,11 +108,11 @@ class NewMultiplatformIT : BaseGradleIT() {
                     val pom = groupDir.resolve(it.replaceAfterLast('.', "pom"))
                     Assert.assertTrue(
                         "$pom should contain a name section.",
-                        pom.readText().contains("<name>Sample MPP library</name>")
+                        pom.readText().contains("<name>Sample MPP library</name>"),
                     )
                     Assert.assertFalse(
                         "$pom should not contain standard K/N libraries as dependencies.",
-                        pom.readText().contains("<groupId>Kotlin/Native</groupId>")
+                        pom.readText().contains("<groupId>Kotlin/Native</groupId>"),
                     )
                 }
 
@@ -262,14 +262,16 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testSourceSetCyclicDependencyDetection() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         setupWorkingDir()
-        gradleBuildScript().appendText("\n" + """
+        gradleBuildScript().appendText(
+            "\n" + """
             kotlin.sourceSets {
                 a
                 b { dependsOn a }
                 c { dependsOn b }
                 a.dependsOn(c)
             }
-        """.trimIndent())
+        """.trimIndent(),
+        )
 
         build("assemble") {
             assertFailed()
@@ -331,7 +333,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         // also check incremental Kapt class structure configurations, KT-33105
                         jvm6MainImplementation(project(":sample-lib-gradle-kotlin-dsl")) 
                     }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             }
             // also check incremental Kapt class structure configurations, KT-33105
@@ -347,7 +349,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     @JvmStatic @dagger.Provides
                     fun provideHeater(): Iface = object : Iface { }
                 }
-            """.trimIndent()
+            """.trimIndent(),
             )
 
             fun javaSourceRootForCompilation(compilationName: String) =
@@ -366,7 +368,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     class JavaClassInJava {
                         Sequence<String> makeSequence() { throw new UnsupportedOperationException(); }
                     }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
 
                 // Add a Kotlin source file in the Java source root and check that it is compiled:
@@ -374,7 +376,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     """
                     package com.example.lib
                     class KotlinClassInJava
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             }
 
@@ -393,7 +395,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                             new JavaClassInJava();
                         }
                     }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             }
 
@@ -409,7 +411,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         // other added classes:
                         "kotlin/jvm6/main/com/example/lib/KotlinClassInJava.class",
                         "java/main/com/example/lib/JavaClassInJava.class",
-                        "java/test/com/example/lib/JavaTest.class"
+                        "java/test/com/example/lib/JavaTest.class",
                     )
                 val actualClasses = getFilePathsSet("build/classes")
                 Assert.assertEquals(expectedMainClasses, actualClasses)
@@ -470,7 +472,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 // test tasks:
                 ":jsTest", // does not run any actual tests for now
                 ":jvmWithoutJavaTest",
-                ":test"
+                ":test",
             )
 
             val expectedKotlinOutputFiles = listOf(
@@ -478,14 +480,14 @@ class NewMultiplatformIT : BaseGradleIT() {
                     arrayOf(
                         it + "com/example/lib/JavaClassUsageKt.class",
                         it + "com/example/lib/CommonKt.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module"
+                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module",
                     )
                 },
                 *kotlinClassesDir(sourceSet = "jvmWithJava/test").let {
                     arrayOf(
                         it + "com/example/lib/TestCommonCode.class",
                         it + "com/example/lib/TestWithJava.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module" // Note: same name as in main
+                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module", // Note: same name as in main
                     )
                 },
                 *kotlinClassesDir(sourceSet = "jvmWithoutJava/main").let {
@@ -493,16 +495,16 @@ class NewMultiplatformIT : BaseGradleIT() {
                         it + "com/example/lib/CommonKt.class",
                         it + "com/example/lib/MainKt.class",
                         it + "Script.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module"
+                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module",
                     )
                 },
                 *kotlinClassesDir(sourceSet = "jvmWithoutJava/test").let {
                     arrayOf(
                         it + "com/example/lib/TestCommonCode.class",
                         it + "com/example/lib/TestWithoutJava.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module" // Note: same name as in main
+                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module", // Note: same name as in main
                     )
-                }
+                },
             )
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }
@@ -512,7 +514,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 "jsBrowserTest",
                 "jsNodeTest",
                 "test", // jvmTest
-                "${nativeHostTargetName}Test"
+                "${nativeHostTargetName}Test",
             )
         }
     }
@@ -533,7 +535,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         progressiveMode = true
                     }
                 }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         listOf("compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlin${nativeHostTargetName.capitalize()}").forEach {
@@ -543,7 +545,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertContains(
                     "-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses",
                     " -progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-                    "-Xopt-in=kotlin.contracts.ExperimentalContracts"
+                    "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                 )
             }
         }
@@ -559,7 +561,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     foo { }
                     bar { dependsOn foo }
                 }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         fun testMonotonousCheck(sourceSetConfigurationChange: String, expectedErrorHint: String) {
@@ -576,17 +578,17 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         testMonotonousCheck(
             "languageSettings.languageVersion = '1.4'",
-            SourceSetConsistencyChecks.languageVersionCheckHint
+            SourceSetConsistencyChecks.languageVersionCheckHint,
         )
 
         testMonotonousCheck(
             "languageSettings.enableLanguageFeature('InlineClasses')",
-            SourceSetConsistencyChecks.unstableFeaturesHint
+            SourceSetConsistencyChecks.unstableFeaturesHint,
         )
 
         testMonotonousCheck(
             "languageSettings.useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes')",
-            SourceSetConsistencyChecks.experimentalAnnotationsInUseHint
+            SourceSetConsistencyChecks.experimentalAnnotationsInUseHint,
         )
 
         // check that enabling a bugfix feature and progressive mode or advancing API level
@@ -598,7 +600,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     enableLanguageFeature('SoundSmartcastForEnumEntries')
                     progressiveMode = true
                 }
-            """.trimIndent()
+            """.trimIndent(),
         )
         build("tasks") {
             assertSuccessful()
@@ -642,7 +644,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                             }
                         }
                     }
-                """.trimIndent()
+                """.trimIndent(),
             )
             val metadataDependencyRegex = "$pathPrefix(.*?)->(.*)".toRegex()
 
@@ -660,7 +662,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
                         "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
                     }.toSet(),
-                    paths
+                    paths,
                 )
             }
         }
@@ -720,7 +722,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         targetPomPath,
                         "<groupId>com.example</groupId>",
                         "<artifactId>sample-lib-metadata</artifactId>",
-                        "<version>1.0</version>"
+                        "<version>1.0</version>",
                     )
                 }
             }
@@ -730,7 +732,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testEndorsedLibsController() {
         with(
-            transformProjectWithPluginsDsl("new-mpp-native-endorsed", gradleVersion)
+            transformProjectWithPluginsDsl("new-mpp-native-endorsed", gradleVersion),
         ) {
             setupWorkingDir()
 
@@ -862,7 +864,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             @Optional("optionalAnnotationValue")
             class OptionalCommonUsage
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         build("compileKotlinJvmWithoutJava", "compileKotlin${nativeHostTargetName.capitalize()}") {
@@ -901,21 +903,21 @@ class NewMultiplatformIT : BaseGradleIT() {
         val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
         val sharedPaths = listOf(
             "build/bin/$nativeHostTargetName/mainDebugShared/$sharedPrefix$baseName$sharedSuffix",
-            "build/bin/$nativeHostTargetName/mainReleaseShared/$sharedPrefix$baseName$sharedSuffix"
+            "build/bin/$nativeHostTargetName/mainReleaseShared/$sharedPrefix$baseName$sharedSuffix",
         )
 
         val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
         val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
         val staticPaths = listOf(
             "build/bin/$nativeHostTargetName/mainDebugStatic/$staticPrefix$baseName$staticSuffix",
-            "build/bin/$nativeHostTargetName/mainReleaseStatic/$staticPrefix$baseName$staticSuffix"
+            "build/bin/$nativeHostTargetName/mainReleaseStatic/$staticPrefix$baseName$staticSuffix",
         )
 
         val headerPaths = listOf(
             "build/bin/$nativeHostTargetName/mainDebugShared/$sharedPrefix${baseName}_api.h",
             "build/bin/$nativeHostTargetName/mainReleaseShared/$sharedPrefix${baseName}_api.h",
             "build/bin/$nativeHostTargetName/mainDebugStatic/$staticPrefix${baseName}_api.h",
-            "build/bin/$nativeHostTargetName/mainReleaseStatic/$staticPrefix${baseName}_api.h"
+            "build/bin/$nativeHostTargetName/mainReleaseStatic/$staticPrefix${baseName}_api.h",
         )
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
@@ -927,7 +929,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         val frameworkPaths = listOf(
             "build/bin/$nativeHostTargetName/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
             "build/bin/$nativeHostTargetName/mainDebugFramework/$frameworkPrefix$baseName$frameworkSuffix",
-            "build/bin/$nativeHostTargetName/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix"
+            "build/bin/$nativeHostTargetName/mainReleaseFramework/$frameworkPrefix$baseName$frameworkSuffix",
         )
             .takeIf { HostManager.hostIsMac }
             .orEmpty()
@@ -937,7 +939,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             ":linkMainDebugShared$taskSuffix",
             ":linkMainReleaseShared$taskSuffix",
             ":linkMainDebugStatic$taskSuffix",
-            ":linkMainReleaseStatic$taskSuffix"
+            ":linkMainReleaseStatic$taskSuffix",
         )
 
         val klibTask = ":compileKotlin$taskSuffix"
@@ -1001,7 +1003,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     private fun doTestNativeBinaryDSL(
         projectName: String,
-        gradleVersionRequired: GradleVersionRequired = gradleVersion
+        gradleVersionRequired: GradleVersionRequired = gradleVersion,
     ) = with(transformProjectWithPluginsDsl(projectName, gradleVersionRequired, "new-mpp-native-binaries")) {
 
         val hostSuffix = nativeHostTargetName.capitalize()
@@ -1014,7 +1016,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             "bazReleaseExecutable" to "my-baz",
             "test2ReleaseExecutable" to "test2",
             "releaseStatic" to "native_binary",
-            "releaseShared" to "native_binary"
+            "releaseShared" to "native_binary",
         )
 
         val linkTasks = binaries.map { (name, _) -> "link${name.capitalize()}$hostSuffix" }
@@ -1033,7 +1035,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             "runFooReleaseExecutable",
             "runBarReleaseExecutable",
             "runBazReleaseExecutable",
-            "runTest2ReleaseExecutable"
+            "runTest2ReleaseExecutable",
         ).map { "$it$hostSuffix" }.toMutableList()
 
         val binariesTasks = arrayOf("${nativeHostTargetName}MainBinaries", "${nativeHostTargetName}TestBinaries")
@@ -1180,7 +1182,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     // TODO: Drop in 1.3.70.
     @Test
     fun testLinkNativeBinaryFromSources() = with(
-        transformProjectWithPluginsDsl("groovy-dsl", gradleVersion, "new-mpp-native-binaries")
+        transformProjectWithPluginsDsl("groovy-dsl", gradleVersion, "new-mpp-native-binaries"),
     ) {
         val linkTask = ":linkDebugExecutable${nativeHostTargetName.capitalize()}"
 
@@ -1206,7 +1208,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNativeFreeArgsWarning() = with(transformProjectWithPluginsDsl("kotlin-dsl", gradleVersion, "new-mpp-native-binaries")) {
         gradleBuildScript().appendText(
-            """kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt""""
+            """kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt"""",
         )
         gradleBuildScript("exported").appendText(
             """
@@ -1214,7 +1216,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 kotlin.targets["macos64"].compilations["test"].kotlinOptions.freeCompilerArgs += "-g"
                 kotlin.targets["linux64"].compilations["main"].kotlinOptions.freeCompilerArgs +=
                     listOf("-g", "-Xdisable-phases=Devirtualization,BuildDFG")
-            """.trimIndent()
+            """.trimIndent(),
         )
         build("tasks") {
             assertSuccessful()
@@ -1233,7 +1235,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 Please move them into final binary declarations. E.g. binaries.executable { freeCompilerArgs += "..." }
                 See more about final binaries: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries.
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
@@ -1353,7 +1355,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 fun fail() {
                     error("FAILURE!")
                 }
-            """.trimIndent()
+            """.trimIndent(),
         )
         build("check") {
             assertFailed()
@@ -1431,7 +1433,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
                     |
                     |    binaries.getTest("DEBUG")
-                """.trimMargin()
+                """.trimMargin(),
             )
         }
 
@@ -1443,7 +1445,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
                     |
                     |    binaries.findTest("DEBUG")
-                """.trimMargin()
+                """.trimMargin(),
             )
             assertContains("Find test: null")
         }
@@ -1474,11 +1476,13 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             setupWorkingDir()
             listOf(gradleBuildScript(), gradleBuildScript("publishedLibrary")).forEach {
-                it.appendText("""
+                it.appendText(
+                    """
                     repositories {
                         maven { url '$repo' }
                     }
-                """.trimIndent())
+                """.trimIndent(),
+                )
             }
 
             val targetsToBuild = if (HostManager.hostIsMingw) {
@@ -1502,7 +1506,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             build(":publishedLibrary:build", ":publishedLibrary:publish") {
                 assertSuccessful()
                 assertTasksExecuted(
-                    targetsToBuild.map { ":publishedLibrary:cinteropStdio${it.capitalize()}" }
+                    targetsToBuild.map { ":publishedLibrary:cinteropStdio${it.capitalize()}" },
                 )
                 assertTrue(output.contains("Published test"), "No test output found")
                 targetsToBuild.forEach {
@@ -1521,7 +1525,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
             val hostLibraryTasks = listOf(
                 ":projectLibrary:cinteropStdio${nativeHostTargetName.capitalize()}",
-                ":projectLibrary:compileKotlin${nativeHostTargetName.capitalize()}"
+                ":projectLibrary:compileKotlin${nativeHostTargetName.capitalize()}",
             )
             build(":projectLibrary:build") {
                 assertSuccessful()
@@ -1633,7 +1637,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                             maven { url "file://${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/../sample-lib/repo" }
                         }
                     }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
                 build("publish") {
                     assertSuccessful()
@@ -1672,7 +1676,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     dependencies {
                         commonMainApi 'com.external.dependency:external:1.2.3'
                     }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             }
 
@@ -1687,7 +1691,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         }
                     }
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
 
             if (withMetadata) {
@@ -1701,7 +1705,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                             }
                         }
                     }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             }
 
@@ -1711,20 +1715,20 @@ class NewMultiplatformIT : BaseGradleIT() {
                     "repo/com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom",
                     "<groupId>com.example</groupId>",
                     "<artifactId>sample-lib-nodejs</artifactId>",
-                    "<version>1.0</version>"
+                    "<version>1.0</version>",
                 )
                 assertFileContains(
                     "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
                     "<groupId>foo</groupId>",
                     "<artifactId>bar</artifactId>",
-                    "<version>42</version>"
+                    "<version>42</version>",
                 )
                 if (withMetadata) {
                     assertFileContains(
                         "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
                         "<groupId>com.external.dependency</groupId>",
                         "<artifactId>external-jvm6</artifactId>",
-                        "<version>1.2.3</version>"
+                        "<version>1.2.3</version>",
                     )
 
                     // Check that, despite the rewritten POM, the module metadata contains the original dependency:
@@ -1744,9 +1748,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                     if (withMetadata)
                         "<artifactId>sample-lib-multiplatform</artifactId>"
                     else
-                        "<artifactId>sample-lib</artifactId>"
-                    ,
-                    "<version>1.0</version>"
+                        "<artifactId>sample-lib</artifactId>",
+                    "<version>1.0</version>",
                 )
                 assertFileContains(
                     "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
@@ -1754,16 +1757,15 @@ class NewMultiplatformIT : BaseGradleIT() {
                     if (withMetadata)
                         "<artifactId>sample-lib-multiplatform</artifactId>"
                     else
-                        "<artifactId>sample-lib</artifactId>"
-                    ,
-                    "<version>1.0</version>"
+                        "<artifactId>sample-lib</artifactId>",
+                    "<version>1.0</version>",
                 )
                 if (withMetadata) {
                     assertFileContains(
                         "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
                         "<groupId>com.external.dependency</groupId>",
                         "<artifactId>external</artifactId>",
-                        "<version>1.2.3</version>"
+                        "<version>1.2.3</version>",
                     )
                 }
             }
@@ -1804,21 +1806,21 @@ class NewMultiplatformIT : BaseGradleIT() {
                     }
                 }
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         projectDir.resolve("src/commonMain/kotlin/Annotation.kt").writeText(
             """
             package com.example
             annotation class Annotation
-            """.trimIndent()
+            """.trimIndent(),
         )
         projectDir.resolve("src/commonMain/kotlin/Annotated.kt").writeText(
             """
             package com.example
             @Annotation
             open class Annotated(var y: Int) { var x = 2 }
-            """.trimIndent()
+            """.trimIndent(),
         )
         // TODO once Kotlin/Native properly supports compiler plugins, move this class to the common sources
         listOf("jvm6", "nodeJs").forEach {
@@ -1829,7 +1831,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 class Override : Annotated(0) {
                     override var x = 3
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
 
@@ -1892,7 +1894,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     file("foo/2.txt").text = System.currentTimeMillis()
                 }
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         val staleFilePath = "foo/1.txt"
@@ -1919,7 +1921,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     println "$testOutputPrefix ${'$'}{target.name} ${'$'}{compilation.name} ${'$'}{compilation.defaultSourceSet.name}"
                 }
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         build {
@@ -1930,7 +1932,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "wasm32", "mingw64", "mingw86", "linux64", "macos64"
+                "jvm6", "nodeJs", "wasm32", "mingw64", "mingw86", "linux64", "macos64",
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(target, compilation, "$target${compilation.capitalize()}")
@@ -2013,7 +2015,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertNotContains(
                 UnusedSourceSetsChecker.WARNING_PREFIX_ONE,
                 UnusedSourceSetsChecker.WARNING_PREFIX_MANY,
-                UnusedSourceSetsChecker.WARNING_INTRO
+                UnusedSourceSetsChecker.WARNING_INTRO,
             )
         }
     }
@@ -2108,23 +2110,23 @@ class NewMultiplatformIT : BaseGradleIT() {
                 if (keepPomIntact != true) {
                     assertTrue("The JVM POM should contain the dependency on 'mpp-lib' rewritten as 'mpp-lib-myjvm'") {
                         jvmPom.contains(
-                            "<groupId>com.example</groupId><artifactId>mpp-lib-myjvm</artifactId><version>1.0</version><scope>compile</scope>"
+                            "<groupId>com.example</groupId><artifactId>mpp-lib-myjvm</artifactId><version>1.0</version><scope>compile</scope>",
                         )
                     }
                     assertTrue("The JS POM should contain the dependency on 'mpp-lib' rewritten as 'mpp-lib-js'") {
                         jsPom.contains(
-                            "<groupId>com.example</groupId><artifactId>mpp-lib-js</artifactId><version>1.0</version><scope>compile</scope>"
+                            "<groupId>com.example</groupId><artifactId>mpp-lib-js</artifactId><version>1.0</version><scope>compile</scope>",
                         )
                     }
                 } else {
                     assertTrue("The JVM POM should contain the original dependency on 'mpp-lib'") {
                         jvmPom.contains(
-                            "<groupId>com.example</groupId><artifactId>mpp-lib</artifactId><version>1.0</version><scope>compile</scope>"
+                            "<groupId>com.example</groupId><artifactId>mpp-lib</artifactId><version>1.0</version><scope>compile</scope>",
                         )
                     }
                     assertTrue("The JS POM should contain the original dependency on 'mpp-lib'") {
                         jsPom.contains(
-                            "<groupId>com.example</groupId><artifactId>mpp-lib</artifactId><version>1.0</version><scope>compile</scope>"
+                            "<groupId>com.example</groupId><artifactId>mpp-lib</artifactId><version>1.0</version><scope>compile</scope>",
                         )
                     }
                 }
@@ -2186,7 +2188,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             checkBytecodeContains(
                 projectDir.resolve("build/classes/kotlin/jvm/integrationTest/com/example/HelloIntegrationTest.class"),
                 "Hello.internalFun\$new_mpp_associate_compilations",
-                "HelloTest.internalTestFun\$new_mpp_associate_compilations"
+                "HelloTest.internalTestFun\$new_mpp_associate_compilations",
             )
             assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations.kotlin_module")
 
@@ -2198,7 +2200,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
 
         gradleBuildScript().appendText(
-            "\nkotlin.sourceSets { getByName(\"commonTest\").requiresVisibilityOf(getByName(\"commonIntegrationTest\")) }"
+            "\nkotlin.sourceSets { getByName(\"commonTest\").requiresVisibilityOf(getByName(\"commonIntegrationTest\")) }",
         )
         build {
             assertFailed()
@@ -2221,7 +2223,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTasksExecuted(
                 *testTasks,
                 ":compileIntegrationTestKotlinJvm",
-                ":linkIntegrationDebugTest${nativeHostTargetName.capitalize()}"
+                ":linkIntegrationDebugTest${nativeHostTargetName.capitalize()}",
             )
 
             fun checkUnitTestOutput(targetName: String) {

@@ -53,7 +53,7 @@ open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserData
     open val scriptExpectedLocations: List<kotlin.script.experimental.location.ScriptExpectedLocation> =
         listOf(
             kotlin.script.experimental.location.ScriptExpectedLocation.SourcesOnly,
-            kotlin.script.experimental.location.ScriptExpectedLocation.TestsOnly
+            kotlin.script.experimental.location.ScriptExpectedLocation.TestsOnly,
         )
 
     open val implicitReceivers: List<KType> get() = emptyList()

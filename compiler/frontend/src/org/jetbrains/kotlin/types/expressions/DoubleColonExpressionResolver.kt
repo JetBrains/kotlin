@@ -89,7 +89,7 @@ private fun <T : DoubleColonLHS> KotlinTypeRefiner.refineLHS(lhs: T): T = when (
         val newType = lhs.typeInfo.type?.let { refineType(it) }
         DoubleColonLHS.Expression(
             lhs.typeInfo.replaceType(newType),
-            lhs.isObjectQualifier
+            lhs.isObjectQualifier,
         ) as T
     }
     is DoubleColonLHS.Type -> {
@@ -113,7 +113,7 @@ class DoubleColonExpressionResolver(
     val dataFlowValueFactory: DataFlowValueFactory,
     val bigAritySupport: FunctionWithBigAritySupport,
     val genericArrayClassLiteralSupport: GenericArrayClassLiteralSupport,
-    val kotlinTypeRefiner: KotlinTypeRefiner
+    val kotlinTypeRefiner: KotlinTypeRefiner,
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -151,7 +151,7 @@ class DoubleColonExpressionResolver(
         c: ExpressionTypingContext,
         expression: KtClassLiteralExpression,
         type: KotlinType,
-        result: DoubleColonLHS
+        result: DoubleColonLHS,
     ) {
         if (result is DoubleColonLHS.Expression) {
             if (!result.isObjectQualifier) {
@@ -228,8 +228,8 @@ class DoubleColonExpressionResolver(
             c.trace.report(
                 UNSUPPORTED_FEATURE.on(
                     expression.receiverExpression!!,
-                    LanguageFeature.BoundCallableReferences to languageVersionSettings
-                )
+                    LanguageFeature.BoundCallableReferences to languageVersionSettings,
+                ),
             )
         }
     }
@@ -329,7 +329,7 @@ class DoubleColonExpressionResolver(
         val resultForReservedExpr = tryResolveLHS(
             doubleColonExpression, c,
             this::shouldTryResolveLHSAsReservedExpression,
-            this::resolveReservedExpressionOnLHS
+            this::resolveReservedExpressionOnLHS,
         )
         if (resultForReservedExpr != null) {
             val lhs = resultForReservedExpr.lhs
@@ -342,7 +342,7 @@ class DoubleColonExpressionResolver(
         val resultForReservedCallChain = tryResolveLHS(
             doubleColonExpression, c,
             this::shouldTryResolveLHSAsReservedCallChain,
-            this::resolveReservedCallChainOnLHS
+            this::resolveReservedCallChainOnLHS,
         )
         if (resultForReservedCallChain != null) {
             val lhs = resultForReservedCallChain.lhs
@@ -401,7 +401,7 @@ class DoubleColonExpressionResolver(
     private class LHSResolutionResult<out T : DoubleColonLHS>(
         val lhs: T?,
         val expression: KtExpression,
-        val traceAndCache: TemporaryTraceAndCache
+        val traceAndCache: TemporaryTraceAndCache,
     ) {
         fun commit(): T? {
             if (lhs != null) {
@@ -420,7 +420,7 @@ class DoubleColonExpressionResolver(
         doubleColonExpression: KtDoubleColonExpression,
         context: ExpressionTypingContext,
         criterion: (KtDoubleColonExpression) -> Boolean,
-        resolve: (KtExpression, ExpressionTypingContext) -> T?
+        resolve: (KtExpression, ExpressionTypingContext) -> T?,
     ): LHSResolutionResult<T>? {
         val expression = doubleColonExpression.receiverExpression ?: return null
 
@@ -468,26 +468,27 @@ class DoubleColonExpressionResolver(
     }
 
     private fun resolveTypeOnLHS(
-        expression: KtExpression, doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext
+        expression: KtExpression, doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext,
     ): DoubleColonLHS.Type? {
         val qualifierResolutionResult =
             qualifiedExpressionResolver.resolveDescriptorForDoubleColonLHS(expression, c.scope, c.trace, c.isDebuggerContext)
 
         val typeResolutionContext = TypeResolutionContext(
             c.scope, c.trace, /* checkBounds = */ true, /* allowBareTypes = */ true,
-            /* isDebuggerContext = */ expression.suppressDiagnosticsInDebugMode() /* TODO: test this */
+            /* isDebuggerContext = */
+            expression.suppressDiagnosticsInDebugMode(), /* TODO: test this */
         )
 
         val classifier = qualifierResolutionResult.classifierDescriptor
         if (classifier == null) {
             typeResolver.resolveTypeProjections(
-                typeResolutionContext, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections
+                typeResolutionContext, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections,
             )
             return null
         }
 
         val possiblyBareType = typeResolver.resolveTypeForClassifier(
-            typeResolutionContext, classifier, qualifierResolutionResult, expression, Annotations.EMPTY
+            typeResolutionContext, classifier, qualifierResolutionResult, expression, Annotations.EMPTY,
         )
 
         val type = if (possiblyBareType.isBare) {
@@ -501,7 +502,7 @@ class DoubleColonExpressionResolver(
             val arguments = descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
             KotlinTypeFactory.simpleType(
                 Annotations.EMPTY, descriptor.typeConstructor, arguments,
-                possiblyBareType.isNullable || doubleColonExpression.hasQuestionMarks
+                possiblyBareType.isNullable || doubleColonExpression.hasQuestionMarks,
             )
         } else {
             val actualType = possiblyBareType.actualType
@@ -550,7 +551,7 @@ class DoubleColonExpressionResolver(
         expression: KtCallableReferenceExpression,
         lhs: DoubleColonLHS?,
         resolutionResults: OverloadResolutionResults<*>?,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ): KotlinType? {
         val descriptor =
             if (resolutionResults != null && !resolutionResults.isNothing) {
@@ -577,7 +578,7 @@ class DoubleColonExpressionResolver(
     }
 
     internal fun checkReferenceIsToAllowedMember(
-        descriptor: CallableDescriptor, trace: BindingTrace, expression: KtCallableReferenceExpression
+        descriptor: CallableDescriptor, trace: BindingTrace, expression: KtCallableReferenceExpression,
     ) {
         val simpleName = expression.callableReference
         if (!languageVersionSettings.supportsFeature(LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS)) {
@@ -585,8 +586,8 @@ class DoubleColonExpressionResolver(
                 (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null)) {
                 trace.report(
                     UNSUPPORTED_FEATURE.on(
-                        simpleName, LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS to languageVersionSettings
-                    )
+                        simpleName, LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS to languageVersionSettings,
+                    ),
                 )
             }
         }
@@ -610,14 +611,15 @@ class DoubleColonExpressionResolver(
         expression: KtCallableReferenceExpression,
         type: KotlinType,
         context: ResolutionContext<*>,
-        referencedFunction: FunctionDescriptor
+        referencedFunction: FunctionDescriptor,
     ) {
         val functionDescriptor = AnonymousFunctionDescriptor(
             context.scope.ownerDescriptor,
             Annotations.EMPTY,
             CallableMemberDescriptor.Kind.DECLARATION,
             expression.toSourceElement(),
-            /* isCoroutine = */ ReflectionTypes.isNumberedKSuspendFunction(type) || referencedFunction.isSuspend
+            /* isCoroutine = */
+            ReflectionTypes.isNumberedKSuspendFunction(type) || referencedFunction.isSuspend,
         )
 
         functionDescriptor.initialize(
@@ -625,7 +627,7 @@ class DoubleColonExpressionResolver(
             createValueParametersForInvokeInFunctionType(functionDescriptor, type.arguments.dropLast(1)),
             type.arguments.last().type,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            Visibilities.PUBLIC,
         )
 
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
@@ -634,9 +636,11 @@ class DoubleColonExpressionResolver(
             bigAritySupport.shouldCheckLanguageVersionSettings &&
             !languageVersionSettings.supportsFeature(LanguageFeature.FunctionTypesWithBigArity)
         ) {
-            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(
-                expression, LanguageFeature.FunctionTypesWithBigArity to languageVersionSettings
-            ))
+            context.trace.report(
+                Errors.UNSUPPORTED_FEATURE.on(
+                    expression, LanguageFeature.FunctionTypesWithBigArity to languageVersionSettings,
+                ),
+            )
         }
     }
 
@@ -644,11 +648,11 @@ class DoubleColonExpressionResolver(
         expression: KtCallableReferenceExpression,
         referenceType: KotlinType,
         context: ResolutionContext<*>,
-        mutable: Boolean = true
+        mutable: Boolean = true,
     ) {
         val localVariable = LocalVariableDescriptor(
             context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType,
-            mutable, false, expression.toSourceElement()
+            mutable, false, expression.toSourceElement(),
         )
 
         context.trace.record(BindingContext.VARIABLE, expression, localVariable)
@@ -657,7 +661,7 @@ class DoubleColonExpressionResolver(
     fun resolveCallableReference(
         expression: KtCallableReferenceExpression,
         context: ExpressionTypingContext,
-        resolveArgumentsMode: ResolveArgumentsMode
+        resolveArgumentsMode: ResolveArgumentsMode,
     ): Pair<DoubleColonLHS?, OverloadResolutionResults<*>?> {
         val lhsResult =
             if (expression.isEmptyLHS) null
@@ -674,7 +678,7 @@ class DoubleColonExpressionResolver(
         expression: KtCallableReferenceExpression,
         context: ExpressionTypingContext,
         lhsResult: DoubleColonLHS?,
-        resolutionResults: OverloadResolutionResults<CallableDescriptor>?
+        resolutionResults: OverloadResolutionResults<CallableDescriptor>?,
     ) {
         val descriptor =
             if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor else null
@@ -695,7 +699,7 @@ class DoubleColonExpressionResolver(
 
     private class ResolutionResultsAndTraceCommitCallback(
         val results: OverloadResolutionResults<CallableDescriptor>,
-        val commitTrace: () -> Unit
+        val commitTrace: () -> Unit,
     )
 
     private fun tryResolveRHSWithReceiver(
@@ -703,7 +707,7 @@ class DoubleColonExpressionResolver(
         receiver: Receiver?,
         reference: KtSimpleNameExpression,
         outerContext: ResolutionContext<*>,
-        resolutionMode: ResolveArgumentsMode
+        resolutionMode: ResolveArgumentsMode,
     ): ResolutionResultsAndTraceCommitCallback? {
         // we should preserve information about `call` because callable references are analyzed two times,
         // otherwise there will be not completed calls in trace
@@ -720,7 +724,7 @@ class DoubleColonExpressionResolver(
                 outerContext.replaceTraceAndCache(temporaryTrace)
 
         val resolutionResults = callResolver.resolveCallForMember(
-            reference, BasicCallResolutionContext.create(newContext, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE)
+            reference, BasicCallResolutionContext.create(newContext, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE),
         )
 
         return when {
@@ -738,7 +742,7 @@ class DoubleColonExpressionResolver(
         expression: KtCallableReferenceExpression,
         lhs: DoubleColonLHS?,
         c: ResolutionContext<*>,
-        mode: ResolveArgumentsMode
+        mode: ResolveArgumentsMode,
     ): OverloadResolutionResults<CallableDescriptor>? {
         val reference = expression.callableReference
 
@@ -763,23 +767,23 @@ class DoubleColonExpressionResolver(
                     if (qualifier is ClassQualifier) {
                         yieldIfNotNull(
                             tryResolveRHSWithReceiver(
-                                "resolve unbound callable reference in static scope", qualifier, reference, c, mode
-                            )
+                                "resolve unbound callable reference in static scope", qualifier, reference, c, mode,
+                            ),
                         )
                     }
 
                     yieldIfNotNull(
                         tryResolveRHSWithReceiver(
-                            "resolve unbound callable reference with receiver", TransientReceiver(lhsType), reference, c, mode
-                        )
+                            "resolve unbound callable reference with receiver", TransientReceiver(lhsType), reference, c, mode,
+                        ),
                     )
                 }
                 is DoubleColonLHS.Expression -> {
                     val expressionReceiver = ExpressionReceiver.create(expression.receiverExpression!!, lhsType, c.trace.bindingContext)
                     yieldIfNotNull(
                         tryResolveRHSWithReceiver(
-                            "resolve bound callable reference", expressionReceiver, reference, c, mode
-                        )
+                            "resolve bound callable reference", expressionReceiver, reference, c, mode,
+                        ),
                     )
 
                     if (lhs.isObjectQualifier) {
@@ -789,8 +793,8 @@ class DoubleColonExpressionResolver(
                             val qualifier = ClassQualifier(calleeExpression, classifier)
                             yieldIfNotNull(
                                 tryResolveRHSWithReceiver(
-                                    "resolve object callable reference in static scope", qualifier, reference, c, mode
-                                )
+                                    "resolve object callable reference in static scope", qualifier, reference, c, mode,
+                                ),
                             )
                         }
                     }
@@ -819,7 +823,7 @@ class DoubleColonExpressionResolver(
         private fun isMutablePropertyReference(
             descriptor: PropertyDescriptor,
             lhs: DoubleColonLHS?,
-            scopeOwnerDescriptor: DeclarationDescriptor
+            scopeOwnerDescriptor: DeclarationDescriptor,
         ): Boolean {
             val receiver = receiverTypeFor(descriptor, lhs)?.let(::TransientReceiver)
             val setter = descriptor.setter
@@ -830,7 +834,7 @@ class DoubleColonExpressionResolver(
             descriptor: CallableDescriptor,
             lhs: DoubleColonLHS?,
             reflectionTypes: ReflectionTypes,
-            scopeOwnerDescriptor: DeclarationDescriptor
+            scopeOwnerDescriptor: DeclarationDescriptor,
         ): KotlinType? {
             val receiverType = receiverTypeFor(descriptor, lhs)
             return when (descriptor) {
@@ -840,7 +844,7 @@ class DoubleColonExpressionResolver(
                     val parametersNames = descriptor.valueParameters.map { it.name }
                     return reflectionTypes.getKFunctionType(
                         Annotations.EMPTY, receiverType,
-                        parametersTypes, parametersNames, returnType, descriptor.builtIns, descriptor.isSuspend
+                        parametersTypes, parametersNames, returnType, descriptor.builtIns, descriptor.isSuspend,
                     )
                 }
                 is PropertyDescriptor -> {

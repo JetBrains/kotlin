@@ -46,7 +46,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         fun getText(
             factory: ClassFileFactory,
             filter: Filter = Filter.EMPTY,
-            withSignatures: Boolean = false
+            withSignatures: Boolean = false,
         ) = factory.getClassFiles()
             .sortedBy { it.relativePath }
             .mapNotNull {
@@ -158,7 +158,8 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                 val type = Type.getType(desc).className
                 parameterAnnotations.getOrPut(
                     parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount),
-                    { arrayListOf() }).add("@$type ")
+                    { arrayListOf() },
+                ).add("@$type ")
                 return super.visitParameterAnnotation(parameter, desc, visible)
             }
 
@@ -169,7 +170,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
                 declarationsInsideClass.add(
-                    Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
+                    Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations),
                 )
                 super.visitEnd()
             }

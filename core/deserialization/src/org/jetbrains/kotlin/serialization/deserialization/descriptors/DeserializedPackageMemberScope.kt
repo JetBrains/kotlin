@@ -39,13 +39,13 @@ open class DeserializedPackageMemberScope(
     metadataVersion: BinaryVersion,
     containerSource: DeserializedContainerSource?,
     components: DeserializationComponents,
-    classNames: () -> Collection<Name>
+    classNames: () -> Collection<Name>,
 ) : DeserializedMemberScope(
     components.createContext(
         packageDescriptor, nameResolver, TypeTable(proto.typeTable),
-        VersionRequirementTable.create(proto.versionRequirementTable), metadataVersion, containerSource
+        VersionRequirementTable.create(proto.versionRequirementTable), metadataVersion, containerSource,
     ),
-    proto.functionList, proto.propertyList, proto.typeAliasList, classNames
+    proto.functionList, proto.propertyList, proto.typeAliasList, classNames,
 ) {
     private val packageFqName = packageDescriptor.fqName
 

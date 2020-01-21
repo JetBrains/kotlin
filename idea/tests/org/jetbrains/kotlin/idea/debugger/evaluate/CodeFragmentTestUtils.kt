@@ -46,7 +46,7 @@ internal fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String
         file.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) {
             val codeFragment = KtPsiFactory(project).createBlockCodeFragment(
                 "val xxx: $typeStr",
-                PsiTreeUtil.getParentOfType(elementAt, KtElement::class.java)
+                PsiTreeUtil.getParentOfType(elementAt, KtElement::class.java),
             )
             val context = codeFragment.analyzeWithContent()
             val typeReference: KtTypeReference =

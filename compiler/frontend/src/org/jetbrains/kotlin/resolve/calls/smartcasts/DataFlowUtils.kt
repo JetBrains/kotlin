@@ -26,7 +26,7 @@ fun KtExpression?.getKotlinTypeWithPossibleSmartCastToFP(
     descriptor: DeclarationDescriptor?,
     languageVersionSettings: LanguageVersionSettings,
     dataFlowValueFactory: DataFlowValueFactory,
-    defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, _ -> givenType }
+    defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, _ -> givenType },
 ): KotlinType? {
     val givenType = this?.getKotlinTypeForComparison(bindingContext) ?: return null
 

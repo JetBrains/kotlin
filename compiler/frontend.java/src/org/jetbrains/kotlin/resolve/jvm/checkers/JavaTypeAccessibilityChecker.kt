@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class JavaTypeAccessibilityChecker : AdditionalTypeChecker {
     override fun checkType(
-            expression: KtExpression,
-            expressionType: KotlinType,
-            expressionTypeWithSmartCast: KotlinType,
-            c: ResolutionContext<*>
+        expression: KtExpression,
+        expressionType: KotlinType,
+        expressionTypeWithSmartCast: KotlinType,
+        c: ResolutionContext<*>,
     ) {
         // NB in Kotlin class hierarchy leading to "pathological" type inference is impossible
         // due to EXPOSED_SUPER_CLASS & EXPOSED_SUPER_INTERFACE checks.
@@ -63,9 +63,9 @@ class JavaTypeAccessibilityChecker : AdditionalTypeChecker {
     }
 
     private fun findInaccessibleJavaClassesRec(
-            type: KotlinType,
-            scopeOwner: DeclarationDescriptor,
-            inaccessibleClasses: MutableCollection<ClassDescriptor>
+        type: KotlinType,
+        scopeOwner: DeclarationDescriptor,
+        inaccessibleClasses: MutableCollection<ClassDescriptor>,
     ) {
         val declarationDescriptor = type.constructor.declarationDescriptor
 

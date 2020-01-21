@@ -19,7 +19,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val annotationsFromAsm: ArrayList<BinAnnData>,
     private val className: String,
     private val classpath: List<File>,
-    private val messageReporter: MessageReporter
+    private val messageReporter: MessageReporter,
 ) : ScriptDefinition.FromConfigurationsBase() {
 
     constructor(
@@ -27,7 +27,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         classBytes: ByteArray,
         className: String,
         classpath: List<File>,
-        messageReporter: MessageReporter
+        messageReporter: MessageReporter,
     ) : this(baseHostConfiguration, loadAnnotationsFromClass(classBytes), className, classpath, messageReporter)
 
     override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -39,20 +39,21 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val configurations by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageReporter(
             ScriptDiagnostic.Severity.DEBUG,
-            "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
+            "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread()
+                .stackTrace}",
         )
         try {
             val compileCfg =
                 createCompilationConfigurationFromTemplate(
                     KotlinType(className),
                     hostConfiguration,
-                    LazyScriptDefinitionFromDiscoveredClass::class
+                    LazyScriptDefinitionFromDiscoveredClass::class,
                 )
             val evalCfg =
                 createEvaluationConfigurationFromTemplate(
                     KotlinType(className),
                     hostConfiguration,
-                    LazyScriptDefinitionFromDiscoveredClass::class
+                    LazyScriptDefinitionFromDiscoveredClass::class,
                 )
             compileCfg to evalCfg
         } catch (ex: ClassNotFoundException) {
@@ -61,7 +62,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         } catch (ex: Exception) {
             messageReporter(
                 ScriptDiagnostic.Severity.ERROR,
-                "Error processing script definition class $className: ${ex.message}\nclasspath:\n${classpath.joinToString("\n", "    ")}"
+                "Error processing script definition class $className: ${ex.message}\nclasspath:\n${classpath.joinToString("\n", "    ")}",
             )
             InvalidScriptDefinition
         }

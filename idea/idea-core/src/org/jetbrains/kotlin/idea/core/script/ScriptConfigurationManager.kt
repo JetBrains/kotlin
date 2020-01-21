@@ -134,7 +134,7 @@ interface ScriptConfigurationManager {
             LOG.warn(
                 "Default Script SDK is null: " +
                         "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
-                        "all sdks = ${getAllProjectSdks().joinToString("\n")}"
+                        "all sdks = ${getAllProjectSdks().joinToString("\n")}",
             )
             return null
         }

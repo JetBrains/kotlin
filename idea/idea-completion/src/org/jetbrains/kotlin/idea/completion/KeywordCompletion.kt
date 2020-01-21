@@ -65,7 +65,7 @@ object KeywordCompletion {
         SEALED_KEYWORD to CLASS_KEYWORD,
         LATEINIT_KEYWORD to VAR_KEYWORD,
         CONST_KEYWORD to VAL_KEYWORD,
-        SUSPEND_KEYWORD to FUN_KEYWORD
+        SUSPEND_KEYWORD to FUN_KEYWORD,
     )
 
     private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
@@ -77,7 +77,7 @@ object KeywordCompletion {
         FINALLY_KEYWORD to "fun foo() { try {\n}\nfinally{\ncaret\n}",
         DO_KEYWORD to "fun foo() { do {\ncaret\n}",
         INIT_KEYWORD to "class C { init {\ncaret\n}",
-        CONSTRUCTOR_KEYWORD to "class C { constructor(caret)"
+        CONSTRUCTOR_KEYWORD to "class C { constructor(caret)",
     )
 
     private val NO_SPACE_AFTER = listOf(
@@ -93,7 +93,7 @@ object KeywordCompletion {
         FILE_KEYWORD,
         DYNAMIC_KEYWORD,
         GET_KEYWORD,
-        SET_KEYWORD
+        SET_KEYWORD,
     ).map { it.value } + "companion object"
 
     fun complete(position: PsiElement, prefixMatcher: PrefixMatcher, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
@@ -149,7 +149,7 @@ object KeywordCompletion {
 
     private fun createLookupElementBuilder(
         keyword: String,
-        position: PsiElement
+        position: PsiElement,
     ): LookupElementBuilder {
         val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == AT
         val insertHandler = when {
@@ -196,8 +196,8 @@ object KeywordCompletion {
             ParentFilter(ClassFilter(KtConstantExpression::class.java)),
             FileFilter(ClassFilter(KtTypeCodeFragment::class.java)),
             LeftNeighbour(TextFilter(".")),
-            LeftNeighbour(TextFilter("?."))
-        )
+            LeftNeighbour(TextFilter("?.")),
+        ),
     )
 
     private class CommentFilter() : ElementFilter {
@@ -332,7 +332,7 @@ object KeywordCompletion {
     private fun buildFilterWithContext(
         prefixText: String,
         contextElement: PsiElement,
-        position: PsiElement
+        position: PsiElement,
     ): (KtKeywordToken) -> Boolean {
         val offset = position.getStartOffsetInAncestor(contextElement)
         val truncatedContext = contextElement.text!!.substring(0, offset)
@@ -342,7 +342,7 @@ object KeywordCompletion {
     private fun buildFilterWithReducedContext(
         prefixText: String,
         contextElement: PsiElement?,
-        position: PsiElement
+        position: PsiElement,
     ): (KtKeywordToken) -> Boolean {
         val builder = StringBuilder()
         buildReducedContextBefore(builder, position, contextElement)
@@ -353,7 +353,7 @@ object KeywordCompletion {
     private fun buildFilesWithKeywordApplication(
         keywordTokenType: KtKeywordToken,
         prefixText: String,
-        psiFactory: KtPsiFactory
+        psiFactory: KtPsiFactory,
     ): Sequence<KtFile> {
         return computeKeywordApplications(prefixText, keywordTokenType)
             .map { application -> psiFactory.createFile(prefixText + application) }
@@ -403,7 +403,7 @@ object KeywordCompletion {
                             MEMBER_FUNCTION,
                             MEMBER_PROPERTY,
                             FUNCTION,
-                            PROPERTY
+                            PROPERTY,
                         )
 
                         is KtFile -> listOf(
@@ -415,7 +415,7 @@ object KeywordCompletion {
                             TOP_LEVEL_FUNCTION,
                             TOP_LEVEL_PROPERTY,
                             FUNCTION,
-                            PROPERTY
+                            PROPERTY,
                         )
 
                         else -> listOf()
@@ -507,7 +507,7 @@ object KeywordCompletion {
     private fun isModifierTargetSupportedAtLanguageLevel(
         keyword: KtKeywordToken,
         target: KotlinTarget,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         if (keyword == LATEINIT_KEYWORD) {
             val feature = when (target) {

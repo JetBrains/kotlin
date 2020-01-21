@@ -36,7 +36,7 @@ data class ConstraintContext(
     // see TypeBounds.Bound.derivedFrom
     val derivedFrom: Set<TypeVariable>? = null,
     val initial: Boolean = false,
-    val initialReduction: Boolean = false
+    val initialReduction: Boolean = false,
 )
 
 fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {

@@ -50,9 +50,9 @@ class GenerateProtoBufCompare {
         Descriptors.FieldDescriptor.JavaType.DOUBLE,
         Descriptors.FieldDescriptor.JavaType.BOOLEAN,
         Descriptors.FieldDescriptor.JavaType.STRING,
-        Descriptors.FieldDescriptor.JavaType.ENUM
+        Descriptors.FieldDescriptor.JavaType.ENUM,
 
-    )
+        )
 
     private val RESULT_NAME = "result"
     private val STRING_INDEXES_NAME = "StringIndexes"
@@ -392,7 +392,7 @@ class GenerateProtoBufCompare {
                         ${ifWithComparison(field, "getExtension($fullFieldName, i)", statement)}
                     }
                 }
-            """
+            """,
             )
         }
 
@@ -446,7 +446,8 @@ class GenerateProtoBufCompare {
             field.options.getExtension(DebugExtOptionsProtoBuf.typeIdInTable) ->
                 "if (!$CHECK_EQUALS_NAME(oldTypeTable.getType(old.$expr), newTypeTable.getType(new.$expr))) $statement"
             field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
-                    field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
+                    field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable),
+            ->
                 "if (!$CHECK_STRING_EQUALS_NAME(old.$expr, new.$expr)) $statement"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
                 "if (!$CHECK_CLASS_ID_EQUALS_NAME(old.$expr, new.$expr)) $statement"
@@ -471,7 +472,8 @@ class GenerateProtoBufCompare {
             field.options.getExtension(DebugExtOptionsProtoBuf.typeIdInTable) ->
                 "typeById($expr).$HASH_CODE_NAME(stringIndexes, fqNameIndexes, typeById)"
             field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
-                    field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
+                    field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable),
+            ->
                 "stringIndexes($expr)"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
                 "fqNameIndexes($expr)"

@@ -23,7 +23,7 @@ fun List<CFGNode<*>>.indicesMap(): Map<CFGNode<*>, Int> = mapIndexed { i, node -
 
 fun ControlFlowGraph.sortNodes(): List<CFGNode<*>> {
     return DFS.topologicalOrder(
-        nodes
+        nodes,
     ) {
         val result = if (it !is WhenBranchConditionExitNode || it.followingNodes.size < 2) {
             it.followingNodes
@@ -114,7 +114,7 @@ fun CFGNode<*>.render(): String =
 
                 is ConstExpressionNode -> "Const: ${fir.render()}"
                 is VariableDeclarationNode ->
-                    "Variable declaration: ${buildString { FirRenderer(this).visitCallableDeclaration(fir)} }"
+                    "Variable declaration: ${buildString { FirRenderer(this).visitCallableDeclaration(fir) }}"
 
                 is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render()}"
                 is FunctionCallNode -> "Function call: ${fir.render()}"
@@ -154,7 +154,7 @@ fun CFGNode<*>.render(): String =
                 is ExitSafeCallNode -> "Exit safe call"
 
                 else -> TODO(this@render.toString())
-            }
+            },
         )
     }
 

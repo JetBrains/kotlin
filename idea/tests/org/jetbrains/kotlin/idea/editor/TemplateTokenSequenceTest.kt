@@ -18,7 +18,7 @@ class TemplateTokenSequenceTest : TestCase() {
     fun `test multiple template tokens`() {
         doTest(
             "literal \${a.length} literal \${b.length}",
-            "LITERAL_CHUNK(literal )ENTRY_CHUNK(\${a.length})LITERAL_CHUNK( literal )ENTRY_CHUNK(\${b.length})"
+            "LITERAL_CHUNK(literal )ENTRY_CHUNK(\${a.length})LITERAL_CHUNK( literal )ENTRY_CHUNK(\${b.length})",
         )
     }
 

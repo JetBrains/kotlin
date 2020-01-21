@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.types.KotlinType
 class DeserializedTypeParameterDescriptor(
     private val c: DeserializationContext,
     val proto: ProtoBuf.TypeParameter,
-    index: Int
+    index: Int,
 ) : AbstractLazyTypeParameterDescriptor(
     c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),
-    ProtoEnumFlags.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY
+    ProtoEnumFlags.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY,
 ) {
     override val annotations = DeserializedAnnotations(c.storageManager) {
         c.components.annotationAndConstantLoader.loadTypeParameterAnnotations(proto, c.nameResolver).toList()
@@ -48,6 +48,6 @@ class DeserializedTypeParameterDescriptor(
     }
 
     override fun reportSupertypeLoopError(type: KotlinType) = throw IllegalStateException(
-        "There should be no cycles for deserialized type parameters, but found for: $this"
+        "There should be no cycles for deserialized type parameters, but found for: $this",
     )
 }

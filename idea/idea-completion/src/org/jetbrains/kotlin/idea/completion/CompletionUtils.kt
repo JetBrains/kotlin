@@ -168,7 +168,7 @@ fun thisExpressionItems(
     bindingContext: BindingContext,
     position: KtExpression,
     prefix: String,
-    resolutionFacade: ResolutionFacade
+    resolutionFacade: ResolutionFacade,
 ): Collection<ThisItemLookupObject> {
     val scope = position.getResolutionScope(bindingContext, resolutionFacade)
 
@@ -310,7 +310,7 @@ private fun createKeywordElementWithSpace(
     keyword: String,
     tail: String = "",
     addSpaceAfter: Boolean = false,
-    lookupObject: KeywordLookupObject = KeywordLookupObject()
+    lookupObject: KeywordLookupObject = KeywordLookupObject(),
 ): LookupElement {
     val element = createKeywordElement(keyword, tail, lookupObject)
     return if (addSpaceAfter) {
@@ -327,7 +327,7 @@ private fun createKeywordElementWithSpace(
 private fun createKeywordElement(
     keyword: String,
     tail: String = "",
-    lookupObject: KeywordLookupObject = KeywordLookupObject()
+    lookupObject: KeywordLookupObject = KeywordLookupObject(),
 ): LookupElementBuilder {
     var element = LookupElementBuilder.create(lookupObject, keyword + tail)
     element = element.withPresentableText(keyword)
@@ -411,7 +411,7 @@ fun shortenReferences(
     context: InsertionContext,
     startOffset: Int,
     endOffset: Int,
-    shortenReferences: ShortenReferences = ShortenReferences.DEFAULT
+    shortenReferences: ShortenReferences = ShortenReferences.DEFAULT,
 ) {
     PsiDocumentManager.getInstance(context.project).commitAllDocuments()
     val file = context.file as KtFile
@@ -433,7 +433,7 @@ fun singleCharPattern(char: Char) = StandardPatterns.character().equalTo(char)
 
 fun LookupElement.decorateAsStaticMember(
     memberDescriptor: DeclarationDescriptor,
-    classNameAsLookupString: Boolean
+    classNameAsLookupString: Boolean,
 ): LookupElement? {
     val container = memberDescriptor.containingDeclaration as? ClassDescriptor ?: return null
     val classDescriptor = if (container.isCompanionObject)

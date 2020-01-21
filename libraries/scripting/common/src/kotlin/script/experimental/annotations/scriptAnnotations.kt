@@ -52,6 +52,6 @@ annotation class KotlinScript(
     val fileExtension: String = "kts",
     val filePathPattern: String = "",
     val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class,
-    val evaluationConfiguration: KClass<out ScriptEvaluationConfiguration> = ScriptEvaluationConfiguration.Default::class
+    val evaluationConfiguration: KClass<out ScriptEvaluationConfiguration> = ScriptEvaluationConfiguration.Default::class,
 )
 

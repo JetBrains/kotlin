@@ -22,7 +22,7 @@ class LazyScriptClassMemberScope(
     resolveSession: ResolveSession,
     declarationProvider: ClassMemberDeclarationProvider,
     private val scriptDescriptor: LazyScriptDescriptor,
-    trace: BindingTrace
+    trace: BindingTrace,
 ) : LazyClassMemberScope(resolveSession, declarationProvider, scriptDescriptor, trace) {
 
     private val scriptPrimaryConstructor: () -> ClassConstructorDescriptorImpl? = resolveSession.storageManager.createNullableLazyValue {
@@ -42,7 +42,7 @@ class LazyScriptClassMemberScope(
                 }
             val annotations = baseConstructorDescriptor.annotations
             val constructorDescriptor = ClassConstructorDescriptorImpl.create(
-                scriptDescriptor, annotations, baseConstructorDescriptor.isPrimary, scriptDescriptor.source
+                scriptDescriptor, annotations, baseConstructorDescriptor.isPrimary, scriptDescriptor.source,
             )
             var paramsIndexBase = baseConstructorDescriptor.valueParameters.lastIndex + 1
             val syntheticParameters =
@@ -54,7 +54,7 @@ class LazyScriptClassMemberScope(
                         Annotations.EMPTY,
                         Name.identifier(param.first),
                         param.second,
-                        false, false, false, null, SourceElement.NO_SOURCE
+                        false, false, false, null, SourceElement.NO_SOURCE,
                     )
                 }
             val parameters = baseConstructorDescriptor.valueParameters.map { it.copy(constructorDescriptor, it.name, it.index) } +
@@ -73,10 +73,10 @@ class LazyScriptClassMemberScope(
                     scriptDescriptor,
                     Annotations.EMPTY,
                     true,
-                    SourceElement.NO_SOURCE
+                    SourceElement.NO_SOURCE,
                 ).initialize(
                     emptyList(),
-                    Visibilities.PUBLIC
+                    Visibilities.PUBLIC,
                 )
         setDeferredReturnType(constructor)
         return constructor

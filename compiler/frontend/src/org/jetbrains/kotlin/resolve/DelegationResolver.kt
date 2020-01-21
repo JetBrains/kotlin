@@ -42,7 +42,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
     private val memberExtractor: MemberExtractor<T>,
     private val typeResolver: TypeResolver,
     private val delegationFilter: DelegationFilter,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
 
     private fun generateDelegatedMembers(): Collection<T> {
@@ -122,7 +122,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
             memberExtractor: MemberExtractor<T>,
             typeResolver: TypeResolver,
             delegationFilter: DelegationFilter,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
         ): Collection<T> =
             DelegationResolver(
                 classOrObject,
@@ -132,13 +132,13 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                 memberExtractor,
                 typeResolver,
                 delegationFilter,
-                languageVersionSettings
+                languageVersionSettings,
             )
                 .generateDelegatedMembers()
 
         private fun isOverridingAnyOf(
             candidate: CallableMemberDescriptor,
-            possiblyOverriddenBy: Collection<CallableDescriptor>
+            possiblyOverriddenBy: Collection<CallableDescriptor>,
         ): Boolean =
             possiblyOverriddenBy.any { isOverridableBy(it, candidate) }
 
@@ -153,7 +153,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         fun getDelegates(
             descriptor: ClassDescriptor,
             toInterface: ClassDescriptor,
-            delegateExpressionType: KotlinType? = null
+            delegateExpressionType: KotlinType? = null,
         ): Map<CallableMemberDescriptor, CallableMemberDescriptor> {
             if (delegateExpressionType?.isDynamic() ?: false) return emptyMap()
 
@@ -178,7 +178,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                                     it == overriddenDescriptor || OverridingUtil.overrides(
                                         it,
                                         overriddenDescriptor,
-                                        it.module.isTypeRefinementEnabled()
+                                        it.module.isTypeRefinementEnabled(),
                                     )
                                 }
                         }

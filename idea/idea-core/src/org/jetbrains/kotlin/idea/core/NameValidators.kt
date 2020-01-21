@@ -32,7 +32,7 @@ import java.util.*
 
 class CollectingNameValidator @JvmOverloads constructor(
     existingNames: Collection<String> = Collections.emptySet(),
-    private val filter: (String) -> Boolean = { true }
+    private val filter: (String) -> Boolean = { true },
 ) : (String) -> Boolean {
     private val existingNames = HashSet(existingNames)
 
@@ -53,18 +53,18 @@ class NewDeclarationNameValidator(
     private val visibleDeclarationsContext: KtElement?,
     private val checkDeclarationsIn: Sequence<PsiElement>,
     private val target: Target,
-    private val excludedDeclarations: List<KtDeclaration> = emptyList()
+    private val excludedDeclarations: List<KtDeclaration> = emptyList(),
 ) : (String) -> Boolean {
     constructor(
         container: PsiElement,
         anchor: PsiElement?,
         target: Target,
-        excludedDeclarations: List<KtDeclaration> = emptyList()
+        excludedDeclarations: List<KtDeclaration> = emptyList(),
     ) : this(
         (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<KtElement>(),
         anchor?.siblings() ?: container.allChildren,
         target,
-        excludedDeclarations
+        excludedDeclarations,
     )
 
     enum class Target {

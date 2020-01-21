@@ -52,7 +52,7 @@ class OperatorCallChecker : CallChecker {
                 throw AssertionError(
                     "Illegal resolved call to variable with invoke for $outerCall. " +
                             "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +
-                            "Invoke: ${resolvedCall.functionCall.resultingDescriptor}"
+                            "Invoke: ${resolvedCall.functionCall.resultingDescriptor}",
                 )
             }
         }
@@ -92,7 +92,7 @@ class OperatorCallChecker : CallChecker {
 
         private fun isWrongCallWithExplicitTypeArguments(
             resolvedCall: VariableAsFunctionResolvedCall,
-            outerCall: Call
+            outerCall: Call,
         ): Boolean {
             val passedTypeArgumentsToInvoke = outerCall.typeArguments.isNotEmpty() &&
                     resolvedCall.functionCall.candidateDescriptor.typeParameters.isNotEmpty()
@@ -111,7 +111,7 @@ fun shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings: LanguageVe
 
 private fun checkModConvention(
     descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
-    diagnosticHolder: DiagnosticSink, modifier: PsiElement
+    diagnosticHolder: DiagnosticSink, modifier: PsiElement,
 ) {
     if (!descriptor.isOperatorMod()) return
 
@@ -130,7 +130,7 @@ private fun warnAboutDeprecatedOrForbiddenMod(
     descriptor: FunctionDescriptor,
     diagnosticHolder: DiagnosticSink,
     reportOn: PsiElement,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ) {
     val diagnosticFactory = if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod))
         Errors.FORBIDDEN_BINARY_MOD_AS_REM

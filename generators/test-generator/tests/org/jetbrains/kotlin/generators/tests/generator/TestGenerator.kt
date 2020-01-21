@@ -23,7 +23,7 @@ class TestGenerator(
     suiteTestClassFqName: String,
     baseTestClassFqName: String,
     testClassModels: Collection<TestClassModel>,
-    useJunit4: Boolean
+    useJunit4: Boolean,
 ) {
     private val baseTestClassPackage: String
     private val suiteClassPackage: String
@@ -59,7 +59,7 @@ class TestGenerator(
             | * Copyright 2010-$year JetBrains s.r.o. and Kotlin Programming Language contributors.
             | * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
             | */
-            |""".trimMargin()
+            |""".trimMargin(),
         )
         p.println("package ", suiteClassPackage, ";")
         p.println()

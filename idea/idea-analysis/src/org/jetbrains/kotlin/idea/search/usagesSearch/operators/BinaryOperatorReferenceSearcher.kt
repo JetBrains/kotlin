@@ -35,14 +35,15 @@ class BinaryOperatorReferenceSearcher(
     searchScope: SearchScope,
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
-    options: KotlinReferencesSearchOptions
+    options: KotlinReferencesSearchOptions,
 ) : OperatorReferenceSearcher<KtBinaryExpression>(
     targetFunction,
     searchScope,
     consumer,
     optimizer,
     options,
-    wordsToSearch = operationTokens.map { it.value }) {
+    wordsToSearch = operationTokens.map { it.value },
+) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {
         val binaryExpression = expression.parent as? KtBinaryExpression ?: return

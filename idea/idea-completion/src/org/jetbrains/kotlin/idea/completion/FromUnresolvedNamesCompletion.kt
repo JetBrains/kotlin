@@ -21,7 +21,7 @@ import java.util.*
 
 class FromUnresolvedNamesCompletion(
     private val collector: LookupElementsCollector,
-    private val prefixMatcher: PrefixMatcher
+    private val prefixMatcher: PrefixMatcher,
 ) {
     fun addNameSuggestions(scope: KtElement, afterOffset: Int?, sampleDescriptor: DeclarationDescriptor?) {
         val names = HashSet<String>()

@@ -24,7 +24,7 @@ abstract class TowerDataConsumer {
     abstract fun consume(
         kind: TowerDataKind,
         towerScopeLevel: TowerScopeLevel,
-        group: Int
+        group: Int,
     ): ProcessorAction
 
     private var stopGroup = Int.MAX_VALUE
@@ -40,12 +40,12 @@ abstract class TowerDataConsumer {
 
 class PrioritizedTowerDataConsumer(
     override val resultCollector: CandidateCollector,
-    private vararg val consumers: TowerDataConsumer
+    private vararg val consumers: TowerDataConsumer,
 ) : TowerDataConsumer() {
     override fun consume(
         kind: TowerDataKind,
         towerScopeLevel: TowerScopeLevel,
-        group: Int
+        group: Int,
     ): ProcessorAction {
         if (skipGroup(group)) return ProcessorAction.NEXT
         var empty = true
@@ -63,7 +63,7 @@ class PrioritizedTowerDataConsumer(
 // - initialConsumer consumes property which is invoke receiver
 // - additionalConsumers consume invoke calls themselves
 class AccumulatingTowerDataConsumer(
-    override val resultCollector: CandidateCollector
+    override val resultCollector: CandidateCollector,
 ) : TowerDataConsumer() {
     lateinit var initialConsumer: TowerDataConsumer
 
@@ -76,7 +76,7 @@ class AccumulatingTowerDataConsumer(
     override fun consume(
         kind: TowerDataKind,
         towerScopeLevel: TowerScopeLevel,
-        group: Int
+        group: Int,
     ): ProcessorAction {
         if (skipGroup(group)) return ProcessorAction.NEXT
         accumulatedTowerData += TowerData(kind, towerScopeLevel, group)
@@ -113,7 +113,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     val token: TowerScopeLevel.Token<T>,
     val explicitReceiver: AbstractExplicitReceiver<*>,
     val candidateFactory: CandidateFactory,
-    override val resultCollector: CandidateCollector
+    override val resultCollector: CandidateCollector,
 ) : TowerDataConsumer() {
 
     companion object {
@@ -123,7 +123,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     override fun consume(
         kind: TowerDataKind,
         towerScopeLevel: TowerScopeLevel,
-        group: Int
+        group: Int,
     ): ProcessorAction {
         if (skipGroup(group)) return ProcessorAction.NEXT
         return when (kind) {
@@ -132,12 +132,12 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                     session, resultCollector.components, explicitReceiver,
                     implicitExtensionReceiver = (towerScopeLevel as? TowerScopeLevel.OnlyImplicitReceiver)?.implicitReceiverValue,
                     implicitExtensionInvokeMode = towerScopeLevel is TowerScopeLevel.OnlyImplicitReceiver,
-                    scopeSession = candidateFactory.bodyResolveComponents.scopeSession
+                    scopeSession = candidateFactory.bodyResolveComponents.scopeSession,
                 ).processElementsByName(
                     token,
                     name,
                     explicitReceiver = null,
-                    processor = EmptyKindTowerProcessor(group)
+                    processor = EmptyKindTowerProcessor(group),
                 )
             }
             TowerDataKind.TOWER_LEVEL -> {
@@ -146,7 +146,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                     token,
                     name,
                     explicitReceiver = explicitReceiver,
-                    processor = TowerLevelKindTowerProcessor(group)
+                    processor = TowerLevelKindTowerProcessor(group),
                 )
             }
         }
@@ -158,7 +158,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-            builtInExtensionFunctionReceiverValue: ReceiverValue?
+            builtInExtensionFunctionReceiverValue: ReceiverValue?,
         ): ProcessorAction {
             resultCollector.consumeCandidate(
                 group,
@@ -167,8 +167,8 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                     ExplicitReceiverKind.DISPATCH_RECEIVER,
                     dispatchReceiverValue,
                     implicitExtensionReceiverValue,
-                    builtInExtensionFunctionReceiverValue
-                )
+                    builtInExtensionFunctionReceiverValue,
+                ),
             )
             return ProcessorAction.NEXT
         }
@@ -179,7 +179,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-            builtInExtensionFunctionReceiverValue: ReceiverValue?
+            builtInExtensionFunctionReceiverValue: ReceiverValue?,
         ): ProcessorAction {
             if (symbol is FirNamedFunctionSymbol && symbol.callableId.packageName.startsWith(defaultPackage)) {
                 val explicitReceiverType = explicitReceiver.type
@@ -193,8 +193,8 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                                 explicitReceiverType,
                                 declarationReceiverType.lookupTag.constructClassType(
                                     declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
-                                    isNullable = true
-                                )
+                                    isNullable = true,
+                                ),
                             )
                         ) {
                             return ProcessorAction.NEXT
@@ -207,12 +207,12 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
                 dispatchReceiverValue,
                 implicitExtensionReceiverValue,
-                builtInExtensionFunctionReceiverValue
+                builtInExtensionFunctionReceiverValue,
             )
 
             resultCollector.consumeCandidate(
                 group,
-                candidate
+                candidate,
             )
             return ProcessorAction.NEXT
         }
@@ -224,12 +224,12 @@ class NoExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
     val candidateFactory: CandidateFactory,
-    override val resultCollector: CandidateCollector
+    override val resultCollector: CandidateCollector,
 ) : TowerDataConsumer() {
     override fun consume(
         kind: TowerDataKind,
         towerScopeLevel: TowerScopeLevel,
-        group: Int
+        group: Int,
     ): ProcessorAction {
         if (skipGroup(group)) return ProcessorAction.NEXT
         return when (kind) {
@@ -239,7 +239,7 @@ class NoExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                     token,
                     name,
                     explicitReceiver = null,
-                    processor = TowerLevelProcessorImpl(group)
+                    processor = TowerLevelProcessorImpl(group),
                 )
             }
             else -> ProcessorAction.NEXT
@@ -251,7 +251,7 @@ class NoExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
             implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
-            builtInExtensionFunctionReceiverValue: ReceiverValue?
+            builtInExtensionFunctionReceiverValue: ReceiverValue?,
         ): ProcessorAction {
             resultCollector.consumeCandidate(
                 group,
@@ -260,8 +260,8 @@ class NoExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     dispatchReceiverValue,
                     implicitExtensionReceiverValue,
-                    builtInExtensionFunctionReceiverValue
-                )
+                    builtInExtensionFunctionReceiverValue,
+                ),
             )
             return ProcessorAction.NEXT
         }

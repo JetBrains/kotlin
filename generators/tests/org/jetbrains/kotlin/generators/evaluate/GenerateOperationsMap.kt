@@ -84,14 +84,14 @@ fun generate(): String {
         val (funcName, parameters, isFunction) = unaryOperationsMapIterator.next()
         val parenthesesOrBlank = if (isFunction) "()" else ""
         p.println(
-                "unaryOperation(",
-                parameters.map { it.asString() }.joinToString(", "),
-                ", ",
-                "\"$funcName\"",
-                ", { a -> a.$funcName$parenthesesOrBlank }, ",
-                renderCheckUnaryOperation(funcName, parameters),
-                ")",
-                if (unaryOperationsMapIterator.hasNext()) "," else ""
+            "unaryOperation(",
+            parameters.map { it.asString() }.joinToString(", "),
+            ", ",
+            "\"$funcName\"",
+            ", { a -> a.$funcName$parenthesesOrBlank }, ",
+            renderCheckUnaryOperation(funcName, parameters),
+            ")",
+            if (unaryOperationsMapIterator.hasNext()) "," else "",
         )
     }
     p.popIndent()
@@ -107,14 +107,14 @@ fun generate(): String {
     while (binaryOperationsMapIterator.hasNext()) {
         val (funcName, parameters) = binaryOperationsMapIterator.next()
         p.println(
-                "binaryOperation(",
-                parameters.map { it.asString() }.joinToString(", "),
-                ", ",
-                "\"$funcName\"",
-                ", { a, b -> a.$funcName(b) }, ",
-                renderCheckBinaryOperation(funcName, parameters),
-                ")",
-                if (binaryOperationsMapIterator.hasNext()) "," else ""
+            "binaryOperation(",
+            parameters.map { it.asString() }.joinToString(", "),
+            ", ",
+            "\"$funcName\"",
+            ", { a, b -> a.$funcName(b) }, ",
+            renderCheckBinaryOperation(funcName, parameters),
+            ")",
+            if (binaryOperationsMapIterator.hasNext()) "," else "",
         )
     }
     p.popIndent()
@@ -150,7 +150,8 @@ fun renderCheckBinaryOperation(name: String, params: List<KotlinType>): String {
         "rem",
         "xor",
         "or",
-        "and" -> "{ a, b -> a.$name(b) }"
+        "and",
+        -> "{ a, b -> a.$name(b) }"
         else -> "emptyBinaryFun"
     }
 }

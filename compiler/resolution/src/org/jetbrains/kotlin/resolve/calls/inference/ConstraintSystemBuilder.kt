@@ -60,7 +60,7 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
 fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
     lowerType: KotlinTypeMarker,
     upperType: KotlinTypeMarker,
-    position: ConstraintPosition
+    position: ConstraintPosition,
 ) =
     runTransaction {
         if (!hasContradiction) addSubtypeConstraint(lowerType, upperType, position)

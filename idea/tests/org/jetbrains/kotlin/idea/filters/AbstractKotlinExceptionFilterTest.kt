@@ -68,13 +68,13 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
             MockLibraryUtil.compileKotlin(path, File(outDir.path), extraClasspath = *arrayOf(mockLibraryPath))
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
-                ForTestCompileRuntime.runtimeJarClassLoader()
+                ForTestCompileRuntime.runtimeJarClassLoader(),
             )
         } else {
             MockLibraryUtil.compileKotlin(path, File(outDir.path))
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/")),
-                ForTestCompileRuntime.runtimeJarClassLoader()
+                ForTestCompileRuntime.runtimeJarClassLoader(),
             )
         }
 
@@ -124,7 +124,7 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         assertEquals(
             "Wrong result for line $stackTraceElement",
             "$expectedFileName:$expectedOffset",
-            descriptor.file.name + ":" + descriptor.offset
+            descriptor.file.name + ":" + descriptor.offset,
         )
     }
 }

@@ -61,15 +61,15 @@ class UtilsTest : TestCase() {
         assertProjectFilesBy("**/sss/*.kt") // none
         assertProjectFilesBy(
             "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt",
-            "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt"
+            "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt",
         )
         assertProjectFilesBy(
             "src/kotlin/script/experimental/jvm/util/jvm?lassLoaderUtil.kt",
-            "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt"
+            "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt",
         )
         assertProjectFilesBy(
             "src/kotlin/script/experimental/jvm/util/jvm*LoaderUtil.kt",
-            "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt"
+            "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt",
         )
         assertProjectFilesBy("**/jvmClassLoaderUtil.kt", "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt", trace = true)
         assertProjectFilesBy("**/script/**/jvmClassLoaderUtil.kt", "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt")

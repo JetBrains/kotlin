@@ -36,7 +36,7 @@ interface LocalRedeclarationChecker {
 
 abstract class LexicalScopeStorage(
     parent: HierarchicalScope,
-    val redeclarationChecker: LocalRedeclarationChecker
+    val redeclarationChecker: LocalRedeclarationChecker,
 ) : LexicalScope {
     override val parent = parent.takeSnapshot()
 

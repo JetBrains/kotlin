@@ -55,7 +55,7 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
     private fun showOverrideImplementChooser(
         project: Project,
-        members: Array<OverrideMemberChooserObject>
+        members: Array<OverrideMemberChooserObject>,
     ): MemberChooser<OverrideMemberChooserObject>? {
         val chooser = MemberChooser(members, true, true, project)
         chooser.title = getChooserTitle()
@@ -117,7 +117,7 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
             editor: Editor?,
             classOrObject: KtClassOrObject,
             selectedElements: Collection<OverrideMemberChooserObject>,
-            copyDoc: Boolean
+            copyDoc: Boolean,
         ) {
             val selectedMemberDescriptors = selectedElements.associate { it.generateMember(classOrObject, copyDoc) to it.descriptor }
 

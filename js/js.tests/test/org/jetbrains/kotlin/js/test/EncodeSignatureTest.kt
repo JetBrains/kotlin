@@ -90,63 +90,89 @@ class EncodeSignatureTest {
 
     @Test
     fun enclosingTypeParameters() {
-        assertSignature("2:0,1:0,0:0|0:0", """
+        assertSignature(
+            "2:0,1:0,0:0|0:0",
+            """
             class A<S> {
                 inner class B<T> {
                     fun <U> test(x: S, y: T, z: U) {}
                 }
             }
-        """)
+        """,
+        )
     }
 
     @Test
     fun variance() {
-        assertSignature("A<kotlin.Int>,A<-kotlin.Long>,A<+kotlin.String>", """
+        assertSignature(
+            "A<kotlin.Int>,A<-kotlin.Long>,A<+kotlin.String>",
+            """
             class A<T>
             fun test(x: A<Int>, y: A<in Long>, z: A<out String>)
-        """)
+        """,
+        )
 
-        assertSignature("A<-kotlin.Int>,A<-kotlin.Long>,A<+kotlin.String>", """
+        assertSignature(
+            "A<-kotlin.Int>,A<-kotlin.Long>,A<+kotlin.String>",
+            """
             class A<in T>
             fun test(x: A<Int>, y: A<in Long>, z: A<out String>)
-        """)
+        """,
+        )
 
-        assertSignature("A<+kotlin.Int>,A<+kotlin.Long>,A<+kotlin.String>", """
+        assertSignature(
+            "A<+kotlin.Int>,A<+kotlin.Long>,A<+kotlin.String>",
+            """
             class A<out T>
             fun test(x: A<Int>, y: A<in Long>, z: A<out String>)
-        """)
+        """,
+        )
     }
 
     @Test
     fun starProjection() {
-        assertSignature("A<*>", """
+        assertSignature(
+            "A<*>",
+            """
             class A<T>
             fun test(x: A<*>)
-        """)
+        """,
+        )
     }
 
     @Test
     fun typeConstraints() {
-        assertSignature("0:0|0:0<:A<kotlin.Int>", """
+        assertSignature(
+            "0:0|0:0<:A<kotlin.Int>",
+            """
             class A<T>
             fun <T : A<Int>> test(x: T)
-        """)
+        """,
+        )
 
-        assertSignature("0:0|0:0<:A<kotlin.Int>&A<kotlin.String>", """
+        assertSignature(
+            "0:0|0:0<:A<kotlin.Int>&A<kotlin.String>",
+            """
             class A<T>
             fun <T> test(x: T) where T : A<Int>, T : A<String>
-        """)
+        """,
+        )
 
-        assertSignature("1:0,0:0|0:0<:1:0", """
+        assertSignature(
+            "1:0,0:0|0:0<:1:0",
+            """
             class A<T> {
                 fun <S> test(x: T, x: S) where S : T
             }
-        """)
+        """,
+        )
     }
 
     @Test
     fun genericExtensionFunctionToInner() {
-        assertSignature("A.C<kotlin.String,2:0>/1:0", """
+        assertSignature(
+            "A.C<kotlin.String,2:0>/1:0",
+            """
             class A<T> {
                 inner class B<S> {
                     fun C<String>.test(x: S) {}
@@ -154,35 +180,45 @@ class EncodeSignatureTest {
                 inner class C<U>
             }
             fun <T : A<Int>> test(x: T)
-        """)
+        """,
+        )
     }
 
     @Test
     fun typeAliases() {
-        assertSignature("C<kotlin.String>", """
+        assertSignature(
+            "C<kotlin.String>",
+            """
             class C<T>
             typealias A = C<String>
             fun test(x: A)
-        """)
+        """,
+        )
     }
 
     @Test
     fun typeParameterUsageInConstraints() {
-        assertSignature("0:0|0:0<:1:0,1:0<:I", """
+        assertSignature(
+            "0:0|0:0<:1:0,1:0<:I",
+            """
             interface I
             class A<T : I> {
                 fun <S : T> test(x: S)
             }
-        """)
+        """,
+        )
     }
 
     @Test
     fun recursiveType() {
-        assertSignature("1:0|1:0<:I<1:0>", """
+        assertSignature(
+            "1:0|1:0<:I<1:0>",
+            """
             interface I<T : I<T>> {
                 fun test(x: T)
             }
-        """)
+        """,
+        )
     }
 
     @Test

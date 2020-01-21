@@ -36,15 +36,19 @@ abstract class AbstractGradleImportHandler<T : AnnotationBasedPluginModel> : Gra
     abstract val modelKey: Key<T>
 
     override fun importBySourceSet(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>) {
-        modifyCompilerArgumentsForPlugin(facet, getPluginSetupBySourceSet(sourceSetNode),
-                                         compilerPluginId = compilerPluginId,
-                                         pluginName = pluginName)
+        modifyCompilerArgumentsForPlugin(
+            facet, getPluginSetupBySourceSet(sourceSetNode),
+            compilerPluginId = compilerPluginId,
+            pluginName = pluginName,
+        )
     }
 
     override fun importByModule(facet: KotlinFacet, moduleNode: DataNode<ModuleData>) {
-        modifyCompilerArgumentsForPlugin(facet, getPluginSetupByModule(moduleNode),
-                                         compilerPluginId = compilerPluginId,
-                                         pluginName = pluginName)
+        modifyCompilerArgumentsForPlugin(
+            facet, getPluginSetupByModule(moduleNode),
+            compilerPluginId = compilerPluginId,
+            pluginName = pluginName,
+        )
     }
 
     protected open fun getAnnotationsForPreset(presetName: String): List<String> = emptyList()
@@ -52,7 +56,7 @@ abstract class AbstractGradleImportHandler<T : AnnotationBasedPluginModel> : Gra
     protected open fun getAdditionalOptions(model: T): List<PluginOption> = emptyList()
 
     private fun getPluginSetupByModule(
-            moduleNode: DataNode<ModuleData>
+        moduleNode: DataNode<ModuleData>,
     ): AnnotationBasedCompilerPluginSetup? {
         val pluginModel = moduleNode.getCopyableUserData(modelKey)?.takeIf { it.isEnabled } ?: return null
         val annotations = pluginModel.annotations

@@ -44,7 +44,7 @@ object PackageDirectiveCompletion {
         val variants = packageMemberScope.getContributedDescriptors(DescriptorKindFilter.PACKAGES, prefixMatcher.asNameFilter())
         val lookupElementFactory = BasicLookupElementFactory(
             resolutionFacade.project,
-            InsertHandlerProvider(callType = CallType.PACKAGE_DIRECTIVE, expectedInfosCalculator = { emptyList() })
+            InsertHandlerProvider(callType = CallType.PACKAGE_DIRECTIVE, expectedInfosCalculator = { emptyList() }),
         )
         for (variant in variants) {
             val lookupElement = lookupElementFactory.createLookupElement(variant)

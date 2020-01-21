@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class CandidateFactory(
     val bodyResolveComponents: BodyResolveComponents,
-    private val callInfo: CallInfo
+    private val callInfo: CallInfo,
 ) {
 
     private val baseSystem: ConstraintStorage
@@ -33,14 +33,14 @@ class CandidateFactory(
         explicitReceiverKind: ExplicitReceiverKind,
         dispatchReceiverValue: ReceiverValue? = null,
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
-        builtInExtensionFunctionReceiverValue: ReceiverValue? = null
+        builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
     ): Candidate {
         return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
             explicitReceiverKind, bodyResolveComponents, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
-            } ?: callInfo
+            } ?: callInfo,
         )
     }
 }

@@ -31,7 +31,7 @@ private val KotlinType.immanentNullability: Nullability
 class DataFlowValue(
     val identifierInfo: IdentifierInfo,
     val type: KotlinType,
-    val immanentNullability: Nullability = type.immanentNullability
+    val immanentNullability: Nullability = type.immanentNullability,
 ) {
 
     val kind: Kind get() = identifierInfo.kind

@@ -32,7 +32,7 @@ class StaticMembersCompletion(
     private val resolutionFacade: ResolutionFacade,
     private val lookupElementFactory: LookupElementFactory,
     alreadyAdded: Collection<DeclarationDescriptor>,
-    private val isJvmModule: Boolean
+    private val isJvmModule: Boolean,
 ) {
     private val alreadyAdded = alreadyAdded.mapTo(HashSet()) {
         if (it is ImportedFromObjectCallableDescriptor<*>) it.callableFromObject else it
@@ -41,7 +41,7 @@ class StaticMembersCompletion(
     fun decoratedLookupElementFactory(itemPriority: ItemPriority): AbstractLookupElementFactory = object : AbstractLookupElementFactory {
         override fun createStandardLookupElementsForDescriptor(
             descriptor: DeclarationDescriptor,
-            useReceiverTypes: Boolean
+            useReceiverTypes: Boolean,
         ): Collection<LookupElement> {
             if (!useReceiverTypes) return emptyList()
             return lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
@@ -54,7 +54,7 @@ class StaticMembersCompletion(
         override fun createLookupElement(
             descriptor: DeclarationDescriptor, useReceiverTypes: Boolean,
             qualifyNestedClasses: Boolean, includeClassTypeArguments: Boolean,
-            parametersAndTypeGrayed: Boolean
+            parametersAndTypeGrayed: Boolean,
         ) = null
     }
 
@@ -75,7 +75,7 @@ class StaticMembersCompletion(
                 memberScope.getDescriptorsFiltered(kindFilter, nameFilter) + memberScope.collectSyntheticStaticMembersAndConstructors(
                     resolutionFacade,
                     kindFilter,
-                    nameFilter
+                    nameFilter,
                 )
             members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded }
         }
@@ -142,7 +142,7 @@ class StaticMembersCompletion(
         indicesHelper: KotlinIndicesHelper,
         receiverTypes: Collection<KotlinType>,
         callType: CallType<*>,
-        collector: LookupElementsCollector
+        collector: LookupElementsCollector,
     ) {
         val factory = decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
         processObjectMemberExtensions(indicesHelper) { objectMemberDescriptor ->

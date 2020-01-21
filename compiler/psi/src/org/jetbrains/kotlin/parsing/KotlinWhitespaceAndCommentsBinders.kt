@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
-        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter,
     ): Int {
         if (tokens.isEmpty()) return 0
 
@@ -55,7 +55,7 @@ object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
 
 object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
-        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter,
     ): Int {
         if (tokens.isEmpty()) return 0
 
@@ -70,7 +70,7 @@ object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
 // Binds comments on the same line
 object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
-        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter,
     ): Int {
         if (tokens.isEmpty()) return 0
 
@@ -92,7 +92,7 @@ object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
 
 private class AllCommentsBinder(val isTrailing: Boolean) : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
-        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter,
     ): Int {
         if (tokens.isEmpty()) return 0
 
@@ -114,7 +114,7 @@ val TRAILING_ALL_COMMENTS_BINDER: WhitespacesAndCommentsBinder = AllCommentsBind
 
 object DoNotBindAnything : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
-        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter,
     ): Int {
         return 0
     }
@@ -122,7 +122,7 @@ object DoNotBindAnything : WhitespacesAndCommentsBinder {
 
 object BindFirstShebangWithWhitespaceOnly : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
-        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter,
     ): Int {
         if (tokens.firstOrNull() == KtTokens.SHEBANG_COMMENT) {
             return if (tokens.getOrNull(1) == KtTokens.WHITE_SPACE) 2 else 1
@@ -134,7 +134,7 @@ object BindFirstShebangWithWhitespaceOnly : WhitespacesAndCommentsBinder {
 
 class BindAll(val isTrailing: Boolean) : WhitespacesAndCommentsBinder {
     override fun getEdgePosition(
-        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
+        tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter,
     ): Int {
         return if (!isTrailing) 0 else tokens.size
     }

@@ -108,7 +108,7 @@ class KDocSampleTest : AbstractMultiModuleTest() {
                 "'// INFO:' directive was expected",
                 textData,
                 textData + "\n\n//INFO: " + info,
-                testDataFile.absolutePath
+                testDataFile.absolutePath,
             )
         } else {
             val expectedInfo = directives.joinToString("\n", postfix = "\n")

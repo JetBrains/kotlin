@@ -35,20 +35,21 @@ import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
 class AndroidSyntheticPackageData(
-        val moduleData: AndroidModuleData,
-        val forView: Boolean,
-        val isDeprecated: Boolean,
-        val lazyResources: () -> List<AndroidResource>)
+    val moduleData: AndroidModuleData,
+    val forView: Boolean,
+    val isDeprecated: Boolean,
+    val lazyResources: () -> List<AndroidResource>,
+)
 
 class AndroidSyntheticPackageFragmentDescriptor(
-        module: ModuleDescriptor,
-        fqName: FqName,
-        val packageData: AndroidSyntheticPackageData,
-        private val lazyContext: LazySyntheticElementResolveContext,
-        private val storageManager: StorageManager,
-        private val isExperimental: Boolean,
-        private val lookupTracker: LookupTracker,
-        private val layoutName: String
+    module: ModuleDescriptor,
+    fqName: FqName,
+    val packageData: AndroidSyntheticPackageData,
+    private val lazyContext: LazySyntheticElementResolveContext,
+    private val storageManager: StorageManager,
+    private val isExperimental: Boolean,
+    private val lookupTracker: LookupTracker,
+    private val layoutName: String,
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     private val scope = AndroidExtensionPropertiesScope()
     override fun getMemberScope(): MemberScope = scope

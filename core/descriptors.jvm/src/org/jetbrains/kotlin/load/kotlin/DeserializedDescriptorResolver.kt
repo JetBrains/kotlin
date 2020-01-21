@@ -63,10 +63,10 @@ class DeserializedDescriptorResolver {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
         val source = JvmPackagePartSource(
-            kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible
+            kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible,
         )
         return DeserializedPackageMemberScope(
-            descriptor, packageProto, nameResolver, kotlinClass.classHeader.metadataVersion, source, components
+            descriptor, packageProto, nameResolver, kotlinClass.classHeader.metadataVersion, source, components,
         ) {
             // All classes are included into Java scope
             emptyList()

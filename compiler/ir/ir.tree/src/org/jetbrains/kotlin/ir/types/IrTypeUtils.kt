@@ -41,7 +41,7 @@ fun Collection<IrClassifierSymbol>.commonSuperclass(): IrClassifierSymbol {
         val visited = mutableSetOf<IrClassifierSymbol>()
         DFS.topologicalOrder(
             listOf(classifierSymbol), { it.superTypes().map { s -> (s as IrSimpleType).classifier } },
-            DFS.VisitedWithSet(visited)
+            DFS.VisitedWithSet(visited),
         ).also {
             if (superClassifiers == null) {
                 superClassifiers = visited
@@ -59,8 +59,8 @@ fun Collection<IrClassifierSymbol>.commonSuperclass(): IrClassifierSymbol {
         ?: error(
             "No common superType found for non-empty set of classifiers: ${joinToString(
                 prefix = "[",
-                postfix = "]"
-            ) { it.owner.render() }}"
+                postfix = "]",
+            ) { it.owner.render() }}",
         )
 }
 
@@ -83,10 +83,11 @@ fun IrType.isNullable(): Boolean = DFS.ifAny(
             null -> emptyList()
             else -> error("Unsupported classifier: $classifier")
         }
-    }, {
+    },
+    {
         when (it) {
             is IrSimpleType -> it.hasQuestionMark
             else -> it is IrDynamicType
         }
-    }
+    },
 )

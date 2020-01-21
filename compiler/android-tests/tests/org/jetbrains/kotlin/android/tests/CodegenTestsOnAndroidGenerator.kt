@@ -44,7 +44,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     fun getFlavorUnitTestFilePath(index: Int): String {
         return pathManager.srcFolderInAndroidTmpFolder + "/androidTestKtest$index/java/" + testClassPackage.replace(
             ".",
-            "/"
+            "/",
         ) + "/" + testClassName + "$index.java"
     }
 
@@ -64,16 +64,16 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun copyKotlinRuntimeJars() {
         FileUtil.copy(
             ForTestCompileRuntime.runtimeJarForTests(),
-            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-stdlib.jar")
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-stdlib.jar"),
         )
         FileUtil.copy(
             ForTestCompileRuntime.reflectJarForTests(),
-            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-reflect.jar")
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-reflect.jar"),
         )
 
         FileUtil.copy(
             ForTestCompileRuntime.kotlinTestJarForTests(),
-            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-test.jar")
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-test.jar"),
         )
     }
 
@@ -99,7 +99,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     internal inner class FilesWriter(
-        private val configuration: CompilerConfiguration
+        private val configuration: CompilerConfiguration,
     ) {
         private val rawFiles = arrayListOf<TestClassInfo>()
         private val unitTestDescriptions = arrayListOf<TestInfo>()
@@ -118,7 +118,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             val environment = KotlinCoreEnvironment.createForTests(
                 disposable,
                 configuration.copy().apply { put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + currentModuleIndex++) },
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+                EnvironmentConfigFiles.JVM_CONFIG_FILES,
             )
 
             writeFiles(
@@ -128,7 +128,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     } catch (e: Throwable) {
                         throw RuntimeException("Error on processing ${it.name}:\n${it.content}", e)
                     }
-                }, environment
+                },
+                environment,
             )
             Disposer.dispose(disposable)
             rawFiles.clear()
@@ -157,7 +158,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 UnitTestFileWriter(
                     getFlavorUnitTestFilePath(index),
                     index,
-                    generatedTestNames
+                    generatedTestNames,
                 )
             }
             unitTestFileWriter.addTests(unitTestDescriptions)
@@ -173,7 +174,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     @Throws(IOException::class)
     private fun processFiles(
         files: Array<File>,
-        holders: MutableMap<ConfigurationKey, FilesWriter>
+        holders: MutableMap<ConfigurationKey, FilesWriter>,
     ) {
         holders.values.forEach {
             it.writeFilesOnDiskIfNeeded()
@@ -225,10 +226,12 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
                     val filesHolder = holders.getOrPut(key) {
-                        FilesWriter(KotlinTestUtils.newConfiguration(kind, jdkKind, KotlinTestUtils.getAnnotationsJar()).apply {
-                            println("Creating new configuration by $key")
-                            updateConfigurationByDirectivesInTestFiles(testFiles, this)
-                        })
+                        FilesWriter(
+                            KotlinTestUtils.newConfiguration(kind, jdkKind, KotlinTestUtils.getAnnotationsJar()).apply {
+                                println("Creating new configuration by $key")
+                                updateConfigurationByDirectivesInTestFiles(testFiles, this)
+                            },
+                        )
                     }
 
                     patchFilesAndAddTest(file, testFiles, filesHolder)
@@ -245,8 +248,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
                     return TestFile(fileName, text)
                 }
-            }, false,
-            "kotlin.coroutines"
+            },
+            false,
+            "kotlin.coroutines",
         )
 
     companion object {

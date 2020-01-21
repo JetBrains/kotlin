@@ -15,17 +15,19 @@ class KotlinHighlightingLexerTest : LexerTestCase() {
 
     fun testCharLiteralValidEscape() {
         doTest(
-            "'\\n'", """CHARACTER_LITERAL (''')
+            "'\\n'",
+            """CHARACTER_LITERAL (''')
                            |VALID_STRING_ESCAPE_TOKEN ('\n')
-                           |CHARACTER_LITERAL (''')""".trimMargin()
+                           |CHARACTER_LITERAL (''')""".trimMargin(),
         )
     }
 
     fun testCharLiteralInvalidEscape() {
         doTest(
-            "'\\q'", """CHARACTER_LITERAL (''')
+            "'\\q'",
+            """CHARACTER_LITERAL (''')
                            |INVALID_CHARACTER_ESCAPE_TOKEN ('\q')
-                           |CHARACTER_LITERAL (''')""".trimMargin()
+                           |CHARACTER_LITERAL (''')""".trimMargin(),
         )
     }
 

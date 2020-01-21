@@ -44,8 +44,10 @@ class JavaClassOnCompanionChecker : CallChecker {
             val javaLangClass = actualType.constructor.declarationDescriptor as? ClassDescriptor ?: return
 
             val arguments = listOf(TypeProjectionImpl(containingClass.defaultType))
-            val expectedType = KotlinTypeFactory.simpleType(Annotations.EMPTY, javaLangClass.typeConstructor, arguments,
-                                                            actualType.isMarkedNullable)
+            val expectedType = KotlinTypeFactory.simpleType(
+                Annotations.EMPTY, javaLangClass.typeConstructor, arguments,
+                actualType.isMarkedNullable,
+            )
             context.trace.report(ErrorsJvm.JAVA_CLASS_ON_COMPANION.on(reportOn, actualType, expectedType))
         }
     }

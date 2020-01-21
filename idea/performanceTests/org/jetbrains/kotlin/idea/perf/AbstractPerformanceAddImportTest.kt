@@ -38,7 +38,7 @@ abstract class AbstractPerformanceAddImportTest : AbstractPerformanceImportTest(
         filter: (DeclarationDescriptor) -> Boolean,
         descriptorName: String,
         importInsertHelper: ImportInsertHelper,
-        psiDocumentManager: PsiDocumentManager
+        psiDocumentManager: PsiDocumentManager,
     ): String? {
         val resolveImportReference = file.resolveImportReference(fqName)
         val descriptors = resolveImportReference.filter(filter)
@@ -49,7 +49,7 @@ abstract class AbstractPerformanceAddImportTest : AbstractPerformanceImportTest(
             descriptors.size > 1 ->
                 error(
                     "Multiple descriptors found:\n    " +
-                            descriptors.joinToString("\n    ") { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
+                            descriptors.joinToString("\n    ") { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) },
                 )
 
             else -> {

@@ -58,7 +58,7 @@ object CompilerRunnerUtil {
     @Synchronized
     private fun getOrCreateClassLoader(
         environment: JpsCompilerEnvironment,
-        paths: List<File>
+        paths: List<File>,
     ): ClassLoader {
         var classLoader = ourClassLoaderRef.get()
         if (classLoader == null) {
@@ -66,7 +66,7 @@ object CompilerRunnerUtil {
                 paths,
                 Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE,
                 CompilerRunnerUtil::class.java.classLoader,
-                environment.classesToLoadByParent
+                environment.classesToLoadByParent,
             )
             ourClassLoaderRef = SoftReference(classLoader)
         }
@@ -79,7 +79,7 @@ object CompilerRunnerUtil {
 
         messageCollector.report(
             ERROR,
-            "Broken compiler at '" + libs.absolutePath + "'. Make sure plugin is properly installed", null
+            "Broken compiler at '" + libs.absolutePath + "'. Make sure plugin is properly installed", null,
         )
 
         return null
@@ -89,21 +89,21 @@ object CompilerRunnerUtil {
         compilerClassName: String,
         arguments: Array<String>,
         environment: JpsCompilerEnvironment,
-        out: PrintStream
+        out: PrintStream,
     ): Any? = withCompilerClassloader(environment) { classLoader ->
         val compiler = Class.forName(compilerClassName, true, classLoader)
         val exec = compiler.getMethod(
             "execAndOutputXml",
             PrintStream::class.java,
             Class.forName("org.jetbrains.kotlin.config.Services", true, classLoader),
-            Array<String>::class.java
+            Array<String>::class.java,
         )
         exec.invoke(compiler.newInstance(), out, environment.services, arguments)
     }
 
     fun invokeClassesFqNames(
         environment: JpsCompilerEnvironment,
-        files: Set<File>
+        files: Set<File>,
     ): Set<String> = withCompilerClassloader(environment) { classLoader ->
         val klass = Class.forName("org.jetbrains.kotlin.incremental.parsing.ParseFileUtilsKt", true, classLoader)
         val method = klass.getMethod("classesFqNames", Set::class.java)
@@ -113,7 +113,7 @@ object CompilerRunnerUtil {
 
     private fun <T> withCompilerClassloader(
         environment: JpsCompilerEnvironment,
-        fn: (ClassLoader) -> T
+        fn: (ClassLoader) -> T,
     ): T? {
         val libPath = getLibPath(environment.kotlinPaths, environment.messageCollector) ?: return null
         val kotlinPaths = KotlinPathsFromBaseDirectory(libPath)

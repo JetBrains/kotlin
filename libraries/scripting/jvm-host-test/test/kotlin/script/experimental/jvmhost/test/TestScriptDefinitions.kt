@@ -38,7 +38,7 @@ object ReceiverAndPropertiesConfiguration : ScriptCompilationConfiguration(
         providedProperties("providedString" to String::class)
 
         implicitReceivers(ImplicitReceiverClass::class)
-    }
+    },
 )
 
 object ProvidedPropertiesConfiguration : ScriptCompilationConfiguration(
@@ -46,7 +46,7 @@ object ProvidedPropertiesConfiguration : ScriptCompilationConfiguration(
         updateClasspath(classpathFromClass<ScriptWithProvidedProperties>())
 
         providedProperties("providedString" to String::class)
-    }
+    },
 )
 
 object ImplicitReceiverConfiguration : ScriptCompilationConfiguration(
@@ -54,14 +54,14 @@ object ImplicitReceiverConfiguration : ScriptCompilationConfiguration(
         updateClasspath(classpathFromClass<ScriptWithImplicitReceiver>())
 
         implicitReceivers(ImplicitReceiverClass::class)
-    }
+    },
 )
 
 class ImplicitReceiverClass(val receiverString: String)
 
 inline fun <reified T : Any> evalString(
     source: String,
-    noinline configure: ScriptEvaluationConfiguration.Builder.() -> Unit
+    noinline configure: ScriptEvaluationConfiguration.Builder.() -> Unit,
 ): ResultWithDiagnostics<EvaluationResult> {
     val actualConfiguration = createJvmCompilationConfigurationFromTemplate<T>()
     return BasicJvmScriptingHost()

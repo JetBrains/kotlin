@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 fun Candidate.computeCompletionMode(
     components: InferenceComponents,
     expectedType: FirTypeRef?,
-    currentReturnType: ConeKotlinType?
+    currentReturnType: ConeKotlinType?,
 ): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode {
     // Presence of expected type means that we trying to complete outermost call => completion mode should be full
     if (expectedType != null) return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
@@ -99,7 +99,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
         completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         candidateReturnType: ConeKotlinType,
-        analyze: (PostponedResolvedAtomMarker) -> Unit
+        analyze: (PostponedResolvedAtomMarker) -> Unit,
     ) {
 
         while (true) {
@@ -109,7 +109,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
             val postponedKtPrimitives = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
             val variableForFixation =
                 variableFixationFinder.findFirstVariableForFixation(
-                    c, allTypeVariables, postponedKtPrimitives, completionMode, candidateReturnType
+                    c, allTypeVariables, postponedKtPrimitives, completionMode, candidateReturnType,
                 ) ?: break
 
 //            if (shouldForceCallableReferenceOrLambdaResolution(completionMode, variableForFixation)) {
@@ -143,7 +143,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
 
     private fun getOrderedAllTypeVariables(
         c: KotlinConstraintSystemCompleter.Context,
-        topLevelAtoms: List<FirStatement>
+        topLevelAtoms: List<FirStatement>,
     ): List<TypeConstructorMarker> {
         val result = LinkedHashSet<TypeConstructorMarker>(c.notFixedTypeVariables.size)
         fun ConeTypeVariable?.toTypeConstructor(): TypeConstructorMarker? =
@@ -182,7 +182,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
         c: KotlinConstraintSystemCompleter.Context,
         topLevelType: KotlinTypeMarker,
         variableWithConstraints: VariableWithConstraints,
-        postponedResolveKtPrimitives: List<PostponedResolvedAtom>
+        postponedResolveKtPrimitives: List<PostponedResolvedAtom>,
     ) {
         val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
         fixVariable(c, variableWithConstraints, direction)
@@ -191,7 +191,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     fun fixVariable(
         c: KotlinConstraintSystemCompleter.Context,
         variableWithConstraints: VariableWithConstraints,
-        direction: TypeVariableDirectionCalculator.ResolveDirection
+        direction: TypeVariableDirectionCalculator.ResolveDirection,
     ) {
         val resultType = components.resultTypeResolver.findResultType(c, variableWithConstraints, direction)
         c.fixVariable(variableWithConstraints.typeVariable, resultType, atom = null) // TODO: obtain atom for diagnostics
@@ -200,7 +200,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     private fun analyzePostponeArgumentIfPossible(
         c: KotlinConstraintSystemCompleter.Context,
         topLevelAtoms: List<FirStatement>,
-        analyze: (PostponedResolvedAtomMarker) -> Unit
+        analyze: (PostponedResolvedAtomMarker) -> Unit,
     ): Boolean {
         for (argument in getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)) {
             if (canWeAnalyzeIt(c, argument)) {
@@ -217,7 +217,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
             primitive.processAllContainingCallCandidates(
                 // TODO: remove this argument and relevant parameter
                 // Currently, it's used because otherwise problem happens with a lambda in a try-block (see tryWithLambdaInside test)
-                processBlocks = primitive !is FirTryExpression
+                processBlocks = primitive !is FirTryExpression,
             ) { candidate ->
                 candidate.postponedAtoms.forEach {
                     notAnalyzedArguments.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })

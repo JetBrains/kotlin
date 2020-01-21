@@ -61,7 +61,7 @@ class JavaClassifierTypeImpl(psiClassType: PsiClassType) : JavaTypeImpl<PsiClass
     private class ResolutionResult(
         val classifier: JavaClassifierImpl<*>?,
         val substitutor: PsiSubstitutor,
-        val isRaw: Boolean
+        val isRaw: Boolean,
     )
 
     private fun resolve(): ResolutionResult {
@@ -70,7 +70,7 @@ class JavaClassifierTypeImpl(psiClassType: PsiClassType) : JavaTypeImpl<PsiClass
             val psiClass = result.element
             val substitutor = result.substitutor
             ResolutionResult(
-                psiClass?.let { JavaClassifierImpl.create(it) }, substitutor, PsiClassType.isRaw(result)
+                psiClass?.let { JavaClassifierImpl.create(it) }, substitutor, PsiClassType.isRaw(result),
             ).apply {
                 resolutionResult = this
             }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 class MissingSupertypesResolver(
     storageManager: StorageManager,
-    private val moduleDescriptor: ModuleDescriptor
+    private val moduleDescriptor: ModuleDescriptor,
 ) {
     fun getMissingSuperClassifiers(descriptor: ClassifierDescriptor) = missingClassifiers(descriptor)
 

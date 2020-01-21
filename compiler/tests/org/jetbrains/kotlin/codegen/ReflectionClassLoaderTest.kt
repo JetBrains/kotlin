@@ -43,7 +43,7 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
 
         doTest(
             createClassLoader(),
-            createClassLoader()
+            createClassLoader(),
         )
     }
 
@@ -59,7 +59,7 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
 
         doTest(
             BrokenEqualsClassLoader(createClassLoader()),
-            BrokenEqualsClassLoader(createClassLoader())
+            BrokenEqualsClassLoader(createClassLoader()),
         )
     }
 
@@ -74,7 +74,7 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
 
         doTest(
             parent,
-            ChildClassLoader(parent)
+            ChildClassLoader(parent),
         )
     }
 }

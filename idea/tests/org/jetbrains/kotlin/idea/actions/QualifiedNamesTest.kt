@@ -35,7 +35,7 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
 
                     val anonymous = object {
                     }
-                """
+                """,
         )
         assertEquals(
             listOf(
@@ -44,9 +44,9 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
                 "foo.bar.Klass.Companion",
                 "foo.bar.Object",
                 "foo.bar.ClassKt#getAnonymous",
-                null
+                null,
             ),
-            getQualifiedNamesForDeclarations()
+            getQualifiedNamesForDeclarations(),
         )
     }
 
@@ -66,7 +66,7 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
                     fun topLevelFun()
 
                     val topLevelVal = ":)"
-                """
+                """,
         )
         assertEquals(
             listOf(
@@ -74,24 +74,26 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
                 "foo.bar.Klass#memberFun",
                 "foo.bar.Klass#getMemberVal",
                 "foo.bar.FunKt#topLevelFun",
-                "foo.bar.FunKt#getTopLevelVal"
+                "foo.bar.FunKt#getTopLevelVal",
             ),
-            getQualifiedNamesForDeclarations()
+            getQualifiedNamesForDeclarations(),
         )
     }
 
     private fun getQualifiedNamesForDeclarations(): List<String?> {
         val result = ArrayList<String?>()
-        file_.accept(object : KtVisitorVoid() {
-            override fun visitElement(element: PsiElement) {
-                element.acceptChildren(this)
-            }
+        file_.accept(
+            object : KtVisitorVoid() {
+                override fun visitElement(element: PsiElement) {
+                    element.acceptChildren(this)
+                }
 
-            override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
-                result.add(CopyReferenceAction.elementToFqn(declaration))
-                super.visitNamedDeclaration(declaration)
-            }
-        })
+                override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+                    result.add(CopyReferenceAction.elementToFqn(declaration))
+                    super.visitNamedDeclaration(declaration)
+                }
+            },
+        )
         return result
     }
 }

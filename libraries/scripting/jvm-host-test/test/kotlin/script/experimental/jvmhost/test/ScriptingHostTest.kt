@@ -60,7 +60,7 @@ class ScriptingHostTest : TestCase() {
                 createJvmCompilationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration) {
                     updateClasspath(classpathFromClass<SimpleScript>())
                 },
-                createJvmEvaluationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration)
+                createJvmEvaluationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration),
             ).throwOnFailure()
         }
         Assert.assertEquals(greeting, output)
@@ -233,7 +233,7 @@ class ScriptingHostTest : TestCase() {
         val output = doDiamondImportTest(
             ScriptEvaluationConfiguration {
                 enableScriptsInstancesSharing()
-            }
+            },
         )
         Assert.assertEquals(greeting, output)
     }
@@ -352,13 +352,16 @@ class ScriptingHostTest : TestCase() {
         val bytes = jvmCompiledModule.compilerOutputFiles["SavedScript.class"]!!
 
         var classFileVersion: Int? = null
-        ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-            override fun visit(
-                version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?
-            ) {
-                classFileVersion = version
-            }
-        }, 0)
+        ClassReader(bytes).accept(
+            object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visit(
+                    version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?,
+                ) {
+                    classFileVersion = version
+                }
+            },
+            0,
+        )
 
         assertEquals(expectedVersion, classFileVersion)
     }
@@ -427,7 +430,7 @@ fun <T> ResultWithDiagnostics<T>.throwOnFailure(): ResultWithDiagnostics<T> = ap
         val firstExceptionFromReports = reports.find { it.exception != null }?.exception
         throw Exception(
             "Compilation/evaluation failed:\n  ${reports.joinToString("\n  ") { it.exception?.toString() ?: it.message }}",
-            firstExceptionFromReports
+            firstExceptionFromReports,
         )
     }
 }
@@ -438,14 +441,14 @@ private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScript
 private fun evalScriptWithResult(
     script: String,
     host: BasicScriptingHost = BasicJvmScriptingHost(),
-    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    body: ScriptCompilationConfiguration.Builder.() -> Unit = {},
 ): ResultValue =
     evalScriptWithConfiguration(script, host, body).throwOnFailure().valueOrNull()!!.returnValue
 
 internal fun evalScriptWithConfiguration(
     script: String,
     host: BasicScriptingHost = BasicJvmScriptingHost(),
-    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    body: ScriptCompilationConfiguration.Builder.() -> Unit = {},
 ): ResultWithDiagnostics<EvaluationResult> {
     val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = body)
     return host.eval(script.toScriptSource(), compilationConfiguration, null)

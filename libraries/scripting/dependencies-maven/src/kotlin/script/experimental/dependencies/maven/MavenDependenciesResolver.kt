@@ -26,7 +26,7 @@ class MavenRepositoryCoordinates(
     val username: String?,
     val password: String?,
     val privateKeyFile: String?,
-    val passPhrase: String?
+    val passPhrase: String?,
 ) : RepositoryCoordinates(url)
 
 class MavenDependenciesResolver : ExternalDependenciesResolver {
@@ -75,7 +75,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         val repo = RemoteRepository(
             repositoryCoordinates.string,
             "default",
-            url.toString()
+            url.toString(),
         )
         if (repositoryCoordinates is MavenRepositoryCoordinates) {
             val username = repositoryCoordinates.username?.let(::tryResolveEnvironmentVariable)

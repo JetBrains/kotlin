@@ -40,7 +40,7 @@ abstract class AbstractDslHighlighterTest : KotlinLightCodeInsightFixtureTestCas
                     "KotlinPsiChecker did not contribute an Annotation containing the correct text attribute key at line ${lineNumber + 1}",
                     annotationHolder.any {
                         it.textAttributes.externalName == styleIdByComment
-                    }
+                    },
                 )
             } else if (styleIdByCall != styleIdByComment) {
                 val what = element.text

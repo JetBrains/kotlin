@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.platform.PlatformSpecificDiagnosticComponents
 
 class JvmDiagnosticComponents(
-    private val typeQualifierResolver: AnnotationTypeQualifierResolver
+    private val typeQualifierResolver: AnnotationTypeQualifierResolver,
 ) : PlatformSpecificDiagnosticComponents {
     override fun isNullabilityAnnotation(
         annotationDescriptor: AnnotationDescriptor,
-        containingDeclaration: DeclarationDescriptor
+        containingDeclaration: DeclarationDescriptor,
     ): Boolean {
         if (containingDeclaration !is JavaCallableMemberDescriptor) {
             return false

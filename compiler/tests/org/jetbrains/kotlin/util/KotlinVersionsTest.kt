@@ -54,31 +54,31 @@ class KotlinVersionsTest : KtUsefulTestCase() {
 
         // This version is null in case of a local build when KotlinCompilerVersion.VERSION = "@snapshot@"
         versions.addIfNotNull(
-                KotlinCompilerVersion.VERSION.substringBefore('-').toVersionOrNull("KotlinCompilerVersion.VERSION")
+            KotlinCompilerVersion.VERSION.substringBefore('-').toVersionOrNull("KotlinCompilerVersion.VERSION"),
         )
 
         versions.add(
-                ForTestCompileRuntime.runtimeJarClassLoader().loadClass(KotlinVersion::class.qualifiedName!!)
-                        .getDeclaredField((KotlinVersion)::CURRENT.name)
-                        .get(null)
-                        .toString()
-                        .toVersion("KotlinVersion.CURRENT")
+            ForTestCompileRuntime.runtimeJarClassLoader().loadClass(KotlinVersion::class.qualifiedName!!)
+                .getDeclaredField((KotlinVersion)::CURRENT.name)
+                .get(null)
+                .toString()
+                .toVersion("KotlinVersion.CURRENT"),
         )
 
         versions.add(
-                loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
-                        ?.toVersion("version in pom.xml")
-                ?: error("No version in libraries/pom.xml")
+            loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
+                ?.toVersion("version in pom.xml")
+                ?: error("No version in libraries/pom.xml"),
         )
 
         versions.add(
-                LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE")
+            LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE"),
         )
 
         if (versions.any { v1 -> versions.any { v2 -> !v1.isConsistentWith(v2) } }) {
             Assert.fail(
-                    "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
-                    versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
+                "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
+                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } },
             )
         }
     }
@@ -101,14 +101,14 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         }
 
         Assert.assertTrue(
-                "Too few (<= 10) pom.xml files found. Something must be wrong in the test or in the project structure",
-                poms.size > 10
+            "Too few (<= 10) pom.xml files found. Something must be wrong in the test or in the project structure",
+            poms.size > 10,
         )
 
         if (!poms.map(Pom::version).areEqual()) {
             Assert.fail(
-                    "Some versions in pom.xml files are different. Please change the versions so that they are equal:\n\n" +
-                    poms.joinToString(separator = "\n") { (path, version) -> "$version $path" }
+                "Some versions in pom.xml files are different. Please change the versions so that they are equal:\n\n" +
+                        poms.joinToString(separator = "\n") { (path, version) -> "$version $path" },
             )
         }
     }
@@ -118,25 +118,28 @@ class KotlinVersionsTest : KtUsefulTestCase() {
 
         var result: String? = null
 
-        SAXParserFactory.newInstance().newSAXParser().parse(File(filePath), object : DefaultHandler() {
-            val currentPath = mutableListOf<String>()
+        SAXParserFactory.newInstance().newSAXParser().parse(
+            File(filePath),
+            object : DefaultHandler() {
+                val currentPath = mutableListOf<String>()
 
-            override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-                currentPath.add(qName)
-            }
-
-            override fun endElement(uri: String, localName: String, qName: String) {
-                assert(currentPath.lastOrNull() == qName) { "Invalid XML at $filePath: mismatched tag '$qName'" }
-                currentPath.removeAt(currentPath.lastIndex)
-            }
-
-            override fun characters(ch: CharArray, start: Int, length: Int) {
-                if (currentPath == query) {
-                    assert(result == null) { "More than one value found for $query in $filePath" }
-                    result = String(ch, start, length).trim()
+                override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+                    currentPath.add(qName)
                 }
-            }
-        })
+
+                override fun endElement(uri: String, localName: String, qName: String) {
+                    assert(currentPath.lastOrNull() == qName) { "Invalid XML at $filePath: mismatched tag '$qName'" }
+                    currentPath.removeAt(currentPath.lastIndex)
+                }
+
+                override fun characters(ch: CharArray, start: Int, length: Int) {
+                    if (currentPath == query) {
+                        assert(result == null) { "More than one value found for $query in $filePath" }
+                        result = String(ch, start, length).trim()
+                    }
+                }
+            },
+        )
 
         return result
     }

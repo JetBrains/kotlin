@@ -38,8 +38,8 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
             KotlinCodeBlockModificationListener(
                 PsiModificationTracker.SERVICE.getInstance(project),
                 project,
-                treeAspect
-            )
+                treeAspect,
+            ),
         )
     }
 

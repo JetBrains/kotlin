@@ -66,7 +66,7 @@ internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
 
     signature(
         classDescriptor,
-        (original as? SimpleFunctionDescriptor ?: return null).computeJvmDescriptor()
+        (original as? SimpleFunctionDescriptor ?: return null).computeJvmDescriptor(),
     )
 }
 
@@ -106,7 +106,7 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
         when {
             possiblyPrimitiveType is JvmType.Primitive && possiblyPrimitiveType.jvmPrimitiveType != null ->
                 createObjectType(
-                    JvmClassName.byFqNameWithoutInnerClasses(possiblyPrimitiveType.jvmPrimitiveType.wrapperFqName).internalName
+                    JvmClassName.byFqNameWithoutInnerClasses(possiblyPrimitiveType.jvmPrimitiveType.wrapperFqName).internalName,
                 )
             else -> possiblyPrimitiveType
         }

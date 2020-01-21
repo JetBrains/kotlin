@@ -97,7 +97,7 @@ val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<An
 data class ScriptConfigurationRefinementContext(
     val script: SourceCode,
     val compilationConfiguration: ScriptCompilationConfiguration,
-    val collectedData: ScriptCollectedData? = null
+    val collectedData: ScriptCollectedData? = null,
 )
 
 interface ScriptEvaluationContextDataKeys
@@ -111,7 +111,7 @@ class ScriptEvaluationContextData(baseConfigurations: Iterable<ScriptEvaluationC
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
     constructor(
-        vararg baseConfigurations: ScriptEvaluationContextData, body: Builder.() -> Unit = {}
+        vararg baseConfigurations: ScriptEvaluationContextData, body: Builder.() -> Unit = {},
     ) : this(baseConfigurations.asIterable(), body)
 
     class Builder internal constructor(baseConfigurations: Iterable<ScriptEvaluationContextData>) :
@@ -149,5 +149,5 @@ val ScriptEvaluationContextDataKeys.commandLineArgs by PropertiesCollection.key<
 data class ScriptEvaluationConfigurationRefinementContext(
     val compiledScript: CompiledScript<*>,
     val evaluationConfiguration: ScriptEvaluationConfiguration,
-    val contextData: ScriptEvaluationContextData? = null
+    val contextData: ScriptEvaluationContextData? = null,
 )

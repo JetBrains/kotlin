@@ -50,7 +50,7 @@ class ClassDispatchReceiverValue(klassSymbol: FirClassSymbol<*>) : ReceiverValue
     override val type: ConeKotlinType = ConeClassLikeTypeImpl(
         klassSymbol.toLookupTag(),
         (klassSymbol.fir as? FirTypeParametersOwner)?.typeParameters?.map { ConeStarProjection }?.toTypedArray().orEmpty(),
-        isNullable = false
+        isNullable = false,
     )
 
     override val receiverExpression: FirExpression = receiverExpression(klassSymbol, type)
@@ -77,7 +77,7 @@ class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : A
     private fun getClassSymbolWithCallablesScope(
         classId: ClassId,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
     ): Pair<FirClassSymbol<*>?, FirScope?> {
         val symbol = useSiteSession.firSymbolProvider.getClassLikeSymbolByFqName(classId) ?: return null to null
         if (symbol is FirTypeAliasSymbol) {
@@ -121,14 +121,14 @@ class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : A
 }
 
 private class ExpressionReceiverValue(
-    override val explicitReceiver: FirExpression
+    override val explicitReceiver: FirExpression,
 ) : AbstractExplicitReceiver<FirExpression>(), ReceiverValue
 
 abstract class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     val boundSymbol: S,
     type: ConeKotlinType,
     private val useSiteSession: FirSession,
-    private val scopeSession: ScopeSession
+    private val scopeSession: ScopeSession,
 ) : ReceiverValue {
     final override var type: ConeKotlinType = type
         private set
@@ -154,7 +154,7 @@ class ImplicitDispatchReceiverValue(
     boundSymbol: FirClassSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession) {
     val implicitCompanionScopes: List<FirScope> = run {
         val klass = boundSymbol.fir as? FirRegularClass ?: return@run emptyList()
@@ -170,5 +170,5 @@ class ImplicitExtensionReceiverValue(
     boundSymbol: FirCallableSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : ImplicitReceiverValue<FirCallableSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession)

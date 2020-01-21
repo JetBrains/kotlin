@@ -31,7 +31,7 @@ import java.io.File
  */
 abstract class AbstractPerformanceCompletionHandlerTests(
     private val defaultCompletionType: CompletionType,
-    private val note: String = ""
+    private val note: String = "",
 ) : CompletionHandlerTestBase() {
 
     companion object {
@@ -94,7 +94,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
             }
 
             doPerfTestWithTextLoaded(
-                testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars
+                testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars,
             )
         } finally {
             if (configured) {
@@ -112,7 +112,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         lookupString: String?,
         itemText: String?,
         tailText: String?,
-        completionChars: String
+        completionChars: String,
     ) {
         performanceTest<Unit, Unit> {
             name(getTestName(false))
@@ -137,7 +137,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         lookupString: String?,
         itemText: String?,
         tailText: String?,
-        completionChars: String
+        completionChars: String,
     ) {
         completionChars?.let {
             for (idx in 0 until it.length - 1) {
@@ -172,10 +172,10 @@ abstract class AbstractPerformanceSmartCompletionHandlerTest : AbstractPerforman
 
 abstract class AbstractPerformanceCompletionCharFilterTest : AbstractPerformanceCompletionHandlerTests(
     CompletionType.BASIC,
-    note = "charFilter"
+    note = "charFilter",
 )
 
 abstract class AbstractPerformanceKeywordCompletionHandlerTest : AbstractPerformanceCompletionHandlerTests(
     CompletionType.BASIC,
-    note = "keyword"
+    note = "keyword",
 )

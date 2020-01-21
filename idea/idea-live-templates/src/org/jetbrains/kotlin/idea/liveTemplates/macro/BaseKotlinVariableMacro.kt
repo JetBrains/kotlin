@@ -63,7 +63,7 @@ abstract class BaseKotlinVariableMacro<TState> : KotlinMacro() {
                 contextElement,
                 null,
                 bindingContext,
-                resolutionFacade
+                resolutionFacade,
             )
         }
 
@@ -74,7 +74,7 @@ abstract class BaseKotlinVariableMacro<TState> : KotlinMacro() {
             resolutionFacade,
             resolutionFacade.moduleDescriptor,
             ::isVisible,
-            NotPropertiesService.getNotProperties(contextElement)
+            NotPropertiesService.getNotProperties(contextElement),
         )
         return helper
             .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
@@ -87,7 +87,7 @@ abstract class BaseKotlinVariableMacro<TState> : KotlinMacro() {
     protected abstract fun isSuitable(
         variableDescriptor: VariableDescriptor,
         project: Project,
-        state: TState
+        state: TState,
     ): Boolean
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {

@@ -36,7 +36,7 @@ val Jsr223CompilationConfigurationKeys.getScriptContext by PropertiesCollection.
     {
         get(ScriptCompilationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jsr223.getScriptContext)
     },
-    isTransient = true
+    isTransient = true,
 )
 
 val Jsr223CompilationConfigurationKeys.importAllBindings by PropertiesCollection.key<Boolean>(false)
@@ -54,7 +54,7 @@ val Jsr223EvaluationConfigurationKeys.getScriptContext by PropertiesCollection.k
     {
         get(ScriptEvaluationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jsr223.getScriptContext)
     },
-    isTransient = true
+    isTransient = true,
 )
 
 

@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.js.dce.Context.Node
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 
 class ReachabilityTracker(
-        private val context: Context,
-        private val analysisResult: AnalysisResult,
-        private val logConsumer: (DCELogLevel, String) -> Unit
+    private val context: Context,
+    private val analysisResult: AnalysisResult,
+    private val logConsumer: (DCELogLevel, String) -> Unit,
 ) : RecursiveJsVisitor() {
     companion object {
         private val CALL_FUNCTIONS = setOf("call", "apply")

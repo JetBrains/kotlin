@@ -27,7 +27,7 @@ abstract class AbstractFirSymbolProvider<C : FirClassLikeSymbol<*>> : FirSymbolP
     }
 
     protected inline fun <K, V : Any, T> MutableMap<K, V?>.lookupCacheOrCalculateWithPostCompute(
-        key: K, crossinline l: (K) -> Pair<V?, T>, postCompute: (V, T) -> Unit
+        key: K, crossinline l: (K) -> Pair<V?, T>, postCompute: (V, T) -> Unit,
     ): V? {
         return if (containsKey(key)) {
             this[key]

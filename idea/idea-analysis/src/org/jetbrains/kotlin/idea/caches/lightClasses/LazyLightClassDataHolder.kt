@@ -33,7 +33,7 @@ sealed class LazyLightClassDataHolder(
     private val builder: LightClassBuilder,
     private val exactContextProvider: ExactLightClassContextProvider,
     dummyContextProvider: DummyLightClassContextProvider,
-    private val diagnosticsHolderProvider: DiagnosticsHolderProvider
+    private val diagnosticsHolderProvider: DiagnosticsHolderProvider,
 ) : LightClassDataHolder {
 
     class DiagnosticsHolder(storageManager: StorageManager) {
@@ -73,7 +73,7 @@ sealed class LazyLightClassDataHolder(
         builder: LightClassBuilder,
         exactContextProvider: ExactLightClassContextProvider,
         dummyContextProvider: DummyLightClassContextProvider,
-        diagnosticsHolderProvider: DiagnosticsHolderProvider
+        diagnosticsHolderProvider: DiagnosticsHolderProvider,
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider, diagnosticsHolderProvider),
         LightClassDataHolder.ForClass {
         override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
@@ -86,7 +86,7 @@ sealed class LazyLightClassDataHolder(
         builder: LightClassBuilder,
         exactContextProvider: ExactLightClassContextProvider,
         dummyContextProvider: DummyLightClassContextProvider,
-        diagnosticsHolderProvider: DiagnosticsHolderProvider
+        diagnosticsHolderProvider: DiagnosticsHolderProvider,
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider, diagnosticsHolderProvider),
         LightClassDataHolder.ForFacade
 
@@ -94,12 +94,12 @@ sealed class LazyLightClassDataHolder(
         builder: LightClassBuilder,
         exactContextProvider: ExactLightClassContextProvider,
         dummyContextProvider: DummyLightClassContextProvider,
-        diagnosticsHolderProvider: DiagnosticsHolderProvider
+        diagnosticsHolderProvider: DiagnosticsHolderProvider,
     ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider, diagnosticsHolderProvider),
         LightClassDataHolder.ForScript
 
     private inner class LazyLightClassData(
-        findDelegate: (PsiJavaFileStub) -> PsiClass
+        findDelegate: (PsiJavaFileStub) -> PsiClass,
     ) : LightClassData {
         override val clsDelegate: PsiClass by lazyPub { findDelegate(javaFileStub) }
 
@@ -119,7 +119,7 @@ sealed class LazyLightClassDataHolder(
                     //
                     // it costs some performance and has to happen in rare and odd cases
                     KtLightFieldImpl.create(
-                        KtLightFieldImpl.getOrigin(dummyField), dummyField, containingClass
+                        KtLightFieldImpl.getOrigin(dummyField), dummyField, containingClass,
                     )
                 }
             }

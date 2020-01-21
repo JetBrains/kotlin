@@ -33,7 +33,7 @@ class MutableContextInfo private constructor(
     val subtypes: MutableMap<ESValue, MutableSet<KotlinType>>,
     val notSubtypes: MutableMap<ESValue, MutableSet<KotlinType>>,
     val equalValues: MutableMap<ESValue, MutableSet<ESValue>>,
-    val notEqualValues: MutableMap<ESValue, MutableSet<ESValue>>
+    val notEqualValues: MutableMap<ESValue, MutableSet<ESValue>>,
 ) {
     companion object {
         val EMPTY: MutableContextInfo
@@ -42,7 +42,7 @@ class MutableContextInfo private constructor(
                 subtypes = mutableMapOf(),
                 notSubtypes = mutableMapOf(),
                 equalValues = mutableMapOf(),
-                notEqualValues = mutableMapOf()
+                notEqualValues = mutableMapOf(),
             )
     }
 
@@ -67,7 +67,7 @@ class MutableContextInfo private constructor(
         subtypes = subtypes.intersect(other.subtypes),
         notSubtypes = notSubtypes.intersect(other.notSubtypes),
         equalValues = equalValues.intersect(other.equalValues),
-        notEqualValues = notEqualValues.intersect(other.notEqualValues)
+        notEqualValues = notEqualValues.intersect(other.notEqualValues),
     )
 
     fun and(other: MutableContextInfo): MutableContextInfo = MutableContextInfo(
@@ -75,7 +75,7 @@ class MutableContextInfo private constructor(
         subtypes = subtypes.union(other.subtypes),
         notSubtypes = notSubtypes.union(other.notSubtypes),
         equalValues = equalValues.union(other.equalValues),
-        notEqualValues = notEqualValues.union(other.notEqualValues)
+        notEqualValues = notEqualValues.union(other.notEqualValues),
     )
 
     private fun <D> MutableMap<ESValue, MutableSet<D>>.intersect(that: MutableMap<ESValue, MutableSet<D>>): MutableMap<ESValue, MutableSet<D>> {

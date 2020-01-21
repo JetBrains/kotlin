@@ -16,7 +16,7 @@ class ReplResultPropertyDescriptor(
     kotlinType: KotlinType,
     receiver: ReceiverParameterDescriptor?,
     script: ScriptDescriptor,
-    source: SourceElement
+    source: SourceElement,
 ) : PropertyDescriptorImpl(
     script,
     null,
@@ -27,13 +27,15 @@ class ReplResultPropertyDescriptor(
     name,
     CallableMemberDescriptor.Kind.SYNTHESIZED,
     source,
-    /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false,
-    /* isDelegated = */ false
+    /* lateInit = */
+    false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false,
+    /* isDelegated = */
+    false,
 ) {
     init {
         setType(kotlinType, emptyList(), receiver, null)
         initialize(
-            null, null
+            null, null,
         )
     }
 }

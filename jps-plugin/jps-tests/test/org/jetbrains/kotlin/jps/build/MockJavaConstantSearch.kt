@@ -27,7 +27,7 @@ class MockJavaConstantSearch(private val workDir: File) :
         fieldName: String,
         accessFlags: Int,
         fieldRemoved: Boolean,
-        accessChanged: Boolean
+        accessChanged: Boolean,
     ): Future<Callbacks.ConstantAffection> {
         fun File.isAffected(): Boolean {
             if (!isJavaFile()) return false
@@ -42,8 +42,8 @@ class MockJavaConstantSearch(private val workDir: File) :
         val affectedJavaFiles = workDir.walk().filter(File::isAffected).toList()
         return FixedFuture(
             Callbacks.ConstantAffection(
-                affectedJavaFiles
-            )
+                affectedJavaFiles,
+            ),
         )
     }
 }

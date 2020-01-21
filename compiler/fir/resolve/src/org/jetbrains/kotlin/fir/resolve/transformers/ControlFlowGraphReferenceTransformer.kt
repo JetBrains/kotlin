@@ -24,14 +24,14 @@ object ControlFlowGraphReferenceTransformer : FirTransformer<ControlFlowGraph>()
 
     override fun <F : FirFunction<F>> transformFunction(
         function: FirFunction<F>,
-        data: ControlFlowGraph
+        data: ControlFlowGraph,
     ): CompositeTransformResult<FirStatement> {
         return (function.transformChildren(this, data) as FirFunction<*>).compose()
     }
 
     override fun transformControlFlowGraphReference(
         controlFlowGraphReference: FirControlFlowGraphReference,
-        data: ControlFlowGraph
+        data: ControlFlowGraph,
     ): CompositeTransformResult<FirControlFlowGraphReference> {
         return if (controlFlowGraphReference is FirEmptyControlFlowGraphReference) {
             FirControlFlowGraphReferenceImpl(data).compose()

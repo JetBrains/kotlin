@@ -73,10 +73,10 @@ fun generateTypicalIrProviderList(
     irBuiltins: IrBuiltIns,
     symbolTable: SymbolTable,
     deserializer: IrDeserializer? = null,
-    extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
+    extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ): List<IrProvider> {
     val stubGenerator = DeclarationStubGenerator(
-        moduleDescriptor, symbolTable, irBuiltins.languageVersionSettings, extensions
+        moduleDescriptor, symbolTable, irBuiltins.languageVersionSettings, extensions,
     )
     return listOfNotNull(deserializer, stubGenerator).also {
         stubGenerator.setIrProviders(it)

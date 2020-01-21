@@ -18,19 +18,19 @@ class ScriptingGradleProjectImportHandler : GradleProjectImportHandler {
     val gradlePluginJars = listOf(
         "scripting-gradle", // obsolete artifact name, only for compatibility with 1.2.5x, where it was introduced (and immediately dropped afterwards)
         "scripting-compiler",
-        "scripting-compiler-embeddable"
+        "scripting-compiler-embeddable",
     )
 
     override fun importBySourceSet(
         facet: KotlinFacet,
-        sourceSetNode: com.intellij.openapi.externalSystem.model.DataNode<GradleSourceSetData>
+        sourceSetNode: com.intellij.openapi.externalSystem.model.DataNode<GradleSourceSetData>,
     ) {
         modifyCompilerArgumentsForPlugin(facet, compilerPluginId, gradlePluginJars)
     }
 
     override fun importByModule(
         facet: KotlinFacet,
-        moduleNode: com.intellij.openapi.externalSystem.model.DataNode<com.intellij.openapi.externalSystem.model.project.ModuleData>
+        moduleNode: com.intellij.openapi.externalSystem.model.DataNode<com.intellij.openapi.externalSystem.model.project.ModuleData>,
     ) {
         modifyCompilerArgumentsForPlugin(facet, compilerPluginId, gradlePluginJars)
     }
@@ -40,7 +40,7 @@ class ScriptingGradleProjectImportHandler : GradleProjectImportHandler {
 internal fun modifyCompilerArgumentsForPlugin(
     facet: KotlinFacet,
     compilerPluginId: String,
-    pluginJarNames: List<String>
+    pluginJarNames: List<String>,
 ) {
     val facetSettings = facet.configuration.settings
 

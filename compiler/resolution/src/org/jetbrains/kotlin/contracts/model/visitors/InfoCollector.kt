@@ -29,7 +29,8 @@ class InfoCollector(private val observedEffect: ESEffect, private val builtIns: 
     fun collectFromSchema(schema: List<ESEffect>): MutableContextInfo =
         schema.mapNotNull { collectFromEffect(it) }.fold(
             MutableContextInfo.EMPTY,
-            { resultingInfo, clauseInfo -> resultingInfo.and(clauseInfo) })
+            { resultingInfo, clauseInfo -> resultingInfo.and(clauseInfo) },
+        )
 
     private fun collectFromEffect(effect: ESEffect): MutableContextInfo? {
         if (effect !is ConditionalEffect) {
@@ -50,7 +51,7 @@ class InfoCollector(private val observedEffect: ESEffect, private val builtIns: 
         val isType = type.toKotlinType(builtIns)
         if (functor.isNegated != isInverted) MutableContextInfo.EMPTY.notSubtype(left, isType) else MutableContextInfo.EMPTY.subtype(
             left,
-            isType
+            isType,
         )
     }
 

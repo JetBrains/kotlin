@@ -93,7 +93,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     class BodyResolveTransformerComponents(
         override val session: FirSession,
         override val scopeSession: ScopeSession,
-        val transformer: FirBodyResolveTransformer
+        val transformer: FirBodyResolveTransformer,
     ) : BodyResolveComponents {
         val topLevelScopes: MutableList<FirScope> = mutableListOf()
         val localScopes: MutableList<FirLocalScope> = mutableListOf()
@@ -117,10 +117,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             topLevelScopes,
             localScopes,
             implicitReceiverStack,
-            qualifiedResolver
+            qualifiedResolver,
         )
         val typeResolverTransformer = FirSpecificTypeResolverTransformer(
-            FirTypeResolveScopeForBodyResolve(topLevelScopes, implicitReceiverStack, localScopes), session
+            FirTypeResolveScopeForBodyResolve(topLevelScopes, implicitReceiverStack, localScopes), session,
         )
         val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         override val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)

@@ -23,7 +23,7 @@ class PerfTestBuilder<SV, TV> {
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profileEnabled = profileEnabled
+            profileEnabled = profileEnabled,
         )
     }
 

@@ -43,7 +43,7 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         constructorProjection: TypeArgumentMarker,
         constructorSupertypes: List<KotlinTypeMarker>,
         lowerType: KotlinTypeMarker?,
-        captureStatus: CaptureStatus
+        captureStatus: CaptureStatus,
     ): CapturedTypeMarker {
         require(lowerType is UnwrappedType?, lowerType::errorMessage)
         require(constructorProjection is TypeProjectionImpl, constructorProjection::errorMessage)
@@ -51,12 +51,12 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         @Suppress("UNCHECKED_CAST")
         val newCapturedTypeConstructor = NewCapturedTypeConstructor(
             constructorProjection,
-            constructorSupertypes as List<UnwrappedType>
+            constructorSupertypes as List<UnwrappedType>,
         )
         return NewCapturedType(
             CaptureStatus.FOR_INCORPORATION,
             newCapturedTypeConstructor,
-            lowerType = lowerType
+            lowerType = lowerType,
         )
     }
 
@@ -93,7 +93,7 @@ private inline fun Any?.errorMessage(): String {
 @Suppress("FunctionName")
 fun NewConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
-    builtIns: KotlinBuiltIns
+    builtIns: KotlinBuiltIns,
 ): NewConstraintSystemImpl {
     return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns))
 }

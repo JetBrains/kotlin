@@ -60,7 +60,7 @@ class CallableReferenceCandidate(
     val explicitReceiverKind: ExplicitReceiverKind,
     val reflectionCandidateType: UnwrappedType,
     val numDefaults: Int,
-    val diagnostics: List<KotlinCallDiagnostic>
+    val diagnostics: List<KotlinCallDiagnostic>,
 ) : Candidate {
     override val resultingApplicability = getResultApplicability(diagnostics)
     override val isSuccessful get() = resultingApplicability.isSuccess
@@ -115,7 +115,7 @@ fun ConstraintSystemOperation.checkCallableReference(
     candidateDescriptor: CallableDescriptor,
     reflectionCandidateType: UnwrappedType,
     expectedType: UnwrappedType?,
-    ownerDescriptor: DeclarationDescriptor
+    ownerDescriptor: DeclarationDescriptor,
 ): Pair<FreshVariableNewTypeSubstitutor, KotlinCallDiagnostic?> {
     val position = ArgumentConstraintPosition(argument)
 
@@ -132,7 +132,7 @@ fun ConstraintSystemOperation.checkCallableReference(
 
     val invisibleMember = Visibilities.findInvisibleMember(
         dispatchReceiver?.asReceiverValueForVisibilityChecks,
-        candidateDescriptor, ownerDescriptor
+        candidateDescriptor, ownerDescriptor,
     )
     return toFreshSubstitutor to invisibleMember?.let(::VisibilityError)
 }
@@ -142,7 +142,7 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
     toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
     receiverArgument: CallableReceiver?,
     receiverParameter: ReceiverParameterDescriptor?,
-    position: ArgumentConstraintPosition
+    position: ArgumentConstraintPosition,
 ) {
     if (receiverArgument == null || receiverParameter == null) {
         assert(receiverArgument == null) { "Receiver argument should be null if parameter is: $receiverArgument" }
@@ -161,7 +161,7 @@ class CallableReferencesCandidateFactory(
     val callComponents: KotlinCallComponents,
     val scopeTower: ImplicitScopeTower,
     val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
-    val expectedType: UnwrappedType?
+    val expectedType: UnwrappedType?,
 ) : CandidateFactory<CallableReferenceCandidate> {
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
@@ -170,7 +170,7 @@ class CallableReferencesCandidateFactory(
     override fun createCandidate(
         towerCandidate: CandidateWithBoundDispatchReceiver,
         explicitReceiverKind: ExplicitReceiverKind,
-        extensionReceiver: ReceiverValueWithSmartCastInfo?
+        extensionReceiver: ReceiverValueWithSmartCastInfo?,
     ): CallableReferenceCandidate {
 
         val dispatchCallableReceiver =
@@ -184,7 +184,7 @@ class CallableReferencesCandidateFactory(
             dispatchCallableReceiver,
             extensionCallableReceiver,
             expectedType,
-            callComponents.builtIns
+            callComponents.builtIns,
         )
 
         if (defaults != 0 &&
@@ -197,7 +197,7 @@ class CallableReferencesCandidateFactory(
             return CallableReferenceCandidate(
                 candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
                 explicitReceiverKind, reflectionCandidateType, defaults,
-                listOf(NotCallableMemberReference(argument, candidateDescriptor))
+                listOf(NotCallableMemberReference(argument, candidateDescriptor)),
             )
         }
 
@@ -209,7 +209,7 @@ class CallableReferencesCandidateFactory(
 
             val (_, visibilityError) = it.checkCallableReference(
                 argument, dispatchCallableReceiver, extensionCallableReceiver, candidateDescriptor,
-                reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor
+                reflectionCandidateType, expectedType, scopeTower.lexicalScope.ownerDescriptor,
             )
 
             diagnostics.addIfNotNull(visibilityError)
@@ -219,14 +219,14 @@ class CallableReferencesCandidateFactory(
                     argument,
                     candidateDescriptor,
                     expectedType,
-                    reflectionCandidateType
-                )
+                    reflectionCandidateType,
+                ),
             )
         }
 
         return CallableReferenceCandidate(
             candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-            explicitReceiverKind, reflectionCandidateType, defaults, diagnostics
+            explicitReceiverKind, reflectionCandidateType, defaults, diagnostics,
         )
     }
 
@@ -238,7 +238,7 @@ class CallableReferencesCandidateFactory(
         descriptor: FunctionDescriptor,
         expectedType: UnwrappedType?,
         unboundReceiverCount: Int,
-        builtins: KotlinBuiltIns
+        builtins: KotlinBuiltIns,
     ): Triple<Array<KotlinType>, CoercionStrategy, Int>? {
         val inputOutputTypes = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType) ?: return null
 
@@ -269,7 +269,7 @@ class CallableReferencesCandidateFactory(
                         inputOutputTypes.inputTypes[index],
                         substitutedParameter,
                         varargMappingState,
-                        builtins
+                        builtins,
                     )
                     varargMappingState = newVarargMappingState
                     mappedArgument = varargType
@@ -296,7 +296,7 @@ class CallableReferencesCandidateFactory(
         expectedParameterType: KotlinType,
         substitutedParameter: ValueParameterDescriptor,
         varargMappingState: VarargMappingState,
-        builtins: KotlinBuiltIns
+        builtins: KotlinBuiltIns,
     ): Pair<KotlinType?, VarargMappingState> {
         val elementType = substitutedParameter.varargElementType
             ?: error("Vararg parameter $substitutedParameter does not have vararg type")
@@ -327,7 +327,7 @@ class CallableReferencesCandidateFactory(
         dispatchReceiver: CallableReceiver?,
         extensionReceiver: CallableReceiver?,
         expectedType: UnwrappedType?,
-        builtins: KotlinBuiltIns
+        builtins: KotlinBuiltIns,
     ): Pair<UnwrappedType, /*defaults*/ Int> {
         val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2)
 
@@ -347,7 +347,7 @@ class CallableReferencesCandidateFactory(
                     val setter = descriptor.setter
                     setter == null || Visibilities.isVisible(
                         dispatchReceiver?.asReceiverValueForVisibilityChecks, setter,
-                        scopeTower.lexicalScope.ownerDescriptor
+                        scopeTower.lexicalScope.ownerDescriptor,
                     )
                 }
 
@@ -355,7 +355,7 @@ class CallableReferencesCandidateFactory(
                     Annotations.EMPTY,
                     argumentsAndReceivers,
                     descriptorReturnType,
-                    mutable
+                    mutable,
                 ) to 0
             }
             is FunctionDescriptor -> {
@@ -364,7 +364,7 @@ class CallableReferencesCandidateFactory(
                 val argumentsAndExpectedTypeCoercion = getArgumentAndReturnTypeUseMappingByExpectedType(
                     descriptor, expectedType,
                     unboundReceiverCount = argumentsAndReceivers.size,
-                    builtins = builtins
+                    builtins = builtins,
                 )
 
                 if (argumentsAndExpectedTypeCoercion == null) {
@@ -381,7 +381,7 @@ class CallableReferencesCandidateFactory(
 
                 return callComponents.reflectionTypes.getKFunctionType(
                     Annotations.EMPTY, null, argumentsAndReceivers, null,
-                    returnType, descriptor.builtIns, descriptor.isSuspend
+                    returnType, descriptor.builtIns, descriptor.isSuspend,
                 ) to defaults
             }
             else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to 0

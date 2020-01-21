@@ -21,7 +21,7 @@ import kotlin.script.experimental.jvm.jvm
  */
 class JvmReplEvaluator(
     val baseScriptEvaluationConfiguration: ScriptEvaluationConfiguration,
-    val scriptEvaluator: ScriptEvaluator = BasicJvmScriptEvaluator()
+    val scriptEvaluator: ScriptEvaluator = BasicJvmScriptEvaluator(),
 ) : ReplEvaluator {
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
@@ -31,7 +31,7 @@ class JvmReplEvaluator(
         state: IReplStageState<*>,
         compileResult: ReplCompileResult.CompiledClasses,
         scriptArgs: ScriptArgsWithTypes?,
-        invokeWrapper: InvokeWrapper?
+        invokeWrapper: InvokeWrapper?,
     ): ReplEvalResult = state.lock.write {
         val evalState = state.asState(JvmReplEvaluatorState::class.java)
         val history = evalState.history as ReplStageHistoryWithReplace
@@ -63,7 +63,7 @@ class JvmReplEvaluator(
                         history.replaceOrPush(compileResult.lineId, retVal.scriptClass to null)
                         ReplEvalResult.Error.Runtime(
                             retVal.error.message ?: "unknown error",
-                            (retVal.error as? Exception) ?: (retVal.wrappingException as? Exception)
+                            (retVal.error as? Exception) ?: (retVal.wrappingException as? Exception),
                         )
                     }
                     is ResultValue.Value -> {
@@ -80,7 +80,7 @@ class JvmReplEvaluator(
             else ->
                 ReplEvalResult.Error.Runtime(
                     res.reports.joinToString("\n") { it.message + (it.exception?.let { e -> ": $e" } ?: "") },
-                    res.reports.find { it.exception != null }?.exception as? Exception
+                    res.reports.find { it.exception != null }?.exception as? Exception,
                 )
         }
     }
@@ -88,7 +88,7 @@ class JvmReplEvaluator(
 
 open class JvmReplEvaluatorState(
     scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
-    override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+    override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock(),
 ) : IReplStageState<Pair<KClass<*>?, Any?>> {
     override val history: IReplStageHistory<Pair<KClass<*>?, Any?>> = ReplStageHistoryWithReplace(lock)
 

@@ -66,7 +66,7 @@ class KotlinIndicesHelper(
     private val declarationTranslator: (KtDeclaration) -> KtDeclaration? = { it },
     applyExcludeSettings: Boolean = true,
     private val filterOutPrivate: Boolean = true,
-    private val file: KtFile? = null
+    private val file: KtFile? = null,
 ) {
 
     private val moduleDescriptor = resolutionFacade.moduleDescriptor
@@ -91,7 +91,7 @@ class KotlinIndicesHelper(
 
     private fun MutableSet<KtNamedDeclaration>.addTopLevelNonExtensionCallablesByName(
         index: StringStubIndexExtension<out KtNamedDeclaration>,
-        name: String
+        name: String,
     ) {
         index.get(name, project, scope)
             .filterTo(this) { it.parent is KtFile && it is KtCallableDeclaration && it.receiverTypeReference == null }
@@ -139,7 +139,7 @@ class KotlinIndicesHelper(
         callTypeAndReceiver: CallTypeAndReceiver<*, *>,
         position: KtExpression,
         bindingContext: BindingContext,
-        nameFilter: (String) -> Boolean
+        nameFilter: (String) -> Boolean,
     ): Collection<CallableDescriptor> {
         val receiverTypes =
             callTypeAndReceiver.receiverTypes(bindingContext, position, moduleDescriptor, resolutionFacade, stableSmartCastsOnly = false)
@@ -151,7 +151,7 @@ class KotlinIndicesHelper(
         callTypeAndReceiver: CallTypeAndReceiver<*, *>,
         receiverTypes: Collection<KotlinType>,
         nameFilter: (String) -> Boolean,
-        declarationFilter: (KtDeclaration) -> Boolean = { true }
+        declarationFilter: (KtDeclaration) -> Boolean = { true },
     ): Collection<CallableDescriptor> {
         if (receiverTypes.isEmpty()) return emptyList()
 
@@ -238,7 +238,7 @@ class KotlinIndicesHelper(
     private fun findSuitableExtensions(
         declarations: Sequence<KtCallableDeclaration>,
         receiverTypes: Collection<KotlinType>,
-        callType: CallType<*>
+        callType: CallType<*>,
     ): Collection<CallableDescriptor> {
         val result = LinkedHashSet<CallableDescriptor>()
 
@@ -272,7 +272,7 @@ class KotlinIndicesHelper(
     fun processJvmCallablesByName(
         name: String,
         filter: (PsiMember) -> Boolean,
-        processor: (CallableDescriptor) -> Unit
+        processor: (CallableDescriptor) -> Unit,
     ) {
         val javaDeclarations = getJavaCallables(name, PsiShortNamesCache.getInstance(project))
         val processed = HashSet<CallableDescriptor>()
@@ -359,7 +359,7 @@ class KotlinIndicesHelper(
     fun processKotlinCallablesByName(
         name: String,
         filter: (KtNamedDeclaration) -> Boolean,
-        processor: (CallableDescriptor) -> Unit
+        processor: (CallableDescriptor) -> Unit,
     ) {
         val functions: Sequence<KtCallableDeclaration> = KotlinFunctionShortNameIndex.getInstance().get(name, project, scope).asSequence()
         val properties: Sequence<KtNamedDeclaration> = KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
@@ -377,7 +377,7 @@ class KotlinIndicesHelper(
     fun getKotlinClasses(
         nameFilter: (String) -> Boolean,
         psiFilter: (KtDeclaration) -> Boolean = { true },
-        kindFilter: (ClassKind) -> Boolean = { true }
+        kindFilter: (ClassKind) -> Boolean = { true },
     ): Collection<ClassDescriptor> {
         val index = KotlinFullClassNameIndex.getInstance()
         return index.getAllKeys(project).asSequence()
@@ -414,7 +414,7 @@ class KotlinIndicesHelper(
         descriptorKindFilter: DescriptorKindFilter,
         nameFilter: (String) -> Boolean,
         filter: (KtNamedDeclaration, KtObjectDeclaration) -> Boolean,
-        processor: (DeclarationDescriptor) -> Unit
+        processor: (DeclarationDescriptor) -> Unit,
     ) {
         fun processIndex(index: StringStubIndexExtension<out KtNamedDeclaration>) {
             for (name in index.getAllKeys(project)) {
@@ -446,7 +446,7 @@ class KotlinIndicesHelper(
     fun processJavaStaticMembers(
         descriptorKindFilter: DescriptorKindFilter,
         nameFilter: (String) -> Boolean,
-        processor: (DeclarationDescriptor) -> Unit
+        processor: (DeclarationDescriptor) -> Unit,
     ) {
         val idFilter = IdFilter.getProjectIdFilter(resolutionFacade.project, false)
         val shortNamesCache = PsiShortNamesCache.getInstance(project)
@@ -455,7 +455,7 @@ class KotlinIndicesHelper(
         shortNamesCache.processAllMethodNames(
             { name -> if (nameFilter(name)) allMethodNames.add(name); true },
             scopeWithoutKotlin,
-            idFilter
+            idFilter,
         )
         for (name in allMethodNames) {
             ProgressManager.checkCanceled()
@@ -500,7 +500,7 @@ class KotlinIndicesHelper(
     }
 
     private fun KtNamedDeclaration.resolveToDescriptorsWithHack(
-        psiFilter: (KtDeclaration) -> Boolean
+        psiFilter: (KtDeclaration) -> Boolean,
     ): Collection<DeclarationDescriptor> {
         if (containingKtFile.isCompiled) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
             val fqName = fqName ?: return emptyList()

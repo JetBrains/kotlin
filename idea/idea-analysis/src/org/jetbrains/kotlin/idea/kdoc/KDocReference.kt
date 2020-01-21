@@ -41,7 +41,7 @@ class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
             resolutionFacade,
             declarationDescriptor,
             kdocLink.getTagIfSubject(),
-            element.getQualifiedName()
+            element.getQualifiedName(),
         )
     }
 

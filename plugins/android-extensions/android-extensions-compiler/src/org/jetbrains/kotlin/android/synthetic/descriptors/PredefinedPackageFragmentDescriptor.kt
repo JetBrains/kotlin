@@ -30,15 +30,15 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 
 class PredefinedPackageFragmentDescriptor(
-        fqName: FqName,
-        module: ModuleDescriptor,
-        storageManager: StorageManager,
-        val lazySubpackages: List<LazyAndroidExtensionsPackageFragmentDescriptor> = emptyList(),
-        private val functions: (PredefinedPackageFragmentDescriptor) -> Collection<SimpleFunctionDescriptor> = { emptyList() }
+    fqName: FqName,
+    module: ModuleDescriptor,
+    storageManager: StorageManager,
+    val lazySubpackages: List<LazyAndroidExtensionsPackageFragmentDescriptor> = emptyList(),
+    private val functions: (PredefinedPackageFragmentDescriptor) -> Collection<SimpleFunctionDescriptor> = { emptyList() },
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     class LazyAndroidExtensionsPackageFragmentDescriptor(
         val descriptor: () -> PackageFragmentDescriptor,
-        val isDeprecated: Boolean
+        val isDeprecated: Boolean,
     )
 
     private val calculatedFunctions = storageManager.createLazyValue {
@@ -61,8 +61,8 @@ class PredefinedPackageFragmentDescriptor(
         override fun getContributedFunctions(name: Name, location: LookupLocation) = calculatedFunctions().filter { it.name == name }
 
         override fun getContributedDescriptors(
-                kindFilter: DescriptorKindFilter,
-                nameFilter: (Name) -> Boolean
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
         ): List<SimpleFunctionDescriptor> {
             return calculatedFunctions().filter { nameFilter(it.name) && kindFilter.accepts(it) }
         }

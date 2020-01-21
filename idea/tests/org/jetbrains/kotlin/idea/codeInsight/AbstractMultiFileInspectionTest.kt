@@ -43,7 +43,7 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
 
                     runInspection(
                         Class.forName(config.getString("inspectionClass")), project,
-                        withTestDir = configFile.parent
+                        withTestDir = configFile.parent,
                     )
                 } finally {
                     if (withRuntime) {
@@ -53,7 +53,7 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
                     }
                 }
             },
-            getTestDirName(true)
+            getTestDirName(true),
         )
     }
 

@@ -69,7 +69,7 @@ val KtParameter.propertyDescriptor: PropertyDescriptor?
 fun PsiReference.checkUsageVsOriginalDescriptor(
     targetDescriptor: DeclarationDescriptor,
     declarationToDescriptor: (KtDeclaration) -> DeclarationDescriptor? = { it.descriptor },
-    checker: (usageDescriptor: DeclarationDescriptor, targetDescriptor: DeclarationDescriptor) -> Boolean
+    checker: (usageDescriptor: DeclarationDescriptor, targetDescriptor: DeclarationDescriptor) -> Boolean,
 ): Boolean {
     return unwrappedTargets
         .filterIsInstance<KtDeclaration>()
@@ -133,7 +133,7 @@ fun PsiElement.buildProcessDelegationCallConstructorUsagesTask(scope: SearchScop
 
 private fun PsiElement.buildProcessDelegationCallKotlinConstructorUsagesTask(
     scope: SearchScope,
-    process: (KtCallElement) -> Boolean
+    process: (KtCallElement) -> Boolean,
 ): () -> Boolean {
     val element = unwrapped
     if (element != null && element !in scope) return { true }
@@ -155,7 +155,7 @@ private fun PsiElement.buildProcessDelegationCallKotlinConstructorUsagesTask(
 
 private fun PsiElement.buildProcessDelegationCallJavaConstructorUsagesTask(
     scope: SearchScope,
-    process: (KtCallElement) -> Boolean
+    process: (KtCallElement) -> Boolean,
 ): () -> Boolean {
     if (this is KtLightElement<*, *>) return { true }
     // TODO: Temporary hack to avoid NPE while KotlinNoOriginLightMethod is around
@@ -171,7 +171,7 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
     klass: PsiElement,
     scope: SearchScope,
     lazyDescriptor: Lazy<ConstructorDescriptor?>,
-    process: (KtCallElement) -> Boolean
+    process: (KtCallElement) -> Boolean,
 ): Boolean {
     return HierarchySearchRequest(klass, scope, false).searchInheritors().all {
         runReadAction {
@@ -187,7 +187,7 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
 private fun processClassDelegationCallsToSpecifiedConstructor(
     klass: KtClass,
     lazyDescriptor: Lazy<ConstructorDescriptor?>,
-    process: (KtCallElement) -> Boolean
+    process: (KtCallElement) -> Boolean,
 ): Boolean {
     for (secondaryConstructor in klass.secondaryConstructors) {
         val delegationCallDescriptor =
@@ -267,7 +267,7 @@ fun PsiReference.isCallableOverrideUsage(declaration: KtNamedDeclaration): Boole
                 usageDescriptor != null && OverridingUtil.overrides(
                     usageDescriptor,
                     targetDescriptor,
-                    usageDescriptor.module.isTypeRefinementEnabled()
+                    usageDescriptor.module.isTypeRefinementEnabled(),
                 )
             }
             is PsiMethod -> {

@@ -56,7 +56,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
     private fun resolveArgument(
         proto: Argument,
         parameterByName: Map<Name, ValueParameterDescriptor>,
-        nameResolver: NameResolver
+        nameResolver: NameResolver,
     ): Pair<Name, ConstantValue<*>>? {
         val parameter = parameterByName[nameResolver.getName(proto.nameId)] ?: return null
         return Pair(nameResolver.getName(proto.nameId), resolveValueAndCheckExpectedType(parameter.type, proto.value, nameResolver))
@@ -86,7 +86,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             Type.ANNOTATION -> AnnotationValue(deserializeAnnotation(value.annotation, nameResolver))
             Type.ARRAY -> ConstantValueFactory.createArrayValue(
                 value.arrayElementList.map { resolveValue(builtIns.anyType, it, nameResolver) },
-                expectedType
+                expectedType,
             )
             else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
         }

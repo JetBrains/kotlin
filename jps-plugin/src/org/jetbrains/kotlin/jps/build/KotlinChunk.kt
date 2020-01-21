@@ -85,7 +85,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
     fun buildMetaInfoFile(target: ModuleBuildTarget): File =
         File(
             context.dataPaths.getTargetDataRoot(target),
-            representativeTarget.buildMetaInfoFileName
+            representativeTarget.buildMetaInfoFileName,
         )
 
     fun saveVersions() {

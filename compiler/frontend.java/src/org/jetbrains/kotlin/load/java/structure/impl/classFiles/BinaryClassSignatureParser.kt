@@ -105,8 +105,8 @@ class BinaryClassSignatureParser {
     }
 
     private fun parseParameterizedClassRefSignature(
-            signature: CharacterIterator,
-            context: ClassifierResolutionContext
+        signature: CharacterIterator,
+        context: ClassifierResolutionContext,
     ): JavaClassifierType {
         val canonicalName = StringBuilder()
 
@@ -139,7 +139,7 @@ class BinaryClassSignatureParser {
         val internalName = canonicalNameInterner.intern(canonicalName.toString().replace('.', '$'))
         return PlainJavaClassifierType(
             { context.resolveByInternalName(internalName) },
-            argumentGroups.reversed().flattenTo(arrayListOf()).compact()
+            argumentGroups.reversed().flattenTo(arrayListOf()).compact(),
         )
     }
 

@@ -127,8 +127,8 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
                 jpsContext.processMessage(
                     CompilerMessage(
                         "Kotlin", BuildMessage.Kind.WARNING,
-                        "Incremental caches are corrupted. All Kotlin code will be rebuilt."
-                    )
+                        "Incremental caches are corrupted. All Kotlin code will be rebuilt.",
+                    ),
                 )
                 KotlinBuilder.LOG.info(Error("Lookup storage is corrupted, probe failed: ${e.message}", e))
 
@@ -244,7 +244,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             chunk.targets.forEach { target ->
                 if (target.initialLocalCacheAttributesDiff.status == CacheStatus.SHOULD_BE_CLEARED) {
                     KotlinBuilder.LOG.info(
-                        "$target caches is cleared as not required anymore: ${target.initialLocalCacheAttributesDiff}"
+                        "$target caches is cleared as not required anymore: ${target.initialLocalCacheAttributesDiff}",
                     )
                     testingLogger?.invalidOrUnusedCache(null, target, target.initialLocalCacheAttributesDiff)
                     target.initialLocalCacheAttributesDiff.manager.writeVersion(null)
@@ -299,8 +299,8 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
                 CompilerMessage(
                     KOTLIN_COMPILER_NAME,
                     BuildMessage.Kind.WARNING,
-                    msg
-                )
+                    msg,
+                ),
             )
         }
     }

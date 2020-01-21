@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
  */
 abstract class AbstractFilteringTrace(
     private val parentTrace: BindingTrace,
-    name: String
+    name: String,
 ) : DelegatingBindingTrace(parentTrace.bindingContext, name, true, BindingTraceFilter.ACCEPT_ALL, false) {
     abstract protected fun <K, V> shouldBeHiddenFromParent(slice: WritableSlice<K, V>, key: K): Boolean
 

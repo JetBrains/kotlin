@@ -71,38 +71,96 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
 
     companion object {
         val RESERVED_WORDS: Set<String> = setOf(
-                // keywords
-                "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
-                "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with",
+            // keywords
+            "await",
+            "break",
+            "case",
+            "catch",
+            "continue",
+            "debugger",
+            "default",
+            "delete",
+            "do",
+            "else",
+            "finally",
+            "for",
+            "function",
+            "if",
+            "in",
+            "instanceof",
+            "new",
+            "return",
+            "switch",
+            "this",
+            "throw",
+            "try",
+            "typeof",
+            "var",
+            "void",
+            "while",
+            "with",
 
-                // future reserved words
-                "class", "const", "enum", "export", "extends", "import", "super",
+            // future reserved words
+            "class",
+            "const",
+            "enum",
+            "export",
+            "extends",
+            "import",
+            "super",
 
-                // as future reserved words in strict mode
-                "implements", "interface", "let", "package", "private", "protected", "public", "static", "yield",
+            // as future reserved words in strict mode
+            "implements",
+            "interface",
+            "let",
+            "package",
+            "private",
+            "protected",
+            "public",
+            "static",
+            "yield",
 
-                // additional reserved words
-                "null", "true", "false",
+            // additional reserved words
+            "null",
+            "true",
+            "false",
 
-                // disallowed as variable names in strict mode
-                "eval", "arguments",
+            // disallowed as variable names in strict mode
+            "eval",
+            "arguments",
 
-                // global identifiers usually declared in a typical JS interpreter
-                "NaN", "isNaN", "Infinity", "undefined",
-                "Error", "Object", "Math", "String", "Number", "Boolean", "Date", "Array", "RegExp", "JSON",
+            // global identifiers usually declared in a typical JS interpreter
+            "NaN",
+            "isNaN",
+            "Infinity",
+            "undefined",
+            "Error",
+            "Object",
+            "Math",
+            "String",
+            "Number",
+            "Boolean",
+            "Date",
+            "Array",
+            "RegExp",
+            "JSON",
 
-                // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)
-                "require", "define", "module", "window", "self",
+            // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)
+            "require",
+            "define",
+            "module",
+            "window",
+            "self",
 
-                // the special Kotlin object
-                "Kotlin"
+            // the special Kotlin object
+            "Kotlin",
         )
     }
 }
 
 class DelegatingJsFunctionScopeWithTemporaryParent(
-        private val delegatingScope: JsFunctionScope,
-        parent: JsScope
+    private val delegatingScope: JsFunctionScope,
+    parent: JsScope,
 ) : JsFunctionScope(parent, "<delegating scope to delegatingScope>") {
 
     override fun hasOwnName(name: String): Boolean =

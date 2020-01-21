@@ -16,26 +16,26 @@ import java.io.File
 enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
     MockRuntime(
         "kotlin-mock-runtime",
-        ForTestCompileRuntime.minimalRuntimeJarForTests()
+        ForTestCompileRuntime.minimalRuntimeJarForTests(),
     ),
 
     JvmStdLib(
         "kotlin-stdlib",
         PathUtil.kotlinPathsForDistDirectory.stdlibPath,
-        File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
+        File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar"),
     ),
     JvmTest(
         "kotlin-test",
-        PathUtil.kotlinPathsForDistDirectory.kotlinTestPath
+        PathUtil.kotlinPathsForDistDirectory.kotlinTestPath,
     ),
 
     JsStdLib(
         "KotlinJavaScript",
-        PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
+        PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath,
     ),
     JsTest(
         "KotlinJavaScriptTest",
-        PathUtil.kotlinPathsForDistDirectory.jsKotlinTestJarPath
+        PathUtil.kotlinPathsForDistDirectory.jsKotlinTestJarPath,
     );
 
     fun create(project: JpsProject): JpsLibrary {

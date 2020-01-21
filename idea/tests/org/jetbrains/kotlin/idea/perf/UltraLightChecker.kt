@@ -32,9 +32,12 @@ import kotlin.test.assertFails
 
 fun UsefulTestCase.forceUsingOldLightClassesForTest() {
     KtUltraLightSupport.forceUsingOldLightClasses = true
-    Disposer.register(testRootDisposable, Disposable {
-        KtUltraLightSupport.forceUsingOldLightClasses = false
-    })
+    Disposer.register(
+        testRootDisposable,
+        Disposable {
+            KtUltraLightSupport.forceUsingOldLightClasses = false
+        },
+    )
 }
 
 object UltraLightChecker {
@@ -48,7 +51,7 @@ object UltraLightChecker {
         if (sourceFileText.contains("//RELEASE_COROUTINE_NEEDED")) {
             TestCase.assertTrue(
                 "Test should be runned under language version that supports released coroutines",
-                module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+                module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
             )
         }
     }
@@ -60,7 +63,7 @@ object UltraLightChecker {
     fun checkFacadeEquivalence(
         fqName: FqName,
         searchScope: GlobalSearchScope,
-        project: Project
+        project: Project,
     ): KtLightClassForFacade? {
 
         val oldForceFlag = KtUltraLightSupport.forceUsingOldLightClasses
@@ -102,7 +105,7 @@ object UltraLightChecker {
         if (goldText != ultraText) {
             Assert.assertEquals(
                 "// Classic implementation:\n$goldText",
-                "// Ultra-light implementation:\n$ultraText"
+                "// Ultra-light implementation:\n$ultraText",
             )
         }
     }
@@ -131,7 +134,7 @@ object UltraLightChecker {
             }
 
             annotationsBuffer.add(
-                annotation.renderAnnotation() + (if (this is PsiParameter) " " else "\n")
+                annotation.renderAnnotation() + (if (this is PsiParameter) " " else "\n"),
             )
         }
         annotationsBuffer.sort()
@@ -246,7 +249,7 @@ object UltraLightChecker {
                 append(
                     fields
                         .filterIsInstance<PsiEnumConstant>()
-                        .joinToString(",\n") { it.renderEnumConstant() }.prependDefaultIndent()
+                        .joinToString(",\n") { it.renderEnumConstant() }.prependDefaultIndent(),
                 )
                 append(";\n\n")
             }
@@ -261,16 +264,16 @@ object UltraLightChecker {
             appendSorted(
                 fields
                     .filterNot { it is PsiEnumConstant }
-                    .map { it.renderVar().prependDefaultIndent() + ";\n\n" }
+                    .map { it.renderVar().prependDefaultIndent() + ";\n\n" },
             )
 
             appendSorted(
                 methods
-                    .map { it.renderMethod().prependDefaultIndent() + "\n\n" }
+                    .map { it.renderMethod().prependDefaultIndent() + "\n\n" },
             )
 
             appendSorted(
-                innerClasses.map { "class ${it.name} ...\n\n".prependDefaultIndent() }
+                innerClasses.map { "class ${it.name} ...\n\n".prependDefaultIndent() },
             )
         }
     }
@@ -294,7 +297,8 @@ object UltraLightChecker {
                     }
                 }
                 true
-            })
+            },
+        )
     }
 
     fun checkDescriptorsLeak(lightClass: KtLightClass) {

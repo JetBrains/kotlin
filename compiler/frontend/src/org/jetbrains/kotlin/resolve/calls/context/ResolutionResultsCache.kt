@@ -29,7 +29,7 @@ interface ResolutionResultsCache {
         val resolutionResults: OverloadResolutionResultsImpl<*>,
         val deferredComputation: BasicCallResolutionContext,
         val tracing: TracingStrategy,
-        val resolutionTrace: DelegatingBindingTrace
+        val resolutionTrace: DelegatingBindingTrace,
     )
 
     fun record(
@@ -37,7 +37,7 @@ interface ResolutionResultsCache {
         results: OverloadResolutionResultsImpl<*>,
         deferredComputation: BasicCallResolutionContext,
         tracing: TracingStrategy,
-        resolutionTrace: DelegatingBindingTrace
+        resolutionTrace: DelegatingBindingTrace,
     )
 
     operator fun get(call: Call): CachedData?
@@ -51,7 +51,7 @@ class ResolutionResultsCacheImpl : ResolutionResultsCache {
         results: OverloadResolutionResultsImpl<out CallableDescriptor?>,
         deferredComputation: BasicCallResolutionContext,
         tracing: TracingStrategy,
-        resolutionTrace: DelegatingBindingTrace
+        resolutionTrace: DelegatingBindingTrace,
     ) {
         data[call] = CachedData(results, deferredComputation, tracing, resolutionTrace)
     }
@@ -71,7 +71,7 @@ class TemporaryResolutionResultsCache(private val parentCache: ResolutionResults
         results: OverloadResolutionResultsImpl<out CallableDescriptor?>,
         deferredComputation: BasicCallResolutionContext,
         tracing: TracingStrategy,
-        resolutionTrace: DelegatingBindingTrace
+        resolutionTrace: DelegatingBindingTrace,
     ) {
         innerCache.record(call, results, deferredComputation, tracing, resolutionTrace)
     }

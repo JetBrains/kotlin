@@ -14,7 +14,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
     ): ResultWithDiagnostics<EvaluationResult> = try {
         val configuration = getConfigurationWithClassloader(compiledScript, scriptEvaluationConfiguration)
 
@@ -56,13 +56,13 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         }
     } catch (e: Throwable) {
         ResultWithDiagnostics.Failure(
-            e.asDiagnostics(path = compiledScript.sourceLocationId)
+            e.asDiagnostics(path = compiledScript.sourceLocationId),
         )
     }
 
     private fun KClass<*>.evalWithConfigAndOtherScriptsResults(
         refinedEvalConfiguration: ScriptEvaluationConfiguration,
-        importedScriptsEvalResults: List<EvaluationResult>
+        importedScriptsEvalResults: List<EvaluationResult>,
     ): Any {
         val args = ArrayList<Any?>()
 

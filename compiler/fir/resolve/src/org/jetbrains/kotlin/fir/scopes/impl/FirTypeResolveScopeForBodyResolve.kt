@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.name.Name
 class FirTypeResolveScopeForBodyResolve(
     private val topLevelScopes: List<FirScope>,
     private val implicitReceiverStack: ImplicitReceiverStack,
-    private val localScopes: List<FirScope>
+    private val localScopes: List<FirScope>,
 ) : FirScope() {
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         for (scope in localScopes.asReversed()) {
             if (!scope.processClassifiersByName(name, processor)) {

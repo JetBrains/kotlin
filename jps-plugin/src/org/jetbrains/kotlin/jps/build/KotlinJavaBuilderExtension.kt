@@ -30,7 +30,7 @@ private class KotlinLookupConstantSearch(context: CompileContext) : Callbacks.Co
         fieldName: String,
         accessFlags: Int,
         fieldRemoved: Boolean,
-        accessChanged: Boolean
+        accessChanged: Boolean,
     ): Future<Callbacks.ConstantAffection> {
         val future = object : BasicFuture<Callbacks.ConstantAffection>() {
             @Volatile

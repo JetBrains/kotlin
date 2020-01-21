@@ -25,7 +25,7 @@ class KotlinExceptionFilterTest : KotlinLightCodeInsightFixtureTestCase() {
     private val myPathPlug = "<path>"
 
     private val myTemplates = listOf(
-        "\tat 1   main.kexe\t\t 0x000000010d7cdb4c kfun:package.function(kotlin.Int) + 108 ($myPathPlug:$mySuffixPlug)\n"
+        "\tat 1   main.kexe\t\t 0x000000010d7cdb4c kfun:package.function(kotlin.Int) + 108 ($myPathPlug:$mySuffixPlug)\n",
     )
 
     private var myFiles = HashMap<String, VirtualFile>()
@@ -34,7 +34,7 @@ class KotlinExceptionFilterTest : KotlinLightCodeInsightFixtureTestCase() {
     private val mySuffixOptions = listOf(
         SuffixOption("10:1", 10, 1),
         SuffixOption("14:11", 14, 11),
-        SuffixOption("<unknown>", 0, 0)
+        SuffixOption("<unknown>", 0, 0),
     )
 
     private fun errorMessage(detail: String) = "Failed to parse Kotlin Native exception '$myExceptionLine': $detail"

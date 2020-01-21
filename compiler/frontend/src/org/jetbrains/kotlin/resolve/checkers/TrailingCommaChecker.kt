@@ -42,7 +42,7 @@ object TrailingCommaDeclarationChecker : DeclarationChecker {
                     TrailingCommaChecker.check(
                         declaration.setter?.parameterList?.trailingComma,
                         context.trace,
-                        context.languageVersionSettings
+                        context.languageVersionSettings,
                     )
                 }
             }
@@ -62,12 +62,12 @@ object TrailingCommaCallChecker : CallChecker {
             is KtArrayAccessExpression -> TrailingCommaChecker.check(
                 callElement.trailingComma,
                 context.trace,
-                context.languageVersionSettings
+                context.languageVersionSettings,
             )
             is KtCollectionLiteralExpression -> TrailingCommaChecker.check(
                 callElement.trailingComma,
                 context.trace,
-                context.languageVersionSettings
+                context.languageVersionSettings,
             )
             is KtWhenExpression -> {
                 if (callElement.subjectExpression != null) {

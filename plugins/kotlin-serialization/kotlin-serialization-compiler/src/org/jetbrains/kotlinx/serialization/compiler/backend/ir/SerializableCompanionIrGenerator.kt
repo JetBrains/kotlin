@@ -29,14 +29,14 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 class SerializableCompanionIrGenerator(
     val irClass: IrClass,
     override val compilerContext: SerializationPluginContext,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ) : SerializableCompanionCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
 
     companion object {
         fun generate(
             irClass: IrClass,
             context: SerializationPluginContext,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
         ) {
             val companionDescriptor = irClass.descriptor
             val serializableClass = getSerializableClassDescriptorByCompanion(companionDescriptor) ?: return
@@ -55,12 +55,14 @@ class SerializableCompanionIrGenerator(
         val annotationMarkerClass = serializer.module.findClassAcrossModuleDependencies(
             ClassId(
                 SerializationPackages.packageFqName,
-                Name.identifier(SerialEntityNames.ANNOTATION_MARKER_CLASS)
-            )
+                Name.identifier(SerialEntityNames.ANNOTATION_MARKER_CLASS),
+            ),
         ) ?: return
-        val annotationCtor = requireNotNull(annotationMarkerClass.unsubstitutedPrimaryConstructor?.let {
-            compilerContext.symbolTable.referenceConstructor(it)
-        })
+        val annotationCtor = requireNotNull(
+            annotationMarkerClass.unsubstitutedPrimaryConstructor?.let {
+                compilerContext.symbolTable.referenceConstructor(it)
+            },
+        )
 
         val annotationType = annotationMarkerClass.defaultType.toIrType()
         val irSerializableClass = compilerContext.symbolTable.referenceClass(serializableDescriptor).owner
@@ -71,8 +73,8 @@ class SerializableCompanionIrGenerator(
                 createClassReference(
                     serializerType,
                     startOffset,
-                    endOffset
-                )
+                    endOffset,
+                ),
             )
         }
 
@@ -84,14 +86,14 @@ class SerializableCompanionIrGenerator(
             val serializer = requireNotNull(
                 findTypeSerializer(
                     serializableDescriptor.module,
-                    serializableDescriptor.toSimpleType()
-                )
+                    serializableDescriptor.toSimpleType(),
+                ),
             )
             val args: List<IrExpression> = getter.valueParameters.map { irGet(it) }
             val expr = serializerInstance(
                 this@SerializableCompanionIrGenerator,
                 serializer, serializableDescriptor.module,
-                serializableDescriptor.defaultType
+                serializableDescriptor.defaultType,
             ) { it, _ -> args[it] }
             patchSerializableClassWithMarkerAnnotation(serializer)
             +irReturn(requireNotNull(expr))
@@ -103,7 +105,7 @@ class SerializableCompanionIrGenerator(
         if (serializableDescriptor.declaredTypeParameters.isEmpty()) return
         val serialFactoryDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
             SerialEntityNames.SERIALIZER_PROVIDER_NAME,
-            NoLookupLocation.FROM_BACKEND
+            NoLookupLocation.FROM_BACKEND,
         ).firstOrNull {
             it.valueParameters.size == 1
                     && it.valueParameters.first().isVararg
@@ -125,7 +127,7 @@ class SerializableCompanionIrGenerator(
                 IrGetValueImpl(startOffset, endOffset, factory.dispatchReceiverParameter!!.symbol),
                 serializerCall,
                 List(argsSize) { outAnyNullable },
-                serializers
+                serializers,
             )
             +irReturn(call)
             patchSerializableClassWithMarkerAnnotation(companionDescriptor)

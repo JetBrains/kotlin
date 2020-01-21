@@ -27,7 +27,7 @@ class TypeEnhancementInfo(val map: Map<Int, JavaTypeQualifiers>) {
 
 class PredefinedFunctionEnhancementInfo(
     val returnTypeInfo: TypeEnhancementInfo? = null,
-    val parametersInfo: List<TypeEnhancementInfo?> = emptyList()
+    val parametersInfo: List<TypeEnhancementInfo?> = emptyList(),
 )
 
 /** Type is always nullable: `T?` */
@@ -225,7 +225,8 @@ private class SignatureEnhancementBuilder {
                         if (qualifiers.isEmpty()) null else TypeEnhancementInfo(
                             qualifiers.withIndex().associateBy(
                                 { it.index },
-                                { it.value })
+                                { it.value },
+                            ),
                         )
             }
 

@@ -73,9 +73,9 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
 
     companion object {
         fun run(
-                inputFiles: Collection<InputFile>,
-                rootReachableNames: Set<String>,
-                logConsumer: (DCELogLevel, String) -> Unit
+            inputFiles: Collection<InputFile>,
+            rootReachableNames: Set<String>,
+            logConsumer: (DCELogLevel, String) -> Unit,
         ): DeadCodeEliminationResult {
             val program = JsProgram()
             val dce = DeadCodeElimination(logConsumer)
@@ -93,8 +93,9 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                 when (sourceMapParse) {
                     is SourceMapError -> {
                         logConsumer(
-                                DCELogLevel.WARN,
-                                "Error parsing source map file ${file.sourceMapResource}: ${sourceMapParse.message}")
+                            DCELogLevel.WARN,
+                            "Error parsing source map file ${file.sourceMapResource}: ${sourceMapParse.message}",
+                        )
                     }
                     is SourceMapSuccess -> {
                         val sourceMap = sourceMapParse.value

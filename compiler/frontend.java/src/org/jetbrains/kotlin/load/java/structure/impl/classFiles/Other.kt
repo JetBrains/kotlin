@@ -24,12 +24,12 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 
 class BinaryJavaField(
-        override val name: Name,
-        override val access: Int,
-        override val containingClass: JavaClass,
-        override val isEnumEntry: Boolean,
-        override val type: JavaType,
-        override val initializerValue: Any?
+    override val name: Name,
+    override val access: Int,
+    override val containingClass: JavaClass,
+    override val isEnumEntry: Boolean,
+    override val type: JavaType,
+    override val initializerValue: Any?,
 ) : JavaField, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
     override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
     override val annotationsByFqName by buildLazyValueForMap()
@@ -39,8 +39,8 @@ class BinaryJavaField(
 }
 
 class BinaryJavaTypeParameter(
-        override val name: Name,
-        override val upperBounds: Collection<JavaClassifierType>
+    override val name: Name,
+    override val upperBounds: Collection<JavaClassifierType>,
 ) : JavaTypeParameter {
     // TODO: support annotations on type parameters
     override val annotations get() = emptyList<JavaAnnotation>()
@@ -50,8 +50,8 @@ class BinaryJavaTypeParameter(
 }
 
 class BinaryJavaValueParameter(
-        override val type: JavaType,
-        override val isVararg: Boolean
+    override val type: JavaType,
+    override val isVararg: Boolean,
 ) : JavaValueParameter, MapBasedJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
     override val annotationsByFqName by buildLazyValueForMap()
@@ -75,7 +75,7 @@ fun isNotTopLevelClass(classContent: ByteArray): Boolean {
                 name: String?,
                 signature: String?,
                 superName: String?,
-                interfaces: Array<out String>?
+                interfaces: Array<out String>?,
             ) {
                 internalName = name
             }
@@ -87,7 +87,7 @@ fun isNotTopLevelClass(classContent: ByteArray): Boolean {
                 }
             }
         },
-        ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+        ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES,
     )
     return isNotTopLevelClass
 }

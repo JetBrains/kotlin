@@ -50,8 +50,8 @@ class FriendPathsTest : TestCaseWithTmpdir() {
             K2JVMCompiler(),
             listOf(
                 "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
-                "-Xfriend-paths=${libDest.path}"
-            )
+                "-Xfriend-paths=${libDest.path}",
+            ),
         )
     }
 }

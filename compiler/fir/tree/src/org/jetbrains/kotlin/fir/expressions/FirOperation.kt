@@ -41,7 +41,7 @@ enum class FirOperation(val operator: String = "???") {
         val ASSIGNMENTS: Set<FirOperation> = EnumSet.of(ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN)
 
         val BOOLEANS: Set<FirOperation> = EnumSet.of(
-            EQ, NOT_EQ, IDENTITY, NOT_IDENTITY, LT, GT, LT_EQ, GT_EQ, IS, NOT_IS
+            EQ, NOT_EQ, IDENTITY, NOT_IDENTITY, LT, GT, LT_EQ, GT_EQ, IS, NOT_IS,
         )
 
         val COMPARISONS: Set<FirOperation> = EnumSet.of(LT, GT, LT_EQ, GT_EQ)
@@ -57,8 +57,8 @@ object FirOperationNameConventions {
             FirOperation.MINUS_ASSIGN to OperatorNameConventions.MINUS_ASSIGN,
             FirOperation.TIMES_ASSIGN to OperatorNameConventions.TIMES_ASSIGN,
             FirOperation.DIV_ASSIGN to OperatorNameConventions.DIV_ASSIGN,
-            FirOperation.REM_ASSIGN to OperatorNameConventions.REM_ASSIGN
-        )
+            FirOperation.REM_ASSIGN to OperatorNameConventions.REM_ASSIGN,
+        ),
     )
 
     val ASSIGNMENTS_TO_SIMPLE_OPERATOR: Map<FirOperation, Name> = EnumMap(
@@ -67,7 +67,7 @@ object FirOperationNameConventions {
             FirOperation.MINUS_ASSIGN to OperatorNameConventions.MINUS,
             FirOperation.TIMES_ASSIGN to OperatorNameConventions.TIMES,
             FirOperation.DIV_ASSIGN to OperatorNameConventions.DIV,
-            FirOperation.REM_ASSIGN to OperatorNameConventions.REM
-        )
+            FirOperation.REM_ASSIGN to OperatorNameConventions.REM,
+        ),
     )
 }

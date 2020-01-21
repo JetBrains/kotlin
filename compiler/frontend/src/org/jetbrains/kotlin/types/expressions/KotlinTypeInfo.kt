@@ -34,7 +34,7 @@ class KotlinTypeInfo @JvmOverloads constructor(
     val type: KotlinType?,
     val dataFlowInfo: DataFlowInfo,
     val jumpOutPossible: Boolean = false,
-    val jumpFlowInfo: DataFlowInfo = dataFlowInfo
+    val jumpFlowInfo: DataFlowInfo = dataFlowInfo,
 ) {
 
     fun clearType() = replaceType(null)

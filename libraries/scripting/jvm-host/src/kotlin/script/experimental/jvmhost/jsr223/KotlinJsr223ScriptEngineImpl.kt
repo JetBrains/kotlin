@@ -25,7 +25,7 @@ class KotlinJsr223ScriptEngineImpl(
     factory: ScriptEngineFactory,
     baseCompilationConfiguration: ScriptCompilationConfiguration,
     baseEvaluationConfiguration: ScriptEvaluationConfiguration,
-    val getScriptArgs: (context: ScriptContext) -> ScriptArgsWithTypes?
+    val getScriptArgs: (context: ScriptContext) -> ScriptArgsWithTypes?,
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223InvocableScriptEngine {
 
     @Volatile

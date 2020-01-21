@@ -24,7 +24,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
         val isIgnored = InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile, ignoreBackendDirectivePrefix)
         val (factory1, factory2) = doTwoFileTest(
             files.filter { it.name.endsWith(".kt") },
-            !isIgnored
+            !isIgnored,
         )
         try {
             val allGeneratedFiles = factory1.asList() + factory2.asList()

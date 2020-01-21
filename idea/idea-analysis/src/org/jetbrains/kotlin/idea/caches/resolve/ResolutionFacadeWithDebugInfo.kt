@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 private class ResolutionFacadeWithDebugInfo(
     private val delegate: ResolutionFacade,
-    private val creationPlace: CreationPlace
+    private val creationPlace: CreationPlace,
 ) : ResolutionFacade, ResolutionFacadeModuleDescriptorProvider {
     override fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
         return delegate.findModuleDescriptor(ideaModuleInfo)
@@ -110,14 +110,17 @@ private class ResolutionFacadeWithDebugInfo(
 private class KotlinIdeaResolutionException(
     cause: Throwable,
     resolvingWhat: ResolvingWhat,
-    creationPlace: CreationPlace
+    creationPlace: CreationPlace,
 ) : KotlinExceptionWithAttachments("Kotlin resolution encountered a problem while ${resolvingWhat.shortDescription()}", cause) {
     init {
-        withAttachment("info.txt", buildString {
-            append(resolvingWhat.description())
-            appendln("---------------------------------------------")
-            append(creationPlace.description())
-        })
+        withAttachment(
+            "info.txt",
+            buildString {
+                append(resolvingWhat.description())
+                appendln("---------------------------------------------")
+                append(creationPlace.description())
+            },
+        )
         for (element in resolvingWhat.elements.withIndex()) {
             withAttachment("element${element.index}.kt", element.value.text)
         }
@@ -128,7 +131,7 @@ private class KotlinIdeaResolutionException(
 private class CreationPlace(
     private val elements: Collection<KtElement>,
     private val moduleInfo: ModuleInfo?,
-    private val platform: TargetPlatform?
+    private val platform: TargetPlatform?,
 ) {
     fun description() = buildString {
         appendln("Resolver created for:")
@@ -148,7 +151,7 @@ private class ResolvingWhat(
     val elements: Collection<PsiElement> = emptyList(),
     private val bodyResolveMode: BodyResolveMode? = null,
     private val serviceClass: Class<*>? = null,
-    private val moduleDescriptor: ModuleDescriptor? = null
+    private val moduleDescriptor: ModuleDescriptor? = null,
 ) {
     fun shortDescription() = serviceClass?.let { "getting service ${serviceClass.simpleName}" }
         ?: "analyzing ${elements.firstOrNull()?.javaClass?.simpleName ?: ""}"
@@ -205,7 +208,7 @@ private fun StringBuilder.appendElement(element: PsiElement) {
         val moduleName = ifIndexReady { ModuleUtil.findModuleForFile(virtualFile, element.project)?.name ?: "null" }?.result
         info(
             "ideaModule",
-            moduleName ?: "<index not ready>"
+            moduleName ?: "<index not ready>",
         )
     }
 }
@@ -221,7 +224,7 @@ private fun <T> ifIndexReady(body: () -> T): IndexResult<T>? = try {
 internal fun ResolutionFacade.createdFor(
     files: Collection<KtFile>,
     moduleInfo: ModuleInfo?,
-    platform: TargetPlatform? = null
+    platform: TargetPlatform? = null,
 ): ResolutionFacade {
     return ResolutionFacadeWithDebugInfo(this, CreationPlace(files, moduleInfo, platform))
 }

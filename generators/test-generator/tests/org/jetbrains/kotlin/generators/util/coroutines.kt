@@ -22,14 +22,14 @@ class CoroutinesTestModel(
     checkFilenameStartsLowerCase: Boolean?,
     targetBackend: TargetBackend,
     skipIgnored: Boolean,
-    private val isLanguageVersion1_3: Boolean
+    private val isLanguageVersion1_3: Boolean,
 ) : SimpleTestMethodModel(
     rootDir,
     file,
     filenamePattern,
     checkFilenameStartsLowerCase,
     targetBackend,
-    skipIgnored
+    skipIgnored,
 ) {
     override val name: String
         get() = super.name + if (isLanguageVersion1_3) "_1_3" else "_1_2"
@@ -52,7 +52,7 @@ fun createCommonCoroutinesTestMethodModels(
     filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
     targetBackend: TargetBackend,
-    skipIgnored: Boolean
+    skipIgnored: Boolean,
 ): Collection<MethodModel> {
     return if (targetBackend.isIR)
         listOf(
@@ -63,8 +63,8 @@ fun createCommonCoroutinesTestMethodModels(
                 checkFilenameStartsLowerCase,
                 targetBackend,
                 skipIgnored,
-                true
-            )
+                true,
+            ),
         )
     else
         listOf(
@@ -75,7 +75,7 @@ fun createCommonCoroutinesTestMethodModels(
                 checkFilenameStartsLowerCase,
                 targetBackend,
                 skipIgnored,
-                true
+                true,
             ),
             CoroutinesTestModel(
                 rootDir,
@@ -84,7 +84,7 @@ fun createCommonCoroutinesTestMethodModels(
                 checkFilenameStartsLowerCase,
                 targetBackend,
                 skipIgnored,
-                false
-            )
+                false,
+            ),
         )
 }

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 fun resolveUnqualifiedSuperFromExpressionContext(
     superExpression: KtSuperExpression,
     supertypes: Collection<KotlinType>,
-    anyType: KotlinType
+    anyType: KotlinType,
 ): Collection<KotlinType> {
     val parentElement = superExpression.parent
 
@@ -100,7 +100,7 @@ private fun KotlinType.isInterface(): Boolean =
 private fun resolveSupertypesForMethodOfAny(
     supertypes: Collection<KotlinType>,
     calleeName: Name,
-    anyType: KotlinType
+    anyType: KotlinType,
 ): Collection<KotlinType> {
     val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, false) {
         getFunctionMembers(it, calleeName, LOOKUP_LOCATION)
@@ -125,7 +125,7 @@ private fun resolveSupertypesByPropertyName(supertypes: Collection<KotlinType>, 
 private inline fun resolveSupertypesByMembers(
     supertypes: Collection<KotlinType>,
     allowNonConcreteMembers: Boolean,
-    getMembers: (KotlinType) -> Collection<MemberDescriptor>
+    getMembers: (KotlinType) -> Collection<MemberDescriptor>,
 ): Collection<KotlinType> {
     val typesWithConcreteMembers = SmartList<KotlinType>()
     val typesWithNonConcreteMembers = SmartList<KotlinType>()

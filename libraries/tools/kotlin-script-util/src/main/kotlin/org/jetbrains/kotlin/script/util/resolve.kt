@@ -41,10 +41,11 @@ open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<Fil
     }
 
     @AcceptedAnnotations(DependsOn::class, Repository::class)
-    override fun resolve(script: ScriptContents,
-                         environment: Map<String, Any?>?,
-                         report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
-                         previousDependencies: KotlinScriptExternalDependencies?
+    override fun resolve(
+        script: ScriptContents,
+        environment: Map<String, Any?>?,
+        report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
+        previousDependencies: KotlinScriptExternalDependencies?,
     ): Future<KotlinScriptExternalDependencies?> {
         val depsFromAnnotations: List<File> = resolveFromAnnotations(script)
         return (if (previousDependencies != null && depsFromAnnotations.isEmpty()) previousDependencies

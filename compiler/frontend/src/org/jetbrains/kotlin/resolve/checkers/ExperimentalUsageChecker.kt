@@ -66,7 +66,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
     class ExperimentalityDiagnostic2(
         val factory: DiagnosticFactory2<PsiElement, FqName, String>,
-        val defaultMessage: (FqName) -> String
+        val defaultMessage: (FqName) -> String,
     ) : ExperimentalityDiagnostic {
         override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
             trace.reportDiagnosticOnce(factory.on(element, fqName, message ?: defaultMessage(fqName)))
@@ -75,7 +75,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
     data class ExperimentalityDiagnostics(
         val warning: ExperimentalityDiagnostic,
-        val error: ExperimentalityDiagnostic
+        val error: ExperimentalityDiagnostic,
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -109,19 +109,19 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private val USAGE_DIAGNOSTICS = ExperimentalityDiagnostics(
             warning = ExperimentalityDiagnostic2(
                 Errors.EXPERIMENTAL_API_USAGE,
-                getDefaultDiagnosticMessage("This declaration is experimental and its usage should be marked")
+                getDefaultDiagnosticMessage("This declaration is experimental and its usage should be marked"),
             ),
             error = ExperimentalityDiagnostic2(
                 Errors.EXPERIMENTAL_API_USAGE_ERROR,
-                getDefaultDiagnosticMessage("This declaration is experimental and its usage must be marked")
-            )
+                getDefaultDiagnosticMessage("This declaration is experimental and its usage must be marked"),
+            ),
         )
 
         fun reportNotAcceptedExperimentalities(
-            experimentalities: Collection<Experimentality>, element: PsiElement, context: CheckerContext
+            experimentalities: Collection<Experimentality>, element: PsiElement, context: CheckerContext,
         ) {
             reportNotAcceptedExperimentalities(
-                experimentalities, element, context.languageVersionSettings, context.trace, USAGE_DIAGNOSTICS
+                experimentalities, element, context.languageVersionSettings, context.trace, USAGE_DIAGNOSTICS,
             )
         }
 
@@ -130,7 +130,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             element: PsiElement,
             languageVersionSettings: LanguageVersionSettings,
             trace: BindingTrace,
-            diagnostics: ExperimentalityDiagnostics
+            diagnostics: ExperimentalityDiagnostics,
         ) {
             for ((annotationFqName, severity, message) in experimentalities) {
                 if (!element.isExperimentalityAccepted(annotationFqName, languageVersionSettings, trace.bindingContext)) {
@@ -145,7 +145,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
         fun DeclarationDescriptor.loadExperimentalities(
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
-            languageVersionSettings: LanguageVersionSettings
+            languageVersionSettings: LanguageVersionSettings,
         ): Set<Experimentality> {
             val result = SmartSet.create<Experimentality>()
 
@@ -201,7 +201,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         fun PsiElement.isExperimentalityAccepted(
             annotationFqName: FqName,
             languageVersionSettings: LanguageVersionSettings,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
         ): Boolean =
             annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.experimental) ||
                     annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.useExperimental) ||
@@ -245,7 +245,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             module: ModuleDescriptor,
             languageVersionSettings: LanguageVersionSettings,
             reportError: (String) -> Unit,
-            reportWarning: (String) -> Unit
+            reportWarning: (String) -> Unit,
         ) {
             // Ideally, we should run full resolution (with all classifier usage checkers) on classifiers used in "-Xexperimental" and
             // "-Xuse-experimental" arguments. However, it's not easy to do this. This should be solved in the future with the support of
@@ -311,7 +311,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     !element.isUsageAsUseExperimentalArgument(context.trace.bindingContext)
                 ) {
                     context.trace.report(
-                        Errors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL.on(element)
+                        Errors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL.on(element),
                     )
                 }
             }

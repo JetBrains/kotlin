@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo as getNull
     "Temporary interface to support binary compatibility in other plugins. " +
             "Works only for instanceof check. Will be removed in Kotlin plugin bundled to 2018.2.",
     ReplaceWith("org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo"),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.ERROR,
 )
 interface IdeaModuleInfo : ModuleInfo
 
@@ -23,7 +23,7 @@ interface IdeaModuleInfo : ModuleInfo
     "Temporary interface to support binary compatibility in other plugins. " +
             "Works only for instanceof check. Will be removed in Kotlin plugin bundled to 2018.2.",
     ReplaceWith("org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo"),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.ERROR,
 )
 interface ModuleTestSourceInfo : IdeaModuleInfo
 
@@ -31,6 +31,6 @@ interface ModuleTestSourceInfo : IdeaModuleInfo
     "Temporary function to support binary compatibility after for other plugins after move." +
             "Will be removed in Kotlin plugin bundled to 2018.2.",
     ReplaceWith("org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo"),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.ERROR,
 )
 fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = getNullableModuleInfoNew()

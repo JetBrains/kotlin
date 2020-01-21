@@ -28,7 +28,7 @@ class TypeVariableDependencyInformationProvider(
     private val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>,
     private val postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
     private val topLevelType: KotlinTypeMarker?,
-    private val typeSystemContext: TypeSystemInferenceExtensionContext
+    private val typeSystemContext: TypeSystemInferenceExtensionContext,
 ) {
     // not oriented edges
     private val constrainEdges: MutableMap<TypeConstructorMarker, MutableSet<TypeConstructorMarker>> = hashMapOf()

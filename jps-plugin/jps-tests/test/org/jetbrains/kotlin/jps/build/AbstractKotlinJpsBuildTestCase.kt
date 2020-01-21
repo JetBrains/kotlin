@@ -99,7 +99,7 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
             modules: Collection<JpsModule>,
             exported: Boolean,
             libraryName: String,
-            vararg file: File
+            vararg file: File,
         ): JpsLibrary {
             val library = modules.iterator().next().project.addLibrary(libraryName, JpsJavaLibraryType.INSTANCE)
 

@@ -22,7 +22,7 @@ fun testCompletion(
     complete: (CompletionType, Int) -> Array<LookupElement>?,
     defaultCompletionType: CompletionType = CompletionType.BASIC,
     defaultInvocationCount: Int = 0,
-    additionalValidDirectives: Collection<String> = emptyList()
+    additionalValidDirectives: Collection<String> = emptyList(),
 ) {
     testWithAutoCompleteSetting(fileText) {
         val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
@@ -38,7 +38,7 @@ fun testCompletion(
 
         Assert.assertTrue(
             "Should be some assertions about completion",
-            expected.size != 0 || unexpected.size != 0 || itemsNumber != null || nothingElse
+            expected.size != 0 || unexpected.size != 0 || itemsNumber != null || nothingElse,
         )
         ExpectedCompletionUtils.assertContainsRenderedItems(expected, items, ExpectedCompletionUtils.isWithOrder(fileText), nothingElse)
         ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, items)

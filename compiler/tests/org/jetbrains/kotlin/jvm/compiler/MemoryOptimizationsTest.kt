@@ -37,7 +37,11 @@ import org.jetbrains.kotlin.types.upperIfFlexible
 class MemoryOptimizationsTest : KtUsefulTestCase() {
     fun testBasicFlexibleTypeCase() {
         val moduleDescriptor = JvmResolveUtil.analyze(
-                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+            KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                myTestRootDisposable,
+                ConfigurationKind.ALL,
+                TestJdkKind.FULL_JDK,
+            ),
         ).moduleDescriptor
 
         val appendableClass =
@@ -71,12 +75,12 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
         val environment =
                 KotlinTestUtils
                         .createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                                myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
+                            myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
                         )
         val moduleDescriptor =
                 JvmResolveUtil.analyze(
-                        KotlinTestUtils.createFile("main.kt", text, environment.project),
-                        environment
+                    KotlinTestUtils.createFile("main.kt", text, environment.project),
+                    environment,
                 ).moduleDescriptor
 
         val aClass =
@@ -84,9 +88,9 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
 
         val memberScope =
                 aClass.getMemberScope(
-                        TypeConstructorSubstitution.create(
-                                aClass.typeConstructor, listOf(moduleDescriptor.builtIns.stringType.asTypeProjection())
-                        )
+                    TypeConstructorSubstitution.create(
+                        aClass.typeConstructor, listOf(moduleDescriptor.builtIns.stringType.asTypeProjection()),
+                    ),
                 )
 
         val append =

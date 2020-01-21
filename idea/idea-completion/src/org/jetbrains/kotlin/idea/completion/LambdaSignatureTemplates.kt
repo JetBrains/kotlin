@@ -39,7 +39,7 @@ object LambdaSignatureTemplates {
         placeholderRange: TextRange,
         lambdaType: KotlinType,
         explicitParameterTypes: Boolean,
-        signatureOnly: Boolean
+        signatureOnly: Boolean,
     ) {
         // we start template later to not interfere with insertion of tail type
         val commandProcessor = CommandProcessor.getInstance()
@@ -131,7 +131,7 @@ object LambdaSignatureTemplates {
         lambdaType: KotlinType,
         signatureOnly: Boolean,
         explicitParameterTypes: Boolean,
-        project: Project
+        project: Project,
     ): Template {
         val parameterTypes = functionParameterTypes(lambdaType)
 

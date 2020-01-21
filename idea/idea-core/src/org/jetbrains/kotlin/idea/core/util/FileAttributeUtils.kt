@@ -21,7 +21,7 @@ inline fun <T : Any> cachedFileAttribute(
     name: String,
     version: Int,
     crossinline read: DataInputStream.() -> T,
-    crossinline write: DataOutputStream.(T) -> Unit
+    crossinline write: DataOutputStream.(T) -> Unit,
 ): FileAttributeProperty<T> {
     return object : FileAttributeProperty<T>(name, version) {
         override fun readValue(input: DataInputStream): T = read(input)
@@ -38,7 +38,7 @@ abstract class FileAttributeProperty<T : Any>(name: String, version: Int, privat
     @Suppress("LeakingThis")
     private val cache = NullableLazyKey.create(
         "FileAttributeProperty.$name",
-        this::computeValue
+        this::computeValue,
     )
 
     private fun computeValue(file: VirtualFile): T? {

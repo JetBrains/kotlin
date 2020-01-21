@@ -42,26 +42,26 @@ data class CallInfo(
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
     val lhs: DoubleColonLHS? = null,
-    val stubReceiver: FirExpression? = null
+    val stubReceiver: FirExpression? = null,
 ) {
     val argumentCount get() = arguments.size
 
     fun replaceWithVariableAccess(): CallInfo =
         CallInfo(
             CallKind.VariableAccess, name, explicitReceiver, emptyList(),
-            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs
+            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs,
         )
 
     fun replaceExplicitReceiver(explicitReceiver: FirExpression): CallInfo =
         CallInfo(
             callKind, name, explicitReceiver, arguments,
-            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs
+            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs,
         )
 
     fun withReceiverAsArgument(receiverExpression: FirExpression): CallInfo =
         CallInfo(
             callKind, name, explicitReceiver, listOf(receiverExpression) + arguments,
-            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs
+            isSafeCall, typeArguments, session, containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs,
         )
 }
 
@@ -81,7 +81,7 @@ class Candidate(
     val explicitReceiverKind: ExplicitReceiverKind,
     val bodyResolveComponents: BodyResolveComponents,
     private val baseSystem: ConstraintStorage,
-    val callInfo: CallInfo
+    val callInfo: CallInfo,
 ) {
 
     var systemInitialized: Boolean = false

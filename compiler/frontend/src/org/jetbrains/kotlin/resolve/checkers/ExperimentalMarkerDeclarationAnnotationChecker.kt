@@ -77,7 +77,8 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         val wrongTargets = allowedTargets.intersect(WRONG_TARGETS_FOR_MARKER)
         if (wrongTargets.isNotEmpty()) {
             trace.report(
-                Errors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET.on(entry, wrongTargets.joinToString(transform = KotlinTarget::description))
+                Errors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET
+                    .on(entry, wrongTargets.joinToString(transform = KotlinTarget::description)),
             )
         }
     }

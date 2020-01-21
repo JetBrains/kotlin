@@ -130,9 +130,9 @@ class ChangesCollector {
     private fun PackagePartProtoData.collectAllFromPackage(isRemoved: Boolean) {
         val memberNames =
                 proto.getNonPrivateNames(
-                        nameResolver,
-                        ProtoBuf.Package::getFunctionList,
-                        ProtoBuf.Package::getPropertyList
+                    nameResolver,
+                    ProtoBuf.Package::getFunctionList,
+                    ProtoBuf.Package::getPropertyList,
                 )
 
         if (isRemoved) {
@@ -166,10 +166,10 @@ class ChangesCollector {
 
     private fun ClassProtoData.getNonPrivateMemberNames(): Set<String> {
         return proto.getNonPrivateNames(
-                nameResolver,
-                ProtoBuf.Class::getConstructorList,
-                ProtoBuf.Class::getFunctionList,
-                ProtoBuf.Class::getPropertyList
+            nameResolver,
+            ProtoBuf.Class::getConstructorList,
+            ProtoBuf.Class::getFunctionList,
+            ProtoBuf.Class::getPropertyList,
         ) + proto.enumEntryList.map { nameResolver.getString(it.name) }
     }
 

@@ -208,7 +208,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedTypeConstructor,
             is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionType -> 0
+            is ConeIntersectionType,
+            -> 0
             is FirRegularClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
             is ConeIntegerLiteralType -> 0
@@ -284,7 +285,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
             is ConeIntersectionType,
-            is ConeIntegerLiteralType -> false
+            is ConeIntegerLiteralType,
+            -> false
             is AbstractFirBasedSymbol<*> -> true
             else -> true
         }
@@ -499,7 +501,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 class ConeTypeCheckerContext(
     override val isErrorTypeEqualsToAnything: Boolean,
     override val isStubTypeEqualsToAnything: Boolean,
-    override val session: FirSession
+    override val session: FirSession,
 ) : AbstractTypeCheckerContext(), ConeInferenceContext {
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
         if (type.argumentsCount() == 0) return SupertypesPolicy.LowerIfFlexible
@@ -546,7 +548,7 @@ class ConeTypeCheckerContext(
 
     override fun newBaseTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
     ): AbstractTypeCheckerContext =
         if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything)
             this

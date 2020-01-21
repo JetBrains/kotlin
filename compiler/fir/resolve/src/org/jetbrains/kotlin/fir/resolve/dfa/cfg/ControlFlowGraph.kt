@@ -134,19 +134,19 @@ class CheckNotNullCallNode(owner: ControlFlowGraph, override val fir: FirCheckNo
 class QualifiedAccessNode(
     owner: ControlFlowGraph,
     override val fir: FirQualifiedAccessExpression,
-    level: Int
+    level: Int,
 ) : CFGNode<FirQualifiedAccessExpression>(owner, level)
 
 class FunctionCallNode(
     owner: ControlFlowGraph,
     override val fir: FirFunctionCall,
-    level: Int
+    level: Int,
 ) : CFGNode<FirFunctionCall>(owner, level)
 
 class ThrowExceptionNode(
     owner: ControlFlowGraph,
     override val fir: FirThrowExpression,
-    level: Int
+    level: Int,
 ) : CFGNode<FirThrowExpression>(owner, level)
 
 class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level) {

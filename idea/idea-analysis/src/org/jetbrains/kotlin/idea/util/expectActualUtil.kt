@@ -159,7 +159,7 @@ fun KtDeclaration.runCommandOnAllExpectAndActualDeclaration(
     command: String = "",
     writeAction: Boolean = false,
     withSelf: Boolean = true,
-    f: (KtDeclaration) -> Unit
+    f: (KtDeclaration) -> Unit,
 ) {
     val (pointers, project) = runReadAction {
         collectAllExpectAndActualDeclaration(withSelf).map { it.createSmartPointer() } to project

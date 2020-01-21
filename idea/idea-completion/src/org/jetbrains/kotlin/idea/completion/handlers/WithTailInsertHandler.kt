@@ -31,7 +31,7 @@ class WithTailInsertHandler(
     val tailText: String,
     val spaceBefore: Boolean,
     val spaceAfter: Boolean,
-    val overwriteText: Boolean = true
+    val overwriteText: Boolean = true,
 ) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         item.handleInsert(context)

@@ -39,7 +39,7 @@ class BasicCompletionHandlerTest : CompletionHandlerTestBase() {
             itemText,
             tailText,
             completionChar.toString(),
-            fileName() + ".after"
+            fileName() + ".after",
         )
     }
 

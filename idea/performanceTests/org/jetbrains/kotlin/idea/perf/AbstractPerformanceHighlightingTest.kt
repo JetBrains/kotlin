@@ -49,7 +49,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         innerPerfTest(WARM_UP) {
             myFixture.configureByText(
                 KotlinFileType.INSTANCE,
-                "class Foo {\n    private val value: String? = null\n}"
+                "class Foo {\n    private val value: String? = null\n}",
             )
         }
     }

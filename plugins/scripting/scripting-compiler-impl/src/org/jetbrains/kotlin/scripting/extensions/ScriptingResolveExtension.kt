@@ -20,7 +20,7 @@ class ScriptingResolveExtension : SyntheticResolveExtension {
         name: Name,
         ctx: LazyClassContext,
         declarationProvider: PackageMemberDeclarationProvider,
-        result: MutableSet<ClassDescriptor>
+        result: MutableSet<ClassDescriptor>,
     ) {
         declarationProvider.getScriptDeclarations(name).mapTo(result) {
             LazyScriptDescriptor(ctx as ResolveSession, thisDescriptor, name, it)

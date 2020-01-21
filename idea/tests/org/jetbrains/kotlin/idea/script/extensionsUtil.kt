@@ -13,7 +13,7 @@ fun <T> addExtensionPointInTest(
     pointName: ExtensionPointName<T>,
     project: Project,
     provider: T,
-    testRootDisposable: Disposable
+    testRootDisposable: Disposable,
 ) {
     pointName.getPoint(project).registerExtension(provider, testRootDisposable)
 }

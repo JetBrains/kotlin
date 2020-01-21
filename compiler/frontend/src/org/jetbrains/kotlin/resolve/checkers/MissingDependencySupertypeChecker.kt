@@ -46,7 +46,7 @@ object MissingDependencySupertypeChecker {
 
             val errorReported = checkSupertypes(
                 descriptor.dispatchReceiverParameter?.declaration, reportOn,
-                context.trace, context.missingSupertypesResolver
+                context.trace, context.missingSupertypesResolver,
             )
             if (descriptor !is ConstructorDescriptor && descriptor !is FakeCallableDescriptorForObject && !errorReported) {
                 // The constructed class' own supertypes are not resolved after constructor call,
@@ -55,7 +55,7 @@ object MissingDependencySupertypeChecker {
                 checkSupertypes(descriptor.containingDeclaration, reportOn, context.trace, context.missingSupertypesResolver)
                 checkSupertypes(
                     descriptor.extensionReceiverParameter?.declaration, reportOn,
-                    context.trace, context.missingSupertypesResolver
+                    context.trace, context.missingSupertypesResolver,
                 )
             }
         }
@@ -69,7 +69,7 @@ object MissingDependencySupertypeChecker {
         classifierType: KotlinType,
         reportOn: PsiElement,
         trace: BindingTrace,
-        missingSupertypesResolver: MissingSupertypesResolver
+        missingSupertypesResolver: MissingSupertypesResolver,
     ) = checkSupertypes(classifierType.constructor.declarationDescriptor, reportOn, trace, missingSupertypesResolver)
 
     // true for reported error
@@ -77,7 +77,7 @@ object MissingDependencySupertypeChecker {
         declaration: DeclarationDescriptor?,
         reportOn: PsiElement,
         trace: BindingTrace,
-        missingSupertypesResolver: MissingSupertypesResolver
+        missingSupertypesResolver: MissingSupertypesResolver,
     ): Boolean {
         if (declaration !is ClassifierDescriptor)
             return false
@@ -88,8 +88,8 @@ object MissingDependencySupertypeChecker {
                 Errors.MISSING_DEPENDENCY_SUPERCLASS.on(
                     reportOn,
                     missingClassifier.fqNameSafe,
-                    declaration.fqNameSafe
-                )
+                    declaration.fqNameSafe,
+                ),
             )
         }
         return missingSupertypes.isNotEmpty()

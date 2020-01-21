@@ -20,7 +20,7 @@ class ScriptContentLoader(private val project: Project) {
             file,
             scriptDefinition,
             project,
-            scriptDefinition.template::class.java.classLoader
+            scriptDefinition.template::class.java.classLoader,
         )
 
     class BasicScriptContents(virtualFile: VirtualFile, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
@@ -33,14 +33,14 @@ class ScriptContentLoader(private val project: Project) {
 
     fun loadContentsAndResolveDependencies(
         scriptDef: KotlinScriptDefinition,
-        file: VirtualFile
+        file: VirtualFile,
     ): DependenciesResolver.ResolveResult {
         val scriptContents = getScriptContents(scriptDef, file)
         val environment = getEnvironment(scriptDef)
         val result = try {
             scriptDef.dependencyResolver.resolve(
-                    scriptContents,
-                    environment
+                scriptContents,
+                environment,
             )
         }
         catch (e: Throwable) {

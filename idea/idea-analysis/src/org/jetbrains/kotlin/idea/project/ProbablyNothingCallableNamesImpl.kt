@@ -25,5 +25,6 @@ private inline fun createCachedValue(project: Project, crossinline names: () -> 
     CachedValuesManager.getManager(project).createCachedValue(
         {
             CachedValueProvider.Result.create(names(), KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker)
-        }, false
+        },
+        false,
     )

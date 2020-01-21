@@ -29,7 +29,8 @@ abstract class JsState(override val lock: ReentrantReadWriteLock) : IReplStageSt
 abstract class JsCompilationState(
     lock: ReentrantReadWriteLock,
     val nameTables: NameTables,
-    val dependencies: List<ModuleDescriptor>) : JsState(lock)
+    val dependencies: List<ModuleDescriptor>,
+) : JsState(lock)
 
 class JsEvaluationState(lock: ReentrantReadWriteLock, val engine: ScriptEngine) : JsState(lock) {
     override fun dispose() {
@@ -39,7 +40,7 @@ class JsEvaluationState(lock: ReentrantReadWriteLock, val engine: ScriptEngine) 
 
 class JsCompiledScript(
     val jsCode: String,
-    override val compilationConfiguration: ScriptCompilationConfiguration
+    override val compilationConfiguration: ScriptCompilationConfiguration,
 ) : CompiledScript<Any> {
     override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> {
         throw IllegalStateException("Class is not available for JS implementation")

@@ -65,17 +65,19 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
                               ?: error("Class is not resolved: $clazz (classId = ${clazz.classId})")
 
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                classDescriptor,
-                RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
-                KotlinTestUtils.replaceExtension(source, "txt")
+            classDescriptor,
+            RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
+            KotlinTestUtils.replaceExtension(source, "txt"),
         )
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun assertHasAnnotationData(clazz: Class<*>) {
-        checkNotNull(clazz.getAnnotation(
-                clazz.classLoader.loadClass(JvmAnnotationNames.METADATA_FQ_NAME.asString()) as Class<Annotation>
-        )) { "Metadata annotation is not found for class $clazz" }
+        checkNotNull(
+            clazz.getAnnotation(
+                clazz.classLoader.loadClass(JvmAnnotationNames.METADATA_FQ_NAME.asString()) as Class<Annotation>,
+            ),
+        ) { "Metadata annotation is not found for class $clazz" }
     }
 
     private val Class<*>.classId: ClassId

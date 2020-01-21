@@ -90,7 +90,7 @@ sealed class PlatformAnalysisSettings {
             platform: TargetPlatform,
             sdk: Sdk?,
             isAdditionalBuiltInFeaturesSupported: Boolean,
-            isReleaseCoroutines: Boolean
+            isReleaseCoroutines: Boolean,
         ) = if (project.useCompositeAnalysis)
             CompositeAnalysisSettings(isReleaseCoroutines)
         else
@@ -102,7 +102,7 @@ data class PlatformAnalysisSettingsImpl(
     val platform: TargetPlatform,
     val sdk: Sdk?,
     val isAdditionalBuiltInFeaturesSupported: Boolean,
-    override val isReleaseCoroutines: Boolean
+    override val isReleaseCoroutines: Boolean,
 ) : PlatformAnalysisSettings()
 
 data class CompositeAnalysisSettings(override val isReleaseCoroutines: Boolean) : PlatformAnalysisSettings() {
@@ -146,19 +146,19 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private val facadeForScriptDependenciesForProject = createFacadeForScriptDependencies(ScriptDependenciesInfo.ForProject(project))
 
     private fun createFacadeForScriptDependencies(
-        dependenciesModuleInfo: ScriptDependenciesInfo
+        dependenciesModuleInfo: ScriptDependenciesInfo,
     ): ProjectResolutionFacade {
         val sdk = dependenciesModuleInfo.sdk
         val platform = JvmPlatforms.defaultJvmPlatform // TODO: Js scripts?
         val settings = PlatformAnalysisSettings.create(
             project, platform, sdk, true,
-            LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
+            LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED,
         )
 
         val dependenciesForScriptDependencies = listOf(
             LibraryModificationTracker.getInstance(project),
             ProjectRootModificationTracker.getInstance(project),
-            ScriptDependenciesModificationTracker.getInstance(project)
+            ScriptDependenciesModificationTracker.getInstance(project),
         )
 
         val scriptFile = (dependenciesModuleInfo as? ScriptDependenciesInfo.ForFile)?.scriptFile
@@ -180,7 +180,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             //TODO: provide correct trackers
             dependencies = dependenciesForScriptDependencies,
             moduleFilter = { it == dependenciesModuleInfo },
-            invalidateOnOOCB = true
+            invalidateOnOOCB = true,
         )
     }
 
@@ -193,10 +193,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             moduleFilter = { it is SdkInfo },
             dependencies = listOf(
                 LibraryModificationTracker.getInstance(project),
-                ProjectRootModificationTracker.getInstance(project)
+                ProjectRootModificationTracker.getInstance(project),
             ),
             invalidateOnOOCB = false,
-            reuseDataFrom = null
+            reuseDataFrom = null,
         )
 
         private val librariesContext = sdkContext.contextWithCompositeExceptionTracker(project, resolverForLibrariesName)
@@ -208,8 +208,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             invalidateOnOOCB = false,
             dependencies = listOf(
                 LibraryModificationTracker.getInstance(project),
-                ProjectRootModificationTracker.getInstance(project)
-            )
+                ProjectRootModificationTracker.getInstance(project),
+            ),
         )
 
         private val modulesContext = librariesContext.contextWithCompositeExceptionTracker(project, resolverForModulesName)
@@ -220,16 +220,16 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             moduleFilter = { !it.isLibraryClasses() },
             dependencies = listOf(
                 LibraryModificationTracker.getInstance(project),
-                ProjectRootModificationTracker.getInstance(project)
+                ProjectRootModificationTracker.getInstance(project),
             ),
-            invalidateOnOOCB = true
+            invalidateOnOOCB = true,
         )
     }
 
     private fun IdeaModuleInfo.platformSettings(targetPlatform: TargetPlatform) = PlatformAnalysisSettings.create(
         project, targetPlatform, sdk,
         supportsAdditionalBuiltInsMembers(project),
-        isReleaseCoroutines()
+        isReleaseCoroutines(),
     )
 
     private fun IdeaModuleInfo.isReleaseCoroutines(): Boolean {
@@ -258,9 +258,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val dependenciesForSyntheticFileCache = if (files.all { it.originalFile != it }) {
             emptyList()
         } else {
-            listOf(ModificationTracker {
-                files.sumByLong { it.modificationStamp }
-            })
+            listOf(
+                ModificationTracker {
+                    files.sumByLong { it.modificationStamp }
+                },
+            )
         }
 
         val resolverDebugName =
@@ -271,7 +273,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             globalContext: GlobalContextImpl,
             reuseDataFrom: ProjectResolutionFacade? = null,
             moduleFilter: (IdeaModuleInfo) -> Boolean = { true },
-            allModules: Collection<IdeaModuleInfo>? = null
+            allModules: Collection<IdeaModuleInfo>? = null,
         ): ProjectResolutionFacade {
             return ProjectResolutionFacade(
                 debugName,
@@ -284,7 +286,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 moduleFilter = moduleFilter,
                 dependencies = dependenciesForSyntheticFileCache,
                 invalidateOnOOCB = true,
-                allModules = allModules
+                allModules = allModules,
             )
         }
 
@@ -295,30 +297,30 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 val globalContext =
                     modulesFacade.globalContext.contextWithCompositeExceptionTracker(
                         project,
-                        "facadeForSpecialModuleInfo (ModuleSourceInfo)"
+                        "facadeForSpecialModuleInfo (ModuleSourceInfo)",
                     )
                 makeProjectResolutionFacade(
                     "facadeForSpecialModuleInfo (ModuleSourceInfo)",
                     globalContext,
                     reuseDataFrom = modulesFacade,
-                    moduleFilter = { it in dependentModules }
+                    moduleFilter = { it in dependentModules },
                 )
             }
 
             specialModuleInfo is ScriptModuleInfo -> {
                 val facadeForScriptDependencies = createFacadeForScriptDependencies(
-                    ScriptDependenciesInfo.ForFile(project, specialModuleInfo.scriptFile, specialModuleInfo.scriptDefinition)
+                    ScriptDependenciesInfo.ForFile(project, specialModuleInfo.scriptFile, specialModuleInfo.scriptDefinition),
                 )
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithCompositeExceptionTracker(
                     project,
-                    "facadeForSpecialModuleInfo (ScriptModuleInfo)"
+                    "facadeForSpecialModuleInfo (ScriptModuleInfo)",
                 )
                 makeProjectResolutionFacade(
                     "facadeForSpecialModuleInfo (ScriptModuleInfo)",
                     globalContext,
                     reuseDataFrom = facadeForScriptDependencies,
                     allModules = specialModuleInfo.dependencies(),
-                    moduleFilter = { it == specialModuleInfo }
+                    moduleFilter = { it == specialModuleInfo },
                 )
             }
             specialModuleInfo is ScriptDependenciesInfo -> facadeForScriptDependenciesForProject
@@ -326,14 +328,14 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 val globalContext =
                     facadeForScriptDependenciesForProject.globalContext.contextWithCompositeExceptionTracker(
                         project,
-                        "facadeForSpecialModuleInfo (ScriptDependenciesSourceInfo)"
+                        "facadeForSpecialModuleInfo (ScriptDependenciesSourceInfo)",
                     )
                 makeProjectResolutionFacade(
                     "facadeForSpecialModuleInfo (ScriptDependenciesSourceInfo)",
                     globalContext,
                     reuseDataFrom = facadeForScriptDependenciesForProject,
                     allModules = specialModuleInfo.dependencies(),
-                    moduleFilter = { it == specialModuleInfo }
+                    moduleFilter = { it == specialModuleInfo },
                 )
             }
 
@@ -345,7 +347,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                     debugName,
                     globalContext,
                     reuseDataFrom = librariesFacade,
-                    moduleFilter = { it == specialModuleInfo }
+                    moduleFilter = { it == specialModuleInfo },
                 )
             }
 
@@ -357,7 +359,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 val globalContext = GlobalContext("facadeForSpecialModuleInfo for file under both classes and root")
                 makeProjectResolutionFacade(
                     "facadeForSpecialModuleInfo for file under both classes and root",
-                    globalContext
+                    globalContext,
                 )
             }
 
@@ -402,16 +404,16 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                         return annotated.annotationEntries.mapNotNull {
                             context.get(
                                 BindingContext.ANNOTATION,
-                                it
+                                it,
                             )
                         }
                     }
                 },
                 LibraryModificationTracker.getInstance(project),
-                PsiModificationTracker.MODIFICATION_COUNT
+                PsiModificationTracker.MODIFICATION_COUNT,
             )
         },
-        false
+        false,
     )
 
     private val specialFilesCacheProvider = CachedValueProvider {
@@ -422,7 +424,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 override fun createValue(files: Set<KtFile>) = createFacadeForFilesWithSpecialModuleInfo(files)
             },
             LibraryModificationTracker.getInstance(project),
-            ProjectRootModificationTracker.getInstance(project)
+            ProjectRootModificationTracker.getInstance(project),
         )
     }
 
@@ -445,7 +447,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             },
             LibraryModificationTracker.getInstance(project),
             ProjectRootModificationTracker.getInstance(project),
-            ScriptDependenciesModificationTracker.getInstance(project)
+            ScriptDependenciesModificationTracker.getInstance(project),
         )
     }
 
@@ -491,7 +493,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val settings = moduleInfo.platformSettings(platform)
         val projectFacade = when (moduleInfo) {
             is ScriptDependenciesInfo.ForProject,
-            is ScriptDependenciesSourceInfo.ForProject -> facadeForScriptDependenciesForProject
+            is ScriptDependenciesSourceInfo.ForProject,
+            -> facadeForScriptDependenciesForProject
             is ScriptDependenciesInfo.ForFile -> createFacadeForScriptDependencies(moduleInfo)
             else -> facadeForModules(settings)
         }

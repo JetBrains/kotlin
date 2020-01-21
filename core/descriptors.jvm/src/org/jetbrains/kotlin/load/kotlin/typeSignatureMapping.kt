@@ -54,7 +54,7 @@ fun <T : Any> mapType(
     mode: TypeMappingMode,
     typeMappingConfiguration: TypeMappingConfiguration<T>,
     descriptorTypeWriter: JvmDescriptorTypeWriter<T>?,
-    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3
+    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3,
 ): T {
     typeMappingConfiguration.preprocessType(kotlinType)?.let { newType ->
         return mapType(newType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
@@ -63,7 +63,7 @@ fun <T : Any> mapType(
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
             transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),
-            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
+            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
         )
     }
 
@@ -86,7 +86,7 @@ fun <T : Any> mapType(
         // It's not very important because such types anyway are prohibited in declarations
         return mapType(
             commonSupertype.replaceArgumentsWithStarProjections(),
-            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
+            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
         )
     }
 
@@ -122,7 +122,7 @@ fun <T : Any> mapType(
 
                 arrayElementType = mapType(
                     memberType, factory, mode.toGenericArgumentMode(memberProjection.projectionKind, ofArray = true),
-                    typeMappingConfiguration, descriptorTypeWriter, writeGenericType
+                    typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
                 )
 
                 descriptorTypeWriter?.writeArrayEnd()
@@ -138,7 +138,7 @@ fun <T : Any> mapType(
                 if (expandedType != null) {
                     return mapType(
                         expandedType, factory, mode.wrapInlineClassesMode(), typeMappingConfiguration,
-                        descriptorTypeWriter, writeGenericType
+                        descriptorTypeWriter, writeGenericType,
                     )
                 }
             }
@@ -167,7 +167,7 @@ fun <T : Any> mapType(
         descriptor is TypeParameterDescriptor -> {
             val type = mapType(
                 descriptor.representativeUpperBound, factory, mode, typeMappingConfiguration,
-                writeGenericType = DO_NOTHING_3, descriptorTypeWriter = null
+                writeGenericType = DO_NOTHING_3, descriptorTypeWriter = null,
             )
             descriptorTypeWriter?.writeTypeVariable(descriptor.getName(), type)
             return type
@@ -187,7 +187,7 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
 fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
     type: KotlinTypeMarker,
     typeFactory: JvmTypeFactory<T>,
-    mode: TypeMappingMode
+    mode: TypeMappingMode,
 ): T? {
     val constructor = type.typeConstructor()
     if (!constructor.isClassTypeConstructor()) return null
@@ -219,7 +219,7 @@ fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
 
 fun computeInternalName(
     klass: ClassDescriptor,
-    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl
+    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl,
 ): String {
     typeMappingConfiguration.getPredefinedFullInternalNameForClass(klass)?.let { return it }
 

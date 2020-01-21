@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 
 class AllUnderImportScope(
     descriptor: DeclarationDescriptor,
-    excludedImportNames: Collection<FqName>
+    excludedImportNames: Collection<FqName>,
 ) : BaseImportingScope(null) {
 
     private val scopes: List<MemberScope> = if (descriptor is ClassDescriptor) {
@@ -54,7 +54,7 @@ class AllUnderImportScope(
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
-        changeNamesForAliased: Boolean
+        changeNamesForAliased: Boolean,
     ): Collection<DeclarationDescriptor> {
         val nameFilterToUse = if (excludedNames.isEmpty()) { // optimization
             nameFilter

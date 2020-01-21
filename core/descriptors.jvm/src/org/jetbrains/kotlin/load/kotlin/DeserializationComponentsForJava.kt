@@ -42,7 +42,7 @@ class DeserializationComponentsForJava(
     errorReporter: ErrorReporter,
     lookupTracker: LookupTracker,
     contractDeserializer: ContractDeserializer,
-    kotlinTypeChecker: NewKotlinTypeChecker
+    kotlinTypeChecker: NewKotlinTypeChecker,
 ) {
     val components: DeserializationComponents
 
@@ -56,7 +56,7 @@ class DeserializationComponentsForJava(
             additionalClassPartsProvider = jvmBuiltIns?.settings ?: AdditionalClassPartsProvider.None,
             platformDependentDeclarationFilter = jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
             extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY,
-            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList())
+            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList()),
         )
     }
 }

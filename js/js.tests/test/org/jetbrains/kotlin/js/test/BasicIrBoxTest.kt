@@ -29,7 +29,7 @@ abstract class BasicIrBoxTest(
     testGroupOutputDirPrefix: String,
     pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
-    generateNodeJsRunner: Boolean = false
+    generateNodeJsRunner: Boolean = false,
 ) : BasicBoxTest(
     pathToTestDir,
     testGroupOutputDirPrefix,
@@ -37,7 +37,7 @@ abstract class BasicIrBoxTest(
     typedArraysEnabled = true,
     generateSourceMap = generateSourceMap,
     generateNodeJsRunner = generateNodeJsRunner,
-    targetBackend = TargetBackend.JS_IR
+    targetBackend = TargetBackend.JS_IR,
 ) {
     open val generateDts = false
 
@@ -71,7 +71,7 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
     ) {
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
@@ -104,7 +104,7 @@ abstract class BasicIrBoxTest(
                     dumpToDirectory = dumpOutputDir.path,
                     toDumpStateAfter = allPhasesSet,
                     toValidateStateAfter = allPhasesSet,
-                    dumpOnlyFqName = null
+                    dumpOnlyFqName = null,
                 )
             } else {
                 PhaseConfig(jsPhases)
@@ -120,7 +120,7 @@ abstract class BasicIrBoxTest(
                 mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                 exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                 generateFullJs = true,
-                generateDceJs = runIrDce
+                generateDceJs = runIrDce,
             )
 
             val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode!!, moduleId = config.moduleId, moduleKind = config.moduleKind)
@@ -144,7 +144,7 @@ abstract class BasicIrBoxTest(
                 allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
                 outputKlibPath = actualOutputFile,
-                nopack = true
+                nopack = true,
             )
 
             compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
@@ -157,7 +157,7 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String,
         expectedResult: String,
-        withModuleSystem: Boolean
+        withModuleSystem: Boolean,
     ) {
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files

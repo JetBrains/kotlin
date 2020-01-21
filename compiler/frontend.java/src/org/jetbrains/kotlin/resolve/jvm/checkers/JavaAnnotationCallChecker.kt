@@ -59,9 +59,9 @@ class JavaAnnotationCallChecker : CallChecker {
     }
 
     private fun reportOnValueArgument(
-            context: CallCheckerContext,
-            arguments: Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>,
-            diagnostic: DiagnosticFactory0<KtExpression>
+        context: CallCheckerContext,
+        arguments: Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>,
+        diagnostic: DiagnosticFactory0<KtExpression>,
     ) {
         for (valueArgument in arguments.value.arguments) {
             val argumentExpression = valueArgument.getArgumentExpression() ?: continue
@@ -71,7 +71,7 @@ class JavaAnnotationCallChecker : CallChecker {
 
     companion object {
         fun getJavaAnnotationCallValueArgumentsThatShouldBeNamed(
-                resolvedCall: ResolvedCall<*>
+            resolvedCall: ResolvedCall<*>,
         ): Map<ValueParameterDescriptor, ResolvedValueArgument> =
                 resolvedCall.valueArguments.filter {
                     p ->

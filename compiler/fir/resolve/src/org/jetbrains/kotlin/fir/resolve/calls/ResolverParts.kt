@@ -110,7 +110,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     sink = sink,
                     isReceiver = true,
                     isDispatch = this is Dispatch,
-                    isSafeCall = callInfo.isSafeCall
+                    isSafeCall = callInfo.isSafeCall,
                 )
                 sink.yieldIfNeed()
             } else {
@@ -123,7 +123,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                         sink = sink,
                         isReceiver = true,
                         isDispatch = this is Dispatch,
-                        isSafeCall = callInfo.isSafeCall
+                        isSafeCall = callInfo.isSafeCall,
                     )
                     sink.yieldIfNeed()
                 }
@@ -155,7 +155,7 @@ internal object CheckArguments : CheckerStage() {
                 parameter,
                 isReceiver = false,
                 isSafeCall = false,
-                sink = sink
+                sink = sink,
             )
             if (candidate.system.hasContradiction) {
                 sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
@@ -236,18 +236,18 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 private fun createKPropertyType(
     property: FirProperty,
     receiverType: ConeKotlinType?,
-    returnTypeRef: FirResolvedTypeRef
+    returnTypeRef: FirResolvedTypeRef,
 ): ConeKotlinType {
     val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $property")
     return createKPropertyType(
-        receiverType, propertyType, isMutable = property.isVar
+        receiverType, propertyType, isMutable = property.isVar,
     )
 }
 
 private fun createKFunctionType(
     function: FirFunction<*>,
     receiverType: ConeKotlinType?,
-    returnTypeRef: FirResolvedTypeRef
+    returnTypeRef: FirResolvedTypeRef,
 ): ConeKotlinType {
     val parameterTypes = function.valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
@@ -256,7 +256,7 @@ private fun createKFunctionType(
     return createFunctionalType(
         parameterTypes, receiverType = receiverType,
         rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function"),
-        isKFunctionType = true
+        isKFunctionType = true,
     )
 }
 
@@ -298,7 +298,7 @@ internal object CheckVisibility : CheckerStage() {
     private fun FirRegularClassSymbol.canSeeProtectedMemberOf(
         ownerId: ClassId,
         session: FirSession,
-        visited: MutableSet<ClassId>
+        visited: MutableSet<ClassId>,
     ): Boolean {
         if (classId in visited) return false
         visited += classId
@@ -351,7 +351,7 @@ internal object CheckVisibility : CheckerStage() {
         declaration: FirMemberDeclaration,
         symbol: AbstractFirBasedSymbol<*>,
         sink: CheckerSink,
-        callInfo: CallInfo
+        callInfo: CallInfo,
     ): Boolean {
         val useSiteFile = callInfo.containingFile
         val implicitReceiverStack = callInfo.implicitReceiverStack

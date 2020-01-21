@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 class AnnotationModel(
     val annotation: Class<out Annotation>,
-    val arguments: List<Any>
+    val arguments: List<Any>,
 ) {
     fun generate(p: Printer) {
         val argumentsString = arguments.joinToString(separator = ",") { "\"$it\""}

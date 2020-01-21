@@ -39,8 +39,8 @@ class CallableReferenceCompatibilityChecker : CallChecker {
                     context.trace.report(
                         Errors.UNSUPPORTED_FEATURE.on(
                             argumentExpression,
-                            typeInferenceForCallableReferencesFeature to context.languageVersionSettings
-                        )
+                            typeInferenceForCallableReferencesFeature to context.languageVersionSettings,
+                        ),
                     )
                 }
             }

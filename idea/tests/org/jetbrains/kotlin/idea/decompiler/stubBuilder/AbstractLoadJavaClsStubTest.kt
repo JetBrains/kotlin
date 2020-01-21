@@ -44,7 +44,7 @@ abstract class AbstractLoadJavaClsStubTest : TestCaseWithTmpdir() {
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         environment.projectEnvironment.environment.application.registerService(
             IDEKotlinBinaryClassCache::class.java,
-            IDEKotlinBinaryClassCache()
+            IDEKotlinBinaryClassCache(),
         )
 
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(ktFile), tmpdir, environment)
@@ -83,7 +83,7 @@ abstract class AbstractLoadJavaClsStubTest : TestCaseWithTmpdir() {
                 Assert.assertEquals(
                     "File: ${file.name}",
                     stubsFromDeserializedDescriptors.serializeToString(),
-                    stubTreeFromCls.serializeToString()
+                    stubTreeFromCls.serializeToString(),
                 )
             }
         }

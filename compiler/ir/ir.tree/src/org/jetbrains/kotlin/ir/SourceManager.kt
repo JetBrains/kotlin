@@ -27,7 +27,7 @@ data class SourceRangeInfo(
     val startColumnNumber: Int,
     val endOffset: Int,
     val endLineNumber: Int,
-    val endColumnNumber: Int
+    val endColumnNumber: Int,
 )
 
 interface SourceManager {

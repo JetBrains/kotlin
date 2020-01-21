@@ -78,7 +78,7 @@ class ResolversTest : ResolversTestBase() {
         val acceptsArt: (String) -> Boolean,
         val doResolve: (String) -> File?,
         val acceptsRepo: (String) -> Boolean,
-        val addRepo: (String) -> Unit
+        val addRepo: (String) -> Unit,
     ) : ExternalDependenciesResolver {
 
         override fun acceptsArtifact(artifactCoordinates: String): Boolean = acceptsArt(artifactCoordinates)
@@ -101,16 +101,20 @@ class ResolversTest : ResolversTestBase() {
     fun testCompoundResolver() {
         val file1 = getNonExistingFile()
         val file2 = getNonExistingFile()
-        val resolver1 = TestDependenciesResolver(acceptsArt = { it.startsWith("file") },
-                                                 doResolve = { if (it == "file1") file1 else null },
-                                                 acceptsRepo = { false },
-                                                 addRepo = {})
+        val resolver1 = TestDependenciesResolver(
+            acceptsArt = { it.startsWith("file") },
+            doResolve = { if (it == "file1") file1 else null },
+            acceptsRepo = { false },
+            addRepo = {},
+        )
 
         var prefix: String? = null
-        val resolver2 = TestDependenciesResolver(acceptsArt = { a -> prefix?.let { a.startsWith(it) } ?: false },
-                                                 doResolve = { if (it.contains(".")) file2 else null },
-                                                 acceptsRepo = { true },
-                                                 addRepo = { prefix = it })
+        val resolver2 = TestDependenciesResolver(
+            acceptsArt = { a -> prefix?.let { a.startsWith(it) } ?: false },
+            doResolve = { if (it.contains(".")) file2 else null },
+            acceptsRepo = { true },
+            addRepo = { prefix = it },
+        )
 
         val resolver = CompoundDependenciesResolver(resolver1, resolver2)
 

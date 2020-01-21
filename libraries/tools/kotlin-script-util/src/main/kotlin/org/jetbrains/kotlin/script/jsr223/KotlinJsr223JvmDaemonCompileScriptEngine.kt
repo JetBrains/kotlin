@@ -36,13 +36,13 @@ import kotlin.reflect.KClass
 // TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
 
 class KotlinJsr223JvmDaemonCompileScriptEngine(
-        factory: ScriptEngineFactory,
-        compilerClasspath: List<File>,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
-        val scriptArgsTypes: Array<out KClass<out Any>>?,
-        compilerOut: OutputStream = System.err
+    factory: ScriptEngineFactory,
+    compilerClasspath: List<File>,
+    templateClasspath: List<File>,
+    templateClassName: String,
+    val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+    val scriptArgsTypes: Array<out KClass<out Any>>?,
+    compilerOut: OutputStream = System.err,
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
     private val daemon by lazy { connectToCompileService(compilerClasspath) }
@@ -50,13 +50,14 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
     override val replCompiler by lazy {
         daemon.let {
             KotlinRemoteReplCompilerClient(
-                    it,
-                    makeAutodeletingFlagFile("jsr223-repl-session"),
-                    CompileService.TargetPlatform.JVM,
-                    emptyArray(),
-                    PrintingMessageCollector(PrintStream(compilerOut), MessageRenderer.WITHOUT_PATHS, false),
-                    templateClasspath,
-                    templateClassName)
+                it,
+                makeAutodeletingFlagFile("jsr223-repl-session"),
+                CompileService.TargetPlatform.JVM,
+                emptyArray(),
+                PrintingMessageCollector(PrintStream(compilerOut), MessageRenderer.WITHOUT_PATHS, false),
+                templateClasspath,
+                templateClassName,
+            )
         }
     }
 

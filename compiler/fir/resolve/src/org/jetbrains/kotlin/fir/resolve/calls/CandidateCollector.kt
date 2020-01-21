@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
-    val resolutionStageRunner: ResolutionStageRunner
+    val resolutionStageRunner: ResolutionStageRunner,
 ) {
     private val groupNumbers = mutableListOf<Int>()
     private val candidates = mutableListOf<Candidate>()
@@ -78,12 +78,12 @@ class InvokeReceiverCandidateCollector(
     private val invokeCallInfo: CallInfo,
     components: BodyResolveComponents,
     private val invokeConsumer: AccumulatingTowerDataConsumer,
-    resolutionStageRunner: ResolutionStageRunner
+    resolutionStageRunner: ResolutionStageRunner,
 ) : CandidateCollector(components, resolutionStageRunner) {
     private fun createBoundInvokeConsumer(boundInvokeCallInfo: CallInfo): TowerDataConsumer {
         return createSimpleFunctionConsumer(
             components.session, OperatorNameConventions.INVOKE,
-            boundInvokeCallInfo, components, towerResolver.collector
+            boundInvokeCallInfo, components, towerResolver.collector,
         )
     }
 
@@ -93,7 +93,7 @@ class InvokeReceiverCandidateCollector(
             calleeReference = FirNamedReferenceWithCandidate(
                 null,
                 symbol.callableId.callableName,
-                candidate
+                candidate,
             )
             dispatchReceiver = candidate.dispatchReceiverExpression()
             typeRef = towerResolver.typeCalculator.tryCalculateReturnType(symbol.firUnsafe())

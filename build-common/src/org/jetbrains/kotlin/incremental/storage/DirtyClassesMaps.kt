@@ -25,8 +25,8 @@ internal class DirtyClassesJvmNameMap(storageFile: File) : AbstractDirtyClassesM
 internal class DirtyClassesFqNameMap(storageFile: File) : AbstractDirtyClassesMap<FqName>(FqNameTransformer, storageFile)
 
 internal abstract class AbstractDirtyClassesMap<Name>(
-        private val nameTransformer: NameTransformer<Name>,
-        storageFile: File
+    private val nameTransformer: NameTransformer<Name>,
+    storageFile: File,
 ) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
     fun markDirty(className: Name) {
         storage[nameTransformer.asString(className)] = true

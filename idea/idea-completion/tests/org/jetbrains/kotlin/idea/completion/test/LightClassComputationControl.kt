@@ -20,7 +20,7 @@ import java.util.Collections.synchronizedList
 object LightClassComputationControl {
     fun testWithControl(project: Project, testText: String, testBody: () -> Unit) {
         val expectedLightClassFqNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(
-            testText, "// $LIGHT_CLASS_DIRECTIVE"
+            testText, "// $LIGHT_CLASS_DIRECTIVE",
         ).map { it.trim() }
 
         val actualFqNames = synchronizedList(ArrayList<String>())
@@ -39,7 +39,7 @@ object LightClassComputationControl {
             Assert.fail(
                 "Expected to compute: ${expectedLightClassFqNames.prettyToString()}\n" +
                         "Actually computed: ${actualFqNames.prettyToString()}\n" +
-                        "Use $LIGHT_CLASS_DIRECTIVE to specify expected light class computations"
+                        "Use $LIGHT_CLASS_DIRECTIVE to specify expected light class computations",
             )
         }
     }

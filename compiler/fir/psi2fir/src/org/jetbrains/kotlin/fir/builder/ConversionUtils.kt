@@ -134,14 +134,14 @@ fun IElementType.toFirOperation(): FirOperation =
     }
 
 fun FirExpression.generateNotNullOrOther(
-    session: FirSession, other: FirExpression, caseId: String, baseSource: FirSourceElement?
+    session: FirSession, other: FirExpression, caseId: String, baseSource: FirSourceElement?,
 ): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
     val subjectVariable = generateTemporaryVariable(session, baseSource, subjectName, this)
     val subject = FirWhenSubject()
     val subjectExpression = FirWhenSubjectExpressionImpl(baseSource, subject)
     return FirWhenExpressionImpl(
-        baseSource, this, subjectVariable
+        baseSource, this, subjectVariable,
     ).apply {
         subject.bind(this)
         branches += FirWhenBranchImpl(
@@ -150,19 +150,19 @@ fun FirExpression.generateNotNullOrOther(
                 arguments += subjectExpression
                 arguments += FirConstExpressionImpl(baseSource, FirConstKind.Null, null)
             },
-            FirSingleExpressionBlock(other)
+            FirSingleExpressionBlock(other),
         )
         branches += FirWhenBranchImpl(
             other.source, FirElseIfTrueCondition(baseSource),
             FirSingleExpressionBlock(
-                generateResolvedAccessExpression(baseSource, subjectVariable)
-            )
+                generateResolvedAccessExpression(baseSource, subjectVariable),
+            ),
         )
     }
 }
 
 fun FirExpression.generateLazyLogicalOperation(
-    other: FirExpression, isAnd: Boolean, baseSource: FirSourceElement?
+    other: FirExpression, isAnd: Boolean, baseSource: FirSourceElement?,
 ): FirBinaryLogicExpression {
     val kind = if (isAnd)
         LogicOperationKind.AND
@@ -174,14 +174,14 @@ fun FirExpression.generateLazyLogicalOperation(
 internal fun KtWhenCondition.toFirWhenCondition(
     subject: FirWhenSubject,
     convert: KtExpression?.(String) -> FirExpression,
-    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
+    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val firSubjectExpression = FirWhenSubjectExpressionImpl(this.toFirSourceElement(), subject)
     return when (this) {
         is KtWhenConditionWithExpression -> {
             FirOperatorCallImpl(
                 expression?.toFirSourceElement(),
-                FirOperation.EQ
+                FirOperation.EQ,
             ).apply {
                 arguments += firSubjectExpression
                 arguments += expression.convert("No expression in condition with expression")
@@ -195,7 +195,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
             FirTypeOperatorCallImpl(
                 typeReference?.toFirSourceElement(),
                 if (isNegated) FirOperation.NOT_IS else FirOperation.IS,
-                typeReference.toFirOrErrorTypeRef()
+                typeReference.toFirOrErrorTypeRef(),
             ).apply {
                 arguments += firSubjectExpression
             }
@@ -210,7 +210,7 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
     baseSource: FirSourceElement?,
     subject: FirWhenSubject,
     convert: KtExpression?.(String) -> FirExpression,
-    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
+    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     var firCondition: FirExpression? = null
     for (condition in this) {
@@ -218,7 +218,7 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
         firCondition = when (firCondition) {
             null -> firConditionElement
             else -> firCondition.generateLazyLogicalOperation(
-                firConditionElement, false, baseSource
+                firConditionElement, false, baseSource,
             )
         }
     }
@@ -229,7 +229,7 @@ fun FirExpression.generateContainsOperation(
     argument: FirExpression,
     inverted: Boolean,
     base: KtExpression?,
-    operationReference: KtOperationReferenceExpression?
+    operationReference: KtOperationReferenceExpression?,
 ): FirFunctionCall {
     val baseSource = base?.toFirSourceElement()
     val operationReferenceSource = operationReference?.toFirSourceElement()
@@ -261,7 +261,7 @@ internal fun generateDestructuringBlock(
     container: FirVariable<*>,
     tmpVariable: Boolean,
     extractAnnotationsTo: KtAnnotated.(FirAbstractAnnotatedElement) -> Unit,
-    toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef
+    toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     return FirBlockImpl(multiDeclaration.toFirSourceElement()).apply {
         if (tmpVariable) {
@@ -281,7 +281,7 @@ internal fun generateDestructuringBlock(
                 isVar,
                 FirPropertySymbol(entry.nameAsSafeName), // TODO?
                 true,
-                FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL),
             ).apply {
                 entry.extractAnnotationsTo(this)
                 symbol.bind(this)
@@ -291,7 +291,7 @@ internal fun generateDestructuringBlock(
 }
 
 fun generateTemporaryVariable(
-    session: FirSession, source: FirSourceElement?, name: Name, initializer: FirExpression, typeRef: FirTypeRef? = null
+    session: FirSession, source: FirSourceElement?, name: Name, initializer: FirExpression, typeRef: FirTypeRef? = null,
 ): FirVariable<*> =
     FirPropertyImpl(
         source,
@@ -304,13 +304,13 @@ fun generateTemporaryVariable(
         false,
         FirPropertySymbol(name),
         true,
-        FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+        FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL),
     ).apply {
         symbol.bind(this)
     }
 
 fun generateTemporaryVariable(
-    session: FirSession, source: FirSourceElement?, specialName: String, initializer: FirExpression
+    session: FirSession, source: FirSourceElement?, specialName: String, initializer: FirExpression,
 ): FirVariable<*> = generateTemporaryVariable(session, source, Name.special("<$specialName>"), initializer)
 
 fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean, receiver: FirExpression?) {
@@ -346,7 +346,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
             FirImplicitTypeRefImpl(null),
             FirPropertyAccessorSymbol(),
             true,
-            FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
+            FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL),
         ).apply Accessor@{
             body = FirSingleExpressionBlock(
                 FirReturnExpressionImpl(
@@ -356,11 +356,11 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
                         calleeReference = FirSimpleNamedReference(null, GET_VALUE, null)
                         arguments += thisRef()
                         arguments += propertyRef()
-                    }
+                    },
                 ).apply {
                     target = FirFunctionTarget(null)
                     target.bind(this@Accessor)
-                }
+                },
             )
         }
     }
@@ -371,13 +371,13 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
             session.builtinTypes.unitType,
             FirPropertyAccessorSymbol(),
             false,
-            FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
+            FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL),
         ).apply {
             val parameter = FirValueParameterImpl(
                 null, session, FirImplicitTypeRefImpl(null),
                 DELEGATED_SETTER_PARAM, FirVariableSymbol(name),
                 defaultValue = null, isCrossinline = false,
-                isNoinline = false, isVararg = false
+                isNoinline = false, isVararg = false,
             )
             valueParameters += parameter
             body = FirSingleExpressionBlock(
@@ -389,7 +389,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
                     arguments += FirQualifiedAccessExpressionImpl(null).apply {
                         calleeReference = FirResolvedNamedReferenceImpl(source, DELEGATED_SETTER_PARAM, parameter.symbol)
                     }
-                }
+                },
             )
         }
     }

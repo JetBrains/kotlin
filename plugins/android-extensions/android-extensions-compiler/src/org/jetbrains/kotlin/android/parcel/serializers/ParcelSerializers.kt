@@ -46,9 +46,9 @@ internal class GenericParcelSerializer(override val asmType: Type) : ParcelSeria
 }
 
 internal class TypeParcelerParcelSerializer(
-        override val asmType: Type,
-        private val parcelerType: KotlinType,
-        private val typeMapper: KotlinTypeMapper
+    override val asmType: Type,
+    private val parcelerType: KotlinType,
+    private val typeMapper: KotlinTypeMapper,
 ) : ParcelSerializer {
     private val parcelerAsmType = typeMapper.mapType(parcelerType)
 
@@ -187,9 +187,9 @@ internal fun InstructionAdapter.castIfNeeded(targetType: Type) {
 }
 
 internal class ListSetParcelSerializer(
-        asmType: Type,
-        elementSerializer: ParcelSerializer,
-        frameMap: FrameMap
+    asmType: Type,
+    elementSerializer: ParcelSerializer,
+    frameMap: FrameMap,
 ) : AbstractCollectionParcelSerializer(asmType, elementSerializer, frameMap) {
     override fun getSize(v: InstructionAdapter) {
         v.invokeinterface("java/util/Collection", "size", "()I")
@@ -217,10 +217,10 @@ internal class ListSetParcelSerializer(
 }
 
 internal class MapParcelSerializer(
-        asmType: Type,
-        private val keySerializer: ParcelSerializer,
-        elementSerializer: ParcelSerializer,
-        frameMap: FrameMap
+    asmType: Type,
+    private val keySerializer: ParcelSerializer,
+    elementSerializer: ParcelSerializer,
+    frameMap: FrameMap,
 ) : AbstractCollectionParcelSerializer(asmType, elementSerializer, frameMap) {
     override fun getSize(v: InstructionAdapter) {
         v.invokeinterface("java/util/Map", "size", "()I")
@@ -263,20 +263,22 @@ internal class MapParcelSerializer(
 }
 
 abstract internal class AbstractCollectionParcelSerializer(
-        final override val asmType: Type,
-        protected val elementSerializer: ParcelSerializer,
-        private val frameMap: FrameMap
+    final override val asmType: Type,
+    protected val elementSerializer: ParcelSerializer,
+    private val frameMap: FrameMap,
 ) : ParcelSerializer {
-    protected val collectionType: Type = Type.getObjectType(when (asmType.internalName) {
-        "java/util/List" -> "java/util/ArrayList"
-        "java/util/Set" -> "java/util/LinkedHashSet"
-        "java/util/SortedSet" -> "java/util/TreeSet"
-        "java/util/NavigableSet" -> "java/util/TreeSet"
-        "java/util/Map" -> "java/util/LinkedHashMap"
-        "java/util/SortedMap" -> "java/util/TreeMap"
-        "java/util/NavigableMap" -> "java/util/TreeMap"
-        else -> asmType.internalName
-    })
+    protected val collectionType: Type = Type.getObjectType(
+        when (asmType.internalName) {
+            "java/util/List" -> "java/util/ArrayList"
+            "java/util/Set" -> "java/util/LinkedHashSet"
+            "java/util/SortedSet" -> "java/util/TreeSet"
+            "java/util/NavigableSet" -> "java/util/TreeSet"
+            "java/util/Map" -> "java/util/LinkedHashMap"
+            "java/util/SortedMap" -> "java/util/TreeMap"
+            "java/util/NavigableMap" -> "java/util/TreeMap"
+            else -> asmType.internalName
+        },
+    )
 
     private var hasConstructorWithCapacity = when (collectionType.internalName) {
         "java/util/LinkedList", "java/util/TreeSet", "java/util/TreeMap" -> false
@@ -376,9 +378,9 @@ abstract internal class AbstractCollectionParcelSerializer(
 }
 
 internal class SparseArrayParcelSerializer(
-        override val asmType: Type,
-        private val valueSerializer: ParcelSerializer,
-        private val frameMap: FrameMap
+    override val asmType: Type,
+    private val valueSerializer: ParcelSerializer,
+    private val frameMap: FrameMap,
 ) : ParcelSerializer {
     private val valueType = (valueSerializer as? PrimitiveTypeParcelSerializer)?.asmType ?: Type.getObjectType("java/lang/Object")
 
@@ -466,9 +468,9 @@ internal class SparseArrayParcelSerializer(
 }
 
 internal class ObjectParcelSerializer(
-        override val asmType: Type,
-        private val type: KotlinType,
-        private val typeMapper: KotlinTypeMapper
+    override val asmType: Type,
+    private val type: KotlinType,
+    private val typeMapper: KotlinTypeMapper,
 ) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
         v.pop2()
@@ -482,7 +484,7 @@ internal class ObjectParcelSerializer(
 
 internal class ZeroParameterClassSerializer(
     override val asmType: Type,
-    type: KotlinType
+    type: KotlinType,
 ) : ParcelSerializer {
     val clazz = type.constructor.declarationDescriptor as ClassDescriptor
 
@@ -600,7 +602,7 @@ internal class NullAwareParcelSerializerWrapper(val delegate: ParcelSerializer) 
 }
 
 internal class PrimitiveArrayParcelSerializer(
-        override val asmType: Type
+    override val asmType: Type,
 ) : ParcelSerializer {
     private val methodNameBase = when (asmType.elementType) {
         Type.INT_TYPE -> "Int"
@@ -627,9 +629,9 @@ internal class PrimitiveArrayParcelSerializer(
 
 /** write...() and get...() methods in Android should support passing `null` values. */
 internal class NullCompliantObjectParcelSerializer(
-        override val asmType: Type,
-        writeMethod: Method<String?>,
-        readMethod: Method<String?>
+    override val asmType: Type,
+    writeMethod: Method<String?>,
+    readMethod: Method<String?>,
 ) : ParcelSerializer {
     private val writeMethod = Method(writeMethod.name, writeMethod.signature ?: "(${asmType.descriptor})V")
     private val readMethod = Method(readMethod.name, readMethod.signature ?: "()${asmType.descriptor}")
@@ -647,26 +649,28 @@ internal class NullCompliantObjectParcelSerializer(
 internal class BoxedPrimitiveTypeParcelSerializer private constructor(val unboxedType: Type) : ParcelSerializer {
     companion object {
         private val BOXED_TO_UNBOXED_TYPE_MAPPINGS = mapOf(
-                "java/lang/Boolean" to Type.BOOLEAN_TYPE,
-                "java/lang/Character" to Type.CHAR_TYPE,
-                "java/lang/Byte" to Type.BYTE_TYPE,
-                "java/lang/Short" to Type.SHORT_TYPE,
-                "java/lang/Integer" to Type.INT_TYPE,
-                "java/lang/Float" to Type.FLOAT_TYPE,
-                "java/lang/Long" to Type.LONG_TYPE,
-                "java/lang/Double" to Type.DOUBLE_TYPE)
+            "java/lang/Boolean" to Type.BOOLEAN_TYPE,
+            "java/lang/Character" to Type.CHAR_TYPE,
+            "java/lang/Byte" to Type.BYTE_TYPE,
+            "java/lang/Short" to Type.SHORT_TYPE,
+            "java/lang/Integer" to Type.INT_TYPE,
+            "java/lang/Float" to Type.FLOAT_TYPE,
+            "java/lang/Long" to Type.LONG_TYPE,
+            "java/lang/Double" to Type.DOUBLE_TYPE,
+        )
 
         private val UNBOXED_TO_BOXED_TYPE_MAPPINGS = BOXED_TO_UNBOXED_TYPE_MAPPINGS.map { it.value to it.key }.toMap()
 
         internal val BOXED_VALUE_METHOD_NAMES = mapOf(
-                "java/lang/Boolean" to "booleanValue",
-                "java/lang/Character" to "charValue",
-                "java/lang/Byte" to "byteValue",
-                "java/lang/Short" to "shortValue",
-                "java/lang/Integer" to "intValue",
-                "java/lang/Float" to "floatValue",
-                "java/lang/Long" to "longValue",
-                "java/lang/Double" to "doubleValue")
+            "java/lang/Boolean" to "booleanValue",
+            "java/lang/Character" to "charValue",
+            "java/lang/Byte" to "byteValue",
+            "java/lang/Short" to "shortValue",
+            "java/lang/Integer" to "intValue",
+            "java/lang/Float" to "floatValue",
+            "java/lang/Long" to "longValue",
+            "java/lang/Double" to "doubleValue",
+        )
 
         private val INSTANCES = BOXED_TO_UNBOXED_TYPE_MAPPINGS.values.map { type ->
             type to BoxedPrimitiveTypeParcelSerializer(type)
@@ -694,24 +698,26 @@ internal class BoxedPrimitiveTypeParcelSerializer private constructor(val unboxe
 internal open class PrimitiveTypeParcelSerializer private constructor(final override val asmType: Type) : ParcelSerializer {
     companion object {
         private val WRITE_METHOD_NAMES = mapOf(
-                Type.BOOLEAN_TYPE to Method("writeInt", "(I)V"),
-                Type.CHAR_TYPE to Method("writeInt", "(I)V"),
-                Type.BYTE_TYPE to Method("writeByte", "(B)V"),
-                Type.SHORT_TYPE to Method("writeInt", "(I)V"),
-                Type.INT_TYPE to Method("writeInt", "(I)V"),
-                Type.FLOAT_TYPE to Method("writeFloat", "(F)V"),
-                Type.LONG_TYPE to Method("writeLong", "(J)V"),
-                Type.DOUBLE_TYPE to Method("writeDouble", "(D)V"))
+            Type.BOOLEAN_TYPE to Method("writeInt", "(I)V"),
+            Type.CHAR_TYPE to Method("writeInt", "(I)V"),
+            Type.BYTE_TYPE to Method("writeByte", "(B)V"),
+            Type.SHORT_TYPE to Method("writeInt", "(I)V"),
+            Type.INT_TYPE to Method("writeInt", "(I)V"),
+            Type.FLOAT_TYPE to Method("writeFloat", "(F)V"),
+            Type.LONG_TYPE to Method("writeLong", "(J)V"),
+            Type.DOUBLE_TYPE to Method("writeDouble", "(D)V"),
+        )
 
         private val READ_METHOD_NAMES = mapOf(
-                Type.BOOLEAN_TYPE to Method("readInt", "()I"),
-                Type.CHAR_TYPE to Method("readInt", "()I"),
-                Type.BYTE_TYPE to Method("readByte", "()B"),
-                Type.SHORT_TYPE to Method("readInt", "()I"),
-                Type.INT_TYPE to Method("readInt", "()I"),
-                Type.FLOAT_TYPE to Method("readFloat", "()F"),
-                Type.LONG_TYPE to Method("readLong", "()J"),
-                Type.DOUBLE_TYPE to Method("readDouble", "()D"))
+            Type.BOOLEAN_TYPE to Method("readInt", "()I"),
+            Type.CHAR_TYPE to Method("readInt", "()I"),
+            Type.BYTE_TYPE to Method("readByte", "()B"),
+            Type.SHORT_TYPE to Method("readInt", "()I"),
+            Type.INT_TYPE to Method("readInt", "()I"),
+            Type.FLOAT_TYPE to Method("readFloat", "()F"),
+            Type.LONG_TYPE to Method("readLong", "()J"),
+            Type.DOUBLE_TYPE to Method("readDouble", "()D"),
+        )
 
         private val INSTANCES = READ_METHOD_NAMES.keys.map {
             it to when (it) {

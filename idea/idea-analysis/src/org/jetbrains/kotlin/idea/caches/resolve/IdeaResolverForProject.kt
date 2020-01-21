@@ -44,14 +44,14 @@ class IdeaResolverForProject(
     fallbackModificationTracker: ModificationTracker? = null,
     private val isReleaseCoroutines: Boolean? = null,
     // TODO(dsavvinov): this is needed only for non-composite analysis, extract separate resolver implementation instead
-    private val constantSdkDependencyIfAny: SdkInfo? = null
+    private val constantSdkDependencyIfAny: SdkInfo? = null,
 ) : AbstractResolverForProject<IdeaModuleInfo>(
     debugName,
     projectContext,
     modules,
     fallbackModificationTracker,
     delegateResolver,
-    ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java)
+    ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java),
 ) {
     private val builtInsCache: BuiltInsCache =
         (delegateResolver as? IdeaResolverForProject)?.builtInsCache ?: BuiltInsCache(projectContext, this)
@@ -81,7 +81,7 @@ class IdeaResolverForProject(
             projectContext.withModule(descriptor),
             moduleContent,
             this,
-            languageVersionSettings
+            languageVersionSettings,
         )
     }
 
@@ -93,11 +93,11 @@ class IdeaResolverForProject(
             moduleByJavaClass = { javaClass: JavaClass ->
                 val psiClass = (javaClass as JavaClassImpl).psi
                 psiClass.getPlatformModuleInfo(JvmPlatforms.unspecifiedJvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
-            }
+            },
         )
 
         val commonPlatformParameters = CommonAnalysisParameters(
-            metadataPartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) }
+            metadataPartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) },
         )
 
         return if (!projectContext.project.useCompositeAnalysis) {
@@ -113,7 +113,7 @@ class IdeaResolverForProject(
                 commonPlatformParameters,
                 jvmPlatformParameters,
                 platform,
-                CompositeAnalyzerServices(platform.componentPlatforms.map { it.toTargetPlatform().findAnalyzerServices })
+                CompositeAnalyzerServices(platform.componentPlatforms.map { it.toTargetPlatform().findAnalyzerServices }),
             )
         }
     }

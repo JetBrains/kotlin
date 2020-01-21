@@ -25,7 +25,7 @@ object FieldSets {
     val receivers = fieldSet(
         field("explicitReceiver", expression, nullable = true).withTransform(),
         field("dispatchReceiver", expression).withTransform(),
-        field("extensionReceiver", expression).withTransform()
+        field("extensionReceiver", expression).withTransform(),
     )
 
     val typeArguments =

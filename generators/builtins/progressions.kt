@@ -50,7 +50,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         }
 
         out.println(
-                """/**
+            """/**
  * A progression of values of type `$t`.
  */
 public open class $progression
@@ -104,7 +104,8 @@ public open class $progression
          */
         public fun fromClosedRange(rangeStart: $t, rangeEnd: $t, step: $incrementType): $progression = $progression(rangeStart, rangeEnd, step)
     }
-}""")
+}""",
+        )
         out.println()
 
     }

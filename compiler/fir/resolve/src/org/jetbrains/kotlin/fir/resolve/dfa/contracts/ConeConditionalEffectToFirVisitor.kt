@@ -30,7 +30,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: ConeBinaryLogicExpression,
-        data: Map<Int, FirExpression>
+        data: Map<Int, FirExpression>,
     ): FirExpression? {
         val leftExpression = binaryLogicExpression.left.accept(this, data) ?: return null
         val rightExpression = binaryLogicExpression.right.accept(this, data) ?: return null

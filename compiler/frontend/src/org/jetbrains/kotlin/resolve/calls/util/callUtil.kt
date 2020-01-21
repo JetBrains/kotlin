@@ -81,17 +81,19 @@ fun <D : CallableDescriptor> ResolvedCall<D>.usesDefaultArguments(): Boolean {
 
 fun <C : ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
     val arguments = valueArguments.map { it.getArgumentExpression() }
-    return arguments.any(fun(argument: KtExpression?): Boolean {
-        if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, context)) return false
+    return arguments.any(
+        fun(argument: KtExpression?): Boolean {
+            if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, context)) return false
 
-        when (val resolvedCall = argument.getResolvedCall(context.trace.bindingContext)) {
-            is MutableResolvedCall<*> -> if (!resolvedCall.hasInferredReturnType()) return false
-            is NewResolvedCallImpl<*> -> if (resolvedCall.resultingDescriptor.returnType?.isError == true) return false
-        }
+            when (val resolvedCall = argument.getResolvedCall(context.trace.bindingContext)) {
+                is MutableResolvedCall<*> -> if (!resolvedCall.hasInferredReturnType()) return false
+                is NewResolvedCallImpl<*> -> if (resolvedCall.resultingDescriptor.returnType?.isError == true) return false
+            }
 
-        val expressionType = context.trace.bindingContext.getType(argument)
-        return expressionType == null || expressionType.isError
-    })
+            val expressionType = context.trace.bindingContext.getType(argument)
+            return expressionType == null || expressionType.isError
+        },
+    )
 }
 
 fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
@@ -172,7 +174,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
 fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
     val callExpressionTypes = arrayOf<Class<out KtElement>?>(
         KtSimpleNameExpression::class.java, KtCallElement::class.java, KtBinaryExpression::class.java,
-        KtUnaryExpression::class.java, KtArrayAccessExpression::class.java
+        KtUnaryExpression::class.java, KtArrayAccessExpression::class.java,
     )
 
     val parent = if (strict) {
@@ -302,7 +304,7 @@ val KtLambdaExpression.isTrailingLambdaOnNewLIne
 
 inline fun BindingTrace.reportTrailingLambdaErrorOr(
     expression: KtExpression?,
-    originalDiagnostic: (KtExpression) -> Diagnostic
+    originalDiagnostic: (KtExpression) -> Diagnostic,
 ) {
     expression?.let { expr ->
         if (expr is KtLambdaExpression && expr.isTrailingLambdaOnNewLIne) {

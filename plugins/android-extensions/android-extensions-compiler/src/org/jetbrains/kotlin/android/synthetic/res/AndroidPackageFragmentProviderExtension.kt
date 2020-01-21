@@ -47,12 +47,12 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
     }
 
     override fun getPackageFragmentProvider(
-            project: Project,
-            module: ModuleDescriptor,
-            storageManager: StorageManager,
-            trace: BindingTrace,
-            moduleInfo: ModuleInfo?,
-            lookupTracker: LookupTracker
+        project: Project,
+        module: ModuleDescriptor,
+        storageManager: StorageManager,
+        trace: BindingTrace,
+        moduleInfo: ModuleInfo?,
+        lookupTracker: LookupTracker,
     ): PackageFragmentProvider? {
         val isExperimental = isExperimental(moduleInfo)
 
@@ -78,7 +78,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 
                         AndroidSyntheticPackageFragmentDescriptor(
                             module, fqName, packageData, lazyContext, storageManager, isExperimental,
-                            lookupTracker, layoutName
+                            lookupTracker, layoutName,
                         )
                     }
                     packages[fqName] = lazyPackageDescriptor
@@ -130,7 +130,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 }
 
 class AndroidSyntheticPackageFragmentProvider(
-    val packages: Map<FqName, () -> PackageFragmentDescriptor>
+    val packages: Map<FqName, () -> PackageFragmentDescriptor>,
 ) : PackageFragmentProvider {
     override fun getPackageFragments(fqName: FqName) = listOfNotNull(packages[fqName]?.invoke())
 

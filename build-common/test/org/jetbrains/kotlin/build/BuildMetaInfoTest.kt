@@ -45,7 +45,7 @@ class BuildMetaInfoTest : TestCase() {
             "metadataVersionPatch",
             "multiplatformEnable",
             "multiplatformVersion",
-            "ownVersion"
+            "ownVersion",
         )
         assertEquals(expectedKeys, actual.split("\r\n", "\n").map { line -> line.split("=").first() })
     }

@@ -35,7 +35,7 @@ fun DeclarationDescriptorWithVisibility.isVisible(
     context: PsiElement,
     receiverExpression: KtExpression?,
     bindingContext: BindingContext,
-    resolutionFacade: ResolutionFacade
+    resolutionFacade: ResolutionFacade,
 ): Boolean {
     val resolutionScope = context.getResolutionScope(bindingContext, resolutionFacade)
     val from = resolutionScope.ownerDescriptor
@@ -46,7 +46,7 @@ private fun DeclarationDescriptorWithVisibility.isVisible(
     from: DeclarationDescriptor,
     receiverExpression: KtExpression?,
     bindingContext: BindingContext? = null,
-    resolutionScope: LexicalScope? = null
+    resolutionScope: LexicalScope? = null,
 ): Boolean {
     if (Visibilities.isVisibleWithAnyReceiver(this, from)) return true
 

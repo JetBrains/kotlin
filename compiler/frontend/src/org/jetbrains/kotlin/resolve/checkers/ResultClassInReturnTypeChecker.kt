@@ -36,7 +36,7 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
     }
 
     private fun isForbiddenReturnType(
-        returnType: KotlinType, declaration: KtDeclaration, declarationDescriptor: DeclarationDescriptor
+        returnType: KotlinType, declaration: KtDeclaration, declarationDescriptor: DeclarationDescriptor,
     ): Boolean {
         if (!returnType.isResultType()) return false
 

@@ -44,7 +44,7 @@ class CallCheckerContext @JvmOverloads constructor(
     override val deprecationResolver: DeprecationResolver,
     override val moduleDescriptor: ModuleDescriptor,
     val missingSupertypesResolver: MissingSupertypesResolver,
-    override val trace: BindingTrace = resolutionContext.trace
+    override val trace: BindingTrace = resolutionContext.trace,
 ) : CheckerContext {
     val scope: LexicalScope
         get() = resolutionContext.scope

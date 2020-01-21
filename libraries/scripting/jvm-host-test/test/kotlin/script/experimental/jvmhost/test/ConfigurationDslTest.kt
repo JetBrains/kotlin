@@ -73,15 +73,15 @@ class ConfigurationDslTest : TestCase() {
 
         Assert.assertEquals(
             listOf(KotlinType(Int::class), KotlinType(Float::class)),
-            finalConfig[ScriptCompilationConfiguration.implicitReceivers]
+            finalConfig[ScriptCompilationConfiguration.implicitReceivers],
         )
         Assert.assertEquals(
             mapOf("ann1" to KotlinType(String::class), "ann12" to KotlinType(Int::class)),
-            finalConfig[ScriptCompilationConfiguration.providedProperties]
+            finalConfig[ScriptCompilationConfiguration.providedProperties],
         )
         Assert.assertEquals(
             listOf("-version"),
-            finalConfig[ScriptCompilationConfiguration.compilerOptions]
+            finalConfig[ScriptCompilationConfiguration.compilerOptions],
         )
 
         val implicitReceiver1 = 10
@@ -114,11 +114,11 @@ class ConfigurationDslTest : TestCase() {
 
         Assert.assertEquals(
             listOf<Any>(implicitReceiver1, implicitReceiver2),
-            finalEvalConfig[ScriptEvaluationConfiguration.implicitReceivers]
+            finalEvalConfig[ScriptEvaluationConfiguration.implicitReceivers],
         )
         Assert.assertEquals(
             mapOf("ann1" to propAnn1, "ann12" to propAnn12),
-            finalEvalConfig[ScriptEvaluationConfiguration.providedProperties]
+            finalEvalConfig[ScriptEvaluationConfiguration.providedProperties],
         )
 
         Assert.assertEquals(propAnn1 + propAnn12, (evalRes.returnValue as ResultValue.Value).value)

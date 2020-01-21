@@ -33,7 +33,7 @@ class PropertyDelegationOperatorReferenceSearcher(
     searchScope: SearchScope,
     consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
-    options: KotlinReferencesSearchOptions
+    options: KotlinReferencesSearchOptions,
 ) : OperatorReferenceSearcher<KtPropertyDelegate>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("by")) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {

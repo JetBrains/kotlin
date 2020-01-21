@@ -44,10 +44,10 @@ val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 open class IncrementalJvmCache(
     private val targetDataRoot: File,
     targetOutputDir: File?,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
 ) : AbstractIncrementalCache<JvmClassName>(
     workingDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME),
-    pathConverter = pathConverter
+    pathConverter = pathConverter,
 ), IncrementalCache {
     companion object {
         private val PROTO_MAP = "proto"
@@ -291,7 +291,7 @@ open class IncrementalJvmCache(
             val newData = ProtoMapValue(
                 header.kind != KotlinClassHeader.Kind.CLASS,
                 BitEncoding.decodeBytes(header.data!!),
-                header.strings!!
+                header.strings!!,
             )
             storage[key] = newData
 
@@ -328,7 +328,7 @@ open class IncrementalJvmCache(
 
             changesCollector.collectProtoChanges(
                 oldData?.toProtoData(), newData.toProtoData(),
-                collectAllMembersForNewClass = true
+                collectAllMembersForNewClass = true,
             )
         }
 
@@ -355,15 +355,18 @@ open class IncrementalJvmCache(
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
             val result = HashMap<String, Any>()
 
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-                    val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_PRIVATE
-                    if (value != null && access and staticFinal == Opcodes.ACC_STATIC or Opcodes.ACC_FINAL) {
-                        result[name] = value
+            ClassReader(bytes).accept(
+                object : ClassVisitor(Opcodes.API_VERSION) {
+                    override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
+                        val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_PRIVATE
+                        if (value != null && access and staticFinal == Opcodes.ACC_STATIC or Opcodes.ACC_FINAL) {
+                            result[name] = value
+                        }
+                        return null
                     }
-                    return null
-                }
-            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                },
+                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES,
+            )
 
             return result
         }
@@ -447,7 +450,7 @@ open class IncrementalJvmCache(
 
     inner class InternalNameToSourcesMap(
         storageFile: File,
-        private val pathConverter: FileToPathConverter
+        private val pathConverter: FileToPathConverter,
     ) : BasicStringMap<Collection<String>>(storageFile, EnumeratorStringDescriptor(), PathCollectionExternalizer) {
         operator fun set(internalName: String, sourceFiles: Collection<File>) {
             storage[internalName] = pathConverter.toPaths(sourceFiles)
@@ -477,29 +480,32 @@ open class IncrementalJvmCache(
 
             val result = HashMap<String, Long>()
 
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                override fun visitMethod(
-                    access: Int,
-                    name: String,
-                    desc: String,
-                    signature: String?,
-                    exceptions: Array<out String>?
-                ): MethodVisitor? {
-                    val dummyClassWriter = ClassWriter(Opcodes.API_VERSION)
+            ClassReader(bytes).accept(
+                object : ClassVisitor(Opcodes.API_VERSION) {
+                    override fun visitMethod(
+                        access: Int,
+                        name: String,
+                        desc: String,
+                        signature: String?,
+                        exceptions: Array<out String>?,
+                    ): MethodVisitor? {
+                        val dummyClassWriter = ClassWriter(Opcodes.API_VERSION)
 
-                    return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
-                        override fun visitEnd() {
-                            val jvmName = name + desc
-                            if (jvmName !in inlineFunctions) return
+                        return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
+                            override fun visitEnd() {
+                                val jvmName = name + desc
+                                if (jvmName !in inlineFunctions) return
 
-                            val dummyBytes = dummyClassWriter.toByteArray()!!
-                            val hash = dummyBytes.md5()
-                            result[jvmName] = hash
+                                val dummyBytes = dummyClassWriter.toByteArray()!!
+                                val hash = dummyBytes.md5()
+                                result[jvmName] = hash
+                            }
                         }
                     }
-                }
 
-            }, 0)
+                },
+                0,
+            )
 
             return result
         }
@@ -520,7 +526,7 @@ open class IncrementalJvmCache(
                     kotlinClass.scopeFqName(),
                     functionNameBySignature(fn),
                     oldMap[fn],
-                    newMap[fn]
+                    newMap[fn],
                 )
             }
         }

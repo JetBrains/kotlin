@@ -52,7 +52,7 @@ open class NameNotFoundResolutionResult<D : CallableDescriptor> : AbstractOverlo
 }
 
 class ManyCandidates<D : CallableDescriptor>(
-    val candidates: Collection<ResolvedCall<D>>
+    val candidates: Collection<ResolvedCall<D>>,
 ) : AbstractOverloadResolutionResults<D>() {
     override fun getAllCandidates(): Collection<ResolvedCall<D>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = candidates

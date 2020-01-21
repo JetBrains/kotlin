@@ -15,7 +15,7 @@ class MockSourcePosition(
     private val myElementAt: PsiElement? = null,
     private val myLine: Int? = null,
     private val myOffset: Int? = null,
-    private val myEditor: Editor? = null
+    private val myEditor: Editor? = null,
 ) : SourcePosition() {
     override fun getFile(): PsiFile {
         return myFile ?: throw UnsupportedOperationException("Parameter file isn't set for MockSourcePosition")

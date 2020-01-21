@@ -30,10 +30,13 @@ import java.util.*
 
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
     private var lazyConfig: Lazy<JsConfig>? = lazy(LazyThreadSafetyMode.NONE) {
-        JsConfig(project, environment.configuration.copy().apply {
-            put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
-            put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
-        })
+        JsConfig(
+            project,
+            environment.configuration.copy().apply {
+                put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
+                put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
+            },
+        )
     }
 
     protected val config: JsConfig get() = lazyConfig!!.value
@@ -51,7 +54,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         moduleTrace: BindingTrace,
         languageVersionSettings: LanguageVersionSettings,
         separateModules: Boolean,
-        jvmTarget: JvmTarget
+        jvmTarget: JvmTarget,
     ): JsAnalysisResult {
         // TODO: support LANGUAGE directive in JS diagnostic tests
         moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))

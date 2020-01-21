@@ -14,5 +14,5 @@ data class ClassData(
     val nameResolver: NameResolver,
     val classProto: ProtoBuf.Class,
     val metadataVersion: BinaryVersion,
-    val sourceElement: SourceElement
+    val sourceElement: SourceElement,
 )

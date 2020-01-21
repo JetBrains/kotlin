@@ -31,7 +31,7 @@ fun TypeSystemCommonBackendContext.computeExpandedTypeForInlineClass(inlineClass
     computeExpandedTypeInner(inlineClassType, hashSetOf())
 
 private fun TypeSystemCommonBackendContext.computeExpandedTypeInner(
-    kotlinType: KotlinTypeMarker, visitedClassifiers: HashSet<TypeConstructorMarker>
+    kotlinType: KotlinTypeMarker, visitedClassifiers: HashSet<TypeConstructorMarker>,
 ): KotlinTypeMarker? {
     val classifier = kotlinType.typeConstructor()
     if (!visitedClassifiers.add(classifier)) return null

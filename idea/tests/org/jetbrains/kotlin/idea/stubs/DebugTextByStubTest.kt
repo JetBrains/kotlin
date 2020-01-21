@@ -175,7 +175,7 @@ class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val tree = createStubTree("class A {\n init {} }")
         val initializer =
             tree.findChildStubByType(KtStubElementTypes.CLASS)!!.findChildStubByType(KtStubElementTypes.CLASS_BODY)!!.findChildStubByType(
-                KtStubElementTypes.CLASS_INITIALIZER
+                KtStubElementTypes.CLASS_INITIALIZER,
             )
         assertEquals("initializer in STUB: class A", KtClassInitializer(initializer as KotlinPlaceHolderStub).getDebugText())
     }
@@ -184,7 +184,7 @@ class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val tree = createStubTree("class A { companion object Def {} }")
         val companionObject =
             tree.findChildStubByType(KtStubElementTypes.CLASS)!!.findChildStubByType(KtStubElementTypes.CLASS_BODY)!!.findChildStubByType(
-                KtStubElementTypes.OBJECT_DECLARATION
+                KtStubElementTypes.OBJECT_DECLARATION,
             )
         assertEquals("STUB: companion object Def", KtObjectDeclaration(companionObject as KotlinObjectStub).getDebugText())
     }

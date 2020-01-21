@@ -39,7 +39,7 @@ abstract class AbstractFunctor : Functor {
     protected abstract fun doInvocation(
         arguments: List<Computation>,
         typeSubstitution: ESTypeSubstitution,
-        reducer: Reducer
+        reducer: Reducer,
     ): List<ESEffect>
 }
 

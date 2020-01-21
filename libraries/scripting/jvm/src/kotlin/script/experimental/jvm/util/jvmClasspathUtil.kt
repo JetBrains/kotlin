@@ -58,9 +58,11 @@ fun classpathFromClassloader(currentClassLoader: ClassLoader, unpackJarCollectio
     val processedJars = hashSetOf<File>()
     val unpackJarCollectionsDir by lazy {
         createTempDir("unpackedJarCollections").canonicalFile.also {
-            Runtime.getRuntime().addShutdownHook(Thread {
-                it.deleteRecursively()
-            })
+            Runtime.getRuntime().addShutdownHook(
+                Thread {
+                    it.deleteRecursively()
+                },
+            )
         }
     }
     return allRelatedClassLoaders(currentClassLoader).flatMap { classLoader ->
@@ -259,7 +261,7 @@ fun scriptCompilationClasspathFromContextOrNull(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false,
-    unpackJarCollections: Boolean = false
+    unpackJarCollections: Boolean = false,
 ): List<File>? {
     fun List<File>.takeAndFilter() = when {
         isEmpty() -> null
@@ -278,12 +280,12 @@ fun scriptCompilationClasspathFromContextOrNull(
 fun scriptCompilationClasspathFromContextOrStdlib(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
-    wholeClasspath: Boolean = false
+    wholeClasspath: Boolean = false,
 ): List<File> =
     scriptCompilationClasspathFromContextOrNull(
         *keyNames,
         classLoader = classLoader,
-        wholeClasspath = wholeClasspath
+        wholeClasspath = wholeClasspath,
     )
         ?: KotlinJars.kotlinScriptStandardJars
 
@@ -291,13 +293,13 @@ fun scriptCompilationClasspathFromContext(
     vararg keyNames: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false,
-    unpackJarCollections: Boolean = false
+    unpackJarCollections: Boolean = false,
 ): List<File> =
     scriptCompilationClasspathFromContextOrNull(
         *keyNames,
         classLoader = classLoader,
         wholeClasspath = wholeClasspath,
-        unpackJarCollections = unpackJarCollections
+        unpackJarCollections = unpackJarCollections,
     )
         ?: throw Exception("Unable to get script compilation classpath from context, please specify explicit classpath via \"$KOTLIN_SCRIPT_CLASSPATH_PROPERTY\" property")
 
@@ -319,13 +321,13 @@ object KotlinJars {
     private fun findCompilerClasspath(withScripting: Boolean): List<File> {
         val kotlinCompilerJars = listOf(
             KOTLIN_COMPILER_JAR,
-            KOTLIN_COMPILER_EMBEDDABLE_JAR
+            KOTLIN_COMPILER_EMBEDDABLE_JAR,
         )
         val kotlinLibsJars = listOf(
             KOTLIN_JAVA_STDLIB_JAR,
             KOTLIN_JAVA_REFLECT_JAR,
             KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-            TROVE4J_JAR
+            TROVE4J_JAR,
         )
         val kotlinScriptingJars = if (withScripting) listOf(
             KOTLIN_SCRIPTING_COMPILER_JAR,
@@ -333,7 +335,7 @@ object KotlinJars {
             KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
             KOTLIN_SCRIPTING_COMPILER_IMPL_EMBEDDABLE_JAR,
             KOTLIN_SCRIPTING_COMMON_JAR,
-            KOTLIN_SCRIPTING_JVM_JAR
+            KOTLIN_SCRIPTING_JVM_JAR,
         ) else emptyList()
 
         val kotlinBaseJars = kotlinCompilerJars + kotlinLibsJars + kotlinScriptingJars
@@ -348,7 +350,7 @@ object KotlinJars {
         if (classpath == null || (explicitCompilerClasspath == null && classpath.none { f ->
                 kotlinCompilerJars.any {
                     f.matchMaybeVersionedFile(
-                        it
+                        it,
                     )
                 }
             })) {
@@ -370,7 +372,7 @@ object KotlinJars {
     fun getLib(propertyName: String, jarName: String, markerClassName: String, classLoader: ClassLoader? = null): File? =
         getExplicitLib(propertyName, jarName)
             ?: tryGetResourcePathForClassByName(
-                markerClassName, classLoader ?: Thread.currentThread().contextClassLoader
+                markerClassName, classLoader ?: Thread.currentThread().contextClassLoader,
             )?.takeIf(File::exists)
 
     private fun getExplicitLib(propertyName: String, jarName: String) =
@@ -382,7 +384,7 @@ object KotlinJars {
             ?: getLib(
                 KOTLIN_RUNTIME_JAR_PROPERTY,
                 KOTLIN_JAVA_STDLIB_JAR,
-                JvmStatic::class
+                JvmStatic::class,
             )
     }
 
@@ -395,7 +397,7 @@ object KotlinJars {
         getLib(
             KOTLIN_REFLECT_JAR_PROPERTY,
             KOTLIN_JAVA_REFLECT_JAR,
-            "kotlin.reflect.full.KClasses" // using a class that is a part of the kotlin-reflect.jar
+            "kotlin.reflect.full.KClasses", // using a class that is a part of the kotlin-reflect.jar
         )
     }
 
@@ -403,7 +405,7 @@ object KotlinJars {
         getLib(
             KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY,
             KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-            ScriptTemplateWithArgs::class
+            ScriptTemplateWithArgs::class,
         )
     }
 
@@ -415,13 +417,13 @@ object KotlinJars {
     val kotlinScriptStandardJars
         get() = listOf(
             stdlibOrNull,
-            scriptRuntimeOrNull
+            scriptRuntimeOrNull,
         ).filterNotNull()
 
     val kotlinScriptStandardJarsWithReflect
         get() = listOf(
             stdlibOrNull,
             scriptRuntimeOrNull,
-            reflectOrNull
+            reflectOrNull,
         ).filterNotNull()
 }

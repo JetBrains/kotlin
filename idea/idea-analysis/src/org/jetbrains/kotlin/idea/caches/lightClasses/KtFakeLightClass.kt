@@ -64,12 +64,12 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
 
 class KtFakeLightMethod private constructor(
     val ktDeclaration: KtNamedDeclaration,
-    ktClassOrObject: KtClassOrObject
+    ktClassOrObject: KtClassOrObject,
 ) : LightMethod(
     ktDeclaration.manager,
     DummyJavaPsiFactory.createDummyVoidMethod(ktDeclaration.project),
     KtFakeLightClass(ktClassOrObject),
-    KotlinLanguage.INSTANCE
+    KotlinLanguage.INSTANCE,
 ), KtLightElement<KtNamedDeclaration, PsiMethod> {
     override val kotlinOrigin get() = ktDeclaration
     override val clsDelegate get() = myMethod
@@ -109,7 +109,7 @@ private object DummyJavaPsiFactory {
         return PsiFileFactory.getInstance(project).createFileFromText(
             DUMMY_FILE_NAME,
             JavaFileType.INSTANCE,
-            text
+            text,
         ) as PsiJavaFile
     }
 

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
 internal open class ClassOneToManyMap(
-        storageFile: File
+    storageFile: File,
 ) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
     override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
 

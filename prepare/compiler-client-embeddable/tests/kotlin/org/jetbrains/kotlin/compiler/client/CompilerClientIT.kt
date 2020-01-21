@@ -63,8 +63,10 @@ class CompilerClientIT {
         val daemonJVMOptions = org.jetbrains.kotlin.daemon.common.DaemonJVMOptions()
         val daemonReportMessages = arrayListOf<DaemonReportMessage>()
 
-        KotlinCompilerClient.connectToCompileService(compilerId, clientAliveFile, daemonJVMOptions, daemonOptions,
-                DaemonReportingTargets(messages = daemonReportMessages), true)
+        KotlinCompilerClient.connectToCompileService(
+            compilerId, clientAliveFile, daemonJVMOptions, daemonOptions,
+            DaemonReportingTargets(messages = daemonReportMessages), true,
+        )
                 ?: throw IllegalStateException("Unable to connect to compiler daemon:" + daemonReportMessages.joinToString("\n  ", prefix = "\n  ") { "${it.category.name} ${it.message}" })
     }
 
@@ -73,8 +75,9 @@ class CompilerClientIT {
     @Test
     fun testSimpleScript() {
         val (out, code) = runCompiler(
-                "-cp", compilationClasspath.joinToString(File.pathSeparator) { it.canonicalPath },
-                File("testData/scripts/simpleHelloWorld.kts").canonicalPath)
+            "-cp", compilationClasspath.joinToString(File.pathSeparator) { it.canonicalPath },
+            File("testData/scripts/simpleHelloWorld.kts").canonicalPath,
+        )
         assertEquals(0, code, "compilation failed:\n" + out + "\n")
     }
 
@@ -83,8 +86,10 @@ class CompilerClientIT {
         var code = -1
         myMessageCollector.clear()
         val out = captureOutAndErr {
-            code = KotlinCompilerClient.compile(compilerService, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, args, myMessageCollector,
-                    reportSeverity = ReportSeverity.DEBUG)
+            code = KotlinCompilerClient.compile(
+                compilerService, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, args, myMessageCollector,
+                reportSeverity = ReportSeverity.DEBUG,
+            )
         }
         return myMessageCollector.messages.joinToString("\n") { it.message } + "\n" + out to code
     }

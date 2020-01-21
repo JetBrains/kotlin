@@ -33,7 +33,7 @@ abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase
         val fragmentProvider =
             ext.getPackageFragmentProvider(
                 project, analysisResult.moduleDescriptor, LockBasedStorageManager.NO_LOCKS,
-                DummyTraces.DUMMY_EXCEPTION_ON_ERROR_TRACE, null, LookupTracker.DO_NOTHING
+                DummyTraces.DUMMY_EXCEPTION_ON_ERROR_TRACE, null, LookupTracker.DO_NOTHING,
             ) as AndroidSyntheticPackageFragmentProvider
 
         val renderer = DescriptorRenderer.COMPACT_WITH_MODIFIERS

@@ -125,7 +125,8 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
                         // Widgets with the same id but different types exist.
                         if (res.xmlType != existing.xmlType && existing.xmlType != AndroidConst.VIEW_FQNAME) {
                             val mergedWidget = AndroidResource.Widget(
-                                    res.id, AndroidConst.VIEW_FQNAME, res.sourceElement, isPartiallyDefined)
+                                res.id, AndroidConst.VIEW_FQNAME, res.sourceElement, isPartiallyDefined,
+                            )
                             resourceMap.put(res.id.name, mergedWidget)
                         }
                     }

@@ -61,45 +61,46 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 }
                 totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile!!) }.length
                 counter++
-                firFile?.accept(object : FirVisitorVoid() {
-                    override fun visitElement(element: FirElement) {
-                        element.acceptChildren(this)
-                    }
-
-                    override fun visitErrorExpression(errorExpression: FirErrorExpression) {
-                        errorExpressions++
-                        println(errorExpression.render())
-                        errorExpression.psi?.let { println(it) }
-                    }
-
-                    override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
-                        val calleeReference = qualifiedAccess.calleeReference
-                        if (calleeReference is FirErrorNamedReference) {
-                            errorReferences++
-                            println(calleeReference.diagnostic.reason)
-                        } else {
-                            normalReferences++
+                firFile?.accept(
+                    object : FirVisitorVoid() {
+                        override fun visitElement(element: FirElement) {
+                            element.acceptChildren(this)
                         }
-                        visitStatement(qualifiedAccess)
-                    }
 
-                    override fun visitExpression(expression: FirExpression) {
-                        when (expression) {
-                            is FirExpressionStub -> {
-                                expressionStubs++
-                                if (!stubMode) {
-                                    println(expression.psi?.text)
-                                }
+                        override fun visitErrorExpression(errorExpression: FirErrorExpression) {
+                            errorExpressions++
+                            println(errorExpression.render())
+                            errorExpression.psi?.let { println(it) }
+                        }
+
+                        override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
+                            val calleeReference = qualifiedAccess.calleeReference
+                            if (calleeReference is FirErrorNamedReference) {
+                                errorReferences++
+                                println(calleeReference.diagnostic.reason)
+                            } else {
+                                normalReferences++
                             }
-                            else -> normalExpressions++
+                            visitStatement(qualifiedAccess)
                         }
-                        expression.acceptChildren(this)
-                    }
 
-                    override fun visitStatement(statement: FirStatement) {
-                        normalStatements++
-                        statement.acceptChildren(this)
-                    }
+                        override fun visitExpression(expression: FirExpression) {
+                            when (expression) {
+                                is FirExpressionStub -> {
+                                    expressionStubs++
+                                    if (!stubMode) {
+                                        println(expression.psi?.text)
+                                    }
+                                }
+                                else -> normalExpressions++
+                            }
+                            expression.acceptChildren(this)
+                        }
+
+                        override fun visitStatement(statement: FirStatement) {
+                            normalStatements++
+                            statement.acceptChildren(this)
+                        }
 
 //                    override fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration) {
 //                        errorDeclarations++
@@ -107,30 +108,33 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 //                        errorDeclaration.psi?.let { println(it) }
 //                    }
 
-                    override fun visitDeclaration(declaration: FirDeclaration) {
-                        normalDeclarations++
-                        declaration.acceptChildren(this)
-                    }
-                })
-                ktFile.accept(object : KtTreeVisitor<Nothing?>() {
-                    override fun visitReferenceExpression(expression: KtReferenceExpression, data: Nothing?): Void? {
-                        ktReferences++
-                        expression.acceptChildren(this)
-                        return null
-                    }
+                        override fun visitDeclaration(declaration: FirDeclaration) {
+                            normalDeclarations++
+                            declaration.acceptChildren(this)
+                        }
+                    },
+                )
+                ktFile.accept(
+                    object : KtTreeVisitor<Nothing?>() {
+                        override fun visitReferenceExpression(expression: KtReferenceExpression, data: Nothing?): Void? {
+                            ktReferences++
+                            expression.acceptChildren(this)
+                            return null
+                        }
 
-                    override fun visitExpression(expression: KtExpression, data: Nothing?): Void? {
-                        ktExpressions++
-                        expression.acceptChildren(this)
-                        return null
-                    }
+                        override fun visitExpression(expression: KtExpression, data: Nothing?): Void? {
+                            ktExpressions++
+                            expression.acceptChildren(this)
+                            return null
+                        }
 
-                    override fun visitDeclaration(dcl: KtDeclaration, data: Nothing?): Void? {
-                        ktDeclarations++
-                        dcl.acceptChildren(this)
-                        return null
-                    }
-                })
+                        override fun visitDeclaration(dcl: KtDeclaration, data: Nothing?): Void? {
+                            ktDeclarations++
+                            dcl.acceptChildren(this)
+                            return null
+                        }
+                    },
+                )
 
             } catch (e: Exception) {
                 if (counter > 0) {
@@ -206,21 +210,25 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
             val firFile: FirFile = ktFile.toFirFile(stubMode = false)
             val psiSetViaFir = mutableSetOf<KtElement>()
             val psiSetDirect = mutableSetOf<KtElement>()
-            firFile.accept(object : FirVisitorVoid() {
-                override fun visitElement(element: FirElement) {
-                    val psi = element.psi as? KtElement
-                    if (psi != null) {
-                        psiSetViaFir += psi
+            firFile.accept(
+                object : FirVisitorVoid() {
+                    override fun visitElement(element: FirElement) {
+                        val psi = element.psi as? KtElement
+                        if (psi != null) {
+                            psiSetViaFir += psi
+                        }
+                        element.acceptChildren(this)
                     }
-                    element.acceptChildren(this)
-                }
-            })
-            ktFile.accept(object : KtTreeVisitor<Nothing?>() {
-                override fun visitKtElement(element: KtElement, data: Nothing?): Void? {
-                    psiSetDirect += element
-                    return super.visitKtElement(element, data)
-                }
-            })
+                },
+            )
+            ktFile.accept(
+                object : KtTreeVisitor<Nothing?>() {
+                    override fun visitKtElement(element: KtElement, data: Nothing?): Void? {
+                        psiSetDirect += element
+                        return super.visitKtElement(element, data)
+                    }
+                },
+            )
             psiSetDirect -= psiSetViaFir
             psiSetDirect.removeIf {
                 it is KtPackageDirective || it is KtImportList || it is KtClassBody ||

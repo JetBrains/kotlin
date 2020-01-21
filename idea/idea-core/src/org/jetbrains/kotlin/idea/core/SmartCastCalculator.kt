@@ -32,7 +32,7 @@ class SmartCastCalculator(
     val containingDeclarationOrModule: DeclarationDescriptor,
     contextElement: PsiElement,
     receiver: KtExpression?,
-    resolutionFacade: ResolutionFacade
+    resolutionFacade: ResolutionFacade,
 ) {
     private val dataFlowValueFactory = resolutionFacade.frontendService<DataFlowValueFactory>()
 
@@ -40,7 +40,7 @@ class SmartCastCalculator(
     private val entityToSmartCastInfo: Map<Any, SmartCastInfo> = processDataFlowInfo(
         bindingContext.getDataFlowInfoBefore(contextElement),
         contextElement.getResolutionScope(bindingContext, resolutionFacade),
-        receiver
+        receiver,
     )
 
     fun types(descriptor: VariableDescriptor): Collection<KotlinType> {
@@ -73,7 +73,7 @@ class SmartCastCalculator(
     private fun processDataFlowInfo(
         dataFlowInfo: DataFlowInfo,
         resolutionScope: LexicalScope?,
-        receiver: KtExpression?
+        receiver: KtExpression?,
     ): Map<Any, SmartCastInfo> {
         if (dataFlowInfo == DataFlowInfo.EMPTY) return emptyMap()
 
@@ -81,7 +81,7 @@ class SmartCastCalculator(
         if (receiver != null) {
             val receiverType = bindingContext.getType(receiver) ?: return emptyMap()
             val receiverIdentifierInfo = dataFlowValueFactory.createDataFlowValue(
-                receiver, receiverType, bindingContext, containingDeclarationOrModule
+                receiver, receiverType, bindingContext, containingDeclarationOrModule,
             ).identifierInfo
             dataFlowValueToEntity = { value ->
                 val identifierInfo = value.identifierInfo

@@ -21,7 +21,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
         vararg inputs: String,
         expectedOutPatterns: List<String> = emptyList(),
         expectedExitCode: Int = 0,
-        workDirectory: File? = null
+        workDirectory: File? = null,
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
@@ -36,7 +36,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
         val inputIter = inputs.iterator()
 
         data class ExceptionContainer(
-            var value: Throwable? = null
+            var value: Throwable? = null,
         )
 
         fun InputStream.captureStream(): Triple<Thread, ExceptionContainer, ArrayList<String>> {
@@ -96,7 +96,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
                 val actualLine = processOut[i]
                 TestCase.assertTrue(
                     "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                    Regex(expectedPattern).matches(actualLine)
+                    Regex(expectedPattern).matches(actualLine),
                 )
             }
             TestCase.assertEquals(expectedExitCode, process.exitValue())
@@ -119,8 +119,8 @@ class LauncherReplTest : TestCaseWithTmpdir() {
                 "Welcome to Kotlin version .*",
                 "Type :help for help, :quit for quit",
                 ".*42$",
-                ".*"
-            )
+                ".*",
+            ),
         )
     }
 }

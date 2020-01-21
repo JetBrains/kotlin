@@ -14,7 +14,7 @@ import java.lang.Boolean.getBoolean
 abstract class AbstractIrJsTypeScriptExportTest : BasicIrBoxTest(
     pathToTestDir = TEST_DATA_DIR_PATH + "typescript-export/",
     testGroupOutputDirPrefix = "typescript-export/",
-    pathToRootOutputDir = TEST_DATA_DIR_PATH
+    pathToRootOutputDir = TEST_DATA_DIR_PATH,
 ) {
     override val generateDts = true
     private val updateReferenceDtsFiles = getBoolean("kotlin.js.updateReferenceDtsFiles")

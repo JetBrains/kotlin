@@ -17,7 +17,7 @@ import kotlin.script.experimental.dependencies.ScriptReport
 interface LegacyResolverWrapper
 
 class ApiChangeDependencyResolverWrapper(
-        override val delegate: kotlin.script.dependencies.ScriptDependenciesResolver
+    override val delegate: kotlin.script.dependencies.ScriptDependenciesResolver,
 ) : kotlin.script.experimental.dependencies.DependenciesResolver,
     DependencyResolverWrapper<ScriptDependenciesResolver>,
     LegacyResolverWrapper {
@@ -25,25 +25,25 @@ class ApiChangeDependencyResolverWrapper(
     private var previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies? = null
 
     override fun resolve(
-            scriptContents: kotlin.script.dependencies.ScriptContents,
-            environment: Environment
+        scriptContents: kotlin.script.dependencies.ScriptContents,
+        environment: Environment,
     ): DependenciesResolver.ResolveResult {
         val reports = ArrayList<ScriptReport>()
         val legacyDeps = delegate.resolve(
-                scriptContents,
-                environment,
-                { sev, msg, pos ->
-                    reports.add(ScriptReport(msg, sev.convertSeverity(), pos?.convertPosition()))
-                },
-                previousDependencies
+            scriptContents,
+            environment,
+            { sev, msg, pos ->
+                reports.add(ScriptReport(msg, sev.convertSeverity(), pos?.convertPosition()))
+            },
+            previousDependencies,
         ).get() ?: return DependenciesResolver.ResolveResult.Failure(reports)
 
         val dependencies = ScriptDependencies(
-                javaHome = legacyDeps.javaHome?.let(::File),
-                classpath = legacyDeps.classpath.toList(),
-                imports = legacyDeps.imports.toList(),
-                sources = legacyDeps.sources.toList(),
-                scripts = legacyDeps.scripts.toList()
+            javaHome = legacyDeps.javaHome?.let(::File),
+            classpath = legacyDeps.classpath.toList(),
+            imports = legacyDeps.imports.toList(),
+            sources = legacyDeps.sources.toList(),
+            scripts = legacyDeps.scripts.toList(),
         )
         previousDependencies = legacyDeps
         return DependenciesResolver.ResolveResult.Success(dependencies, reports)

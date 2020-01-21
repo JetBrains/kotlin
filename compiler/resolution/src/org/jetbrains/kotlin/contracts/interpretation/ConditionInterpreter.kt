@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.contracts.model.functors.IsFunctor
 import org.jetbrains.kotlin.contracts.model.structure.*
 
 internal class ConditionInterpreter(
-    private val dispatcher: ContractInterpretationDispatcher
+    private val dispatcher: ContractInterpretationDispatcher,
 ) : ContractDescriptionVisitor<ESExpression?, Unit> {
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit): ESExpression? {
         val left = logicalOr.left.accept(this, data) ?: return null

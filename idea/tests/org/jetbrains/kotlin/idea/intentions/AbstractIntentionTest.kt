@@ -59,13 +59,13 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         if (candidateFiles.isEmpty()) {
             throw AssertionError(
                 ".intention file is not found for " + testDataFile +
-                        "\nAdd it to base directory of test data. It should contain fully-qualified name of intention class."
+                        "\nAdd it to base directory of test data. It should contain fully-qualified name of intention class.",
             )
         }
         if (candidateFiles.size > 1) {
             throw AssertionError(
                 "Several .intention files are available for " + testDataFile +
-                        "\nPlease remove some of them\n" + candidateFiles
+                        "\nPlease remove some of them\n" + candidateFiles,
             )
         }
 
@@ -155,12 +155,12 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         Assert.assertEquals(
             "There should not be any difference what thread isApplicable is called from",
             isApplicableOnPooled,
-            isApplicableOnEdt
+            isApplicableOnEdt,
         )
 
         Assert.assertTrue(
             "isAvailable() for " + intentionAction.javaClass + " should return " + isApplicableExpected,
-            isApplicableExpected == isApplicableOnEdt
+            isApplicableExpected == isApplicableOnEdt,
         )
 
         val intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// " + intentionTextDirectiveName() + ": ")

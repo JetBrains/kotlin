@@ -34,9 +34,9 @@ abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractF
 
         val additionalClasspath = (foreignAnnotations + testAnnotations).map { it.path }
         CodegenTestUtil.compileJava(
-                CodegenTestUtil.findJavaSourcesInDirectory(javaFilesDir),
-                additionalClasspath, emptyList(),
-                compiledJavaPath
+            CodegenTestUtil.findJavaSourcesInDirectory(javaFilesDir),
+            additionalClasspath, emptyList(),
+            compiledJavaPath,
         )
 
         return listOf(compiledJavaPath) + testAnnotations

@@ -23,7 +23,7 @@ import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
 class BridgeDependenciesResolver(
     val scriptCompilationConfiguration: ScriptCompilationConfiguration,
     val onConfigurationUpdated: (SourceCode, ScriptCompilationConfiguration) -> Unit = { _, _ -> },
-    val getScriptSource: (ScriptContents) -> SourceCode? = { null }
+    val getScriptSource: (ScriptContents) -> SourceCode? = { null },
 ) : AsyncDependenciesResolver {
 
     override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult =
@@ -37,8 +37,8 @@ class BridgeDependenciesResolver(
             val diagnostics = arrayListOf<ScriptReport>()
             val processedScriptData = ScriptCollectedData(
                 mapOf(
-                    ScriptCollectedData.foundAnnotations to scriptContents.annotations
-                )
+                    ScriptCollectedData.foundAnnotations to scriptContents.annotations,
+                ),
             )
 
             val script = getScriptSource(scriptContents) ?: scriptContents.toScriptSource()
@@ -67,11 +67,11 @@ class BridgeDependenciesResolver(
             return DependenciesResolver.ResolveResult.Success(
                 // TODO: consider returning only increment from the initial config
                 refinedConfiguration.toDependencies(newClasspath),
-                diagnostics
+                diagnostics,
             )
         } catch (e: Throwable) {
             return DependenciesResolver.ResolveResult.Failure(
-                ScriptReport(e.message ?: "unknown error $e")
+                ScriptReport(e.message ?: "unknown error $e"),
             )
         }
     }
@@ -84,7 +84,7 @@ fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): Script
         classpath = classpath,
         sources = this[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
         imports = defaultImports,
-        scripts = this[ScriptCompilationConfiguration.importScripts].toFilesOrEmpty()
+        scripts = this[ScriptCompilationConfiguration.importScripts].toFilesOrEmpty(),
     )
 }
 
@@ -108,7 +108,7 @@ internal fun List<SourceCode>?.toFilesOrEmpty() = this?.map {
 fun ScriptCompilationConfiguration.refineWith(
     handler: RefineScriptCompilationConfigurationHandler?,
     processedScriptData: ScriptCollectedData,
-    script: SourceCode
+    script: SourceCode,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
     if (handler == null) this.asSuccess()
     else handler(ScriptConfigurationRefinementContext(script, this, processedScriptData))

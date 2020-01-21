@@ -27,9 +27,11 @@ interface ScriptTemplatesProvider {
     // for resolving ambiguities
     val id: String
 
-    @Deprecated("Parameter isn't used for resolving priorities anymore. " +
+    @Deprecated(
+        "Parameter isn't used for resolving priorities anymore. " +
                 "com.intellij.openapi.extensions.LoadingOrder constants can be used to order providers when registered from Intellij plugin.",
-                ReplaceWith("0"))
+        ReplaceWith("0"),
+    )
     val version: Int
         get() = 0
 

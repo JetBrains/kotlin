@@ -70,7 +70,7 @@ internal fun markMembersInfo(file: PsiFile) {
         val parsedInfo = JsonParser().parse(info).asJsonObject
         element.elementInfo = ElementInfo(
             parsedInfo["checked"]?.asBoolean ?: false,
-            parsedInfo["toAbstract"]?.asBoolean ?: false
+            parsedInfo["toAbstract"]?.asBoolean ?: false,
         )
     }
 }

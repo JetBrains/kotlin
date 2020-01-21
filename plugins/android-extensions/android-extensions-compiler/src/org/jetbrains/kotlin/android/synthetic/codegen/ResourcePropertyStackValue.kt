@@ -22,13 +22,13 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ResourcePropertyStackValue(
-        val receiver: StackValue,
-        private val typeMapper: KotlinTypeMapper,
-        val resource: PropertyDescriptor,
-        val container: ClassDescriptor,
-        private val containerOptions: ContainerOptionsProxy,
-        private val androidPackage: String,
-        private val globalCacheImpl: CacheImplementation
+    val receiver: StackValue,
+    private val typeMapper: KotlinTypeMapper,
+    val resource: PropertyDescriptor,
+    val container: ClassDescriptor,
+    private val containerOptions: ContainerOptionsProxy,
+    private val androidPackage: String,
+    private val globalCacheImpl: CacheImplementation,
 ) : StackValue(typeMapper.mapType(resource.returnType!!)) {
     private val containerType get() = containerOptions.containerType
 

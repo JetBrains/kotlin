@@ -173,11 +173,13 @@ val KindOwner.needPureAbstractElement: Boolean get() = (kind != Implementation.K
 fun Implementation.collectImports(): List<String> {
     return element.collectImportsInternal(
         listOf(
-            element.fullQualifiedName)
+            element.fullQualifiedName,
+        )
                 + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName }
-                + listOfNotNull(pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement }
+                + listOfNotNull(
+            pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement },
         ),
-        isImpl = true
+        isImpl = true,
     )
 }
 
@@ -193,7 +195,7 @@ fun Element.collectImports(): List<String> {
     }
     return collectImportsInternal(
         baseTypes,
-        isImpl = false
+        isImpl = false,
     )
 }
 
@@ -351,7 +353,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
                 |        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
                 |            ${extensionReceiver.acceptString()}
                 |        }
-                    """.trimMargin()
+                    """.trimMargin(),
                             )
                         }
 
@@ -373,7 +375,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
             |        } else {
             |            subject?.accept(visitor, data)
             |        }
-                """.trimMargin()
+                """.trimMargin(),
                                 )
                             } else {
                                 indent(2)
@@ -422,7 +424,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
                             |        if (dispatchReceiver !== explicitReceiver) {
                             |            dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
                             |        }
-                        """.trimMargin()
+                        """.trimMargin(),
                             )
                         }
                         if (extensionReceiver.isMutable) {
@@ -431,7 +433,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
                             |        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
                             |            extensionReceiver = extensionReceiver.transformSingle(transformer, data)
                             |        }
-                        """.trimMargin()
+                        """.trimMargin(),
                             )
                         }
                     }
@@ -485,13 +487,15 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
             if (field.isMutable && field.isFirType) {
                 // TODO: replace with smth normal
                 if (type == "FirWhenExpressionImpl" && field.name == "subject") {
-                    println("""
+                    println(
+                        """
             |        if (subjectVariable != null) {
             |            subjectVariable = subjectVariable?.transformSingle(transformer, data)
             |        } else {
             |            subject = subject?.transformSingle(transformer, data)
             |        }
-                """.trimMargin())
+                """.trimMargin(),
+                    )
                 } else {
                     indent(2)
                     field.transform()
@@ -698,13 +702,15 @@ fun PrintWriter.printElement(element: Element) {
                     print(", ")
                 }
             }
-            print(parents.joinToString(", ") {
-                var result = it.type
-                parentsArguments[it]?.let { arguments ->
-                    result += arguments.values.joinToString(", ", "<", ">") { it.typeWithArguments }
-                }
-                result + it.kind.braces()
-            })
+            print(
+                parents.joinToString(", ") {
+                    var result = it.type
+                    parentsArguments[it]?.let { arguments ->
+                        result += arguments.values.joinToString(", ", "<", ">") { it.typeWithArguments }
+                    }
+                    result + it.kind.braces()
+                },
+            )
         }
         print(multipleUpperBoundsList())
         println("{")

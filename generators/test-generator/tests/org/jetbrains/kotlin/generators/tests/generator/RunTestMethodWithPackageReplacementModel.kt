@@ -12,7 +12,7 @@ class RunTestMethodWithPackageReplacementModel(
     private val targetBackend: TargetBackend,
     private val testMethodName: String,
     private val testRunnerMethodName: String,
-    private val additionalRunnerArguments: List<String>
+    private val additionalRunnerArguments: List<String>,
 ) : MethodModel {
     override val name = METHOD_NAME
     override val dataString: String? = null

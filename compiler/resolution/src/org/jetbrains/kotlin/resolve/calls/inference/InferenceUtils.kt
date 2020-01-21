@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
     context: TypeSystemInferenceExtensionContext,
-    additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>
+    additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>,
 ): TypeSubstitutorMarker {
     return context.typeSubstitutorByTypeConstructor(fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings)
 }
@@ -41,7 +41,7 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(context: TypeSystemInfer
             notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
                 freshTypeConstructor to context.createErrorTypeWithCustomConstructor(
                     "Uninferred type",
-                    (typeVariable.typeVariable).freshTypeConstructor()
+                    (typeVariable.typeVariable).freshTypeConstructor(),
                 )
             }
         } else {
@@ -54,7 +54,7 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(context: TypeSystemInfer
 
 fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(context: TypeSystemInferenceExtensionContext) =
     context.typeSubstitutorByTypeConstructor(
-        notFixedTypeVariables.mapValues { context.createStubType(it.value.typeVariable) }
+        notFixedTypeVariables.mapValues { context.createStubType(it.value.typeVariable) },
     )
 
 fun ConstraintStorage.buildResultingSubstitutor(context: TypeSystemInferenceExtensionContext, transformTypeVariablesToErrorTypes: Boolean = true): NewTypeSubstitutor {
@@ -80,7 +80,7 @@ fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDesc
 
 fun CallableDescriptor.substituteAndApproximateTypes(
     substitutor: NewTypeSubstitutor,
-    typeApproximator: TypeApproximator
+    typeApproximator: TypeApproximator,
 ): CallableDescriptor {
     val wrappedSubstitution = object : TypeSubstitution() {
         override fun get(key: KotlinType): TypeProjection? = null
@@ -89,7 +89,7 @@ fun CallableDescriptor.substituteAndApproximateTypes(
             substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
                 typeApproximator.approximateToSuperType(
                     substitutedType,
-                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
                 ) ?: substitutedType
             }
     }

@@ -55,7 +55,7 @@ abstract class AbstractMultiFileIntentionTest : KotlinLightCodeInsightFixtureTes
             try {
                 Assert.assertTrue(
                     "isAvailable() for ${intentionAction::class.java} should return $isApplicableExpected",
-                    isApplicableExpected == intentionAction.isAvailable(project, editor, mainFile)
+                    isApplicableExpected == intentionAction.isAvailable(project, editor, mainFile),
                 )
                 config.getNullableString("intentionText")?.let {
                     TestCase.assertEquals("Intention text mismatch", it, intentionAction.text)

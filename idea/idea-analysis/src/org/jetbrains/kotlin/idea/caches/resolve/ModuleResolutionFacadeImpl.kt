@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 internal class ModuleResolutionFacadeImpl(
     private val projectFacade: ProjectResolutionFacade,
-    private val moduleInfo: IdeaModuleInfo
+    private val moduleInfo: IdeaModuleInfo,
 ) : ResolutionFacade, ResolutionFacadeModuleDescriptorProvider {
     override val project: Project
         get() = projectFacade.project

@@ -20,9 +20,9 @@ class BuiltInsPackageFragmentImpl private constructor(
     module: ModuleDescriptor,
     proto: ProtoBuf.PackageFragment,
     metadataVersion: BuiltInsBinaryVersion,
-    override val isFallback: Boolean
+    override val isFallback: Boolean,
 ) : BuiltInsPackageFragment, DeserializedPackageFragmentImpl(
-    fqName, storageManager, module, proto, metadataVersion, containerSource = null
+    fqName, storageManager, module, proto, metadataVersion, containerSource = null,
 ) {
     companion object {
         fun create(
@@ -30,7 +30,7 @@ class BuiltInsPackageFragmentImpl private constructor(
             storageManager: StorageManager,
             module: ModuleDescriptor,
             inputStream: InputStream,
-            isFallback: Boolean
+            isFallback: Boolean,
         ): BuiltInsPackageFragmentImpl {
             lateinit var version: BuiltInsBinaryVersion
 
@@ -42,7 +42,7 @@ class BuiltInsPackageFragmentImpl private constructor(
                     throw UnsupportedOperationException(
                         "Kotlin built-in definition format version is not supported: " +
                                 "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                                "Please update Kotlin"
+                                "Please update Kotlin",
                     )
                 }
 

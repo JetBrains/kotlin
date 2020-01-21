@@ -39,7 +39,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         BadInheritedJavaSignaturesChecker,
         JvmMultifileClassStateChecker,
         SynchronizedOnInlineMethodChecker,
-        DefaultCheckerInTailrec
+        DefaultCheckerInTailrec,
     ),
 
     additionalCallCheckers = listOf(
@@ -53,7 +53,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         ProtectedSyntheticExtensionCallChecker,
         RuntimeAssertionsOnExtensionReceiverCallChecker,
         ApiVersionIsAtLeastArgumentsChecker,
-        InconsistentOperatorFromJavaCallChecker
+        InconsistentOperatorFromJavaCallChecker,
     ),
 
     additionalTypeCheckers = listOf(
@@ -61,22 +61,22 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         RuntimeAssertionsTypeChecker,
         JavaGenericVarianceViolationTypeChecker,
         JavaTypeAccessibilityChecker(),
-        JvmArrayVariableInLoopAssignmentChecker
+        JvmArrayVariableInLoopAssignmentChecker,
     ),
 
     additionalClassifierUsageCheckers = listOf(
         BigFunctionTypeAvailabilityChecker,
-        MissingBuiltInDeclarationChecker.ClassifierUsage
+        MissingBuiltInDeclarationChecker.ClassifierUsage,
     ),
 
     additionalAnnotationCheckers = listOf(
         RepeatableAnnotationChecker,
         FileClassAnnotationsChecker,
-        ExplicitMetadataChecker
+        ExplicitMetadataChecker,
     ),
 
     additionalClashResolvers = listOf(
-        PlatformExtensionsClashResolver.FallbackToDefault(SamConversionResolver.Empty, SamConversionResolver::class.java)
+        PlatformExtensionsClashResolver.FallbackToDefault(SamConversionResolver.Empty, SamConversionResolver::class.java),
     ),
 
     identifierChecker = JvmSimpleNameBacktickChecker,
@@ -89,7 +89,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
 
     overridesBackwardCompatibilityHelper = JvmOverridesBackwardCompatibilityHelper,
 
-    declarationReturnTypeSanitizer = JvmDeclarationReturnTypeSanitizer
+    declarationReturnTypeSanitizer = JvmDeclarationReturnTypeSanitizer,
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JvmStaticChecker>()

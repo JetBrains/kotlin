@@ -24,7 +24,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
     fun testTypeStringTemplateStart() = doTypeTest(
         '{',
         """val x = "$<caret>" """,
-        """val x = "$dollar{}" """
+        """val x = "$dollar{}" """,
     )
 
     fun testAutoIndentRightOpenBrace() = doTypeTest(
@@ -36,7 +36,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun test() {\n" +
                 "    {<caret>}\n" +
-                "}"
+                "}",
     )
 
     fun testAutoIndentLeftOpenBrace() = doTypeTest(
@@ -48,67 +48,67 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun test() {\n" +
                 "    {<caret>}\n" +
-                "}"
+                "}",
     )
 
     fun testTypeStringTemplateStartWithCloseBraceAfter() = doTypeTest(
         '{',
         """fun foo() { "$<caret>" }""",
-        """fun foo() { "$dollar{}" }"""
+        """fun foo() { "$dollar{}" }""",
     )
 
     fun testTypeStringTemplateStartBeforeStringWithExistingDollar() = doTypeTest(
         '{',
         """fun foo() { "$<caret>something" }""",
-        """fun foo() { "$dollar{something" }"""
+        """fun foo() { "$dollar{something" }""",
     )
 
     fun testTypeStringTemplateStartBeforeStringWithNoDollar() = doTypeTest(
         "$dollar{",
         """fun foo() { "<caret>something" }""",
-        """fun foo() { "$dollar{<caret>}something" }"""
+        """fun foo() { "$dollar{<caret>}something" }""",
     )
 
     fun testTypeStringTemplateWithUnmatchedBrace() = doTypeTest(
         "$dollar{",
         """val a = "<caret>bar}foo"""",
-        """val a = "$dollar{<caret>bar}foo""""
+        """val a = "$dollar{<caret>bar}foo"""",
     )
 
     fun testTypeStringTemplateWithUnmatchedBraceComplex() = doTypeTest(
         "$dollar{",
         """val a = "<caret>bar + more}foo"""",
-        """val a = "$dollar{<caret>}bar + more}foo""""
+        """val a = "$dollar{<caret>}bar + more}foo"""",
     )
 
     fun testTypeStringTemplateStartInStringWithBraceLiterals() = doTypeTest(
         "$dollar{",
         """val test = "{ code <caret>other }"""",
-        """val test = "{ code $dollar{<caret>}other }""""
+        """val test = "{ code $dollar{<caret>}other }"""",
     )
 
     fun testTypeStringTemplateStartInEmptyString() = doTypeTest(
         '{',
         """fun foo() { "$<caret>" }""",
-        """fun foo() { "$dollar{<caret>}" }"""
+        """fun foo() { "$dollar{<caret>}" }""",
     )
 
     fun testKT3575() = doTypeTest(
         '{',
         """val x = "$<caret>]" """,
-        """val x = "$dollar{}]" """
+        """val x = "$dollar{}]" """,
     )
 
     fun testAutoCloseRawStringInEnd() = doTypeTest(
         '"',
         """val x = ""<caret>""",
-        """val x = ""${'"'}<caret>""${'"'}"""
+        """val x = ""${'"'}<caret>""${'"'}""",
     )
 
     fun testNoAutoCloseRawStringInEnd() = doTypeTest(
         '"',
         """val x = ""${'"'}<caret>""",
-        """val x = ""${'"'}""""
+        """val x = ""${'"'}"""",
     )
 
     fun testAutoCloseRawStringInMiddle() = doTypeTest(
@@ -120,31 +120,31 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
         """
             val x = ""${'"'}<caret>""${'"'}
             val y = 12
-            """.trimIndent()
+            """.trimIndent(),
     )
 
     fun testNoAutoCloseBetweenMultiQuotes() = doTypeTest(
         '"',
         """val x = ""${'"'}<caret>${'"'}""/**/""",
-        """val x = ""${'"'}${'"'}<caret>""/**/"""
+        """val x = ""${'"'}${'"'}<caret>""/**/""",
     )
 
     fun testNoAutoCloseBetweenMultiQuotes1() = doTypeTest(
         '"',
         """val x = ""${'"'}"<caret>"${'"'}/**/""",
-        """val x = ""${'"'}""<caret>${'"'}/**/"""
+        """val x = ""${'"'}""<caret>${'"'}/**/""",
     )
 
     fun testNoAutoCloseAfterEscape() = doTypeTest(
         '"',
         """val x = "\""<caret>""",
-        """val x = "\""${'"'}<caret>""""
+        """val x = "\""${'"'}<caret>"""",
     )
 
     fun testAutoCloseBraceInFunctionDeclaration() = doTypeTest(
         '{',
         "fun foo() <caret>",
-        "fun foo() {<caret>}"
+        "fun foo() {<caret>}",
     )
 
     fun testAutoCloseBraceInLocalFunctionDeclaration() = doTypeTest(
@@ -156,7 +156,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    fun bar() {<caret>}\n" +
-                "}"
+                "}",
     )
 
     fun testAutoCloseBraceInAssignment() = doTypeTest(
@@ -167,7 +167,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    val a = {<caret>}\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedIfSurroundOnSameLine() = doTypeTest(
@@ -179,7 +179,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    if() {foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedElseSurroundOnSameLine() = doTypeTest(
@@ -191,7 +191,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    if(true) {} else {foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedTryOnSameLine() = doTypeTest(
@@ -203,7 +203,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    try {foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedCatchOnSameLine() = doTypeTest(
@@ -215,7 +215,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    try {} catch (e: Exception) {foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedFinallyOnSameLine() = doTypeTest(
@@ -227,7 +227,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    try {} catch (e: Exception) finally {foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnSameLine() = doTypeTest(
@@ -239,7 +239,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    while() {foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnNewLine() = doTypeTest(
@@ -255,7 +255,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 "    while()\n" +
                 "    {\n" +
                 "    foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedIfSurroundOnOtherLine() = doTypeTest(
@@ -269,7 +269,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
         "fun foo() {\n" +
                 "    if(true) {<caret>\n" +
                 "    foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedElseSurroundOnOtherLine() = doTypeTest(
@@ -283,7 +283,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
         "fun foo() {\n" +
                 "    if(true) {} else {<caret>\n" +
                 "    foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedTryOnOtherLine() = doTypeTest(
@@ -297,7 +297,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
         "fun foo() {\n" +
                 "    try {<caret>\n" +
                 "    foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedIfSurroundOnNewLine() = doTypeTest(
@@ -313,7 +313,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 "    if(true)\n" +
                 "    {<caret>\n" +
                 "    foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedElseSurroundOnNewLine() = doTypeTest(
@@ -329,7 +329,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 "    if(true) {} else\n" +
                 "    {<caret>\n" +
                 "    foo()\n" +
-                "}"
+                "}",
     )
 
     fun testDoNotAutoCloseBraceInUnfinishedTryOnNewLine() = doTypeTest(
@@ -345,7 +345,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 "    try\n" +
                 "    {<caret>\n" +
                 "    foo()\n" +
-                "}"
+                "}",
     )
 
     fun testAutoCloseBraceInsideFor() = doTypeTest(
@@ -359,7 +359,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
         "fun foo() {\n" +
                 "    for (elem in some.filter {<caret>}) {\n" +
                 "    }\n" +
-                "}"
+                "}",
     )
 
     fun testAutoCloseBraceInsideForAfterCloseParen() = doTypeTest(
@@ -373,7 +373,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
         "fun foo() {\n" +
                 "    for (elem in some.foo(true) {<caret>}) {\n" +
                 "    }\n" +
-                "}"
+                "}",
     )
 
     fun testAutoCloseBraceBeforeIf() = doTypeTest(
@@ -385,7 +385,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    {<caret>if (true) {}\n" +
-                "}"
+                "}",
     )
 
     fun testAutoCloseBraceInIfCondition() = doTypeTest(
@@ -397,67 +397,67 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
 
         "fun foo() {\n" +
                 "    if (some.hello (12) {<caret>})\n" +
-                "}"
+                "}",
     )
 
     fun testInsertSpaceAfterRightBraceOfNestedLambda() = doTypeTest(
         '{',
         "val t = Array(100) { Array(200) <caret>}",
-        "val t = Array(100) { Array(200) {<caret>} }"
+        "val t = Array(100) { Array(200) {<caret>} }",
     )
 
     fun testAutoInsertParenInStringLiteral() = doTypeTest(
         '(',
         """fun f() { println("$dollar{f<caret>}") }""",
-        """fun f() { println("$dollar{f(<caret>)}") }"""
+        """fun f() { println("$dollar{f(<caret>)}") }""",
     )
 
     fun testAutoInsertParenInCode() = doTypeTest(
         '(',
         """fun f() { val a = f<caret> }""",
-        """fun f() { val a = f(<caret>) }"""
+        """fun f() { val a = f(<caret>) }""",
     )
 
     fun testSplitStringByEnter() = doTypeTest(
         '\n',
         """val s = "foo<caret>bar"""",
         "val s = \"foo\" +\n" +
-                "        \"bar\""
+                "        \"bar\"",
     )
 
     fun testSplitStringByEnterEmpty() = doTypeTest(
         '\n',
         """val s = "<caret>"""",
         "val s = \"\" +\n" +
-                "        \"\""
+                "        \"\"",
     )
 
     fun testSplitStringByEnterBeforeEscapeSequence() = doTypeTest(
         '\n',
         """val s = "foo<caret>\nbar"""",
         "val s = \"foo\" +\n" +
-                "        \"\\nbar\""
+                "        \"\\nbar\"",
     )
 
     fun testSplitStringByEnterBeforeSubstitution() = doTypeTest(
         '\n',
         """val s = "foo<caret>${dollar}bar"""",
         "val s = \"foo\" +\n" +
-                "        \"${dollar}bar\""
+                "        \"${dollar}bar\"",
     )
 
     fun testSplitStringByEnterAddParentheses() = doTypeTest(
         '\n',
         """val l = "foo<caret>bar".length()""",
         "val l = (\"foo\" +\n" +
-                "        \"bar\").length()"
+                "        \"bar\").length()",
     )
 
     fun testSplitStringByEnterExistingParentheses() = doTypeTest(
         '\n',
         """val l = ("asdf" + "foo<caret>bar").length()""",
         "val l = (\"asdf\" + \"foo\" +\n" +
-                "        \"bar\").length()"
+                "        \"bar\").length()",
     )
 
     fun testTypeLtInFunDeclaration() {
@@ -504,7 +504,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |open class A
                 |class B
                 |    :<caret>
-                """
+                """,
         )
     }
 
@@ -520,7 +520,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |interface A
                 |object B
                 |    :<caret>
-                """
+                """,
         )
     }
 
@@ -540,7 +540,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    companion object
                 |        :<caret>
                 |}
-                """
+                """,
         )
     }
 
@@ -558,7 +558,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |class B
                 |    :<caret> {
                 |}
-                """
+                """,
         )
     }
 
@@ -578,7 +578,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    class B
                 |        :<caret>
                 |}
-                """
+                """,
         )
     }
 
@@ -598,7 +598,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    Test()
                 |            .<caret>
                 |}
-                """
+                """,
         )
     }
 
@@ -618,7 +618,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    Test()
                 |            ?.<caret>
                 |}
-                """
+                """,
         )
     }
 
@@ -638,7 +638,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    test()
                 |            ?:<caret>
                 |}
-            """
+            """,
         )
     }
 
@@ -656,7 +656,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    if (true
                 |            ||<caret>)
                 |}
-            """
+            """,
         )
     }
 
@@ -674,7 +674,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    val test = true
                 |            &&<caret>
                 |}
-            """
+            """,
         )
     }
 
@@ -686,7 +686,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 """,
             """
                 | val test = 1 .<caret>
-                """
+                """,
         )
     }
 
@@ -709,7 +709,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    else if (!b) {
                 |    }
                 |}
-                """
+                """,
         )
     }
 
@@ -732,7 +732,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    else {
                 |    }
                 |}
-                """
+                """,
         )
     }
 
@@ -751,7 +751,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |            <caret>
                 |    foo()
                 |}
-                """
+                """,
         )
     }
 
@@ -768,7 +768,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |    val a =
                 |            <caret>
                 |}
-                """
+                """,
         )
     }
 
@@ -786,7 +786,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |		<caret>
                 |)
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnterWithTabs(),
         )
     }
 
@@ -804,7 +804,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |         <caret>
                 |) {}
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnterWithTabs(),
         )
     }
 
@@ -820,7 +820,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |         arg1: String,
                 |<caret>) {}
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnterWithTabs(),
         )
     }
 
@@ -838,7 +838,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |         <caret>
                 |) {}
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnterWithTabs(),
         )
     }
 
@@ -853,7 +853,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |		<caret>
                 |) {}
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnterWithTabs(),
         )
     }
 
@@ -874,7 +874,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
             |            <caret>
             |    }
             |}
-            """
+            """,
         )
     }
 
@@ -924,14 +924,14 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
                 |  val b: B,<caret>
                 |  val c: C
                 |)
-                """
+                """,
         )
 
     fun testValInserterOnValInsertedInsideOtherParameters() =
         testValInserter(
             ',',
             """data class xxx(val a: A, b: A<caret>val c: A)""",
-            """data class xxx(val a: A, val b: A,<caret>val c: A)"""
+            """data class xxx(val a: A, val b: A,<caret>val c: A)""",
         )
 
     fun testValInserterOnSimpleInlineClass() =
@@ -957,7 +957,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
             |fun test() =
             |    <caret>
             """,
-            enableKotlinOfficialCodeStyle
+            enableKotlinOfficialCodeStyle,
         )
     }
 
@@ -975,7 +975,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
             |        <caret>
             |}
             """,
-            enableKotlinOfficialCodeStyle
+            enableKotlinOfficialCodeStyle,
         )
     }
 
@@ -989,7 +989,7 @@ class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
             |val test =
             |    <caret>
             """,
-            enableKotlinOfficialCodeStyle
+            enableKotlinOfficialCodeStyle,
         )
     }
 

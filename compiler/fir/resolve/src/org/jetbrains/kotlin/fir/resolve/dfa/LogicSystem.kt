@@ -48,7 +48,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         flow: Flow,
         sourceVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
-        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo?)? = null
+        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo?)? = null,
     ) {
         var infos = flow.getConditionalInfos(sourceVariable)
         if (transform != null) {
@@ -65,7 +65,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         condition: Condition,
         flow: Flow,
         shouldForkFlow: Boolean,
-        shouldRemoveSynthetics: Boolean
+        shouldRemoveSynthetics: Boolean,
     ): Flow {
         val notApprovedFacts: Collection<ConditionalFirDataFlowInfo> = if (shouldRemoveSynthetics && variable.isSynthetic()) {
             flow.removeConditionalInfos(variable)
@@ -119,19 +119,19 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     data class InfoForBooleanOperator(
         val conditionalFromLeft: Collection<ConditionalFirDataFlowInfo>,
         val conditionalFromRight: Collection<ConditionalFirDataFlowInfo>,
-        val approvedFromRight: ApprovedInfos
+        val approvedFromRight: ApprovedInfos,
     )
 
     abstract fun collectInfoForBooleanOperator(
         leftFlow: Flow,
         leftVariable: DataFlowVariable,
         rightFlow: Flow,
-        rightVariable: DataFlowVariable
+        rightVariable: DataFlowVariable,
     ): InfoForBooleanOperator
 
     fun orForVerifiedFacts(
         left: ApprovedInfos,
-        right: ApprovedInfos
+        right: ApprovedInfos,
     ): MutableApprovedInfos {
         if (left.isNullOrEmpty() || right.isNullOrEmpty()) return mutableMapOf()
         val map = mutableMapOf<RealDataFlowVariable, MutableFirDataFlowInfo>()

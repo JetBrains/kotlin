@@ -95,7 +95,7 @@ class GenericReplTest : KtUsefulTestCase() {
         TestRepl().use { replBase ->
             val repl = GenericReplCompilingEvaluator(
                 replBase.replCompiler, replBase.baseClasspath, Thread.currentThread().contextClassLoader,
-                fallbackScriptArgs = replBase.emptyScriptArgs
+                fallbackScriptArgs = replBase.emptyScriptArgs,
             )
 
             val state = repl.createState()
@@ -193,9 +193,9 @@ class GenericReplTest : KtUsefulTestCase() {
 
 
 internal class TestRepl(
-        templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")),
-        templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
-        repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE
+    templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")),
+    templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
+    repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE,
 ) : Closeable {
     val application = ApplicationManager.getApplication()
 

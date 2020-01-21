@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.isError
 
 class AnnotationChecker(
     private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace.bindingContext)
@@ -88,7 +88,7 @@ class AnnotationChecker(
         val propertyAnnotations = mapOf(
             AnnotationUseSiteTarget.PROPERTY_GETTER to property.getter?.annotationEntries.getDescriptors(),
             AnnotationUseSiteTarget.PROPERTY_SETTER to property.setter?.annotationEntries.getDescriptors(),
-            AnnotationUseSiteTarget.SETTER_PARAMETER to property.setter?.parameter?.annotationEntries.getDescriptors()
+            AnnotationUseSiteTarget.SETTER_PARAMETER to property.setter?.parameter?.annotationEntries.getDescriptors(),
         )
 
         for (entry in property.annotationEntries) {
@@ -144,7 +144,7 @@ class AnnotationChecker(
         entries: List<KtAnnotationEntry>,
         actualTargets: TargetList,
         trace: BindingTrace,
-        annotated: KtAnnotated? = null
+        annotated: KtAnnotated? = null,
     ) {
         if (entries.isEmpty()) return
 
@@ -209,14 +209,14 @@ class AnnotationChecker(
         if (useSiteTarget != null) {
             trace.report(
                 Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(
-                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName
-                )
+                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName,
+                ),
             )
         } else {
             trace.report(
                 Errors.WRONG_ANNOTATION_TARGET.on(
-                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
-                )
+                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target",
+                ),
             )
         }
     }
@@ -327,7 +327,8 @@ class AnnotationChecker(
                         backingField -> MEMBER_PROPERTY_WITH_BACKING_FIELD
                         delegate -> MEMBER_PROPERTY_WITH_DELEGATE
                         else -> MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE
-                    }, MEMBER_PROPERTY, PROPERTY
+                    },
+                    MEMBER_PROPERTY, PROPERTY,
                 ) {
                     propertyTargets(backingField, delegate)
                 }
@@ -338,7 +339,8 @@ class AnnotationChecker(
                         backingField -> TOP_LEVEL_PROPERTY_WITH_BACKING_FIELD
                         delegate -> TOP_LEVEL_PROPERTY_WITH_DELEGATE
                         else -> TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE
-                    }, TOP_LEVEL_PROPERTY, PROPERTY
+                    },
+                    TOP_LEVEL_PROPERTY, PROPERTY,
                 ) {
                     propertyTargets(backingField, delegate)
                 }
@@ -416,19 +418,19 @@ class AnnotationChecker(
         class TargetList(
             val defaultTargets: List<KotlinTarget>,
             val canBeSubstituted: List<KotlinTarget> = emptyList(),
-            val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList()
+            val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList(),
         )
 
         private object UseSiteTargetsList {
             val T_CONSTRUCTOR_PARAMETER = listOf(
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
                 AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.FIELD
+                AnnotationUseSiteTarget.FIELD,
             )
 
             val T_PROPERTY = listOf(
                 AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.FIELD
+                AnnotationUseSiteTarget.FIELD,
             )
         }
     }

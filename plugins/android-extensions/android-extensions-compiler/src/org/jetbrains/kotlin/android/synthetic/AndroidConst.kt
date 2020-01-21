@@ -63,7 +63,7 @@ fun androidIdToName(id: String): ResourceIdentifier? {
 
     return ResourceIdentifier(
         getJavaIdentifierNameForResourceName(values[4]),
-        if (packageName.isEmpty()) null else packageName
+        if (packageName.isEmpty()) null else packageName,
     )
 }
 

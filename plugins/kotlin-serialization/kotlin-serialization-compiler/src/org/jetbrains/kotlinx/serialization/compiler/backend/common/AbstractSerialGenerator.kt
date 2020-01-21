@@ -37,7 +37,7 @@ abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val c
     val contextualKClassListInCurrentFile: Set<KotlinType> by lazy {
         getKClassListFromFileAnnotation(
             SerializationAnnotations.contextualFqName,
-            currentDeclaration
+            currentDeclaration,
         ).toSet()
     }
 
@@ -48,7 +48,7 @@ abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val c
                     it.supertypes().find(::isKSerializer)?.arguments?.firstOrNull()?.type.toClassDescriptor
                         ?: throw AssertionError("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer or does not provide serializer for concrete type")
                 },
-                { it.toClassDescriptor!! }
+                { it.toClassDescriptor!! },
             )
     }
 

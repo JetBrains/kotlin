@@ -16,7 +16,7 @@ object OptionalExpectationTargetChecker {
     fun check(
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptor,
-        trace: BindingTrace
+        trace: BindingTrace,
     ) {
         if (descriptor is MemberDescriptor && descriptor.isExpect) return
 

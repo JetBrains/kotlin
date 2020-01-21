@@ -32,7 +32,7 @@ object KeywordValues {
             lookupString: String,
             expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
             priority: SmartCompletionItemPriority,
-            factory: () -> LookupElement
+            factory: () -> LookupElement,
         )
     }
 
@@ -42,7 +42,7 @@ object KeywordValues {
         bindingContext: BindingContext,
         resolutionFacade: ResolutionFacade,
         moduleDescriptor: ModuleDescriptor,
-        isJvmModule: Boolean
+        isJvmModule: Boolean,
     ) {
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
             val booleanInfoMatcher = matcher@{ info: ExpectedInfo ->
@@ -103,7 +103,7 @@ object KeywordValues {
                         val javaLangClassType = KotlinTypeFactory.simpleNotNullType(
                             Annotations.EMPTY,
                             javaLangClassDescriptor,
-                            listOf(TypeProjectionImpl(qualifierType))
+                            listOf(TypeProjectionImpl(qualifierType)),
                         )
                         val javaClassTypes = listOf(javaLangClassType.toFuzzyType(emptyList()))
                         val javaClassMatcher = { info: ExpectedInfo -> javaClassTypes.matchExpectedInfo(info) }

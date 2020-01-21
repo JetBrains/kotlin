@@ -16,5 +16,5 @@ var VirtualFile.scriptRelatedModuleName: String? by cachedFileAttribute(
     name = "kotlin-script-moduleName",
     version = 1,
     read = DataInputStream::readString,
-    write = DataOutputStream::writeString
+    write = DataOutputStream::writeString,
 )

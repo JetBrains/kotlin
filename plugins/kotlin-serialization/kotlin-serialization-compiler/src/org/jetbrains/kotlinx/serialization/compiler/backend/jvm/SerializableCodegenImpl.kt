@@ -36,7 +36,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class SerializableCodegenImpl(
-    private val classCodegen: ImplementationBodyCodegen
+    private val classCodegen: ImplementationBodyCodegen,
 ) : SerializableCodegen(classCodegen.descriptor, classCodegen.bindingContext) {
 
     private val thisAsmType = classCodegen.typeMapper.mapClass(serializableDescriptor)
@@ -49,7 +49,8 @@ class SerializableCodegenImpl(
             else if (serializableClass.serializableAnnotationIsUseless) {
                 throw CompilationException(
                     "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
-                            "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
+                            "Provide serializer manually via e.g. companion object",
+                    null, serializableClass.findPsi(),
                 )
             }
         }
@@ -114,7 +115,7 @@ class SerializableCodegenImpl(
                 classCodegen.typeMapper.mapType(superClass).internalName,
                 superSignature.asmMethod.name,
                 superSignature.asmMethod.descriptor,
-                false
+                false,
             )
         } else {
             myPropsStart = 0
@@ -132,7 +133,7 @@ class SerializableCodegenImpl(
                 thisAsmType,
                 thisI,
                 offsetI,
-                generator = this@SerializableCodegenImpl
+                generator = this@SerializableCodegenImpl,
             )
         }
 
@@ -151,7 +152,7 @@ class SerializableCodegenImpl(
                     property.descriptor,
                     thisAsmType,
                     thisI,
-                    classCodegen.state
+                    classCodegen.state,
                 )
                 StackValue.coerce(actualType.type, propAsmType, this)
                 val lhs = StackValue.onStack(propAsmType)
@@ -213,7 +214,7 @@ class SerializableCodegenImpl(
                     throw CompilationException(
                         "Optional properties without backing fields doesn't have much sense, maybe you want transient?",
                         null,
-                        getProp(prop)
+                        getProp(prop),
                     )
                 exprCodegen.genInitProperty(prop)
                 visitLabel(nextLabel)
@@ -274,7 +275,8 @@ class SerializableCodegenImpl(
             this.v.load(0, thisAsmType)
             if (!it.hasDefaultValue()) throw CompilationException(
                 "Optional field ${it.name} in primary constructor of serializable " +
-                        "$serializableDescriptor must have default value", null, it
+                        "$serializableDescriptor must have default value",
+                null, it,
             )
             this.gen(it.defaultValue, prop.asmType)
             this.v.putfield(thisAsmType.internalName, prop.descriptor.name.asString(), prop.asmType.descriptor)
@@ -286,7 +288,8 @@ class SerializableCodegenImpl(
         val mapType = classCodegen.typeMapper.mapType(prop.type)
         if (!param.hasDefaultValue()) throw CompilationException(
             "Transient field ${param.name} in primary constructor of serializable " +
-                    "$serializableDescriptor must have default value", null, param
+                    "$serializableDescriptor must have default value",
+            null, param,
         )
         this.gen(param.defaultValue, mapType)
         this.v.putfield(thisAsmType.internalName, prop.name.asString(), mapType.descriptor)

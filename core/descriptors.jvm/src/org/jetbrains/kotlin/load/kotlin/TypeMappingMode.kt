@@ -19,7 +19,7 @@ class TypeMappingMode private constructor(
     private val genericArgumentMode: TypeMappingMode? = null,
     val kotlinCollectionsToJavaCollections: Boolean = true,
     private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode,
-    private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode
+    private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode,
 ) {
     companion object {
         /**
@@ -50,7 +50,7 @@ class TypeMappingMode private constructor(
         val CLASS_DECLARATION = TypeMappingMode(
             genericArgumentMode = GENERIC_ARGUMENT,
             needPrimitiveBoxing = false,
-            needInlineClassWrapping = true
+            needInlineClassWrapping = true,
         )
 
         /**
@@ -64,7 +64,7 @@ class TypeMappingMode private constructor(
         val SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS = TypeMappingMode(
             skipDeclarationSiteWildcards = true,
             genericArgumentMode = GENERIC_ARGUMENT,
-            kotlinCollectionsToJavaCollections = false
+            kotlinCollectionsToJavaCollections = false,
         )
 
         /**
@@ -77,24 +77,24 @@ class TypeMappingMode private constructor(
             isForAnnotationParameter = true,
             needPrimitiveBoxing = false,
             needInlineClassWrapping = false,
-            genericArgumentMode = GENERIC_ARGUMENT
+            genericArgumentMode = GENERIC_ARGUMENT,
         )
 
 
         @JvmStatic
         fun getModeForReturnTypeNoGeneric(
-            isAnnotationMethod: Boolean
+            isAnnotationMethod: Boolean,
         ) = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else DEFAULT
 
         @JvmStatic
         fun getOptimalModeForValueParameter(
-            type: KotlinType
+            type: KotlinType,
         ) = getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = true)
 
         @JvmStatic
         fun getOptimalModeForReturnType(
             type: KotlinType,
-            isAnnotationMethod: Boolean
+            isAnnotationMethod: Boolean,
         ) = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
 
         private fun getOptimalModeForSignaturePart(type: KotlinType, canBeUsedInSupertypePosition: Boolean): TypeMappingMode {
@@ -124,7 +124,7 @@ class TypeMappingMode private constructor(
                 skipDeclarationSiteWildcardsIfPossible = true,
                 genericContravariantArgumentMode = contravariantArgumentMode,
                 genericInvariantArgumentMode = invariantArgumentMode,
-                needInlineClassWrapping = !type.isInlineClassType()
+                needInlineClassWrapping = !type.isInlineClassType(),
             )
         }
 
@@ -133,12 +133,12 @@ class TypeMappingMode private constructor(
             skipDeclarationSiteWildcards: Boolean,
             isForAnnotationParameter: Boolean,
             needInlineClassWrapping: Boolean,
-            fallbackMode: TypeMappingMode? = null
+            fallbackMode: TypeMappingMode? = null,
         ) = TypeMappingMode(
             isForAnnotationParameter = isForAnnotationParameter,
             skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
             genericArgumentMode = fallbackMode,
-            needInlineClassWrapping = needInlineClassWrapping
+            needInlineClassWrapping = needInlineClassWrapping,
         )
     }
 
@@ -152,12 +152,12 @@ class TypeMappingMode private constructor(
     fun wrapInlineClassesMode(): TypeMappingMode =
         TypeMappingMode(
             needPrimitiveBoxing, true, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
-            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
+            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode,
         )
 
     fun dontWrapInlineClassesMode(): TypeMappingMode =
         TypeMappingMode(
             needPrimitiveBoxing, false, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
-            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
+            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode,
         )
 }

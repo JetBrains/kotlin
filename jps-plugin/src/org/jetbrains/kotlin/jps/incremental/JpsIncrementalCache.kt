@@ -37,7 +37,7 @@ interface JpsIncrementalCache : IncrementalCacheCommon, StorageOwner {
 class JpsIncrementalJvmCache(
     target: ModuleBuildTarget,
     paths: BuildDataPaths,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
 ) : IncrementalJvmCache(paths.getTargetDataRoot(target), target.outputDir, pathConverter), JpsIncrementalCache {
     override fun addJpsDependentCache(cache: JpsIncrementalCache) {
         if (cache is JpsIncrementalJvmCache) {
@@ -53,7 +53,7 @@ class JpsIncrementalJvmCache(
 class JpsIncrementalJsCache(
     target: ModuleBuildTarget,
     paths: BuildDataPaths,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
 ) : IncrementalJsCache(paths.getTargetDataRoot(target), pathConverter, JsSerializerProtocol), JpsIncrementalCache {
     override fun addJpsDependentCache(cache: JpsIncrementalCache) {
         if (cache is JpsIncrementalJsCache) {
@@ -64,7 +64,7 @@ class JpsIncrementalJsCache(
 
 private class KotlinIncrementalStorageProvider(
     private val target: KotlinModuleBuildTarget<*>,
-    private val paths: BuildDataPaths
+    private val paths: BuildDataPaths,
 ) : StorageProvider<JpsIncrementalCache>() {
     init {
         check(target.hasCaches)

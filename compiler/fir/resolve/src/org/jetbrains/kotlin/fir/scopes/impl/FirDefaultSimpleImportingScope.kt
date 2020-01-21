@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 class FirDefaultSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    priority: DefaultImportPriority
+    priority: DefaultImportPriority,
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     private fun FirImportImpl.resolve(importResolveTransformer: FirImportResolveTransformer) =

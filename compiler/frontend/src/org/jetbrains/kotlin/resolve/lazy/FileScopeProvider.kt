@@ -40,7 +40,7 @@ interface FileScopeProvider {
 class FileScopeProviderImpl(
     private val fileScopeFactory: FileScopeFactory,
     private val bindingTrace: BindingTrace,
-    private val storageManager: StorageManager
+    private val storageManager: StorageManager,
 ) : FileScopeProvider {
 
     private val cache = storageManager.createMemoizedFunction<KtFile, FileScopes> { file ->

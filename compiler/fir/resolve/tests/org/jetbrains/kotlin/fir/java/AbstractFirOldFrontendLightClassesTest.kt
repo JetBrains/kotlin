@@ -40,7 +40,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : AbstractFirOldFrontendDi
 
             val psiClass = assertInstanceOf(
                 ourFinder.findClass(qualifiedName, GlobalSearchScope.allScope(project)),
-                ClsClassImpl::class.java
+                ClsClassImpl::class.java,
             )
 
             psiClass.appendMirrorText(0, stringBuilder)

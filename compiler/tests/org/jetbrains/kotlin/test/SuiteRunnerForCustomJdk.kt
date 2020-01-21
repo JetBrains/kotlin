@@ -16,33 +16,38 @@ import java.util.*
 annotation class RunOnlyJdk6Test
 
 class SuiteRunnerForCustomJdk constructor(klass: Class<*>, builder: RunnerBuilder?) :
-    Suite(builder, klass, getAnnotatedClasses(klass).flatMap {
-        collectDeclaredClasses(
-            it,
-            true
-        )
-    }.distinct().toTypedArray()) {
+    Suite(
+        builder, klass,
+        getAnnotatedClasses(klass).flatMap {
+            collectDeclaredClasses(
+                it,
+                true,
+            )
+        }.distinct().toTypedArray(),
+    ) {
 
     init {
         if (klass.getAnnotation(RunOnlyJdk6Test::class.java) != null) {
-            filter(object : Filter() {
-                override fun shouldRun(description: Description): Boolean {
-                    if (description.isTest) {
-                        val methodAnnotation = description.getAnnotation(TestMetadata::class.java) ?: return true
-                        val testClassAnnotation = description.testClass.getAnnotation(TestMetadata::class.java) ?: return true
+            filter(
+                object : Filter() {
+                    override fun shouldRun(description: Description): Boolean {
+                        if (description.isTest) {
+                            val methodAnnotation = description.getAnnotation(TestMetadata::class.java) ?: return true
+                            val testClassAnnotation = description.testClass.getAnnotation(TestMetadata::class.java) ?: return true
 
-                        val path = testClassAnnotation.value + "/" + methodAnnotation.value
-                        val fileText = File(path).readText()
-                        return !InTextDirectivesUtils.isDirectiveDefined(fileText, "// JVM_TARGET:") &&
-                                !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_JDK6")
+                            val path = testClassAnnotation.value + "/" + methodAnnotation.value
+                            val fileText = File(path).readText()
+                            return !InTextDirectivesUtils.isDirectiveDefined(fileText, "// JVM_TARGET:") &&
+                                    !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_JDK6")
+                        }
+                        return true
                     }
-                    return true
-                }
 
-                override fun describe(): String {
-                    return "skipped on JDK 6"
-                }
-            })
+                    override fun describe(): String {
+                        return "skipped on JDK 6"
+                    }
+                },
+            )
         }
     }
 
@@ -53,7 +58,7 @@ class SuiteRunnerForCustomJdk constructor(klass: Class<*>, builder: RunnerBuilde
             return (annotation?.value?.map { it.java } ?: emptyList()) +
                     if (addSuperAnnotations) getAnnotatedClasses(
                         klass.superclass,
-                        false
+                        false,
                     ) else emptyList()
         }
 

@@ -17,11 +17,11 @@ import java.io.IOException
  */
 class CompositeLookupsCacheAttributesManager(
     rootPath: File,
-    expectedComponents: Set<String>
+    expectedComponents: Set<String>,
 ) : CacheAttributesManager<CompositeLookupsCacheAttributes> {
     private val versionManager = lookupsCacheVersionManager(
         rootPath,
-        expectedComponents.isNotEmpty()
+        expectedComponents.isNotEmpty(),
     )
 
     private val actualComponentsFile = File(rootPath, "components.txt")
@@ -69,7 +69,7 @@ class CompositeLookupsCacheAttributesManager(
 
 data class CompositeLookupsCacheAttributes(
     val version: Int,
-    val components: Set<String>
+    val components: Set<String>,
 ) {
     override fun toString() = "($version, $components)"
 }

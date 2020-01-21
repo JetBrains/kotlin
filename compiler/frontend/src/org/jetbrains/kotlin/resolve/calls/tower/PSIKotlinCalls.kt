@@ -66,13 +66,13 @@ class PSIKotlinCallImpl(
     override val startingDataFlowInfo: DataFlowInfo,
     override val resultDataFlowInfo: DataFlowInfo,
     override val dataFlowInfoForArguments: DataFlowInfoForArguments,
-    override val isForImplicitInvoke: Boolean
+    override val isForImplicitInvoke: Boolean,
 ) : PSIKotlinCall()
 
 class PSIKotlinCallForVariable(
     val baseCall: PSIKotlinCallImpl,
     override val explicitReceiver: ReceiverKotlinCallArgument?,
-    override val name: Name
+    override val name: Name,
 ) : PSIKotlinCall() {
     override val callKind: KotlinCallKind get() = KotlinCallKind.VARIABLE
     override val typeArguments: List<TypeArgument> get() = emptyList()
@@ -95,7 +95,7 @@ class PSIKotlinCallForInvoke(
     val baseCall: PSIKotlinCallImpl,
     val variableCall: KotlinResolutionCandidate,
     override val explicitReceiver: ReceiverKotlinCallArgument,
-    override val dispatchReceiverForInvokeExtension: SimpleKotlinCallArgument?
+    override val dispatchReceiverForInvokeExtension: SimpleKotlinCallArgument?,
 ) : PSIKotlinCall() {
     override val callKind: KotlinCallKind get() = KotlinCallKind.FUNCTION
     override val name: Name get() = OperatorNameConventions.INVOKE
@@ -117,7 +117,7 @@ class PSIKotlinCallForInvoke(
 
         psiCall = CallTransformer.CallForImplicitInvoke(
             explicitExtensionReceiver?.receiverValue,
-            variableReceiver.receiverValue as ExpressionReceiver, baseCall.psiCall, true
+            variableReceiver.receiverValue as ExpressionReceiver, baseCall.psiCall, true,
         )
         tracingStrategy =
                 TracingStrategyForInvoke(calleeExpression, psiCall, variableReceiver.receiverValue!!.type) // check for type parameters

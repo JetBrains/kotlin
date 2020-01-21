@@ -73,7 +73,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         name: String,
         processor: Processor<in PsiClass>,
         scope: GlobalSearchScope,
-        filter: IdFilter?
+        filter: IdFilter?,
     ): Boolean {
         if (disableSearch.get()) return true
         val effectiveScope = kotlinDeclarationsVisibleFromJavaScope(scope)
@@ -86,7 +86,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                 LOG.error(
                     "A declaration obtained from index has non-matching name:" +
                             "\nin index: $name" +
-                            "\ndeclared: ${fqName.shortName()}($fqName)"
+                            "\ndeclared: ${fqName.shortName()}($fqName)",
                 )
 
                 return@Processor true
@@ -106,7 +106,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
             project,
             effectiveScope,
             filter,
-            KtClassOrObject::class.java
+            KtClassOrObject::class.java,
         ) { ktClassOrObject ->
             fqNameProcessor.process(ktClassOrObject.fqName)
         }
@@ -120,7 +120,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
             project,
             effectiveScope,
             filter,
-            KtFile::class.java
+            KtFile::class.java,
         ) { ktFile ->
             fqNameProcessor.process(ktFile.javaFileFacadeFqName)
         }
@@ -176,7 +176,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         name: String,
         processor: Processor<in PsiMethod>,
         scope: GlobalSearchScope,
-        filter: IdFilter?
+        filter: IdFilter?,
     ): Boolean {
         if (disableSearch.get()) return true
         val allFunctionsProcessed = StubIndex.getInstance().processElements(
@@ -185,7 +185,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
             project,
             scope,
             filter,
-            KtNamedFunction::class.java
+            KtNamedFunction::class.java,
         ) { ktNamedFunction ->
             val methods = LightClassUtil.getLightClassMethods(ktNamedFunction).filter { it.name == name }
             return@processElements methods.all { method ->
@@ -203,7 +203,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                 project,
                 scope,
                 filter,
-                KtNamedDeclaration::class.java
+                KtNamedDeclaration::class.java,
             ) { ktNamedDeclaration ->
                 val methods = ktNamedDeclaration.getAccessorLightMethods()
                     .asSequence()
@@ -241,7 +241,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                     processor.size != maxCount && processor.process(psiMethod)
                 },
                 scope,
-                null
+                null,
             )
         }
     }
@@ -275,7 +275,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         name: String,
         processor: Processor<in PsiField>,
         scope: GlobalSearchScope,
-        filter: IdFilter?
+        filter: IdFilter?,
     ): Boolean {
         if (disableSearch.get()) return true
         return StubIndex.getInstance().processElements(
@@ -284,7 +284,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
             project,
             scope,
             filter,
-            KtNamedDeclaration::class.java
+            KtNamedDeclaration::class.java,
         ) { ktNamedDeclaration ->
             val field = LightClassUtil.getLightClassBackingField(ktNamedDeclaration)
                 ?: return@processElements true
@@ -311,7 +311,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                     processor.size != maxCount && processor.process(psiField)
                 },
                 scope,
-                null
+                null,
             )
         }
     }
@@ -319,7 +319,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
     private inline fun <T> withArrayProcessor(
         result: Array<T>,
-        process: (CancelableArrayCollectProcessor<T>) -> Unit
+        process: (CancelableArrayCollectProcessor<T>) -> Unit,
     ): Array<T> {
         return CancelableArrayCollectProcessor<T>().also { processor ->
             process(processor)

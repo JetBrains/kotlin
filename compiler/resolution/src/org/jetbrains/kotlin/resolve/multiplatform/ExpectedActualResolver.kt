@@ -48,7 +48,7 @@ object ExpectedActualResolver {
     fun findActualForExpected(
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
-        moduleVisibilityFilter: ModuleFilter = onlyFromThisModule(platformModule)
+        moduleVisibilityFilter: ModuleFilter = onlyFromThisModule(platformModule),
     ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
@@ -77,7 +77,7 @@ object ExpectedActualResolver {
     fun findExpectedForActual(
         actual: MemberDescriptor,
         commonModule: ModuleDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean = onlyFromThisModule(commonModule)
+        moduleFilter: (ModuleDescriptor) -> Boolean = onlyFromThisModule(commonModule),
     ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (actual) {
             is CallableMemberDescriptor -> {
@@ -121,7 +121,7 @@ object ExpectedActualResolver {
 
     private fun CallableMemberDescriptor.findNamesakesFromModule(
         module: ModuleDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean
+        moduleFilter: (ModuleDescriptor) -> Boolean,
     ): Collection<CallableMemberDescriptor> {
         val scopes = when (val containingDeclaration = containingDeclaration) {
             is PackageFragmentDescriptor -> {
@@ -157,7 +157,7 @@ object ExpectedActualResolver {
 
     private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
         module: ModuleDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean
+        moduleFilter: (ModuleDescriptor) -> Boolean,
     ): Collection<ClassifierDescriptorWithTypeParameters> {
         val classId = classId ?: return emptyList()
 
@@ -172,7 +172,7 @@ object ExpectedActualResolver {
         for (name in segments.subList(1, segments.size)) {
             classifiers = classifiers.mapNotNull { classifier ->
                 (classifier as? ClassDescriptor)?.unsubstitutedInnerClassesScope?.getContributedClassifier(
-                    name, NoLookupLocation.FOR_ALREADY_TRACKED
+                    name, NoLookupLocation.FOR_ALREADY_TRACKED,
                 ) as? ClassifierDescriptorWithTypeParameters
             }
         }
@@ -226,7 +226,7 @@ object ExpectedActualResolver {
             object Supertypes : Incompatible("some supertypes are missing in the actual declaration")
 
             class ClassScopes(
-                val unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>
+                val unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
             ) : Incompatible("some expected members have no actual ones")
 
             object EnumEntries : Incompatible("some entries from expected enum are missing in the actual enum")
@@ -251,7 +251,7 @@ object ExpectedActualResolver {
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor,
         platformModule: ModuleDescriptor = b.module,
-        parentSubstitutor: Substitutor? = null
+        parentSubstitutor: Substitutor? = null,
     ): Compatibility {
         assert(a.name == b.name) {
             "This function should be invoked only for declarations with the same name: $a, $b"
@@ -313,7 +313,7 @@ object ExpectedActualResolver {
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor,
         aParams: List<ValueParameterDescriptor>,
-        bParams: List<ValueParameterDescriptor>
+        bParams: List<ValueParameterDescriptor>,
     ): Boolean {
         if (aParams.size == bParams.size) return true
 
@@ -346,7 +346,7 @@ object ExpectedActualResolver {
     private fun isExpectedClassAndActualTypeAlias(
         expectedTypeConstructor: TypeConstructor,
         actualTypeConstructor: TypeConstructor,
-        platformModule: ModuleDescriptor
+        platformModule: ModuleDescriptor,
     ): Boolean {
         val expected = expectedTypeConstructor.declarationDescriptor
         val actual = actualTypeConstructor.declarationDescriptor
@@ -372,7 +372,7 @@ object ExpectedActualResolver {
         a: List<TypeParameterDescriptor>,
         b: List<TypeParameterDescriptor>,
         platformModule: ModuleDescriptor,
-        substitutor: Substitutor
+        substitutor: Substitutor,
     ): Compatibility {
         for (i in a.indices) {
             val aBounds = a[i].upperBounds
@@ -455,7 +455,7 @@ object ExpectedActualResolver {
 
     private fun areDeclarationsWithCompatibleVisibilities(
         a: CallableMemberDescriptor,
-        b: CallableMemberDescriptor
+        b: CallableMemberDescriptor,
     ): Boolean {
         val compare = Visibilities.compare(a.visibility, b.visibility)
         return if (a.isOverridable) {
@@ -472,7 +472,7 @@ object ExpectedActualResolver {
         a: ClassDescriptor,
         b: ClassDescriptor,
         platformModule: ModuleDescriptor,
-        substitutor: Substitutor
+        substitutor: Substitutor,
     ): Compatibility {
         val unfulfilled = arrayListOf<Pair<MemberDescriptor, Map<Incompatible, MutableCollection<MemberDescriptor>>>>()
 
@@ -549,12 +549,14 @@ object ExpectedActualResolver {
     private class Substitutor(
         aTypeParams: List<TypeParameterDescriptor>,
         bTypeParams: List<TypeParameterDescriptor>,
-        private val parent: Substitutor? = null
+        private val parent: Substitutor? = null,
     ) : (KotlinType?) -> KotlinType? {
         private val typeSubstitutor = TypeSubstitutor.create(
-            TypeConstructorSubstitution.createByParametersMap(aTypeParams.keysToMap {
-                bTypeParams[it.index].defaultType.asTypeProjection()
-            })
+            TypeConstructorSubstitution.createByParametersMap(
+                aTypeParams.keysToMap {
+                    bTypeParams[it.index].defaultType.asTypeProjection()
+                },
+            ),
         )
 
         override fun invoke(type: KotlinType?): KotlinType? =
@@ -566,7 +568,7 @@ fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module):
     return ExpectedActualResolver.findExpectedForActual(
         this as MemberDescriptor,
         inModule,
-        { true }
+        { true },
     )?.get(Compatible).orEmpty()
 }
 
@@ -574,7 +576,7 @@ fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module):
     return ExpectedActualResolver.findActualForExpected(
         (this as MemberDescriptor),
         inModule,
-        { true }
+        { true },
     )?.get(Compatible).orEmpty()
 }
 

@@ -64,7 +64,7 @@ class StreamTraceChecker(private val testCase: ExecutionTestCase) {
     private fun printMapping(
         values: List<TraceElement>,
         mapper: (TraceElement) -> List<TraceElement>,
-        direction: Direction
+        direction: Direction,
     ) {
         if (values.isEmpty()) {
             println("    empty")
@@ -141,19 +141,21 @@ class StreamTraceChecker(private val testCase: ExecutionTestCase) {
             leftValues,
             rightValues,
             { left.getNextValues(it) },
-            { right.getPrevValues(it) })
+            { right.getPrevValues(it) },
+        )
         checkThatMappingsIsCorrect(
             rightValues,
             leftValues,
             { right.getPrevValues(it) },
-            { left.getNextValues(it) })
+            { left.getNextValues(it) },
+        )
     }
 
     private fun checkThatMappingsIsCorrect(
         prev: Set<TraceElement>,
         next: Set<TraceElement>,
         toNext: (TraceElement) -> List<TraceElement>,
-        toPrev: (TraceElement) -> List<TraceElement>
+        toPrev: (TraceElement) -> List<TraceElement>,
     ) {
         for (leftElement in prev) {
             val mapToRight = toNext.invoke(leftElement)

@@ -41,11 +41,12 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
     }
 
     private class SyntheticPartsGenerateContext(
-            val classBuilder: ClassBuilder,
-            val state: GenerationState,
-            val container: ClassDescriptor,
-            val classOrObject: KtClassOrObject,
-            val containerOptions: ContainerOptionsProxy)
+        val classBuilder: ClassBuilder,
+        val state: GenerationState,
+        val container: ClassDescriptor,
+        val classOrObject: KtClassOrObject,
+        val containerOptions: ContainerOptionsProxy,
+    )
 
     protected abstract fun isEnabled(element: KtElement?): Boolean
     protected abstract fun isExperimental(element: KtElement?): Boolean
@@ -75,10 +76,10 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
     }
 
     private fun generateClearFindViewByIdCacheFunctionCall(
-            receiver: StackValue,
-            resolvedCall: ResolvedCall<*>,
-            container: ClassDescriptor,
-            c: ExpressionCodegenExtension.Context
+        receiver: StackValue,
+        resolvedCall: ResolvedCall<*>,
+        container: ClassDescriptor,
+        c: ExpressionCodegenExtension.Context,
     ): StackValue? {
         val containerOptions = ContainerOptionsProxy.create(container)
 
@@ -98,10 +99,10 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
     }
 
     private fun generateResourcePropertyCall(
-            receiver: StackValue,
-            resolvedCall: ResolvedCall<*>,
-            c: ExpressionCodegenExtension.Context,
-            resource: PropertyDescriptor
+        receiver: StackValue,
+        resolvedCall: ResolvedCall<*>,
+        c: ExpressionCodegenExtension.Context,
+        resource: PropertyDescriptor,
     ): StackValue? {
         if (resource !is AndroidSyntheticProperty) return null
         val packageFragment = resource.containingDeclaration as? AndroidSyntheticPackageFragmentDescriptor ?: return null
@@ -109,8 +110,10 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val container = resolvedCall.getReceiverDeclarationDescriptor() as? ClassDescriptor ?: return null
 
         val containerOptions = ContainerOptionsProxy.create(container)
-        return ResourcePropertyStackValue(receiver, c.typeMapper, resource, container,
-                                          containerOptions, androidPackage, getGlobalCacheImpl(resolvedCall.call.calleeExpression))
+        return ResourcePropertyStackValue(
+            receiver, c.typeMapper, resource, container,
+            containerOptions, androidPackage, getGlobalCacheImpl(resolvedCall.call.calleeExpression),
+        )
     }
 
     private fun ResolvedCall<*>.getReceiverDeclarationDescriptor(): ClassifierDescriptor? {
@@ -218,7 +221,8 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val viewType = Type.getObjectType("android/view/View")
 
         val methodVisitor = classBuilder.newMethod(
-                JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", null, null)
+            JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, CACHED_FIND_VIEW_BY_ID_METHOD_NAME, "(I)Landroid/view/View;", null, null,
+        )
         methodVisitor.visitCode()
         val iv = InstructionAdapter(methodVisitor)
 

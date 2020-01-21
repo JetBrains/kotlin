@@ -39,7 +39,7 @@ class Java9CodegenTest : AbstractBlackBoxCodegenTest() {
             "-ea",
             "-classpath",
             listOf(tmpdir, ForTestCompileRuntime.runtimeJarForTests()).joinToString(File.pathSeparator, transform = File::getAbsolutePath),
-            PackagePartClassUtils.getFilePartShortName(getTestName(false))
+            PackagePartClassUtils.getFilePartShortName(getTestName(false)),
         )
 
         val process = ProcessBuilder(*command).inheritIO().start()

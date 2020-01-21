@@ -35,5 +35,5 @@ class DeclarationCheckerContext(
     override val deprecationResolver: DeprecationResolver,
     override val moduleDescriptor: ModuleDescriptor,
     val expectActualTracker: ExpectActualTracker,
-    val missingSupertypesResolver: MissingSupertypesResolver
+    val missingSupertypesResolver: MissingSupertypesResolver,
 ) : CheckerContext

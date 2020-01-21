@@ -132,17 +132,17 @@ var JsExpression.primitiveKClass: JsExpression? by MetadataProperty(default = nu
 var JsExpression.kType: JsExpression? by MetadataProperty(default = null)
 
 data class CoroutineMetadata(
-        val doResumeName: JsName,
-        val stateName: JsName,
-        val exceptionStateName: JsName,
-        val finallyPathName: JsName,
-        val resultName: JsName,
-        val exceptionName: JsName,
-        val baseClassRef: JsExpression,
-        val suspendObjectRef: JsExpression,
-        val hasController: Boolean,
-        val hasReceiver: Boolean,
-        val psiElement: PsiElement?
+    val doResumeName: JsName,
+    val stateName: JsName,
+    val exceptionStateName: JsName,
+    val finallyPathName: JsName,
+    val resultName: JsName,
+    val exceptionName: JsName,
+    val baseClassRef: JsExpression,
+    val suspendObjectRef: JsExpression,
+    val hasController: Boolean,
+    val hasReceiver: Boolean,
+    val psiElement: PsiElement?,
 )
 
 enum class TypeCheck {

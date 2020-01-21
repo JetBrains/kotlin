@@ -33,9 +33,11 @@ abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
     abstract val pluginJarFileFromIdea: File
 
     override fun invoke(facet: KotlinFacet, mavenProject: MavenProject) {
-        modifyCompilerArgumentsForPlugin(facet, getPluginSetup(mavenProject),
-                                         compilerPluginId = compilerPluginId,
-                                         pluginName = pluginName)
+        modifyCompilerArgumentsForPlugin(
+            facet, getPluginSetup(mavenProject),
+            compilerPluginId = compilerPluginId,
+            pluginName = pluginName,
+        )
     }
 
     abstract fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<PluginOption>?

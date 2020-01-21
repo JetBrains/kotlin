@@ -19,7 +19,7 @@ import java.io.File
 
 private class AutoMute(
     val file: String,
-    val issue: String
+    val issue: String,
 )
 
 private val DO_AUTO_MUTE: AutoMute? by lazy {
@@ -28,7 +28,7 @@ private val DO_AUTO_MUTE: AutoMute? by lazy {
         val lines = autoMuteFile.readLines().filter { it.isNotBlank() }.map { it.trim() }
         AutoMute(
             lines.getOrNull(0) ?: error("A file path is expected in tne first line"),
-            lines.getOrNull(1) ?: error("An issue description is the second line")
+            lines.getOrNull(1) ?: error("An issue description is the second line"),
         )
     } else {
         null
@@ -48,7 +48,7 @@ private fun AutoMute.muteTest(testKey: String) {
 private class MutedTest(
     val key: String,
     @Suppress("unused") val issue: String?,
-    val hasFailFile: Boolean
+    val hasFailFile: Boolean,
 ) {
     val methodKey: String
     val classNameKey: String
@@ -147,8 +147,8 @@ private val mutedSet by lazy {
     loadMutedSet(
         listOf(
             File("tests/mute-common.csv"),
-            File("tests/mute-platform.csv")
-        )
+            File("tests/mute-platform.csv"),
+        ),
     )
 }
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import java.util.*
 
 class ArgumentsToParametersMapper(
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ) {
 
     private val allowMixedNamedAndPositionArguments =
@@ -38,7 +38,7 @@ class ArgumentsToParametersMapper(
         //      foo(b = bar(), a = qux())
         // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
         val parameterToCallArgumentMap: Map<ValueParameterDescriptor, ResolvedCallArgument>,
-        val diagnostics: List<KotlinCallDiagnostic>
+        val diagnostics: List<KotlinCallDiagnostic>,
     )
 
     val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
@@ -49,7 +49,7 @@ class ArgumentsToParametersMapper(
     fun mapArguments(
         argumentsInParenthesis: List<KotlinCallArgument>,
         externalArgument: KotlinCallArgument?,
-        descriptor: CallableDescriptor
+        descriptor: CallableDescriptor,
     ): ArgumentMapping {
         // optimization for case of variable
         if (argumentsInParenthesis.isEmpty() && externalArgument == null && descriptor.valueParameters.isEmpty()) {
@@ -69,7 +69,7 @@ class ArgumentsToParametersMapper(
 
     private class CallArgumentProcessor(
         val descriptor: CallableDescriptor,
-        val allowMixedNamedAndPositionArguments: Boolean
+        val allowMixedNamedAndPositionArguments: Boolean,
     ) {
         val result: MutableMap<ValueParameterDescriptor, ResolvedCallArgument> = LinkedHashMap()
         private var state = State.POSITION_ARGUMENTS

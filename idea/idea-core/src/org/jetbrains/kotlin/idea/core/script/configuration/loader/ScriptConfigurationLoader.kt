@@ -25,6 +25,6 @@ interface ScriptConfigurationLoader {
         isFirstLoad: Boolean,
         ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
-        context: ScriptConfigurationLoadingContext
+        context: ScriptConfigurationLoadingContext,
     ): Boolean
 }

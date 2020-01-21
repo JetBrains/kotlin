@@ -31,7 +31,7 @@ import kotlin.math.max
 class ConstraintInjector(
     val constraintIncorporator: ConstraintIncorporator,
     val typeApproximator: AbstractTypeApproximator,
-    val kotlinTypeRefiner: KotlinTypeRefiner
+    val kotlinTypeRefiner: KotlinTypeRefiner,
 ) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
@@ -67,7 +67,7 @@ class ConstraintInjector(
         c: Context,
         lowerType: KotlinTypeMarker,
         upperType: KotlinTypeMarker,
-        incorporatePosition: IncorporationConstraintPosition
+        incorporatePosition: IncorporationConstraintPosition,
     ) {
         val possibleNewConstraints = Stack<Pair<TypeVariableMarker, Constraint>>()
         val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints)
@@ -120,7 +120,7 @@ class ConstraintInjector(
         val position: IncorporationConstraintPosition,
         val baseLowerType: KotlinTypeMarker,
         val baseUpperType: KotlinTypeMarker,
-        val possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>
+        val possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>,
     ) : AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
 
         val baseContext: AbstractTypeCheckerContext = newBaseTypeCheckerContext(isErrorTypeEqualsToAnything, isStubTypeEqualsToAnything)
@@ -189,7 +189,7 @@ class ConstraintInjector(
         override fun addNewIncorporatedConstraint(
             typeVariable: TypeVariableMarker,
             type: KotlinTypeMarker,
-            constraintContext: ConstraintContext
+            constraintContext: ConstraintContext,
         ) {
             val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint) = constraintContext
 
@@ -232,7 +232,7 @@ class ConstraintInjector(
                 kind, targetType, position,
                 derivedFrom = derivedFrom,
                 isNullabilityConstraint = isNullabilityConstraint,
-                inputTypePositionBeforeIncorporation = inputTypePosition
+                inputTypePositionBeforeIncorporation = inputTypePosition,
             )
             possibleNewConstraints.add(typeVariable to newConstraint)
         }
@@ -255,7 +255,7 @@ class ConstraintInjector(
         fun fixedTypeVariable(variable: TypeVariableMarker): Nothing {
             error(
                 "Type variable $variable should not be fixed!\n" +
-                        renderBaseConstraint()
+                        renderBaseConstraint(),
             )
         }
 
@@ -267,5 +267,5 @@ data class ConstraintContext(
     val kind: ConstraintKind,
     val derivedFrom: Set<TypeVariableMarker>,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
-    val isNullabilityConstraint: Boolean
+    val isNullabilityConstraint: Boolean,
 )

@@ -50,13 +50,13 @@ class VarianceChecker(trace: BindingTrace) {
 class VarianceConflictDiagnosticData(
     val containingType: KotlinType,
     val typeParameter: TypeParameterDescriptor,
-    val occurrencePosition: Variance
+    val occurrencePosition: Variance,
 )
 
 class VarianceCheckerCore(
     val context: BindingContext,
     private val diagnosticSink: DiagnosticSink,
-    private val manualVariance: ManualVariance? = null
+    private val manualVariance: ManualVariance? = null,
 ) {
 
     fun check(c: TopDownAnalysisContext) {
@@ -105,7 +105,7 @@ class VarianceCheckerCore(
     private fun checkCallableDeclaration(
         trace: BindingContext,
         declaration: KtCallableDeclaration,
-        descriptor: CallableDescriptor
+        descriptor: CallableDescriptor,
     ): Boolean {
         if (isIrrelevant(descriptor)) return true
         var noError = true
@@ -126,7 +126,7 @@ class VarianceCheckerCore(
 
     private fun KtTypeParameterListOwner.checkTypeParameters(
         trace: BindingContext,
-        typePosition: Variance
+        typePosition: Variance,
     ): Boolean {
         var noError = true
         for (typeParameter in typeParameters) {

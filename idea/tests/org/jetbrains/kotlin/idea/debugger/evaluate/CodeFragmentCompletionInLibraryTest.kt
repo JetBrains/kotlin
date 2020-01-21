@@ -62,8 +62,10 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
     private fun testCompletionInLibraryCodeFragment(fragmentText: String, vararg completionDirectives: String) {
         setupFixtureByCodeFragment(fragmentText)
         val directives = completionDirectives.joinToString(separator = "\n") { "//$it" }
-        testCompletion(directives,
-                       JvmPlatforms.unspecifiedJvmPlatform, { completionType, count -> myFixture.complete(completionType, count) })
+        testCompletion(
+            directives,
+            JvmPlatforms.unspecifiedJvmPlatform, { completionType, count -> myFixture.complete(completionType, count) },
+        )
     }
 
     private fun setupFixtureByCodeFragment(fragmentText: String) {
@@ -72,7 +74,7 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
         val fooFunctionFromLibrary = jetFile.declarations.first() as KtFunction
         val codeFragment = KtPsiFactory(fooFunctionFromLibrary).createExpressionCodeFragment(
             fragmentText,
-            getContextElement(fooFunctionFromLibrary.bodyExpression)
+            getContextElement(fooFunctionFromLibrary.bodyExpression),
         )
         codeFragment.forceResolveScope(GlobalSearchScope.allScope(project))
         myFixture.configureFromExistingVirtualFile(codeFragment.virtualFile)

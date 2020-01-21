@@ -119,7 +119,7 @@ private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
 private fun ideaModelDependencies(
     module: Module,
     forProduction: Boolean,
-    platform: TargetPlatform
+    platform: TargetPlatform,
 ): List<IdeaModuleInfo> {
     fun TargetPlatform.canDependOn(other: TargetPlatform): Boolean {
         return this.isJvm() && other.isJvm() ||
@@ -160,7 +160,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     @Deprecated(
         message = "This accessor is deprecated and will be removed soon, use API from 'org.jetbrains.kotlin.platform.*' packages instead",
         replaceWith = ReplaceWith("platform"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.ERROR,
     )
     fun getPlatform(): org.jetbrains.kotlin.resolve.TargetPlatform = platform.toOldPlatform()
 
@@ -184,7 +184,7 @@ sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) 
 }
 
 data class ModuleProductionSourceInfo internal constructor(
-    override val module: Module
+    override val module: Module,
 ) : ModuleSourceInfoWithExpectedBy(forProduction = true) {
 
     override val name = Name.special("<production sources for module ${module.name}>")
@@ -333,8 +333,9 @@ data class LibrarySourceInfo(val project: Project, val library: Library, overrid
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
         LibrarySourceScope(
             project,
-            library
-        ), project
+            library,
+        ),
+        project,
     )
 
     override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> {
@@ -465,7 +466,7 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
 
 data class PlatformModuleInfo(
     override val platformModule: ModuleSourceInfo,
-    private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
+    private val commonModules: List<ModuleSourceInfo>, // NOTE: usually contains a single element for current implementation
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = platformModule.capabilities

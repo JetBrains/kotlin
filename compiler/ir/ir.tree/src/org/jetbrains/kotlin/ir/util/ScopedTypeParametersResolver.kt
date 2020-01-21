@@ -25,7 +25,7 @@ class ScopedTypeParametersResolver : TypeParametersResolver {
         typeParameterScopes.addFirst(
             typeParametersContainer.typeParameters.associate {
                 it.descriptor to it.symbol
-            }
+            },
         )
     }
 

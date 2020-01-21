@@ -9,12 +9,12 @@ import org.jetbrains.org.objectweb.asm.*
 
 internal class BinAnnArgData(
     val name: String?,
-    val value: String
+    val value: String,
 )
 
 internal class BinAnnData(
     val name: String,
-    val args: ArrayList<BinAnnArgData> = arrayListOf()
+    val args: ArrayList<BinAnnArgData> = arrayListOf(),
 )
 
 private class TemplateAnnotationVisitor(val anns: ArrayList<BinAnnData> = arrayListOf()) : AnnotationVisitor(Opcodes.API_VERSION) {

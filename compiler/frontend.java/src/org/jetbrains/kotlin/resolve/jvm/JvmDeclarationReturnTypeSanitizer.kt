@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.types.WrappedTypeFactory
 
 object JvmDeclarationReturnTypeSanitizer : DeclarationReturnTypeSanitizer {
     override fun sanitizeReturnType(
-            inferred: UnwrappedType,
-            wrappedTypeFactory: WrappedTypeFactory,
-            trace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings
+        inferred: UnwrappedType,
+        wrappedTypeFactory: WrappedTypeFactory,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings,
     ): UnwrappedType =
             if (languageVersionSettings.supportsFeature(LanguageFeature.StrictJavaNullabilityAssertions)) {
                 // NB can't check for presence of EnhancedNullability here,
@@ -38,7 +38,7 @@ object JvmDeclarationReturnTypeSanitizer : DeclarationReturnTypeSanitizer {
                 inferred.replaceAnnotations(
                     FilteredAnnotations(inferred.annotations, languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
                         it != JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
-                    }
+                    },
                 )
             }
             else inferred

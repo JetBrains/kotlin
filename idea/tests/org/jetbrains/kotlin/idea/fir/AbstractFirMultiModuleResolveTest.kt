@@ -61,7 +61,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
         for (module in project.allModules().drop(1)) {
             ConfigLibraryUtil.configureSdk(
                 module,
-                PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(jdkKind) }
+                PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(jdkKind) },
             )
         }
         doFirResolveTest(dirPath)

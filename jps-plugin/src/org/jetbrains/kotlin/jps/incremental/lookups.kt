@@ -13,5 +13,5 @@ private val DATA_CONTAINER_VERSION = 5
 fun lookupsCacheVersionManager(dataRoot: File, isEnabled: Boolean) =
     CacheVersionManager(
         File(dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
-        if (isEnabled) DATA_CONTAINER_VERSION else null
+        if (isEnabled) DATA_CONTAINER_VERSION else null,
     )

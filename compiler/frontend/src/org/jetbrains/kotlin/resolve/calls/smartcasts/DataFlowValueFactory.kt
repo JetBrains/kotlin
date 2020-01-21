@@ -31,34 +31,34 @@ interface DataFlowValueFactory {
     fun createDataFlowValue(
         expression: KtExpression,
         type: KotlinType,
-        resolutionContext: ResolutionContext<*>
+        resolutionContext: ResolutionContext<*>,
     ): DataFlowValue
 
     fun createDataFlowValue(
         expression: KtExpression,
         type: KotlinType,
         bindingContext: BindingContext,
-        containingDeclarationOrModule: DeclarationDescriptor
+        containingDeclarationOrModule: DeclarationDescriptor,
     ): DataFlowValue
 
     fun createDataFlowValueForStableReceiver(receiver: ReceiverValue): DataFlowValue
 
     fun createDataFlowValue(
         receiverValue: ReceiverValue,
-        resolutionContext: ResolutionContext<*>
+        resolutionContext: ResolutionContext<*>,
     ): DataFlowValue
 
     fun createDataFlowValue(
         receiverValue: ReceiverValue,
         bindingContext: BindingContext,
-        containingDeclarationOrModule: DeclarationDescriptor
+        containingDeclarationOrModule: DeclarationDescriptor,
     ): DataFlowValue
 
     fun createDataFlowValueForProperty(
         property: KtProperty,
         variableDescriptor: VariableDescriptor,
         bindingContext: BindingContext,
-        usageContainingModule: ModuleDescriptor?
+        usageContainingModule: ModuleDescriptor?,
     ): DataFlowValue
 
 }

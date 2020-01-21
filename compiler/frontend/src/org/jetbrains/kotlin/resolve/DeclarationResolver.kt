@@ -39,7 +39,7 @@ import java.util.*
 
 class DeclarationResolver(
     private val annotationResolver: AnnotationResolver,
-    private val trace: BindingTrace
+    private val trace: BindingTrace,
 ) {
 
     fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
@@ -76,7 +76,7 @@ class DeclarationResolver(
 
     fun checkRedeclarationsInPackages(
         topLevelDescriptorProvider: TopLevelDescriptorProvider,
-        topLevelFqNames: Multimap<FqName, KtElement>
+        topLevelFqNames: Multimap<FqName, KtElement>,
     ) {
         for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
             if (fqName.isRoot) continue
@@ -100,7 +100,7 @@ class DeclarationResolver(
     private fun getTopLevelDescriptorsByFqName(
         topLevelDescriptorProvider: TopLevelDescriptorProvider,
         fqName: FqName,
-        location: LookupLocation
+        location: LookupLocation,
     ): Set<DeclarationDescriptor> {
         val descriptors = HashSet<DeclarationDescriptor>()
 

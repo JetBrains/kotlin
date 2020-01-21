@@ -92,7 +92,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
         val generateActualDeclarationsFor: List<ModulesTxt.Module> = module.expectedBy.map { it.to },
         val generatePlatformDependent: Boolean = true,
         var generateKtFile: Boolean = true,
-        var generateJavaFile: Boolean = true
+        var generateJavaFile: Boolean = true,
     )
 
     inner class EditingTestCase(val module: ModulesTxt.Module, val changeJavaClass: Boolean) : TestCase() {
@@ -112,7 +112,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
                 serviceNameSuffix = "New",
                 generatePlatformDependent = false,
                 generateKtFile = !changeJavaClass,
-                generateJavaFile = changeJavaClass
+                generateJavaFile = changeJavaClass,
             )
 
             when {
@@ -120,21 +120,21 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
                     step("create new service") {
                         generateCommonFile(
                             module,
-                            fileNameSuffix = ".new.$step"
+                            fileNameSuffix = ".new.$step",
                         )
                     }
 
                     step("edit new service") {
                         generateCommonFile(
                             module,
-                            fileNameSuffix = ".touch.$step"
+                            fileNameSuffix = ".touch.$step",
                         )
                     }
 
                     step("delete new service") {
                         serviceKtFile(
                             module,
-                            fileNameSuffix = ".delete.$step"
+                            fileNameSuffix = ".delete.$step",
                         ).setFileContent("")
                     }
                 }
@@ -147,7 +147,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
 
                         generatePlatformFile(
                             module,
-                            fileNameSuffix = ".new.$step"
+                            fileNameSuffix = ".new.$step",
                         )
 
                         module.contentsSettings = prevModuleContentsSettings
@@ -156,7 +156,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
                     step("edit new service") {
                         generatePlatformFile(
                             module,
-                            fileNameSuffix = ".touch.$step"
+                            fileNameSuffix = ".touch.$step",
                         )
                     }
 
@@ -194,7 +194,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
                 implModule.contentsSettings = ModuleContentSettings(
                     implModule,
                     serviceNameSuffix = "New",
-                    generateActualDeclarationsFor = listOf(commonModule)
+                    generateActualDeclarationsFor = listOf(commonModule),
                 )
             }
 
@@ -337,23 +337,25 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
 
         protected fun generateCommonFile(
             module: ModulesTxt.Module,
-            fileNameSuffix: String = ""
+            fileNameSuffix: String = "",
         ) {
             val settings = module.contentsSettings
 
-            serviceKtFile(module, fileNameSuffix).setFileContent(buildString {
-                if (settings.generatePlatformDependent)
-                    appendln("expect fun ${module.platformDependentFunName}(): String")
+            serviceKtFile(module, fileNameSuffix).setFileContent(
+                buildString {
+                    if (settings.generatePlatformDependent)
+                        appendln("expect fun ${module.platformDependentFunName}(): String")
 
-                appendln("fun ${module.platformIndependentFunName}() = \"common$fileNameSuffix\"")
+                    appendln("fun ${module.platformIndependentFunName}() = \"common$fileNameSuffix\"")
 
-                appendTestFun(module, settings)
-            })
+                    appendTestFun(module, settings)
+                },
+            )
         }
 
         protected fun generatePlatformFile(
             module: ModulesTxt.Module,
-            fileNameSuffix: String = ""
+            fileNameSuffix: String = "",
         ) {
             val isJvm = module.isJvmModule
             val settings = module.contentsSettings
@@ -361,23 +363,25 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
             val javaClassName = module.javaClassName
 
             if (settings.generateKtFile) {
-                serviceKtFile(module, fileNameSuffix).setFileContent(buildString {
-                    if (settings.generatePlatformDependent) {
-                        for (expectedBy in settings.generateActualDeclarationsFor) {
-                            appendln(
-                                "actual fun ${expectedBy.platformDependentFunName}(): String" +
-                                        " = \"${module.name}$fileNameSuffix\""
-                            )
+                serviceKtFile(module, fileNameSuffix).setFileContent(
+                    buildString {
+                        if (settings.generatePlatformDependent) {
+                            for (expectedBy in settings.generateActualDeclarationsFor) {
+                                appendln(
+                                    "actual fun ${expectedBy.platformDependentFunName}(): String" +
+                                            " = \"${module.name}$fileNameSuffix\"",
+                                )
+                            }
                         }
-                    }
 
-                    appendln(
-                        "fun ${module.platformOnlyFunName}()" +
-                                " = \"${module.name}$fileNameSuffix\""
-                    )
+                        appendln(
+                            "fun ${module.platformOnlyFunName}()" +
+                                    " = \"${module.name}$fileNameSuffix\"",
+                        )
 
-                    appendTestFun(module, settings)
-                })
+                        appendTestFun(module, settings)
+                    },
+                )
             }
 
             if (isJvm && settings.generateJavaFile) {
@@ -388,7 +392,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
                     |       return "${module.name}$fileNameSuffix";
                     |    }
                     |}
-                    """.trimMargin()
+                    """.trimMargin(),
                 )
             }
         }
@@ -396,7 +400,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
         // call all functions declared in this module and all of its dependencies recursively
         private fun StringBuilder.appendTestFun(
             module: ModulesTxt.Module,
-            settings: ModuleContentSettings
+            settings: ModuleContentSettings,
         ) {
             appendln()
             appendln("fun Test${module.serviceName}() {")
@@ -425,7 +429,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
 
         private fun ModulesTxt.Module.collectDependenciesRecursivelyTo(
             collection: MutableCollection<ModulesTxt.Module>,
-            exportedOnly: Boolean = false
+            exportedOnly: Boolean = false,
         ) {
             dependencies.forEach {
                 if (!exportedOnly || it.effectivelyExported) {

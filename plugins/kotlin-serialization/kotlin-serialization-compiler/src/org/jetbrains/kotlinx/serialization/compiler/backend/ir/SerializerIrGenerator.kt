@@ -65,7 +65,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         }
 
         compilerContext.symbolTable.declareAnonymousInitializer(
-            irClass.startOffset, irClass.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irClass.descriptor
+            irClass.startOffset, irClass.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irClass.descriptor,
         ).buildWithScope { initIrBody ->
             initIrBody.parent = irClass
             val ctor = irClass.declarations.filterIsInstance<IrConstructor>().find { it.isPrimary }
@@ -75,7 +75,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                     DeclarationIrBuilder(compilerContext, initIrBody.symbol, initIrBody.startOffset, initIrBody.endOffset).irBlockBody {
                         val localDesc = irTemporary(
                             instantiateNewDescriptor(serialDescImplClass, irGet(thisAsReceiverParameter)),
-                            nameHint = "serialDesc"
+                            nameHint = "serialDesc",
                         )
 
                         addElementsContentToDescriptor(serialDescImplClass, localDesc, addFuncS)
@@ -83,17 +83,17 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                         copySerialInfoAnnotationsToDescriptor(
                             serializableIrClass.annotations,
                             localDesc,
-                            serialDescImplClass.referenceMethod(CallingConventions.addClassAnnotation)
+                            serialDescImplClass.referenceMethod(CallingConventions.addClassAnnotation),
                         )
 
                         // save local descriptor to field
                         +irSetField(
                             generateReceiverExpressionForFieldAccess(
                                 thisAsReceiverParameter.symbol,
-                                generatedSerialDescPropertyDescriptor
+                                generatedSerialDescPropertyDescriptor,
                             ),
                             prop.backingField!!,
-                            irGet(localDesc)
+                            irGet(localDesc),
                         )
                     }
                 (ctor.body as? IrBlockBody)?.statements?.addAll(initIrBody.body.statements)
@@ -103,28 +103,28 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
 
     protected open fun IrBlockBodyBuilder.instantiateNewDescriptor(
         serialDescImplClass: ClassDescriptor,
-        correctThis: IrExpression
+        correctThis: IrExpression,
     ): IrExpression {
         val serialDescImplConstructor = serialDescImplClass
             .unsubstitutedPrimaryConstructor!!
         val serialClassDescImplCtor = compilerContext.symbolTable.referenceConstructor(serialDescImplConstructor)
         return irInvoke(
             null, serialClassDescImplCtor,
-            irString(serialName), if (isGeneratedSerializer) correctThis else irNull()
+            irString(serialName), if (isGeneratedSerializer) correctThis else irNull(),
         )
     }
 
     protected open fun IrBlockBodyBuilder.addElementsContentToDescriptor(
         serialDescImplClass: ClassDescriptor,
         localDescriptor: IrVariable,
-        addFunction: IrFunctionSymbol
+        addFunction: IrFunctionSymbol,
     ) {
         fun addFieldCall(prop: SerializableProperty) = irInvoke(
             irGet(localDescriptor),
             addFunction,
             irString(prop.name),
             irBoolean(prop.optional),
-            typeHint = compilerContext.irBuiltIns.unitType
+            typeHint = compilerContext.irBuiltIns.unitType,
         )
 
         for (classProp in serializableProperties) {
@@ -134,7 +134,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             copySerialInfoAnnotationsToDescriptor(
                 classProp.irField.correspondingPropertySymbol?.owner?.annotations.orEmpty(),
                 localDescriptor,
-                serialDescImplClass.referenceMethod(CallingConventions.addAnnotation)
+                serialDescImplClass.referenceMethod(CallingConventions.addAnnotation),
             )
         }
     }
@@ -142,7 +142,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
     protected fun IrBlockBodyBuilder.copySerialInfoAnnotationsToDescriptor(
         annotations: List<IrConstructorCall>,
         receiver: IrVariable,
-        method: IrFunctionSymbol
+        method: IrFunctionSymbol,
     ) {
         annotations.forEach { annotationCall ->
             if ((annotationCall.symbol.descriptor as? ClassConstructorDescriptor)?.constructedClass?.isSerialInfoAnnotation == true)
@@ -159,7 +159,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                 startOffset,
                 endOffset,
                 compilerContext.irBuiltIns.unitType,
-                primaryCtor.symbol
+                primaryCtor.symbol,
             ).apply {
                 irClass.typeParameters.forEachIndexed { index, irTypeParameter ->
                     putTypeArgument(index, irTypeParameter.defaultType)
@@ -170,10 +170,13 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             val thisAsReceiverParameter = irClass.thisReceiver!!
             ctor.valueParameters.forEachIndexed { index, param ->
                 val localSerial = compilerContext.symbolTable.referenceField(localSerializersFieldsDescriptors[index])
-                +irSetField(generateReceiverExpressionForFieldAccess(
-                    thisAsReceiverParameter.symbol,
-                    localSerializersFieldsDescriptors[index]
-                ), localSerial.owner, irGet(param))
+                +irSetField(
+                    generateReceiverExpressionForFieldAccess(
+                        thisAsReceiverParameter.symbol,
+                        localSerializersFieldsDescriptors[index],
+                    ),
+                    localSerial.owner, irGet(param),
+                )
             }
 
 
@@ -182,7 +185,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
     override fun generateChildSerializersGetter(function: FunctionDescriptor) = irClass.contributeFunction(function) { irFun ->
         val allSerializers = serializableProperties.map {
             requireNotNull(
-                serializerTower(this@SerializerIrGenerator, irFun.dispatchReceiverParameter!!, it)
+                serializerTower(this@SerializerIrGenerator, irFun.dispatchReceiverParameter!!, it),
             ) { "Property ${it.name} must have a serializer" }
         }
 
@@ -221,7 +224,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                 startOffset,
                 endOffset,
                 parameterDescriptor.type.toIrType(),
-                parameterDescriptor.varargElementType!!.toIrType()
+                parameterDescriptor.varargElementType!!.toIrType(),
             )
         }
         // can it be done in more concise way? e.g. additional builder function?
@@ -234,8 +237,9 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             return irGetField(
                 irGet(
                     type = ownerType,
-                    variable = objectToSerialize.symbol
-                ), irField
+                    variable = objectToSerialize.symbol,
+                ),
+                irField,
             )
         }
 
@@ -249,7 +253,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                 sti.serializer,
                 property.module,
                 property.type,
-                genericIndex = property.genericIndex
+                genericIndex = property.genericIndex,
             )
             val (writeFunc, args: List<IrExpression>) = if (innerSerial == null) {
                 val f =
@@ -264,7 +268,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                     irGet(localSerialDesc),
                     irInt(index),
                     innerSerial,
-                    property.irGet()
+                    property.irGet(),
                 )
             }
             val typeArgs  = if (writeFunc.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
@@ -345,7 +349,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             irTemporaryVar(
                 expr,
                 "local$i",
-                typeHint = type
+                typeHint = type,
             )
         }
 
@@ -355,7 +359,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             irGet(loadFunc.valueParameters[0]),
             beginFunc,
             irGet(localSerialDesc),
-            irEmptyVararg(beginFunc.descriptor.valueParameters[1])
+            irEmptyVararg(beginFunc.descriptor.valueParameters[1]),
         )
         val localInput = irTemporary(call, "input")
 
@@ -370,7 +374,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                         sti.serializer,
                         property.module,
                         property.type,
-                        genericIndex = property.genericIndex
+                        genericIndex = property.genericIndex,
                     )
                     // todo: update
                     val decodeFuncToCall =
@@ -387,7 +391,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                     // local$i = localInput.decode...(...)
                     +irSetVar(
                         localProps[index].symbol,
-                        irInvoke(localInput.get(), decodeFuncToCall, typeArgs, args, returnTypeHint = property.type.toIrType())
+                        irInvoke(localInput.get(), decodeFuncToCall, typeArgs, args, returnTypeHint = property.type.toIrType()),
                     )
                     // bitMask[i] |= 1 << x
                     val bitPos = 1 shl (index % 32)
@@ -425,9 +429,9 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                             irInvoke(
                                 null,
                                 excClassRef,
-                                indexVar.get()
-                            )
-                        )
+                                indexVar.get(),
+                            ),
+                        ),
                     )
                 }
             }
@@ -440,7 +444,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         +irInvoke(
             localInput.get(),
             endFunc,
-            irGet(localSerialDesc)
+            irGet(localSerialDesc),
         )
 
         // todo: set properties in external deserialization
@@ -460,7 +464,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         fun generate(
             irClass: IrClass,
             context: SerializationPluginContext,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
             if (serializableDesc.isSerializableEnum()) {

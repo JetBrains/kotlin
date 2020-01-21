@@ -53,14 +53,14 @@ object DataClassDescriptorResolver {
         property: PropertyDescriptor,
         parameter: ValueParameterDescriptor,
         classDescriptor: ClassDescriptor,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): SimpleFunctionDescriptor {
         val functionDescriptor = SimpleFunctionDescriptorImpl.create(
             classDescriptor,
             Annotations.EMPTY,
             createComponentName(parameterIndex),
             CallableMemberDescriptor.Kind.SYNTHESIZED,
-            parameter.source
+            parameter.source,
         )
 
         functionDescriptor.initialize(
@@ -70,7 +70,7 @@ object DataClassDescriptorResolver {
             emptyList<ValueParameterDescriptor>(),
             property.type,
             Modality.FINAL,
-            property.visibility
+            property.visibility,
         )
         functionDescriptor.isOperator = true
 
@@ -81,14 +81,14 @@ object DataClassDescriptorResolver {
     fun createCopyFunctionDescriptor(
         constructorParameters: Collection<ValueParameterDescriptor>,
         classDescriptor: ClassDescriptor,
-        trace: BindingTrace
+        trace: BindingTrace,
     ): SimpleFunctionDescriptor {
         val functionDescriptor = SimpleFunctionDescriptorImpl.create(
             classDescriptor,
             Annotations.EMPTY,
             COPY_METHOD_NAME,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
-            classDescriptor.source
+            classDescriptor.source,
         )
 
         val parameterDescriptors = arrayListOf<ValueParameterDescriptor>()
@@ -99,7 +99,7 @@ object DataClassDescriptorResolver {
             val declaresDefaultValue = propertyDescriptor != null
             val parameterDescriptor = ValueParameterDescriptorImpl(
                 functionDescriptor, null, parameter.index, parameter.annotations, parameter.name, parameter.type, declaresDefaultValue,
-                parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, parameter.source
+                parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, parameter.source,
             )
             parameterDescriptors.add(parameterDescriptor)
             if (declaresDefaultValue) {
@@ -114,7 +114,7 @@ object DataClassDescriptorResolver {
             parameterDescriptors,
             classDescriptor.defaultType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            Visibilities.PUBLIC,
         )
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor)

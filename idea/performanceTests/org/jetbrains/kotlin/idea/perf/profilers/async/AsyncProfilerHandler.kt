@@ -106,9 +106,9 @@ class AsyncProfilerCommandBuilder(private val snapshotsPath: String) {
                         "stop",
                         mergeParameters(
                             profilingOptions,
-                            listOf(*option.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-                        )
-                    )
+                            listOf(*option.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()),
+                        ),
+                    ),
                 )
             }
             return stopCommands

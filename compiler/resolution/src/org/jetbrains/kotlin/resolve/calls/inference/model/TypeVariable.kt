@@ -66,12 +66,12 @@ fun TypeConstructor.typeForTypeVariable(): SimpleType {
     require(this is TypeVariableTypeConstructor)
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
         Annotations.EMPTY, this, arguments = emptyList(),
-        nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope
+        nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope,
     )
 }
 
 class TypeVariableFromCallableDescriptor(
-    val originalTypeParameter: TypeParameterDescriptor
+    val originalTypeParameter: TypeParameterDescriptor,
 ) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = originalTypeParameter.hasOnlyInputTypesAnnotation()
 }
@@ -79,14 +79,14 @@ class TypeVariableFromCallableDescriptor(
 class TypeVariableForLambdaReturnType(
     val lambdaArgument: LambdaKotlinCallArgument,
     builtIns: KotlinBuiltIns,
-    name: String
+    name: String,
 ) : NewTypeVariable(builtIns, name) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = false
 }
 
 class TypeVariableForCallableReferenceReturnType(
     builtIns: KotlinBuiltIns,
-    name: String
+    name: String,
 ) : NewTypeVariable(builtIns, name) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = false
 }

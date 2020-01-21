@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirAbstractStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    lookupInFir: Boolean = true
+    lookupInFir: Boolean = true,
 ) : FirAbstractImportingScope(session, scopeSession, lookupInFir) {
 
     protected abstract val starImports: List<FirResolvedImport>
@@ -27,7 +27,7 @@ abstract class FirAbstractStarImportingScope(
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         if (starImports.isEmpty() || name in absentClassifierNames) {
             return ProcessorAction.NONE
@@ -56,7 +56,7 @@ abstract class FirAbstractStarImportingScope(
     override fun <T : FirCallableSymbol<*>> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         if (starImports.isEmpty()) {
             return ProcessorAction.NONE

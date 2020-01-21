@@ -39,7 +39,7 @@ abstract class AbstractFirTreeImplementationConfigurator {
         field: String,
         implementationPredicate: ((Implementation) -> Boolean)? = null,
         fieldPredicate: ((Field) -> Boolean)? = null,
-        init: ImplementationContext.(field: String) -> Unit
+        init: ImplementationContext.(field: String) -> Unit,
     ) {
         for (element in elementsWithImpl) {
             for (implementation in element.allImplementations) {

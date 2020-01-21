@@ -29,12 +29,12 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 
 abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
-            moduleContext: ModuleContext,
-            files: List<KtFile>,
-            moduleTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings,
-            separateModules: Boolean,
-            jvmTarget: JvmTarget
+        moduleContext: ModuleContext,
+        files: List<KtFile>,
+        moduleTrace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings,
+        separateModules: Boolean,
+        jvmTarget: JvmTarget,
     ): JsAnalysisResult {
         val analysisResult = super.analyzeModuleContents(moduleContext, files, moduleTrace, languageVersionSettings, separateModules, jvmTarget)
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics

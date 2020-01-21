@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.render
 
 class FirCallArgumentsProcessor(
     private val function: FirFunction<*>,
-    private val arguments: List<FirExpression>
+    private val arguments: List<FirExpression>,
 ) {
     class Result(val argumentMapping: Map<FirExpression, FirValueParameter>, val isSuccess: Boolean)
 
@@ -26,7 +26,7 @@ class FirCallArgumentsProcessor(
                 currentState = State.PositionalThenNamed(
                     function.valueParameters,
                     currentState.argumentMap,
-                    currentState.usedParameters
+                    currentState.usedParameters,
                 )
             }
             val status = currentState.processArgument(argument)
@@ -53,7 +53,7 @@ class FirCallArgumentsProcessor(
     private sealed class State(
         val valueParameters: List<FirValueParameter>,
         val argumentMap: MutableMap<FirExpression, FirValueParameter> = mutableMapOf(),
-        val usedParameters: MutableSet<FirValueParameter> = mutableSetOf()
+        val usedParameters: MutableSet<FirValueParameter> = mutableSetOf(),
     ) {
         abstract fun processArgument(argument: FirExpression): MappingStatus
 
@@ -83,7 +83,7 @@ class FirCallArgumentsProcessor(
         class PositionalThenNamed(
             valueParameters: List<FirValueParameter>,
             argumentMap: MutableMap<FirExpression, FirValueParameter>,
-            usedParameters: MutableSet<FirValueParameter>
+            usedParameters: MutableSet<FirValueParameter>,
         ) : State(valueParameters, argumentMap, usedParameters) {
             val nameToParameter = valueParameters.associateBy { it.name }
 

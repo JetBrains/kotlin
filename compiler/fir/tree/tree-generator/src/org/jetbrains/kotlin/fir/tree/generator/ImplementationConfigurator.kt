@@ -181,7 +181,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             parents += callWithArgumentList
             default(
                 "calleeReference",
-                "if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)"
+                "if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)",
             )
             default("isSuper") {
                 value = "!isThis"
@@ -307,13 +307,16 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(operatorCall) {
             parents += callWithArgumentList
-            default("typeRef", """
+            default(
+                "typeRef",
+                """
                 |if (operation in FirOperation.BOOLEANS) {
                 |        FirImplicitBooleanTypeRef(null)
                 |    } else {
                 |        FirImplicitTypeRefImpl(null)
                 |    }
-                """.trimMargin())
+                """.trimMargin(),
+            )
 
             useTypes(implicitTypeRefType, implicitBooleanTypeRefType)
         }
@@ -620,7 +623,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         configureFieldInAllImplementations(
             field = "typeRef",
             implementationPredicate = { it.type !in listOf("FirDelegatedTypeRefImpl", "FirTypeProjectionWithVarianceImpl") },
-            fieldPredicate = { it.defaultValue == null }
+            fieldPredicate = { it.defaultValue == null },
         ) {
             default(it, "FirImplicitTypeRefImpl(null)")
             useTypes(implicitTypeRefType)
@@ -628,13 +631,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         configureFieldInAllImplementations(
             field = "resolvePhase",
-            fieldPredicate = { it.defaultValue == null }
+            fieldPredicate = { it.defaultValue == null },
         ) {
             default(it, "FirResolvePhase.RAW_FIR")
         }
 
         configureFieldInAllImplementations(
-            field = "containerSource"
+            field = "containerSource",
         ) {
             default(it) {
                 value = "null"

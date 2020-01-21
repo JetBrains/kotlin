@@ -41,21 +41,21 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
 
     private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar(),
         ).apply {
             if (useJavac) {
                 put(JVMConfigurationKeys.USE_JAVAC, true)
             }
             languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.jsr305 to Jsr305State.STRICT)
+                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.jsr305 to Jsr305State.STRICT),
             )
             configurator(this)
         }
         val environment =
                 KotlinCoreEnvironment.createForTests(
-                        myTestRootDisposable,
-                        configuration,
-                        EnvironmentConfigFiles.JVM_CONFIG_FILES
+                    myTestRootDisposable,
+                    configuration,
+                    EnvironmentConfigFiles.JVM_CONFIG_FILES,
                 ).apply {
                     if (useJavac) {
                         registerJavac()

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 abstract class IrTypeBase(
     val kotlinType: KotlinType?,
     override val annotations: List<IrConstructorCall>,
-    override val variance: Variance
+    override val variance: Variance,
 ) : IrType, IrTypeProjection {
     override val type: IrType get() = this
 }
@@ -22,7 +22,7 @@ abstract class IrTypeBase(
 class IrErrorTypeImpl(
     kotlinType: KotlinType?,
     annotations: List<IrConstructorCall>,
-    variance: Variance
+    variance: Variance,
 ) : IrTypeBase(kotlinType, annotations, variance), IrErrorType {
     override fun equals(other: Any?): Boolean = other is IrErrorTypeImpl
 
@@ -32,7 +32,7 @@ class IrErrorTypeImpl(
 class IrDynamicTypeImpl(
     kotlinType: KotlinType?,
     annotations: List<IrConstructorCall>,
-    variance: Variance
+    variance: Variance,
 ) : IrTypeBase(kotlinType, annotations, variance), IrDynamicType, IrTypeProjection {
     override fun equals(other: Any?): Boolean = other is IrDynamicTypeImpl
 

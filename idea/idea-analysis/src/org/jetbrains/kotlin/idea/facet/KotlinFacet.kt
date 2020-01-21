@@ -12,7 +12,7 @@ import com.intellij.openapi.module.Module
 class KotlinFacet(
     module: Module,
     name: String,
-    configuration: KotlinFacetConfiguration
+    configuration: KotlinFacetConfiguration,
 ) : Facet<KotlinFacetConfiguration>(KotlinFacetType.INSTANCE, module, name, configuration, null) {
     companion object {
         fun get(module: Module): KotlinFacet? {

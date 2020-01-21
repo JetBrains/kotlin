@@ -63,12 +63,12 @@ class ResolveDependenciesTest : TestCase() {
         chechEvaluateInRepl(
             configurationWithDependenciesFromClassloader, null,
             sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText),
-            sequenceOf(42, 42)
+            sequenceOf(42, 42),
         )
         chechEvaluateInRepl(
             configurationWithDependenciesFromClassloader, null,
             funAndValImportScriptText.split('\n').asSequence(),
-            sequenceOf(null, null, 42)
+            sequenceOf(null, null, 42),
         )
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
@@ -98,7 +98,7 @@ class ResolveDependenciesTest : TestCase() {
         val classpath = listOf(
             File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
                 assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
-            }
+            },
         )
         val compilationConfiguration = configurationWithDependenciesFromClassloader.with {
             updateClasspath(classpath)
@@ -110,7 +110,7 @@ class ResolveDependenciesTest : TestCase() {
         script: SourceCode,
         compilationConfiguration: ScriptCompilationConfiguration,
         evaluationConfiguration: ScriptEvaluationConfiguration?,
-        expectedResult: T
+        expectedResult: T,
     ) {
         val res = BasicJvmScriptingHost().eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
         when (res) {

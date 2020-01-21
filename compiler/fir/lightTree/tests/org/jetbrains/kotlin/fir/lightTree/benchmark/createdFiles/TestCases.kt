@@ -34,190 +34,274 @@ class TestCases {
     fun `1Cin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createClass(1)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createClass(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Cin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createClass(10)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createClass(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Cin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createClass(100)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createClass(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1000Cin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createClass(1000)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createClass(1000)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10_000Cin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createClass(10_000)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createClass(10_000)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100_000Cin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createClass(100_000)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createClass(100_000)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Cin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createClass(1)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createClass(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Cin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createClass(10)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createClass(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Cin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createClass(100)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createClass(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1000Cin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createClass(1000)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createClass(1000)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10_000Cin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createClass(10_000)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createClass(10_000)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Cin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createClass(1)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createClass(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Cin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createClass(10)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createClass(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Cin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createClass(100)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createClass(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1000Cin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createClass(1000)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createClass(1000)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Cin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createClass(1)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createClass(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Cin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createClass(10)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createClass(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Cin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createClass(100)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createClass(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Cin10_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10_000, {
-                    createClass(1)
-                })
-            }).getText()
+                createClass(
+                    10_000,
+                    {
+                        createClass(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Cin10_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10_000, {
-                    createClass(10)
-                })
-            }).getText()
+                createClass(
+                    10_000,
+                    {
+                        createClass(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Cin100_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100_000, {
-                    createClass(1)
-                })
-            }).getText()
+                createClass(
+                    100_000,
+                    {
+                        createClass(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     /* FUNCTIONS */
@@ -248,136 +332,196 @@ class TestCases {
     fun `1Fin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createFun(1)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createFun(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Fin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createFun(1)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createFun(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Fin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createFun(1)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createFun(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Fin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createFun(1)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createFun(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Fin10_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10_000, {
-                    createFun(1)
-                })
-            }).getText()
+                createClass(
+                    10_000,
+                    {
+                        createFun(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Fin100_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100_000, {
-                    createFun(1)
-                })
-            }).getText()
+                createClass(
+                    100_000,
+                    {
+                        createFun(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Fin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createFun(10)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createFun(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Fin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createFun(10)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createFun(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Fin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createFun(10)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createFun(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Fin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createFun(10)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createFun(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Fin10_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10_000, {
-                    createFun(10)
-                })
-            }).getText()
+                createClass(
+                    10_000,
+                    {
+                        createFun(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Fin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createFun(100)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createFun(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Fin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createFun(100)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createFun(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Fin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createFun(100)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createFun(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Fin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createFun(100)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createFun(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     /* PROPERTIES */
@@ -408,135 +552,195 @@ class TestCases {
     fun `1Vin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createProperty(1)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createProperty(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Vin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createProperty(1)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createProperty(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Vin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createProperty(1)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createProperty(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Vin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createProperty(1)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createProperty(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Vin10_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10_000, {
-                    createProperty(1)
-                })
-            }).getText()
+                createClass(
+                    10_000,
+                    {
+                        createProperty(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `1Vin100_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100_000, {
-                    createProperty(1)
-                })
-            }).getText()
+                createClass(
+                    100_000,
+                    {
+                        createProperty(1)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Vin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createProperty(10)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createProperty(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Vin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createProperty(10)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createProperty(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Vin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createProperty(10)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createProperty(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Vin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createProperty(10)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createProperty(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `10Vin10_000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10_000, {
-                    createProperty(10)
-                })
-            }).getText()
+                createClass(
+                    10_000,
+                    {
+                        createProperty(10)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Vin1C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1, {
-                    createProperty(100)
-                })
-            }).getText()
+                createClass(
+                    1,
+                    {
+                        createProperty(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Vin10C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(10, {
-                    createProperty(100)
-                })
-            }).getText()
+                createClass(
+                    10,
+                    {
+                        createProperty(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Vin100C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(100, {
-                    createProperty(100)
-                })
-            }).getText()
+                createClass(
+                    100,
+                    {
+                        createProperty(100)
+                    },
+                )
+            },
+        ).getText()
     }
 
     fun `100Vin1000C`(): String {
         return TestCasesGenerator().generateData(
             {
-                createClass(1000, {
-                    createProperty(100)
-                })
-            }).getText()
+                createClass(
+                    1000,
+                    {
+                        createProperty(100)
+                    },
+                )
+            },
+        ).getText()
     }
 }

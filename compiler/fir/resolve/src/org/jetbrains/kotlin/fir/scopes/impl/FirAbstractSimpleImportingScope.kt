@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractSimpleImportingScope(
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : FirAbstractImportingScope(session, scopeSession, lookupInFir = true) {
 
     protected abstract val simpleImports: Map<Name, List<FirResolvedImportImpl>>
 
     override fun processClassifiersByName(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         val imports = simpleImports[name] ?: return ProcessorAction.NONE
         if (imports.isEmpty()) return ProcessorAction.NONE
@@ -46,7 +46,7 @@ abstract class FirAbstractSimpleImportingScope(
     override fun <T : FirCallableSymbol<*>> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction,
     ): ProcessorAction {
         val imports = simpleImports[name] ?: return ProcessorAction.NONE
         if (imports.isEmpty()) return ProcessorAction.NONE

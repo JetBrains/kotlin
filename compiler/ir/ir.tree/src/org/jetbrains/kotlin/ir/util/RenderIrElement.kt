@@ -120,7 +120,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                     append(
                         arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
                             it.renderTypeArgument()
-                        }
+                        },
                     )
                 }
                 if (hasQuestionMark) {
@@ -143,7 +143,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                 append(
                     arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
                         it.renderTypeArgument()
-                    }
+                    },
                 )
             }
             if (hasQuestionMark) {
@@ -384,7 +384,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "suspend".takeIf { isSuspend },
             "expect".takeIf { isExpect },
             "fake_override".takeIf { isFakeOverride },
-            "operator".takeIf { isOperator }
+            "operator".takeIf { isOperator },
         )
 
     private fun IrFunction.renderTypeParameters(): String =
@@ -412,7 +412,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "inline".takeIf { isInline },
             "external".takeIf { isExternal },
             "primary".takeIf { isPrimary },
-            "expect".takeIf { isExpect }
+            "expect".takeIf { isExpect },
         )
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
@@ -430,7 +430,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "delegated".takeIf { isDelegated },
             "expect".takeIf { isExpect },
             "fake_override".takeIf { isFakeOverride },
-            if (isVar) "var" else "val"
+            if (isVar) "var" else "val",
         )
 
     override fun visitField(declaration: IrField, data: Nothing?): String =
@@ -444,7 +444,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "final".takeIf { isFinal },
             "external".takeIf { isExternal },
             "static".takeIf { isStatic },
-            "fake_override".takeIf { isFakeOverride }
+            "fake_override".takeIf { isFakeOverride },
         )
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
@@ -462,7 +462,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "data".takeIf { isData },
             "external".takeIf { isExternal },
             "inline".takeIf { isInline },
-            "expect".takeIf { isExpect }
+            "expect".takeIf { isExpect },
         )
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
@@ -475,7 +475,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         renderFlagsList(
             "const".takeIf { isConst },
             "lateinit".takeIf { isLateinit },
-            if (isVar) "var" else "val"
+            if (isVar) "var" else "val",
         )
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
@@ -508,7 +508,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         renderFlagsList(
             "vararg".takeIf { varargElementType != null },
             "crossinline".takeIf { isCrossinline },
-            "noinline".takeIf { isNoinline }
+            "noinline".takeIf { isNoinline },
         )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
@@ -526,7 +526,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
     private fun IrTypeAlias.renderTypeAliasFlags(): String =
         renderFlagsList(
-            "actual".takeIf { isActual }
+            "actual".takeIf { isActual },
         )
 
     private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
@@ -779,7 +779,7 @@ internal inline fun <T> StringBuilder.appendListWith(
     prefix: String,
     postfix: String,
     separator: String,
-    renderItem: StringBuilder.(T) -> Unit
+    renderItem: StringBuilder.(T) -> Unit,
 ) {
     append(prefix)
     var isFirst = true

@@ -14,7 +14,7 @@ fun createVariableAndObjectConsumer(
     name: Name,
     callInfo: CallInfo,
     bodyResolveComponents: BodyResolveComponents,
-    resultCollector: CandidateCollector
+    resultCollector: CandidateCollector,
 ): TowerDataConsumer {
     return PrioritizedTowerDataConsumer(
         resultCollector,
@@ -24,7 +24,7 @@ fun createVariableAndObjectConsumer(
             TowerScopeLevel.Token.Properties,
             callInfo,
             bodyResolveComponents,
-            resultCollector
+            resultCollector,
         ),
         createSimpleConsumer(
             session,
@@ -32,8 +32,8 @@ fun createVariableAndObjectConsumer(
             TowerScopeLevel.Token.Objects,
             callInfo,
             bodyResolveComponents,
-            resultCollector
-        )
+            resultCollector,
+        ),
     )
 }
 
@@ -42,7 +42,7 @@ fun createSimpleFunctionConsumer(
     name: Name,
     callInfo: CallInfo,
     bodyResolveComponents: BodyResolveComponents,
-    resultCollector: CandidateCollector
+    resultCollector: CandidateCollector,
 ): TowerDataConsumer {
     return createSimpleConsumer(
         session,
@@ -50,7 +50,7 @@ fun createSimpleFunctionConsumer(
         TowerScopeLevel.Token.Functions,
         callInfo,
         bodyResolveComponents,
-        resultCollector
+        resultCollector,
     )
 }
 
@@ -60,7 +60,7 @@ fun createFunctionConsumer(
     callInfo: CallInfo,
     bodyResolveComponents: BodyResolveComponents,
     resultCollector: CandidateCollector,
-    towerResolver: FirTowerResolver
+    towerResolver: FirTowerResolver,
 ): TowerDataConsumer {
     val varCallInfo = callInfo.replaceWithVariableAccess()
     return PrioritizedTowerDataConsumer(
@@ -71,7 +71,7 @@ fun createFunctionConsumer(
             TowerScopeLevel.Token.Functions,
             callInfo,
             bodyResolveComponents,
-            resultCollector
+            resultCollector,
         ),
         AccumulatingTowerDataConsumer(resultCollector).apply {
             initialConsumer = createSimpleConsumer(
@@ -85,10 +85,10 @@ fun createFunctionConsumer(
                     invokeCallInfo = callInfo,
                     components = bodyResolveComponents,
                     invokeConsumer = this,
-                    resolutionStageRunner = resultCollector.resolutionStageRunner
-                )
+                    resolutionStageRunner = resultCollector.resolutionStageRunner,
+                ),
             )
-        }
+        },
     )
 }
 
@@ -98,7 +98,7 @@ fun createSimpleConsumer(
     token: TowerScopeLevel.Token<*>,
     callInfo: CallInfo,
     bodyResolveComponents: BodyResolveComponents,
-    resultCollector: CandidateCollector
+    resultCollector: CandidateCollector,
 ): TowerDataConsumer {
     val factory = CandidateFactory(bodyResolveComponents, callInfo)
     val explicitReceiver = callInfo.explicitReceiver
@@ -114,12 +114,12 @@ fun createCallableReferencesConsumer(
     name: Name,
     callInfo: CallInfo,
     bodyResolveComponents: BodyResolveComponents,
-    resultCollector: CandidateCollector
+    resultCollector: CandidateCollector,
 ): TowerDataConsumer {
     // TODO: Use SamePriorityConsumer
     return PrioritizedTowerDataConsumer(
         resultCollector,
         createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, callInfo, bodyResolveComponents, resultCollector),
-        createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, callInfo, bodyResolveComponents, resultCollector)
+        createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, callInfo, bodyResolveComponents, resultCollector),
     )
 }

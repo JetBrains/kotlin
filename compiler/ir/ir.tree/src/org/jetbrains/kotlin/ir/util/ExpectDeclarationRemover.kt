@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 class ExpectDeclarationRemover(
     val symbolTable: ReferenceSymbolTable,
     private val doRemove: Boolean,
-    private val keepOptionalAnnotations: Boolean
+    private val keepOptionalAnnotations: Boolean,
 ) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -50,45 +50,47 @@ class ExpectDeclarationRemover(
     }
 
     private fun copyDefaultArgumentsFromExpectToActual(declaration: IrDeclaration) {
-        declaration.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitValueParameter(declaration: IrValueParameter) {
-                super.visitValueParameter(declaration)
-
-                val defaultValue = declaration.defaultValue ?: return
-                val function = declaration.parent as IrFunction
-
-                val index = declaration.index
-                assert(function.valueParameters[index] == declaration)
-
-                if (function is IrConstructor &&
-                    ExpectedActualDeclarationChecker.isOptionalAnnotationClass(function.descriptor.constructedClass)
-                ) {
-                    return
+        declaration.acceptVoid(
+            object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
                 }
 
-                // If the containing declaration is an `expect class` that matches an `actual typealias`,
-                // the `actual fun` or `actual constructor` for this may be in a different module.
-                // Nothing we can do with those.
-                // TODO they may not actually have the defaults though -- may be a frontend bug.
-                val actualFunction = function.findActualForExpected() ?: return
-                val actualParameter = actualFunction.valueParameters[index]
+                override fun visitValueParameter(declaration: IrValueParameter) {
+                    super.visitValueParameter(declaration)
 
-                // Keep actual default value if present. They are generally not allowed but can be suppressed with
-                // @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-                if (actualParameter.defaultValue != null)
-                    return
+                    val defaultValue = declaration.defaultValue ?: return
+                    val function = declaration.parent as IrFunction
 
-                actualParameter.defaultValue = defaultValue.also {
-                    it.expression = it.expression.remapExpectValueSymbols()
-                    // Default value might have some declarations inside. Patching parents.
-                    it.expression.patchDeclarationParents(actualParameter.parent)
+                    val index = declaration.index
+                    assert(function.valueParameters[index] == declaration)
+
+                    if (function is IrConstructor &&
+                        ExpectedActualDeclarationChecker.isOptionalAnnotationClass(function.descriptor.constructedClass)
+                    ) {
+                        return
+                    }
+
+                    // If the containing declaration is an `expect class` that matches an `actual typealias`,
+                    // the `actual fun` or `actual constructor` for this may be in a different module.
+                    // Nothing we can do with those.
+                    // TODO they may not actually have the defaults though -- may be a frontend bug.
+                    val actualFunction = function.findActualForExpected() ?: return
+                    val actualParameter = actualFunction.valueParameters[index]
+
+                    // Keep actual default value if present. They are generally not allowed but can be suppressed with
+                    // @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                    if (actualParameter.defaultValue != null)
+                        return
+
+                    actualParameter.defaultValue = defaultValue.also {
+                        it.expression = it.expression.remapExpectValueSymbols()
+                        // Default value might have some declarations inside. Patching parents.
+                        it.expression.patchDeclarationParents(actualParameter.parent)
+                    }
                 }
-            }
-        })
+            },
+        )
     }
 
     private fun IrFunction.findActualForExpected(): IrFunction? =
@@ -106,22 +108,25 @@ class ExpectDeclarationRemover(
     } as T?
 
     private fun IrExpression.remapExpectValueSymbols(): IrExpression {
-        return this.transform(object : IrElementTransformerVoid() {
+        return this.transform(
+            object : IrElementTransformerVoid() {
 
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid()
-                val newValue = remapExpectValue(expression.symbol)
-                    ?: return expression
+                override fun visitGetValue(expression: IrGetValue): IrExpression {
+                    expression.transformChildrenVoid()
+                    val newValue = remapExpectValue(expression.symbol)
+                        ?: return expression
 
-                return IrGetValueImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    newValue.type,
-                    newValue.symbol,
-                    expression.origin
-                )
-            }
-        }, data = null)
+                    return IrGetValueImpl(
+                        expression.startOffset,
+                        expression.endOffset,
+                        newValue.type,
+                        newValue.symbol,
+                        expression.origin,
+                    )
+                }
+            },
+            data = null,
+        )
     }
 
     private fun remapExpectValue(symbol: IrValueSymbol): IrValueParameter? {

@@ -423,7 +423,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     private fun Module.addDependency(
         other: Module,
         dependencyScope: DependencyScope = DependencyScope.COMPILE,
-        exported: Boolean = false
+        exported: Boolean = false,
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
     private val VirtualFile.moduleInfo: IdeaModuleInfo
@@ -470,7 +470,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     private fun stdlibCommon(): Library = projectLibrary(
         "kotlin-stdlib-common",
         ForTestCompileRuntime.stdlibCommonForTests().jarRoot,
-        kind = CommonLibraryKind
+        kind = CommonLibraryKind,
     )
 
     private fun stdlibJvm(): Library = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
@@ -478,7 +478,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     private fun stdlibJs(): Library = projectLibrary(
         "kotlin-stdlib-js",
         ForTestCompileRuntime.runtimeJarForTests().jarRoot,
-        kind = JSLibraryKind
+        kind = JSLibraryKind,
     )
 
     override fun setUp() {

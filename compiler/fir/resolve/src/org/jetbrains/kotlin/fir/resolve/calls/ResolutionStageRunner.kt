@@ -19,15 +19,17 @@ class ResolutionStageRunner(val components: InferenceComponents) {
             for (stage in candidate.callInfo.callKind.resolutionSequence) {
                 stage.check(candidate, sink, candidate.callInfo)
             }
-        }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
-            override val context: CoroutineContext
-                get() = EmptyCoroutineContext
+        }.createCoroutineUnintercepted(
+            completion = object : Continuation<Unit> {
+                override val context: CoroutineContext
+                    get() = EmptyCoroutineContext
 
-            override fun resumeWith(result: Result<Unit>) {
-                result.exceptionOrNull()?.let { throw it }
-                finished = true
-            }
-        })
+                override fun resumeWith(result: Result<Unit>) {
+                    result.exceptionOrNull()?.let { throw it }
+                    finished = true
+                }
+            },
+        )
 
         while (!finished) {
             sink.continuation!!.resume(Unit)

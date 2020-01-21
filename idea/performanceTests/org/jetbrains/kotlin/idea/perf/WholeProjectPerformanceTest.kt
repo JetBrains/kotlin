@@ -79,7 +79,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
                 .plus(XmlSchemaProvider.EP_NAME.extensions)
                 .plus(XmlFileNSInfoProvider.EP_NAME.extensions)
                 .plus(ExternalAnnotatorsFilter.EXTENSION_POINT_NAME.extensions)
-                .plus(IndexPatternBuilder.EP_NAME.extensions).isNotEmpty()
+                .plus(IndexPatternBuilder.EP_NAME.extensions).isNotEmpty(),
         )
     }
 

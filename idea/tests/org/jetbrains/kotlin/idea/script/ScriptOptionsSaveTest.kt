@@ -27,7 +27,7 @@ class ScriptOptionsSaveTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(
             "isAutoReloadEnabled should be set to true",
             "<KotlinScriptingSettings><option name=\"isAutoReloadEnabled\" value=\"true\" /></KotlinScriptingSettings>",
-            XMLOutputter().outputString(settings.state)
+            XMLOutputter().outputString(settings.state),
         )
 
         settings.isAutoReloadEnabled = initialAutoReload
@@ -46,7 +46,7 @@ class ScriptOptionsSaveTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(
             "scriptDefinition should be off",
             "<KotlinScriptingSettings><scriptDefinition><order>0</order><isEnabled>false</isEnabled></scriptDefinition></KotlinScriptingSettings>",
-            XMLOutputter().outputString(settings.state).replace("scriptDefinition .*\">".toRegex(), "scriptDefinition>")
+            XMLOutputter().outputString(settings.state).replace("scriptDefinition .*\">".toRegex(), "scriptDefinition>"),
         )
 
         settings.setEnabled(scriptDefinition, initialIsEnabled)

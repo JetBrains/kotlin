@@ -35,7 +35,7 @@ internal fun VariableDescriptor.variableKind(
     usageModule: ModuleDescriptor?,
     bindingContext: BindingContext,
     accessElement: KtElement,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): DataFlowValue.Kind {
     if (this is PropertyDescriptor) {
         return propertyKind(usageModule)
@@ -90,7 +90,7 @@ internal fun VariableDescriptor.variableKind(
 fun hasNoWritersInClosures(
     variableContainingDeclaration: DeclarationDescriptor,
     writers: Set<AssignedVariablesSearcher.Writer>,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ): Boolean {
     return writers.none { (_, writerDeclaration) ->
         val writerDescriptor = writerDeclaration?.let {
@@ -102,7 +102,7 @@ fun hasNoWritersInClosures(
 
 private fun isAccessedInsideClosureAfterAllWriters(
     writers: Set<AssignedVariablesSearcher.Writer>,
-    accessElement: KtElement
+    accessElement: KtElement,
 ): Boolean {
     val parent = ControlFlowInformationProvider.getElementParentDeclaration(accessElement) ?: return false
     return writers.none { (assignment) -> !assignment.before(parent) }
@@ -112,13 +112,13 @@ private fun isAccessedBeforeAllClosureWriters(
     variableContainingDeclaration: DeclarationDescriptor,
     writers: Set<AssignedVariablesSearcher.Writer>,
     bindingContext: BindingContext,
-    accessElement: KtElement
+    accessElement: KtElement,
 ): Boolean {
     // All writers should be before access element, with the exception:
     // writer which is the same with declaration site does not count
     writers.mapNotNull { it.declaration }.forEach { writerDeclaration ->
         val writerDescriptor = ControlFlowInformationProvider.getDeclarationDescriptorIncludingConstructors(
-            bindingContext, writerDeclaration
+            bindingContext, writerDeclaration,
         )
         // Access is after some writerDeclaration
         if (variableContainingDeclaration != writerDescriptor && !accessElement.before(writerDeclaration)) {
@@ -145,7 +145,7 @@ private fun PropertyDescriptor.hasDefaultGetter(): Boolean {
 private fun isAccessedInsideClosure(
     variableContainingDeclaration: DeclarationDescriptor,
     bindingContext: BindingContext,
-    accessElement: KtElement
+    accessElement: KtElement,
 ): Boolean {
     val parent = ControlFlowInformationProvider.getElementParentDeclaration(accessElement)
     return if (parent != null) // Access is at the same declaration: not in closure, lower: in closure

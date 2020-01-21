@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class IntegerLiteralTypeApproximationTransformer(
     private val symbolProvider: FirSymbolProvider,
-    private val inferenceContext: ConeInferenceContext
+    private val inferenceContext: ConeInferenceContext,
 ) : FirTransformer<ConeKotlinType?>() {
     override fun <E : FirElement> transformElement(element: E, data: ConeKotlinType?): CompositeTransformResult<E> {
         return element.compose()
@@ -40,7 +40,7 @@ class IntegerLiteralTypeApproximationTransformer(
 
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
-        data: ConeKotlinType?
+        data: ConeKotlinType?,
     ): CompositeTransformResult<FirStatement> {
         val type = constExpression.resultType.coneTypeSafe<ConeIntegerLiteralType>() ?: return constExpression.compose()
         val approximatedType = type.getApproximatedType(data)
@@ -101,7 +101,7 @@ class IntegerLiteralTypeApproximationTransformer(
     // TODO: call outside
     override fun transformTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,
-        data: ConeKotlinType?
+        data: ConeKotlinType?,
     ): CompositeTransformResult<FirStatement> {
         return typeOperatorCall.transformArguments(this, null).compose()
     }

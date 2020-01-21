@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.utils.sure
 class IDELightClassConstructionContext(
     bindingContext: BindingContext, module: ModuleDescriptor,
     languageVersionSettings: LanguageVersionSettings,
-    val mode: Mode
+    val mode: Mode,
 ) : LightClassConstructionContext(bindingContext, module, languageVersionSettings) {
     enum class Mode {
         LIGHT,
@@ -104,7 +104,7 @@ internal object IDELightClassContexts {
             bindingContext,
             resolutionFacade.moduleDescriptor,
             classOrObject.languageVersionSettings,
-            EXACT
+            EXACT,
         )
     }
 
@@ -120,7 +120,7 @@ internal object IDELightClassContexts {
                 bindingContext,
                 resolutionFacade.moduleDescriptor,
                 classOrObject.languageVersionSettings,
-                EXACT
+                EXACT,
             )
         }
 
@@ -130,7 +130,7 @@ internal object IDELightClassContexts {
             bindingContext,
             resolutionFacade.moduleDescriptor,
             classOrObject.languageVersionSettings,
-            EXACT
+            EXACT,
         )
     }
 
@@ -143,7 +143,7 @@ internal object IDELightClassContexts {
             resolveSession.bindingContext,
             resolveSession.moduleDescriptor,
             files.first().languageVersionSettings,
-            EXACT
+            EXACT,
         )
     }
 
@@ -158,7 +158,7 @@ internal object IDELightClassContexts {
                 bindingContext,
                 resolutionFacade.moduleDescriptor,
                 script.languageVersionSettings,
-                EXACT
+                EXACT,
             )
         }
 
@@ -173,7 +173,7 @@ internal object IDELightClassContexts {
         val resolveSession = setupAdHocResolve(
             classOrObject.project,
             classOrObject.getResolutionFacade().moduleDescriptor,
-            listOf(classOrObject.containingKtFile)
+            listOf(classOrObject.containingKtFile),
         )
 
         val descriptor = resolveSession.resolveToDescriptor(classOrObject) as? ClassDescriptor ?: return null
@@ -185,7 +185,7 @@ internal object IDELightClassContexts {
             resolveSession.bindingContext,
             resolveSession.moduleDescriptor,
             classOrObject.languageVersionSettings,
-            LIGHT
+            LIGHT,
         )
     }
 
@@ -199,7 +199,7 @@ internal object IDELightClassContexts {
             resolveSession.bindingContext,
             resolveSession.moduleDescriptor,
             files.first().languageVersionSettings,
-            LIGHT
+            LIGHT,
         )
     }
 
@@ -288,7 +288,7 @@ internal object IDELightClassContexts {
         var result = false
         StubIndex.getInstance().processElements(
             KotlinOverridableInternalMembersShortNameIndex.Instance.key, name, project,
-            EverythingGlobalScope(project), KtCallableDeclaration::class.java
+            EverythingGlobalScope(project), KtCallableDeclaration::class.java,
         ) {
             result = true
             false // stop processing at first matching result
@@ -353,7 +353,7 @@ internal object IDELightClassContexts {
             configureModule(
                 ModuleContext(moduleDescriptor, project, "ad hoc resolve"), JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget),
                 JvmPlatformAnalyzerServices, trace,
-                IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+                IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project),
             )
 
             useInstance(GlobalSearchScope.EMPTY_SCOPE)
@@ -365,13 +365,15 @@ internal object IDELightClassContexts {
             useInstance(CodegenAffectingAnnotations(realWorldModule))
             useImpl<AdHocAnnotationResolver>()
 
-            useInstance(object : WrappedTypeFactory(sm) {
-                override fun createDeferredType(trace: BindingTrace, computation: () -> KotlinType) = errorType()
+            useInstance(
+                object : WrappedTypeFactory(sm) {
+                    override fun createDeferredType(trace: BindingTrace, computation: () -> KotlinType) = errorType()
 
-                override fun createRecursionIntolerantDeferredType(trace: BindingTrace, computation: () -> KotlinType) = errorType()
+                    override fun createRecursionIntolerantDeferredType(trace: BindingTrace, computation: () -> KotlinType) = errorType()
 
-                private fun errorType() = ErrorUtils.createErrorType("Error type in ad hoc resolve for lighter classes")
-            })
+                    private fun errorType() = ErrorUtils.createErrorType("Error type in ad hoc resolve for lighter classes")
+                },
+            )
 
             IdeaEnvironment.configure(this)
 
@@ -394,7 +396,7 @@ internal object IDELightClassContexts {
         // see JvmPlatformAnnotations.kt, JvmFlagAnnotations.kt, also PsiModifier.MODIFIERS
         private val annotationsThatAffectCodegen = listOf(
             "JvmField", "JvmOverloads", "JvmName", "JvmStatic",
-            "Synchronized", "Transient", "Volatile", "Strictfp"
+            "Synchronized", "Transient", "Volatile", "Strictfp",
         ).map { FqName("kotlin.jvm").child(Name.identifier(it)) } +
                 FqName("kotlin.PublishedApi") +
                 FqName("kotlin.Deprecated") +
@@ -409,7 +411,7 @@ internal object IDELightClassContexts {
         private val callResolver: CallResolver,
         private val languageVersionSettings: LanguageVersionSettings,
         private val dataFlowValueFactory: DataFlowValueFactory, constantExpressionEvaluator: ConstantExpressionEvaluator,
-        storageManager: StorageManager
+        storageManager: StorageManager,
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
 
         override fun resolveAnnotationType(scope: LexicalScope, entryElement: KtAnnotationEntry, trace: BindingTrace): KotlinType {
@@ -425,7 +427,7 @@ internal object IDELightClassContexts {
         override fun resolveAnnotationCall(
             annotationEntry: KtAnnotationEntry,
             scope: LexicalScope,
-            trace: BindingTrace
+            trace: BindingTrace,
         ): OverloadResolutionResults<FunctionDescriptor> {
             val annotationConstructor = annotationClassByEntry(annotationEntry)?.constructors?.singleOrNull()
                 ?: return super.resolveAnnotationCall(annotationEntry, scope, trace)
@@ -436,10 +438,10 @@ internal object IDELightClassContexts {
                     trace, scope, CallMaker.makeCall(null, null, annotationEntry), TypeUtils.NO_EXPECTED_TYPE,
                     DataFlowInfoFactory.EMPTY, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                     true, languageVersionSettings,
-                    dataFlowValueFactory
+                    dataFlowValueFactory,
                 ),
                 annotationEntry.calleeExpression!!.constructorReferenceExpression!!,
-                annotationConstructor.returnType
+                annotationConstructor.returnType,
             ) as OverloadResolutionResults<FunctionDescriptor>
         }
     }

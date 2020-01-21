@@ -24,12 +24,12 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     companion object {
         private val migrationDiagnosticsForFunction = MigrationDiagnostics(
             ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION,
-            ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR
+            ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR,
         )
 
         private val migrationDiagnosticsForAnnotation = MigrationDiagnostics(
             Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION,
-            Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR
+            Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR,
         )
     }
 
@@ -44,7 +44,7 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     private fun checkAssignmentOfSingleElementToVararg(
         argument: ValueArgument,
         parameterDescriptor: ValueParameterDescriptor,
-        context: ResolutionContext<*>
+        context: ResolutionContext<*>,
     ) {
         if (!context.languageVersionSettings.supportsFeature(AssigningArraysToVarargsInNamedFormInAnnotations)) return
 
@@ -63,7 +63,7 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     private fun checkAssignmentOfSingleElementInAnnotation(
         argument: ValueArgument,
         argumentExpression: KtExpression,
-        context: ResolutionContext<*>
+        context: ResolutionContext<*>,
     ) {
         if (isArrayOrArrayLiteral(argument, context.trace)) {
             if (argument.hasSpread()) {
@@ -81,7 +81,7 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
         argument: ValueArgument,
         argumentExpression: KtExpression,
         context: ResolutionContext<*>,
-        parameterDescriptor: ValueParameterDescriptor
+        parameterDescriptor: ValueParameterDescriptor,
     ) {
         if (
             context.languageVersionSettings.supportsFeature(AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)
@@ -104,7 +104,7 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     private inline fun <T : DiagnosticFactory<*>> reportMigrationDiagnostic(
         migrationDiagnostics: MigrationDiagnostics<T>,
         context: ResolutionContext<*>,
-        report: (T) -> Unit
+        report: (T) -> Unit,
     ) {
         val (warning, error) = migrationDiagnostics
         if (context.languageVersionSettings.supportsFeature(ProhibitAssigningSingleElementsToVarargsInNamedForm)) {

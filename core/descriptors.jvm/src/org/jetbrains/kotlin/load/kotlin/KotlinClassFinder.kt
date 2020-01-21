@@ -31,7 +31,7 @@ interface KotlinClassFinder : KotlinMetadataFinder {
         data class KotlinClass(val kotlinJvmBinaryClass: KotlinJvmBinaryClass) : Result()
         data class ClassFileContent(
             @Suppress("ArrayInDataClass")
-            val content: ByteArray
+            val content: ByteArray,
         ) : Result()
     }
 }

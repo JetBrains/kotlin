@@ -31,7 +31,7 @@ import kotlin.collections.HashSet
 class FirSuperTypeScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
-    val scopes: List<FirScope>
+    val scopes: List<FirScope>,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val absentFunctions = mutableSetOf<Name>()
@@ -56,7 +56,7 @@ class FirSuperTypeScope private constructor(
         name: Name,
         noinline processor: (D) -> ProcessorAction,
         absentNames: MutableSet<Name>,
-        processCallables: FirScope.(Name, (D) -> ProcessorAction) -> ProcessorAction
+        processCallables: FirScope.(Name, (D) -> ProcessorAction) -> ProcessorAction,
     ): ProcessorAction? {
         if (name in absentNames) {
             return ProcessorAction.NONE
@@ -102,7 +102,7 @@ class FirSuperTypeScope private constructor(
     }
 
     private fun <D : FirCallableSymbol<*>> selectMostSpecificMember(
-        overridables: Collection<D>
+        overridables: Collection<D>,
     ): D {
         require(overridables.isNotEmpty()) { "Should have at least one overridable descriptor" }
         if (overridables.size == 1) {
@@ -141,7 +141,7 @@ class FirSuperTypeScope private constructor(
 
     private fun isMoreSpecific(
         a: FirCallableSymbol<*>,
-        b: FirCallableSymbol<*>
+        b: FirCallableSymbol<*>,
     ): Boolean {
         val aFir = a.fir
         val bFir = b.fir
@@ -183,7 +183,7 @@ class FirSuperTypeScope private constructor(
 
             val result = Visibilities.compare(
                 (member.fir as FirCallableMemberDeclaration<*>).status.visibility,
-                (candidate.fir as FirCallableMemberDeclaration<*>).status.visibility
+                (candidate.fir as FirCallableMemberDeclaration<*>).status.visibility,
             )
             if (result != null && result < 0) {
                 member = candidate
@@ -194,7 +194,7 @@ class FirSuperTypeScope private constructor(
 
     private fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
         overrider: D,
-        members: MutableCollection<D>
+        members: MutableCollection<D>,
     ): Collection<D> {
         val result = mutableListOf<D>().apply { add(overrider) }
 
@@ -250,7 +250,7 @@ class FirSuperTypeScope private constructor(
         fun prepareSupertypeScope(
             session: FirSession,
             overrideChecker: FirOverrideChecker,
-            scopes: List<FirScope>
+            scopes: List<FirScope>,
         ): FirScope {
             scopes.singleOrNull()?.let { return it }
 

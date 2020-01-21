@@ -38,7 +38,7 @@ class LexicalChainedScope @JvmOverloads constructor(
     // Please, do not leak them outside of LexicalChainedScope, because other parts of compiler are not ready to work with them
     private val memberScopes: List<MemberScope>,
     @Deprecated("This value is temporary hack for resolve -- don't use it!")
-    val isStaticScope: Boolean = false
+    val isStaticScope: Boolean = false,
 ) : LexicalScope {
     override val parent = parent.takeSnapshot()
 
@@ -75,7 +75,7 @@ class LexicalChainedScope @JvmOverloads constructor(
     override fun printStructure(p: Printer) {
         p.println(
             this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {",
         )
         p.pushIndent()
 

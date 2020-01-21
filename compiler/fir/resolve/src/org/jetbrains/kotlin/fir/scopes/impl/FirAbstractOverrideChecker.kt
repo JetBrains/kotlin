@@ -19,7 +19,7 @@ abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
     protected fun getSubstitutorIfTypeParametersAreCompatible(
         overrideCandidate: FirSimpleFunction,
-        baseDeclaration: FirSimpleFunction
+        baseDeclaration: FirSimpleFunction,
     ): ConeSubstitutor? {
         val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration) ?: return null
         if (!overrideCandidate.typeParameters.zip(baseDeclaration.typeParameters).all { (a, b) ->
@@ -34,7 +34,7 @@ abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
 fun buildSubstitutorForOverridesCheck(
     overrideCandidate: FirCallableMemberDeclaration<*>,
-    baseDeclaration: FirCallableMemberDeclaration<*>
+    baseDeclaration: FirCallableMemberDeclaration<*>,
 ): ConeSubstitutor? {
     if (overrideCandidate.typeParameters.size != baseDeclaration.typeParameters.size) return null
 

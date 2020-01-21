@@ -42,12 +42,12 @@ class ScriptGenTest : CodegenTestCase() {
         private val FIB_SCRIPT_DEFINITION =
             ScriptDefinition.FromLegacy(
                 defaultJvmScriptingHostConfiguration,
-                KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+                KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class),
             )
         private val NO_PARAM_SCRIPT_DEFINITION =
             ScriptDefinition.FromLegacy(
                 defaultJvmScriptingHostConfiguration,
-                KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
+                KotlinScriptDefinitionFromAnnotatedTemplate(Any::class),
             )
     }
 
@@ -59,7 +59,7 @@ class ScriptGenTest : CodegenTestCase() {
                     "compiler/build/classes/kotlin/test",
                     "build/compiler/classes/kotlin/test",
                     "out/test/compiler.test",
-                    "out/test/compiler_test"
+                    "out/test/compiler_test",
                 )
                     .mapNotNull { File(it).canonicalFile.takeIf(File::isDirectory) }
                     .takeIf { it.isNotEmpty() }
@@ -147,6 +147,6 @@ class ScriptGenTest : CodegenTestCase() {
 @Suppress("unused")
 @ScriptTemplateDefinition(
     scriptFilePattern = ".*\\.lang\\.kts",
-    resolver = TestKotlinScriptDependenciesResolver::class
+    resolver = TestKotlinScriptDependenciesResolver::class,
 )
 abstract class ScriptWithIntParam(val num: Int)

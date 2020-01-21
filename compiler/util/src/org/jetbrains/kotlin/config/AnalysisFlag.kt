@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty
 
 class AnalysisFlag<out T> internal constructor(
     private val name: String,
-    val defaultValue: T
+    val defaultValue: T,
 ) {
     override fun equals(other: Any?): Boolean = other is AnalysisFlag<*> && other.name == name
 

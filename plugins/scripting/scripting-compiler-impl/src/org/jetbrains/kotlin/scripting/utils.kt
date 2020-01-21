@@ -11,7 +11,7 @@ import kotlin.script.experimental.api.fileExtension
 
 fun SourceCode.scriptFileName(
     mainScript: SourceCode,
-    scriptCompilationConfiguration: ScriptCompilationConfiguration
+    scriptCompilationConfiguration: ScriptCompilationConfiguration,
 ): String {
     val mainExtension = scriptCompilationConfiguration[ScriptCompilationConfiguration.fileExtension]
     return when {

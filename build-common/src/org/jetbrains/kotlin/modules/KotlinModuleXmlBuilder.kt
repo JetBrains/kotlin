@@ -42,16 +42,18 @@ class KotlinModuleXmlBuilder {
         targetTypeId: String,
         isTests: Boolean,
         directoriesToFilterOut: Set<File>,
-        friendDirs: Iterable<File>
+        friendDirs: Iterable<File>,
     ): KotlinModuleXmlBuilder {
         assert(!done) { "Already done" }
 
         p.println("<!-- Module script for ${if (isTests) "tests" else "production"} -->")
 
-        p.println("<", MODULE, " ",
-                  NAME, "=\"", escapeXml(moduleName), "\" ",
-                  TYPE, "=\"", escapeXml(targetTypeId), "\" ",
-                  OUTPUT_DIR, "=\"", getEscapedPath(File(outputDir)), "\">")
+        p.println(
+            "<", MODULE, " ",
+            NAME, "=\"", escapeXml(moduleName), "\" ",
+            TYPE, "=\"", escapeXml(targetTypeId), "\" ",
+            OUTPUT_DIR, "=\"", getEscapedPath(File(outputDir)), "\">",
+        )
         p.pushIndent()
 
         for (friendDir in friendDirs) {
@@ -78,8 +80,9 @@ class KotlinModuleXmlBuilder {
     }
 
     private fun processClasspath(
-            files: Iterable<File>,
-            directoriesToFilterOut: Set<File>) {
+        files: Iterable<File>,
+        directoriesToFilterOut: Set<File>,
+    ) {
         p.println("<!-- Classpath -->")
         for (file in files) {
             val isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.isEnabledForJvm()

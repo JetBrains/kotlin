@@ -36,7 +36,7 @@ data class ModulesTxt(
     val file: File,
     val fileName: String,
     val modules: List<Module>,
-    val dependencies: List<Dependency>
+    val dependencies: List<Dependency>,
 ) {
     override fun toString() = fileName
 
@@ -94,7 +94,7 @@ data class ModulesTxt(
         val to: Module,
         val scope: JpsJavaDependencyScope,
         val kind: Kind,
-        val exported: Boolean
+        val exported: Boolean,
     ) {
         val effectivelyExported
             get() = kind == EXPECTED_BY || exported
@@ -156,7 +156,7 @@ class ModulesTxtBuilder {
         val to: ModuleRef,
         val scope: JpsJavaDependencyScope,
         val kind: ModulesTxt.Dependency.Kind,
-        val exported: Boolean
+        val exported: Boolean,
     ) {
         fun build(): ModulesTxt.Dependency {
             when (kind) {
@@ -226,7 +226,7 @@ class ModulesTxtBuilder {
                     .split(",")
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
-                    .toSet()
+                    .toSet(),
             )
         } else ValueWithFlags(str)
     }
@@ -320,7 +320,7 @@ class ModulesTxtBuilder {
                 to = moduleRef(to),
                 scope = scope ?: JpsJavaDependencyScope.COMPILE,
                 kind = kind,
-                exported = exported
+                exported = exported,
             ).also {
                 dependencies.add(it)
             }

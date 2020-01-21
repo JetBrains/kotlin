@@ -32,7 +32,7 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
             completionChars: String,
             afterFilePath: String,
             actions: List<String>? = emptyList(),
-            afterTypingBlock: () -> Unit = {}
+            afterTypingBlock: () -> Unit = {},
         ) {
             for (idx in 0 until completionChars.length - 1) {
                 fixture.type(completionChars[idx])
@@ -111,9 +111,9 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
                                     ExpectedCompletionUtils.getItemsInformation(
                                         arrayOf(
                                             foundElement,
-                                            lookupElement
-                                        )
-                                    )
+                                            lookupElement,
+                                        ),
+                                    ),
                                 )
                                 fail("Several elements satisfy to completion restrictions:\n$dump")
                             }

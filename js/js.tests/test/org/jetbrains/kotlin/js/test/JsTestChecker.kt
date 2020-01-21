@@ -23,7 +23,7 @@ fun ScriptEngine.runTestFunction(
     testModuleName: String?,
     testPackageName: String?,
     testFunctionName: String,
-    withModuleSystem: Boolean
+    withModuleSystem: Boolean,
 ): String? {
     var script = when {
         withModuleSystem -> BasicBoxTest.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')"
@@ -48,7 +48,7 @@ abstract class AbstractJsTestChecker {
         testPackageName: String?,
         testFunctionName: String,
         expectedResult: String,
-        withModuleSystem: Boolean
+        withModuleSystem: Boolean,
     ) {
         val actualResult = run(files, testModuleName, testPackageName, testFunctionName, withModuleSystem)
         Assert.assertEquals(expectedResult, actualResult)
@@ -59,7 +59,7 @@ abstract class AbstractJsTestChecker {
         testModuleName: String?,
         testPackageName: String?,
         testFunctionName: String,
-        withModuleSystem: Boolean
+        withModuleSystem: Boolean,
     ) = run(files) {
         runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem)
     }
@@ -140,7 +140,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
     override val preloadedScripts = listOf(
         BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
         BasicBoxTest.DIST_DIR_JS_PATH + "kotlin.js",
-        BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js"
+        BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js",
     )
 
     override fun createScriptEngineForTest(): ScriptEngineNashorn {
@@ -155,7 +155,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 class NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
     override val preloadedScripts = listOf(
         BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
-        "libraries/stdlib/js-v1/src/js/polyfills.js"
+        "libraries/stdlib/js-v1/src/js/polyfills.js",
     )
 }
 
@@ -185,7 +185,7 @@ object V8JsTestChecker : AbstractV8JsTestChecker() {
 
         listOf(
             BasicBoxTest.DIST_DIR_JS_PATH + "kotlin.js",
-            BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js"
+            BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js",
         ).forEach { v8.loadFile(it) }
 
         v8.overrideAsserter()

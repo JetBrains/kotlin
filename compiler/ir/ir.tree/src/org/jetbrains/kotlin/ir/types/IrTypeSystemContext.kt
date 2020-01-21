@@ -139,7 +139,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeParameterMarker.getTypeConstructor() = this as IrTypeParameterSymbol
 
     override fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker) = FqNameEqualityChecker.areEqual(
-        c1 as IrClassifierSymbol, c2 as IrClassifierSymbol
+        c1 as IrClassifierSymbol, c2 as IrClassifierSymbol,
     )
 
     override fun TypeConstructorMarker.isDenotable() = true
@@ -190,7 +190,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
             newArguments += makeTypeProjection(
                 makeTypeIntersection(parameter.superTypes + additionalBounds),
-                Variance.INVARIANT
+                Variance.INVARIANT,
             )
         }
 
@@ -222,7 +222,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
-        nullable: Boolean
+        nullable: Boolean,
     ): SimpleTypeMarker = IrSimpleTypeImpl(constructor as IrClassifierSymbol, nullable, arguments.map { it as IrTypeArgument }, emptyList())
 
     private fun TypeVariance.convertVariance(): Variance {
@@ -326,7 +326,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             IrTypeSubstitutor(
                 irClass.typeParameters.map { it.symbol },
                 (this as? IrSimpleType)?.arguments.orEmpty(),
-                irBuiltIns
+                irBuiltIns,
             ).substitute(parameter.type)
         }
     }

@@ -46,7 +46,7 @@ class SlowTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
             val superType = TypeIntersector.intersectTypes(listOf(builtIns.charSequence.defaultType, builtIns.comparable.defaultType))
             AbstractNullabilityChecker.isPossibleSubtype(
                 ClassicTypeCheckerContext(errorTypeEqualsToAnything = true), builtIns.annotationType,
-                superType as SimpleType
+                superType as SimpleType,
             )
         } catch (e: AssertionError) {
             assertEquals("Not singleClassifierType superType: {CharSequence & Comparable<T>}", e.message)

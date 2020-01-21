@@ -32,7 +32,7 @@ class KotlinBinaryClassCache : Disposable {
 
         fun cache(
             file: VirtualFile,
-            result: KotlinClassFinder.Result?
+            result: KotlinClassFinder.Result?,
         ): KotlinClassFinder.Result? {
             virtualFile = file
             this.result = result
@@ -57,7 +57,7 @@ class KotlinBinaryClassCache : Disposable {
 
     companion object {
         fun getKotlinBinaryClassOrClassFileContent(
-            file: VirtualFile, fileContent: ByteArray? = null
+            file: VirtualFile, fileContent: ByteArray? = null,
         ): KotlinClassFinder.Result? {
             if (file.fileType !== JavaClassFileType.INSTANCE) return null
 
@@ -70,10 +70,12 @@ class KotlinBinaryClassCache : Disposable {
                 return requestCache.result
             }
 
-            val aClass = ApplicationManager.getApplication().runReadAction(Computable {
-                @Suppress("DEPRECATION")
-                VirtualFileKotlinClass.create(file, fileContent)
-            })
+            val aClass = ApplicationManager.getApplication().runReadAction(
+                Computable {
+                    @Suppress("DEPRECATION")
+                    VirtualFileKotlinClass.create(file, fileContent)
+                },
+            )
 
             return requestCache.cache(file, aClass)
         }

@@ -23,7 +23,7 @@ internal fun <T : Any> SettingsMutator<T>.setValue(preferences: DebuggerPreferen
 internal class OldValueStorage<T : Any>(
     private val mutator: SettingsMutator<T>,
     private val project: Project,
-    private val oldValue: T
+    private val oldValue: T,
 ) {
     fun revertValue() = mutator.revertValue(oldValue, project)
 }

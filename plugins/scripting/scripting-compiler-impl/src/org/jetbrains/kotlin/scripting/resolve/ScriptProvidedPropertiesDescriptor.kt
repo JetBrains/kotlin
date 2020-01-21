@@ -26,7 +26,7 @@ class ScriptProvidedPropertiesDescriptor(script: LazyScriptDescriptor) :
         ClassKind.CLASS, false, false,
         Name.special("<synthetic script provided properties for ${script.name}>"),
         SourceElement.NO_SOURCE,
-        LockBasedStorageManager.NO_LOCKS
+        LockBasedStorageManager.NO_LOCKS,
     ) {
 
     init {
@@ -39,7 +39,7 @@ class ScriptProvidedPropertiesDescriptor(script: LazyScriptDescriptor) :
     private val memberScope: () -> ScriptProvidedPropertiesMemberScope = script.resolveSession.storageManager.createLazyValue {
         ScriptProvidedPropertiesMemberScope(
             script.name.identifier,
-            properties()
+            properties(),
         )
     }
 
@@ -55,18 +55,18 @@ class ScriptProvidedPropertiesDescriptor(script: LazyScriptDescriptor) :
                 classDescriptor,
                 thisAsReceiverParameter,
                 true,
-                script
+                script,
             )
         }
     }
 
     private class ScriptProvidedPropertiesMemberScope(
         private val scriptId: String,
-        private val providedProperties: List<PropertyDescriptor>
+        private val providedProperties: List<PropertyDescriptor>,
     ) : MemberScopeImpl() {
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
         ): Collection<DeclarationDescriptor> =
             providedProperties
 

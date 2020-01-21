@@ -95,7 +95,7 @@ internal fun InstructionAdapter.genExceptionThrow(exceptionClass: String, messag
 fun InstructionAdapter.genKOutputMethodCall(
     property: SerializableProperty, classCodegen: ImplementationBodyCodegen, expressionCodegen: ExpressionCodegen,
     propertyOwnerType: Type, ownerVar: Int, fromClassStartVar: Int? = null,
-    generator: AbstractSerialGenerator
+    generator: AbstractSerialGenerator,
 ) {
     val propertyType = classCodegen.typeMapper.mapType(property.type)
     val sti = generator.getSerialTypeInfo(property, propertyType)
@@ -107,7 +107,7 @@ fun InstructionAdapter.genKOutputMethodCall(
         property.descriptor,
         propertyOwnerType,
         ownerVar,
-        classCodegen.state
+        classCodegen.state,
     ) else null
     actualType?.type?.let { type -> StackValue.coerce(type, sti.type, this) }
     invokeinterface(
@@ -115,7 +115,7 @@ fun InstructionAdapter.genKOutputMethodCall(
         CallingConventions.encode + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
         "(" + descType.descriptor + "I" +
                 (if (useSerializer) kSerialSaverType.descriptor else "") +
-                (if (sti.unit) "" else sti.type.descriptor) + ")V"
+                (if (sti.unit) "" else sti.type.descriptor) + ")V",
     )
 }
 
@@ -123,7 +123,7 @@ internal fun InstructionAdapter.buildInternalConstructorDesc(
     propsStartVar: Int,
     bitMaskBase: Int,
     codegen: ClassBodyCodegen,
-    args: List<SerializableProperty>
+    args: List<SerializableProperty>,
 ): String {
     val constructorDesc = StringBuilder("(")
     repeat(args.bitMaskSlotCount()) {
@@ -144,14 +144,16 @@ internal fun InstructionAdapter.buildInternalConstructorDesc(
 
 internal fun ImplementationBodyCodegen.generateMethod(
     function: FunctionDescriptor,
-    block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit
+    block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit,
 ) {
-    this.functionCodegen.generateMethod(OtherOrigin(this.myClass.psiOrParent, function), function,
-                                        object : FunctionGenerationStrategy.CodegenBased(this.state) {
-                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                                                codegen.v.block(signature, codegen)
-                                            }
-                                        })
+    this.functionCodegen.generateMethod(
+        OtherOrigin(this.myClass.psiOrParent, function), function,
+        object : FunctionGenerationStrategy.CodegenBased(this.state) {
+            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                codegen.v.block(signature, codegen)
+            }
+        },
+    )
 }
 
 
@@ -167,7 +169,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(
     codegen: ClassBodyCodegen,
     sti: JVMSerialTypeInfo,
     varIndexStart: Int,
-    serializerCodegen: AbstractSerialGenerator
+    serializerCodegen: AbstractSerialGenerator,
 ): Boolean {
     val serializer = sti.serializer
     return serializerCodegen.stackValueSerializerInstance(
@@ -176,7 +178,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(
         sti.property.type,
         serializer,
         this,
-        sti.property.genericIndex
+        sti.property.genericIndex,
     ) { idx, _ ->
         load(varIndexStart + idx, kSerializerType)
     }
@@ -185,14 +187,14 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(
 internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithoutSti(
     codegen: ClassBodyCodegen,
     property: SerializableProperty,
-    serializerCodegen: AbstractSerialGenerator
+    serializerCodegen: AbstractSerialGenerator,
 ): Boolean {
     val serializer =
         property.serializableWith?.toClassDescriptor
             ?: if (!property.type.isTypeParameter()) serializerCodegen.findTypeSerializerOrContext(
                 property.module,
                 property.type,
-                property.descriptor.findPsi()
+                property.descriptor.findPsi(),
             ) else null
     return serializerCodegen.stackValueSerializerInstance(
         codegen,
@@ -200,7 +202,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithou
         property.type,
         serializer,
         this,
-        property.genericIndex
+        property.genericIndex,
     ) { idx, _ ->
         load(0, kSerializerType)
         getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
@@ -210,7 +212,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithou
 internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codegen: ClassBodyCodegen, sti: JVMSerialTypeInfo, serializerCodegen: AbstractSerialGenerator): Boolean {
     return serializerCodegen.stackValueSerializerInstance(
         codegen, sti.property.module, sti.property.type,
-        sti.serializer, this, sti.property.genericIndex
+        sti.serializer, this, sti.property.genericIndex,
     ) { idx, _ ->
         load(0, kSerializerType)
         getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
@@ -219,10 +221,11 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codeg
 
 // returns false is cannot not use serializer
 // use iv == null to check only (do not emit serializer onto stack)
-internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
-                                                                  iv: InstructionAdapter?,
-                                                                  genericIndex: Int? = null,
-                                                                  genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
+internal fun AbstractSerialGenerator.stackValueSerializerInstance(
+    codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
+    iv: InstructionAdapter?,
+    genericIndex: Int? = null,
+    genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null,
 ): Boolean {
     if (maybeSerializer == null && genericIndex != null) {
         // get field from serializer object
@@ -252,7 +255,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                 argSerializer,
                 null,
                 argType.genericIndex,
-                genericSerializerFieldGetter
+                genericSerializerFieldGetter,
             )
         )
             return false
@@ -277,8 +280,8 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                     argSerializer,
                     this,
                     argType.genericIndex,
-                    genericSerializerFieldGetter
-                )
+                    genericSerializerFieldGetter,
+                ),
             )
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
@@ -325,7 +328,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                             argType,
                             argSerializer,
                             this,
-                            argType.genericIndex
+                            argType.genericIndex,
                         ) { _, genericType ->
                             // if we encountered generic type parameter in one of subclasses of sealed class, use polymorphism from upper bound
                             assert(
@@ -334,10 +337,10 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                                     module,
                                     (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound,
                                     module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer),
-                                    this
-                                )
+                                    this,
+                                ),
                             )
-                        }
+                        },
                     )
                     if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
                 }
@@ -362,7 +365,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
 fun InstructionAdapter.wrapStackValueIntoNullableSerializer() =
     invokestatic(
         "kotlinx/serialization/internal/NullableSerializerKt", "makeNullable",
-        "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false
+        "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false,
     )
 
 fun <T> InstructionAdapter.fillArray(type: Type, args: List<T>, onEach: (Int, T) -> Unit) {
@@ -386,7 +389,7 @@ class JVMSerialTypeInfo(
     val type: Type,
     nn: String,
     serializer: ClassDescriptor? = null,
-    unit: Boolean = false
+    unit: Boolean = false,
 ) : SerialTypeInfo(property, nn, serializer, unit)
 
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialTypeInfo {
@@ -395,7 +398,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
             property,
             Type.getType("Ljava/lang/Object;"),
             if (property.type.isMarkedNullable) "Nullable" else "",
-            serializer
+            serializer,
         )
 
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
@@ -406,7 +409,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
         property,
         Type.getType("Ljava/lang/Object;"),
         if (property.type.isMarkedNullable) "Nullable" else "",
-        null
+        null,
     )
     when (type.sort) {
         BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR -> {
@@ -427,7 +430,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                         serializer = findTypeSerializerOrContext(
                             property.module,
                             property.type,
-                            property.descriptor.findPsi()
+                            property.descriptor.findPsi(),
                         )
                     }
                     // primitive elements are not supported yet
@@ -435,7 +438,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
             }
             return JVMSerialTypeInfo(
                 property, Type.getType("Ljava/lang/Object;"),
-                if (property.type.isMarkedNullable) "Nullable" else "", serializer
+                if (property.type.isMarkedNullable) "Nullable" else "", serializer,
             )
         }
         OBJECT -> {
@@ -450,11 +453,11 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                 ?: findTypeSerializerOrContext(
                     property.module,
                     property.type,
-                    property.descriptor.findPsi()
+                    property.descriptor.findPsi(),
                 )
             return JVMSerialTypeInfo(
                 property, Type.getType("Ljava/lang/Object;"),
-                if (property.type.isMarkedNullable) "Nullable" else "", serializer
+                if (property.type.isMarkedNullable) "Nullable" else "", serializer,
             )
         }
         else -> throw AssertionError("Unexpected sort  for $type") // should not happen

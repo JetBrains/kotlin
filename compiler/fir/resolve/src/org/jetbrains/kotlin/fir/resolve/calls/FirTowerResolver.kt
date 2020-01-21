@@ -42,7 +42,7 @@ class FirTowerResolver(
     val components: BodyResolveComponents,
     resolutionStageRunner: ResolutionStageRunner,
     val topLevelScopes: List<FirScope>,
-    val localScopes: List<FirLocalScope>
+    val localScopes: List<FirLocalScope>,
 ) {
 
     val session: FirSession get() = components.session
@@ -51,7 +51,7 @@ class FirTowerResolver(
         towerDataConsumer: TowerDataConsumer,
         implicitReceiverValue: ImplicitReceiverValue<*>,
         nonEmptyLocalScopes: List<FirLocalScope>,
-        oldGroup: Int
+        oldGroup: Int,
     ): Int {
         var group = oldGroup
         // Member (no explicit receiver) / extension member (with explicit receiver) access via implicit receiver
@@ -63,7 +63,7 @@ class FirTowerResolver(
         towerDataConsumer.consume(
             TOWER_LEVEL,
             MemberScopeTowerLevel(session, components, dispatchReceiver = implicitReceiverValue, scopeSession = components.scopeSession),
-            group++
+            group++,
         )
 
         // class Foo {
@@ -75,7 +75,7 @@ class FirTowerResolver(
         towerDataConsumer.consume(
             EMPTY,
             TowerScopeLevel.OnlyImplicitReceiver(implicitReceiverValue),
-            group++
+            group++,
         )
         //TowerData.OnlyImplicitReceiver(implicitReceiver).process()?.let { return it }
 
@@ -90,9 +90,9 @@ class FirTowerResolver(
                 session, components,
                 dispatchReceiver = implicitReceiverValue,
                 implicitExtensionReceiver = implicitReceiverValue,
-                scopeSession = components.scopeSession
+                scopeSession = components.scopeSession,
             ),
-            group++
+            group++,
         )
 
         for (scope in nonEmptyLocalScopes) {
@@ -106,7 +106,7 @@ class FirTowerResolver(
             towerDataConsumer.consume(
                 TOWER_LEVEL,
                 ScopeTowerLevel(session, components, scope, implicitExtensionReceiver = implicitReceiverValue),
-                group++
+                group++,
             )
         }
 
@@ -125,7 +125,7 @@ class FirTowerResolver(
                 towerDataConsumer.consume(
                     TOWER_LEVEL,
                     ScopeTowerLevel(session, components, implicitScope, implicitExtensionReceiver = implicitReceiverValue),
-                    group++
+                    group++,
                 )
             }
             if (implicitDispatchReceiverValue is ImplicitDispatchReceiverValue) {
@@ -139,7 +139,7 @@ class FirTowerResolver(
                     towerDataConsumer.consume(
                         TOWER_LEVEL,
                         ScopeTowerLevel(session, components, implicitCompanionScope, implicitExtensionReceiver = implicitReceiverValue),
-                        group++
+                        group++,
                     )
                 }
                 if (blockDispatchReceivers) {
@@ -164,9 +164,9 @@ class FirTowerResolver(
                         session, components,
                         scopeSession = components.scopeSession,
                         dispatchReceiver = implicitDispatchReceiverValue,
-                        implicitExtensionReceiver = implicitReceiverValue
+                        implicitExtensionReceiver = implicitReceiverValue,
                     ),
-                    group++
+                    group++,
                 )
             }
         }
@@ -178,7 +178,7 @@ class FirTowerResolver(
         towerDataConsumer: TowerDataConsumer,
         topLevelScope: FirScope,
         oldGroup: Int,
-        extensionsOnly: Boolean = false
+        extensionsOnly: Boolean = false,
     ): Int {
         var group = oldGroup
         // Top-level extensions via implicit receiver
@@ -192,9 +192,9 @@ class FirTowerResolver(
                     ScopeTowerLevel(
                         session, components, topLevelScope,
                         implicitExtensionReceiver = implicitReceiverValue,
-                        extensionsOnly = extensionsOnly
+                        extensionsOnly = extensionsOnly,
                     ),
-                    group++
+                    group++,
                 ) == NONE
             ) {
                 return group
@@ -230,11 +230,11 @@ class FirTowerResolver(
                     PrioritizedTowerDataConsumer(
                         collector,
                         createCallableReferencesConsumer(
-                            session, info.name, info.replaceExplicitReceiver(info.stubReceiver), components, collector
+                            session, info.name, info.replaceExplicitReceiver(info.stubReceiver), components, collector,
                         ),
                         createCallableReferencesConsumer(
-                            session, info.name, info, components, collector
-                        )
+                            session, info.name, info, components, collector,
+                        ),
                     )
                 }
             }
@@ -248,7 +248,7 @@ class FirTowerResolver(
             calleeReference = FirNamedReferenceWithCandidate(
                 null,
                 symbol.callableId.callableName,
-                candidate
+                candidate,
             )
             dispatchReceiver = candidate.dispatchReceiverExpression()
             typeRef = typeCalculator.tryCalculateReturnType(symbol.firUnsafe())
@@ -260,16 +260,17 @@ class FirTowerResolver(
         implicitReceiverValues: List<ImplicitReceiverValue<*>>,
         info: CallInfo,
         collector: CandidateCollector,
-        qualifiedReceiver: FirResolvedQualifier
+        qualifiedReceiver: FirResolvedQualifier,
     ): CandidateCollector {
         val qualifierScope = FirExplicitSimpleImportingScope(
             listOf(
                 FirResolvedImportImpl(
                     FirImportImpl(null, FqName.topLevel(info.name), false, null),
                     qualifiedReceiver.packageFqName,
-                    qualifiedReceiver.relativeClassFqName
-                )
-            ), session, components.scopeSession
+                    qualifiedReceiver.relativeClassFqName,
+                ),
+            ),
+            session, components.scopeSession,
         )
         val candidateFactory = CandidateFactory(components, info)
 
@@ -295,12 +296,12 @@ class FirTowerResolver(
                 val invokeReceiverCollector = CandidateCollector(components, components.resolutionStageRunner)
                 val invokeReceiverCandidateFactory = CandidateFactory(
                     components,
-                    info.replaceWithVariableAccess()
+                    info.replaceWithVariableAccess(),
                 )
 
                 qualifierScope.processPropertiesByName(info.name) {
                     invokeReceiverCollector.consumeCandidate(
-                        0, invokeReceiverCandidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
+                        0, invokeReceiverCandidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER),
                     )
                     ProcessorAction.NEXT
                 }
@@ -312,7 +313,7 @@ class FirTowerResolver(
                         runResolver(
                             implicitReceiverValues,
                             info.copy(explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE),
-                            collector
+                            collector,
                         )
                     }
                 }
@@ -326,7 +327,7 @@ class FirTowerResolver(
     fun runResolver(
         implicitReceiverValues: List<ImplicitReceiverValue<*>>,
         info: CallInfo,
-        collector: CandidateCollector = this.collector
+        collector: CandidateCollector = this.collector,
     ): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
 

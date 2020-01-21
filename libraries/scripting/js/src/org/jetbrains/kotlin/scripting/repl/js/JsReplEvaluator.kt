@@ -17,7 +17,7 @@ class JsReplEvaluator : ReplEvaluator {
         state: IReplStageState<*>,
         compileResult: ReplCompileResult.CompiledClasses,
         scriptArgs: ScriptArgsWithTypes?,
-        invokeWrapper: InvokeWrapper?
+        invokeWrapper: InvokeWrapper?,
     ): ReplEvalResult {
         return try {
             val evaluationState = state.asState(JsEvaluationState::class.java)

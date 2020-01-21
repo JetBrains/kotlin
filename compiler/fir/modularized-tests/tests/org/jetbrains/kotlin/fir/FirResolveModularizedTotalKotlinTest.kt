@@ -119,7 +119,8 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         configuration.addAll(
             CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) },
+        )
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         Extensions.getArea(environment.project)
@@ -174,8 +175,8 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         PrintStream(
             FileOutputStream(
                 reportDir().resolve("report-$reportDateStr.log"),
-                true
-            )
+                true,
+            ),
         ).use { stream ->
             statistics.report(stream, header)
             stream.println()

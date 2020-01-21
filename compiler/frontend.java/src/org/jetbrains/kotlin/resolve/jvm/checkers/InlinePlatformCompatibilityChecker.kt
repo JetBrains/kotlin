@@ -70,8 +70,8 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
                     ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM.on(
                         reportOn,
                         JvmTarget.getDescription(inliningBytecodeVersion),
-                        JvmTarget.getDescription(compilingBytecodeVersion)
-                    )
+                        JvmTarget.getDescription(compilingBytecodeVersion),
+                    ),
                 )
                 return
             }
@@ -85,8 +85,8 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
                     ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM.on(
                         reportOn,
                         JvmTarget.getDescription(inliningBytecodeVersionProper),
-                        JvmTarget.getDescription(compilingBytecodeVersion)
-                    )
+                        JvmTarget.getDescription(compilingBytecodeVersion),
+                    ),
                 )
             } else {
                 //INLINE_FROM_HIGHER_PLATFORM was checked in `if (!properError)`
@@ -94,8 +94,8 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
                     ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM_WARNING.on(
                         reportOn,
                         JvmTarget.getDescription(inliningBytecodeVersionProper),
-                        JvmTarget.getDescription(compilingBytecodeVersion)
-                    )
+                        JvmTarget.getDescription(compilingBytecodeVersion),
+                    ),
                 )
             }
         }
@@ -107,7 +107,7 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
 
         fun getBytecodeVersionIfDeserializedDescriptor(
             funOrProperty: DeclarationDescriptor,
-            useConcreteSuperImplementation: Boolean
+            useConcreteSuperImplementation: Boolean,
         ): Int? {
             if (funOrProperty !is DeserializedCallableMemberDescriptor) return null
 

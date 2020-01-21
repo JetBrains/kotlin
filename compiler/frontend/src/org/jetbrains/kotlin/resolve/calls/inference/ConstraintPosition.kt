@@ -78,7 +78,7 @@ fun ConstraintPosition.derivedFrom(kind: ConstraintPositionKind): Boolean {
 class ValidityConstraintForConstituentType(
     val typeArgument: KotlinType,
     val typeParameter: TypeParameterDescriptor,
-    val bound: KotlinType
+    val bound: KotlinType,
 ) : ConstraintPosition {
     override val kind: ConstraintPositionKind get() = TYPE_BOUND_POSITION
 }

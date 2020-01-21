@@ -175,19 +175,19 @@ fun main(args: Array<String>) {
                 "stepping/stepIntoAndSmartStepInto",
                 pattern = KT_WITHOUT_DOTS_IN_NAME,
                 testMethod = "doStepIntoTest",
-                testClassName = "StepInto"
+                testClassName = "StepInto",
             )
             model(
                 "stepping/stepIntoAndSmartStepInto",
                 pattern = KT_WITHOUT_DOTS_IN_NAME,
                 testMethod = "doSmartStepIntoTest",
-                testClassName = "SmartStepInto"
+                testClassName = "SmartStepInto",
             )
             model(
                 "stepping/stepInto",
                 pattern = KT_WITHOUT_DOTS_IN_NAME,
                 testMethod = "doStepIntoTest",
-                testClassName = "StepIntoOnly"
+                testClassName = "StepIntoOnly",
             )
             model("stepping/stepOut", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOutTest")
             model("stepping/stepOver", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverTest")
@@ -318,7 +318,7 @@ fun main(args: Array<String>) {
             model(
                 "parameterInfo",
                 pattern = "^([\\w\\-_]+)\\.kt$", recursive = true,
-                excludeDirs = listOf("withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib")
+                excludeDirs = listOf("withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib"),
             )
         }
 
@@ -586,18 +586,18 @@ fun main(args: Array<String>) {
             model("formatter", pattern = """^([^\.]+)\.after\.kt.*$""")
             model(
                 "formatter", pattern = """^([^\.]+)\.after\.inv\.kt.*$""",
-                testMethod = "doTestInverted", testClassName = "FormatterInverted"
+                testMethod = "doTestInverted", testClassName = "FormatterInverted",
             )
         }
 
         testClass<AbstractTypingIndentationTestBase> {
             model(
                 "indentationOnNewline", pattern = """^([^\.]+)\.after\.kt.*$""", testMethod = "doNewlineTest",
-                testClassName = "DirectSettings"
+                testClassName = "DirectSettings",
             )
             model(
                 "indentationOnNewline", pattern = """^([^\.]+)\.after\.inv\.kt.*$""", testMethod = "doNewlineTestWithInvert",
-                testClassName = "InvertedSettings"
+                testClassName = "InvertedSettings",
             )
         }
 
@@ -651,14 +651,14 @@ fun main(args: Array<String>) {
                 pattern = KT_WITHOUT_DOTS_IN_NAME,
                 testMethod = "doTestCopy",
                 testClassName = "Copy",
-                recursive = false
+                recursive = false,
             )
             model(
                 "copyPaste/imports",
                 pattern = KT_WITHOUT_DOTS_IN_NAME,
                 testMethod = "doTestCut",
                 testClassName = "Cut",
-                recursive = false
+                recursive = false,
             )
         }
 
@@ -896,7 +896,7 @@ fun main(args: Array<String>) {
                 extension = "kts",
                 testMethod = "doScratchCompilingTest",
                 testClassName = "ScratchCompiling",
-                recursive = false
+                recursive = false,
             )
             model("scratch", extension = "kts", testMethod = "doScratchReplTest", testClassName = "ScratchRepl", recursive = false)
             model(
@@ -904,7 +904,7 @@ fun main(args: Array<String>) {
                 extension = null,
                 testMethod = "doScratchMultiFileTest",
                 testClassName = "ScratchMultiFile",
-                recursive = false
+                recursive = false,
             )
 
             model(
@@ -912,7 +912,7 @@ fun main(args: Array<String>) {
                 extension = "ws.kts",
                 testMethod = "doWorksheetCompilingTest",
                 testClassName = "WorksheetCompiling",
-                recursive = false
+                recursive = false,
             )
             model("worksheet", extension = "ws.kts", testMethod = "doWorksheetReplTest", testClassName = "WorksheetRepl", recursive = false)
             model(
@@ -920,7 +920,7 @@ fun main(args: Array<String>) {
                 extension = null,
                 testMethod = "doWorksheetMultiFileTest",
                 testClassName = "WorksheetMultiFile",
-                recursive = false
+                recursive = false,
             )
 
             model(
@@ -928,7 +928,7 @@ fun main(args: Array<String>) {
                 extension = "kts",
                 testMethod = "doRightPreviewPanelOutputTest",
                 testClassName = "ScratchRightPanelOutput",
-                recursive = false
+                recursive = false,
             )
         }
 
@@ -987,7 +987,7 @@ fun main(args: Array<String>) {
             model(
                 "asJava/lightClasses",
                 excludeDirs = listOf("local", "compilationErrors", "ideRegression"),
-                pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME
+                pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME,
             )
         }
     }
@@ -1078,7 +1078,7 @@ fun main(args: Array<String>) {
 
     testGroup(
         "libraries/tools/new-project-wizard/new-project-wizard-cli/tests",
-        "libraries/tools/new-project-wizard/new-project-wizard-cli/testData"
+        "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
     ) {
         testClass<AbstractBuildFileGenerationTest> {
             model("buildFileGeneration", recursive = false, extension = null)
@@ -1156,7 +1156,7 @@ fun main(args: Array<String>) {
         testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
             model(
                 "incremental/multiModule/multiplatform/withGeneratedContent", extension = null, excludeParentDirs = true,
-                testClassName = "MultiplatformMultiModule", recursive = true
+                testClassName = "MultiplatformMultiModule", recursive = true,
             )
         }
 
@@ -1244,7 +1244,7 @@ fun main(args: Array<String>) {
 
     testGroup(
         "plugins/android-extensions/android-extensions-compiler/test",
-        "plugins/android-extensions/android-extensions-compiler/testData"
+        "plugins/android-extensions/android-extensions-compiler/testData",
     ) {
         testClass<AbstractAndroidSyntheticPropertyDescriptorTest> {
             model("descriptors", recursive = false, extension = null)
@@ -1333,7 +1333,7 @@ fun main(args: Array<String>) {
 
     testGroup(
         "plugins/kotlin-serialization/kotlin-serialization-compiler/test",
-        "plugins/kotlin-serialization/kotlin-serialization-compiler/testData"
+        "plugins/kotlin-serialization/kotlin-serialization-compiler/testData",
     ) {
         testClass<AbstractSerializationPluginDiagnosticTest> {
             model("diagnostics")

@@ -34,6 +34,6 @@ val IdeScriptCompilationConfigurationKeys.acceptedLocations
         by PropertiesCollection.key<List<ScriptAcceptedLocation>>(
             listOf(
                 ScriptAcceptedLocation.Sources,
-                ScriptAcceptedLocation.Tests
-            )
+                ScriptAcceptedLocation.Tests,
+            ),
         )

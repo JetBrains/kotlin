@@ -40,7 +40,7 @@ class QuickDocInHierarchyTest() : CodeInsightTestCase() {
         val hierarchyTreeStructure = TypeHierarchyTreeStructure(
             project,
             provider.getTarget(context) as PsiClass?,
-            HierarchyBrowserBaseEx.SCOPE_PROJECT
+            HierarchyBrowserBaseEx.SCOPE_PROJECT,
         )
         val hierarchyNodeDescriptor = hierarchyTreeStructure.baseDescriptor as TypeHierarchyNodeDescriptor
         val doc = KotlinQuickDocumentationProvider().generateDoc(hierarchyNodeDescriptor.psiClass as PsiElement, null)!!

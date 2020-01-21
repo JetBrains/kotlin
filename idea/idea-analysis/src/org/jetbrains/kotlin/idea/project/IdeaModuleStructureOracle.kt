@@ -31,7 +31,7 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
                     currentPath,
                     getChilds = {
                         with(DependsOnGraphHelper) { it.unwrapModuleSourceInfo()?.predecessorsInDependsOnGraph() ?: emptyList() }
-                    }
+                    },
                 )
             }
         }.map {
@@ -50,7 +50,7 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
                     currentPath,
                     getChilds = {
                         with(DependsOnGraphHelper) { it.unwrapModuleSourceInfo()?.successorsInDependsOnGraph() ?: emptyList() }
-                    }
+                    },
                 )
             }
         }.map {
@@ -61,7 +61,7 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
     private suspend fun SequenceScope<ModuleInfoPath>.yieldPathsFromSubgraph(
         root: ModuleInfo,
         currentPath: Stack<ModuleInfo>,
-        getChilds: (ModuleInfo) -> List<ModuleInfo>
+        getChilds: (ModuleInfo) -> List<ModuleInfo>,
     ) {
         currentPath.push(root)
 

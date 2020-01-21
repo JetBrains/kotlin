@@ -31,7 +31,7 @@ open class DelegatingBindingTrace(
     private val name: String,
     withParentDiagnostics: Boolean = true,
     private val filter: BindingTraceFilter = BindingTraceFilter.ACCEPT_ALL,
-    allowSliceRewrite: Boolean = false
+    allowSliceRewrite: Boolean = false,
 ) : BindingTrace {
 
     protected val map = if (BindingTraceContext.TRACK_REWRITES && !allowSliceRewrite)
@@ -81,12 +81,12 @@ open class DelegatingBindingTrace(
         debugName: String,
         resolutionSubjectForMessage: Any?,
         filter: BindingTraceFilter = BindingTraceFilter.ACCEPT_ALL,
-        allowSliceRewrite: Boolean = false
+        allowSliceRewrite: Boolean = false,
     ) : this(
         parentContext,
         AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage),
         filter = filter,
-        allowSliceRewrite = allowSliceRewrite
+        allowSliceRewrite = allowSliceRewrite,
     )
 
     override fun getBindingContext(): BindingContext = bindingContext

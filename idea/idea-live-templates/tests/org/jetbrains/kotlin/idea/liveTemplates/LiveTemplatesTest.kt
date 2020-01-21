@@ -273,16 +273,18 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private fun nextTab() {
         val project = project
-        UIUtil.invokeAndWaitIfNeeded(Runnable {
-            CommandProcessor.getInstance().executeCommand(
-                project,
-                {
-                    templateState!!.nextTab()
-                },
-                "nextTab",
-                null
-            )
-        })
+        UIUtil.invokeAndWaitIfNeeded(
+            Runnable {
+                CommandProcessor.getInstance().executeCommand(
+                    project,
+                    {
+                        templateState!!.nextTab()
+                    },
+                    "nextTab",
+                    null,
+                )
+            },
+        )
     }
 
     private fun nextTab(times: Int) {
@@ -303,7 +305,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         val actionHandler = actionManager.getActionHandler(actionId)
         actionHandler.execute(
             myFixture.editor, myFixture.editor.caretModel.currentCaret,
-            DataManager.getInstance().getDataContext(myFixture.editor.component)
+            DataManager.getInstance().getDataContext(myFixture.editor.component),
         )
     }
 

@@ -127,21 +127,24 @@ done
     }
 
     private fun compileScript(
-            scriptFileName: String,
-            scriptTemplate: KClass<out Any>,
-            environment: Map<String, Any?>? = null,
-            suppressOutput: Boolean = false
+        scriptFileName: String,
+        scriptTemplate: KClass<out Any>,
+        environment: Map<String, Any?>? = null,
+        suppressOutput: Boolean = false,
     ): Class<*>? =
-            compileScriptImpl("libraries/tools/kotlin-script-util/src/test/resources/scripts/" + scriptFileName,
-                              KotlinScriptDefinitionFromAnnotatedTemplate(
-                                  scriptTemplate,
-                                  environment
-                              ), suppressOutput)
+            compileScriptImpl(
+                "libraries/tools/kotlin-script-util/src/test/resources/scripts/" + scriptFileName,
+                KotlinScriptDefinitionFromAnnotatedTemplate(
+                    scriptTemplate,
+                    environment,
+                ),
+                suppressOutput,
+            )
 
     private fun compileScriptImpl(
         scriptPath: String,
         scriptDefinition: KotlinScriptDefinition,
-        suppressOutput: Boolean
+        suppressOutput: Boolean,
     ): Class<*>? {
         val messageCollector =
             if (suppressOutput) MessageCollector.NONE
@@ -165,8 +168,8 @@ done
                 add(
                     ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                     ScriptDefinition.FromLegacy(
-                        defaultJvmScriptingHostConfiguration, scriptDefinition
-                    )
+                        defaultJvmScriptingHostConfiguration, scriptDefinition,
+                    ),
                 )
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
@@ -185,7 +188,7 @@ done
             } catch (e: CompilationException) {
                 messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
-                    MessageUtil.psiElementToMessageLocation(e.element)
+                    MessageUtil.psiElementToMessageLocation(e.element),
                 )
                 null
             } catch (e: IllegalStateException) {

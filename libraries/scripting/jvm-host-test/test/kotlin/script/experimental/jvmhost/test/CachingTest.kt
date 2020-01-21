@@ -97,7 +97,7 @@ class CachingTest : TestCase() {
 
     private fun checkWithCache(
         cache: ScriptingCacheWithCounters, script: String, expectedOutput: List<String>,
-        configurationBuilder: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+        configurationBuilder: ScriptCompilationConfiguration.Builder.() -> Unit = {},
     ) {
         val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
             jvm {
@@ -180,7 +180,7 @@ private class SimpleMemoryScriptsCache : ScriptingCacheWithCounters {
     override fun store(
         compiledScript: CompiledScript<*>,
         script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ) {
         data[script to scriptCompilationConfiguration.notTransientData] = compiledScript
         _storedScripts++
@@ -197,7 +197,7 @@ private class FileBasedScriptCache(val baseDir: File) : ScriptingCacheWithCounte
     override fun store(
         compiledScript: CompiledScript<*>,
         script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ) {
         val file = File(baseDir, uniqueScriptHash(script, scriptCompilationConfiguration))
         file.outputStream().use { fs ->
@@ -218,7 +218,8 @@ private class FileBasedScriptCache(val baseDir: File) : ScriptingCacheWithCounte
 class TestCompiledScriptJarsCache(val baseDir: File) : CompiledScriptJarsCache(
     { script, scriptCompilationConfiguration ->
         File(baseDir, uniqueScriptHash(script, scriptCompilationConfiguration) + ".jar")
-    }), ScriptingCacheWithCounters
+    },
+), ScriptingCacheWithCounters
 {
     override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>? =
         super.get(script, scriptCompilationConfiguration)?.also { retrievedScripts++ }
@@ -226,7 +227,7 @@ class TestCompiledScriptJarsCache(val baseDir: File) : CompiledScriptJarsCache(
     override fun store(
         compiledScript: CompiledScript<*>,
         script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ) {
         super.store(compiledScript, script, scriptCompilationConfiguration).also { storedScripts++ }
     }

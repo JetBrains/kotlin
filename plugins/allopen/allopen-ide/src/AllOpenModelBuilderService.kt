@@ -26,8 +26,8 @@ interface AllOpenModel : AnnotationBasedPluginModel {
 }
 
 class AllOpenModelImpl(
-        override val annotations: List<String>,
-        override val presets: List<String>
+    override val annotations: List<String>,
+    override val presets: List<String>,
 ) : AllOpenModel
 
 class AllOpenModelBuilderService : AnnotationBasedPluginModelBuilderService<AllOpenModel>() {

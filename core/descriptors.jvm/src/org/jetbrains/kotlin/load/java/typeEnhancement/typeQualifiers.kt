@@ -31,7 +31,7 @@ class JavaTypeQualifiers(
     val nullability: NullabilityQualifier?,
     val mutability: MutabilityQualifier?,
     val isNotNullTypeParameter: Boolean,
-    val isNullabilityQualifierForWarning: Boolean = false
+    val isNullabilityQualifierForWarning: Boolean = false,
 ) {
     companion object {
         val NONE = JavaTypeQualifiers(null, null, false)

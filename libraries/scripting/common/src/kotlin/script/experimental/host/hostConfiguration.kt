@@ -22,7 +22,7 @@ class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<Scripting
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
     constructor(
-        vararg baseConfigurations: ScriptingHostConfiguration, body: Builder.() -> Unit = {}
+        vararg baseConfigurations: ScriptingHostConfiguration, body: Builder.() -> Unit = {},
     ) : this(baseConfigurations.asIterable(), body)
 
     class Builder internal constructor(baseScriptingHostConfigurations: Iterable<ScriptingHostConfiguration>) :

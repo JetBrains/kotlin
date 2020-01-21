@@ -33,7 +33,7 @@ class KotlinExcludeFromCompletionLookupActionProvider : LookupActionProvider {
 
     private class ExcludeFromCompletionAction(
         private val project: Project,
-        private val exclude: String
+        private val exclude: String,
     ) : LookupElementAction(null, "Exclude '$exclude' from completion") {
         override fun performLookupAction(): Result {
             AddImportAction.excludeFromImport(project, exclude)

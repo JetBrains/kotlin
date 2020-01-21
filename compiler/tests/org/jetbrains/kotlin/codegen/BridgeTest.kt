@@ -539,7 +539,7 @@ class BridgeTest : TestCase() {
         graph(
             d to a, d to b, d to c,
             g to d, g to e, g to f,
-            j to g, j to h, j to i
+            j to g, j to h, j to i,
         )
         doTest(d, setOf(bridge(b, a), bridge(c, a)))
         doTest(g, setOf(bridge(e, a), bridge(f, a)))

@@ -63,7 +63,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val resultTypeInfo = components.dataFlowAnalyzer.checkType(
             typeInfo.replaceType(components.builtIns.booleanType),
             expression,
-            contextWithExpectedType
+            contextWithExpectedType,
         )
 
         if (typeReference != null) {
@@ -72,7 +72,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 subject = leftHandSide,
                 sourceType = knownType,
                 targetType = rhsType,
-                operation = if (expression.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
+                operation = if (expression.isNegated) RttiOperation.NOT_IS else RttiOperation.IS,
             )
             components.rttiExpressionCheckers.forEach {
                 it.check(rttiInformation, expression, context.trace)
@@ -89,7 +89,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val element: KtElement?,
         val typeInfo: KotlinTypeInfo?,
         val scopeWithSubject: LexicalScope?,
-        val type: KotlinType = typeInfo?.type ?: ErrorUtils.createErrorType("Unknown type")
+        val type: KotlinType = typeInfo?.type ?: ErrorUtils.createErrorType("Unknown type"),
     ) {
 
         protected abstract fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns): DataFlowValue
@@ -110,7 +110,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         class Expression(
             val expression: KtExpression,
             typeInfo: KotlinTypeInfo,
-            private val dataFlowValueFactory: DataFlowValueFactory
+            private val dataFlowValueFactory: DataFlowValueFactory,
         ) : Subject(expression, typeInfo, null) {
             override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns) =
                 dataFlowValueFactory.createDataFlowValue(expression, type, contextAfterSubject)
@@ -126,23 +126,23 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             val variable: KtProperty,
             val descriptor: VariableDescriptor,
             typeInfo: KotlinTypeInfo,
-            scopeWithSubject: LexicalScope
+            scopeWithSubject: LexicalScope,
         ) : Subject(variable, typeInfo, scopeWithSubject) {
             override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns) =
                 DataFlowValue(
                     IdentifierInfo.Variable(
                         descriptor,
                         DataFlowValue.Kind.STABLE_VALUE,
-                        contextAfterSubject.trace.bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, descriptor]
+                        contextAfterSubject.trace.bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, descriptor],
                     ),
-                    descriptor.type
+                    descriptor.type,
                 )
 
             override fun makeValueArgument(): ValueArgument? =
                 variable.initializer?.let {
                     CallMaker.makeExternalValueArgument(
                         KtPsiFactory(variable.project, true).createExpression(variable.name!!),
-                        it
+                        it,
                     )
                 }
 
@@ -168,7 +168,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     fun visitWhenExpression(
         expression: KtWhenExpression,
         contextWithExpectedType: ExpressionTypingContext,
-        @Suppress("UNUSED_PARAMETER") isStatement: Boolean
+        @Suppress("UNUSED_PARAMETER") isStatement: Boolean,
     ): KotlinTypeInfo {
         val trace = contextWithExpectedType.trace
         WhenChecker.checkDeprecatedWhenSyntax(trace, expression)
@@ -191,7 +191,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 Subject.Expression(
                     subjectExpression,
                     facade.getTypeInfo(subjectExpression, contextBeforeSubject),
-                    components.dataFlowValueFactory
+                    components.dataFlowValueFactory,
                 )
 
             else ->
@@ -221,7 +221,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             subject,
             contextWithExpectedTypeAndSubjectVariable,
             contextAfterSubject,
-            dataFlowInfoForEntries
+            dataFlowInfoForEntries,
         )
         val whenResultValue =
             whenReturnType?.let { facade.components.dataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
@@ -257,8 +257,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             trace.report(
                 UNSUPPORTED_FEATURE.on(
                     subjectVariable,
-                    Pair(LanguageFeature.VariableDeclarationInWhenSubject, components.languageVersionSettings)
-                )
+                    Pair(LanguageFeature.VariableDeclarationInWhenSubject, components.languageVersionSettings),
+                ),
             )
         } else {
             val illegalDeclarationString = when {
@@ -296,7 +296,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         subject: Subject,
         contextWithExpectedType: ExpressionTypingContext,
         contextAfterSubject: ExpressionTypingContext,
-        dataFlowInfoForEntries: List<DataFlowInfo>
+        dataFlowInfoForEntries: List<DataFlowInfo>,
     ): KotlinType? {
         if (expression.entries.all { it.expression == null }) {
             return components.builtIns.unitType
@@ -306,10 +306,10 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val callForWhen = createCallForSpecialConstruction(
             expression,
             subject.getCalleeExpressionForSpecialCall() ?: expression,
-            wrappedArgumentExpressions
+            wrappedArgumentExpressions,
         )
         val dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfWhenCall(
-            callForWhen, contextAfterSubject.dataFlowInfo, dataFlowInfoForEntries
+            callForWhen, contextAfterSubject.dataFlowInfo, dataFlowInfoForEntries,
         )
 
         val resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
@@ -321,7 +321,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             },
             Collections.nCopies(wrappedArgumentExpressions.size, false),
             contextWithExpectedType,
-            dataFlowInfoForArguments
+            dataFlowInfoForArguments,
         )
 
         return resolvedCall.resultingDescriptor.returnType
@@ -337,7 +337,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     private fun analyzeConditionsInWhenEntries(
         expression: KtWhenExpression,
         contextAfterSubject: ExpressionTypingContext,
-        subject: Subject
+        subject: Subject,
     ): ArrayList<DataFlowInfo> {
         val argumentDataFlowInfos = ArrayList<DataFlowInfo>()
         var inputDataFlowInfo = contextAfterSubject.dataFlowInfo
@@ -345,7 +345,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             val conditionsInfo = analyzeWhenEntryConditions(
                 whenEntry,
                 contextAfterSubject.replaceDataFlowInfo(inputDataFlowInfo),
-                subject
+                subject,
             )
             inputDataFlowInfo = inputDataFlowInfo.and(conditionsInfo.elseInfo)
 
@@ -361,7 +361,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         contextAfterSubject: ExpressionTypingContext,
         resultType: KotlinType?,
         jumpOutPossibleInSubject: Boolean,
-        whenResultValue: DataFlowValue?
+        whenResultValue: DataFlowValue?,
     ): KotlinTypeInfo {
         val bindingContext = contextAfterSubject.trace.bindingContext
 
@@ -407,7 +407,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         expression: KtWhenExpression,
         contextBeforeSubject: ExpressionTypingContext,
         subjectType: KotlinType,
-        possibleTypesForSubject: Set<KotlinType>
+        possibleTypesForSubject: Set<KotlinType>,
     ) {
         val subjectExpression = expression.subjectExpression ?: return
         // Using "reversed()" here is a kind of hack to fix KT-27221
@@ -421,7 +421,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             if (possibleCastClass.kind == ClassKind.ENUM_CLASS || possibleCastClass.modality == Modality.SEALED) {
                 if (checkSmartCastToExpectedTypeInSubject(
                         contextBeforeSubject, subjectExpression, subjectType,
-                        possibleCastType
+                        possibleCastType,
                     )
                 ) {
                     return
@@ -434,7 +434,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             val notNullableType = TypeUtils.makeNotNullable(subjectType)
             if (checkSmartCastToExpectedTypeInSubject(
                     contextBeforeSubject, subjectExpression, subjectType,
-                    notNullableType
+                    notNullableType,
                 )
             ) {
                 return
@@ -446,12 +446,12 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         contextBeforeSubject: ExpressionTypingContext,
         subjectExpression: KtExpression,
         subjectType: KotlinType,
-        expectedType: KotlinType
+        expectedType: KotlinType,
     ): Boolean {
         val trace = TemporaryBindingTrace.create(contextBeforeSubject.trace, "Temporary trace for when subject nullability")
         val subjectContext = contextBeforeSubject.replaceExpectedType(expectedType).replaceBindingTrace(trace)
         val castResult = facade.components.dataFlowAnalyzer.checkPossibleCast(
-            subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext
+            subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext,
         )
         if (castResult != null && castResult.isCorrect) {
             trace.commit()
@@ -463,7 +463,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     private fun analyzeWhenEntryConditions(
         whenEntry: KtWhenEntry,
         context: ExpressionTypingContext,
-        subject: Subject
+        subject: Subject,
     ): ConditionalDataFlowInfo {
         if (whenEntry.isElse) {
             return ConditionalDataFlowInfo(context.dataFlowInfo)
@@ -486,81 +486,84 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     private fun checkWhenCondition(
         subject: Subject,
         condition: KtWhenCondition,
-        context: ExpressionTypingContext
+        context: ExpressionTypingContext,
     ): ConditionalDataFlowInfo {
         var newDataFlowInfo = noChange(context)
 
-        condition.accept(object : KtVisitorVoid() {
-            override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
-                val rangeExpression = condition.rangeExpression ?: return
+        condition.accept(
+            object : KtVisitorVoid() {
+                override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
+                    val rangeExpression = condition.rangeExpression ?: return
 
-                if (subject is Subject.None) {
-                    context.trace.report(EXPECTED_CONDITION.on(condition))
-                    val dataFlowInfo = facade.getTypeInfo(rangeExpression, context).dataFlowInfo
-                    newDataFlowInfo = ConditionalDataFlowInfo(dataFlowInfo)
-                    return
-                }
+                    if (subject is Subject.None) {
+                        context.trace.report(EXPECTED_CONDITION.on(condition))
+                        val dataFlowInfo = facade.getTypeInfo(rangeExpression, context).dataFlowInfo
+                        newDataFlowInfo = ConditionalDataFlowInfo(dataFlowInfo)
+                        return
+                    }
 
-                val argumentForSubject = subject.makeValueArgument() ?: return
-                val typeInfo = facade.checkInExpression(
-                    condition, condition.operationReference,
-                    argumentForSubject, rangeExpression, context
-                )
-                val dataFlowInfo = typeInfo.dataFlowInfo
-                newDataFlowInfo = ConditionalDataFlowInfo(dataFlowInfo)
-                val type = typeInfo.type
-                if (type == null || !isBoolean(type)) {
-                    context.trace.report(TYPE_MISMATCH_IN_RANGE.on(condition))
-                }
-            }
-
-            override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
-                if (subject is Subject.None) {
-                    context.trace.report(EXPECTED_CONDITION.on(condition))
-                }
-
-                val typeReference = condition.typeReference ?: return
-
-                val result = checkTypeForIs(context, condition, condition.isNegated, subject.type, typeReference, subject.dataFlowValue)
-                newDataFlowInfo = if (condition.isNegated) ConditionalDataFlowInfo(result.elseInfo, result.thenInfo) else result
-                val rhsType = context.trace[BindingContext.TYPE, typeReference]
-
-                if (subject !is Subject.None) {
-                    val rttiInformation = RttiExpressionInformation(
-                        subject = subject.element!!,
-                        sourceType = subject.type,
-                        targetType = rhsType,
-                        operation = if (condition.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
+                    val argumentForSubject = subject.makeValueArgument() ?: return
+                    val typeInfo = facade.checkInExpression(
+                        condition, condition.operationReference,
+                        argumentForSubject, rangeExpression, context,
                     )
-                    components.rttiExpressionCheckers.forEach {
-                        it.check(rttiInformation, condition, context.trace)
+                    val dataFlowInfo = typeInfo.dataFlowInfo
+                    newDataFlowInfo = ConditionalDataFlowInfo(dataFlowInfo)
+                    val type = typeInfo.type
+                    if (type == null || !isBoolean(type)) {
+                        context.trace.report(TYPE_MISMATCH_IN_RANGE.on(condition))
                     }
                 }
 
-            }
+                override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
+                    if (subject is Subject.None) {
+                        context.trace.report(EXPECTED_CONDITION.on(condition))
+                    }
 
-            override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
-                val expression = condition.expression ?: return
+                    val typeReference = condition.typeReference ?: return
 
-                val basicDataFlowInfo =
-                    checkTypeForExpressionCondition(context, expression, subject)
-                val moduleDescriptor = DescriptorUtils.getContainingModule(context.scope.ownerDescriptor)
-                val dataFlowInfoFromES =
-                    components.effectSystem.getDataFlowInfoWhenEquals(subject.valueExpression, expression, context.trace, moduleDescriptor)
-                newDataFlowInfo = basicDataFlowInfo.and(dataFlowInfoFromES)
-            }
+                    val result = checkTypeForIs(context, condition, condition.isNegated, subject.type, typeReference, subject.dataFlowValue)
+                    newDataFlowInfo = if (condition.isNegated) ConditionalDataFlowInfo(result.elseInfo, result.thenInfo) else result
+                    val rhsType = context.trace[BindingContext.TYPE, typeReference]
 
-            override fun visitKtElement(element: KtElement) {
-                context.trace.report(UNSUPPORTED.on(element, this::class.java.canonicalName))
-            }
-        })
+                    if (subject !is Subject.None) {
+                        val rttiInformation = RttiExpressionInformation(
+                            subject = subject.element!!,
+                            sourceType = subject.type,
+                            targetType = rhsType,
+                            operation = if (condition.isNegated) RttiOperation.NOT_IS else RttiOperation.IS,
+                        )
+                        components.rttiExpressionCheckers.forEach {
+                            it.check(rttiInformation, condition, context.trace)
+                        }
+                    }
+
+                }
+
+                override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
+                    val expression = condition.expression ?: return
+
+                    val basicDataFlowInfo =
+                        checkTypeForExpressionCondition(context, expression, subject)
+                    val moduleDescriptor = DescriptorUtils.getContainingModule(context.scope.ownerDescriptor)
+                    val dataFlowInfoFromES =
+                        components.effectSystem
+                            .getDataFlowInfoWhenEquals(subject.valueExpression, expression, context.trace, moduleDescriptor)
+                    newDataFlowInfo = basicDataFlowInfo.and(dataFlowInfoFromES)
+                }
+
+                override fun visitKtElement(element: KtElement) {
+                    context.trace.report(UNSUPPORTED.on(element, this::class.java.canonicalName))
+                }
+            },
+        )
         return newDataFlowInfo
     }
 
     private fun checkTypeForExpressionCondition(
         context: ExpressionTypingContext,
         expression: KtExpression,
-        subject: Subject
+        subject: Subject,
     ): ConditionalDataFlowInfo {
         var newContext = context
         val typeInfo = facade.getTypeInfo(expression, newContext)
@@ -589,7 +592,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             context.trace,
             subjectStableTypes,
             expressionStableTypes,
-            expression
+            expression,
         )
 
         val result = noChange(newContext)
@@ -597,13 +600,13 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             result.thenInfo.equate(
                 subject.dataFlowValue, expressionDataFlowValue,
                 identityEquals = facade.components.dataFlowAnalyzer.typeHasEqualsFromAny(subject.type, expression),
-                languageVersionSettings = components.languageVersionSettings
+                languageVersionSettings = components.languageVersionSettings,
             ),
             result.elseInfo.disequate(
                 subject.dataFlowValue,
                 expressionDataFlowValue,
-                components.languageVersionSettings
-            )
+                components.languageVersionSettings,
+            ),
         )
     }
 
@@ -613,7 +616,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         negated: Boolean,
         subjectType: KotlinType,
         typeReferenceAfterIs: KtTypeReference,
-        subjectDataFlowValue: DataFlowValue
+        subjectDataFlowValue: DataFlowValue,
     ): ConditionalDataFlowInfo {
         val typeResolutionContext =
             TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true, context.isDebuggerContext)
@@ -623,7 +626,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             possiblyBareTarget,
             subjectType,
             context.trace,
-            components.builtIns
+            components.builtIns,
         )
 
         if (targetType.isDynamic()) {
@@ -656,7 +659,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         targetType: KotlinType,
         isCheck: KtElement,
         negated: Boolean,
-        subjectDataFlowValue: DataFlowValue
+        subjectDataFlowValue: DataFlowValue,
     ) {
         if (subjectType.containsError() || targetType.containsError()) return
 
@@ -676,7 +679,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         context: ExpressionTypingContext,
         type: KotlinType,
         subjectType: KotlinType,
-        reportErrorOn: KtElement
+        reportErrorOn: KtElement,
     ) {
         // TODO : Take smart casts into account?
         if (TypeIntersector.isIntersectionEmpty(type, subjectType)) {

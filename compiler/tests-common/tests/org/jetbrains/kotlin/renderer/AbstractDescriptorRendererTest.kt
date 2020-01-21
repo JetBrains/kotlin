@@ -51,73 +51,74 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
 
         val descriptors = ArrayList<DeclarationDescriptor>()
 
-        psiFile.accept(object : KtVisitorVoid() {
-            override fun visitKtFile(file: KtFile) {
-                val fqName = file.packageFqName
-                if (!fqName.isRoot) {
-                    descriptors.add(module.getPackage(fqName))
-                }
-                file.acceptChildren(this)
-            }
-
-            override fun visitParameter(parameter: KtParameter) {
-                val declaringElement = parameter.parent.parent
-                when (declaringElement) {
-                    is KtFunctionType -> return
-                    is KtNamedFunction ->
-                        addCorrespondingParameterDescriptor(getDescriptor(declaringElement, container) as FunctionDescriptor, parameter)
-                    is KtPrimaryConstructor -> {
-                        val ktClassOrObject: KtClassOrObject = declaringElement.getContainingClassOrObject()
-                        val classDescriptor = getDescriptor(ktClassOrObject, container) as ClassDescriptor
-                        addCorrespondingParameterDescriptor(classDescriptor.unsubstitutedPrimaryConstructor!!, parameter)
+        psiFile.accept(
+            object : KtVisitorVoid() {
+                override fun visitKtFile(file: KtFile) {
+                    val fqName = file.packageFqName
+                    if (!fqName.isRoot) {
+                        descriptors.add(module.getPackage(fqName))
                     }
-                    else -> super.visitParameter(parameter)
+                    file.acceptChildren(this)
                 }
-            }
 
-            override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
-                val property = accessor.property
-                val propertyDescriptor = getDescriptor(property, container) as PropertyDescriptor
-                if (accessor.isGetter) {
-                    descriptors.add(propertyDescriptor.getter!!)
+                override fun visitParameter(parameter: KtParameter) {
+                    val declaringElement = parameter.parent.parent
+                    when (declaringElement) {
+                        is KtFunctionType -> return
+                        is KtNamedFunction ->
+                            addCorrespondingParameterDescriptor(getDescriptor(declaringElement, container) as FunctionDescriptor, parameter)
+                        is KtPrimaryConstructor -> {
+                            val ktClassOrObject: KtClassOrObject = declaringElement.getContainingClassOrObject()
+                            val classDescriptor = getDescriptor(ktClassOrObject, container) as ClassDescriptor
+                            addCorrespondingParameterDescriptor(classDescriptor.unsubstitutedPrimaryConstructor!!, parameter)
+                        }
+                        else -> super.visitParameter(parameter)
+                    }
                 }
-                else {
-                    descriptors.add(propertyDescriptor.setter!!)
+
+                override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+                    val property = accessor.property
+                    val propertyDescriptor = getDescriptor(property, container) as PropertyDescriptor
+                    if (accessor.isGetter) {
+                        descriptors.add(propertyDescriptor.getter!!)
+                    } else {
+                        descriptors.add(propertyDescriptor.setter!!)
+                    }
+                    accessor.acceptChildren(this)
                 }
-                accessor.acceptChildren(this)
-            }
 
-            override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
-                initializer.acceptChildren(this)
-            }
+                override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
+                    initializer.acceptChildren(this)
+                }
 
-            override fun visitDeclaration(element: KtDeclaration) {
-                val descriptor = getDescriptor(element, container)
-                descriptors.add(descriptor)
-                if (descriptor is ClassDescriptor) {
-                    // if class has primary constructor then we visit it later, otherwise add it artificially
-                    if (element !is KtClassOrObject || !element.hasExplicitPrimaryConstructor()) {
-                        if (descriptor.unsubstitutedPrimaryConstructor != null) {
-                            descriptors.add(descriptor.unsubstitutedPrimaryConstructor!!)
+                override fun visitDeclaration(element: KtDeclaration) {
+                    val descriptor = getDescriptor(element, container)
+                    descriptors.add(descriptor)
+                    if (descriptor is ClassDescriptor) {
+                        // if class has primary constructor then we visit it later, otherwise add it artificially
+                        if (element !is KtClassOrObject || !element.hasExplicitPrimaryConstructor()) {
+                            if (descriptor.unsubstitutedPrimaryConstructor != null) {
+                                descriptors.add(descriptor.unsubstitutedPrimaryConstructor!!)
+                            }
                         }
                     }
+                    element.acceptChildren(this)
                 }
-                element.acceptChildren(this)
-            }
 
-            override fun visitKtElement(element: KtElement) {
-                element.acceptChildren(this)
-            }
+                override fun visitKtElement(element: KtElement) {
+                    element.acceptChildren(this)
+                }
 
-            private fun addCorrespondingParameterDescriptor(functionDescriptor: FunctionDescriptor, parameter: KtParameter) {
-                for (valueParameterDescriptor in functionDescriptor.valueParameters) {
-                    if (valueParameterDescriptor.name == parameter.nameAsName) {
-                        descriptors.add(valueParameterDescriptor)
+                private fun addCorrespondingParameterDescriptor(functionDescriptor: FunctionDescriptor, parameter: KtParameter) {
+                    for (valueParameterDescriptor in functionDescriptor.valueParameters) {
+                        if (valueParameterDescriptor.name == parameter.nameAsName) {
+                            descriptors.add(valueParameterDescriptor)
+                        }
                     }
+                    parameter.acceptChildren(this)
                 }
-                parameter.acceptChildren(this)
-            }
-        })
+            },
+        )
 
         val renderer = DescriptorRenderer.withOptions {
             classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 class FirExplicitStarImportingScope(
     imports: List<FirImport>,
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : FirAbstractStarImportingScope(session, scopeSession) {
     override val starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder }
 }

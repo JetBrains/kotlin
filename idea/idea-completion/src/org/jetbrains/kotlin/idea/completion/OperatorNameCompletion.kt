@@ -25,7 +25,7 @@ object OperatorNameCompletion {
         CONTAINS to "in !in",
         COMPARE_TO to "< > <= >=",
         EQUALS to "== !=",
-        INVOKE to "(...)"
+        INVOKE to "(...)",
     )
 
     private fun buildLookupElement(opName: Name): LookupElement {
@@ -39,7 +39,9 @@ object OperatorNameCompletion {
     }
 
     fun doComplete(collector: LookupElementsCollector, descriptorNameFilter: (String) -> Boolean) {
-        collector.addElements(OperatorConventions.CONVENTION_NAMES.filter { descriptorNameFilter(it.asString()) }
-                                  .map(this::buildLookupElement))
+        collector.addElements(
+            OperatorConventions.CONVENTION_NAMES.filter { descriptorNameFilter(it.asString()) }
+                .map(this::buildLookupElement),
+        )
     }
 }

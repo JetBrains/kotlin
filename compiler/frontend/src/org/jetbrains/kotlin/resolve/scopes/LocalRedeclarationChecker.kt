@@ -71,8 +71,8 @@ class ThrowingLocalRedeclarationChecker(overloadChecker: OverloadChecker) : Abst
             String.format(
                 "Redeclaration: %s (%s) and %s (%s) (no line info available)",
                 DescriptorUtils.getFqName(first), first,
-                DescriptorUtils.getFqName(second), second
-            )
+                DescriptorUtils.getFqName(second), second,
+            ),
         )
     }
 
@@ -81,8 +81,8 @@ class ThrowingLocalRedeclarationChecker(overloadChecker: OverloadChecker) : Abst
             String.format(
                 "Conflicting overloads: %s (%s) and %s (%s) (no line info available)",
                 DescriptorUtils.getFqName(first), first,
-                DescriptorUtils.getFqName(second), second
-            )
+                DescriptorUtils.getFqName(second), second,
+            ),
         )
     }
 }

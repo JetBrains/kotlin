@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class OverridesCompletion(
     private val collector: LookupElementsCollector,
-    private val lookupElementFactory: BasicLookupElementFactory
+    private val lookupElementFactory: BasicLookupElementFactory,
 ) {
     private val PRESENTATION_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
         modifiers = emptySet()

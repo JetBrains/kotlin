@@ -51,7 +51,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             addRoot(
                 moduleWithSrcRootSet,
                 File(testDataPath + "${getTestName(true)}/${name}Test"),
-                true
+                true,
             )
         }
 
@@ -93,18 +93,21 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     fun Module.addDependency(
         other: Module,
         dependencyScope: DependencyScope = DependencyScope.COMPILE,
-        exported: Boolean = false
+        exported: Boolean = false,
     ): Module = this.apply { ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported) }
 
     fun Module.addLibrary(
         jar: File,
         name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME,
-        kind: PersistentLibraryKind<*>? = null
+        kind: PersistentLibraryKind<*>? = null,
     ) {
-        ConfigLibraryUtil.addLibrary(NewLibraryEditor().apply {
-            this.name = name
-            addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES)
-        }, this, kind)
+        ConfigLibraryUtil.addLibrary(
+            NewLibraryEditor().apply {
+                this.name = name
+                addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES)
+            },
+            this, kind,
+        )
     }
 
     fun Module.enableMultiPlatform(additionalCompilerArguments: String = "") {
@@ -129,7 +132,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     protected fun checkFiles(
         findFiles: () -> List<PsiFile>,
-        check: () -> Unit
+        check: () -> Unit,
     ) {
         var atLeastOneFile = false
         findFiles().forEach { file ->
@@ -143,7 +146,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
 fun Module.createFacet(
     platformKind: TargetPlatform? = null,
-    useProjectSettings: Boolean = true
+    useProjectSettings: Boolean = true,
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) { }
 }
@@ -151,7 +154,7 @@ fun Module.createFacet(
 fun Module.createMultiplatformFacetM1(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    implementedModuleNames: List<String>
+    implementedModuleNames: List<String>,
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.implementedModuleNames = implementedModuleNames
@@ -161,7 +164,7 @@ fun Module.createMultiplatformFacetM1(
 fun Module.createMultiplatformFacetM3(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    dependsOnModuleNames: List<String>
+    dependsOnModuleNames: List<String>,
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.dependsOnModuleNames = dependsOnModuleNames
@@ -172,7 +175,7 @@ fun Module.createMultiplatformFacetM3(
 private fun Module.createFacetWithAdditionalSetup(
     platformKind: TargetPlatform?,
     useProjectSettings: Boolean,
-    additionalSetup: KotlinFacetSettings.() -> Unit
+    additionalSetup: KotlinFacetSettings.() -> Unit,
 ) {
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
@@ -180,7 +183,7 @@ private fun Module.createFacetWithAdditionalSetup(
             initializeIfNeeded(
                 this@createFacetWithAdditionalSetup,
                 modelsProvider.getModifiableRootModel(this@createFacetWithAdditionalSetup),
-                platformKind
+                platformKind,
             )
             additionalSetup()
         }

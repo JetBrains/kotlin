@@ -24,7 +24,7 @@ data class CommonBuildMetaInfo(
     override val metadataVersionPatch: Int,
     override val ownVersion: Int,
     override val coroutinesVersion: Int,
-    override val multiplatformVersion: Int
+    override val multiplatformVersion: Int,
 ) : BuildMetaInfo {
     companion object : BuildMetaInfoFactory<CommonBuildMetaInfo>(CommonBuildMetaInfo::class) {
         override fun create(
@@ -39,7 +39,7 @@ data class CommonBuildMetaInfo(
             ownVersion: Int,
             coroutinesVersion: Int,
             multiplatformVersion: Int,
-            metadataVersionArray: IntArray?
+            metadataVersionArray: IntArray?,
         ): CommonBuildMetaInfo {
             val metadataVersion = metadataVersionArray?.let(::JvmMetadataVersion) ?: JvmMetadataVersion.INSTANCE
             return CommonBuildMetaInfo(
@@ -56,7 +56,7 @@ data class CommonBuildMetaInfo(
                 metadataVersionPatch = metadataVersion.patch,
                 ownVersion = ownVersion,
                 coroutinesVersion = coroutinesVersion,
-                multiplatformVersion = multiplatformVersion
+                multiplatformVersion = multiplatformVersion,
             )
         }
     }
