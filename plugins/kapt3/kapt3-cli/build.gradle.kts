@@ -24,6 +24,3 @@ projectTest {
     workingDir = rootDir
     dependsOn(":dist")
 }
-
-val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
-compileKotlin.kotlinOptions.freeCompilerArgs += "-Xno-use-ir"
