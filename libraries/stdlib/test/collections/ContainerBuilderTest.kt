@@ -18,6 +18,7 @@ class ContainerBuilderTest {
 
         assertEquals(listOf('a', 'b', 'c', 'd'), y)
 
+        assertEquals(listOf(1), buildList(0) { add(1) })
         assertFailsWith<IllegalArgumentException> {
             buildList(-1) { add(0) }
         }
@@ -38,6 +39,7 @@ class ContainerBuilderTest {
 
         assertEquals(setOf('c', 'b', 'd'), y)
 
+        assertEquals(setOf(1), buildSet(0) { add(1) })
         assertFailsWith<IllegalArgumentException> {
             buildSet(-1) { add(0) }
         }
@@ -59,6 +61,7 @@ class ContainerBuilderTest {
 
         assertEquals(mapOf('a' to 1, 'c' to 3, 'b' to 2, 'd' to 4), y)
 
+        assertEquals(mapOf("a" to 1), buildMap<String, Int>(0) { put("a", 1) })
         assertFailsWith<IllegalArgumentException> {
             buildMap<String, Int>(-1) { put("x", 1) }
         }

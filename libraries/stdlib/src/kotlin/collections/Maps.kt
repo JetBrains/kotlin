@@ -148,6 +148,7 @@ public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K,
 @kotlin.internal.InlineOnly
 public inline fun <K, V> buildMap(expectedSize: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    checkBuilderCapacity(expectedSize)
     return LinkedHashMap<K, V>(mapCapacity(expectedSize)).apply(builderAction)
 }
 
@@ -156,6 +157,14 @@ public inline fun <K, V> buildMap(expectedSize: Int, @BuilderInference builderAc
  */
 @PublishedApi
 internal expect fun mapCapacity(expectedSize: Int): Int
+
+/**
+ * Checks a collection builder function capacity argument.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@PublishedApi
+internal expect fun checkBuilderCapacity(capacity: Int)
 
 /** Returns `true` if this map is not empty. */
 @kotlin.internal.InlineOnly

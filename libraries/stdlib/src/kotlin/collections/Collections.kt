@@ -178,6 +178,7 @@ public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.
 @kotlin.internal.InlineOnly
 public inline fun <E> buildList(expectedSize: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    checkBuilderCapacity(expectedSize)
     return ArrayList<E>(expectedSize).apply(builderAction)
 }
 
