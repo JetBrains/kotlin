@@ -15,7 +15,7 @@ object MppModuleConfigurator : ModuleConfigurator {
     override val moduleKind = ModuleKind.multiplatform
     override val suggestedModuleName = "shared"
     override val id = "multiplatform"
-
+    override val text = "Multiplatform"
     override val canContainSubModules = true
 
     override fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
