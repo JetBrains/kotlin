@@ -198,12 +198,12 @@ public final class RunContentManagerImpl implements RunContentManager {
   @Nullable
   public RunContentDescriptor getSelectedContent() {
     for (String activeWindow : myToolwindowIdZBuffer) {
-      final ContentManager contentManager = myToolwindowIdToContentManagerMap.get(activeWindow);
+      ContentManager contentManager = myToolwindowIdToContentManagerMap.get(activeWindow);
       if (contentManager == null) {
         continue;
       }
 
-      final Content selectedContent = contentManager.getSelectedContent();
+      Content selectedContent = contentManager.getSelectedContent();
       if (selectedContent == null) {
         if (contentManager.getContentCount() == 0) {
           // continue to the next window if the content manager is empty

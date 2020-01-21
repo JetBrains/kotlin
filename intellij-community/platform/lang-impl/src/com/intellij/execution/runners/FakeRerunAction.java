@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.runners;
 
 import com.intellij.execution.ExecutionBundle;
@@ -57,7 +57,8 @@ public class FakeRerunAction extends AnAction  {
     ExecutionEnvironment environment = event.getData(LangDataKeys.EXECUTION_ENVIRONMENT);
     if (environment == null) {
       Project project = event.getProject();
-      RunContentDescriptor contentDescriptor = project == null ? null : RunContentManager.getInstance(project).getSelectedContent();
+      RunContentManager runContentManager = project == null ? null : RunContentManager.getInstanceIfCreated(project);
+      RunContentDescriptor contentDescriptor = runContentManager == null ? null : runContentManager.getSelectedContent();
       if (contentDescriptor != null) {
         JComponent component = contentDescriptor.getComponent();
         if (component != null) {
