@@ -460,18 +460,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     return false;
   }
 
-
   @NotNull
-  private static JComponent createHintComponent(@NotNull Project project,
-                                                @NotNull Runnable cancelAction,
-                                                boolean isWarning,
-                                                @NotNull String secondInvocationTitle,
-                                                @NotNull Runnable showDialogAndFindUsagesRunnable) {
+  private static JComponent createHintComponent(@NotNull String secondInvocationTitle, boolean isWarning, @NotNull JComponent button) {
     JComponent label = HintUtil.createInformationLabel(secondInvocationTitle);
     if (isWarning) {
       label.setBackground(MessageType.WARNING.getPopupBackground());
     }
-    InplaceButton button = createSettingsButton(project, cancelAction, showDialogAndFindUsagesRunnable);
 
     JPanel panel = new JPanel(new BorderLayout());
     button.setBackground(label.getBackground());
@@ -935,9 +929,13 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
         return;
       }
       JComponent label = createHintComponent(
-        project, ShowUsagesAction::hideHints, isWarning,
         suggestSecondInvocation(hint, getSecondInvocationTitle(actionHandler)),
-        () -> actionHandler.showDialogAndFindUsages(editor)
+        isWarning,
+        createSettingsButton(
+          project,
+          ShowUsagesAction::hideHints,
+          () -> actionHandler.showDialogAndFindUsages(editor)
+        )
       );
       if (editor == null || editor.isDisposed() || !editor.getComponent().isShowing()) {
         int flags = HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE | HintManager.HIDE_BY_SCROLLING;
