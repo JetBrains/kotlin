@@ -91,7 +91,13 @@ public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
 public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /**
- * Build a new read-only [Set] with the [elements][E] from the [builderAction] while preserving the insertion order.
+ * Builds a new read-only [Set] by populating a [MutableSet] using the given [builderAction]
+ * and returning a read-only set with the same elements.
+ *
+ * The set passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
+ *
+ * Elements of the set are iterated in the order they were added by the [builderAction].
  *
  * @sample samples.collections.Builders.Sets.buildSetSample
  */
@@ -104,19 +110,27 @@ public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.()
 }
 
 /**
- * Build a new read-only [Set] with the given [expectedSize] and [elements][E] from the [builderAction] while preserving the insertion
- * order.
+ * Builds a new read-only [Set] by populating a [MutableSet] using the given [builderAction]
+ * and returning a read-only set with the same elements.
+ *
+ * The set passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
+ *
+ * [capacity] is used to hint the expected number of elements added in the [builderAction].
+ *
+ * Elements of the set are iterated in the order they were added by the [builderAction].
+ *
+ * @throws IllegalArgumentException if the given [capacity] is negative.
  *
  * @sample samples.collections.Builders.Sets.buildSetSample
- * @throws IllegalArgumentException if the given [expectedSize] is negative.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun <E> buildSet(expectedSize: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    checkBuilderCapacity(expectedSize)
-    return LinkedHashSet<E>(mapCapacity(expectedSize)).apply(builderAction)
+    checkBuilderCapacity(capacity)
+    return LinkedHashSet<E>(mapCapacity(capacity)).apply(builderAction)
 }
 
 

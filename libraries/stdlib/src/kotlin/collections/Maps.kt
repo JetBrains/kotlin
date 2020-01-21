@@ -124,7 +124,13 @@ public inline fun <K, V> linkedMapOf(): LinkedHashMap<K, V> = LinkedHashMap<K, V
 public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = pairs.toMap(LinkedHashMap(mapCapacity(pairs.size)))
 
 /**
- * Build a new read-only [Map] with the [key][K]-[value][V] pairs from the [builderAction] while preserving the insertion order.
+ * Builds a new read-only [Map] by populating a [MutableMap] using the given [builderAction]
+ * and returning a read-only map with the same key-value pairs.
+ *
+ * The map passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
+ *
+ * Entries of the map are iterated in the order they were added by the [builderAction].
  *
  * @sample samples.collections.Builders.Maps.buildMapSample
  */
@@ -137,19 +143,27 @@ public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K,
 }
 
 /**
- * Build a new read-only [Map] with the given [expectedSize] and [key][K]-[value][V] pairs from the [builderAction] while preserving
- * the insertion order.
+ * Builds a new read-only [Map] by populating a [MutableMap] using the given [builderAction]
+ * and returning a read-only map with the same key-value pairs.
+ *
+ * The map passed as a receiver to the [builderAction] is valid only inside that function.
+ * Using it outside of the function produces an unspecified behavior.
+ *
+ * [capacity] is used to hint the expected number of pairs added in the [builderAction].
+ *
+ * Entries of the map are iterated in the order they were added by the [builderAction].
+ *
+ * @throws IllegalArgumentException if the given [capacity] is negative.
  *
  * @sample samples.collections.Builders.Maps.buildMapSample
- * @throws IllegalArgumentException if the given [expectedSize] is negative.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun <K, V> buildMap(expectedSize: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    checkBuilderCapacity(expectedSize)
-    return LinkedHashMap<K, V>(mapCapacity(expectedSize)).apply(builderAction)
+    checkBuilderCapacity(capacity)
+    return LinkedHashMap<K, V>(mapCapacity(capacity)).apply(builderAction)
 }
 
 /**
