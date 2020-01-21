@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -89,15 +87,6 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String, val irConfigu
                 dependsOn(compilation.compileKotlinTaskName)
                 dependsOn(compilation.processResourcesTaskName)
             }
-        }
-    }
-
-    override fun createJarTasks(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        super.createJarTasks(target)
-        val jar = target.project.tasks.getByName(target.artifactsTaskName) as Jar
-
-        if (irConfigurator != null) {
-            jar.archiveAppendix.set("legacyJs")
         }
     }
 

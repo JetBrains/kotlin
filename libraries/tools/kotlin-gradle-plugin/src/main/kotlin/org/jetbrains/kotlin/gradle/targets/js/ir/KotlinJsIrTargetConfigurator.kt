@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -20,11 +22,6 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     KotlinTargetWithTestsConfigurator<KotlinJsIrReportAggregatingTestRun, KotlinJsIrTarget> {
 
     override val testRunClass: Class<KotlinJsIrReportAggregatingTestRun> get() = KotlinJsIrReportAggregatingTestRun::class.java
-
-    @Deprecated("Remove when legacy js plugin will be removed")
-    fun configureTarget(target: KotlinJsIrTarget, mixedMode: Boolean) {
-        super<KotlinOnlyTargetConfigurator>.configureTarget(target) // TODO Add tests support
-    }
 
     override fun createTestRun(
         name: String,
@@ -52,6 +49,13 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     override fun buildCompilationProcessor(compilation: KotlinJsIrCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
         return KotlinJsIrSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
+    }
+
+    override fun createJarTasks(target: KotlinOnlyTarget<KotlinJsIrCompilation>): Pair<String, Zip> {
+        val (_, task) = super.createJarTasks(target)
+        task.archiveExtension.set(KLIB_TYPE)
+
+        return KLIB_TYPE to task
     }
 
     override fun configureCompilations(target: KotlinJsIrTarget) {

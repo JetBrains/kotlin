@@ -22,6 +22,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -350,12 +351,14 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
         }
     }
 
-    /** The implementations are expected to create a [Jar] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
-    protected open fun createJarTasks(target: KotlinTargetType) {
+    /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
+    protected open fun createJarTasks(target: KotlinTargetType): Pair<String, Zip> {
         val result = target.project.tasks.create(target.artifactsTaskName, Jar::class.java)
         result.description = "Assembles a jar archive containing the main classes."
         result.group = BasePlugin.BUILD_GROUP
         result.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+
+        return ArtifactTypeDefinition.JAR_TYPE to result
     }
 
     override fun configureArchivesAndComponent(target: KotlinTargetType) {
@@ -363,17 +366,16 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        createJarTasks(target)
-        val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
+        val (type, task) = createJarTasks(target)
 
-        target.disambiguationClassifier?.let { jar.appendix = it.toLowerCase() }
+        target.disambiguationClassifier?.let { task.appendix = it.toLowerCase() }
 
         // Workaround: adding the artifact during configuration seems to interfere with the Java plugin, which results into missing
         // task dependency 'assemble -> jar' if the Java plugin is applied after this steps
         project.afterEvaluate {
-            project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, jar) { jarArtifact ->
-                jarArtifact.builtBy(jar)
-                jarArtifact.type = ArtifactTypeDefinition.JAR_TYPE
+            project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, task) { jarArtifact ->
+                jarArtifact.builtBy(task)
+                jarArtifact.type = type
 
                 val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
                 addJar(apiElementsConfiguration, jarArtifact)
