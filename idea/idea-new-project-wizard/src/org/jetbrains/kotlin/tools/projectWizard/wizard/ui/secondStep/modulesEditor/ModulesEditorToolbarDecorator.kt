@@ -4,9 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.ToolbarDecorator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.createPanelWithPopupHandler
@@ -31,6 +29,9 @@ class ModulesEditorToolbarDecorator(
                 allowMultiplatform = isMultiplatformProject()
                         && isRootModule
                         && allModules.none { it.configurator == MppModuleConfigurator },
+                allowSinglepaltformJs = isMultiplatformProject()
+                        && isRootModule
+                        && allModules.none { it.configurator == JsSingleplatformModuleConfigurator },
                 allowAndroid = isRootModule
                         && isMultiplatformProject()
                         && allModules.none { it.configurator == AndroidSinglePlatformModuleConfigurator },
@@ -52,7 +53,8 @@ class ModulesEditorToolbarDecorator(
                 }
                 text = "Add" + when (tree.selectedSettingItem?.safeAs<Module>()?.kind) {
                     ModuleKind.multiplatform -> " Target"
-                    ModuleKind.singleplatform -> " Module"
+                    ModuleKind.singleplatformJvm -> " Module"
+                    ModuleKind.singleplatformJs -> " JS Module"
                     ModuleKind.target -> ""
                     null -> ""
                 }
@@ -105,6 +107,7 @@ class ModulesEditorToolbarDecorator(
 private val Module.kindText
     get() = when (kind) {
         ModuleKind.multiplatform -> "Module"
-        ModuleKind.singleplatform -> "Module"
+        ModuleKind.singleplatformJvm -> "Module"
+        ModuleKind.singleplatformJs -> "Module"
         ModuleKind.target -> "Target"
     }

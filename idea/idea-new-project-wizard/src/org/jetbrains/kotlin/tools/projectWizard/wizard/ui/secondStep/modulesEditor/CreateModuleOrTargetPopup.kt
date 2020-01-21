@@ -19,6 +19,7 @@ import javax.swing.Icon
 class CreateModuleOrTargetPopup private constructor(
     private val target: Module?,
     private val allowMultiplatform: Boolean,
+    private val allowSinglepaltformJs: Boolean,
     private val allowAndroid: Boolean,
     private val allowIos: Boolean,
     private val createTarget: (TargetConfigurator) -> Unit,
@@ -42,6 +43,7 @@ class CreateModuleOrTargetPopup private constructor(
             if (allowMultiplatform) +MppModuleConfigurator
             +JvmSinglePlatformModuleConfigurator
             if (allowAndroid) +AndroidSinglePlatformModuleConfigurator
+            if (allowSinglepaltformJs) +JsSingleplatformModuleConfigurator
 
             //todo ios support
             //if (allowIos) +IOSSinglePlatformModuleConfigurator
@@ -101,6 +103,7 @@ class CreateModuleOrTargetPopup private constructor(
         fun create(
             target: Module?,
             allowMultiplatform: Boolean,
+            allowSinglepaltformJs: Boolean,
             allowAndroid: Boolean,
             allowIos: Boolean,
             createTarget: (TargetConfigurator) -> Unit,
@@ -108,6 +111,7 @@ class CreateModuleOrTargetPopup private constructor(
         ) = CreateModuleOrTargetPopup(
             target = target,
             allowMultiplatform = allowMultiplatform,
+            allowSinglepaltformJs = allowSinglepaltformJs,
             allowAndroid = allowAndroid,
             allowIos = allowIos,
             createTarget = createTarget,

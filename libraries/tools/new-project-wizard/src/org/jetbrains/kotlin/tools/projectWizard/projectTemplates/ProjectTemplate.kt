@@ -4,6 +4,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsSingleplatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.defaultTarget
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -54,7 +55,8 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             JvmServerJsClient,
             MultiplatformLibrary,
             AndroidApplication,
-            NativeConsoleApplication
+            NativeConsoleApplication,
+            JsBrowserApplication
         )
     }
 }
@@ -206,7 +208,7 @@ object AndroidApplication : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 Module(
                     "app",
-                    ModuleKind.singleplatform,
+                    ModuleKind.singleplatformJvm,
                     AndroidSinglePlatformModuleConfigurator,
                     template = null,
                     sourcesets = SourcesetType.ALL.map { type ->
@@ -238,6 +240,29 @@ object NativeConsoleApplication : ProjectTemplate() {
                             withTemplate(NativeConsoleApplicationTemplate())
                         }
                     )
+                )
+            )
+        )
+}
+
+object JsBrowserApplication : ProjectTemplate() {
+    override val title = "Kotlin/JS Frontend Application"
+    override val htmlDescription = title
+    override val suggestedProjectName = "myKotlinJsApplication"
+    override val projectKind = ProjectKind.Multiplatform
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin::modules withValue listOf(
+                Module(
+                    "frontend",
+                    ModuleKind.singleplatformJs,
+                    JsSingleplatformModuleConfigurator,
+                    template = SimpleJsClientTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, ModuleType.jvm, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
                 )
             )
         )
