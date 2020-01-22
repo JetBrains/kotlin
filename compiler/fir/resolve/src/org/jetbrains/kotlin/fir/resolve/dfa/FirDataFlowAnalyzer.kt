@@ -531,7 +531,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val node = graphBuilder.exitSafeCall(qualifiedAccess).mergeIncomingFlow()
         val variable = variableStorage.getOrCreateVariable(qualifiedAccess)
         val receiverVariable = when (variable) {
-            is RealVariable -> variable.explicitReceiverVariable!!
+            // There is some bug with invokes. See KT-36014
+            is RealVariable -> variable.explicitReceiverVariable ?: return
             is SyntheticVariable -> variableStorage.getOrCreateVariable(qualifiedAccess.explicitReceiver!!)
         }
         logicSystem.addImplication(node.flow, (variable notEq null) implies (receiverVariable notEq null))
