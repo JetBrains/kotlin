@@ -11683,6 +11683,44 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/specifyVisibilityInExplicitApiMode")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecifyVisibilityInExplicitApiMode extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSpecifyVisibilityInExplicitApiMode() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/specifyVisibilityInExplicitApiMode"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("class.kt")
+        public void testClass() throws Exception {
+            runTest("idea/testData/quickfix/specifyVisibilityInExplicitApiMode/class.kt");
+        }
+
+        @TestMetadata("companion.kt")
+        public void testCompanion() throws Exception {
+            runTest("idea/testData/quickfix/specifyVisibilityInExplicitApiMode/companion.kt");
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            runTest("idea/testData/quickfix/specifyVisibilityInExplicitApiMode/constructor.kt");
+        }
+
+        @TestMetadata("method.kt")
+        public void testMethod() throws Exception {
+            runTest("idea/testData/quickfix/specifyVisibilityInExplicitApiMode/method.kt");
+        }
+
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            runTest("idea/testData/quickfix/specifyVisibilityInExplicitApiMode/property.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/superTypeIsExtensionType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
