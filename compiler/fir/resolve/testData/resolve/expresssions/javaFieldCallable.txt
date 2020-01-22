@@ -1,0 +1,5 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval staticReference: R|kotlin/reflect/KMutableProperty1<JavaClass, ft<kotlin/String, kotlin/String?>!>| = Q|JavaClass|::R|/JavaClass.staticField|
+        lval nonStaticReference: R|kotlin/reflect/KMutableProperty1<JavaClass, ft<kotlin/String, kotlin/String?>!>| = Q|JavaClass|::R|/JavaClass.nonStaticField|
+    }

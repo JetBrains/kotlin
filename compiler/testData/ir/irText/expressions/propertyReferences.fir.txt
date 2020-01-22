@@ -250,23 +250,23 @@ FILE fqName:<root> fileName:/propertyReferences.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test_constVal> (): kotlin.reflect.KProperty0<kotlin.Int> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_constVal type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
   PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:IrErrorType visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:kotlin.reflect.KProperty1<<root>.J, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: Q|J|::<Unresolved name: CONST>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:IrErrorType
+        ERROR_CALL 'Unsupported callable reference: Q|J|::R|/J.CONST|' type=kotlin.reflect.KProperty1<<root>.J, kotlin.Int>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty1<<root>.J, kotlin.Int>
       correspondingProperty: PROPERTY name:test_J_CONST visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_J_CONST> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_J_CONST> (): kotlin.reflect.KProperty1<<root>.J, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:kotlin.reflect.KProperty1<<root>.J, kotlin.Int> visibility:private [final,static]' type=kotlin.reflect.KProperty1<<root>.J, kotlin.Int> origin=null
   PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:IrErrorType visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:kotlin.reflect.KMutableProperty1<<root>.J, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: Q|J|::<Unresolved name: nonConst>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:IrErrorType
+        ERROR_CALL 'Unsupported callable reference: Q|J|::R|/J.nonConst|' type=kotlin.reflect.KMutableProperty1<<root>.J, kotlin.Int>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty1<<root>.J, kotlin.Int>
       correspondingProperty: PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_J_nonConst> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_J_nonConst> (): kotlin.reflect.KMutableProperty1<<root>.J, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:kotlin.reflect.KMutableProperty1<<root>.J, kotlin.Int> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty1<<root>.J, kotlin.Int> origin=null
   PROPERTY name:test_varWithPrivateSet visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_varWithPrivateSet type:kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY

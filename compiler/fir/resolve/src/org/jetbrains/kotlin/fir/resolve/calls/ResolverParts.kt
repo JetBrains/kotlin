@@ -194,7 +194,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 
         val resultingType: ConeKotlinType = when (fir) {
             is FirFunction -> createKFunctionType(fir, resultingReceiverType, returnTypeRef)
-            is FirProperty -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
+            is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
         }.let(candidate.substitutor::substituteOrSelf)
 
@@ -234,13 +234,13 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 }
 
 private fun createKPropertyType(
-    property: FirProperty,
+    propertyOrField: FirVariable<*>,
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef
 ): ConeKotlinType {
-    val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $property")
+    val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $propertyOrField")
     return createKPropertyType(
-        receiverType, propertyType, isMutable = property.isVar
+        receiverType, propertyType, isMutable = propertyOrField.isVar
     )
 }
 

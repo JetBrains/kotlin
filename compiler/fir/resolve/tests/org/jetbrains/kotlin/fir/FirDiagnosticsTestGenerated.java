@@ -504,6 +504,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/innerQualifier.kt");
         }
 
+        @TestMetadata("javaFieldCallable.kt")
+        public void testJavaFieldCallable() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/javaFieldCallable.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");

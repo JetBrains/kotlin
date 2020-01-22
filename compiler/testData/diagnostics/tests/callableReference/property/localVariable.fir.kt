@@ -3,7 +3,7 @@
 fun eat(value: Any) {}
 
 fun test(param: String) {
-    val a = <!UNRESOLVED_REFERENCE!>::param<!>
+    val a = ::param
 
     val local = "local"
     val b = ::local
