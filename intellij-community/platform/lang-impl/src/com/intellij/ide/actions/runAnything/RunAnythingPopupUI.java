@@ -94,7 +94,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private RunAnythingContext mySelectedExecutingContext;
   private final List<RunAnythingContext> myAvailableExecutingContexts = new ArrayList<>();
   private RunAnythingChooseContextAction myChooseContextAction;
-  private final ProgressIndicator myProgressIndicator = new EmptyProgressIndicator();
+  private ProgressIndicator myProgressIndicator = new EmptyProgressIndicator();
   private final Alarm myListRenderingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
 
   @Nullable
@@ -360,11 +360,15 @@ public class RunAnythingPopupUI extends BigPopupUI {
     }
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      myProgressIndicator.start();
+      if (myProgressIndicator.isRunning() || !myProgressIndicator.isCanceled()) {
+        return;
+      }
+      myProgressIndicator = new EmptyProgressIndicator();
       try {
         myListModel = ProgressManager.getInstance()
           .runProcess(new RunAnythingCalcThread(myProject, getDataContext(), getSearchPattern()), myProgressIndicator);
-        myProgressIndicator.checkCanceled();
+
+        ProgressManager.checkCanceled();
       }
       catch (ProcessCanceledException e) {
         return;
