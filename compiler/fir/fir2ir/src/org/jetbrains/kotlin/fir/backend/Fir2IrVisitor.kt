@@ -873,6 +873,19 @@ class Fir2IrVisitor(
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
         val calleeReference = thisReceiverExpression.calleeReference
         if (calleeReference.labelName == null && calleeReference.boundSymbol is FirRegularClassSymbol) {
+            // Object case
+            val firObject = (calleeReference.boundSymbol?.fir as? FirClass)?.takeIf {
+                it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
+            }
+            if (firObject != null) {
+                val irObject = declarationStorage.getIrClass(firObject, setParent = false)
+                if (irObject != classStack.lastOrNull()) {
+                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                        IrGetObjectValueImpl(startOffset, endOffset, irObject.defaultType, irObject.symbol)
+                    }
+                }
+            }
+
             val dispatchReceiver = this.functionStack.lastOrNull()?.dispatchReceiverParameter
             if (dispatchReceiver != null) {
                 // Use the dispatch receiver of the containing function
