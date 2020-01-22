@@ -64,7 +64,7 @@ data class MultiplatformModuleIR(
             sourceset.withIrs(
                 irsOfType<DependencyIR>().filter { dependency ->
                     dependency.dependencyType == sourceset.sourcesetType.toDependencyType()
-                }
+                }.map { it.withDependencyType(DependencyType.MAIN) }
             )
         }.listNl(needFirstIndent = false)
     }

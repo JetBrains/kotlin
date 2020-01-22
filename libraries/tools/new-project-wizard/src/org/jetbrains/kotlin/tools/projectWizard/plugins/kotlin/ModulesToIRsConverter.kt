@@ -150,7 +150,7 @@ class ModulesToIRsConverter(
         }.map { it.flatten() + buildFileIr }
     }
 
-    private fun createMultiplatformModule(
+    private fun ValuesReadingContext.createMultiplatformModule(
         module: Module,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = with(data) {
@@ -180,7 +180,7 @@ class ModulesToIRsConverter(
         ).asSingletonList().asSuccess()
     }
 
-    private fun createTargetSourceset(target: Module, modulePath: Path): MultiplatformModuleIR {
+    private fun ValuesReadingContext.createTargetSourceset(target: Module, modulePath: Path): MultiplatformModuleIR {
         val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
             val sourcesetIrs = buildList<BuildSystemIR> {
@@ -209,7 +209,7 @@ class ModulesToIRsConverter(
         return MultiplatformModuleIR(
             target.name,
             modulePath,
-            emptyList(),
+            with(target.configurator) { createModuleIRs(data, target) },
             target.configurator.moduleType,
             target.template,
             target,
