@@ -48,6 +48,10 @@ class RegexTest {
 
         val noMatch = last.next()
         assertEquals(null, noMatch)
+
+        assertFailsWith<IndexOutOfBoundsException> { p.find(input, -1) }
+        assertFailsWith<IndexOutOfBoundsException> { p.find(input, input.length + 1) }
+        assertEquals(null, p.find(input, input.length))
     }
 
     @Test fun matchIgnoreCase() {
@@ -82,6 +86,7 @@ class RegexTest {
         assertEquals(2, matches.size)
 
         assertEquals("", pattern.findAll(input, input.length).single().value)
+        assertEquals("", pattern.find(input, input.length)?.value)
     }
 
     @Test fun matchGroups() {
