@@ -396,7 +396,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
             .valueParameters
             .map {
                 val arg = original.getValueArgument(it)
-                it to getParameterExpression(it, arg)
+                it to getParameterExpression(it, arg, unwrapTemp = !ComposeFlags.COMPOSER_PARAM)
             }
 
         val tmpDispatchReceiver = original.dispatchReceiver?.let { irTemporary(it) }
@@ -789,7 +789,11 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
                 original.getValueArgument(desc)?.let { desc to it }
             }
             .map { (desc, expr) ->
-                desc.name.asString() to getParameterExpression(desc, expr)
+                desc.name.asString() to getParameterExpression(
+                    desc,
+                    expr,
+                    unwrapTemp = !ComposeFlags.COMPOSER_PARAM
+                )
             }
             .toMap()
 

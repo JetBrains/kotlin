@@ -29,6 +29,32 @@ import org.robolectric.annotation.Config
 class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
 
     @Test
+    fun testLambdaReorderedParameter(): Unit = checkApi(
+        """
+            @Composable fun Foo(a: String, b: () -> Unit) { }
+            @Composable fun Example() {
+                Foo(b={}, a="Hello, world!")
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static Foo(Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/Composer;)V
+              public final static Example(Landroidx/compose/Composer;)V
+              public final static synthetic Foo(Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+              public final static synthetic Example()V
+              final static INNERCLASS TestKt%Example%1 null null
+            }
+            final class TestKt%Example%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+              synthetic <init>()V
+              public final invoke()V
+              public synthetic bridge invoke()Ljava/lang/Object;
+              final static INNERCLASS TestKt%Example%1 null null
+              OUTERCLASS TestKt Example (Landroidx/compose/Composer;)V
+            }
+        """
+    )
+
+    @Test
     fun testRemappedTypes(): Unit = checkApi(
         """
             class A {
