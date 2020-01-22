@@ -93,7 +93,6 @@ class AsyncStackTraceContext(
         // should add a check for SUSPEND coroutines
         val lineNumber = context.invokeMethodAsInt(instance,"getLineNumber") ?: 0
         val locationClass = context.findClassSafe(className) ?: return null
-        log.warn("Got location of ${className}.${methodName}:${lineNumber} in ${locationClass}")
         return GeneratedLocation(context.debugProcess, locationClass, methodName, lineNumber)
     }
 
