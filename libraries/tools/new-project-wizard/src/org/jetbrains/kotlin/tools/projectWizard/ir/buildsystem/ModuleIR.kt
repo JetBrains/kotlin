@@ -59,6 +59,12 @@ data class MultiplatformModuleIR(
     override fun withReplacedIrs(irs: List<BuildSystemIR>): MultiplatformModuleIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
-        sourcesets.listNl(needFirstIndent = false)
+        sourcesets.map { sourceset ->
+            sourceset.withIrs(
+                irsOfType<DependencyIR>().filter { dependency ->
+                    dependency.dependencyType == sourceset.sourcesetType.toDependencyType()
+                }
+            )
+        }.listNl(needFirstIndent = false)
     }
 }
