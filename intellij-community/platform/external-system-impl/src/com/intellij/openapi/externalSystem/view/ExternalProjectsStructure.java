@@ -73,6 +73,7 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
   public void cleanupCache() {
     myRoot.cleanUpCache();
     myNodeMapping.clear();
+    myTreeModel.invalidate();
   }
 
   private static void configureTree(final Tree tree) {
