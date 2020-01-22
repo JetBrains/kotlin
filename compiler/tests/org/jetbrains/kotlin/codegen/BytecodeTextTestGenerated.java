@@ -3568,6 +3568,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/nullCheckAfterExclExcl_1_4.kt");
         }
 
+        @TestMetadata("nullabilityAssertionOnDispatchReceiver.kt")
+        public void testNullabilityAssertionOnDispatchReceiver() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/nullabilityAssertionOnDispatchReceiver.kt");
+        }
+
         @TestMetadata("primitiveCheck.kt")
         public void testPrimitiveCheck() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/primitiveCheck.kt");

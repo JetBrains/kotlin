@@ -19,3 +19,7 @@ public class J {
 
     public static J j() { return null; }
 }
+
+// @TestKt.class:
+// 0 checkNotNullExpressionValue
+// 0 checkExpressionValueIsNotNull

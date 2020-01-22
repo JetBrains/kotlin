@@ -1,5 +1,4 @@
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.DISABLE_PARAM_ASSERTIONS, +JVM.DISABLE_CALL_ASSERTIONS
-// IGNORE_BACKEND: JVM_IR
 // FILE: noCallAssertions.kt
 
 class AssertionChecker(val nullPointerExceptionExpected: Boolean) {
