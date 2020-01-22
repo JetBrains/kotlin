@@ -15,6 +15,7 @@
  */
 package org.jetbrains.plugins.gradle.tooling.internal;
 
+import org.gradle.StartParameter;
 import org.gradle.api.Project;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.internal.impldep.com.google.common.collect.Lists;
@@ -23,6 +24,7 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.gradle.model.internal.DummyModel;
+import org.jetbrains.plugins.gradle.model.internal.TurnOffDefaultTasks;
 import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService;
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder;
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext;
@@ -30,10 +32,7 @@ import org.jetbrains.plugins.gradle.tooling.ModelBuilderService;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
 import org.jetbrains.plugins.gradle.tooling.util.VersionMatcher;
 
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * @author Vladislav.Soroka
@@ -60,6 +59,7 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
   @Override
   public boolean canBuild(String modelName) {
     if (DummyModel.class.getName().equals(modelName)) return true;
+    if (TurnOffDefaultTasks.class.getName().equals(modelName)) return true;
     for (ModelBuilderService service : modelBuilderServices) {
       if (service.canBuild(modelName) && isVersionMatch(service)) return true;
     }
@@ -71,6 +71,15 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
     if (DummyModel.class.getName().equals(modelName)) {
       return new DummyModel() {
       };
+    }
+    if (TurnOffDefaultTasks.class.getName().equals(modelName)) {
+      StartParameter startParameter = project.getGradle().getStartParameter();
+      List<String> taskNames = startParameter.getTaskNames();
+      if (taskNames.isEmpty()) {
+        startParameter.setTaskNames(null);
+        startParameter.setExcludedTaskNames(Collections.singletonList("help"));
+      }
+      return null;
     }
 
     if (myModelBuilderContext == null) {

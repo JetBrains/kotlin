@@ -139,8 +139,6 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * used by the resolution return true then the {@link org.gradle.tooling.BuildActionExecuter} will have
    * {@link org.gradle.tooling.BuildActionExecuter#forTasks(String...)} called with an empty list. This will allow
    * any tasks that are scheduled by Gradle plugin in the model builders to be run.
-   *
-   * Note: If nothing inside Gradle (i.e the model builders) overwrites the task list then this will cause the default task to be run.
    */
   default boolean requiresTaskRunning() {
     return false;

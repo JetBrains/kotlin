@@ -9,7 +9,6 @@ import org.gradle.tooling.BuildController
 import org.gradle.tooling.GradleConnectionException
 import org.gradle.tooling.model.Model
 import org.gradle.tooling.model.gradle.GradleBuild
-import org.jetbrains.plugins.gradle.GradleManager
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension
@@ -21,7 +20,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-class GradleActionWithImportTest: GradleImportingTestCase() {
+class GradleActionWithImportTest : BuildViewMessagesImportingTestCase() {
 
   override fun setUp() {
     super.setUp()
@@ -38,7 +37,7 @@ class GradleActionWithImportTest: GradleImportingTestCase() {
 
   @Test
   @TargetVersions("4.8+")
-  fun testActionExecutionOnImport() {
+  fun `test start tasks can be set by model builder and run on import`() {
     val testFile = File(projectPath, "testFile")
     assertThat(testFile).doesNotExist()
 
@@ -90,6 +89,48 @@ class GradleActionWithImportTest: GradleImportingTestCase() {
     assertThat(testFile)
       .exists()
       .hasContent(randomKey)
+
+    assertSyncViewTreeEquals("-\n" +
+                             " -finished\n" +
+                             "  :importTestTask")
+  }
+
+  @Test
+  fun `test default tasks are not run on import`() {
+    importProject(
+      """
+        import org.gradle.api.Project;
+        import javax.inject.Inject;
+        import org.gradle.tooling.provider.model.ToolingModelBuilder;
+        import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
+        class TestPlugin implements Plugin<Project> {
+          private ToolingModelBuilderRegistry registry;
+
+          @Inject
+          TestPlugin(ToolingModelBuilderRegistry registry) {
+            this.registry = registry;
+          }
+
+          void apply(Project project) {
+            registry.register(new TestModelBuilder());
+          }
+
+          private static class TestModelBuilder implements ToolingModelBuilder {
+            boolean canBuild(String modelName) {
+              return 'java.lang.Object' == modelName;
+            }
+
+          @Override
+          Object buildAll(String modelName, Project project) {
+              return null;
+            }
+          }
+        }
+        apply plugin: TestPlugin
+      """.trimIndent())
+
+    assertSyncViewTreeEquals("-\n" +
+                             " finished")
   }
 }
 
