@@ -10083,6 +10083,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inference/kt619.kt");
             }
 
+            @TestMetadata("lambdaArgumentWithLabel.kt")
+            public void testLambdaArgumentWithLabel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/lambdaArgumentWithLabel.kt");
+            }
+
             @TestMetadata("lambdaInValInitializerWithAnonymousFunctions.kt")
             public void testLambdaInValInitializerWithAnonymousFunctions() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/lambdaInValInitializerWithAnonymousFunctions.kt");

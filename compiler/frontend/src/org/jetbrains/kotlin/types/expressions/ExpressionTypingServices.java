@@ -385,7 +385,7 @@ public class ExpressionTypingServices {
             return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
         }
 
-        if (statementExpression instanceof KtLambdaExpression) {
+        if (KtPsiUtil.deparenthesize(statementExpression) instanceof KtLambdaExpression) {
             KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
             if (typeInfo != null) return typeInfo;
         }
