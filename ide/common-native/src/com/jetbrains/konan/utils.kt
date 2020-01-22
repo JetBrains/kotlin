@@ -18,7 +18,8 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.util.concurrency.Semaphore
 import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.library.lite.LiteKonanDistributionProvider
+import org.jetbrains.kotlin.konan.parseCompilerVersion
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 
@@ -71,7 +72,11 @@ fun runBuildTasks(
 
 // Returns Kotlin/Native internal version (not the same as Big Kotlin version).
 fun getKotlinNativeVersion(kotlinNativeHome: String): CompilerVersion? {
-    return LiteKonanDistributionProvider.getDistribution(File(kotlinNativeHome))?.konanVersion
+    return try {
+        Distribution(konanHomeOverride = kotlinNativeHome).compilerVersion?.parseCompilerVersion()
+    } catch (_: IllegalArgumentException) {
+        null
+    }
 }
 
 fun filterOutSystemEnvs(user: Map<String, String>): MutableMap<String, String> {
