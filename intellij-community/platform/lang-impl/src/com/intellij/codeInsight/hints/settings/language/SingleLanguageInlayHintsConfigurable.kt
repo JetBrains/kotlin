@@ -38,6 +38,10 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     return getId(language)
   }
 
+  override fun getHelpTopic(): String {
+    return getHelpTopic(language)
+  }
+
   companion object {
     fun getInlayProviderSettingsModels(project: Project, language: Language) : Array<InlayProviderSettingsModel> {
       val models = InlaySettingsProvider.EP.getExtensions().flatMap { it.createModels(project, language) }
@@ -48,6 +52,11 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     @JvmStatic
     fun getId(language: Language): String {
       return "inlay.hints." + language.id
+    }
+
+    @JvmStatic
+    fun getHelpTopic(language: Language): String {
+      return "settings.inlayhints." + language.id
     }
   }
 
