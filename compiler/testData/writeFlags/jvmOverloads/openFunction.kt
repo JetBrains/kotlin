@@ -1,0 +1,18 @@
+// WITH_RUNTIME
+
+open class Foo {
+    @JvmOverloads
+    open fun bar(x: Int = 42, y: Int = -1): Int = x + y
+}
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Foo, bar, (II)I
+// FLAGS: ACC_PUBLIC
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Foo, bar, (I)I
+// FLAGS: ACC_PUBLIC, ACC_FINAL
+
+// TESTED_OBJECT_KIND: function
+// TESTED_OBJECTS: Foo, bar, ()I
+// FLAGS: ACC_PUBLIC, ACC_FINAL
