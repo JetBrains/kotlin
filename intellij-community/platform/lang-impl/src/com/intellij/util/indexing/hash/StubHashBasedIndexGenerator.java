@@ -48,7 +48,17 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
 
   @NotNull
   private <K, V> HashBasedIndexGenerator<K, V> createGenerator(FileBasedIndexExtension<K, V> extension) {
-    return new HashBasedIndexGenerator<>(extension.getKeyDescriptor(), extension.getValueExternalizer(), extension, myStubIndicesRoot);
+    return new HashBasedIndexGenerator<K, V>(extension.getKeyDescriptor(), extension.getValueExternalizer(), extension, myStubIndicesRoot) {
+      @Override
+      public @NotNull String getSharedIndexName() {
+        return StubHashBasedIndexGenerator.this.getSharedIndexName() + "." + super.getSharedIndexName();
+      }
+
+      @Override
+      public @NotNull String getSharedIndexVersion() {
+        return StubHashBasedIndexGenerator.this.getSharedIndexVersion() + "." + super.getSharedIndexVersion();
+      }
+    };
   }
 
   @NotNull

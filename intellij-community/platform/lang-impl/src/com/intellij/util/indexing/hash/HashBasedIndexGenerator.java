@@ -28,6 +28,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HashBasedIndexGenerator<K, V> {
   @NotNull
   private final FakeIndexExtension<K, V> myExtension;
+
+  @NotNull
+  private final String mySharedIndexName;
+
   @NotNull
   private final FileBasedIndex.InputFilter myInputFilter;
 
@@ -48,9 +52,8 @@ public class HashBasedIndexGenerator<K, V> {
                                  @NotNull FileBasedIndexExtension<K, V> originalExtension,
                                  @NotNull Path outRoot) {
     myExtension = new FakeIndexExtension<>(keyDescriptor, valueExternalizer, originalExtension);
-
-    String indexName = originalExtension.getName().getName();
-    myStorageFile = outRoot.resolve(StringUtil.toLowerCase(indexName)).resolve(indexName);
+    mySharedIndexName = originalExtension.getName().getName();
+    myStorageFile = outRoot.resolve(StringUtil.toLowerCase(mySharedIndexName)).resolve(mySharedIndexName);
 
     FileBasedIndex.InputFilter filter = originalExtension.getInputFilter();
 
@@ -62,6 +65,16 @@ public class HashBasedIndexGenerator<K, V> {
     else {
       myInputFilter = filter;
     }
+  }
+
+  @NotNull
+  public String getSharedIndexName() {
+    return mySharedIndexName;
+  }
+
+  @NotNull
+  public String getSharedIndexVersion() {
+    return String.valueOf(getExtension().getVersion());
   }
 
   public void openIndex() throws IOException {
