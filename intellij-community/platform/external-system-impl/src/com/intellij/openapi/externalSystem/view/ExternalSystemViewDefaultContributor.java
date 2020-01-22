@@ -264,6 +264,25 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
       return myChildNodes;
     }
 
+    @Override
+    public ExternalProjectsStructure.ErrorLevel getChildrenErrorLevel() {
+      return getErrorLevelRecursively(myDependenciesGraph);
+    }
+
+    @NotNull
+    private static ExternalProjectsStructure.ErrorLevel getErrorLevelRecursively(@NotNull DependencyNode node) {
+      if (node instanceof UnknownDependencyNode) {
+        return ExternalProjectsStructure.ErrorLevel.ERROR;
+      }
+      ExternalProjectsStructure.ErrorLevel result = ExternalProjectsStructure.ErrorLevel.NONE;
+      for (DependencyNode dependencyNode : node.getDependencies()) {
+        ExternalProjectsStructure.ErrorLevel eachLevel = getErrorLevelRecursively(dependencyNode);
+        if (result.compareTo(eachLevel) > 0) result = eachLevel;
+        if (result == ExternalProjectsStructure.ErrorLevel.ERROR) break;
+      }
+      return result;
+    }
+
     private static void buildNodesMap(@NotNull TLongObjectHashMap<DependencyNode> dependencyNodeMap, @NotNull DependencyNode node) {
       for (DependencyNode child : node.getDependencies()) {
         if (child instanceof ReferenceNode) continue;
