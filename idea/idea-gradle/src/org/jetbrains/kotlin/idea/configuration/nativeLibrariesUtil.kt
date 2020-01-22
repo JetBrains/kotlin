@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -153,7 +152,6 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
 
     private fun getExternalLibraryDependencySubstitute(dependency: ExternalLibraryDependency): DependencySubstitute =
         resolverCtx.dependencySubstitutionCache.getOrPut(dependency.id) {
-            if (KOTLIN_NATIVE_LEGACY_GROUP_ID != dependency.group) return@getOrPut NoSubstitute
             val libraryFile = dependency.file ?: return@getOrPut NoSubstitute
             buildSubstituteIfNecessary(libraryFile)
         }
@@ -274,5 +272,4 @@ object KotlinNativeLibraryNameUtil {
 
 internal const val KOTLIN_NATIVE_LIBRARY_PREFIX = "Kotlin/Native"
 private const val KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE = "$KOTLIN_NATIVE_LIBRARY_PREFIX "
-private const val KOTLIN_NATIVE_LEGACY_GROUP_ID = KOTLIN_NATIVE_LIBRARY_PREFIX
 private const val GRADLE_LIBRARY_PREFIX = "Gradle: "
