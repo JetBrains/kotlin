@@ -1,18 +1,16 @@
 package usage
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun async(x: suspend Controller.() -> Unit) {
     x.startCoroutine(Controller(), object : Continuation<Unit> {
         override val context: CoroutineContext = null!!
-        override fun resume(value: Unit) {}
-
-        override fun resumeWithException(exception: Throwable) {}
+        override fun resumeWith(result: Result<Unit>) {}
     })
 }
 
 class Controller {
-    suspend fun step(param: Int) = suspendCoroutineOrReturn<Int> { next ->
+    suspend fun step(param: Int) = suspendCoroutineUninterceptedOrReturn<Int> { next ->
         next.resume(param + 1)
     }
 }
