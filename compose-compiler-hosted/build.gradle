@@ -47,7 +47,6 @@ androidx {
     // Nobody should ever get this artifact from maven; just from studio or from source
     publish = Publish.NONE
     toolingProject = true
-    mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.COMPOSE
     inceptionYear = "2019"
     description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
