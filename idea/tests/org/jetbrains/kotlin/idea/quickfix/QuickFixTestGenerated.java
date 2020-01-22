@@ -6212,11 +6212,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/replaceCallWithReceiver.kt");
         }
 
-        @TestMetadata("replaceModToRem.kt")
-        public void testReplaceModToRem() throws Exception {
-            runTest("idea/testData/quickfix/deprecatedSymbolUsage/replaceModToRem.kt");
-        }
-
         @TestMetadata("shortenReferences.kt")
         public void testShortenReferences() throws Exception {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/shortenReferences.kt");
