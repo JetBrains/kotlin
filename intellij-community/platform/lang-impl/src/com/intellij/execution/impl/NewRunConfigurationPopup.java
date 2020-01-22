@@ -262,6 +262,12 @@ public class NewRunConfigurationPopup {
         isAutoSelectionPassed.set(true);
         scrollToSelection();
       }
+
+      @Override
+      public boolean shouldBeShowing(Object value) {
+        NodeDescriptor<?> parent = (value instanceof NodeDescriptor) ? ((NodeDescriptor)value).getParentDescriptor() : null;
+        return super.shouldBeShowing(value) || (parent != null && super.shouldBeShowing(parent));
+      }
     };
     DumbAwareAction collapseAllAction =
       new DumbAwareAction(UIBundle.message("tree.view.collapse.all.action.name"), null, AllIcons.Actions.Collapseall) {
