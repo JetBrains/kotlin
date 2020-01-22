@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 public abstract class AbstractClass<T> {
     public abstract val some: T
 }
