@@ -55,6 +55,9 @@ class InlayHintsPass(
     }
     disposeOrphanInlays(existingHorizontalInlays)
     disposeOrphanInlays(existingVerticalInlays)
+    if (rootElement == myFile) {
+      InlayHintsPassFactory.putCurrentModificationStamp(myEditor, myFile)
+    }
   }
 
   private fun disposeOrphanInlays(inlays: MarkList<Inlay<*>>) {
