@@ -65,11 +65,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
             RawGradleIR { call("classpath") { +"com.android.tools.build:gradle:3.2.1".quotified } },
             RawGradleIR {
                 call("classpath") {
-                    call("kotlin", forceBrackets = true) {
-                        +"gradle-plugin".quotified
-                        +", "
-                        +configurationData.kotlinVersion.toString().quotified
-                    }
+                    +"org.jetbrains.kotlin:kotlin-gradle-plugin:${configurationData.kotlinVersion}".quotified
                 }
             }
         ).map(::BuildScriptDependencyIR)
