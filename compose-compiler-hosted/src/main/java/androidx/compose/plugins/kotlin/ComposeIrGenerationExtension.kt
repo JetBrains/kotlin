@@ -19,6 +19,7 @@ package androidx.compose.plugins.kotlin
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
+import androidx.compose.plugins.kotlin.compiler.lower.ComposeSymbolPatcherTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
@@ -37,6 +38,7 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
             ComposerParamTransformer(backendContext as JvmBackendContext).lower(file)
             ComposerIntrinsicTransformer(backendContext).lower(file)
             ComposableCallTransformer(backendContext).lower(file)
+            ComposeSymbolPatcherTransformer(backendContext).lower(file)
             return; // TODO: Without running FrameIrTransformer and ComposeObservePatcher???
         }
 

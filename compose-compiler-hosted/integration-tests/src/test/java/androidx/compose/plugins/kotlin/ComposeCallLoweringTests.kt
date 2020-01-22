@@ -463,7 +463,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
-    fun testWebViewBug(): Unit = forComposerParam(/*true, */false) {
+    fun testWebViewBug(): Unit = forComposerParam(true, false) {
         codegen(
             """
 import android.webkit.WebView
