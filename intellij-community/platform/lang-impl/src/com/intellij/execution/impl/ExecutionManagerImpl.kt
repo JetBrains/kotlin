@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.impl
 
 import com.intellij.CommonBundle
@@ -232,7 +232,8 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
     runningConfigurations.clear()
   }
 
-  override fun getContentManager(): RunContentManager = RunContentManager.getInstance(project)
+  @Suppress("OverridingDeprecatedMember")
+  override fun getContentManager() = RunContentManager.getInstance(project)
 
   override fun getRunningProcesses(): Array<ProcessHandler> {
     var handlers: MutableList<ProcessHandler>? = null
