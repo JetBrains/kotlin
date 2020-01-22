@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Comp
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaAllowedInModule
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaOrLastElement
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.util.needTrailingComma
@@ -39,12 +40,15 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
         TrailingCommaPostFormatVisitor(settings).processText(source, rangeToReformat)
 
     companion object {
-        fun findInvalidCommas(commaOwner: KtElement): List<PsiElement> = commaOwner.firstChild?.siblings(withItself = false)?.mapNotNull {
-            if (it.isComma && it.leafIgnoringWhitespace(false) != it.leafIgnoringWhitespaceAndComments(false))
-                it
-            else
-                null
-        }?.toList().orEmpty()
+        fun findInvalidCommas(commaOwner: KtElement): List<PsiElement> = commaOwner.firstChild
+            ?.siblings(withItself = false)
+            ?.mapNotNull { element ->
+                if (!element.isComma) return@mapNotNull null
+                element.takeIf {
+                    it.prevLeaf(true)?.isLineBreak() == true ||
+                            it.leafIgnoringWhitespace(false) != it.leafIgnoringWhitespaceAndComments(false)
+                }
+            }?.toList().orEmpty()
 
         fun needComma(
             commaOwner: KtElement,

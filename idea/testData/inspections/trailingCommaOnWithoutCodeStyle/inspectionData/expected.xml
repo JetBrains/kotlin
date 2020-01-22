@@ -277,6 +277,18 @@
   </problem>
   <problem>
     <file>ArgumentList.kt</file>
+    <line>208</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
     <line>207</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
@@ -309,6 +321,18 @@
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>15</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ArgumentList.kt</file>
+    <line>214</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -810,6 +834,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>46</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>9</offset>
@@ -825,6 +861,18 @@
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>18</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>108</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -870,6 +918,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>145</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>9</offset>
@@ -906,6 +966,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>194</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>5</offset>
@@ -921,6 +993,18 @@
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>18</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>217</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -954,6 +1038,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>232</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>5</offset>
@@ -978,9 +1074,33 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>255</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>260</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1033,6 +1153,18 @@
   </problem>
   <problem>
     <file>ParameterList.kt</file>
+    <line>338</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>17</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
     <line>337</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
@@ -1074,6 +1206,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>357</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>5</offset>
@@ -1089,6 +1233,18 @@
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>14</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>380</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1122,9 +1278,33 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>395</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>5</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>399</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1149,6 +1329,18 @@
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>20</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>418</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1197,6 +1389,18 @@
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
     <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>ParameterList.kt</file>
+    <line>454</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="ParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1542,6 +1746,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>33</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
     <offset>5</offset>
@@ -1557,6 +1773,18 @@
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
     <offset>14</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>64</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1590,6 +1818,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>87</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
     <offset>5</offset>
@@ -1614,9 +1854,33 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>115</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
     <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>122</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1686,6 +1950,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>LambdaParameterList.kt</file>
+    <line>182</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
     <offset>8</offset>
@@ -1701,6 +1977,18 @@
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>14</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>23</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1734,6 +2022,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>46</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>5</offset>
@@ -1749,6 +2049,18 @@
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>14</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>61</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1782,9 +2094,33 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>84</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>89</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1830,6 +2166,18 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>115</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>5</offset>
@@ -1845,6 +2193,18 @@
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>14</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>138</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1878,9 +2238,33 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>153</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>5</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>157</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1905,6 +2289,18 @@
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>20</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>176</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1965,6 +2361,18 @@
     <description>Missing line break</description>
     <highlighted_element>&gt;</highlighted_element>
     <offset>8</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeParameterList.kt</file>
+    <line>223</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2121,6 +2529,18 @@
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
     <offset>56</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>TypeArgumentList.kt</file>
+    <line>41</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2421,6 +2841,18 @@
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
     <offset>42</offset>
+    <length>1</length>
+  </problem>
+  <problem>
+    <file>IndicesAccess.kt</file>
+    <line>75</line>
+    <module>testProject</module>
+    <package>light_idea_test_case</package>
+    <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
+    <description>Comma loses the advantages in this position</description>
+    <highlighted_element>,</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>

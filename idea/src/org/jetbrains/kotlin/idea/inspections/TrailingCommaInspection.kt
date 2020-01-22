@@ -103,7 +103,7 @@ class TrailingCommaInspection(
             fixMessage: String,
             highlightType: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
         ) {
-            val commaOwner = commaOrElement.parent
+            val commaOwner = commaOrElement.parent as KtElement
             // case for KtFunctionLiteral, where PsiWhiteSpace after KtTypeParameterList isn't included in this list
             val problemOwner = commaOwner.parent
             holder.registerProblem(
@@ -111,7 +111,7 @@ class TrailingCommaInspection(
                 message,
                 highlightType,
                 commaOrElement.textRangeOfCommaOrSymbolAfter.shiftLeft(problemOwner.startOffset),
-                ReformatQuickFix(fixMessage, commaOwner),
+                ReformatQuickFix(fixMessage, commaOwner, createFormatterTextRange(commaOwner)),
             )
         }
 
@@ -126,8 +126,14 @@ class TrailingCommaInspection(
                 "Missing line break",
                 highlightType,
                 TextRange.from(elementForTextRange.startOffset, 1).shiftLeft(problemElement.startOffset),
-                ReformatQuickFix("Add line break", commaOwner),
+                ReformatQuickFix("Add line break", commaOwner, createFormatterTextRange(commaOwner)),
             )
+        }
+
+        private fun createFormatterTextRange(commaOwner: KtElement): TextRange {
+            val startElement = TrailingCommaPostFormatProcessor.elementBeforeFirstElement(commaOwner) ?: commaOwner
+            val endElement = TrailingCommaPostFormatProcessor.elementAfterLastElement(commaOwner) ?: commaOwner
+            return TextRange.create(startElement.startOffset, endElement.endOffset)
         }
 
         private val PsiElement.textRangeOfCommaOrSymbolAfter: TextRange

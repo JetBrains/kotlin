@@ -12320,19 +12320,9 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/trailingComma/changeCommaPosition4.kt");
         }
 
-        @TestMetadata("missingLineBreak.kt")
-        public void testMissingLineBreak() throws Exception {
-            runTest("idea/testData/inspectionsLocal/trailingComma/missingLineBreak.kt");
-        }
-
-        @TestMetadata("missingLineBreak2.kt")
-        public void testMissingLineBreak2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/trailingComma/missingLineBreak2.kt");
-        }
-
-        @TestMetadata("missingLineBreak3.kt")
-        public void testMissingLineBreak3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/trailingComma/missingLineBreak3.kt");
+        @TestMetadata("changeCommaPosition5.kt")
+        public void testChangeCommaPosition5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/trailingComma/changeCommaPosition5.kt");
         }
 
         @TestMetadata("missingLineBreak.kt")
