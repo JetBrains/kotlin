@@ -35,7 +35,9 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
         bindingContext: BindingContext
     ) {
         if (ComposeFlags.COMPOSER_PARAM) {
-            ComposerParamTransformer(backendContext as JvmBackendContext).lower(file)
+            backendContext as JvmBackendContext
+            FrameIrTransformer(backendContext).lower(file)
+            ComposerParamTransformer(backendContext).lower(file)
             ComposerIntrinsicTransformer(backendContext).lower(file)
             ComposableCallTransformer(backendContext).lower(file)
             ComposeSymbolPatcherTransformer(backendContext).lower(file)
