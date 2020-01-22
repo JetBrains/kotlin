@@ -190,3 +190,7 @@ open class GenBasic<T>()
 
 //Extensions
 fun <T:Any> GenNonNull<T>.foo(): T = arg
+
+class StarProjectionInfiniteRecursion<T : StarProjectionInfiniteRecursion<T>>
+
+fun testStarProjectionInfiniteRecursion(x: StarProjectionInfiniteRecursion<*>) {}

@@ -816,7 +816,11 @@ internal class ObjCExportTranslatorImpl(
         } else {
             val typeArgs = if (objcGenerics) {
                 kotlinType.arguments.map { typeProjection ->
-                    mapReferenceTypeIgnoringNullability(typeProjection.type, objCExportScope)
+                    if (typeProjection.isStarProjection) {
+                        ObjCIdType // TODO: use Kotlin upper bound.
+                    } else {
+                        mapReferenceTypeIgnoringNullability(typeProjection.type, objCExportScope)
+                    }
                 }
             } else {
                 emptyList()
