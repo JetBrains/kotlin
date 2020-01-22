@@ -650,6 +650,35 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     )
 
+    @Test
+    fun testExtensionSetterEmit(): Unit = checkApi(
+        """
+            import android.widget.TextView
+
+            private fun TextView.setRef(ref: (TextView) -> Unit) {}
+
+            @Composable
+            fun Test() {
+                TextView(ref = {  })
+            }
+        """,
+        """
+            public final class TestKt {
+              private final static setRef(Landroid/widget/TextView;Lkotlin/jvm/functions/Function1;)V
+              public final static Test(Landroidx/compose/Composer;)V
+              public final static synthetic Test()V
+              final static INNERCLASS TestKt%Test%1 null null
+            }
+            final class TestKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function1 {
+              synthetic <init>()V
+              public final invoke(Landroid/widget/TextView;)V
+              public synthetic bridge invoke(Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%Test%1 null null
+              OUTERCLASS TestKt Test (Landroidx/compose/Composer;)V
+            }
+        """
+    )
+
     override fun setUp() {
         ComposeFlags.COMPOSER_PARAM = true
         super.setUp()
