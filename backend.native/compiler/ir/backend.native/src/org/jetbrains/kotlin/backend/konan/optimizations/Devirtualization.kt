@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -257,6 +258,22 @@ internal object Devirtualization {
                 } else {
                     // String is implicitly created as argument of <main>.
                     addInstantiatingClass(symbolTable.mapType(context.irBuiltIns.stringType))
+
+                    // Conservatively assume each associated object could be instantiated.
+                    context.irModule!!.acceptChildrenVoid(object: IrElementVisitorVoid {
+                        override fun visitElement(element: IrElement) {
+                            element.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitClass(declaration: IrClass) {
+                            context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
+                                assert (it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
+                                addInstantiatingClass(symbolTable.mapType(it.defaultType))
+                            }
+                            super.visitClass(declaration)
+                        }
+                    })
+
                 }
                 // Traverse call graph from the roots.
                 rootSet.forEach { dfs(it, it.returnParameter.type) }

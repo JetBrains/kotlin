@@ -45,14 +45,23 @@ object Baz
 fun testGlobalOptimizations1() {
     val i1 = I1ImplHolder::class.findAssociatedObject<Associated1>()!! as I1
     assertEquals(42, i1.foo())
+    val c = C(null)
+    i1.bar(c)
+    assertEquals("zzz", c.list!![0])
 }
+
+private class C(var list: List<String>?)
 
 private interface I1 {
     fun foo(): Int
+    fun bar(c: C)
 }
 
 private object I1Impl : I1 {
     override fun foo() = 42
+    override fun bar(c: C) {
+        c.list = mutableListOf("zzz")
+    }
 }
 
 @Associated1(I1Impl::class)
