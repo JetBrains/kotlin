@@ -896,7 +896,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (returnedExpression != null) {
             if (newInferenceLambdaInfo != null) {
                 LambdaContextInfo contextInfo;
-                if (returnedExpression instanceof KtLambdaExpression || returnedExpression instanceof KtCallableReferenceExpression) {
+                KtExpression deparenthesizedReturnExpression = KtPsiUtil.deparenthesize(returnedExpression);
+                if (deparenthesizedReturnExpression instanceof KtLambdaExpression ||
+                    deparenthesizedReturnExpression instanceof KtCallableReferenceExpression
+                ) {
                     contextInfo = new LambdaContextInfo(
                             new KotlinTypeInfo(DONT_CARE, context.dataFlowInfo),
                             null,
