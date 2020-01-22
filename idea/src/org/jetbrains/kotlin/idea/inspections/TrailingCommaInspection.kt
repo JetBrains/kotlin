@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.findInvalidCommas
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.needComma
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaAllowedInModule
@@ -21,9 +22,11 @@ import org.jetbrains.kotlin.idea.formatter.TrailingCommaVisitor
 import org.jetbrains.kotlin.idea.formatter.isComma
 import org.jetbrains.kotlin.idea.formatter.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.idea.quickfix.ReformatQuickFix
+import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import javax.swing.JComponent
 
@@ -38,8 +41,35 @@ class TrailingCommaInspection(
             val action = TrailingCommaAction.create(commaOwner)
             if (action != TrailingCommaAction.REMOVE) {
                 checkCommaPosition(commaOwner)
+                checkLineBreaks(commaOwner)
             }
             checkTrailingComma(commaOwner, action)
+        }
+
+        private fun checkLineBreaks(commaOwner: KtElement) {
+            val first = TrailingCommaPostFormatProcessor.elementBeforeFirstElement(commaOwner)
+            if (first?.nextLeaf(true)?.isLineBreak() == false) {
+                first.nextSibling?.let {
+                    registerProblemForLineBreak(
+                        commaOwner,
+                        it,
+                        if (ApplicationManager.getApplication().isUnitTestMode)
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                        else
+                            ProblemHighlightType.INFORMATION,
+                    )
+                }
+
+            }
+
+            val last = TrailingCommaPostFormatProcessor.elementAfterLastElement(commaOwner)
+            if (last?.prevLeaf(true)?.isLineBreak() == false) {
+                registerProblemForLineBreak(
+                    commaOwner,
+                    last,
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                )
+            }
         }
 
         private fun checkCommaPosition(commaOwner: KtElement) {
@@ -85,10 +115,25 @@ class TrailingCommaInspection(
             )
         }
 
+        private fun registerProblemForLineBreak(
+            commaOwner: KtElement,
+            elementForTextRange: PsiElement,
+            highlightType: ProblemHighlightType,
+        ) {
+            val problemElement = commaOwner.parent
+            holder.registerProblem(
+                problemElement,
+                "Missing line break",
+                highlightType,
+                TextRange.from(elementForTextRange.startOffset, 1).shiftLeft(problemElement.startOffset),
+                ReformatQuickFix("Add line break", commaOwner),
+            )
+        }
+
         private val PsiElement.textRangeOfCommaOrSymbolAfter: TextRange
             get() {
                 val textRange = textRange
-                if (textRange.length <= 1) return textRange
+                if (isComma) return textRange
 
                 val resultRange = nextLeaf()?.leafIgnoringWhitespaceAndComments(false)?.endOffset?.takeIf { it > 0 }?.let {
                     TextRange.create(it - 1, it).intersection(parent.textRange)
