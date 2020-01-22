@@ -6148,53 +6148,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
         }
 
-        @TestMetadata("compiler/testData/codegen/box/coroutines/noStdLib")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class NoStdLib extends AbstractIrJsCodegenBoxTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
-            }
-
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS_IR, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInNoStdLib() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/noStdLib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-            }
-
-            @TestMetadata("breakFinally.kt")
-            public void testBreakFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/breakFinally.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("breakStatement.kt")
-            public void testBreakStatement_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/breakStatement.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("crossinline.kt")
-            public void testCrossinline_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/crossinline.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("ifStatement.kt")
-            public void testIfStatement_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/ifStatement.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("stateMachine.kt")
-            public void testStateMachine_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/stateMachine.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("switchLikeWhen.kt")
-            public void testSwitchLikeWhen_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/switchLikeWhen.kt", "kotlin.coroutines");
-            }
-        }
-
         @TestMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
