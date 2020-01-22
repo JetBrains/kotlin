@@ -1,7 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.runners
 
 import com.intellij.execution.ExecutionException
+import com.intellij.execution.ExecutionManager
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.configurations.RunnerSettings
@@ -14,9 +15,9 @@ abstract class BasicProgramRunner : ProgramRunner<RunnerSettings> {
   @Throws(ExecutionException::class)
   override fun execute(environment: ExecutionEnvironment, callback: ProgramRunner.Callback?) {
     val state = environment.state ?: return
-    startRunProfile(environment, callback) {
-      resolvedPromise(doExecute(state, environment))
-    }
+    ExecutionManager.getInstance(environment.project).startRunProfile(environment, callback, {
+        resolvedPromise(doExecute(state, environment))
+      })
   }
 
   @Throws(ExecutionException::class)

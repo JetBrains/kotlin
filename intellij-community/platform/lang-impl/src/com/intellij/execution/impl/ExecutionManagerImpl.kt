@@ -14,6 +14,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunContentManager
 import com.intellij.ide.SaveAndSyncHandler
@@ -39,7 +40,9 @@ import com.intellij.util.Alarm
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.concurrency.Promise
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.SwingUtilities
@@ -128,7 +131,43 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
     project.messageBus.syncPublisher(EXECUTION_TOPIC).processNotStarted(executorId, environment)
   }
 
+  /**
+   * Internal usage only. Maybe removed or changed in any moment. No backward compatibility.
+   */
+  @ApiStatus.Internal
+  override fun startRunProfile(environment: ExecutionEnvironment,
+                               callback: ProgramRunner.Callback?,
+                               starter: () -> Promise<RunContentDescriptor?>) {
+    startRunProfile(environment) {
+      // errors are handled by startRunProfile
+      starter()
+        .then { descriptor ->
+          if (descriptor != null) {
+            descriptor.executionId = environment.executionId
+
+            val toolWindowId = RunContentManager.getInstance(environment.project).getContentDescriptorToolWindowId(environment)
+            if (toolWindowId != null) {
+              descriptor.contentToolWindowId = toolWindowId
+            }
+
+            val settings = environment.runnerAndConfigurationSettings
+            if (settings != null) {
+              descriptor.isActivateToolWindowWhenAdded = settings.isActivateToolWindowBeforeRun
+            }
+          }
+          callback?.processStarted(descriptor)
+          descriptor
+        }
+    }
+  }
+
   override fun startRunProfile(starter: RunProfileStarter, environment: ExecutionEnvironment) {
+    startRunProfile(environment) {
+      starter.executeAsync(environment)
+    }
+  }
+
+  private fun startRunProfile(environment: ExecutionEnvironment, task: () -> Promise<RunContentDescriptor>) {
     val activity = triggerUsage(environment)
 
     RunManager.getInstance(environment.project).refreshUsagesList(environment.runProfile)
@@ -160,7 +199,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
       }
 
       try {
-        starter.executeAsync(environment)
+        task()
           .onSuccess { descriptor ->
             AppUIUtil.invokeLaterIfProjectAlive(project) {
               if (descriptor == null) {
@@ -197,7 +236,8 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
                 if (terminating || terminated) {
                   listener.processWillTerminate(ProcessEvent(processHandler), false /* doesn't matter */)
                   if (terminated) {
-                    listener.processTerminated(ProcessEvent(processHandler, if (processHandler.isStartNotified) processHandler.exitCode ?: -1 else -1))
+                    listener.processTerminated(
+                      ProcessEvent(processHandler, if (processHandler.isStartNotified) processHandler.exitCode ?: -1 else -1))
                   }
                 }
               }
