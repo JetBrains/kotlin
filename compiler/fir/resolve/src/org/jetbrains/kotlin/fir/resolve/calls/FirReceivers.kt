@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirQualifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
 interface Receiver {
-    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope?
+
 }
 
 interface ReceiverValue : Receiver {
@@ -40,7 +39,7 @@ interface ReceiverValue : Receiver {
 
     val receiverExpression: FirExpression
 
-    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? =
+    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? =
         type.scope(useSiteSession, scopeSession)
 }
 

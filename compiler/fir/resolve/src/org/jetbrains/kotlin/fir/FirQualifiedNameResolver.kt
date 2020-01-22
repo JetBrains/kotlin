@@ -28,6 +28,18 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
         qualifierPartsToDrop = 0
     }
 
+
+    /**
+     * NB: 0 if current 'qualifiedAccess.safe || callee.name.isSpecial', 1 if current is fine, 2 if potential qualifier
+     * a.b.c
+     *   ^ here stack will be ['c', 'b'], so possible
+     * a.b?.c
+     *   ^ here stack will be ['b'], so impossible
+     * a?.b.c
+     *    ^ here stack will be [], so impossible
+     */
+    fun isPotentialQualifierPartPosition() = qualifierStack.size > 1
+
     fun initProcessingQualifiedAccess(qualifiedAccess: FirQualifiedAccess, callee: FirSimpleNamedReference) {
         if (qualifiedAccess.safe || callee.name.isSpecial) {
             qualifierStack.clear()

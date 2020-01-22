@@ -27,4 +27,8 @@ object StubFirScopeProvider : FirScopeProvider() {
     ): FirScope? {
         return null
     }
+
+    override fun getNestedClassifierScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+        return null
+    }
 }

@@ -66,9 +66,13 @@ class KotlinScopeProvider(
         scopeSession: ScopeSession
     ): FirScope? {
         return when (klass.classKind) {
-            ClassKind.ENUM_CLASS -> FirStaticScope(declaredMemberScope(klass))
+            ClassKind.ENUM_CLASS -> FirOnlyCallablesScope(FirStaticScope(declaredMemberScope(klass)))
             else -> null
         }
+    }
+
+    override fun getNestedClassifierScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+        return nestedClassifierScope(klass)
     }
 }
 

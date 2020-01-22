@@ -21,4 +21,10 @@ abstract class FirScopeProvider {
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope?
+
+    abstract fun getNestedClassifierScope(
+        klass: FirClass<*>,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope?
 }

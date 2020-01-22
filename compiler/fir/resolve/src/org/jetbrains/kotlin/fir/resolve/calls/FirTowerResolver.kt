@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildImport
-import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.declarations.isCompanion
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -22,13 +20,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStaticScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 
@@ -79,35 +75,54 @@ class FirTowerResolver(
         return implicitReceivers
     }
 
+    private suspend fun processQualifierScopes(
+        manager: TowerResolveManager,
+        info: CallInfo, qualifierReceiver: QualifierReceiver?
+    ) {
+        if (qualifierReceiver == null) return
+        for ((depth, qualifierScope) in qualifierReceiver.callableScopes().withIndex()) {
+            manager.processLevel(
+                ScopeTowerLevel(session, components, qualifierScope, noInnerConstructors = true),
+                info.noStubReceiver(), TowerGroup.Qualifier(depth)
+            )
+        }
+    }
+
+    private suspend fun processClassifierScope(
+        manager: TowerResolveManager,
+        info: CallInfo, qualifierReceiver: QualifierReceiver?, prioritized: Boolean
+    ) {
+        if (qualifierReceiver == null) return
+        if (info.callKind != CallKind.CallableReference &&
+            qualifierReceiver is ClassQualifierReceiver &&
+            qualifierReceiver.classSymbol != qualifierReceiver.originalSymbol
+        ) return
+        val scope = qualifierReceiver.classifierScope() ?: return
+        manager.processLevel(
+            ScopeTowerLevel(session, components, scope, noInnerConstructors = true), info.noStubReceiver(),
+            if (prioritized) TowerGroup.ClassifierPrioritized else TowerGroup.Classifier
+        )
+    }
+
     private suspend fun runResolverForQualifierReceiver(
         info: CallInfo,
         collector: CandidateCollector,
         resolvedQualifier: FirResolvedQualifier,
         manager: TowerResolveManager
     ) {
-        val qualifierScopes = if (resolvedQualifier.classId == null) {
-            listOf(
-                FirExplicitSimpleImportingScope(
-                    listOf(
-                        buildResolvedImport {
-                        delegate = buildImport {
-                             importedFqName = FqName.topLevel(info.name)
-                            isAllUnder = false
-                            }
-                        packageFqName = resolvedQualifier.packageFqName
-                        }
-                    ), session, components.scopeSession
-                )
-            )
-        } else {
-            QualifierReceiver(resolvedQualifier).qualifierScopes(session, components.scopeSession)
+        val qualifierReceiver = createQualifierReceiver(resolvedQualifier, session, components.scopeSession)
+
+        when {
+            info.isPotentialQualifierPart -> {
+                processClassifierScope(manager, info, qualifierReceiver, prioritized = true)
+                processQualifierScopes(manager, info, qualifierReceiver)
+            }
+            else -> {
+                processQualifierScopes(manager, info, qualifierReceiver)
+                processClassifierScope(manager, info, qualifierReceiver, prioritized = false)
+            }
         }
 
-        for ((depth, qualifierScope) in qualifierScopes.withIndex()) {
-            manager.processLevel(
-                ScopeTowerLevel(session, components, qualifierScope), info.noStubReceiver(), TowerGroup.Qualifier(depth)
-            )
-        }
 
         if (resolvedQualifier.classId != null) {
             val typeRef = resolvedQualifier.typeRef

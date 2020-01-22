@@ -227,7 +227,7 @@ class JavaSymbolProvider(
                             symbol = constructorSymbol
                             this.visibility = visibility
                             this.isPrimary = isPrimary
-                            isInner = !javaClass.isStatic
+                            isInner = javaClass.outerClass != null && !javaClass.isStatic
                             returnTypeRef = buildResolvedTypeRef {
                                 type = firSymbol.constructType(
                                     classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
