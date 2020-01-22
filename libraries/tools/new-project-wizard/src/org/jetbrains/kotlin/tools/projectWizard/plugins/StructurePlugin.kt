@@ -1,11 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins
 
-import org.jetbrains.kotlin.tools.projectWizard.core.Context
-import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.pathParser
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PomIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -39,8 +36,12 @@ class StructurePlugin(context: Context) : Plugin(context) {
     }
 }
 
-val TaskRunningContext.projectPath
+val ValuesReadingContext.projectPath
     get() = StructurePlugin::projectPath.reference.settingValue
+
+val ValuesReadingContext.projectName
+    get() = StructurePlugin::name.reference.settingValue
+
 
 fun TaskRunningContext.pomIR() = PomIR(
     artifactId = StructurePlugin::artifactId.reference.settingValue,

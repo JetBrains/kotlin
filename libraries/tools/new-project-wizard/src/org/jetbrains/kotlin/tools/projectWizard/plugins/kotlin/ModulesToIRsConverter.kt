@@ -116,7 +116,7 @@ class ModulesToIRsConverter(
         }
 
         val moduleIr = SingleplatformModuleIR(
-            module.name,
+            if (modulePath == projectPath) projectName else module.name,
             modulePath,
             dependenciesIRs,
             module.template,
