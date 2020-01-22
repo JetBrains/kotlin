@@ -483,9 +483,8 @@ public class EditorSearchSession implements SearchSession,
     else {
 
       if (myFindModel.isRegularExpressions()) {
-        Pattern pattern;
         try {
-          pattern = Pattern.compile(text);
+          Pattern.compile(text);
         }
         catch (PatternSyntaxException e) {
           myComponent.setNotFoundBackground();
@@ -494,7 +493,7 @@ public class EditorSearchSession implements SearchSession,
           myComponent.setStatusText(INCORRECT_REGEX_MESSAGE);
           return;
         }
-        if (pattern.matcher("").matches()) {
+        if (text.matches("\\|+")) {
           nothingToSearchFor(allowedToChangedEditorSelection);
           myComponent.setStatusText(ApplicationBundle.message("editorsearch.empty.string.matches"));
           return;
