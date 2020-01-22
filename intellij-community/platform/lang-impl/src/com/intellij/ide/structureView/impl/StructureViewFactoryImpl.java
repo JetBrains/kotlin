@@ -52,7 +52,7 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
     StructureViewExtension.EXTENSION_POINT_NAME.addExtensionPointListener(
       myExtensions::drop, null);
   }
-  private final MultiMap<Class<? extends PsiElement>, StructureViewExtension> myImplExtensions = new MultiMap<>();
+  private final MultiMap<Class<? extends PsiElement>, StructureViewExtension> myImplExtensions = MultiMap.createConcurrentSet();
 
   public StructureViewFactoryImpl(Project project) {
     myProject = project;
