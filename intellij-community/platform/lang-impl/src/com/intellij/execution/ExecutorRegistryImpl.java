@@ -164,13 +164,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry {
     private final Executor myExecutor;
 
     private ExecutorAction(@NotNull Executor executor) {
-      super(executor.getStartActionText(), executor.getDescription(), new IconLoader.LazyIcon() {
-        @NotNull
-        @Override
-        protected Icon compute() {
-          return executor.getIcon();
-        }
-      });
+      super(executor.getStartActionText(), executor.getDescription(), IconLoader.createLazy(() -> executor.getIcon()));
       myExecutor = executor;
     }
 

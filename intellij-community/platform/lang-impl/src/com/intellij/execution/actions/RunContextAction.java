@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.actions;
 
 import com.intellij.execution.*;
@@ -21,7 +21,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +30,7 @@ public class RunContextAction extends BaseRunConfigurationAction {
   private final Executor myExecutor;
 
   public RunContextAction(@NotNull Executor executor) {
-    super(ExecutionBundle.message("perform.action.with.context.configuration.action.name", executor.getStartActionText()), null, new IconLoader.LazyIcon() {
-      @NotNull
-      @Override
-      protected Icon compute() {
-        return executor.getIcon();
-      }
-    });
+    super(ExecutionBundle.message("perform.action.with.context.configuration.action.name", executor.getStartActionText()), null, IconLoader.createLazy(() -> executor.getIcon()));
     myExecutor = executor;
   }
 

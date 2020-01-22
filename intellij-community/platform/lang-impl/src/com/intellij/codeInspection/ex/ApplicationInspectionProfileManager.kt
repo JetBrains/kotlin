@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.ex
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel
@@ -90,9 +90,7 @@ open class ApplicationInspectionProfileManager @TestOnly @NonInjectable construc
           SeverityRegistrar.registerStandard(t, highlightSeverity)
           val icon = when (t) {
             is HighlightInfoType.Iconable -> {
-              object : IconLoader.LazyIcon() {
-                override fun compute() = (t as HighlightInfoType.Iconable).icon
-              }
+              IconLoader.createLazy { (t as HighlightInfoType.Iconable).icon }
             }
             else -> null
           }
