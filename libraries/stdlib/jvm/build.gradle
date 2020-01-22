@@ -24,23 +24,6 @@ sourceSets {
             srcDir 'src'
         }
     }
-    coroutinesExperimental {
-        kotlin {
-//            srcDir '../coroutines-experimental/jvm/src'
-        }
-    }
-    coroutinesExperimentalTest {
-        kotlin {
-//            srcDir '../coroutines-experimental/jvm/test'
-        }
-    }
-    coroutinesExperimentalMigrationTest {
-        kotlin {
-            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
-//                srcDir '../coroutines-experimental/jvm/test'
-            }
-        }
-    }
     test {
         kotlin {
             srcDir 'test'
@@ -60,12 +43,9 @@ sourceSets {
 
 configurations {
     commonSources
-    coroutinesExperimentalTestCompile.extendsFrom(testCompile)
-    coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
     longRunningTestCompile.extendsFrom(testCompile)
     builtins
     compileOnly.extendsFrom(builtins)
-    coroutinesExperimentalCompile.extendsFrom(builtins)
 }
 
 dependencies {
@@ -76,11 +56,7 @@ dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
-    testCompile sourceSets.coroutinesExperimental.output
     testCompile project(':kotlin-coroutines-experimental-compat')
-
-    coroutinesExperimentalCompile sourceSets.main.output
-    coroutinesExperimentalTestCompile sourceSets.test.output
 
     builtins project(':core:builtins')
 }
@@ -91,14 +67,12 @@ jar {
     from {
         zipTree(configurations.builtins.singleFile)
     }
-    from sourceSets.coroutinesExperimental.output
     // TODO: enable as soon as this doesn't cause D8/DX to crash
     // from sourceSets.java9.output
 }
 
 sourcesJar {
     from "${rootDir}/core/builtins/native"
-    from sourceSets.coroutinesExperimental.kotlin
 }
 
 task distSourcesJar(type: Jar) {
@@ -161,58 +135,7 @@ compileKotlin {
 }
 
 
-compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output, sourceSets.coroutinesExperimental.output])
-
-compileCoroutinesExperimentalKotlin {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs = [
-                "-version",
-                "-Xallow-kotlin-package",
-                "-Xallow-result-return-type",
-                "-Xmultifile-parts-inherit",
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xcoroutines=enable",
-                "-XXLanguage:-ReleaseCoroutines",
-                "-Xno-use-ir",
-                "-module-name", "kotlin-stdlib-coroutines"
-        ]
-    }
-}
-
-compileCoroutinesExperimentalTestKotlin {
-    kotlinOptions {
-        languageVersion = "1.2"
-        apiVersion = "1.2"
-        freeCompilerArgs = [
-                "-Xcoroutines=enable"
-        ]
-    }
-}
-
-compileCoroutinesExperimentalMigrationTestKotlin {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs = []
-    }
-}
-
-task coroutinesExperimentalTest(type: Test, dependsOn: coroutinesExperimentalTestClasses) {
-    group = "verification"
-    testClassesDirs = sourceSets.coroutinesExperimentalTest.output.classesDirs
-    classpath = sourceSets.coroutinesExperimentalTest.runtimeClasspath
-}
-task coroutinesExperimentalMigrationTest(type: Test, dependsOn: coroutinesExperimentalMigrationTestClasses) {
-    group = "verification"
-    testClassesDirs = sourceSets.coroutinesExperimentalMigrationTest.output.classesDirs
-    classpath = sourceSets.coroutinesExperimentalMigrationTest.runtimeClasspath
-}
-
-check.dependsOn(coroutinesExperimentalTest)
-check.dependsOn(coroutinesExperimentalMigrationTest)
+compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output])
 
 compileTestKotlin {
     kotlinOptions {

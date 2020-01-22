@@ -24,10 +24,8 @@ def commonSrcDir = "${projectDir}/../src/kotlin"
 def commonSrcDir2 = "${projectDir}/../common/src"
 def jsCommonDir = "${projectDir}/../js"
 
-def coroutinesExpJsSrcDir = "${rootDir}/libraries/stdlib/coroutines-experimental/js/src"
 def builtinsDir = "${rootDir}/core/builtins"
 def unsignedCommonSrcDir = "${rootDir}/libraries/stdlib/unsigned/src"
-def coroutinesJsModuleName = 'kotlin-stdlib-coroutines'
 
 def jsSrcDir = "src"
 def jsCommonSrcDir = "${jsCommonDir}/src"
@@ -67,19 +65,12 @@ sourceSets {
             srcDir jsCommonTestSrcDir
         }
     }
-
-    coroutinesExperimental {
-        kotlin {
-//            srcDir coroutinesExpJsSrcDir
-        }
-    }
 }
 
 dependencies {
     expectedBy project(":kotlin-stdlib-common")
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
     testCompile project(':kotlin-test:kotlin-test-js')
-    coroutinesExperimentalCompile project.files { sourceSets.main.output.files }.builtBy(compileKotlin2Js)
 }
 
 task prepareComparableSource(type: Copy) {
@@ -158,22 +149,6 @@ compileKotlin2Js {
     }
 }
 
-compileCoroutinesExperimentalKotlin2Js {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        outputFile = "${buildDir}/classes/coroutinesExperimental/kotlin.js"
-        sourceMap = true
-        sourceMapPrefix = "./"
-        freeCompilerArgs += [
-            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-            "-Xuse-experimental=kotlin.Experimental",
-            "-Xcoroutines=enable",
-            "-XXLanguage:-ReleaseCoroutines"
-        ]
-    }
-}
-
 compileTestKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
@@ -186,10 +161,9 @@ compileTestKotlin2Js {
 }
 
 task compileJs(type: NoDebugJavaExec) {
-    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileCoroutinesExperimentalKotlin2Js
+    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js
     inputs.files(compileBuiltinsKotlin2Js.outputs.files).withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.files(compileKotlin2Js.outputs.files).withPathSensitivity(PathSensitivity.RELATIVE)
-    inputs.files(compileCoroutinesExperimentalKotlin2Js.outputs.files).withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.dir(jsSrcDir).withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.dir(jsCommonSrcDir).withPathSensitivity(PathSensitivity.RELATIVE)
 
@@ -206,8 +180,7 @@ task compileJs(type: NoDebugJavaExec) {
     doFirst {
         args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
                (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
-                compileKotlin2Js.outputs.files.collect { it.path }.sort() /*+
-                compileCoroutinesExperimentalKotlin2Js.outputs.files.collect { it.path }.sort()*/).findAll {
+                compileKotlin2Js.outputs.files.collect { it.path }.sort()).findAll {
                    it.endsWith(".js") && !it.endsWith(".meta.js")
                }
     }
@@ -253,8 +226,7 @@ task compileJs(type: NoDebugJavaExec) {
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
 
-        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text /*+
-                                      file(compileCoroutinesExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text*/
+        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
     }
 }
 
@@ -283,9 +255,6 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
     from jsOutputMetaFile
     from "${jsOutputFile}.map"
     from sourceSets.main.output
-    from("${buildDir}/classes/coroutinesExperimental/kotlin") {
-        into coroutinesJsModuleName
-    }
 }
 
 task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
@@ -321,9 +290,6 @@ task sourcesJar(type: Jar, dependsOn: compileJs) {
     from(sourceSets.main.allSource) {
         include 'org.w3c/**'
     }
-    from(sourceSets.coroutinesExperimental.allSource) {
-        into 'kotlin'
-    }
 }
 
 task distSourcesJar(type: Jar) {
@@ -337,10 +303,6 @@ task distSourcesJar(type: Jar) {
         it.includeEmptyDirs = false
         exclude 'META-INF/*'
         into 'common'
-    }
-
-    from(project(":kotlin-stdlib-common").sourceSets.coroutinesExperimental.allSource) {
-        into 'kotlin'
     }
 }
 

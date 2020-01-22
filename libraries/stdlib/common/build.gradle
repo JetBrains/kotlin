@@ -26,18 +26,11 @@ sourceSets {
             srcDir 'test'
         }
     }
-    coroutinesExperimental {
-        kotlin {
-//            srcDir '../coroutines-experimental/src'
-        }
-    }
 }
 
 dependencies {
     testCompile project(":kotlin-test:kotlin-test-common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
-
-    coroutinesExperimentalCompile sourceSets.main.output
 }
 
 compileKotlinCommon {
@@ -60,22 +53,6 @@ compileKotlinCommon {
     }
 }
 
-compileCoroutinesExperimentalKotlinCommon {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs = [
-                "-module-name", project.name+"-coroutines",
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xcoroutines=enable",
-                "-XXLanguage:-ReleaseCoroutines",
-                "-Xallow-kotlin-package",
-                "-Xallow-result-return-type"
-        ]
-    }
-}
-
 compileTestKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
@@ -88,13 +65,11 @@ compileTestKotlinCommon {
 
 jar {
     manifestAttributes(manifest, project, 'Main')
-    from sourceSets.coroutinesExperimental.output
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
-    from sourceSets.coroutinesExperimental.kotlin
 }
 
 configurations {
