@@ -67,8 +67,7 @@ object LibraryUtils {
         return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB, Attributes.Name.IMPLEMENTATION_TITLE)
     }
 
-    private fun isZippedKlib(candidate: File): Boolean {
-        if (candidate.extension == "klib") return true
+    private fun isZippedKlibInZip(candidate: File): Boolean {
         var manifestFound = false
         var irFound = false
         for (entry in ZipFile(candidate).entries()) {
@@ -78,10 +77,15 @@ object LibraryUtils {
         return manifestFound && irFound
     }
 
+    private fun isZippedKlib(candidate: File): Boolean {
+        return candidate.extension == "klib"
+    }
+
     @JvmStatic
     fun isKotlinJavascriptIrLibrary(candidate: File): Boolean {
         return when {
-            FileUtil.isJarOrZip(candidate) -> isZippedKlib(candidate)
+            isZippedKlib(candidate) -> true
+            FileUtil.isJarOrZip(candidate) -> isZippedKlibInZip(candidate)
             !File(candidate, "manifest").isFile -> false
             !File(candidate, "ir").isDirectory -> false
             else -> true
