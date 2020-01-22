@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
-import org.jetbrains.kotlin.tools.projectWizard.core.asPath
-import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
+import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.TemplateSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
@@ -42,6 +39,21 @@ class SimpleJsClientTemplate : Template() {
     }
 
     override val settings: List<TemplateSetting<*, *>> = listOf(renderEngine)
+
+    override fun ValuesReadingContext.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = buildList {
+        if (module.originalModule.kind == ModuleKind.singleplatformJs) {
+            +WizardGradleRunConfiguration(
+                "BrowserDevelopmentRun in continuous mode",
+                "browserDevelopmentRun",
+                listOf("--continuous")
+            )
+            +WizardGradleRunConfiguration(
+                "BrowserProductionRun in continuous mode",
+                "browserProductionRun",
+                listOf("--continuous")
+            )
+        }
+    }
 
     override fun TaskRunningContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = withSettingsOf(module.originalModule) {
         buildList {
