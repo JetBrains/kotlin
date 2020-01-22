@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
@@ -39,11 +40,14 @@ class CompletionModeCalculator {
             if (csBuilder.isProperType(returnType)) return ConstraintSystemCompletionMode.FULL
 
             // For nested call with variables in return type check possibility of full completion
-            return CalculatorForNestedCall(returnType, csCompleterContext, trivialConstraintTypeInferenceOracle).computeCompletionMode()
+            return CalculatorForNestedCall(
+                candidate, returnType, csCompleterContext, trivialConstraintTypeInferenceOracle
+            ).computeCompletionMode()
         }
     }
 
     private class CalculatorForNestedCall(
+        private val candidate: KotlinResolutionCandidate,
         private val returnType: UnwrappedType?,
         private val csCompleterContext: CsCompleterContext,
         private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
@@ -56,6 +60,10 @@ class CompletionModeCalculator {
             newLinkedHashMapWithExpectedSize(csCompleterContext.notFixedTypeVariables.size)
         private val variablesWithQueuedConstraints = mutableSetOf<TypeVariableMarker>()
         private val typesToProcess: Queue<KotlinTypeMarker> = ArrayDeque()
+
+        private val postponedAtoms: List<PostponedResolvedAtom> by lazy {
+            KotlinConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments(listOf(candidate.resolvedCall))
+        }
 
         fun computeCompletionMode(): ConstraintSystemCompletionMode = with(csCompleterContext) {
             // Add fixation directions for variables based on effective variance in type
@@ -163,19 +171,31 @@ class CompletionModeCalculator {
             direction: FixationDirection
         ): Boolean {
             val constraints = variableWithConstraints.constraints
+            val variable = variableWithConstraints.typeVariable
 
             // todo check correctness for @Exact
             return constraints.isNotEmpty() && constraints.any { constraint ->
                 constraint.hasRequiredKind(direction)
-                        && !constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()
                         && isProperType(constraint.type)
-                        && trivialConstraintTypeInferenceOracle.isSuitableResultedType(constraint.type)
+                        && !constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()
+                        && !isNothingConstraintForPartiallyAnalyzedVariable(constraint, variable)
             }
         }
 
         private fun Constraint.hasRequiredKind(direction: FixationDirection) = when (direction) {
             FixationDirection.TO_SUBTYPE -> kind.isLower() || kind.isEqual()
             FixationDirection.EQUALITY -> kind.isEqual()
+        }
+
+        private fun CsCompleterContext.isNothingConstraintForPartiallyAnalyzedVariable(
+            constraint: Constraint,
+            variable: TypeVariableMarker
+        ): Boolean {
+            if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(constraint.type) || !constraint.kind.isLower())
+                return false
+            return postponedAtoms.any { atom ->
+                atom.expectedType?.contains { type -> variable.defaultType() == type } ?: false
+            }
         }
     }
 }
