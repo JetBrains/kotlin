@@ -28,6 +28,8 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
@@ -378,25 +380,25 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
                 jarArtifact.type = type
 
                 val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
-                addJar(apiElementsConfiguration, jarArtifact)
+                addJar(apiElementsConfiguration, jarArtifact, type)
 
                 if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
                     val runtimeConfiguration = project.configurations.getByName(mainCompilation.deprecatedRuntimeConfigurationName)
                     val runtimeElementsConfiguration = project.configurations.getByName(target.runtimeElementsConfigurationName)
-                    addJar(runtimeConfiguration, jarArtifact)
-                    addJar(runtimeElementsConfiguration, jarArtifact)
+                    addJar(runtimeConfiguration, jarArtifact, type)
+                    addJar(runtimeElementsConfiguration, jarArtifact, type)
                     // TODO Check Gradle's special split into variants for classes & resources -- do we need that too?
                 }
             }
         }
     }
 
-    private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {
+    private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact, type: String) {
         val publications = configuration.outgoing
 
         // Configure an implicit variant
         publications.artifacts.add(jarArtifact)
-        publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
+        publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, type)
     }
 }
 
@@ -444,6 +446,16 @@ internal fun Project.usageByName(usageName: String): Usage =
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
+    println("$target ${target is KotlinJsTarget}")
+
+    if (target is KotlinJsTarget) {
+        attributes.attribute(KotlinJsTarget.jsTargetAttribute, "legacy")
+    }
+
+    if (target is KotlinJsIrTarget) {
+        attributes.attribute(KotlinJsTarget.jsTargetAttribute, "ir")
+    }
+
     // TODO: Provide an universal way to copy attributes from the target.
     if (target is KotlinNativeTarget) {
         attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
