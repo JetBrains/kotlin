@@ -34,18 +34,20 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
         backendContext: BackendContext,
         bindingContext: BindingContext
     ) {
+        // TODO: refactor transformers to work with just BackendContext
+        val jvmContext = backendContext as JvmBackendContext
         if (ComposeFlags.COMPOSER_PARAM) {
-            backendContext as JvmBackendContext
-            FrameIrTransformer(backendContext).lower(file)
-            ComposerParamTransformer(backendContext).lower(file)
-            ComposerIntrinsicTransformer(backendContext).lower(file)
-            ComposableCallTransformer(backendContext).lower(file)
-            ComposeSymbolPatcherTransformer(backendContext).lower(file)
-            return; // TODO: Without running FrameIrTransformer and ComposeObservePatcher???
+            FrameIrTransformer(jvmContext).lower(file)
+            ComposerParamTransformer(jvmContext).lower(file)
+            ComposerIntrinsicTransformer(jvmContext).lower(file)
+            ComposableCallTransformer(jvmContext).lower(file)
+            ComposeObservePatcher(jvmContext).lower(file)
+            ComposeSymbolPatcherTransformer(jvmContext).lower(file)
+            return
         }
 
-        FrameIrTransformer(backendContext as JvmBackendContext).lower(file)
-        ComposableCallTransformer(backendContext).lower(file)
-        ComposeObservePatcher(backendContext).lower(file)
+        FrameIrTransformer(jvmContext).lower(file)
+        ComposableCallTransformer(jvmContext).lower(file)
+        ComposeObservePatcher(jvmContext).lower(file)
     }
 }
