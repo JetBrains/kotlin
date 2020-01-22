@@ -38,11 +38,13 @@ class TargetsModel(
                 moduleToAdd.subModules.forEach { subModule ->
                     add(subModule, this)
                 }
-                moduleToAdd.sourcesets.forEach { sourceset ->
-                    val sourcesetNode = DefaultMutableTreeNode(sourceset)
-                    add(sourcesetNode)
-                    pathsToExpand += TreePath(sourcesetNode.path)
-                }
+                // sourcesets for now does not provide functionality except storing dependencies
+                // so, there is no reason for now to show them for user
+                /*  moduleToAdd.sourcesets.forEach { sourceset ->
+                      val sourcesetNode = DefaultMutableTreeNode(sourceset)
+                      add(sourcesetNode)
+                      pathsToExpand += TreePath(sourcesetNode.path)
+                  }*/
             }
         }
 
