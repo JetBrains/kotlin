@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
     val variableFixationFinder: VariableFixationFinder,
-    private val statelessCallbacks: KotlinResolutionStatelessCallbacks
 ) {
     enum class ConstraintSystemCompletionMode {
         FULL,
@@ -214,23 +212,6 @@ class KotlinConstraintSystemCompleter(
         return false
     }
 
-    private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ResolvedAtom>): List<PostponedResolvedAtom> {
-        fun ResolvedAtom.process(to: MutableList<PostponedResolvedAtom>) {
-            to.addIfNotNull(this.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
-
-            if (analyzed) {
-                subResolvedAtoms?.forEach { it.process(to) }
-            }
-        }
-
-        val notAnalyzedArguments = arrayListOf<PostponedResolvedAtom>()
-        for (primitive in topLevelAtoms) {
-            primitive.process(notAnalyzedArguments)
-        }
-
-        return notAnalyzedArguments
-    }
-
     private fun getOrderedAllTypeVariables(
         c: Context,
         collectVariablesFromContext: Boolean,
@@ -351,5 +332,24 @@ class KotlinConstraintSystemCompleter(
         }
 
         return null
+    }
+
+    companion object {
+        fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ResolvedAtom>): List<PostponedResolvedAtom> {
+            fun ResolvedAtom.process(to: MutableList<PostponedResolvedAtom>) {
+                to.addIfNotNull(this.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
+
+                if (analyzed) {
+                    subResolvedAtoms?.forEach { it.process(to) }
+                }
+            }
+
+            val notAnalyzedArguments = arrayListOf<PostponedResolvedAtom>()
+            for (primitive in topLevelAtoms) {
+                primitive.process(notAnalyzedArguments)
+            }
+
+            return notAnalyzedArguments
+        }
     }
 }

@@ -10584,6 +10584,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/completion/kt33166.kt");
                 }
 
+                @TestMetadata("lambdaWithVariableAndNothing.kt")
+                public void testLambdaWithVariableAndNothing() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/lambdaWithVariableAndNothing.kt");
+                }
+
                 @TestMetadata("partialForIlt.kt")
                 public void testPartialForIlt() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/partialForIlt.kt");
@@ -17846,6 +17851,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("kt3535.kt")
             public void testKt3535() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/kt3535.kt");
+            }
+
+            @TestMetadata("kt35668.kt")
+            public void testKt35668() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/kt35668.kt");
             }
 
             @TestMetadata("kt3647.kt")
