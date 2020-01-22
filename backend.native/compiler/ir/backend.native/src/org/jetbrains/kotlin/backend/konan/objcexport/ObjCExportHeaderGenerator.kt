@@ -185,14 +185,6 @@ internal class ObjCExportTranslatorImpl(
         return listOf("unavailable(\"$message\")")
     }
 
-    private fun genericExportScope(classDescriptor: DeclarationDescriptor): ObjCExportScope {
-        return if(objcGenerics && classDescriptor is ClassDescriptor && !classDescriptor.isInterface) {
-            ObjCClassExportScope(classDescriptor, namer)
-        } else {
-            ObjCNoneExportScope
-        }
-    }
-
     private fun referenceClass(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         fun forwardDeclarationObjcClassName(objcGenerics: Boolean, descriptor: ClassDescriptor, namer:ObjCExportNamer): String {
             val className = translateClassOrInterfaceName(descriptor)
@@ -291,7 +283,11 @@ internal class ObjCExportTranslatorImpl(
             return translateUnexposedClassAsUnavailableStub(descriptor)
         }
 
-        val genericExportScope = genericExportScope(descriptor)
+        val genericExportScope = if (objcGenerics) {
+            ObjCClassExportScope(descriptor, namer)
+        } else {
+            ObjCNoneExportScope
+        }
 
         fun superClassGenerics(genericExportScope: ObjCExportScope): List<ObjCNonNullReferenceType> {
             val parentType = computeSuperClassType(descriptor)
@@ -379,7 +375,7 @@ internal class ObjCExportTranslatorImpl(
                 }
             }
 
-            translateClassMembers(descriptor)
+            translateClassMembers(descriptor, genericExportScope)
         }
 
         val attributes = if (descriptor.isFinalOrEnum) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()
@@ -419,33 +415,14 @@ internal class ObjCExportTranslatorImpl(
                     .filter { mapper.shouldBeExposed(it) }
                     .toList()
 
-    private fun StubBuilder.translateClassMembers(descriptor: ClassDescriptor) {
+    private fun StubBuilder.translateClassMembers(descriptor: ClassDescriptor, objCExportScope: ObjCExportScope) {
         require(!descriptor.isInterface)
-        translateClassMembers(descriptor.getExposedMembers())
+        translateClassMembers(descriptor.getExposedMembers(), objCExportScope)
     }
 
     private fun StubBuilder.translateInterfaceMembers(descriptor: ClassDescriptor) {
         require(descriptor.isInterface)
         translateBaseMembers(descriptor.getExposedMembers())
-    }
-
-    private class RenderedStub<T: Stub<*>>(val stub: T) {
-        private val presentation: String by lazy(LazyThreadSafetyMode.NONE) {
-            val listOfLines = StubRenderer.render(stub)
-            assert(listOfLines.size == 1)
-            listOfLines[0]
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            return other is RenderedStub<*> && presentation == other.presentation
-        }
-
-        override fun hashCode(): Int {
-            return presentation.hashCode()
-        }
     }
 
     private fun List<CallableMemberDescriptor>.toObjCMembers(
@@ -464,7 +441,10 @@ internal class ObjCExportTranslatorImpl(
         }
     }
 
-    private fun StubBuilder.translateClassMembers(members: List<CallableMemberDescriptor>) {
+    private fun StubBuilder.translateClassMembers(
+            members: List<CallableMemberDescriptor>,
+            objCExportScope: ObjCExportScope
+    ) {
         // TODO: add some marks about modality.
 
         val methods = mutableListOf<FunctionDescriptor>()
@@ -474,8 +454,22 @@ internal class ObjCExportTranslatorImpl(
 
         methods.forEach { exportThrown(it) }
 
-        collectMethodsOrProperties(methods) { it -> buildAsDeclaredOrInheritedMethods(it.original) }
-        collectMethodsOrProperties(properties) { it -> buildAsDeclaredOrInheritedProperties(it.original) }
+        methods.retainAll { it.kind.isReal }
+        properties.retainAll { it.kind.isReal }
+
+        methods.forEach { method ->
+            mapper.getBaseMethods(method)
+                    .asSequence()
+                    .distinctBy { namer.getSelector(it) }
+                    .forEach { base -> +buildMethod(method, base, objCExportScope) }
+        }
+
+        properties.forEach { property ->
+            mapper.getBaseProperties(property)
+                    .asSequence()
+                    .distinctBy { namer.getPropertyName(it) }
+                    .forEach { base -> +buildProperty(property, base, objCExportScope) }
+        }
     }
 
     private fun StubBuilder.translateBaseMembers(members: List<CallableMemberDescriptor>) {
@@ -517,57 +511,6 @@ internal class ObjCExportTranslatorImpl(
         methods.forEach { +buildMethod(it, it, objCExportScope) }
         properties.forEach { +buildProperty(it, it, objCExportScope) }
     }
-
-    private fun <D : CallableMemberDescriptor, S : Stub<*>> StubBuilder.collectMethodsOrProperties(
-            members: List<D>,
-            converter: (D) -> Set<RenderedStub<S>>) {
-        members.forEach { member ->
-            val memberStubs = converter(member).asSequence()
-
-            val filteredMemberStubs = if (member.kind.isReal) {
-                memberStubs
-            } else {
-                val superMembers: Set<RenderedStub<S>> = (member.overriddenDescriptors as Collection<D>)
-                        .asSequence()
-                        .filter { mapper.shouldBeExposed(it) }
-                        .flatMap { converter(it).asSequence() }
-                        .toSet()
-
-                memberStubs.filterNot { superMembers.contains(it) }
-            }
-
-            this += filteredMemberStubs
-                    .map { rendered -> rendered.stub }
-                    .toList()
-        }
-    }
-
-    private fun buildAsDeclaredOrInheritedMethods(
-            method: FunctionDescriptor
-    ): Set<RenderedStub<ObjCMethod>> {
-        val isInterface = (method.containingDeclaration as ClassDescriptor).isInterface
-
-        return mapper.getBaseMethods(method)
-                .asSequence()
-                .distinctBy { namer.getSelector(it) }
-                .map { base -> buildMethod((if (isInterface) base else method), base, genericExportScope(method.containingDeclaration)) }
-                .map { RenderedStub(it) }
-                .toSet()
-    }
-
-    private fun buildAsDeclaredOrInheritedProperties(
-            property: PropertyDescriptor
-    ): Set<RenderedStub<ObjCProperty>> {
-        val isInterface = (property.containingDeclaration as ClassDescriptor).isInterface
-
-        return mapper.getBaseProperties(property)
-                .asSequence()
-                .distinctBy { namer.getPropertyName(it) }
-                .map { base -> buildProperty((if (isInterface) base else property), base, genericExportScope(property.containingDeclaration)) }
-                .map { RenderedStub(it) }
-                .toSet()
-    }
-
     // TODO: consider checking that signatures for bases with same selector/name are equal.
 
     private fun getSelector(method: FunctionDescriptor): String {

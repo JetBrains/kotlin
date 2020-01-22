@@ -193,7 +193,6 @@ __attribute__((swift_name("Enumeration")))
 @property (class, readonly) ValuesEnumeration *answer __attribute__((swift_name("answer")));
 @property (class, readonly) ValuesEnumeration *year __attribute__((swift_name("year")));
 @property (class, readonly) ValuesEnumeration *temperature __attribute__((swift_name("temperature")));
-- (int32_t)compareToOther:(ValuesEnumeration *)other __attribute__((swift_name("compareTo(other:)")));
 @property (readonly) int32_t enumValue __attribute__((swift_name("enumValue")));
 @end;
 
@@ -407,7 +406,6 @@ __attribute__((swift_name("TransformInheritingDefault")))
 @interface ValuesTransformInheritingDefault<T> : ValuesBase <ValuesTransformWithDefault>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (T _Nullable)mapValue:(T _Nullable)value __attribute__((swift_name("map(value:)")));
 @end;
 
 __attribute__((swift_name("TransformIntString")))
@@ -636,7 +634,6 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 @property (class, readonly) ValuesTestInvalidIdentifiersE *_5_ __attribute__((swift_name("_5_")));
 @property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
 @property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
-- (int32_t)compareToOther:(ValuesTestInvalidIdentifiersE *)other __attribute__((swift_name("compareTo(other:)")));
 @property (readonly) int32_t value __attribute__((swift_name("value")));
 @end;
 
