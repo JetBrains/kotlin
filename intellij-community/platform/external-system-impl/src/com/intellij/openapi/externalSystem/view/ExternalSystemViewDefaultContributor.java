@@ -27,6 +27,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import gnu.trove.TLongObjectHashMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -229,7 +230,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
 
   private static class DependencyScopeExternalSystemNode extends ExternalSystemNode<Object> {
     private final DependencyScopeNode myDependenciesGraph;
-    private final Map<Long, DependencyNode> myDependencyNodeMap = new HashMap<>();
+    private final TLongObjectHashMap<DependencyNode> myDependencyNodeMap = new TLongObjectHashMap<>();
 
     DependencyScopeExternalSystemNode(@NotNull ExternalProjectsView externalProjectsView,
                                       @NotNull DependencyScopeNode dependenciesGraph) {
@@ -263,7 +264,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
       return myChildNodes;
     }
 
-    private static void buildNodesMap(@NotNull Map<Long, DependencyNode> dependencyNodeMap, @NotNull DependencyNode node) {
+    private static void buildNodesMap(@NotNull TLongObjectHashMap<DependencyNode> dependencyNodeMap, @NotNull DependencyNode node) {
       for (DependencyNode child : node.getDependencies()) {
         if (child instanceof ReferenceNode) continue;
         dependencyNodeMap.put(child.getId(), child);
@@ -276,14 +277,14 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
     @NotNull
     private final DependencyNode myDependencyNode;
     @NotNull
-    private final Map<Long, DependencyNode> myDependencyNodeMap;
+    private final TLongObjectHashMap<DependencyNode> myDependencyNodeMap;
     @Nullable
     private DependencyNode myReferencedNode;
     private final String myName;
 
     DependencyExternalSystemNode(@NotNull ExternalProjectsView externalProjectsView,
                                  @NotNull DependencyNode dependencyNode,
-                                 @NotNull Map<Long, DependencyNode> dependencyNodeMap) {
+                                 @NotNull TLongObjectHashMap<DependencyNode> dependencyNodeMap) {
       super(externalProjectsView, null);
       myDependencyNode = dependencyNode;
       myDependencyNodeMap = dependencyNodeMap;
