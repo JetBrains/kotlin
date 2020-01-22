@@ -20,3 +20,8 @@ org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.S
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919
 org.jetbrains.kotlin.idea.completion.test.weighers.BasicCompletionWeigherTestGenerated.testPreferFromJdk, KT-35709 Class from JDK is not prioritized
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.AutoImports.testAmbiguousNamePreferFromJdk, KT-35709 Class from JDK is not prioritized
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibrarySecondaryConstructorUsages, KT-34542, FAIL
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassSecondaryConstructorUsages, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testClassAndConstuctors, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testOverloadedFun, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testRenamedElements, KT-34542, FAIL

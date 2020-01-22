@@ -57,10 +57,7 @@ object MapPsiToAsmDesc {
             append(typeDesc(it.type))
         }
         append(")")
-        psiMethod.returnType?.let {
-            append(typeDesc(it))
-        }
-                ?: return unknownSignature() // TODO: support constructors, there seems to be additional logic in java that doesn't work correctly for compiled kotlin
+        append(psiMethod.returnType?.let { typeDesc(it) } ?: "V")
     }
 
     private fun unknownSignature() = ""
