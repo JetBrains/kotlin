@@ -16,6 +16,15 @@ data class SettingsGradleFileIR(
     override fun withReplacedIrs(irs: List<BuildSystemIR>): SettingsGradleFileIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
+        val repositories = irsOfType<RepositoryIR>()
+        if (repositories.isNotEmpty()) {
+            sectionCall("pluginManagement", needIndent = true) {
+                sectionCall("repositories") {
+                    repositories.listNl()
+                }
+            }
+            nl(lineBreaks = 2)
+        }
         +"rootProject.name = "; +projectName.quotified
         nl(lineBreaks = 2)
         if (subProjects.isNotEmpty()) {
@@ -25,14 +34,5 @@ data class SettingsGradleFileIR(
             }
             nl(lineBreaks = 2)
         }
-        val repositories = irsOfType<RepositoryIR>()
-        if (repositories.isNotEmpty()) {
-            sectionCall("pluginManagement", needIndent = true) {
-                sectionCall("repositories") {
-                    repositories.listNl()
-                }
-            }
-        }
-
     }
 }
