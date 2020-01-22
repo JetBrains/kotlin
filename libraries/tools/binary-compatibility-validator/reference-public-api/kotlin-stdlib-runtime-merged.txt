@@ -664,6 +664,38 @@ public abstract class kotlin/collections/AbstractSet : kotlin/collections/Abstra
 	public fun iterator ()Ljava/util/Iterator;
 }
 
+public final class kotlin/collections/ArrayDeque : kotlin/collections/AbstractMutableList {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public fun <init> (Ljava/util/Collection;)V
+	public fun add (ILjava/lang/Object;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public final fun addFirst (Ljava/lang/Object;)V
+	public final fun addLast (Ljava/lang/Object;)V
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public final fun first ()Ljava/lang/Object;
+	public final fun firstOrNull ()Ljava/lang/Object;
+	public fun get (I)Ljava/lang/Object;
+	public fun getSize ()I
+	public fun indexOf (Ljava/lang/Object;)I
+	public fun isEmpty ()Z
+	public final fun last ()Ljava/lang/Object;
+	public fun lastIndexOf (Ljava/lang/Object;)I
+	public final fun lastOrNull ()Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeAt (I)Ljava/lang/Object;
+	public final fun removeFirst ()Ljava/lang/Object;
+	public final fun removeFirstOrNull ()Ljava/lang/Object;
+	public final fun removeLast ()Ljava/lang/Object;
+	public final fun removeLastOrNull ()Ljava/lang/Object;
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class kotlin/collections/ArraysKt {
 	public static final fun all ([BLkotlin/jvm/functions/Function1;)Z
 	public static final fun all ([CLkotlin/jvm/functions/Function1;)Z
