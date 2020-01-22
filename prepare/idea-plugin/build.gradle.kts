@@ -97,6 +97,7 @@ val projectsToShadow by extra(listOf(
 // Projects published to maven copied to the plugin as separate jars
 val libraryProjects = listOf(
     ":kotlin-reflect",
+    ":kotlin-coroutines-experimental-compat",
     ":kotlin-compiler-client-embeddable",
     ":kotlin-daemon-client",
     ":kotlin-daemon-client-new",

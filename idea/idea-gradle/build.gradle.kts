@@ -25,6 +25,7 @@ dependencies {
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijPluginDep("junit"))
     compileOnly(intellijPluginDep("testng"))
+    runtimeOnly(project(":kotlin-coroutines-experimental-compat"))
 
     compileOnly(project(":kotlin-gradle-statistics"))
 
