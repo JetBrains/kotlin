@@ -64,6 +64,8 @@ class Distribution(
         loaded
     }
 
+    val compilerVersion by lazy { properties["compilerVersion"]?.toString() }
+
     val klib = "$konanHome/klib"
     val stdlib = "$klib/common/stdlib"
 
