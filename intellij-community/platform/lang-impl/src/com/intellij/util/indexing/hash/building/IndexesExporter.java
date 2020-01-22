@@ -4,12 +4,8 @@ package com.intellij.util.indexing.hash.building;
 import com.intellij.concurrency.JobLauncher;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.AdditionalLibraryRootsProvider;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.SyntheticLibrary;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
@@ -17,13 +13,11 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileBasedIndexExtension;
-import com.intellij.util.indexing.IndexableSetContributor;
 import com.intellij.util.indexing.hash.HashBasedIndexGenerator;
 import com.intellij.util.indexing.hash.StubHashBasedIndexGenerator;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -32,61 +26,26 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 public class IndexesExporter {
   private static final Logger LOG = Logger.getInstance(IndexesExporter.class);
 
-  public static void exportIndices(@NotNull Project project, @NotNull Path temp, @NotNull Path outZipFile, @NotNull ProgressIndicator indicator) {
-    List<IndexChunk> chunks = ReadAction.compute(() -> buildChunks(project));
-    exportIndices(project, chunks, temp, outZipFile, indicator);
-  }
+  private final Project myProject;
 
-  public static void exportSingleIndexChunk(@NotNull Project project,
-                                            @NotNull IndexChunk chunk,
-                                            @NotNull Path temp,
-                                            @NotNull Path outZipFile,
-                                            @NotNull ProgressIndicator indicator) {
-    exportIndices(project, Collections.singletonList(chunk), temp, outZipFile, indicator);
+  public IndexesExporter(@NotNull Project project) {
+    myProject = project;
   }
 
   @NotNull
-  private static List<IndexChunk> buildChunks(@NotNull Project project) {
-    Collection<IndexChunk> projectChunks = Arrays
-      .stream(ModuleManager.getInstance(project).getModules())
-      .flatMap(m -> IndexChunk.generate(m))
-      .collect(Collectors.toMap(ch -> ch.getName(), ch -> ch, IndexChunk::mergeUnsafe))
-      .values();
-
-    Set<VirtualFile>
-      additionalRoots = IndexableSetContributor.EP_NAME.extensions().flatMap(contributor -> Stream
-      .concat(IndexableSetContributor.getRootsToIndex(contributor).stream(),
-              IndexableSetContributor.getProjectRootsToIndex(contributor, project).stream())).collect(
-      Collectors.toSet());
-
-    Set<VirtualFile> synthRoots = new THashSet<>();
-    for (AdditionalLibraryRootsProvider provider : AdditionalLibraryRootsProvider.EP_NAME.getExtensionList()) {
-      for (SyntheticLibrary library : provider.getAdditionalProjectLibraries(project)) {
-        for (VirtualFile root : library.getAllRoots()) {
-          // do not try to visit under-content-roots because the first task took care of that already
-          if (!ProjectFileIndex.getInstance(project).isInContent(root)) {
-            synthRoots.add(root);
-          }
-        }
-      }
-    }
-
-    return Stream.concat(projectChunks.stream(),
-                         Stream.of(new IndexChunk(additionalRoots, "ADDITIONAL"),
-                                   new IndexChunk(synthRoots, "SYNTH"))).collect(Collectors.toList());
+  public static IndexesExporter getInstance(@NotNull Project project) {
+    return project.getService(IndexesExporter.class);
   }
 
-  public static void exportIndices(@NotNull Project project,
-                                   @NotNull List<IndexChunk> chunks,
-                                   @NotNull Path out,
-                                   @NotNull Path zipFile,
-                                   @NotNull ProgressIndicator indicator) {
+  public void exportIndices(@NotNull List<IndexChunk> chunks,
+                            @NotNull Path out,
+                            @NotNull Path zipFile,
+                            @NotNull ProgressIndicator indicator) {
     Path indexRoot = PathKt.createDirectories(out.resolve("unpacked"));
 
     indicator.setIndeterminate(false);
@@ -108,7 +67,7 @@ public class IndexesExporter {
         List<HashBasedIndexGenerator<?, ?>> allGenerators = new ArrayList<>(fileBasedGenerators);
         allGenerators.add(stubGenerator);
 
-        generate(chunk, project, allGenerators, chunkRoot);
+        generate(chunk, allGenerators, chunkRoot);
 
         printStatistics(chunk, fileBasedGenerators, stubGenerator);
         deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
@@ -173,10 +132,9 @@ public class IndexesExporter {
     }
   }
 
-  private static void generate(@NotNull IndexChunk chunk,
-                               @NotNull Project project,
-                               @NotNull Collection<HashBasedIndexGenerator<?, ?>> generators,
-                               @NotNull Path chunkOut) {
+  private void generate(@NotNull IndexChunk chunk,
+                        @NotNull Collection<HashBasedIndexGenerator<?, ?>> generators,
+                        @NotNull Path chunkOut) {
     try {
       ContentHashEnumerator hashEnumerator = new ContentHashEnumerator(chunkOut.resolve("hashes"));
       try {
@@ -191,7 +149,7 @@ public class IndexesExporter {
 
               if (!file.isDirectory() && !SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
                 for (HashBasedIndexGenerator<?, ?> generator : generators) {
-                  generator.indexFile(file, project, hashEnumerator);
+                  generator.indexFile(file, myProject, hashEnumerator);
                 }
               }
 
