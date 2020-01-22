@@ -211,7 +211,8 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                         type          = getterKFunctionType,
                         symbol        = expression.getter!!,
                         typeArgumentsCount = getter.typeParameters.size,
-                        valueArgumentsCount = getter.valueParameters.size
+                        valueArgumentsCount = getter.valueParameters.size,
+                        reflectionTarget = expression.getter!!
                 ).apply {
                     this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
                     this.extensionReceiver = extensionReceiver?.let { irGet(it) }
@@ -233,7 +234,8 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                             type          = setterKFunctionType,
                             symbol        = expression.setter!!,
                             typeArgumentsCount = setter.typeParameters.size,
-                            valueArgumentsCount = setter.valueParameters.size
+                            valueArgumentsCount = setter.valueParameters.size,
+                            reflectionTarget = expression.setter!!
                     ).apply {
                         this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
                         this.extensionReceiver = extensionReceiver?.let { irGet(it) }

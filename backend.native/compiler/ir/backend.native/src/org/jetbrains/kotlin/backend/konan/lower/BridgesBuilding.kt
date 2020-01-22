@@ -116,7 +116,8 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         endOffset     = job.endOffset,
                         type          = job.type,
                         symbol        = bridge.symbol,
-                        typeArgumentsCount = 0)
+                        typeArgumentsCount = 0,
+                        reflectionTarget = null)
                 )
                 return expression
             }
