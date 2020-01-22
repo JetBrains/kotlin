@@ -140,10 +140,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         @Suppress("UNCHECKED_CAST")
         val sourceSets =
             (getSourceSets(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-
-        val getAndroidSourceSetDependencies = kotlinExt.javaClass.getMethodOrNull("getAndroidSourceSetDependencies", Project::class.java)
-        @Suppress("UNCHECKED_CAST") val androidDeps =
-            getAndroidSourceSetDependencies?.let { it(kotlinExt, project) } as Map<String, List<File>>?
+        val androidDeps = buildAndroidDeps(kotlinExt, project)
 
         // Some performance optimisation: do not build metadata dependencies if source set is not common
         val doBuildMetadataDependencies =
@@ -170,6 +167,18 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 sourceSet.actualPlatforms as KotlinPlatformContainerImpl,
                 sourceSet.isTestModule
             )
+        }
+    }
+
+    private fun buildAndroidDeps(kotlinExt: Any, project: Project): Map<String, List<File>>? {
+        val includeAndroidDeps = project.properties["kotlin.include.android.dependencies"]?.toString()?.toBoolean() == true
+        if (includeAndroidDeps) {
+            val getAndroidSourceSetDependencies =
+                kotlinExt.javaClass.getMethodOrNull("getAndroidSourceSetDependencies", Project::class.java)
+            @Suppress("UNCHECKED_CAST")
+            return getAndroidSourceSetDependencies?.let { it(kotlinExt, project) } as Map<String, List<File>>?
+        } else {
+            return emptyMap()
         }
     }
 
