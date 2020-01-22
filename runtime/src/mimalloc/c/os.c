@@ -233,6 +233,8 @@ static void* mi_win_virtual_allocx(void* addr, size_t size, size_t try_alignment
       _mi_warning_message("unable to allocate huge (1GiB) page, trying large (2MiB) pages instead (error 0x%lx)\n", err);
     }
   }
+#else
+  UNUSED(try_alignment);
 #endif
 #if (MI_INTPTR_SIZE >= 8) 
   // on 64-bit systems, try to use the virtual address area after 4TiB for 4MiB aligned allocations
