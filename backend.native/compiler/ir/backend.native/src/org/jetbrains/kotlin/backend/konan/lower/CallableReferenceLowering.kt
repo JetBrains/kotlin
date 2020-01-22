@@ -165,7 +165,8 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     isData = false,
                     isExternal = false,
                     isInline = false,
-                    isExpect = false
+                    isExpect = false,
+                    isFun = false
             ).apply {
                 it.bind(this)
                 parent = this@FunctionReferenceBuilder.parent

@@ -491,7 +491,8 @@ internal class TestProcessor (val context: Context) {
                 isData = false,
                 isExternal = false,
                 isInline = false,
-                isExpect = false
+                isExpect = false,
+                isFun = false
         ).apply {
             descriptor.bind(this)
             createParameterDeclarations()
