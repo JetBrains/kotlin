@@ -94,7 +94,6 @@ class AsyncStackTraceContext(
             it >= 0
         } ?: return null
         val locationClass = context.findClassSafe(className) ?: return null
-        log.warn("Got location of ${className}.${methodName}:${lineNumber} in ${locationClass}")
         return GeneratedLocation(context.debugProcess, locationClass, methodName, lineNumber)
     }
 
