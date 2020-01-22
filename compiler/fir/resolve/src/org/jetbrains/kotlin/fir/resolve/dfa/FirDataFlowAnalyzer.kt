@@ -331,7 +331,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterWhenBranchCondition(whenBranch: FirWhenBranch) {
-        val node = graphBuilder.enterWhenBranchCondition(whenBranch).mergeIncomingFlow()
+        val node = graphBuilder.enterWhenBranchCondition(whenBranch).mergeIncomingFlow(updateReceivers = true)
         val previousNode = node.previousNodes.single()
         if (previousNode is WhenBranchConditionExitNode) {
             val conditionVariable = variablesForWhenConditions.remove(previousNode)!!
@@ -379,15 +379,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 )
             }
         }
-        val previousFlows = whenExitNode.alivePreviousNodes.map { it.flow }
-        val flow = logicSystem.joinFlow(previousFlows)
-        whenExitNode.flow = flow
-        // TODO: wtf?
-        // val subjectSymbol = whenExpression.subjectVariable?.symbol
-        // if (subjectSymbol != null) {
-        //     variableStorage[subjectSymbol]?.let { flow = flow.removeVariable(it) }
-        // }
-        // node.flow = flow
+        whenExitNode.mergeIncomingFlow(updateReceivers = true)
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -451,7 +443,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterCatchClause(catch: FirCatch) {
-        graphBuilder.enterCatchClause(catch).mergeIncomingFlow()
+        graphBuilder.enterCatchClause(catch).mergeIncomingFlow(updateReceivers = true)
     }
 
     fun exitCatchClause(catch: FirCatch) {
@@ -749,6 +741,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies info)
         }
 
+        logicSystem.updateAllReceivers(flow)
         node.flow = flow
 
         variableStorage.removeSyntheticVariable(leftVariable)
@@ -797,9 +790,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) previousNodes.first() else this
 
-    private fun <T : CFGNode<*>> T.mergeIncomingFlow(): T = this.also { node ->
+    private fun <T : CFGNode<*>> T.mergeIncomingFlow(updateReceivers: Boolean = false): T = this.also { node ->
         val previousFlows = node.alivePreviousNodes.map { it.flow }
-        node.flow = logicSystem.joinFlow(previousFlows)
+        val flow = logicSystem.joinFlow(previousFlows)
+        if (updateReceivers) {
+            logicSystem.updateAllReceivers(flow)
+        }
+        node.flow = flow
     }
 
     private fun FLOW.addImplication(statement: Implication) {
