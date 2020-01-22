@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
@@ -68,3 +69,9 @@ data class MultiplatformModuleIR(
         }.listNl(needFirstIndent = false)
     }
 }
+
+fun MultiplatformModuleIR.neighbourTargetModules() =
+    originalModule.parent
+        ?.takeIf { it.kind == ModuleKind.multiplatform }
+        ?.subModules
+        .orEmpty()

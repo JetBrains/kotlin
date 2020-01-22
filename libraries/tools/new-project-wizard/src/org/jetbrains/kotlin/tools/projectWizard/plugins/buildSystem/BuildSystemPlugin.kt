@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
+import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatePlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
@@ -44,7 +46,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
 
     val takeRepositoriesFromDependencies by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(BuildSystemPlugin::createModules)
-        runAfter(KotlinPlugin::createModules)
+        runAfter(TemplatesPlugin::postApplyTemplatesToModules)
 
         withAction {
             updateBuildFiles { buildFile ->

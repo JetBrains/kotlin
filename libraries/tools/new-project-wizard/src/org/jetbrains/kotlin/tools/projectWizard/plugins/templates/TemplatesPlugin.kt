@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.projectName
+import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
@@ -111,7 +113,11 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
     ): TaskResult<Unit> {
         val template = module.template ?: return UNIT_SUCCESS
         val settings = with(template) { settingsAsMap(module.originalModule) }
-        val allSettings = settings + interceptionPointSettings.mapKeys { it.key.name }
+        val allSettings: Map<String, Any> = mutableMapOf<String, Any>().apply {
+            putAll(settings)
+            putAll(interceptionPointSettings.mapKeys { it.key.name })
+            putAll(defaultSettings(module))
+        }
         return with(template) { getFileTemplates(module) }.map { (fileTemplateDescriptor, filePath) ->
             val path = generatePathForFileTemplate(module, filePath)
             val fileTemplate = FileTemplate(
@@ -123,11 +129,16 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }.sequenceIgnore()
     }
 
+    private fun TaskRunningContext.defaultSettings(moduleIR: ModuleIR) = mapOf(
+        "projectName" to projectName,
+        "moduleName" to moduleIR.name
+    )
+
     private fun generatePathForFileTemplate(module: ModuleIR, filePath: FilePath) = when (module) {
         is SingleplatformModuleIR -> {
             when (filePath) {
                 is SrcFilePath -> SRC_DIR / filePath.sourcesetType.toString() / KOTLIN_DIR
-                is ResourcesFilePath -> RESOURCES_DIR / filePath.sourcesetType.toString()
+                is ResourcesFilePath -> SRC_DIR / filePath.sourcesetType.toString() / RESOURCES_DIR
             }
         }
 
