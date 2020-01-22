@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.isGradleModule
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.js.isJs
-import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 
 val Module.jsTestOutputFilePath: String?
     get() {
@@ -50,4 +50,4 @@ val Module.jsProductionOutputFilePath: String?
 fun Module.asJsModule(): Module? = takeIf { it.platform.isJs() }
 
 val Module.shouldUseJpsOutput: Boolean
-    get() = !(isGradleModule() && GradleSystemRunningSettings.getInstance().isUseGradleAwareMake)
+    get() = !(isGradleModule() && GradleProjectSettings.isDelegatedBuildEnabled(this))

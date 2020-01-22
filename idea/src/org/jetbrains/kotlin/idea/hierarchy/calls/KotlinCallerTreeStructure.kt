@@ -65,7 +65,7 @@ class KotlinCallerTreeStructure(
         callerToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>
     ): Collection<Any> {
         if (nodeDescriptor is CallHierarchyNodeDescriptor) {
-            val psiMethod = nodeDescriptor.enclosingElement as? PsiMethod ?: return emptyList()
+            val psiMethod: PsiMember = nodeDescriptor.enclosingElement as? PsiMethod ?: return emptyList()
             return CallerMethodsTreeStructure(myProject, psiMethod, scopeType).getChildElements(nodeDescriptor).toList()
         }
 

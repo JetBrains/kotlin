@@ -10,7 +10,7 @@ import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.junit.JUnitConfiguration
 import com.intellij.execution.junit.PatternConfigurationProducer
-import com.intellij.execution.junit.TestClassConfigurationProducer
+import com.intellij.execution.testframework.AbstractInClassConfigurationProducer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.PsiElementProcessor
@@ -42,7 +42,7 @@ class KotlinPatternConfigurationProducer : PatternConfigurationProducer() {
 
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
         return other.isProducedBy(PatternConfigurationProducer::class.java)
-                || other.isProducedBy(TestClassConfigurationProducer::class.java)
+                || other.isProducedBy(AbstractInClassConfigurationProducer::class.java)
                 || other.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java)
     }
 }
