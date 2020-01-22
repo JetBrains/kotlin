@@ -129,7 +129,7 @@ private fun replaceUsages(usages: List<UsageContext>, newName: String) {
         .reversed() // case: inner element
         .forEach {
             val reference = it.pointer.element?.safeAs<KtElement>()?.mainReference ?: return@forEach
-            val newExpression = reference.handleElementRename(newName) as KtNameReferenceExpression
+            val newExpression = reference.handleElementRename(newName) as? KtNameReferenceExpression ?: return@forEach
             if (it.isExtension) {
                 newExpression.getQualifiedElementSelector()?.replace(newExpression)
                 return@forEach
