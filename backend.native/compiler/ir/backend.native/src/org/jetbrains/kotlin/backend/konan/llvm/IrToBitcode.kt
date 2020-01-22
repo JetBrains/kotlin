@@ -1691,8 +1691,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
-        private val functionScope: DIScopeOpaqueRef?
-            get() = returnableBlock.inlineFunctionSymbol?.owner?.scope()
+        private val functionScope by lazy { returnableBlock.inlineFunctionSymbol?.owner?.scope() }
         private val outerScope = currentCodeContext.scope()
 
         private fun getExit(): LLVMBasicBlockRef {
