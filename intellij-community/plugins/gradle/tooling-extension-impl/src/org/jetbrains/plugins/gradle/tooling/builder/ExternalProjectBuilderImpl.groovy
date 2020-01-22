@@ -76,7 +76,6 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     if (externalProject != null) return externalProject
 
     def resolveSourceSetDependencies = System.properties.'idea.resolveSourceSetDependencies' as boolean
-    def isPreview = ExternalProjectPreview.name == modelName
     DefaultExternalProject defaultExternalProject = new DefaultExternalProject()
     defaultExternalProject.externalSystemId = "GRADLE"
     defaultExternalProject.name = project.name
@@ -95,7 +94,7 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     defaultExternalProject.buildFile = project.buildFile
     defaultExternalProject.group = wrap(project.group)
     defaultExternalProject.projectDir = project.projectDir
-    defaultExternalProject.sourceSets = getSourceSets(project, isPreview, resolveSourceSetDependencies, sourceSetFinder)
+    defaultExternalProject.sourceSets = getSourceSets(project, resolveSourceSetDependencies, sourceSetFinder)
     defaultExternalProject.tasks = getTasks(project, tasksFactory)
 
     addArtifactsData(project, defaultExternalProject)
@@ -168,7 +167,6 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
 
   @CompileDynamic
   private static Map<String, DefaultExternalSourceSet> getSourceSets(Project project,
-                                                                     boolean isPreview,
                                                                      boolean resolveSourceSetDependencies,
                                                                      SourceSetCachedFinder sourceSetFinder) {
     final IdeaPlugin ideaPlugin = project.getPlugins().findPlugin(IdeaPlugin.class)
