@@ -79,7 +79,6 @@ androidx {
     name = "AndroidX Compiler CLI Tests"
     publish = Publish.NONE
     toolingProject = true
-    mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.COMPOSE
     inceptionYear = "2019"
     description = "Contains test for the compose compiler plugin"
