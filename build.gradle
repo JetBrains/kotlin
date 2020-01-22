@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.KotlinBuildPusher
 import org.jetbrains.kotlin.CollisionDetector
 import org.jetbrains.kotlin.CollisionTransformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -359,8 +360,16 @@ task distCompiler(type: Copy) {
             exclude('**/*.bat')
         }
     }
+
     from(project.file('konan')) {
         into('konan')
+        exclude('**/*.properties')
+    }
+
+    from(project.file('konan')) {
+        into('konan')
+        include('**/*.properties')
+        filter(ReplaceTokens, tokens: [compilerVersion: konanVersionFull.toString()])
     }
     if (experimentalEnabled) {
         file('konan/experimentalTargetsEnabled').text = ""
