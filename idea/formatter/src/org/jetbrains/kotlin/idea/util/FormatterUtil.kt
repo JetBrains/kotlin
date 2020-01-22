@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,14 +52,14 @@ fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings, checkExisti
         settings = settings,
         trailingComma = { if (checkExistingTrailingComma) valueParameterList?.trailingComma else null },
         globalStartOffset = { valueParameterList?.startOffset },
-        globalEndOffset = { arrow?.endOffset }
+        globalEndOffset = { arrow?.endOffset },
     )
 
 fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean = needTrailingComma(
     settings = settings,
     trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
     additionalCheck = { !isElse },
-    globalEndOffset = { arrow?.endOffset }
+    globalEndOffset = { arrow?.endOffset },
 )
 
 fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean =
@@ -67,7 +67,7 @@ fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings, ch
         settings = settings,
         trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
         globalStartOffset = { lPar?.startOffset },
-        globalEndOffset = { rPar?.endOffset }
+        globalEndOffset = { rPar?.endOffset },
     )
 
 fun <T : PsiElement> T.needTrailingComma(
@@ -75,7 +75,7 @@ fun <T : PsiElement> T.needTrailingComma(
     trailingComma: T.() -> PsiElement?,
     additionalCheck: () -> Boolean = { true },
     globalStartOffset: T.() -> Int? = PsiElement::startOffset,
-    globalEndOffset: T.() -> Int? = PsiElement::endOffset
+    globalEndOffset: T.() -> Int? = PsiElement::endOffset,
 ): Boolean {
     if (trailingComma() == null && !settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA || !additionalCheck()) return false
     val startOffset = globalStartOffset() ?: return false
