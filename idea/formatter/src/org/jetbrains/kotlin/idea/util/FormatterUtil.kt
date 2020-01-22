@@ -76,11 +76,12 @@ fun <T : PsiElement> T.needTrailingComma(
     additionalCheck: () -> Boolean = { true },
     globalStartOffset: T.() -> Int? = PsiElement::startOffset,
     globalEndOffset: T.() -> Int? = PsiElement::endOffset
-) = (trailingComma() != null || settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA) && additionalCheck() && run(fun(): Boolean {
+): Boolean {
+    if (trailingComma() == null && !settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA || !additionalCheck()) return false
     val startOffset = globalStartOffset() ?: return false
     val endOffset = globalEndOffset() ?: return false
     return containsLineBreakInThis(startOffset, endOffset)
-})
+}
 
 fun PsiElement.containsLineBreakInThis(globalStartOffset: Int, globalEndOffset: Int): Boolean {
     val textRange = TextRange.create(globalStartOffset, globalEndOffset).shiftLeft(startOffset)

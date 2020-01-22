@@ -129,7 +129,7 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
         when {
             needComma(parent, settings, false) -> {
                 // add a missing comma
-                if (elementType !== KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
+                if (elementType != KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
                     lastElement.addCommaAfter(KtPsiFactory(parent))
                 }
 
@@ -138,7 +138,7 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
             needComma(parent, settings) -> {
                 correctCommaPosition(parent)
             }
-            elementType === KtTokens.COMMA -> {
+            elementType == KtTokens.COMMA -> {
                 // remove redundant comma
                 lastElement.delete()
             }
@@ -225,4 +225,4 @@ fun PsiElement.leaf(forward: Boolean = true, filter: (PsiElement) -> Boolean): P
     if (forward) nextLeaf(filter)
     else prevLeaf(filter)
 
-val PsiElement.isComma: Boolean get() = elementType === KtTokens.COMMA
+val PsiElement.isComma: Boolean get() = elementType == KtTokens.COMMA

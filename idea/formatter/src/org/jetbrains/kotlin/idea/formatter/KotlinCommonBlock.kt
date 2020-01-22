@@ -588,7 +588,8 @@ abstract class KotlinCommonBlock(
         when {
             elementType === VALUE_ARGUMENT_LIST -> {
                 val wrapSetting = commonSettings.CALL_PARAMETERS_WRAP
-                if (!node.trailingCommaIsAllowed && (wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
+                if (!node.trailingCommaIsAllowed &&
+                    (wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
                     !needWrapArgumentList(nodePsi)
                 ) {
                     return ::noWrapping
@@ -752,12 +753,10 @@ abstract class KotlinCommonBlock(
         fun(childElement: ASTNode): Wrap? = trailingCommaWrappingStrategyWithMultiLineCheck(leftAnchor, rightAnchor)(childElement)
 
     private val ASTNode.trailingCommaIsAllowed: Boolean
-        get() = if (settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA ||
-            lastChildNode?.let { getSiblingWithoutWhitespaceAndComments(it) }?.elementType === COMMA
-        )
-            psi?.let(PsiElement::isMultiline) == true
-        else
-            false
+        get() = (settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA ||
+                lastChildNode?.let { getSiblingWithoutWhitespaceAndComments(it) }?.elementType === COMMA) &&
+                psi?.let(PsiElement::isMultiline) == true
+
 
     private fun ASTNode.notDelimiterSiblingNodeInSequence(
         forward: Boolean,

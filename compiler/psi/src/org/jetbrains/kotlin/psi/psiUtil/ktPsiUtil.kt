@@ -671,5 +671,5 @@ fun getTrailingCommaByClosingElement(closingElement: PsiElement?): PsiElement? {
 
 fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
     val lastChild = elementList?.lastChild?.let { if (it !is PsiComment) it else it.getPrevSiblingIgnoringWhitespaceAndComments() }
-    return lastChild?.run { if (node.elementType == KtTokens.COMMA) this else null }
+    return lastChild?.takeIf { it.node.elementType == KtTokens.COMMA }
 }
