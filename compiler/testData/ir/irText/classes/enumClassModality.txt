@@ -7,7 +7,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestFinalEnum1
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestFinalEnum1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestFinalEnum1>]'
     ENUM_ENTRY name:X1
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum1'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum1'
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestFinalEnum1>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -75,8 +76,9 @@ FILE fqName:<root> fileName:/enumClassModality.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestFinalEnum2 declared in <root>.TestFinalEnum2.<get-x>' type=<root>.TestFinalEnum2 origin=null
     ENUM_ENTRY name:X1
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestFinalEnum2'
-        x: CONST Int type=kotlin.Int value=1
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestFinalEnum2'
+          x: CONST Int type=kotlin.Int value=1
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestFinalEnum2>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -132,7 +134,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestFinalEnum3
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestFinalEnum3 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestFinalEnum3>]'
     ENUM_ENTRY name:X1
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum3'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum3'
     FUN name:doStuff visibility:public modality:FINAL <> ($this:<root>.TestFinalEnum3) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.TestFinalEnum3
       BLOCK_BODY
@@ -191,7 +194,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestOpenEnum1
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestOpenEnum1 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestOpenEnum1>]'
     ENUM_ENTRY name:X1
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum1.X1'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum1.X1'
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:public superTypes:[<root>.TestOpenEnum1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestOpenEnum1.X1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestOpenEnum1.X1 [primary]
@@ -299,7 +303,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestOpenEnum2
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestOpenEnum2 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestOpenEnum2>]'
     ENUM_ENTRY name:X1
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum2.X1'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum2.X1'
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:public superTypes:[<root>.TestOpenEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestOpenEnum2.X1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestOpenEnum2.X1 [primary]
@@ -412,7 +417,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestAbstractEnum1
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestAbstractEnum1 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestAbstractEnum1>]'
     ENUM_ENTRY name:X1
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum1.X1'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum1.X1'
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:public superTypes:[<root>.TestAbstractEnum1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAbstractEnum1.X1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestAbstractEnum1.X1 [primary]
@@ -541,7 +547,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestAbstractEnum2
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestAbstractEnum2 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestAbstractEnum2>; <root>.IFoo]'
     ENUM_ENTRY name:X1
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum2.X1'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum2.X1'
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:public superTypes:[<root>.TestAbstractEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAbstractEnum2.X1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestAbstractEnum2.X1 [primary]

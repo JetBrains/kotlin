@@ -7,7 +7,8 @@ FILE fqName:<root> fileName:/enumEntry.kt
           <E>: <root>.Z
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Z modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Z>]'
     ENUM_ENTRY name:ENTRY
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z.ENTRY'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z.ENTRY'
       class: CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:public superTypes:[<root>.Z]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.ENTRY
         CONSTRUCTOR visibility:private <> () returnType:<root>.Z.ENTRY [primary]

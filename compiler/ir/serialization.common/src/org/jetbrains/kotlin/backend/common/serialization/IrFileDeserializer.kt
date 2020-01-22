@@ -1097,7 +1097,7 @@ abstract class IrFileDeserializer(
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)
                 if (proto.hasInitializer())
-                    initializerExpression = deserializeExpressionBody(proto.initializer)
+                    initializerExpression = IrExpressionBodyImpl(deserializeExpressionBody(proto.initializer))
 
                 (descriptor as? WrappedEnumEntryDescriptor)?.bind(this)
             }

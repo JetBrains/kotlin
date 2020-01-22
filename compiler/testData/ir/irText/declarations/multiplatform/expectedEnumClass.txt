@@ -58,11 +58,14 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
           <E>: <root>.MyEnum
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.MyEnum>]'
     ENUM_ENTRY name:FOO
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
     ENUM_ENTRY name:BAR
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
     ENUM_ENTRY name:BAZ
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.MyEnum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

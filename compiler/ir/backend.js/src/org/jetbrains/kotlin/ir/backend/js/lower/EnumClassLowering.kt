@@ -443,7 +443,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         +irIfThen(irGetField(null, entryInstancesInitializedField), irReturnUnit())
         +irSetField(null, entryInstancesInitializedField, irBoolean(true))
         for ((entry, instanceField) in enumEntries.zip(entryInstances)) {
-            +irSetField(null, instanceField, entry.initializerExpression!!)
+            +irSetField(null, instanceField, entry.initializerExpression!!.expression)
         }
     }.also {
         // entry.initializerExpression can have local declarations

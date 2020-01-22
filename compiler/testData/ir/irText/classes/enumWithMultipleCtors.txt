@@ -2,10 +2,12 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
   CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     ENUM_ENTRY name:X
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
-        arg: CONST String type=kotlin.String value="asd"
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
+          arg: CONST String type=kotlin.String value="asd"
     ENUM_ENTRY name:Y
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.Y'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.Y'
       class: CLASS ENUM_ENTRY name:Y modality:FINAL visibility:public superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Y
         CONSTRUCTOR visibility:private <> () returnType:<root>.A.Y [primary]
@@ -90,8 +92,9 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             public open fun toString (): kotlin.String [fake_override] declared in <root>.A
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
     ENUM_ENTRY name:Z
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.A'
-        x: CONST Int type=kotlin.Int value=5
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.A'
+          x: CONST Int type=kotlin.Int value=5
     PROPERTY name:prop1 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop1> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.String

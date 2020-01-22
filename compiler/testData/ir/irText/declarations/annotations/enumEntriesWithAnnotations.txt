@@ -37,11 +37,13 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
     ENUM_ENTRY name:ENTRY1
       annotations:
         TestAnn(x = 'ENTRY1')
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
     ENUM_ENTRY name:ENTRY2
       annotations:
         TestAnn(x = 'ENTRY2')
-      init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum.ENTRY2'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum.ENTRY2'
       class: CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:public superTypes:[<root>.TestEnum]
         annotations:
           TestAnn(x = 'ENTRY2')

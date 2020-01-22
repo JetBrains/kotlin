@@ -587,7 +587,7 @@ class Fir2IrDeclarationStorage(
                             this.correspondingClass = klass
                         } else if (irParent != null) {
                             this.initializerExpression =
-                                IrEnumConstructorCallImpl(startOffset, endOffset, irType, irParent.constructors.first().symbol)
+                                IrExpressionBodyImpl(IrEnumConstructorCallImpl(startOffset, endOffset, irType, irParent.constructors.first().symbol))
                         }
                     }
                 }
