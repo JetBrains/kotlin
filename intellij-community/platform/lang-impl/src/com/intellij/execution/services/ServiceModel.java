@@ -6,8 +6,6 @@ import com.intellij.execution.services.ServiceEventListener.ServiceEvent;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.WeighedItem;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
@@ -39,7 +37,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
   private static final Logger LOG = Logger.getInstance(ServiceModel.class);
 
   private final Project myProject;
-  private final Invoker myInvoker = Invoker.forBackgroundThreadWithoutReadAction(this);
+  private final Invoker myInvoker = Invoker.forBackgroundThreadWithReadAction(this);
   private final List<ServiceViewItem> myRoots = new CopyOnWriteArrayList<>();
   private volatile boolean myRootsInitialized;
 
@@ -120,7 +118,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     List<? extends ServiceViewItem> roots = ContainerUtil.filter(getRoots(), item -> contributor.equals(item.getContributor()));
     if (roots.isEmpty()) return null;
 
-    return ReadAction.compute(() -> findItemById(new LinkedList<>(ids), roots));
+    return findItemById(new LinkedList<>(ids), roots);
   }
 
   private static ServiceViewItem findItemById(Deque<String> path, List<? extends ServiceViewItem> roots) {
@@ -364,19 +362,16 @@ class ServiceModel implements Disposable, InvokerSupplier {
     if (first == null) return;
 
     //noinspection unchecked
-    @SuppressWarnings("rawtypes") ServiceViewDescriptor viewDescriptor =
-      ((ServiceViewGroupingContributor)first.getContributor()).getGroupDescriptor(e.target);
-    ApplicationManager.getApplication().runReadAction(() -> {
-      for (ServiceViewItem group : groups) {
-        group.setViewDescriptor(viewDescriptor);
-        ServiceViewItem parent = group.getParent();
-        if (parent != null) {
-          List<ServiceViewItem> children = parent.getChildren();
-          children.remove(group);
-          addGroupOrdered(children, (ServiceGroupNode)group);
-        }
+    ServiceViewDescriptor viewDescriptor = ((ServiceViewGroupingContributor)first.getContributor()).getGroupDescriptor(e.target);
+    for (ServiceViewItem group : groups) {
+      group.setViewDescriptor(viewDescriptor);
+      ServiceViewItem parent = group.getParent();
+      if (parent != null) {
+        List<ServiceViewItem> children = parent.getChildren();
+        children.remove(group);
+        addGroupOrdered(children, (ServiceGroupNode)group);
       }
-    });
+    }
   }
 
   private static <T> List<ServiceViewItem> getContributorChildren(Project project,
@@ -437,8 +432,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
       if (!found) {
         ServiceGroupNode groupNode =
           new ServiceGroupNode(group, groupParent, groupingContributor, groupingContributor.getGroupDescriptor(group));
-        List<ServiceViewItem> groupSiblings = currentChildren;
-        ApplicationManager.getApplication().runReadAction(() -> addGroupOrdered(groupSiblings, groupNode));
+        addGroupOrdered(currentChildren, groupNode);
         groupParent = groupNode;
         currentChildren = groupParent.getChildren();
       }
@@ -541,7 +535,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
       if (!myPresentationUpdated) {
         myPresentationUpdated = true;
         if (myValue instanceof NodeDescriptor) {
-          ApplicationManager.getApplication().runReadAction((Runnable)((NodeDescriptor<?>)myValue)::update);
+          ((NodeDescriptor<?>)myValue).update();
         }
       }
       return myViewDescriptor;
