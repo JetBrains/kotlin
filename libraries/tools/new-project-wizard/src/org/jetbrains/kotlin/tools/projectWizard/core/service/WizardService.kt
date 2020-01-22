@@ -10,7 +10,8 @@ object Services {
         OsFileSystemWizardService(),
         BuildSystemAvailabilityWizardServiceImpl(),
         DummyFileFormattingService(),
-        KotlinVersionProviderServiceImpl()
+        KotlinVersionProviderServiceImpl(),
+        RunConfigurationsServiceImpl()
     )
 }
 

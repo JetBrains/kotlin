@@ -23,7 +23,8 @@ object IdeaServices {
         IdeaGradleWizardService(project),
         IdeaMavenWizardService(project),
         IdeaJpsWizardService(project, model),
-        IdeaFileFormattingService(project)
+        IdeaFileFormattingService(project),
+        IdeaRunConfigurationsService(project)
     )
 }
 

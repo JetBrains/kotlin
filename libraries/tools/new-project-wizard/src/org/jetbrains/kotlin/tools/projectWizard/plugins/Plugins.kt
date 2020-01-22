@@ -22,6 +22,7 @@ object Plugins {
             KotlinPlugin(context),
             TemplatesPlugin(context),
             ProjectTemplatesPlugin(context),
+            RunConfigurationsPlugin(context),
 
             // templates
             ConsoleJvmApplicationTemplatePlugin(context),
