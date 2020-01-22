@@ -184,6 +184,9 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
         boolean visible = myToolWindow.isVisible();
         if (!visible || wasVisible) {
           wasVisible = visible;
+          if (!visible) {
+            scheduleStructureCleanupCache();
+          }
           return;
         }
 
@@ -339,6 +342,14 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
 
       assert myStructure != null;
       myStructure.updateProjects(toImport);
+    });
+  }
+
+  private void scheduleStructureCleanupCache() {
+    scheduleStructureRequest(() -> {
+      if (myStructure != null) {
+        myStructure.cleanupCache();
+      }
     });
   }
 

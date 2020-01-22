@@ -70,6 +70,11 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     return myRoot;
   }
 
+  public void cleanupCache() {
+    myRoot.cleanUpCache();
+    myNodeMapping.clear();
+  }
+
   private static void configureTree(final Tree tree) {
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
