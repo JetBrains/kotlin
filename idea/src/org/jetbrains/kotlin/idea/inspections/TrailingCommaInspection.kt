@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
@@ -73,23 +74,26 @@ class TrailingCommaInspection(
             highlightType: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
         ) {
             val commaOwner = commaOrElement.parent
+            // case for KtFunctionLiteral, where PsiWhiteSpace after KtTypeParameterList isn't included in this list
+            val problemOwner = commaOwner.parent
             holder.registerProblem(
-                commaOwner,
+                problemOwner,
                 message,
                 highlightType,
-                commaOrElement.textRangeOfLastSymbol.shiftLeft(commaOwner.startOffset),
-                ReformatQuickFix(fixMessage),
+                commaOrElement.textRangeOfCommaOrSymbolAfter.shiftLeft(problemOwner.startOffset),
+                ReformatQuickFix(fixMessage, commaOwner),
             )
         }
 
-        private val PsiElement.textRangeOfLastSymbol: TextRange
+        private val PsiElement.textRangeOfCommaOrSymbolAfter: TextRange
             get() {
                 val textRange = textRange
                 if (textRange.length <= 1) return textRange
 
-                return nextLeaf()?.leafIgnoringWhitespaceAndComments(false)?.endOffset?.takeIf { it > 0 }?.let {
-                    TextRange.create(it - 1, it).intersection(textRange)
+                val resultRange = nextLeaf()?.leafIgnoringWhitespaceAndComments(false)?.endOffset?.takeIf { it > 0 }?.let {
+                    TextRange.create(it - 1, it).intersection(parent.textRange)
                 } ?: TextRange.create(textRange.endOffset - 1, textRange.endOffset)
+                return resultRange.shiftRight(1)
             }
     }
 
@@ -104,10 +108,13 @@ private enum class TrailingCommaAction {
     ADD, REFORMAT, REMOVE;
 
     companion object {
-        fun create(commaOwner: KtElement): TrailingCommaAction = when {
-            needComma(commaOwner, checkExistingTrailingComma = false) -> ADD
-            needComma(commaOwner, checkExistingTrailingComma = true) -> REFORMAT
-            else -> REMOVE
+        fun create(commaOwner: KtElement): TrailingCommaAction {
+            val settings = CodeStyle.getSettings(commaOwner.project)
+            return when {
+                needComma(commaOwner, settings, checkExistingTrailingComma = false) -> ADD
+                needComma(commaOwner, settings, checkExistingTrailingComma = true) -> REFORMAT
+                else -> REMOVE
+            }
         }
     }
 }
