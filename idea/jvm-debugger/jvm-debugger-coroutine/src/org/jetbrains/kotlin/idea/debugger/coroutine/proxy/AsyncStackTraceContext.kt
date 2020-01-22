@@ -90,8 +90,9 @@ class AsyncStackTraceContext(
         val instance = invokeGetStackTraceElement(continuation) ?: return null
         val className = context.invokeMethodAsString(instance, "getClassName") ?: return null
         val methodName = context.invokeMethodAsString(instance, "getMethodName") ?: return null
-        // should add a check for SUSPEND coroutines
-        val lineNumber = context.invokeMethodAsInt(instance,"getLineNumber") ?: 0
+        val lineNumber = context.invokeMethodAsInt(instance,"getLineNumber")?.takeIf {
+            it >= 0
+        } ?: return null
         val locationClass = context.findClassSafe(className) ?: return null
         return GeneratedLocation(context.debugProcess, locationClass, methodName, lineNumber)
     }
