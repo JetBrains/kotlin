@@ -320,7 +320,9 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
         val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId)
             ?: return FirErrorTypeRefImpl(source = null, diagnostic = FirSimpleDiagnostic("No type for qualifier", DiagnosticKind.Other))
         val declaration = classSymbol.phasedFir
-        typeForQualifierByDeclaration(declaration, resultType, session)?.let { return it }
+        if (declaration !is FirTypeAlias || resolvedQualifier.typeArguments.isEmpty()) {
+            typeForQualifierByDeclaration(declaration, resultType, session)?.let { return it }
+        }
     }
     // TODO: Handle no value type here
     return resultType.resolvedTypeFromPrototype(
