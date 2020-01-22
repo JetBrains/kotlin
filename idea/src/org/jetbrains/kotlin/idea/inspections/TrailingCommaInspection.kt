@@ -34,20 +34,22 @@ class TrailingCommaInspection(
         override val recursively: Boolean = false
 
         override fun process(commaOwner: KtElement) {
-            checkCommaPosition(commaOwner)
-            checkTrailingComma(commaOwner)
+            val action = TrailingCommaAction.create(commaOwner)
+            if (action != TrailingCommaAction.REMOVE) {
+                checkCommaPosition(commaOwner)
+            }
+            checkTrailingComma(commaOwner, action)
         }
 
         private fun checkCommaPosition(commaOwner: KtElement) {
-            if (!needComma(commaOwner, checkExistingTrailingComma = true)) return
             for (invalidComma in findInvalidCommas(commaOwner)) {
                 reportProblem(invalidComma, "Comma loses the advantages in this position", "Fix comma position")
             }
         }
 
-        private fun checkTrailingComma(commaOwner: KtElement) {
+        private fun checkTrailingComma(commaOwner: KtElement, action: TrailingCommaAction) {
             val trailingCommaOrLastElement = trailingCommaOrLastElement(commaOwner) ?: return
-            if (needComma(commaOwner, checkExistingTrailingComma = false)) {
+            if (action == TrailingCommaAction.ADD) {
                 if (!trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
                 reportProblem(
                     trailingCommaOrLastElement,
@@ -58,7 +60,7 @@ class TrailingCommaInspection(
                     else
                         ProblemHighlightType.INFORMATION,
                 )
-            } else if (!needComma(commaOwner, checkExistingTrailingComma = true)) {
+            } else if (action == TrailingCommaAction.REMOVE) {
                 if (!trailingCommaOrLastElement.isComma) return
                 reportProblem(trailingCommaOrLastElement, "Useless trailing comma", "Remove trailing comma")
             }
@@ -95,5 +97,17 @@ class TrailingCommaInspection(
         val panel = MultipleCheckboxOptionsPanel(this)
         panel.addCheckbox("Report also a missing comma", "addCommaWarning")
         return panel
+    }
+}
+
+private enum class TrailingCommaAction {
+    ADD, REFORMAT, REMOVE;
+
+    companion object {
+        fun create(commaOwner: KtElement): TrailingCommaAction = when {
+            needComma(commaOwner, checkExistingTrailingComma = false) -> ADD
+            needComma(commaOwner, checkExistingTrailingComma = true) -> REFORMAT
+            else -> REMOVE
+        }
     }
 }
