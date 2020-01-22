@@ -24,6 +24,7 @@ import com.intellij.ui.popup.PopupPositionManager
 import com.intellij.ui.popup.PopupUpdateProcessor
 import com.intellij.util.concurrency.AppExecutorUtil
 import java.awt.Dimension
+import kotlin.math.min
 
 internal class IntentionPreviewPopupUpdateProcessor(private val project: Project,
                                                     private val originalFile: PsiFile,
@@ -125,14 +126,14 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
       it.softWrapModel.addSoftWrapChangeListener(object : SoftWrapChangeListener {
         override fun recalculationEnds() {
           val height = (it as EditorImpl).offsetToXY(it.document.textLength).y + it.lineHeight + 5
-          it.component.preferredSize = Dimension(it.component.preferredSize.width, height)
+          it.component.preferredSize = Dimension(it.component.preferredSize.width, min(height, MAX_HEIGHT))
           popup.pack(true, true)
         }
 
         override fun softWrapsChanged() {}
       })
 
-      it.component.preferredSize = Dimension(size.width, it.component.preferredSize.height)
+      it.component.preferredSize = Dimension(size.width, min(it.component.preferredSize.height, MAX_HEIGHT))
     }
 
     popup.pack(true, true)
@@ -140,6 +141,7 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
 
   companion object {
     private val ESCAPE_SHORTCUT_TEXT = KeymapUtil.getPreferredShortcutText(ESCAPE.shortcuts)
+    private const val MAX_HEIGHT = 300
   }
 
   internal class IntentionPreviewPopupKey
