@@ -196,5 +196,5 @@ fun createTextForCodegenTestHelpers(backend: TargetBackend) =
     """
         |package helpers
         |
-        |fun getTargetBackend() = "${backend.name}"
+        |fun isIR() = ${backend.isIR}
     """.trimMargin()
