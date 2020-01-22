@@ -84,6 +84,30 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testInlineIssue(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                    inline fun abc(fn: () -> Unit) {
+                        fn()
+                    }
+                    """,
+                    "x/B.kt" to """
+                    fun def() {
+                        abc {}
+                    }
+                """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                """
+                )
+            )
+        )
+    }
+
+    @Test
     fun testSimpleXModuleCall(): Unit = forComposerParam(true, false) {
         compile(
             "TestG", mapOf(
