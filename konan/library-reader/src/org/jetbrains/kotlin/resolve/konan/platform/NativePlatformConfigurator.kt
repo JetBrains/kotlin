@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
 
-object KonanPlatformConfigurator : PlatformConfiguratorBase(
+object NativePlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker())
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {

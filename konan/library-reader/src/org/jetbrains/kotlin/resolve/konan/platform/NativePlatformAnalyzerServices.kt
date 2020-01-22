@@ -13,5 +13,5 @@ object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
         result.add(ImportPath.fromString("kotlin.native.*"))
     }
 
-    override val platformConfigurator: PlatformConfigurator = KonanPlatformConfigurator
+    override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
 }
