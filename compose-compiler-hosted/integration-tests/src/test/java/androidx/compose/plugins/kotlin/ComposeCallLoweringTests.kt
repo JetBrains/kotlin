@@ -406,7 +406,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testGenericParameterOrderIssue(): Unit = forComposerParam(/*true, */false) {
+    fun testGenericParameterOrderIssue(): Unit = forComposerParam(true, false) {
         codegen(
             """
 @Composable

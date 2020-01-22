@@ -1650,7 +1650,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testImplicitReceiverPassing2(): Unit = forComposerParam(/*true, */false) {
+    fun testImplicitReceiverPassing2(): Unit = forComposerParam(true, false) {
         compose(
             """
                 @Composable fun Int.Foo(x: @Composable() Int.(text: String) -> Unit, text: String) {
