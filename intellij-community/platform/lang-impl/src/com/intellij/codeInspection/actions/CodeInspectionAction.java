@@ -46,11 +46,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CodeInspectionAction extends BaseAnalysisAction {
   private static final Logger LOG = Logger.getInstance(CodeInspectionAction.class);
   private static final String LAST_SELECTED_PROFILE_PROP = "run.code.analysis.last.selected.profile";
 
+  private int myRunId = 0;
   private GlobalInspectionContextImpl myGlobalInspectionContext;
   protected InspectionProfileImpl myExternalProfile;
 
@@ -76,18 +78,27 @@ public class CodeInspectionAction extends BaseAnalysisAction {
 
   protected void runInspections(@NotNull Project project,
                                 @NotNull AnalysisScope scope) {
+    int runId = ++myRunId;
     scope.setSearchInLibraries(false);
     FileDocumentManager.getInstance().saveAllDocuments();
+
+    InspectionProfileImpl externalProfile = myExternalProfile;
     final GlobalInspectionContextImpl inspectionContext = getGlobalInspectionContext(project);
     inspectionContext.setRerunAction(() -> ApplicationManager.getApplication().invokeLater(() -> {
+      //someone called the runInspections before us, we cannot restore the state
+      if (runId != myRunId) return;
       if (project.isDisposed()) return;
       if (!scope.isValid()) return;
+
+      //restore current state
+      myExternalProfile = externalProfile;
+      myGlobalInspectionContext = inspectionContext;
 
       FileDocumentManager.getInstance().saveAllDocuments();
       analyze(project, scope);
     }));
 
-    inspectionContext.setExternalProfile(myExternalProfile);
+    inspectionContext.setExternalProfile(externalProfile);
     inspectionContext.setCurrentScope(scope);
     inspectionContext.doInspections(scope);
   }
