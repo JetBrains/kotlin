@@ -76,7 +76,7 @@ public class IndexesExporter {
       indicator.setFraction(((double) idx.incrementAndGet()) / chunks.size());
       return true;
     })) {
-      throw new AssertionError();
+      throw new RuntimeException("Failed to execute indexing jobs");
     }
 
     zipIndexOut(indexRoot, zipFile, indicator);
@@ -123,12 +123,11 @@ public class IndexesExporter {
           entry.setDataFromFile(p.toFile());
         }
         catch (IOException e) {
-          LOG.error(e);
+          throw new RuntimeException("Failed to add " + relativePath + " entry to the target archive. " + e.getMessage(), e);
         }
       });
-    }
-    catch (IOException e) {
-      LOG.error(e);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to generate indexes archive at " + zipFile + ". " + e.getMessage(), e);
     }
   }
 
