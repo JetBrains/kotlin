@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -107,8 +108,6 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
 
             return true
         }
-
-        private fun PsiElement?.isLineBreak() = this is PsiWhiteSpace && textContains('\n')
 
         private object Fix : LocalQuickFix {
             override fun getName() = "Remove redundant semicolon"
