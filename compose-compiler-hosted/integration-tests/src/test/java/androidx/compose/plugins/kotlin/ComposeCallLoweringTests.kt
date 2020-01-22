@@ -585,7 +585,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservable(): Unit = forComposerParam(/*true, */false) {
+    fun testObservable(): Unit = forComposerParam(true, false) {
         compose(
             """
                 import android.widget.Button
@@ -686,7 +686,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableExtension(): Unit = forComposerParam(/*true, */false) {
+    fun testObservableExtension(): Unit = forComposerParam(true, false) {
         compose("""
             @Model
             class Counter() {
@@ -717,7 +717,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObserverableExpressionBody(): Unit = forComposerParam(/*true, */false) {
+    fun testObserverableExpressionBody(): Unit = forComposerParam(true, false) {
         compose("""
             @Model
             class Counter() {
@@ -750,7 +750,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableInlineWrapper(): Unit = forComposerParam(/*true, */false) {
+    fun testObservableInlineWrapper(): Unit = forComposerParam(true, false) {
         compose("""
             @Model
             class Counter() {
@@ -793,7 +793,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableDefaultParameter(): Unit = forComposerParam(/*true, */false) {
+    fun testObservableDefaultParameter(): Unit = forComposerParam(true, false) {
         compose("""
             @Model
             class Counter() {
@@ -824,7 +824,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableEarlyReturn(): Unit = forComposerParam(/*true, */false) {
+    fun testObservableEarlyReturn(): Unit = forComposerParam(true, false) {
         compose("""
             @Model
             class Counter() {
