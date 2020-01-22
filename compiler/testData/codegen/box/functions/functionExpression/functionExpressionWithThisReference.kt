@@ -1,6 +1,4 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
-// For JVM_IR, NewInference is needed because of KT-26531. See functionExpressionWithThisReferenceNI.kt
 
 fun Int.thisRef1() = fun () = this
 fun Int.thisRef2() = fun (): Int {return this}

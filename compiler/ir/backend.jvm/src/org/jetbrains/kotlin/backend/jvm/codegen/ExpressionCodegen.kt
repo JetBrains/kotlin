@@ -453,9 +453,8 @@ class ExpressionCodegen(
             addInlineMarker(mv, isStartNotEnd = false)
         }
 
-        val returnType = callee.returnType
         return when {
-            returnType.substitute(expression.typeSubstitutionMap).isNothing() -> {
+            expression.type.isNothing() -> {
                 mv.aconst(null)
                 mv.athrow()
                 immaterialUnitValue
@@ -467,9 +466,9 @@ class ExpressionCodegen(
                 immaterialUnitValue
             expression.type.isUnit() ->
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
-                MaterialValue(this, callable.asmMethod.returnType, returnType).discard().coerce(expression.type)
+                MaterialValue(this, callable.asmMethod.returnType, callee.returnType).discard().coerce(expression.type)
             else ->
-                MaterialValue(this, callable.asmMethod.returnType, returnType).coerce(expression.type)
+                MaterialValue(this, callable.asmMethod.returnType, callee.returnType).coerce(expression.type)
         }
     }
 
