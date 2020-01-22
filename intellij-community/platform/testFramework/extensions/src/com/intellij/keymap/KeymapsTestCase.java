@@ -396,11 +396,11 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
   // @formatter:on
 
   @NonNls protected static final Set<String> DEFAULT_UNKNOWN_ACTION_IDS = ContainerUtil.set(
-    "ActivateCommitToolWindow", "ActivateVersionControlToolWindow", "ActivateFavoritesToolWindow", "ActivateCommanderToolWindow",
-    "ActivateDebugToolWindow", "ActivateServicesToolWindow", "ActivateFindToolWindow", "ActivateHierarchyToolWindow",
-    "ActivateMessagesToolWindow", "ActivateProjectToolWindow", "ActivateRunToolWindow", "ActivateStructureToolWindow",
-    "ActivateTODOToolWindow", "ActivateWebToolWindow", "ActivatePaletteToolWindow", "ActivateTerminalToolWindow",
-    "IDEtalk.SearchUserHistory", "IDEtalk.SearchUserHistory", "IDEtalk.Rename", "CIDR.Lang.Cpp.GenerateDefinitions",
+    "ActivateCommitToolWindow", "ActivateFavoritesToolWindow", "ActivateCommanderToolWindow", "ActivateDebugToolWindow",
+    "ActivateServicesToolWindow", "ActivateFindToolWindow", "ActivateHierarchyToolWindow", "ActivateMessagesToolWindow",
+    "ActivateProjectToolWindow", "ActivateRunToolWindow", "ActivateStructureToolWindow", "ActivateTODOToolWindow", "ActivateWebToolWindow",
+    "ActivatePaletteToolWindow", "ActivateTerminalToolWindow", "IDEtalk.SearchUserHistory", "IDEtalk.SearchUserHistory", "IDEtalk.Rename",
+    "CIDR.Lang.Cpp.GenerateDefinitions",
     ""
   );
 
