@@ -2132,6 +2132,10 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun removeAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun removeAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun removeAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun removeFirst (Ljava/util/List;)Ljava/lang/Object;
+	public static final fun removeFirstOrNull (Ljava/util/List;)Ljava/lang/Object;
+	public static final fun removeLast (Ljava/util/List;)Ljava/lang/Object;
+	public static final fun removeLastOrNull (Ljava/util/List;)Ljava/lang/Object;
 	public static final fun requireNoNulls (Ljava/lang/Iterable;)Ljava/lang/Iterable;
 	public static final fun requireNoNulls (Ljava/util/List;)Ljava/util/List;
 	public static final fun retainAll (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
