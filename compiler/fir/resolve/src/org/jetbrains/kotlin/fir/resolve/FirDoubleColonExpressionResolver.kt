@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -117,16 +119,23 @@ class FirDoubleColonExpressionResolver(
         return resolve(expression)
     }
 
+    private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
+        val classId = classId ?: return null
+        var fir = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
+        while (fir is FirTypeAlias) {
+            fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
+        }
+        return fir as? FirRegularClass
+    }
+
     private fun resolveExpressionOnLHS(expression: FirExpression): DoubleColonLHS.Expression? {
         val type = (expression.typeRef as? FirResolvedTypeRef)?.type ?: return null
 
         if (expression is FirResolvedQualifier) {
-            val firClass = session.firSymbolProvider
-                .getClassLikeSymbolByFqName(expression.classId ?: return null)
-                ?.fir as? FirRegularClass
-                ?: return null
-
-            if (firClass.classKind == ClassKind.OBJECT) return DoubleColonLHS.Expression(type, isObjectQualifier = true)
+            val firClass = expression.expandedRegularClassIfAny() ?: return null
+            if (firClass.classKind == ClassKind.OBJECT) {
+                return DoubleColonLHS.Expression(type, isObjectQualifier = true)
+            }
             return null
         }
 
@@ -136,14 +145,10 @@ class FirDoubleColonExpressionResolver(
     private fun resolveTypeOnLHS(
         expression: FirExpression
     ): DoubleColonLHS.Type? {
-        val resolvedExpression =
-            expression as? FirResolvedQualifier
-                ?: return null
+        val resolvedExpression = expression as? FirResolvedQualifier
+            ?: return null
 
-        val firClass = session.firSymbolProvider
-            .getClassLikeSymbolByFqName(resolvedExpression.classId ?: return null)
-            // TODO: support type aliases
-            ?.fir as? FirRegularClass
+        val firClass = resolvedExpression.expandedRegularClassIfAny()
             ?: return null
 
         val type = ConeClassLikeTypeImpl(

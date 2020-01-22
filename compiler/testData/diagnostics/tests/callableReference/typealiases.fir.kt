@@ -11,5 +11,5 @@ inline fun <T, R> Iterable<T>.myMap(transform: (T) -> R): List<R> {
 }
 
 fun usesGlobal(p: List<Global>) {
-    p.<!INAPPLICABLE_CANDIDATE!>myMap<!>(Global::toUpperCase)
+    p.myMap(Global::toUpperCase)
 }
