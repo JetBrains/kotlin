@@ -1312,7 +1312,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testMemoization(): Unit = forComposerParam(/*true, */false) {
+    fun testMemoization(): Unit = forComposerParam(true, false) {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
 
