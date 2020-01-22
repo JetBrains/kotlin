@@ -15,7 +15,7 @@ import java.time.*
  * Task to clean all old loaded files based on a last modification date.
  * All registered store in {@link CleanableStore} would be cleaned
  */
-class CleanOldStoredDataTask : DefaultTask() {
+open class CleanOldStoredDataTask : DefaultTask() {
 
     /**
      * Time to live in days
