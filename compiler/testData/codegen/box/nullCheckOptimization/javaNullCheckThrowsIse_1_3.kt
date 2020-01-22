@@ -1,4 +1,4 @@
-// !API_VERSION: LATEST
+// !API_VERSION: 1.3
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: A.java
@@ -15,9 +15,9 @@ public class A {
 fun box(): String {
     try {
         val s: String = A.foo()
-        return "Fail: NPE should have been thrown"
+        return "Fail: ISE should have been thrown"
     } catch (e: Throwable) {
-        if (e::class != NullPointerException::class) return "Fail: exception class should be NPE: ${e::class}"
+        if (e::class != IllegalStateException::class) return "Fail: exception class should be ISE: ${e::class}"
         return "OK"
     }
 }

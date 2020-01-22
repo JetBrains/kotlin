@@ -2591,24 +2591,6 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/boxInline/nullChecks")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class NullChecks extends AbstractIrCompileKotlinAgainstInlineKotlinTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
-        }
-
-        public void testAllFilesPresentInNullChecks() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nullChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @TestMetadata("parameterNullCheck_1_4.kt")
-        public void testParameterNullCheck_1_4() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/nullChecks/parameterNullCheck_1_4.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/boxInline/optimizations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

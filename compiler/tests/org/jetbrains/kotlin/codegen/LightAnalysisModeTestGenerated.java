@@ -17305,9 +17305,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
-        @TestMetadata("exclExclThrowsNpe_1_4.kt")
-        public void testExclExclThrowsNpe_1_4() throws Exception {
-            runTest("compiler/testData/codegen/box/nullCheckOptimization/exclExclThrowsNpe_1_4.kt");
+        @TestMetadata("exclExclThrowsKnpe_1_3.kt")
+        public void testExclExclThrowsKnpe_1_3() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/exclExclThrowsKnpe_1_3.kt");
+        }
+
+        @TestMetadata("exclExclThrowsNpe.kt")
+        public void testExclExclThrowsNpe() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/exclExclThrowsNpe.kt");
         }
 
         @TestMetadata("isNullable.kt")
@@ -17315,9 +17320,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/nullCheckOptimization/isNullable.kt");
         }
 
-        @TestMetadata("javaNullCheckThrowsNpe_1_4.kt")
-        public void testJavaNullCheckThrowsNpe_1_4() throws Exception {
-            runTest("compiler/testData/codegen/box/nullCheckOptimization/javaNullCheckThrowsNpe_1_4.kt");
+        @TestMetadata("javaNullCheckThrowsIse_1_3.kt")
+        public void testJavaNullCheckThrowsIse_1_3() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/javaNullCheckThrowsIse_1_3.kt");
+        }
+
+        @TestMetadata("javaNullCheckThrowsNpe.kt")
+        public void testJavaNullCheckThrowsNpe() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/javaNullCheckThrowsNpe.kt");
         }
 
         @TestMetadata("kt22410.kt")
@@ -17330,9 +17340,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/nullCheckOptimization/kt7774.kt");
         }
 
-        @TestMetadata("parameterNullCheckThrowsNpe_1_4.kt")
-        public void testParameterNullCheckThrowsNpe_1_4() throws Exception {
-            runTest("compiler/testData/codegen/box/nullCheckOptimization/parameterNullCheckThrowsNpe_1_4.kt");
+        @TestMetadata("parameterNullCheckThrowsIae_1_3.kt")
+        public void testParameterNullCheckThrowsIae_1_3() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/parameterNullCheckThrowsIae_1_3.kt");
+        }
+
+        @TestMetadata("parameterNullCheckThrowsNpe.kt")
+        public void testParameterNullCheckThrowsNpe() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/parameterNullCheckThrowsNpe.kt");
         }
 
         @TestMetadata("primitiveCheckWithSideEffect.kt")
