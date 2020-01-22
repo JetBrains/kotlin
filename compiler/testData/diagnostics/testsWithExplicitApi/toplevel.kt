@@ -1,5 +1,8 @@
 // SKIP_TXT
 
+/**
+ * foo KDoc
+ */
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>fun foo<!>() {}
 
 public fun foo2() {}
