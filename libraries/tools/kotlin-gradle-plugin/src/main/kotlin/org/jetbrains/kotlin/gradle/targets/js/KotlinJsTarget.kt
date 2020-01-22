@@ -9,6 +9,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributesSchema
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -40,6 +42,10 @@ constructor(
     KotlinJsTargetDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
+
+    init {
+        attributes.attribute(KotlinJsTarget.jsLegacyAttribute, LEGACY)
+    }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (irTarget == null)
@@ -159,6 +165,19 @@ constructor(
                 sourceMap = true
                 sourceMapEmbedSources = null
             }
+        }
+    }
+
+    companion object {
+        val jsLegacyAttribute = Attribute.of(
+            "org.jetbrains.kotlin.js.legacy",
+            String::class.java
+        )
+
+        const val LEGACY = "legacy"
+
+        fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
+            attributesSchema.attribute(jsLegacyAttribute)
         }
     }
 }

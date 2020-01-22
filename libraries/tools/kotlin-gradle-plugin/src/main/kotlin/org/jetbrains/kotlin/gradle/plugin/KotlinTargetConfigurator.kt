@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget.Companion.LEGACY
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
@@ -446,14 +446,9 @@ internal fun Project.usageByName(usageName: String): Usage =
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
-    println("$target ${target is KotlinJsTarget}")
 
     if (target is KotlinJsTarget) {
-        attributes.attribute(KotlinJsTarget.jsTargetAttribute, "legacy")
-    }
-
-    if (target is KotlinJsIrTarget) {
-        attributes.attribute(KotlinJsTarget.jsTargetAttribute, "ir")
+        attributes.attribute(KotlinJsTarget.jsLegacyAttribute, LEGACY)
     }
 
     // TODO: Provide an universal way to copy attributes from the target.
