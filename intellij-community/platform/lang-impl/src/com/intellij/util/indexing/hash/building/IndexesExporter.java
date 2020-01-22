@@ -1,39 +1,31 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.util.indexing.hash;
+package com.intellij.util.indexing.hash.building;
 
 import com.intellij.concurrency.JobLauncher;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.roots.AdditionalLibraryRootsProvider;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.SyntheticLibrary;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.stubs.StubUpdatingIndex;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileBasedIndexExtension;
 import com.intellij.util.indexing.IndexableSetContributor;
+import com.intellij.util.indexing.hash.HashBasedIndexGenerator;
+import com.intellij.util.indexing.hash.StubHashBasedIndexGenerator;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,28 +35,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
-public class DumpIndexAction extends AnAction {
-  private static final Logger LOG = Logger.getInstance(DumpIndexAction.class);
-
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent event) {
-    Project project = event.getProject();
-    if (project == null) return;
-
-    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    descriptor.withTitle("Select Index Dump Directory");
-    VirtualFile file = FileChooser.chooseFile(descriptor, project, null);
-    if (file != null) {
-      ProgressManager.getInstance().run(new Task.Modal(project, "Exporting Indexes..." , true) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          File out = VfsUtilCore.virtualToIoFile(file);
-          FileUtil.delete(out);
-          exportIndices(project, out.toPath(), new File(out, "index.zip").toPath(), indicator);
-        }
-      });
-    }
-  }
+public class IndexesExporter {
+  private static final Logger LOG = Logger.getInstance(IndexesExporter.class);
 
   public static void exportIndices(@NotNull Project project, @NotNull Path temp, @NotNull Path outZipFile, @NotNull ProgressIndicator indicator) {
     List<IndexChunk> chunks = ReadAction.compute(() -> buildChunks(project));
@@ -80,18 +52,18 @@ public class DumpIndexAction extends AnAction {
   }
 
   @NotNull
-  private static List<IndexChunk> buildChunks(Project project) {
+  private static List<IndexChunk> buildChunks(@NotNull Project project) {
     Collection<IndexChunk> projectChunks = Arrays
-            .stream(ModuleManager.getInstance(project).getModules())
-            .flatMap(m -> IndexChunk.generate(m))
-            .collect(Collectors.toMap(ch -> ch.getName(), ch -> ch, IndexChunk::mergeUnsafe))
-            .values();
+      .stream(ModuleManager.getInstance(project).getModules())
+      .flatMap(m -> IndexChunk.generate(m))
+      .collect(Collectors.toMap(ch -> ch.getName(), ch -> ch, IndexChunk::mergeUnsafe))
+      .values();
 
     Set<VirtualFile>
-            additionalRoots = IndexableSetContributor.EP_NAME.extensions().flatMap(contributor -> Stream
+      additionalRoots = IndexableSetContributor.EP_NAME.extensions().flatMap(contributor -> Stream
       .concat(IndexableSetContributor.getRootsToIndex(contributor).stream(),
               IndexableSetContributor.getProjectRootsToIndex(contributor, project).stream())).collect(
-            Collectors.toSet());
+      Collectors.toSet());
 
     Set<VirtualFile> synthRoots = new THashSet<>();
     for (AdditionalLibraryRootsProvider provider : AdditionalLibraryRootsProvider.EP_NAME.getExtensionList()) {
@@ -106,8 +78,8 @@ public class DumpIndexAction extends AnAction {
     }
 
     return Stream.concat(projectChunks.stream(),
-            Stream.of(new IndexChunk(additionalRoots, "ADDITIONAL"),
-                    new IndexChunk(synthRoots, "SYNTH"))).collect(Collectors.toList());
+                         Stream.of(new IndexChunk(additionalRoots, "ADDITIONAL"),
+                                   new IndexChunk(synthRoots, "SYNTH"))).collect(Collectors.toList());
   }
 
   public static void exportIndices(@NotNull Project project,
@@ -150,6 +122,7 @@ public class DumpIndexAction extends AnAction {
 
     zipIndexOut(indexRoot, zipFile, indicator);
   }
+
 
   @NotNull
   private static <K, V> HashBasedIndexGenerator<K, V> getGenerator(Path chunkRoot, FileBasedIndexExtension<K, V> extension) {
@@ -263,7 +236,7 @@ public class DumpIndexAction extends AnAction {
       appendGeneratorStatistics(stats, generator);
     }
 
-    System.out.println(stats.toString());
+    LOG.warn("Statistics\n" + stats);
   }
 
   private static void appendGeneratorStatistics(@NotNull StringBuilder stringBuilder,
@@ -280,94 +253,5 @@ public class DumpIndexAction extends AnAction {
       stringBuilder.append(" (empty result)");
     }
     stringBuilder.append("\n");
-  }
-
-  public static final class IndexChunk {
-    private final Set<VirtualFile> myRoots;
-    private final String myName;
-
-    public IndexChunk(Set<VirtualFile> roots, String name) {
-      myRoots = roots;
-      myName = name;
-    }
-
-    private String getName() {
-      return myName;
-    }
-
-    private Set<VirtualFile> getRoots() {
-      return myRoots;
-    }
-
-    static IndexChunk mergeUnsafe(IndexChunk ch1, IndexChunk ch2) {
-      ch1.getRoots().addAll(ch2.getRoots());
-      return ch1;
-    }
-
-    static Stream<IndexChunk> generate(Module module) {
-      Stream<IndexChunk> libChunks = Arrays.stream(ModuleRootManager.getInstance(module).getOrderEntries())
-              .map(orderEntry -> {
-                if (orderEntry instanceof LibraryOrSdkOrderEntry) {
-                  VirtualFile[] sources = orderEntry.getFiles(OrderRootType.SOURCES);
-                  VirtualFile[] classes = orderEntry.getFiles(OrderRootType.CLASSES);
-                  String name = null;
-                  if (orderEntry instanceof JdkOrderEntry) {
-                    name = ((JdkOrderEntry)orderEntry).getJdkName();
-                  }
-                  else if (orderEntry instanceof LibraryOrderEntry) {
-                    name = ((LibraryOrderEntry)orderEntry).getLibraryName();
-                  }
-                  if (name == null) {
-                    name = "unknown";
-                  }
-                  return new IndexChunk(ContainerUtil.union(Arrays.asList(sources), Arrays.asList(classes)), reducePath(splitByDots(name)));
-                }
-                return null;
-              })
-              .filter(Objects::nonNull);
-
-      Set<VirtualFile> roots =
-              ContainerUtil.union(ContainerUtil.newTroveSet(ModuleRootManager.getInstance(module).getContentRoots()),
-              ContainerUtil.newTroveSet(ModuleRootManager.getInstance(module).getSourceRoots()));
-      Stream<IndexChunk> srcChunks = Stream.of(new IndexChunk(roots, getChunkName(module)));
-
-      return Stream.concat(libChunks, srcChunks);
-    }
-
-    private static String getChunkName(Module module) {
-      ModuleManager moduleManager = ModuleManager.getInstance(module.getProject());
-      String[] path;
-      if (moduleManager.hasModuleGroups()) {
-        path = moduleManager.getModuleGroupPath(module);
-        assert path != null;
-      } else {
-        path = splitByDots(module.getName());
-      }
-      return reducePath(path);
-    }
-
-    @NotNull
-    private static String reducePath(String[] path) {
-      String[] reducedPath = Arrays.copyOfRange(path, 0, Math.min(1, path.length));
-      return StringUtil.join(reducedPath, ".");
-    }
-
-    private static String[] splitByDots(String name) {
-      return name.split("[-|:.]");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      IndexChunk chunk = (IndexChunk)o;
-      return Objects.equals(myRoots, chunk.myRoots) &&
-              Objects.equals(myName, chunk.myName);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(myRoots, myName);
-    }
   }
 }
