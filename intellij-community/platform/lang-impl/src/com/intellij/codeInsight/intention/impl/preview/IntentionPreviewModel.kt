@@ -20,7 +20,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
 import java.awt.Color
-import java.awt.Dimension
 
 internal class IntentionPreviewModel {
   companion object {
@@ -85,10 +84,8 @@ internal class IntentionPreviewModel {
 
       editor.backgroundColor = getEditorBackground()
 
-      if (text.length > 80) {
-        editor.component.preferredSize = Dimension(600, 80)
-        editor.settings.isUseSoftWraps = true
-      }
+      editor.settings.isUseSoftWraps = true
+      editor.scrollingModel.disableAnimation()
 
       editor.gutterComponentEx.apply {
         setPaintBackground(false)

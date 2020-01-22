@@ -12,14 +12,18 @@ import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.ex.SoftWrapChangeListener
+import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiFile
+import com.intellij.ui.ScreenUtil
 import com.intellij.ui.popup.PopupPositionManager
 import com.intellij.ui.popup.PopupUpdateProcessor
 import com.intellij.util.concurrency.AppExecutorUtil
+import java.awt.Dimension
 
 internal class IntentionPreviewPopupUpdateProcessor(private val project: Project,
                                                     private val originalFile: PsiFile,
@@ -105,6 +109,31 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
     component.stopLoading()
     component.editors = editors
     component.multiPanel.select(index, true)
+
+    val size = component.preferredSize
+    val location = popup.locationOnScreen
+    val screen = ScreenUtil.getScreenRectangle(location)
+
+    if (screen != null) {
+      val delta = screen.width + screen.x - location.x
+      if (size.width > delta) {
+        size.width = delta
+      }
+    }
+
+    component.editors.forEach {
+      it.softWrapModel.addSoftWrapChangeListener(object : SoftWrapChangeListener {
+        override fun recalculationEnds() {
+          val height = (it as EditorImpl).offsetToXY(it.document.textLength).y + it.lineHeight + 5
+          it.component.preferredSize = Dimension(it.component.preferredSize.width, height)
+          popup.pack(true, true)
+        }
+
+        override fun softWrapsChanged() {}
+      })
+
+      it.component.preferredSize = Dimension(size.width, it.component.preferredSize.height)
+    }
 
     popup.pack(true, true)
   }
