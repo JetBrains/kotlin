@@ -14778,11 +14778,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nonNullableTypeParameter.kt");
             }
 
-            @TestMetadata("nullabilityAssertionOnDispatchReceiver.kt")
-            public void testNullabilityAssertionOnDispatchReceiver() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnDispatchReceiver.kt");
-            }
-
             @TestMetadata("nullabilityAssertionOnExtensionReceiver.kt")
             public void testNullabilityAssertionOnExtensionReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullabilityAssertionOnExtensionReceiver.kt");
