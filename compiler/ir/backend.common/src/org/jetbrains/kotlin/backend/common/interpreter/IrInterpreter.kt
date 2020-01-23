@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isSubtypeOf
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isSubclassOf
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.*
 import java.lang.invoke.MethodHandle
 
 enum class Code(var info: String = "") {
@@ -167,14 +164,15 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val superQualifier = (data.getVariableState(variableDescriptor) as Complex).superType!!
         val overridden = owner.overriddenSymbols.first { it.getReceiver()?.equalTo(superQualifier.getReceiver()) == true }
 
-        val valueParameters = owner.valueParameters.zip(overridden.owner.valueParameters)
+        val newStates = InterpreterFrame(mutableListOf(Variable(overridden.getReceiver()!!, superQualifier)))
+        owner.valueParameters.zip(overridden.owner.valueParameters)
             .map { Variable(it.second.descriptor, data.getVariableState(it.first.descriptor)) }
-        val newStates = InterpreterFrame(valueParameters.toMutableList())
-        newStates.addVar(Variable(overridden.getReceiver()!!, superQualifier))
+            .forEach { newStates.addVar(it) }
 
         val overriddenOwner = overridden.owner as IrFunctionImpl
         return when {
             overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
+            superQualifier.superType == null -> calculateBuiltIns(overriddenOwner, newStates)
             else -> calculateOverridden(overriddenOwner, newStates)
         }.apply { data.pushReturnValue(newStates) }
     }
@@ -182,34 +180,47 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private fun calculateBuiltIns(irFunction: IrFunction, data: Frame): Code {
         val descriptor = irFunction.descriptor
         val methodName = descriptor.name.asString()
-        val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
-        val argsValues = data.getAll()
-            .map { it.state }
-            .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
-            .map { it.value }
-        val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
-        //todo try catch
-        val result = when (argsType.size) {
-            1 -> {
-                val function = unaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in unary map")
-                function.invoke(argsValues.first())
+        val args = data.getAll().map { it.state }
+
+        val result: Any?
+        if (irFunction.parent.fqNameForIrSerialization.toString() == "kotlin.Any" || args.any { it !is Primitive<*> }) {
+            // if ir function is declaration in Any class OR it is ir builtin operator for non primitive types
+            val receiver = (args[0] as Complex).instance
+            result = when (methodName) {
+                "equals", "EQEQ", "EQEQEQ" -> (args[1] as Complex).instance === receiver
+                "hashCode" -> System.identityHashCode(receiver)
+                "toString" -> receiver?.irClass?.name?.asString() + "@" + System.identityHashCode(receiver).toString(16).padStart(8)
+                else -> throw IllegalStateException("Method $methodName can not be interpreted")
             }
-            2 -> {
-                val function = binaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
-                when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(irFunction.returnType, data)
-                    else -> function.invoke(argsValues[0], argsValues[1])
+        } else {
+            val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
+            val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
+            val argsValues = args
+                .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
+                .map { it.value }
+            val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
+
+            result = when (argsType.size) {
+                1 -> {
+                    val function = unaryFunctions[signature]
+                        ?: throw NoSuchMethodException("For given function $signature there is no entry in unary map")
+                    function.invoke(argsValues.first())
                 }
+                2 -> {
+                    val function = binaryFunctions[signature]
+                        ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
+                    when (methodName) {
+                        "rangeTo" -> return calculateRangeTo(irFunction.returnType, data)
+                        else -> function.invoke(argsValues[0], argsValues[1])
+                    }
+                }
+                3 -> {
+                    val function = ternaryFunctions[signature]
+                        ?: throw NoSuchMethodException("For given function $signature there is no entry in ternary map")
+                    function.invoke(argsValues[0], argsValues[1], argsValues[2])
+                }
+                else -> throw UnsupportedOperationException("Unsupported number of arguments")
             }
-            3 -> {
-                val function = ternaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in ternary map")
-                function.invoke(argsValues[0], argsValues[1], argsValues[2])
-            }
-            else -> throw UnsupportedOperationException("Unsupported number of arguments")
         }
         data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
         return Code.NEXT
@@ -295,9 +306,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val state = Complex(parent, mutableListOf())
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         val code = constructorCall.getBody()?.interpret(newFrame) ?: Code.NEXT
-        if (newFrame.hasReturnValue()) {
-            state.superType = newFrame.popReturnValue() as Complex
-        }
+        state.superType = newFrame.popReturnValue() as Complex
         data.pushReturnValue(state)
         return code
     }
@@ -311,6 +320,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall, data: Frame): Code {
         if (delegatingConstructorCall.symbol.descriptor.containingDeclaration.defaultType == DefaultBuiltIns.Instance.anyType) {
+            val anyComplex = Complex(irBuiltIns.anyClass.owner, mutableListOf())
+            data.pushReturnValue(anyComplex)
             return Code.NEXT
         }
 
@@ -323,7 +334,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private fun interpretStatements(statements: List<IrStatement>, data: Frame): Code {
-        //create newFrame
         val newFrame = data.copy()
 
         var code = Code.NEXT
