@@ -108,8 +108,11 @@ constructor(
 
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
-            it.configure()
-            browserConfiguredHandlers.forEach { handler -> handler(it) }
+            browserConfiguredHandlers.forEach { handler ->
+                it.whenProducingConfigured {
+                    handler(this)
+                }
+            }
             browserConfiguredHandlers.clear()
         }
     }
@@ -126,8 +129,12 @@ constructor(
 
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
-            it.configure()
-            nodejsConfiguredHandlers.forEach { handler -> handler(it) }
+            nodejsConfiguredHandlers.forEach { handler ->
+                it.whenProducingConfigured {
+                    handler(this)
+                }
+            }
+
             nodejsConfiguredHandlers.clear()
         }
     }
