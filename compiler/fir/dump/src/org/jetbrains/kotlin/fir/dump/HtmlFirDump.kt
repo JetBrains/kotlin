@@ -849,6 +849,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(memberDeclaration: FirMemberDeclaration) {
         when (memberDeclaration) {
+            is FirEnumEntry -> generate(memberDeclaration)
             is FirRegularClass -> generate(memberDeclaration)
             is FirSimpleFunction -> generate(memberDeclaration)
             is FirProperty -> if (memberDeclaration.isLocal) generate(memberDeclaration as FirVariable<*>) else generate(memberDeclaration)
@@ -1676,6 +1677,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 ws
                 simpleName(alias)
             }
+        }
+    }
+
+    private fun FlowContent.generate(enumEntry: FirEnumEntry) {
+        iline {
+            simpleName(enumEntry.name)
         }
     }
 
