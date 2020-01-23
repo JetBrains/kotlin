@@ -241,7 +241,10 @@ class KotlinConstraintSystemCompleter(
         fun ResolvedAtom.process(to: LinkedHashSet<TypeConstructor>) {
             val typeVariables = when (this) {
                 is ResolvedCallAtom -> freshVariablesSubstitutor.freshVariables
-                is CallableReferenceWithTypeVariableAsExpectedTypeAtom -> listOfNotNull(typeVariableForReturnType)
+                is CallableReferenceWithTypeVariableAsExpectedTypeAtom -> mutableListOf<NewTypeVariable>().apply {
+                    addIfNotNull(typeVariableForReturnType)
+                    addAll(candidate?.freshSubstitutor?.freshVariables.orEmpty())
+                }
                 is ResolvedCallableReferenceAtom -> candidate?.freshSubstitutor?.freshVariables.orEmpty()
                 is ResolvedLambdaAtom -> listOfNotNull(typeVariableForLambdaReturnType)
                 else -> emptyList()
