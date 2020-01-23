@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
-import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
+import org.jetbrains.kotlin.fir.resolve.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -95,7 +95,7 @@ class FirLibrarySession private constructor(
             FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
-                    FirLibrarySymbolProviderImpl(this, kotlinScopeProvider),
+                    FirBuiltinSymbolProvider(this, kotlinScopeProvider),
                     KotlinDeserializedJvmSymbolsProvider(
                         this, sessionProvider.project,
                         packagePartProvider,

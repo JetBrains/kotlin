@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
-class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider() {
+class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider() {
     private class BuiltInsPackageFragment(
         stream: InputStream, val fqName: FqName, val session: FirSession,
         val kotlinScopeProvider: KotlinScopeProvider
@@ -169,7 +169,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                         typeParameters.addAll((1..arity).map {
                             FirTypeParameterImpl(
                                 null,
-                                this@FirLibrarySymbolProviderImpl.session,
+                                this@FirBuiltinSymbolProvider.session,
                                 Name.identifier("P$it"),
                                 FirTypeParameterSymbol(),
                                 Variance.IN_VARIANCE,
@@ -181,7 +181,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                         typeParameters.add(
                             FirTypeParameterImpl(
                                 null,
-                                this@FirLibrarySymbolProviderImpl.session,
+                                this@FirBuiltinSymbolProvider.session,
                                 Name.identifier("R"),
                                 FirTypeParameterSymbol(),
                                 Variance.OUT_VARIANCE,
@@ -214,7 +214,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                         addDeclaration(
                             FirSimpleFunctionImpl(
                                 null,
-                                this@FirLibrarySymbolProviderImpl.session,
+                                this@FirBuiltinSymbolProvider.session,
                                 typeArguments.last(),
                                 null,
                                 name,
@@ -226,7 +226,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession, val kotlinScopeProvi
                                     val parameterName = Name.identifier("p${index + 1}")
                                     FirValueParameterImpl(
                                         null,
-                                        this@FirLibrarySymbolProviderImpl.session,
+                                        this@FirBuiltinSymbolProvider.session,
                                         typeArgument,
                                         parameterName,
                                         FirVariableSymbol(parameterName),
