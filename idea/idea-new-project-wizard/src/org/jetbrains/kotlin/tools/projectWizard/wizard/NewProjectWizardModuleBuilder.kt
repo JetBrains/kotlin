@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep
 import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
+import org.jetbrains.kotlin.idea.projectWizard.NewProjectWizardService
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
