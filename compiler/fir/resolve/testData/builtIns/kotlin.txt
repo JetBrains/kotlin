@@ -459,7 +459,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public final operator fun times(other: R|kotlin/Short|): R|kotlin/Double|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte()))) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
 
     public open fun toChar(): R|kotlin/Char|
 
@@ -471,7 +471,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort()))) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
 
     public final operator fun unaryMinus(): R|kotlin/Double|
 
@@ -642,7 +642,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
 
     public final operator fun times(other: R|kotlin/Short|): R|kotlin/Float|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte()))) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
 
     public open fun toChar(): R|kotlin/Char|
 
@@ -654,7 +654,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
 
     public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort()))) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
 
     public final operator fun unaryMinus(): R|kotlin/Float|
 
