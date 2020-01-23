@@ -95,8 +95,8 @@ public final class QuickDocOnMouseOverManager {
    * @param enabled  flag that identifies if quick doc should be automatically shown
    */
   public void setEnabled(boolean enabled) {
+    if (myEnabled == enabled) return;
     myEnabled = enabled;
-    myApplicationActive = enabled;
     if (!enabled) {
       closeQuickDocIfPossible();
       myAlarm.cancelAllRequests();

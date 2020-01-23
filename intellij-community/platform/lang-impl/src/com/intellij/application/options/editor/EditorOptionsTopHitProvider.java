@@ -17,6 +17,6 @@ class EditorOptionsTopHitProvider implements OptionsSearchTopHitProvider.Applica
   @NotNull
   @Override
   public Collection<OptionDescription> getOptions() {
-    return EditorCheckBoxConfigurableKt.getOptionDescriptors();
+    return EditorOptionsPanelKt.getOptionDescriptors();
   }
 }

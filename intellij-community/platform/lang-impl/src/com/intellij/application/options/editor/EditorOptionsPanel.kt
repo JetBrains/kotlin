@@ -1,0 +1,376 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.application.options.editor
+
+import com.intellij.application.options.editor.EditorCaretStopPolicyItem.*
+import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
+import com.intellij.codeInsight.daemon.impl.IdentifierHighlighterPass
+import com.intellij.codeInsight.documentation.QuickDocOnMouseOverManager
+import com.intellij.ide.ui.UISettings
+import com.intellij.ide.ui.search.OptionDescription
+import com.intellij.openapi.application.ApplicationBundle.message
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.actions.CaretStopBoundary
+import com.intellij.openapi.editor.actions.CaretStopOptionsTransposed
+import com.intellij.openapi.editor.actions.CaretStopOptionsTransposed.Companion.fromCaretStopOptions
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.colors.EditorColorsScheme
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
+import com.intellij.openapi.editor.richcopy.settings.RichCopySettings
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.options.BoundConfigurable
+import com.intellij.openapi.options.Configurable.WithEpDependencies
+import com.intellij.openapi.options.SchemeManager
+import com.intellij.openapi.options.ex.ConfigurableWrapper
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.vcs.VcsApplicationSettings
+import com.intellij.openapi.vcs.impl.LineStatusTrackerSettingListener
+import com.intellij.profile.codeInspection.ui.ErrorOptionsProviderEP
+import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.layout.*
+import javax.swing.DefaultComboBoxModel
+
+// @formatter:off
+private val codeInsightSettings get() = CodeInsightSettings.getInstance()
+private val editorSettings get() = EditorSettingsExternalizable.getInstance()
+private val uiSettings get() = UISettings.instance
+private val richCopySettings get() = RichCopySettings.getInstance()
+private val vcsSettings get() = VcsApplicationSettings.getInstance()
+private val codeAnalyzerSettings get() = DaemonCodeAnalyzerSettings.getInstance()
+
+private val honorCamelHumpsWhenSelectingByClicking                     get() = CheckboxDescriptor(message("checkbox.honor.camelhumps.words.settings.on.double.click"), PropertyBinding(editorSettings::isMouseClickSelectionHonorsCamelWords, editorSettings::setMouseClickSelectionHonorsCamelWords))
+
+private val enableWheelFontChange                                      get() = CheckboxDescriptor(if (SystemInfo.isMac) message("checkbox.enable.ctrl.mousewheel.changes.font.size.macos") else message("checkbox.enable.ctrl.mousewheel.changes.font.size"), PropertyBinding(editorSettings::isWheelFontChangeEnabled, editorSettings::setWheelFontChangeEnabled))
+
+private val enableDnD                                                  get() = CheckboxDescriptor(message("checkbox.enable.drag.n.drop.functionality.in.editor"), PropertyBinding(editorSettings::isDndEnabled, editorSettings::setDndEnabled))
+private val virtualSpace                                               get() = CheckboxDescriptor(message("checkbox.allow.placement.of.caret.after.end.of.line"), PropertyBinding(editorSettings::isVirtualSpace, editorSettings::setVirtualSpace))
+private val caretInsideTabs                                            get() = CheckboxDescriptor(message("checkbox.allow.placement.of.caret.inside.tabs"), PropertyBinding(editorSettings::isCaretInsideTabs, editorSettings::setCaretInsideTabs))
+private val virtualPageAtBottom                                        get() = CheckboxDescriptor(message("checkbox.show.virtual.space.at.file.bottom"), PropertyBinding(editorSettings::isAdditionalPageAtBottom, editorSettings::setAdditionalPageAtBottom))
+
+private val highlightBraces                                            get() = CheckboxDescriptor(message("checkbox.highlight.matched.brace"), codeInsightSettings::HIGHLIGHT_BRACES)
+private val highlightScope                                             get() = CheckboxDescriptor(message("checkbox.highlight.current.scope"), codeInsightSettings::HIGHLIGHT_SCOPE)
+private val highlightIdentifierUnderCaret                              get() = CheckboxDescriptor(message("checkbox.highlight.usages.of.element.at.caret"), codeInsightSettings::HIGHLIGHT_IDENTIFIER_UNDER_CARET)
+
+private val showNotificationAfterReformatCodeCheckBox                  get() = CheckboxDescriptor(message("checkbox.show.notification.after.reformat.code.action"), PropertyBinding(editorSettings::isShowNotificationAfterReformat, editorSettings::setShowNotificationAfterReformat))
+private val myShowNotificationAfterOptimizeImportsCheckBox             get() = CheckboxDescriptor(message("checkbox.show.notification.after.optimize.imports.action"), PropertyBinding(editorSettings::isShowNotificationAfterOptimizeImports, editorSettings::setShowNotificationAfterOptimizeImports))
+private val renameLocalVariablesInplace                                get() = CheckboxDescriptor(message("checkbox.rename.local.variables.inplace"), PropertyBinding(editorSettings::isVariableInplaceRenameEnabled, editorSettings::setVariableInplaceRenameEnabled))
+private val preselectCheckBox                                          get() = CheckboxDescriptor(message("checkbox.rename.local.variables.preselect"), PropertyBinding(editorSettings::isPreselectRename, editorSettings::setPreselectRename))
+private val showInlineDialogForCheckBox                                get() = CheckboxDescriptor(message("checkbox.show.inline.dialog.on.local.variable.references"), PropertyBinding(editorSettings::isShowInlineLocalDialog, editorSettings::setShowInlineLocalDialog))
+
+private val cdSmoothScrolling                                          get() = CheckboxDescriptor(message("checkbox.smooth.scrolling"), PropertyBinding(editorSettings::isSmoothScrolling, editorSettings::setSmoothScrolling))
+private val cdUseSoftWrapsAtEditor                                     get() = CheckboxDescriptor(message("checkbox.use.soft.wraps.at.editor"), PropertyBinding(editorSettings::isUseSoftWraps, editorSettings::setUseSoftWraps))
+private val cdUseCustomSoftWrapIndent                                  get() = CheckboxDescriptor(message("checkbox.use.custom.soft.wraps.indent"), PropertyBinding(editorSettings::isUseCustomSoftWrapIndent, editorSettings::setUseCustomSoftWrapIndent))
+private val cdShowSoftWrapsOnlyOnCaretLine                             get() = CheckboxDescriptor(message("checkbox.show.softwraps.only.for.caret.line"), PropertyBinding({ !editorSettings.isAllSoftWrapsShown }, { editorSettings.setAllSoftwrapsShown(!it) }))
+private val cdEnableRichCopyByDefault                                  get() = CheckboxDescriptor(message("combobox.enable.richcopy.by.default"), PropertyBinding(richCopySettings::isEnabled, richCopySettings::setEnabled))
+private val cdEnsureBlankLineBeforeCheckBox                            get() = CheckboxDescriptor(message("editor.options.line.feed"), PropertyBinding(editorSettings::isEnsureNewLineAtEOF, editorSettings::setEnsureNewLineAtEOF))
+private val cdShowQuickDocOnMouseMove                                  get() = CheckboxDescriptor(message("editor.options.quick.doc.on.mouse.hover"), PropertyBinding(editorSettings::isShowQuickDocOnMouseOverElement, editorSettings::setShowQuickDocOnMouseOverElement))
+private val cdKeepTrailingSpacesOnCaretLine                            get() = CheckboxDescriptor(message("editor.settings.keep.trailing.spaces.on.caret.line"), PropertyBinding(editorSettings::isKeepTrailingSpacesOnCaretLine, editorSettings::setKeepTrailingSpacesOnCaretLine))
+private val cdShowLSTInGutterCheckBox                                  get() = CheckboxDescriptor(message("editor.options.highlight.modified.line"), vcsSettings::SHOW_LST_GUTTER_MARKERS)
+private val cdShowWhitespacesInLSTGutterCheckBox                       get() = CheckboxDescriptor(message("editor.options.whitespace.line.color"), vcsSettings::SHOW_WHITESPACES_IN_LST)
+
+private val cdNextErrorGoesToErrorsFirst                               get() = CheckboxDescriptor(message("checkbox.next.error.action.goes.to.errors.first"), PropertyBinding(codeAnalyzerSettings::isNextErrorActionGoesToErrorsFirst, codeAnalyzerSettings::setNextErrorActionGoesToErrorsFirst))
+// @formatter:on
+
+internal val optionDescriptors: List<OptionDescription> = listOf(
+  honorCamelHumpsWhenSelectingByClicking,
+  enableWheelFontChange,
+  enableDnD,
+  virtualSpace,
+  caretInsideTabs,
+  virtualPageAtBottom,
+  highlightBraces,
+  highlightScope,
+  highlightIdentifierUnderCaret,
+  showNotificationAfterReformatCodeCheckBox,
+  myShowNotificationAfterOptimizeImportsCheckBox,
+  renameLocalVariablesInplace,
+  preselectCheckBox,
+  showInlineDialogForCheckBox
+).map(CheckboxDescriptor::asOptionDescriptor)
+
+
+class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithEpDependencies {
+  companion object {
+    const val ID = "preferences.editor"
+
+    private fun clearAllIdentifierHighlighters() {
+      for (project in ProjectManager.getInstance().openProjects) {
+        for (fileEditor in FileEditorManager.getInstance(project).allEditors) {
+          if (fileEditor is TextEditor) {
+            val document = fileEditor.editor.document
+            IdentifierHighlighterPass.clearMyHighlights(document, project)
+          }
+        }
+      }
+    }
+
+    @JvmStatic
+    fun reinitAllEditors() {
+      EditorFactory.getInstance().refreshAllEditors()
+    }
+
+    @JvmStatic
+    fun restartDaemons() {
+      val projects = ProjectManager.getInstance().openProjects
+      for (project in projects) {
+        DaemonCodeAnalyzer.getInstance(project).settingsChanged()
+      }
+    }
+  }
+
+  override fun getDependencies() = setOf(ErrorOptionsProviderEP.EP_NAME)
+
+  override fun createPanel(): DialogPanel {
+    return panel {
+      titledRow(message("group.advanced.mouse.usages")) {
+        row { checkBox(honorCamelHumpsWhenSelectingByClicking) }
+        row { checkBox(enableWheelFontChange) }
+        row { checkBox(enableDnD) }
+      }
+      titledRow(message("group.virtual.space")) {
+        row { checkBox(virtualSpace) }
+        row { checkBox(caretInsideTabs) }
+        row { checkBox(virtualPageAtBottom) }
+      }
+      titledRow(message("group.brace.highlighting")) {
+        row { checkBox(highlightBraces) }
+        row { checkBox(highlightScope) }
+        row { checkBox(highlightIdentifierUnderCaret) }
+      }
+      titledRow(message("group.formatting")) {
+        row { checkBox(showNotificationAfterReformatCodeCheckBox) }
+        row { checkBox(myShowNotificationAfterOptimizeImportsCheckBox) }
+      }
+      titledRow(message("group.refactorings")) {
+        row { checkBox(renameLocalVariablesInplace) }
+        row { checkBox(preselectCheckBox) }
+        row { checkBox(showInlineDialogForCheckBox) }
+      }
+      titledRow(message("editor.options.scrolling")) {
+        row { checkBox(cdSmoothScrolling) }
+        buttonGroup {
+          row { radioButton(message("editor.options.prefer.scrolling.editor.canvas.to.keep.caret.line.centered")) }
+          row {
+            radioButton(message("editor.options.prefer.moving.caret.line.to.minimize.editor.scrolling"))
+              .withSelectedBinding(PropertyBinding(editorSettings::isRefrainFromScrolling, editorSettings::setRefrainFromScrolling))
+          }
+        }
+      }
+      titledRow(message("group.caret.movement")) {
+        row(message("label.word.move.caret.actions.behavior")) {
+          caretStopComboBox(CaretOptionMode.WORD, WordBoundary.values())
+        }
+        row(message("label.word.move.caret.actions.behavior.at.line.break")) {
+          caretStopComboBox(CaretOptionMode.LINE, LineBoundary.values())
+        }
+      }
+      titledRow(message("group.soft.wraps")) {
+        row {
+          val useSoftWraps = checkBox(cdUseSoftWrapsAtEditor)
+          textField({ editorSettings.softWrapFileMasks }, { editorSettings.softWrapFileMasks = it })
+            .growPolicy(GrowPolicy.MEDIUM_TEXT)
+            .applyToComponent { emptyText.text = message("soft.wraps.file.masks.empty.text") }
+            .comment(message("soft.wraps.file.masks.hint")) // TODO: move comment under field itself
+            .enableIf(useSoftWraps.selected)
+        }
+        row {
+          cell(isFullWidth = true) {
+            val useSoftWrapsIndent = checkBox(cdUseCustomSoftWrapIndent)
+            label(message("label.use.custom.soft.wraps.indent"))
+              .enableIf(useSoftWrapsIndent.selected)
+              .withLargeLeftGap()
+            intTextField(editorSettings::getCustomSoftWrapIndent, editorSettings::setCustomSoftWrapIndent, columns = 2)
+              .enableIf(useSoftWrapsIndent.selected)
+          }
+        }
+        row { checkBox(cdShowSoftWrapsOnlyOnCaretLine) }
+      }
+      titledRow(message("group.limits")) {
+        row(message("editbox.recent.files.limit")) {
+          intTextField(uiSettings::recentFilesLimit, range = 1..500, columns = 4)
+        }
+        row(message("editbox.recent.locations.limit")) {
+          intTextField(uiSettings::recentLocationsLimit, range = 1..100, columns = 4)
+        }
+      }
+      titledRow(message("group.richcopy")) {
+        row { checkBox(cdEnableRichCopyByDefault) }
+        row {
+          cell(isFullWidth = true) {
+            label(message("combobox.richcopy.color.scheme"))
+            val schemes = listOf(RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER) +
+                          EditorColorsManager.getInstance().allSchemes.map { SchemeManager.getBaseName(it) }
+            comboBox<String>(
+              DefaultComboBoxModel(schemes.toTypedArray()), richCopySettings::getSchemeName, richCopySettings::setSchemeName,
+              renderer = SimpleListCellRenderer.create("") {
+                when (it) {
+                  RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER ->
+                    message("combobox.richcopy.color.scheme.active")
+                  EditorColorsScheme.DEFAULT_SCHEME_NAME -> EditorColorsScheme.DEFAULT_SCHEME_ALIAS
+                  else -> it
+                }
+              }
+            )
+          }
+        }
+      }
+      titledRow(message("group.error.highlighting")) {
+        row {
+          cell(isFullWidth = true) {
+            label(message("editbox.error.stripe.mark.min.height.pixels"))
+            intTextField(codeAnalyzerSettings::getErrorStripeMarkMinHeight, codeAnalyzerSettings::setErrorStripeMarkMinHeight, columns = 4)
+          }
+        }
+        row {
+          cell(isFullWidth = true) {
+            label(message("editbox.autoreparse.delay.ms"))
+            intTextField(codeAnalyzerSettings::getAutoReparseDelay, codeAnalyzerSettings::setAutoReparseDelay, columns = 4)
+          }
+        }
+        row { checkBox(cdNextErrorGoesToErrorsFirst) }
+
+        for (errorConfigurable in ConfigurableWrapper.createConfigurables(ErrorOptionsProviderEP.EP_NAME)) {
+          val panel = errorConfigurable.createComponent()
+          if (panel != null) {
+            row {
+              component(panel)
+                .onIsModified { errorConfigurable.isModified }
+                .onReset { errorConfigurable.reset() }
+                .onApply { errorConfigurable.apply() }
+            }
+          }
+        }
+      }
+      titledRow(message("editor.options.others.group")) {
+        row {
+          var stripTrailing: ComboBox<*>? = null
+          cell(isFullWidth = true) {
+            label(message("combobox.strip.trailing.spaces.on.save"))
+            val model = DefaultComboBoxModel(
+              arrayOf(
+                EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED,
+                EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE,
+                EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE
+              )
+            )
+            stripTrailing = comboBox(
+              model, editorSettings::getStripTrailingSpaces, editorSettings::setStripTrailingSpaces,
+              renderer = SimpleListCellRenderer.create("") {
+                when (it) {
+                  EditorSettingsExternalizable.STRIP_TRAILING_SPACES_CHANGED -> message("combobox.strip.modified.lines")
+                  EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE -> message("combobox.strip.all")
+                  EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE -> message("combobox.strip.none")
+                  else -> it
+                }
+              }
+            ).component
+          }
+          row {
+            checkBox(cdKeepTrailingSpacesOnCaretLine)
+              .enableIf(stripTrailing!!.selectedValueMatches { it != EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE })
+            largeGapAfter()
+          }
+        }
+        row { checkBox(cdEnsureBlankLineBeforeCheckBox) }
+        row {
+          checkBox(cdShowQuickDocOnMouseMove).apply {
+            onApply { service<QuickDocOnMouseOverManager>().setEnabled(component.isSelected) }
+          }
+        }
+        row {
+          fun fireLSTSettingsChanged() {
+            ApplicationManager.getApplication().messageBus.syncPublisher(LineStatusTrackerSettingListener.TOPIC).settingsUpdated()
+          }
+
+          val showLstGutter = checkBox(cdShowLSTInGutterCheckBox)
+            .onApply(::fireLSTSettingsChanged)
+          row {
+            checkBox(cdShowWhitespacesInLSTGutterCheckBox)
+              .enableIf(showLstGutter.selected)
+              .onApply(::fireLSTSettingsChanged)
+          }
+        }
+        row {
+          cell(isFullWidth = true) {
+            label(message("editor.options.tooltip.delay"))
+            intTextField(editorSettings::getTooltipsDelay, editorSettings::setTooltipsDelay, range = 1..5000, columns = 4)
+            label(message("editor.options.ms"))
+          }
+        }
+      }
+    }
+  }
+
+  override fun apply() {
+    val wasModified = isModified
+
+    super.apply()
+
+    if (wasModified) {
+      clearAllIdentifierHighlighters()
+      reinitAllEditors()
+      uiSettings.fireUISettingsChanged()
+      restartDaemons()
+      ApplicationManager.getApplication().messageBus.syncPublisher(EditorOptionsListener.OPTIONS_PANEL_TOPIC).changesApplied()
+    }
+  }
+}
+
+private fun <E : EditorCaretStopPolicyItem> Cell.caretStopComboBox(mode: CaretOptionMode, values: Array<E>): CellBuilder<ComboBox<E?>> {
+  val model: DefaultComboBoxModel<E?> = SeparatorAwareComboBoxModel()
+  var lastWasOsDefault = false
+  for (item in values) {
+    val isOsDefault = item.osDefault !== OsDefault.NONE
+    if (lastWasOsDefault && !isOsDefault) model.addElement(null)
+    lastWasOsDefault = isOsDefault
+    val insertionIndex = if (item.osDefault.isIdeDefault) 0 else model.size
+    model.insertElementAt(item, insertionIndex)
+  }
+
+  return component(ComboBox(model))
+    .applyToComponent { renderer = SeparatorAwareListItemRenderer() }
+    .sizeGroup("caretStopComboBox")
+    .withBinding(
+      {
+        val item = it.selectedItem as? EditorCaretStopPolicyItem
+        item?.caretStopBoundary ?: mode.get(CaretStopOptionsTransposed.DEFAULT)
+      },
+      { it, value -> it.selectedItem = mode.find(value) },
+      PropertyBinding(
+        {
+          val value = fromCaretStopOptions(editorSettings.caretStopOptions)
+          mode.get(value)
+        },
+        {
+          val value = fromCaretStopOptions(editorSettings.caretStopOptions)
+          editorSettings.caretStopOptions = mode.update(value, it).toCaretStopOptions()
+        }
+      )
+    )
+}
+
+private enum class CaretOptionMode {
+  WORD {
+    override fun find(boundary: CaretStopBoundary): WordBoundary = WordBoundary.itemForBoundary(boundary)
+    override fun get(option: CaretStopOptionsTransposed): CaretStopBoundary = option.wordBoundary
+    override fun update(option: CaretStopOptionsTransposed, value: CaretStopBoundary): CaretStopOptionsTransposed =
+      CaretStopOptionsTransposed(value, option.lineBoundary)
+  },
+  LINE {
+    override fun find(boundary: CaretStopBoundary): LineBoundary = LineBoundary.itemForBoundary(boundary)
+    override fun get(option: CaretStopOptionsTransposed): CaretStopBoundary = option.lineBoundary
+    override fun update(option: CaretStopOptionsTransposed, value: CaretStopBoundary): CaretStopOptionsTransposed =
+      CaretStopOptionsTransposed(option.wordBoundary, value)
+  };
+
+  abstract fun find(boundary: CaretStopBoundary): EditorCaretStopPolicyItem
+  abstract fun get(option: CaretStopOptionsTransposed): CaretStopBoundary
+  abstract fun update(option: CaretStopOptionsTransposed, value: CaretStopBoundary): CaretStopOptionsTransposed
+}

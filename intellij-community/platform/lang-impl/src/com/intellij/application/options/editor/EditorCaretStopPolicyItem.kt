@@ -4,8 +4,6 @@ package com.intellij.application.options.editor
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.editor.actions.CaretStopBoundary
-import com.intellij.openapi.editor.actions.CaretStopOptions
-import com.intellij.openapi.editor.actions.CaretStopOptionsTransposed
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SeparatorWithText
@@ -98,8 +96,7 @@ internal interface EditorCaretStopPolicyItem {
     override fun toString(): String = title.appendHint(osDefault.hint)
     companion object {
       @JvmStatic
-      fun itemForPolicy(caretStopOptions: CaretStopOptions): WordBoundary =
-        findMatchingItem(CaretStopOptionsTransposed.fromCaretStopOptions(caretStopOptions).wordBoundary)
+      fun itemForBoundary(caretStopBoundary: CaretStopBoundary): WordBoundary = findMatchingItem(caretStopBoundary)
     }
   }
 
@@ -119,8 +116,7 @@ internal interface EditorCaretStopPolicyItem {
     override fun toString(): String = title.appendHint(osDefault.hint)
     companion object {
       @JvmStatic
-      fun itemForPolicy(caretStopOptions: CaretStopOptions): LineBoundary =
-        findMatchingItem(CaretStopOptionsTransposed.fromCaretStopOptions(caretStopOptions).lineBoundary)
+      fun itemForBoundary(caretStopBoundary: CaretStopBoundary): LineBoundary = findMatchingItem(caretStopBoundary)
     }
   }
 }
