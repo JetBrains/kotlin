@@ -11,7 +11,8 @@ val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
 
     ::addCidrDeps,
     ::addIdeaNativeModuleDeps,
-    ::addKotlinGradleToolingDeps
+    ::addKotlinGradleToolingDeps,
+    ::handleSymlink
 ).map { it.name to it }.toMap()
 
 rootProject.extensions.add("ultimateTools", ultimateTools)
@@ -52,7 +53,7 @@ val javaApiArtifacts = listOf("java-api", "java-impl")
 data class IDE(val name: String, val version: String)
 
 fun guessIDEParams(): IDE {
-    if (rootProject.extra.has("versions.cidrForAS")) {
+    if (rootProject.extra.has("versions.androidStudioBuild")) {
         return IDE("android-studio-ide", rootProject.extra["versions.androidStudioBuild"] as String)
     }
 
@@ -218,3 +219,40 @@ fun addKotlinGradleToolingDepsStandalone(project: Project) = with(project) {
 
 fun addKotlinGradleToolingDeps(project: Project) =
     if (isStandaloneBuild) addKotlinGradleToolingDepsStandalone(project) else addKotlinGradleToolingDepsComposite(project)
+
+fun handleSymlink(details: FileCopyDetails, targetDir: File): Boolean = with(details) {
+    val symlink = file.toPath().firstParentSymlink()
+    if (symlink != null) {
+        exclude()
+        val destPath = relativeTo(targetDir, symlink)
+        if (java.nio.file.Files.notExists(destPath, java.nio.file.LinkOption.NOFOLLOW_LINKS)) {
+            if (java.nio.file.Files.notExists(destPath.parent)) {
+                project.mkdir(destPath.parent)
+            }
+            java.nio.file.Files.createSymbolicLink(destPath, java.nio.file.Files.readSymbolicLink(symlink))
+        }
+        return true
+    }
+    return false
+}
+
+fun java.nio.file.Path.firstParentSymlink(): java.nio.file.Path? {
+    var cur: java.nio.file.Path? = this
+    @Suppress("SENSELESS_COMPARISON")
+    while (cur != null) {
+        if (java.nio.file.Files.isSymbolicLink(cur)) break
+        cur = cur.parent
+    }
+    return cur
+}
+
+fun FileCopyDetails.relativeTo(targetDir: File, symlink: java.nio.file.Path): java.nio.file.Path {
+    var srcRoot = file.toPath()
+    var cur = java.nio.file.Paths.get(relativePath.pathString)
+    @Suppress("SENSELESS_COMPARISON")
+    while (cur != null) {
+        srcRoot = srcRoot.parent
+        cur = cur.parent
+    }
+    return targetDir.toPath().resolve(srcRoot.relativize(symlink))
+}
