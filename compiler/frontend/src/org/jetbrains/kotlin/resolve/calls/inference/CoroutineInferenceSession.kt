@@ -132,7 +132,8 @@ class CoroutineInferenceSession(
     private fun integrateConstraints(
         commonSystem: NewConstraintSystemImpl,
         storage: ConstraintStorage,
-        nonFixedToVariablesSubstitutor: NewTypeSubstitutor
+        nonFixedToVariablesSubstitutor: NewTypeSubstitutor,
+        shouldIntegrateAllConstraints: Boolean
     ) {
         storage.notFixedTypeVariables.values.forEach { commonSystem.registerVariable(it.typeVariable) }
 
@@ -163,6 +164,14 @@ class CoroutineInferenceSession(
                     }
             }
         }
+
+        if (shouldIntegrateAllConstraints) {
+            for ((variableConstructor, type) in storage.fixedTypeVariables) {
+                val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
+                commonSystem.registerVariable(typeVariable)
+                commonSystem.addEqualityConstraint((typeVariable as NewTypeVariable).defaultType, type, CoroutinePosition())
+            }
+        }
     }
 
     private fun buildCommonSystem(initialStorage: ConstraintStorage): NewConstraintSystemImpl {
@@ -170,13 +179,13 @@ class CoroutineInferenceSession(
 
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
-        integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor)
+        integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
 
         for (call in commonCalls) {
-            integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor)
+            integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
         }
         for (call in partiallyResolvedCallsInfo) {
-            integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor)
+            integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
         }
         for (diagnostic in diagnostics) {
             commonSystem.addError(diagnostic)
