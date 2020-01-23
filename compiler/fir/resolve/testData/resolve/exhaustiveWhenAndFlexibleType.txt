@@ -32,11 +32,14 @@ FILE: main.kt
         }
 
     }
-    public final fun test(): R|kotlin/Unit| {
+    public final fun test_1(): R|kotlin/Unit| {
         lval e: R|ft<E, E?>!| = Q|Utils|.R|/Utils.getEnum|()
-        lval s: R|kotlin/Unit| = when (R|<local>/e|) {
-            ==($subj$, Q|E|.R|/E.A|) || ==($subj$, Null(null)) ->  {
-                ^test Unit
+        lval s: R|kotlin/String| = when (R|<local>/e|) {
+            ==($subj$, Null(null)) ->  {
+                ^test_1 Unit
+            }
+            ==($subj$, Q|E|.R|/E.A|) ->  {
+                String()
             }
             ==($subj$, Q|E|.R|/E.B|) ->  {
                 String()
@@ -46,5 +49,21 @@ FILE: main.kt
             }
         }
 
-        R|<local>/s|.<Unresolved name: length>#
+        R|<local>/s|.R|kotlin/String.length|
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval e: R|ft<E, E?>!| = Q|Utils|.R|/Utils.getEnum|()
+        lval s: R|kotlin/String| = when (R|<local>/e|) {
+            ==($subj$, Q|E|.R|/E.A|) ->  {
+                String()
+            }
+            ==($subj$, Q|E|.R|/E.B|) ->  {
+                String()
+            }
+            ==($subj$, Q|E|.R|/E.C|) ->  {
+                String()
+            }
+        }
+
+        R|<local>/s|.R|kotlin/String.length|
     }

@@ -78,6 +78,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/enumWithCompanion.kt");
     }
 
+    @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
+    public void testExhaustiveWhenAndFlexibleType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/exhaustiveWhenAndFlexibleType.kt");
+    }
+
     @TestMetadata("exhaustiveness_boolean.kt")
     public void testExhaustiveness_boolean() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/exhaustiveness_boolean.kt");
@@ -1034,11 +1039,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("definitelyNotNullAmbiguity.kt")
         public void testDefinitelyNotNullAmbiguity() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAmbiguity.kt");
-        }
-
-        @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
-        public void testExhaustiveWhenAndFlexibleType() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/exhaustiveWhenAndFlexibleType.kt");
         }
 
         @TestMetadata("incorrectSuperCall.kt")

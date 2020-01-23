@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 
@@ -46,7 +47,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             ?: (whenExpression.subject as? FirQualifiedAccessExpression)?.typeRef) as? FirResolvedTypeRef
             ?: return null
 
-        val lookupTag = (typeRef.type as? ConeLookupTagBasedType)?.lookupTag ?: return null
+        // TODO: add some report logic about flexible type (see WHEN_ENUM_CAN_BE_NULL_IN_JAVA diagnostic in old frontend)
+        val type = typeRef.type.lowerBoundIfFlexible()
+        val lookupTag = (type as? ConeLookupTagBasedType)?.lookupTag ?: return null
         val nullable = typeRef.type.nullability == ConeNullability.NULLABLE
         val isExhaustive = when {
             ((lookupTag as? ConeClassLikeLookupTag)?.classId == bodyResolveComponents.session.builtinTypes.booleanType.id) -> {
