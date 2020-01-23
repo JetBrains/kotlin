@@ -23,30 +23,43 @@ class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRender
     @Test
     fun testBitwise() = doTest("Bitwise")
 
-    @Test fun testElvis() = doTest("Elvis")
+    @Test
+    fun testElvis() = doTest("Elvis")
 
-    @Test fun testPropertyAccessors() = doTest("PropertyAccessors")
+    @Test
+    fun testPropertyAccessors() = doTest("PropertyAccessors")
 
-    @Test fun testPropertyInitializer() = doTest("PropertyInitializer")
+    @Test
+    fun testPropertyInitializer() = doTest("PropertyInitializer")
 
-    @Test fun testPropertyInitializerWithoutSetter() = doTest("PropertyInitializerWithoutSetter")
+    @Test
+    fun testPropertyInitializerWithoutSetter() = doTest("PropertyInitializerWithoutSetter")
 
-    @Test fun testAnnotationParameters() = doTest("AnnotationParameters")
+    @Test
+    fun testAnnotationParameters() = doTest("AnnotationParameters")
 
-    @Test fun testEnumValueMembers() = doTest("EnumValueMembers")
+    @Test
+    fun testEnumValueMembers() = doTest("EnumValueMembers")
 
-    @Test fun testStringTemplate() = doTest("StringTemplate")
+    @Test
+    fun testEnumValuesConstructors() = doTest("EnumValuesConstructors")
 
-    @Test fun testStringTemplateComplex() = doTest("StringTemplateComplex")
+    @Test
+    fun testStringTemplate() = doTest("StringTemplate")
+
+    @Test
+    fun testStringTemplateComplex() = doTest("StringTemplateComplex")
 
     @Test
     fun testStringTemplateComplexForUInjectionHost() = withForceUInjectionHostValue {
         doTest("StringTemplateComplexForUInjectionHost")
     }
 
-    @Test fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
+    @Test
+    fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
 
-    @Test fun testPropertyDelegate() = doTest("PropertyDelegate")
+    @Test
+    fun testPropertyDelegate() = doTest("PropertyDelegate")
 
     @Test fun testLocalVariableWithAnnotation() = doTest("LocalVariableWithAnnotation")
 

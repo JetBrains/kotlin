@@ -67,8 +67,13 @@ class KotlinUFunctionCallExpression(
     }
 
     override val methodIdentifier by lz {
-        val calleeExpression = sourcePsi.calleeExpression
-        when (calleeExpression) {
+        if (sourcePsi is KtSuperTypeCallEntry) {
+            ((sourcePsi.parent as? KtInitializerList)?.parent as? KtEnumEntry)?.let { ktEnumEntry ->
+                return@lz KotlinUIdentifier(ktEnumEntry.nameIdentifier, this)
+            }
+        }
+
+        when (val calleeExpression = sourcePsi.calleeExpression) {
             null -> null
             is KtNameReferenceExpression ->
                 KotlinUIdentifier(calleeExpression.getReferencedNameElement(), this)

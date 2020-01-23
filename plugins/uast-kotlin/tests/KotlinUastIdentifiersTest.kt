@@ -27,4 +27,7 @@ class KotlinUastIdentifiersTest : AbstractKotlinIdentifiersTest() {
     @Test
     fun testSuperCalls() = doTest("SuperCalls")
 
+    @Test
+    fun testEnumValuesConstructors() = doTest("EnumValuesConstructors")
+
 }
