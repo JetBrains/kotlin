@@ -6,7 +6,9 @@
 import kotlin.reflect.jvm.*
 import kotlin.test.*
 
-class K(var value: Long)
+class K {
+    lateinit var value: String
+}
 
 fun box(): String {
     val p = K::value
@@ -17,15 +19,15 @@ fun box(): String {
     val setter = p.javaSetter!!
 
     assertEquals(K::class.java.getMethod("getValue"), getter)
-    assertEquals(K::class.java.getMethod("setValue", Long::class.java), setter)
+    assertEquals(K::class.java.getMethod("setValue", String::class.java), setter)
 
     assertNull(p.getter.javaConstructor)
     assertNull(p.setter.javaConstructor)
 
-    val k = K(42L)
-    assertEquals(42L, getter.invoke(k), "Fail k getter")
-    setter.invoke(k, -239L)
-    assertEquals(-239L, getter.invoke(k), "Fail k setter")
+    val k = K()
+    assertFails("Fail k getter") { getter.invoke(k) }  // lateinit not yet initialized
+    setter.invoke(k, "foo")
+    assertEquals("foo", getter.invoke(k), "Fail k setter")
 
     return "OK"
 }

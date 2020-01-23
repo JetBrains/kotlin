@@ -47,6 +47,7 @@ fun IrFieldBuilder.buildField(): IrField {
         name, type, visibility, isFinal, isExternal, isStatic,
         origin == IrDeclarationOrigin.FAKE_OVERRIDE
     ).also {
+        it.metadata = metadata
         wrappedDescriptor.bind(it)
     }
 }
