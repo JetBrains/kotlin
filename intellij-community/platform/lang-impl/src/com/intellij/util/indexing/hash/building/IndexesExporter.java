@@ -4,8 +4,10 @@ package com.intellij.util.indexing.hash.building;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.intellij.concurrency.JobLauncher;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
@@ -67,6 +69,14 @@ public class IndexesExporter {
     zipIndexOut(indexRoot, zipFile, indicator);
   }
 
+  public void exportIndexesChunk(@NotNull IndexChunk chunk,
+                                 @NotNull Path temp,
+                                 @NotNull Path zipFile) {
+    Path chunkRoot = PathKt.createDirectories(temp.resolve("unpacked"));
+    ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk));
+    zipIndexOut(chunkRoot, zipFile, new EmptyProgressIndicator());
+  }
+
   private void processChunkUnderReadAction(@NotNull Path chunkRoot, @NotNull IndexChunk chunk) {
     List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = FileBasedIndexExtension
       .EXTENSION_POINT_NAME
@@ -86,12 +96,13 @@ public class IndexesExporter {
     deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
     deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot.resolve("empty-stub-indices.txt"));
 
-    writeIndexVersionsMetadata(chunkRoot, computeIndexVersions(allGenerators), computeIndexVersions(stubGenerator.getStubGenerators()));
-    //printStatistics(chunk, fileBasedGenerators, stubGenerator);
+    writeIndexVersionsMetadata(chunkRoot, chunk, computeIndexVersions(allGenerators), computeIndexVersions(stubGenerator.getStubGenerators()));
+    printStatistics(chunk, fileBasedGenerators, stubGenerator);
+    printMetadata(chunkRoot);
   }
 
   @NotNull
-  private static String getOsNameForIndexVersions() {
+  public static String getOsNameForIndexVersions() {
     if (SystemInfo.isWindows) return "windows";
     if (SystemInfo.isMac) return "mac";
     if (SystemInfo.isLinux) return "linux";
@@ -99,6 +110,7 @@ public class IndexesExporter {
   }
 
   private static void writeIndexVersionsMetadata(@NotNull Path chunkRoot,
+                                                 @NotNull IndexChunk indexChunk,
                                                  @NotNull Map<String, String> fileIndexes,
                                                  @NotNull Map<String, String> stubIndexes) {
     Path metadata = chunkRoot.resolve("metadata.json");
@@ -106,10 +118,54 @@ public class IndexesExporter {
     StringWriter sw = new StringWriter();
     try(JsonWriter writer = new Gson().newBuilder().setPrettyPrinting().create().newJsonWriter(sw)) {
       writer.beginObject();
+
+      writer.name("metadata_version");
+      writer.value("1");
+
       writer.name("os");
       writer.value(getOsNameForIndexVersions());
-      mapToJson("file-indexes", writer, fileIndexes);
-      mapToJson("stub-indexes", writer, stubIndexes);
+
+      writer.name("index_name");
+      writer.value(indexChunk.getName());
+
+      writer.name("sources");
+      writer.beginObject();
+      writer.name("hash");
+      writer.value(indexChunk.getContentsHash());
+      writer.name("os");
+      writer.value(getOsNameForIndexVersions());
+      writer.endObject();
+
+      writer.name("build");
+      writer.beginObject();
+      writer.name("os");
+      writer.value(SystemInfo.getOsNameAndVersion());
+      writer.name("intellij_version");
+      writer.value(ApplicationInfo.getInstance().getFullVersion());
+      writer.name("intellij_build");
+      writer.value(ApplicationInfo.getInstance().getBuild().toString());
+      writer.name("intellij_product_code");
+      writer.value(ApplicationInfo.getInstance().getBuild().getProductCode());
+      writer.endObject();
+
+
+      writer.name("indexes");
+      writer.beginObject();
+      writer.name("os");
+      writer.value(getOsNameForIndexVersions());
+      //what root indexes to be included here?
+      writer.name("versions");
+      writer.beginObject();
+      Map<String, String> allIndexVersions = new LinkedHashMap<>();
+      allIndexVersions.putAll(new TreeMap<>(fileIndexes));
+      allIndexVersions.putAll(new TreeMap<>(stubIndexes));
+      for (Map.Entry<String, String> e : allIndexVersions.entrySet()) {
+        writer.name(e.getKey());
+        writer.value(e.getValue());
+      }
+      writer.endObject();
+      writer.endObject();
+
       writer.endObject();
     } catch (Exception e) {
       throw new RuntimeException("Failed to generate versions JSON. " + e.getMessage(), e);
@@ -120,18 +176,6 @@ public class IndexesExporter {
     } catch (IOException e) {
       throw new RuntimeException("Failed to write versions JSON to " + metadata + ". " + e.getMessage(), e);
     }
-  }
-
-  private static void mapToJson(@NotNull String key,
-                                @NotNull JsonWriter writer,
-                                @NotNull Map<String, String> versions) throws IOException {
-    writer.name(key);
-    writer.beginObject();
-    for (Map.Entry<String, String> e : versions.entrySet()) {
-      writer.name(e.getKey());
-      writer.value(e.getValue());
-    }
-    writer.endObject();
   }
 
   @NotNull
@@ -242,6 +286,15 @@ public class IndexesExporter {
       catch (IOException e) {
         throw new RuntimeException(e);
       }
+    }
+  }
+
+  private static void printMetadata(@NotNull Path chunkDir) {
+    try {
+      String text = PathKt.readText(chunkDir.resolve("metadata.json"));
+      LOG.warn("metadata.json:\n" + text + "\n\n");
+    } catch (IOException e){
+      throw new RuntimeException("Failed to read metadata.json: " + chunkDir + ". " + e.getMessage(), e);
     }
   }
 

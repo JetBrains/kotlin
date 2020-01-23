@@ -3,6 +3,7 @@ package com.intellij.util.indexing.hash.building;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Set;
@@ -10,8 +11,10 @@ import java.util.Set;
 public final class IndexChunk {
   private final Set<VirtualFile> myRoots;
   private final String myName;
+  private String myContentsHash;
 
-  public IndexChunk(@NotNull Set<VirtualFile> roots, @NotNull String name) {
+  public IndexChunk(@NotNull Set<VirtualFile> roots,
+                    @NotNull String name) {
     myRoots = roots;
     myName = name;
   }
@@ -24,6 +27,15 @@ public final class IndexChunk {
   @NotNull
   public Set<VirtualFile> getRoots() {
     return myRoots;
+  }
+
+  @Nullable
+  public String getContentsHash() {
+    return myContentsHash;
+  }
+
+  public void setContentsHash(@Nullable String contentsHash) {
+    myContentsHash = contentsHash;
   }
 
   @Override
