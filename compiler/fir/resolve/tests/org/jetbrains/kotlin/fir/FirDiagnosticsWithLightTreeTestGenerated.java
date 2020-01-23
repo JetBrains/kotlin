@@ -243,6 +243,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/typeParameterVsNested.kt");
     }
 
+    @TestMetadata("varargInPrimaryConstructor.kt")
+    public void testVarargInPrimaryConstructor() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/varargInPrimaryConstructor.kt");
+    }
+
     @TestMetadata("whenAsReceiver.kt")
     public void testWhenAsReceiver() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/whenAsReceiver.kt");
@@ -1049,11 +1054,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("invokeOfLambdaWithReceiver.kt")
         public void testInvokeOfLambdaWithReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/invokeOfLambdaWithReceiver.kt");
-        }
-
-        @TestMetadata("iteratorOfVararg.kt")
-        public void testIteratorOfVararg() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/iteratorOfVararg.kt");
         }
 
         @TestMetadata("javaAccessorConversion.kt")

@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.impl.FirLabelImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.impl.*
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
@@ -270,7 +270,10 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
 
         private fun KtParameter.toFirProperty(firParameter: FirValueParameter): FirProperty {
             require(hasValOrVar())
-            val type = typeReference.toFirOrErrorType()
+            var type = typeReference.toFirOrErrorType()
+            if (firParameter.isVararg) {
+                type = type.convertToArrayType()
+            }
             val status = FirDeclarationStatusImpl(visibility, modality).apply {
                 isExpect = hasExpectModifier()
                 isActual = hasActualModifier()

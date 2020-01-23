@@ -26,11 +26,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitKPropertyTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -392,6 +393,14 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
                 }
             )
         }
+    }
+}
+
+fun FirTypeRef.convertToArrayType(): FirUserTypeRef =  FirUserTypeRefImpl(source, isMarkedNullable = false).apply {
+    qualifier += FirQualifierPartImpl(ARRAY_TYPE_NAME).apply {
+        typeArguments += FirTypeProjectionWithVarianceImpl(
+            source, this@convertToArrayType, Variance.OUT_VARIANCE
+        )
     }
 }
 
