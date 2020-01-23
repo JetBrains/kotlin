@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.utils.CallOnceFunction
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -32,7 +33,7 @@ class LazyExplicitImportScope(
     private val packageFragmentForVisibilityCheck: PackageFragmentDescriptor?,
     private val declaredName: Name,
     private val aliasName: Name,
-    private val storeReferences: (Collection<DeclarationDescriptor>) -> Unit
+    private val storeReferences: CallOnceFunction<Collection<DeclarationDescriptor>, Unit>
 ) : BaseImportingScope(null) {
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
