@@ -129,7 +129,6 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * This can be used to setup "sync" tasks for the import
    *
    * @see BuildActionExecuter.Builder#projectsLoaded(org.gradle.tooling.BuildAction, org.gradle.tooling.IntermediateResultHandler)
-   * @see GradleProjectResolverExtension#requiresTaskRunning()
    */
   @Nullable
   default ProjectImportModelProvider getProjectsLoadedModelProvider() {return null;}
@@ -139,7 +138,10 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * used by the resolution return true then the {@link org.gradle.tooling.BuildActionExecuter} will have
    * {@link org.gradle.tooling.BuildActionExecuter#forTasks(String...)} called with an empty list. This will allow
    * any tasks that are scheduled by Gradle plugin in the model builders to be run.
+   *
+   * @deprecated not required anymore
    */
+  @Deprecated
   default boolean requiresTaskRunning() {
     return false;
   }

@@ -197,7 +197,6 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
     configureExecutionArgumentsAndVmOptions(executionSettings, resolverCtx, isBuildSrcProject);
     final Set<Class<?>> toolingExtensionClasses = new HashSet<>();
-    boolean requiresTaskInitialization = false;
     for (GradleProjectResolverExtension resolverExtension = tracedResolverChain;
          resolverExtension != null;
          resolverExtension = resolverExtension.getNext()) {
@@ -230,22 +229,13 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       catch (Throwable t) {
         LOG.warn(t);
       }
-
-      // see if anything requires Gradle tasks to be run
-      try {
-        requiresTaskInitialization |= resolverExtension.requiresTaskRunning();
-      }
-      catch (Throwable t) {
-        LOG.warn(t);
-      }
     }
     File initScript = GradleExecutionHelper.generateInitScript(isBuildSrcProject, toolingExtensionClasses);
     if (initScript != null) {
       executionSettings.withArguments(GradleConstants.INIT_SCRIPT_CMD_OPTION, initScript.getAbsolutePath());
     }
 
-    BuildActionRunner buildActionRunner =
-      new BuildActionRunner(resolverCtx, projectImportAction, requiresTaskInitialization, executionSettings, myHelper);
+    BuildActionRunner buildActionRunner = new BuildActionRunner(resolverCtx, projectImportAction, executionSettings, myHelper);
     resolverCtx.checkCancelled();
 
     final long startTime = System.currentTimeMillis();

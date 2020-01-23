@@ -37,7 +37,6 @@ import java.util.function.Consumer
 class BuildActionRunner(
   private val resolverCtx: ProjectResolverContext,
   private val buildAction: ProjectImportAction,
-  private val initializeTaskExecution: Boolean,
   private val settings: GradleExecutionSettings,
   private val helper: GradleExecutionHelper
 ) {
@@ -135,7 +134,7 @@ class BuildActionRunner(
       .build()
     executer.prepare()
     executer.setCancellationToken(resolverCtx)
-    if (initializeTaskExecution) executer.forTasks(emptyList())
+    executer.forTasks(emptyList()) // this will allow to setup Gradle StartParameter#taskNames using model builders
     return executer
   }
 
