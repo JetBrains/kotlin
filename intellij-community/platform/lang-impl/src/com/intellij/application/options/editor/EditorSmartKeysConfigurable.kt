@@ -152,9 +152,7 @@ class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompos
         )
       }
       for (configurable in configurables) {
-        row {
-          configurable.createComponent()?.invoke(growX)
-        }
+        appendDslConfigurableRow(configurable)
       }
     }
   }

@@ -91,9 +91,7 @@ class EditorAppearanceConfigurable : BoundCompositeSearchableConfigurable<Unname
       }
 
       for (configurable in configurables) {
-        row {
-          configurable.createComponent()?.invoke()
-        }
+        appendDslConfigurableRow(configurable)
       }
     }
   }

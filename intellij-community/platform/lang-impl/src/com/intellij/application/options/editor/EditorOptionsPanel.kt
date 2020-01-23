@@ -25,6 +25,7 @@ import com.intellij.openapi.editor.richcopy.settings.RichCopySettings
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.keymap.KeymapUtil
+import com.intellij.openapi.options.BoundCompositeConfigurable
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.options.Configurable.WithEpDependencies
 import com.intellij.openapi.options.SchemeManager
@@ -36,6 +37,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vcs.VcsApplicationSettings
 import com.intellij.openapi.vcs.impl.LineStatusTrackerSettingListener
+import com.intellij.profile.codeInspection.ui.ErrorOptionsProvider
 import com.intellij.profile.codeInspection.ui.ErrorOptionsProviderEP
 import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.layout.*
@@ -299,11 +301,12 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {
   }
 }
 
-class EditorCodeEditingConfigurable : BoundConfigurable(message("title.code.editing"), ID), WithEpDependencies {
+class EditorCodeEditingConfigurable : BoundCompositeConfigurable<ErrorOptionsProvider>(message("title.code.editing"), ID), WithEpDependencies {
   companion object {
     const val ID = "preferences.editor.code.editing"
   }
 
+  override fun createConfigurables() = ConfigurableWrapper.createConfigurables(ErrorOptionsProviderEP.EP_NAME)
   override fun getDependencies() = setOf(ErrorOptionsProviderEP.EP_NAME)
 
   override fun createPanel(): DialogPanel {
@@ -367,16 +370,8 @@ class EditorCodeEditingConfigurable : BoundConfigurable(message("title.code.edit
           }
         }
 
-        for (errorConfigurable in ConfigurableWrapper.createConfigurables(ErrorOptionsProviderEP.EP_NAME)) {
-          val panel = errorConfigurable.createComponent()
-          if (panel != null) {
-            row {
-              component(panel)
-                .onIsModified { errorConfigurable.isModified }
-                .onReset { errorConfigurable.reset() }
-                .onApply { errorConfigurable.apply() }
-            }
-          }
+        for (configurable in configurables) {
+          appendDslConfigurableRow(configurable)
         }
       }
       titledRow(message("group.quick.documentation")) {
