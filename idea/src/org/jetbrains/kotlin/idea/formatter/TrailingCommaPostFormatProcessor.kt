@@ -42,12 +42,9 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
     companion object {
         fun findInvalidCommas(commaOwner: KtElement): List<PsiElement> = commaOwner.firstChild
             ?.siblings(withItself = false)
-            ?.mapNotNull { element ->
-                if (!element.isComma) return@mapNotNull null
-                element.takeIf {
-                    it.prevLeaf(true)?.isLineBreak() == true ||
-                            it.leafIgnoringWhitespace(false) != it.leafIgnoringWhitespaceAndComments(false)
-                }
+            ?.filter { it.isComma }
+            ?.filter {
+                it.prevLeaf(true)?.isLineBreak() == true || it.leafIgnoringWhitespace(false) != it.leafIgnoringWhitespaceAndComments(false)
             }?.toList().orEmpty()
 
         fun needComma(
