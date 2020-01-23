@@ -243,7 +243,7 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
       presentation.setEnabledAndVisible(true);
       VirtualFile vFile = event.getDataContext().getData(CommonDataKeys.VIRTUAL_FILE);
       if (vFile != null) {
-        RunLineMarkerProvider.markRunnable(vFile);
+        RunLineMarkerProvider.markRunnable(vFile, true);
       }
       final List<ConfigurationFromContext> fromContext = getConfigurationsFromContext(context);
       if (existing == null && !fromContext.isEmpty()) {
