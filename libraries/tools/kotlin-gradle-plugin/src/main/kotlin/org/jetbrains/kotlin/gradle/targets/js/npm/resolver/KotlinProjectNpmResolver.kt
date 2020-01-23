@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
@@ -64,6 +65,15 @@ internal class KotlinProjectNpmResolver(
                 if (compilation is KotlinJsCompilation) {
                     // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
                     addCompilation(compilation)
+                }
+            }
+
+            // Hack for mixed mode, when target is JS and contain JS-IR
+            if (target is KotlinJsTarget) {
+                target.irTarget?.compilations?.all { compilation ->
+                    if (compilation is KotlinJsCompilation) {
+                        addCompilation(compilation)
+                    }
                 }
             }
         }
