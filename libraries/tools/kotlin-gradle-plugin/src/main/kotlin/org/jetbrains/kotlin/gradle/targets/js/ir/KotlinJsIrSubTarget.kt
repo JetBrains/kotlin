@@ -60,7 +60,7 @@ abstract class KotlinJsIrSubTarget(
         produceByFlags()
     }
 
-    override fun produceJs() {
+    override fun produceExecutable() {
         produceByFlags()
 
         configureMain()
