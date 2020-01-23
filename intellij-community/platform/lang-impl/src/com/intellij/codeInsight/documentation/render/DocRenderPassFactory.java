@@ -111,12 +111,35 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
           sectionPos = endEndPos;
         }
       }
-      return doc;
+      return isWhitespaceAndTags(doc) ? null : doc;
     }
     catch (IndexNotReadyException e) {
       LOG.debug(e);
       return CodeInsightBundle.message("doc.render.dumb.mode.text");
     }
+  }
+
+  private static boolean isWhitespaceAndTags(@NotNull String text) {
+    int curPos = 0;
+    int tagStart;
+    while ((tagStart = text.indexOf('<', curPos)) >= 0) {
+      if (!isWhitespace(text, curPos, tagStart)) return false;
+      int tagEnd = text.indexOf('>', tagStart + 1);
+      if (tagEnd >= 0) {
+        curPos = tagEnd + 1;
+      }
+      else {
+        return true;
+      }
+    }
+    return isWhitespace(text, curPos, text.length());
+  }
+
+  private static boolean isWhitespace(@NotNull String text, int startPos, int endPos) {
+    for (int i = startPos; i < endPos; i++) {
+      if (text.charAt(i) > ' ') return false;
+    }
+    return true;
   }
 
   public static void applyItemsToRender(@NotNull Editor editor,
