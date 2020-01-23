@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.ReadOnlyProperty
@@ -395,6 +397,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     }
 
+    val allNativeDependencies: List<KonanLibrary> by lazy {
+        val cachedLibraries = context.librariesWithDependencies.filter {
+            context.config.cachedLibraries.isLibraryCached(it)
+        }
+        (nativeDependenciesToLink + cachedLibraries).distinct()
+    }
 
     val bitcodeToLink: List<KonanLibrary> by lazy {
         (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>)

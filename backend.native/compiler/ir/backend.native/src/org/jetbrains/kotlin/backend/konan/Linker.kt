@@ -43,10 +43,7 @@ internal class Linker(val context: Context) {
         }
         val includedBinaries = includedBinariesLibraries.map { (it as? KonanLibrary)?.includedPaths.orEmpty() }.flatten()
 
-        val cachedLibraries = context.librariesWithDependencies
-                .filter { context.config.cachedLibraries.isLibraryCached(it) }
-        val libraryProvidedLinkerFlags = (nativeDependencies + cachedLibraries)
-                .distinct().map { it.linkerOpts }.flatten()
+        val libraryProvidedLinkerFlags = context.llvm.allNativeDependencies.map { it.linkerOpts }.flatten()
 
         runLinker(objectFiles, includedBinaries, libraryProvidedLinkerFlags)
         renameOutput()
