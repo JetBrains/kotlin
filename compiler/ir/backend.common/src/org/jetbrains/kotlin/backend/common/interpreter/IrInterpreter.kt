@@ -29,6 +29,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private val irBuiltIns = irModule.irBuiltins
     private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
         .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
+    private val classCastException = irExceptions.first { it.name.asString() == ClassCastException::class.java.simpleName }
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
@@ -132,6 +133,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     // this method is used to get stack trace after exception
+    // OR
+    // TODO maybe use suspend
     private fun interpretFunction(irFunction: IrFunctionImpl, data: Frame): Code {
         return irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
     }
@@ -454,11 +457,28 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> {
                 expression.argument.interpret(data)
             }
-            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> {
-                expression.argument.interpret(data) //todo check cast correctness
+            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
+                val code = expression.argument.interpret(data)
+                if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
+                    val convertibleClassName = data.popReturnValue().irClass.fqNameForIrSerialization
+                    val castClassName = expression.type.classOrNull?.owner?.fqNameForIrSerialization
+                    val message = "$convertibleClassName cannot be cast to $castClassName"
+                    data.pushReturnValue(Wrapper(ClassCastException(message), classCastException))
+                    Code.EXCEPTION
+                } else {
+                    code
+                }
+            }
+            IrTypeOperator.SAFE_CAST -> {
+                val code = expression.argument.interpret(data)
+                if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
+                    data.popReturnValue()
+                    data.pushReturnValue(null.toState(irBuiltIns.nothingType))
+                }
+                code
             }
             else -> TODO("${expression.operator} not implemented")
         }
