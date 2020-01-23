@@ -32,6 +32,7 @@ import org.jetbrains.plugins.gradle.model.ExternalDependency;
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver;
+import org.jetbrains.plugins.gradle.tooling.util.ModuleComponentIdentifierImpl;
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder;
 import org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver;
 
@@ -39,8 +40,6 @@ import java.io.File;
 import java.util.*;
 
 import static java.util.Collections.*;
-import static org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver.findArtifactSources;
-import static org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver.toComponentIdentifier;
 
 /**
  * @author Vladislav.Soroka
@@ -88,6 +87,7 @@ public class DependencyResolverImpl implements DependencyResolver {
   @Override
   public Collection<ExternalDependency> resolveDependencies(@Nullable String configurationName) {
     if (!IS_NEW_DEPENDENCY_RESOLUTION_APPLICABLE) {
+      //noinspection deprecation
       return new DeprecatedDependencyResolver(myProject, false, myDownloadJavadoc, myDownloadSources, mySourceSetFinder)
         .resolveDependencies(configurationName);
     }
@@ -103,6 +103,7 @@ public class DependencyResolverImpl implements DependencyResolver {
   @Override
   public Collection<ExternalDependency> resolveDependencies(@Nullable Configuration configuration) {
     if (!IS_NEW_DEPENDENCY_RESOLUTION_APPLICABLE) {
+      //noinspection deprecation
       return new DeprecatedDependencyResolver(myProject, false, myDownloadJavadoc, myDownloadSources, mySourceSetFinder)
         .resolveDependencies(configuration);
     }
@@ -118,6 +119,7 @@ public class DependencyResolverImpl implements DependencyResolver {
   @Override
   public Collection<ExternalDependency> resolveDependencies(@NotNull SourceSet sourceSet) {
     if (!IS_NEW_DEPENDENCY_RESOLUTION_APPLICABLE) {
+      //noinspection deprecation
       return new DeprecatedDependencyResolver(myProject, false, myDownloadJavadoc, myDownloadSources, mySourceSetFinder)
         .resolveDependencies(sourceSet);
     }
@@ -564,6 +566,26 @@ public class DependencyResolverImpl implements DependencyResolver {
       return ((ExternalProjectDependency)dependency).getProjectDependencyArtifacts();
     }
     return emptySet();
+  }
+
+  @NotNull
+  public static List<File> findArtifactSources(Collection<? extends File> artifactFiles, SourceSetCachedFinder sourceSetFinder) {
+    List<File> artifactSources = new ArrayList<File>();
+    for (File artifactFile : artifactFiles) {
+      Set<File> sources = sourceSetFinder.findSourcesByArtifact(artifactFile.getPath());
+      if (sources != null) {
+        artifactSources.addAll(sources);
+      }
+    }
+    return artifactSources;
+  }
+
+  public static ModuleComponentIdentifier toComponentIdentifier(ModuleVersionIdentifier id) {
+    return new ModuleComponentIdentifierImpl(id.getGroup(), id.getName(), id.getVersion());
+  }
+
+  public static ModuleComponentIdentifier toComponentIdentifier(@NotNull String group, @NotNull String module, @NotNull String version) {
+    return new ModuleComponentIdentifierImpl(group, module, version);
   }
 
   private static class MyModuleVersionSelector {

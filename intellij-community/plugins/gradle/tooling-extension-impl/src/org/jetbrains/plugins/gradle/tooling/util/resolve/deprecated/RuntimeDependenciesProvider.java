@@ -12,6 +12,10 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * @deprecated use org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
+ */
+@Deprecated
 public class RuntimeDependenciesProvider {
   public static final String SCOPE = DependencyResolver.RUNTIME_SCOPE;
 

@@ -25,8 +25,13 @@ import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder;
 import java.io.File;
 import java.util.*;
 
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.toComponentIdentifier;
 import static org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver.is31OrBetter;
 
+/**
+ * @deprecated use org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
+ */
+@Deprecated
 class ArtifactQueryResolver {
   private final Configuration myConfiguration;
   private final String myScope;
@@ -119,7 +124,7 @@ class ArtifactQueryResolver {
     for (ResolvedArtifact artifact : resolvedArtifacts) {
       final ModuleVersionIdentifier moduleVersionId = artifact.getModuleVersion().getId();
       if (!DeprecatedDependencyResolver.isProjectDependencyArtifact(artifact)) {
-        components.add(DeprecatedDependencyResolver.toComponentIdentifier(moduleVersionId));
+        components.add(toComponentIdentifier(moduleVersionId));
       }
     }
 

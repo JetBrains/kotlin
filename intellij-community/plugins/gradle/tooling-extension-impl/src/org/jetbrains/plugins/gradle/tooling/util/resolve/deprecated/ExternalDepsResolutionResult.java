@@ -4,21 +4,18 @@ package org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated;
 import org.jetbrains.plugins.gradle.model.ExternalDependency;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 
+/**
+ * @deprecated use org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
+ */
+@Deprecated
 public class ExternalDepsResolutionResult {
   public static final ExternalDepsResolutionResult
     EMPTY = new ExternalDepsResolutionResult(Collections.<ExternalDependency>emptySet(), Collections.<File>emptySet());
   private final Collection<ExternalDependency> externalDeps;
   private final Collection<File> resolvedFiles;
-
-  public ExternalDepsResolutionResult() {
-    externalDeps = new LinkedHashSet<ExternalDependency>();
-    resolvedFiles = new ArrayList<File>();
-  }
 
   public ExternalDepsResolutionResult(Collection<ExternalDependency> deps, Collection<File> files) {
     externalDeps = deps;

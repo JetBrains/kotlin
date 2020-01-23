@@ -28,8 +28,14 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.findArtifactSources;
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.toComponentIdentifier;
 import static org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver.*;
 
+/**
+ * @deprecated use org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
+ */
+@Deprecated
 public class DependencyResultsTransformer {
 
   private static final boolean is31orBetter = GradleVersion.current().getBaseVersion().compareTo(GradleVersion.version("3.1")) >= 0;

@@ -39,8 +39,12 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 import static org.gradle.internal.impldep.com.google.common.base.Predicates.isNull;
 import static org.gradle.internal.impldep.com.google.common.base.Predicates.not;
 import static org.gradle.internal.impldep.com.google.common.collect.Iterables.filter;
-import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.getFiles;
+import static org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.*;
 
+/**
+ * @deprecated use org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
+ */
+@Deprecated
 public class DeprecatedDependencyResolver implements DependencyResolver {
 
   private static final boolean is4OrBetter = GradleVersion.current().getBaseVersion().compareTo(GradleVersion.version("4.0")) >= 0;
@@ -701,14 +705,6 @@ public class DeprecatedDependencyResolver implements DependencyResolver {
     return name;
   }
 
-  public static ModuleComponentIdentifier toComponentIdentifier(ModuleVersionIdentifier id) {
-    return new ModuleComponentIdentifierImpl(id.getGroup(), id.getName(), id.getVersion());
-  }
-
-  public static ModuleComponentIdentifier toComponentIdentifier(@NotNull String group, @NotNull String module, @NotNull String version) {
-    return new ModuleComponentIdentifierImpl(group, module, version);
-  }
-
   private static Set<ExternalDependency> findAllFileDependencies(Collection<Dependency> dependencies, String scope) {
     Set<ExternalDependency> result = new LinkedHashSet<ExternalDependency>();
 
@@ -817,19 +813,6 @@ public class DeprecatedDependencyResolver implements DependencyResolver {
     catch (Exception e) {
       throw new RuntimeException(e);
     }
-  }
-
-
-  @NotNull
-  public static List<File> findArtifactSources(Collection<? extends File> artifactFiles, SourceSetCachedFinder sourceSetFinder) {
-    List<File> artifactSources = new ArrayList<File>();
-    for (File artifactFile : artifactFiles) {
-      Set<File> sources = sourceSetFinder.findSourcesByArtifact(artifactFile.getPath());
-      if (sources != null) {
-        artifactSources.addAll(sources);
-      }
-    }
-    return artifactSources;
   }
 
   public static boolean isProjectDependencyArtifact(ResolvedArtifact artifact) {

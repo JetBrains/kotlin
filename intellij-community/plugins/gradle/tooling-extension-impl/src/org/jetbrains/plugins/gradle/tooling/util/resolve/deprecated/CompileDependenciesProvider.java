@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @deprecated use org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
+ */
+@Deprecated
 public class CompileDependenciesProvider {
   public static final String SCOPE = DependencyResolver.COMPILE_SCOPE;
 
