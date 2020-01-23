@@ -550,12 +550,17 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
 
         if (isEmpty()) {
             structure(head, emptyArray())
-        } else if (head < tail) {
-            @Suppress("UNCHECKED_CAST")
-            structure(head, elementData.sliceArray(head until tail))
+            return
+        }
+
+        val elements = arrayOfNulls<Any?>(size)
+        if (head < tail) {
+            elementData.copyInto(elements, startIndex = head, endIndex = tail)
+            structure(head, elements)
         } else {
-            @Suppress("UNCHECKED_CAST")
-            structure(head - elementData.size, elementData.sliceArray(head until elementData.size).plus(elements = elementData.sliceArray(0 until tail)))
+            elementData.copyInto(elements, startIndex = head)
+            elementData.copyInto(elements, elementData.size - head, startIndex = 0, endIndex = tail)
+            structure(head - elementData.size, elements)
         }
     }
 }
