@@ -99,6 +99,8 @@ class GradleActionWithImportTest : BuildViewMessagesImportingTestCase() {
   fun `test default tasks are not run on import`() {
     importProject(
       """
+        defaultTasks "clean", "build"
+        
         import org.gradle.api.Project;
         import javax.inject.Inject;
         import org.gradle.tooling.provider.model.ToolingModelBuilder;

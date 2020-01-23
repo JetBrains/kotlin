@@ -77,7 +77,9 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
       List<String> taskNames = startParameter.getTaskNames();
       if (taskNames.isEmpty()) {
         startParameter.setTaskNames(null);
-        startParameter.setExcludedTaskNames(Collections.singletonList("help"));
+        List<String> helpTask = Collections.singletonList("help");
+        project.setDefaultTasks(helpTask);
+        startParameter.setExcludedTaskNames(helpTask);
       }
       return null;
     }
