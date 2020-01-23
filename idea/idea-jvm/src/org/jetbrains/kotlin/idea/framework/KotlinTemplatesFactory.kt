@@ -38,6 +38,7 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     override fun getGroups() = arrayOf(KOTLIN_GROUP_NAME)
     override fun getGroupIcon(group: String) = KotlinIcons.SMALL_LOGO
     override fun getParentGroup(group: String?): String = KOTLIN_PARENT_GROUP_NAME
+    override fun getGroupWeight(group: String?): Int = 1
 
     override fun createTemplates(group: String?, context: WizardContext?): Array<out ProjectTemplate> {
         val result = mutableListOf<ProjectTemplate>(
