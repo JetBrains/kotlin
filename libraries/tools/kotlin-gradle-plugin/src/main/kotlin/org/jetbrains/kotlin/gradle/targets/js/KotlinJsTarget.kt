@@ -182,6 +182,7 @@ constructor(
         )
 
         const val LEGACY = "legacy"
+        const val IR = "ir"
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
             attributesSchema.attribute(jsLegacyAttribute)
