@@ -75,11 +75,12 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
                 }
             }
             .expireWith(project) // cancel job when project is disposed
-            .coalesceBy(this@KotlinNativeABICompatibilityChecker) // cancel previous job when new one is submitted
             .withDocumentsCommitted(project)
             .submit(AppExecutorUtil.getAppExecutorService())
-            .onProcessed {
-                backgroundJob = null
+            .also {
+                it.onProcessed {
+                    backgroundJob = null
+                }
             }
     }
 
