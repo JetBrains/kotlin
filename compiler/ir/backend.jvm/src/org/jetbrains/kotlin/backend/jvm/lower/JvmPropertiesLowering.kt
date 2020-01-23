@@ -46,9 +46,11 @@ class JvmPropertiesLowering(private val context: JvmBackendContext) : IrElementT
     private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
         if (declaration is IrProperty)
             ArrayList<IrDeclaration>(4).apply {
+                val field = declaration.backingField
+
                 // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
-                if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
-                    addIfNotNull(declaration.backingField)
+                if ((kind != ClassKind.ANNOTATION_CLASS || field?.isStatic == true) && field?.parent == declaration.parent) {
+                    addIfNotNull(field)
                 }
                 addIfNotNull(declaration.getter)
                 addIfNotNull(declaration.setter)
