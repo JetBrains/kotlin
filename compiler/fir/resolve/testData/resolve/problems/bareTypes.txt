@@ -1,0 +1,10 @@
+FILE: bareTypes.kt
+    public abstract interface A<out T> : R|kotlin/Any| {
+    }
+    public abstract interface MutableA<T> : R|A<T>| {
+        public abstract fun add(x: R|T|): R|kotlin/Unit|
+
+    }
+    public final fun test(a: R|A<kotlin/String>|): R|kotlin/Unit| {
+        (R|<local>/a| as R|MutableA|).<Inapplicable(INAPPLICABLE): [/MutableA.add]>#(String())
+    }

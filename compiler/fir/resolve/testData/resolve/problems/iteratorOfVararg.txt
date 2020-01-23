@@ -1,0 +1,28 @@
+FILE: iteratorOfVararg.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(vararg strings: R|kotlin/Array<kotlin/String>|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val strings: R|kotlin/String| = R|<local>/strings|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun test_1(foo: R|Foo|): R|kotlin/Unit| {
+        lval <range>: R|kotlin/String| = R|<local>/foo|.R|/Foo.strings|
+        lval <iterator>: <ERROR TYPE REF: Unresolved name: iterator> = R|<local>/<range>|.<Unresolved name: iterator>#()
+        while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
+            lval s: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+            R|<local>/s|.<Unresolved name: length>#
+        }
+
+    }
+    public final fun test_2(vararg strings: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        lval <range>: R|kotlin/Array<kotlin/String>| = R|<local>/strings|
+        lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/<range>|.R|FakeOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval s: R|kotlin/String| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+            R|<local>/s|.R|kotlin/String.length|
+        }
+
+    }

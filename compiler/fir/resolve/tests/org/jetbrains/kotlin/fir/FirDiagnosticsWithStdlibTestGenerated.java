@@ -587,6 +587,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("arrayFilterCapturedType.kt")
+        public void testArrayFilterCapturedType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/arrayFilterCapturedType.kt");
+        }
+
         @TestMetadata("classLiteralForParameter.kt")
         public void testClassLiteralForParameter() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/classLiteralForParameter.kt");
@@ -595,6 +600,26 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("cloneArray.kt")
         public void testCloneArray() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/cloneArray.kt");
+        }
+
+        @TestMetadata("delegateTypeMismatch.kt")
+        public void testDelegateTypeMismatch() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/delegateTypeMismatch.kt");
+        }
+
+        @TestMetadata("functionAndFunctionN.kt")
+        public void testFunctionAndFunctionN() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/functionAndFunctionN.kt");
+        }
+
+        @TestMetadata("inapplicableRemoveAll.kt")
+        public void testInapplicableRemoveAll() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/inapplicableRemoveAll.kt");
+        }
+
+        @TestMetadata("toSortedMapWithComparator.kt")
+        public void testToSortedMapWithComparator() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/toSortedMapWithComparator.kt");
         }
 
         @TestMetadata("tryWithLambdaInside.kt")

@@ -1,0 +1,4 @@
+FILE: arrayFilterCapturedType.kt
+    public final fun test(elements: R|kotlin/Array<out kotlin/String?>|): R|kotlin/Unit| {
+        lval filtered: <ERROR TYPE REF: Inapplicable(WRONG_RECEIVER): [kotlin/collections/filterNotNull]> = R|<local>/elements|.<Inapplicable(WRONG_RECEIVER): [kotlin/collections/filterNotNull]>#()
+    }

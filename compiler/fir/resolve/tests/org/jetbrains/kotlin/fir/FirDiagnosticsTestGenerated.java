@@ -1001,9 +1001,24 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("ambiguityOnExtensionFunctions.kt")
+        public void testAmbiguityOnExtensionFunctions() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/ambiguityOnExtensionFunctions.kt");
+        }
+
         @TestMetadata("asImports.kt")
         public void testAsImports() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
+        }
+
+        @TestMetadata("bareTypes.kt")
+        public void testBareTypes() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/bareTypes.kt");
+        }
+
+        @TestMetadata("callableReferenceOnInstance.kt")
+        public void testCallableReferenceOnInstance() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/callableReferenceOnInstance.kt");
         }
 
         @TestMetadata("covariantArrayAsReceiver.kt")
@@ -1021,9 +1036,24 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAmbiguity.kt");
         }
 
+        @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
+        public void testExhaustiveWhenAndFlexibleType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/exhaustiveWhenAndFlexibleType.kt");
+        }
+
+        @TestMetadata("incorrectSuperCall.kt")
+        public void testIncorrectSuperCall() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/incorrectSuperCall.kt");
+        }
+
         @TestMetadata("invokeOfLambdaWithReceiver.kt")
         public void testInvokeOfLambdaWithReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/invokeOfLambdaWithReceiver.kt");
+        }
+
+        @TestMetadata("iteratorOfVararg.kt")
+        public void testIteratorOfVararg() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/iteratorOfVararg.kt");
         }
 
         @TestMetadata("javaAccessorConversion.kt")
@@ -1049,6 +1079,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("nestedClassContructor.kt")
         public void testNestedClassContructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
+        }
+
+        @TestMetadata("noBoundSmartcastAfterContinue.kt")
+        public void testNoBoundSmartcastAfterContinue() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/noBoundSmartcastAfterContinue.kt");
         }
 
         @TestMetadata("propertyFromJavaPlusAssign.kt")

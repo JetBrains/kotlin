@@ -1,0 +1,16 @@
+FILE: ambiguityOnExtensionFunctions.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|A| {
+    }
+    public final val R|A|.name: R|kotlin/String?|
+        public get(): R|kotlin/String?| {
+            ^ String()
+        }
+    public final val R|B?|.name: R|kotlin/String?|
+        public get(): R|kotlin/String?| {
+            ^ String()
+        }
+    public final fun test(b: R|B|): R|kotlin/Unit| {
+        lval id: <ERROR TYPE REF: Ambiguity: name, [/name, /name]> = R|<local>/b|.<Ambiguity: name, [/name, /name]>#
+    }

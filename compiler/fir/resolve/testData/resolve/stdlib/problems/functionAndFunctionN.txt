@@ -1,0 +1,6 @@
+FILE: functionAndFunctionN.kt
+    public final fun takeAnyFun(function: R|kotlin/Function<*>|): R|kotlin/Unit| {
+    }
+    public final fun test(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        <Inapplicable(INAPPLICABLE): [/takeAnyFun]>#(R|<local>/block|)
+    }

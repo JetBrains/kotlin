@@ -1,0 +1,7 @@
+FILE: inapplicableRemoveAll.kt
+    public final fun test(list: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit| {
+        R|<local>/list|.<Ambiguity: removeAll, [kotlin/collections/removeAll, kotlin/collections/removeAll, kotlin/collections/removeAll, kotlin/collections/removeAll]>#(<L> = removeAll@fun <anonymous>(): R|class error: Ambiguity: isEmpty, [kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/text/isEmpty]| {
+            <Unresolved name: it>#.<Ambiguity: isEmpty, [kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/collections/isEmpty, kotlin/text/isEmpty]>#()
+        }
+        )
+    }

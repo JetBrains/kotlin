@@ -1,0 +1,50 @@
+FILE: main.kt
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static enum entry A: R|E| = object : R|E| {
+            private constructor(): R|anonymous| {
+                super<R|E|>()
+            }
+
+        }
+
+        public final static enum entry B: R|E| = object : R|E| {
+            private constructor(): R|anonymous| {
+                super<R|E|>()
+            }
+
+        }
+
+        public final static enum entry C: R|E| = object : R|E| {
+            private constructor(): R|anonymous| {
+                super<R|E|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval e: R|ft<E, E?>!| = Q|Utils|.R|/Utils.getEnum|()
+        lval s: R|kotlin/Unit| = when (R|<local>/e|) {
+            ==($subj$, Q|E|.R|/E.A|) || ==($subj$, Null(null)) ->  {
+                ^test Unit
+            }
+            ==($subj$, Q|E|.R|/E.B|) ->  {
+                String()
+            }
+            ==($subj$, Q|E|.R|/E.C|) ->  {
+                String()
+            }
+        }
+
+        R|<local>/s|.<Unresolved name: length>#
+    }

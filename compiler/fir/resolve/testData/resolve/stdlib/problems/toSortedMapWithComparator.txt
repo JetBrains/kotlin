@@ -1,0 +1,4 @@
+FILE: toSortedMapWithComparator.kt
+    public final fun test(map: R|kotlin/collections/Map<kotlin/String?, kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit| {
+        lval sortedMap: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [kotlin/collections/toSortedMap]> = R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/toSortedMap]>#(R|kotlin/comparisons/nullsLast|<R|kotlin/Any?|>())
+    }
