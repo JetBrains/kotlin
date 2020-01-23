@@ -28,6 +28,7 @@ public class KotlinLanguageConfigurationForm {
     private JPanel bundledCompilerVersionPanel;
     private JTextPane compilerVersion;
     public JCheckBox useNewJ2kCheckBox;
+    public JCheckBox useNewProjectWizardCheckBox;
 
     public KotlinLanguageConfigurationForm() {
         showVerifierDisabledStatus();

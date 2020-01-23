@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUpdater
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinLanguageConfigurationForm
+import org.jetbrains.kotlin.idea.projectWizard.NewProjectWizardService
 import org.jetbrains.kotlin.j2k.J2kConverterExtension
 import javax.swing.JComponent
 
@@ -65,11 +66,13 @@ class KotlinLanguageConfiguration : SearchableConfigurable, Configurable.NoScrol
 
     override fun isModified() =
         form.useNewJ2kCheckBox.isSelected != J2kConverterExtension.isNewJ2k
+                || form.useNewProjectWizardCheckBox.isSelected != NewProjectWizardService.isEnabled
 
     override fun apply() {
         // Selected channel is now saved automatically
 
         J2kConverterExtension.isNewJ2k = form.useNewJ2kCheckBox.isSelected
+        NewProjectWizardService.isEnabled = form.useNewProjectWizardCheckBox.isSelected
     }
 
     private fun setInstalledVersion(installedVersion: String?, installingStatus: String?) {
@@ -79,6 +82,7 @@ class KotlinLanguageConfiguration : SearchableConfigurable, Configurable.NoScrol
 
     override fun createComponent(): JComponent? {
         form.useNewJ2kCheckBox.isSelected = J2kConverterExtension.isNewJ2k
+        form.useNewProjectWizardCheckBox.isSelected = NewProjectWizardService.isEnabled
         form.updateCheckProgressIcon.suspend()
         form.updateCheckProgressIcon.setPaintPassiveIcon(false)
 
