@@ -1567,7 +1567,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
   private String getNotFoundText() {
     return mySelectedTab.getContributor()
-      .map(c -> IdeBundle.message("searcheverywhere.nothing.found.for.contributor.anywhere", c.getFullGroupName()))
+      .map(c -> IdeBundle.message("searcheverywhere.nothing.found.for.contributor.anywhere", 
+                                  c.getFullGroupName().toLowerCase(Locale.ROOT)))
       .orElse(IdeBundle.message("searcheverywhere.nothing.found.for.all.anywhere"));
   }
 
