@@ -4,7 +4,7 @@ String[] ijTestIncludes = ${TEST_NAME_INCLUDES}
 boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10")) >= 0
 boolean skipExecution
 
-gradle.addBuildListener(new BuildListener() {
+gradle.addBuildListener(new BuildAdapter() {
   void	buildFinished(BuildResult result) {
     if(result.failure?.message?.startsWith("Task 'cleanTest' not found in") || result.failure?.message?.startsWith("Task 'test' not found in")) {
       IJTestEventLogger.logConfigurationError(
@@ -16,10 +16,6 @@ gradle.addBuildListener(new BuildListener() {
       )
     }
   }
-  void	buildStarted(Gradle gradle){}
-  void	projectsEvaluated(Gradle gradle){}
-  void	projectsLoaded(Gradle gradle){}
-  void	settingsEvaluated(Settings settings){}
 })
 
 for (incl in ijTestIncludes) {
