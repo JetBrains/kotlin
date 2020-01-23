@@ -15,6 +15,9 @@ import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep
 import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
 import org.jetbrains.kotlin.idea.projectWizard.NewProjectWizardService
+import org.jetbrains.kotlin.idea.projectWizard.ProjectCreationStats
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
@@ -42,6 +45,7 @@ As EmptyModuleBuilder has not expert panel option which are redundant
  */
 class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     private val wizard = IdeWizard(Plugins.allPlugins, IdeaServices.PROJECT_INDEPENDENT, isUnitTestMode = false)
+    private val uiEditorUsagesStats = UiEditorUsageStats()
 
     override fun isOpenProjectSettingsAfter(): Boolean = false
     override fun canCreateModule(): Boolean = false
@@ -69,7 +73,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         modulesProvider: ModulesProvider
     ): Array<ModuleWizardStep> {
         this.wizardContext = wizardContext
-        return arrayOf(ModuleNewWizardSecondStep(wizard))
+        return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats))
     }
 
     override fun commit(
@@ -86,6 +90,16 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             val errorMessages = errors.joinToString(separator = "\n") { it.message }
             Messages.showErrorDialog(project, errorMessages, "The following errors arose during project generation")
         }.isSuccess
+        if (success) {
+            val projectCreationStats = ProjectCreationStats(
+                wizard.projectTemplate!!.title,
+                wizard.buildSystemType!!.text
+            )
+            WizardStatsService.logDataOnProjectGenerated(
+                projectCreationStats,
+                uiEditorUsagesStats
+            )
+        }
         return when {
             !success -> null
             wizard.buildSystemType == BuildSystemType.Jps -> runWriteAction {
@@ -207,8 +221,11 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
     )
 }
 
-class ModuleNewWizardSecondStep(wizard: IdeWizard) : WizardStep(wizard, GenerationPhase.SECOND_STEP) {
-    private val component = SecondStepWizardComponent(wizard)
+class ModuleNewWizardSecondStep(
+    wizard: IdeWizard,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : WizardStep(wizard, GenerationPhase.SECOND_STEP) {
+    private val component = SecondStepWizardComponent(wizard, uiEditorUsagesStats)
     override fun getComponent(): JComponent = component.component
 
     override fun _init() {

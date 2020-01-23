@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBTabbedPane
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.configuratorSettings
@@ -15,13 +16,16 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
-class ModuleSettingsComponent(valuesReadingContext: ValuesReadingContext) : DynamicComponent(valuesReadingContext) {
+class ModuleSettingsComponent(
+    valuesReadingContext: ValuesReadingContext,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : DynamicComponent(valuesReadingContext) {
     private val validateModuleName =
         StringValidators.shouldNotBeBlank("Module name") and
                 StringValidators.shouldBeValidIdentifier("Module Name", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
 
     private val moduleConfiguratorSettingsList = SettingsList(emptyList(), valuesReadingContext).asSubComponent()
-    private val templateComponent = TemplatesComponent(valuesReadingContext).asSubComponent()
+    private val templateComponent = TemplatesComponent(valuesReadingContext, uiEditorUsagesStats).asSubComponent()
 
     private val tabPanel = JBTabbedPane().apply {
         add("Template", templateComponent.component)

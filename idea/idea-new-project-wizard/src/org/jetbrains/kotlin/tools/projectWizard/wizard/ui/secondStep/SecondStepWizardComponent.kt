@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -11,10 +12,13 @@ import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 
-class SecondStepWizardComponent(wizard: IdeWizard) : WizardStepComponent(wizard.valuesReadingContext) {
+class SecondStepWizardComponent(
+    wizard: IdeWizard,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : WizardStepComponent(wizard.valuesReadingContext) {
     private val moduleEditorSubStep =
-        ModulesEditorSubStep(wizard.valuesReadingContext, ::onNodeSelected).asSubComponent()
-    private val templatesSubStep = ModuleSettingsSubStep(wizard).asSubComponent()
+        ModulesEditorSubStep(wizard.valuesReadingContext, uiEditorUsagesStats, ::onNodeSelected).asSubComponent()
+    private val templatesSubStep = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
 
     override val component = splitterFor(
         moduleEditorSubStep.component,
@@ -29,10 +33,12 @@ class SecondStepWizardComponent(wizard: IdeWizard) : WizardStepComponent(wizard.
 
 class ModulesEditorSubStep(
     valuesReadingContext: ValuesReadingContext,
+    uiEditorUsagesStats: UiEditorUsageStats,
     onNodeSelected: (data: DisplayableSettingItem?) -> Unit
 ) : SubStep(valuesReadingContext) {
     private val moduleSettingComponent = ModulesEditorComponent(
         valuesReadingContext,
+        uiEditorUsagesStats,
         onNodeSelected
     ).asSubComponent()
 
@@ -47,9 +53,12 @@ class ModulesEditorSubStep(
 }
 
 
-class ModuleSettingsSubStep(wizard: IdeWizard) : SubStep(wizard.valuesReadingContext) {
+class ModuleSettingsSubStep(
+    wizard: IdeWizard,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : SubStep(wizard.valuesReadingContext) {
     private val sourcesetSettingsComponent = SourcesetSettingsComponent(wizard.valuesReadingContext).asSubComponent()
-    private val moduleSettingsComponent = ModuleSettingsComponent(valuesReadingContext).asSubComponent()
+    private val moduleSettingsComponent = ModuleSettingsComponent(valuesReadingContext, uiEditorUsagesStats).asSubComponent()
     private val nothingSelectedComponent = NothingSelectedComponent().asSubComponent()
 
     private val panel = panel {

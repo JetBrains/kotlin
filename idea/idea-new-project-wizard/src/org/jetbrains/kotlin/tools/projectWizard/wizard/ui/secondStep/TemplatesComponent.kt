@@ -8,10 +8,10 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.StatusText
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
@@ -21,9 +21,13 @@ import java.awt.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class TemplatesComponent(valuesReadingContext: ValuesReadingContext) : DynamicComponent(valuesReadingContext) {
+class TemplatesComponent(
+    valuesReadingContext: ValuesReadingContext,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : DynamicComponent(valuesReadingContext) {
     private val chooseTemplateComponent: ChooseTemplateComponent =
         ChooseTemplateComponent(valuesReadingContext) { template ->
+            uiEditorUsagesStats.moduleTemplatesSet++
             module?.template = template
             switchState(template)
         }
@@ -38,6 +42,7 @@ class TemplatesComponent(valuesReadingContext: ValuesReadingContext) : DynamicCo
                 null
             ) == Messages.OK
         ) {
+            uiEditorUsagesStats.moduleTemplatesRemoved++
             module?.template = null
             switchState(null)
         }
