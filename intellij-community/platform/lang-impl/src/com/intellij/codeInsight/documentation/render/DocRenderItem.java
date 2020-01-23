@@ -12,6 +12,8 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.event.EditorFactoryEvent;
+import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.editor.event.VisibleAreaEvent;
 import com.intellij.openapi.editor.event.VisibleAreaListener;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -119,16 +121,18 @@ class DocRenderItem {
       }
       if (editor.getUserData(LISTENERS_DISPOSABLE) == null) {
         MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
-        connection.setDefaultHandler((event, params) -> {
-          if (editor.isDisposed()) {
-            Disposer.dispose(connection);
-          }
-          else {
-            updateInlays(editor);
-          }
-        });
+        connection.setDefaultHandler((event, params) -> updateInlays(editor));
         connection.subscribe(EditorColorsManager.TOPIC);
         connection.subscribe(LafManagerListener.TOPIC);
+        EditorFactory.getInstance().addEditorFactoryListener(new EditorFactoryListener() {
+          @Override
+          public void editorReleased(@NotNull EditorFactoryEvent event) {
+            if (event.getEditor() == editor) {
+              // this ensures renderers are not kept for the released editors
+              setItemsToEditor(editor, new DocRenderPassFactory.Items(), false);
+            }
+          }
+        }, connection);
         editor.putUserData(LISTENERS_DISPOSABLE, connection);
       }
     }
