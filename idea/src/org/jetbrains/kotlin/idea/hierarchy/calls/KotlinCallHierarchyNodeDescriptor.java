@@ -101,7 +101,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
         if (changes && myIsBase) {
             LayeredIcon icon = new LayeredIcon(2);
             icon.setIcon(newIcon, 0);
-            icon.setIcon(AllIcons.Hierarchy.Base, 1, -AllIcons.Hierarchy.Base.getIconWidth() / 2, 0);
+            icon.setIcon(AllIcons.General.Modified, 1, -AllIcons.General.Modified.getIconWidth() / 2, 0);
             newIcon = icon;
         }
         setIcon(newIcon);
