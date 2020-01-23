@@ -20,6 +20,16 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
 
     private val runTaskName = disambiguateCamelCased("run")
 
+    override fun produceKotlinLibrary() {
+        super.produceKotlinLibrary()
+        target.irTarget?.nodejs?.produceKotlinLibrary()
+    }
+
+    override fun produceExecutable() {
+        super.produceExecutable()
+        target.irTarget?.nodejs?.produceExecutable()
+    }
+
     override fun configure() {
         super.configure()
         nodejsProducingConfiguredHandlers.forEach { handler ->

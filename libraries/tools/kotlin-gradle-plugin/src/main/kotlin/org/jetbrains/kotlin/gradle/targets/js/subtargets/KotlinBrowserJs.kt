@@ -43,6 +43,16 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
+    override fun produceKotlinLibrary() {
+        super.produceKotlinLibrary()
+        target.irTarget?.browser?.produceKotlinLibrary()
+    }
+
+    override fun produceExecutable() {
+        super.produceExecutable()
+        target.irTarget?.browser?.produceExecutable()
+    }
+
     override fun configure() {
         super.configure()
         browserProducingConfiguredHandlers.forEach { handler ->
