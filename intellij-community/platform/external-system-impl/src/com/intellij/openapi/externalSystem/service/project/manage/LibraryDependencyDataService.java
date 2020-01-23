@@ -229,13 +229,9 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
           return libraryOrderEntry;
         }
         // LibraryImpl.equals will return true for unrelated module library if it's just created and empty
-        if (library.equals(libraryOrderEntry.getLibrary())) {
-          if (libraryOrderEntry.getScope() == scope) {
-            candidate = libraryOrderEntry;
-          }
-          else if (candidate == null) {
-            candidate = libraryOrderEntry;
-          }
+        if (library.equals(libraryOrderEntry.getLibrary()) &&
+            (candidate == null || libraryOrderEntry.getScope() == scope)) {
+          candidate = libraryOrderEntry;
         }
       }
     }
