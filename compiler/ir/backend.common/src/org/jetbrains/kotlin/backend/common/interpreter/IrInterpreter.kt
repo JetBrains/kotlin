@@ -89,13 +89,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrTry -> interpretTry(this, data)
                 is IrCatch -> interpretCatch(this, data)
                 is IrThrow -> interpretThrow(this, data)
+                is IrStringConcatenation -> interpretStringConcatenation(this, data)
 
                 else -> TODO("${this.javaClass} not supported")
             }
 
             return when (code) {
                 Code.RETURN -> when (this) { // TODO check label
-                    is IrCall, is IrReturnableBlock -> Code.NEXT
+                    is IrCall, is IrReturnableBlock, is IrFunctionImpl -> Code.NEXT
                     else -> Code.RETURN
                 }
                 Code.BREAK_WHEN -> when (this) {
@@ -509,5 +510,29 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private fun interpretThrow(expression: IrThrow, data: Frame): Code {
         expression.value.interpret(data)
         return Code.EXCEPTION
+    }
+
+    private fun interpretStringConcatenation(expression: IrStringConcatenation, data: Frame): Code {
+        val result = StringBuilder()
+        expression.arguments.forEach {
+            it.interpret(data).also { code -> if (code != Code.NEXT) return code }
+            result.append(
+                when (val returnValue = data.popReturnValue()) {
+                    is Primitive<*> -> returnValue.value.toString()
+                    is Wrapper -> returnValue.value.toString()
+                    is Complex -> {
+                        val toStringFun = returnValue.getToStringFunction()
+                        val newFrame = InterpreterFrame(mutableListOf(Variable(toStringFun.symbol.getReceiver()!!, returnValue)))
+                        val code = toStringFun.body?.let { toStringFun.interpret(newFrame) } ?: calculateOverridden(toStringFun, newFrame)
+                        if (code != Code.NEXT) return code
+                        (newFrame.popReturnValue() as Primitive<*>).value.toString()
+                    }
+                    else -> throw AssertionError("$returnValue cannot be used in StringConcatenation expression")
+                }
+            )
+        }
+
+        data.pushReturnValue(result.toString().toState(expression.type))
+        return Code.NEXT
     }
 }

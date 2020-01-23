@@ -122,6 +122,12 @@ open class Complex(override var irClass: IrClass, override val fields: MutableLi
             .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
     }
 
+    fun getToStringFunction(): IrFunctionImpl {
+        return irClass.declarations.filterIsInstance<IrFunction>()
+            .filter { it.descriptor.name.asString() == "toString" }
+            .first { it.descriptor.valueParameters.isEmpty() } as IrFunctionImpl
+    }
+
     override fun copy(): State {
         return Complex(irClass, fields).apply {
             this@apply.superType = this@Complex.superType
