@@ -283,6 +283,7 @@ class DocRenderItem {
 
     @Override
     public void visibleAreaChanged(@NotNull VisibleAreaEvent e) {
+      if (e.getNewRectangle().isEmpty()) return; // ignore switching between tabs
       Editor editor = e.getEditor();
       int newWidth = DocRenderer.calcInlayWidth(editor);
       AffineTransform transform = getTransform(editor);

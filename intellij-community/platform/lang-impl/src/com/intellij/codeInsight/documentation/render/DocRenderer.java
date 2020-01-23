@@ -28,6 +28,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 class DocRenderer implements EditorCustomElementRenderer {
@@ -106,7 +109,13 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   static int calcInlayWidth(@NotNull Editor editor) {
-    return Math.max(scale(MIN_WIDTH), Math.min(scale(MAX_WIDTH), editor.getScrollingModel().getVisibleArea().width));
+    int availableWidth = editor.getScrollingModel().getVisibleArea().width;
+    if (availableWidth <= 0) {
+      // if editor is not shown yet, we create the inlay with maximum possible width,
+      // assuming that there's a higher probability that editor will be shown with larger width than with smaller width
+      return MAX_WIDTH;
+    }
+    return Math.max(scale(MIN_WIDTH), Math.min(scale(MAX_WIDTH), availableWidth));
   }
 
   private int calcInlayStartX() {
@@ -124,7 +133,11 @@ class DocRenderer implements EditorCustomElementRenderer {
       myPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
       myPane.setEditorKit(createEditorKit());
       myPane.setBorder(JBUI.Borders.empty());
-      myPane.setFont(myPane.getFont().deriveFont((float)JBUIScale.scale(DocumentationComponent.getQuickDocFontSize().getSize())));
+      Map<TextAttribute, Object> fontAttributes = new HashMap<>();
+      fontAttributes.put(TextAttribute.SIZE, JBUIScale.scale(DocumentationComponent.getQuickDocFontSize().getSize()));
+      // disable kerning for now - laying out all fragments in a file with it takes too much time
+      fontAttributes.put(TextAttribute.KERNING, 0);
+      myPane.setFont(myPane.getFont().deriveFont(fontAttributes));
       myPane.setText(myItem.textToRender);
       inlay.putUserData(RECREATE_COMPONENT, null);
     }
