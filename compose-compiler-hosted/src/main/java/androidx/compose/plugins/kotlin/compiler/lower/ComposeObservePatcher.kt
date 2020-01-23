@@ -123,7 +123,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
     }
 
     private fun ResolvedCall<*>.isParameterless(): Boolean {
-        return dispatchReceiver != null && extensionReceiver != null && valueArguments.isEmpty()
+        return dispatchReceiver == null && extensionReceiver == null && valueArguments.isEmpty()
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
