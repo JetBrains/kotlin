@@ -330,8 +330,7 @@ val case_17 = if (nullableIntProperty === <!DEBUG_INFO_CONSTANT!>implicitNullabl
 
 /*
  * TESTCASE NUMBER: 18
- * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-35668, KT-35668
+ * ISSUES: KT-35668
  */
 fun case_18(a: DeepObject.A.B.C.D.E.F.G.J?, b: Boolean) {
     val x = null
@@ -1178,7 +1177,6 @@ fun case_65(x: Any?, z: Nothing?) {
 
 /*
  * TESTCASE NUMBER: 66
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35668
  */
 fun case_66(x: Any?, z1: Nothing?, z2: Nothing?, b: Boolean) {
@@ -1244,7 +1242,6 @@ fun case_68(x: Any?, z: Nothing?) {
 
 /*
  * TESTCASE NUMBER: 69
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35668
  */
 fun case_69(x: Any?, z: Nothing?) {
@@ -1328,12 +1325,12 @@ fun case_72(t: Any?, z1: Nothing?) {
     var z2 = null
 
     if (t is Interface1? && t != <!DEBUG_INFO_CONSTANT!>z1<!> ?: <!DEBUG_INFO_CONSTANT!>z2<!> && t is Interface2?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!><!UNSAFE_CALL!>.<!>itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any & kotlin.Any?")!>t<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("{Any? & Interface1? & Interface2?}")!>it<!><!UNSAFE_CALL!>.<!>itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("{Any? & Interface1? & Interface2?}")!>it<!><!UNSAFE_CALL!>.<!>itest2() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest2() }
     }
 }
 
