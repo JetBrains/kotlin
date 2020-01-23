@@ -640,7 +640,7 @@ public class GradleInstallationManager {
       GradleInstallationManager installationManager = ServiceManager.getService(GradleInstallationManager.class);
       File gradleHome = installationManager.getWrappedGradleHome(settings.getExternalProjectPath(), wrapperConfiguration);
       if (gradleHome != null) {
-        String gradleVersion = getGradleVersion(settings.getGradleHome());
+        String gradleVersion = getGradleVersion(gradleHome.getPath());
         if (gradleVersion != null) {
           version = getGradleVersionSafe(gradleVersion);
         }
