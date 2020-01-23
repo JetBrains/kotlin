@@ -61,7 +61,6 @@ import java.util.stream.Collectors;
 public final class StubIndexImpl extends StubIndexEx implements PersistentStateComponent<StubIndexState> {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
   static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
-  static boolean DO_TRACE_STUB_INDEX_UPDATE = SystemProperties.getBooleanProperty("idea.trace.stub.index.update", false);
 
   private static class AsyncState {
     private final Map<StubIndexKey<?, ?>, UpdatableIndex<?, Void, FileContent>> myIndices = new THashMap<>();
@@ -695,10 +694,11 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                               @NotNull final Map<K, StubIdList> oldInputData,
                               @NotNull final Map<K, StubIdList> newInputData) {
     try {
-      if (DO_TRACE_STUB_INDEX_UPDATE) {
+      if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
         LOG.info("stub index '" + key + "' update: " + fileId +
                  " old = " + Arrays.toString(oldInputData.keySet().toArray()) +
-                 " new  = " + Arrays.toString(newInputData.keySet().toArray()));
+                 " new  = " + Arrays.toString(newInputData.keySet().toArray()) +
+                 " updated_id = " + System.identityHashCode(newInputData));
       }
       final UpdatableIndex<K, Void, FileContent> index = getIndex(key);
       if (index == null) return;
@@ -707,6 +707,11 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         protected boolean iterateKeys(@NotNull KeyValueUpdateProcessor<? super K, ? super Void> addProcessor,
                                       @NotNull KeyValueUpdateProcessor<? super K, ? super Void> updateProcessor,
                                       @NotNull RemovedKeyProcessor<? super K> removeProcessor) throws StorageException {
+
+          if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+            LOG.info("iterating keys updated_id = " + System.identityHashCode(newInputData));
+          }
+
           boolean modified = false;
 
           for (K oldKey : oldInputData.keySet()) {
@@ -721,6 +726,10 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
               addProcessor.process(oldKey, null, fileId);
               if (!modified) modified = true;
             }
+          }
+
+          if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+            LOG.info("keys iteration finished updated_id = " + System.identityHashCode(newInputData) + "; modified = " + modified);
           }
 
           return modified;

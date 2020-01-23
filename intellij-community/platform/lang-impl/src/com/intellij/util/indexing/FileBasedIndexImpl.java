@@ -1697,4 +1697,5 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       return extension instanceof PsiDependentIndex;
     }
   }
+  public static boolean DO_TRACE_STUB_INDEX_UPDATE = SystemProperties.getBooleanProperty("idea.trace.stub.index.update", false);
 }

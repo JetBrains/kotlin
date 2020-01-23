@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
+import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.StorageException;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
@@ -68,7 +69,7 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
                                                                         ? Collections.emptyMap()
                                                                         : newSerializedStubTree.getStubIndicesValueMap();
     Collection<StubIndexKey> affectedIndexes = getAffectedIndices(previousStubIndicesValueMap, newStubIndicesValueMap);
-    if (StubIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+    if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
       StubIndexImpl.LOG.info("stub indexes update: file = " + myInputId + " indexes " + affectedIndexes);
     }
     updateStubIndices(

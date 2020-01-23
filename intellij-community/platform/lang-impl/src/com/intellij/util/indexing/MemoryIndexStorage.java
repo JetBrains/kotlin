@@ -67,6 +67,9 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     assert wasEnabled != enabled;
 
     myBufferingEnabled = enabled;
+    if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+      FileBasedIndexImpl.LOG.info("buffering state changed: " + myIndexId + "; enabled = " + enabled);
+    }
     for (BufferingStateListener listener : myListeners) {
       listener.bufferingStateChanged(enabled);
     }
