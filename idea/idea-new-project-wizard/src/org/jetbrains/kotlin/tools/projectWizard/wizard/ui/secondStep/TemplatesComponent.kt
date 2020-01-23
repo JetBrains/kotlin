@@ -38,6 +38,7 @@ class TemplatesComponent(valuesReadingContext: ValuesReadingContext) : DynamicCo
                 null
             ) == Messages.OK
         ) {
+            module?.template = null
             switchState(null)
         }
     }
