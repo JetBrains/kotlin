@@ -298,6 +298,16 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ResolutionMode): CompositeTransformResult<FirSimpleFunction> {
+        if (simpleFunction.resolvePhase == transformerPhase) return simpleFunction.compose()
+        if (simpleFunction.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
+            simpleFunction.replaceResolvePhase(transformerPhase)
+            return simpleFunction.compose()
+        }
+        val returnTypeRef = simpleFunction.returnTypeRef
+        if ((returnTypeRef !is FirImplicitTypeRef) && implicitTypeOnly) {
+            return simpleFunction.compose()
+        }
+
         return withScopeCleanup(topLevelScopes) {
             prepareTypeParameterOwnerForBodyResolve(simpleFunction)
             val containingDeclaration = components.containerIfAny
@@ -306,10 +316,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 prepareSignatureForBodyResolve(simpleFunction)
                 simpleFunction.transformStatus(this, simpleFunction.resolveStatus(simpleFunction.status).mode())
             }
-            val returnTypeRef = simpleFunction.returnTypeRef
-            if ((returnTypeRef !is FirImplicitTypeRef) && implicitTypeOnly) {
-                return@withScopeCleanup simpleFunction.compose()
-            }
+
             withFullBodyResolve {
                 if (returnTypeRef is FirImplicitTypeRef) {
                     simpleFunction.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
