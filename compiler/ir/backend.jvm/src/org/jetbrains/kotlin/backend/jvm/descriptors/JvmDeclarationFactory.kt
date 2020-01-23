@@ -181,7 +181,6 @@ class JvmDeclarationFactory(
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmDeclarationFactory, oldParent, oldParent.thisReceiver!!)
                     ?.patchDeclarationParents(this) as IrExpressionBody?
-                (this as IrFieldImpl).metadata = oldField.metadata
             }
         }
     }
