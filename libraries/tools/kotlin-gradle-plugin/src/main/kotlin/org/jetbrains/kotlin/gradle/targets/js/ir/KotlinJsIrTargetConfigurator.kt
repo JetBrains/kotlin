@@ -48,10 +48,10 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun buildCompilationProcessor(compilation: KotlinJsIrCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
-        return KotlinJsIrSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
+        return KotlinJsIrSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
     }
 
-    override fun createJarTasks(target: KotlinOnlyTarget<KotlinJsIrCompilation>): Pair<String, Zip> {
+    override fun createJarTasks(target: KotlinJsIrTarget): Pair<String, Zip> {
         val (_, task) = super.createJarTasks(target)
         task.archiveExtension.set(KLIB_TYPE)
 
