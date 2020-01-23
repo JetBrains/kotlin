@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
@@ -51,20 +52,31 @@ internal class KotlinRootNpmResolver internal constructor(
     val compilations: Collection<KotlinJsCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
 
-    fun findDependentResolver(src: Project, target: Project): KotlinCompilationNpmResolver? {
+    fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
         // todo: proper finding using KotlinTargetComponent.findUsageContext
         val targetResolver = this[target]
         val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME }
 
         return if (mainCompilations.isNotEmpty()) {
-            if (mainCompilations.size > 1) {
+            //TODO[Ilya Goncharov] Hack for Mixed mode of legacy and IR tooling
+            if (mainCompilations.size == 2) {
+                check(
+                    mainCompilations[0].compilation is KotlinJsIrCompilation
+                            || mainCompilations[1].compilation is KotlinJsIrCompilation
+                ) {
+                    "Cannot resolve project dependency $src -> $target." +
+                            "Dependency to project with multiple js compilation not supported yet."
+                }
+            }
+
+            if (mainCompilations.size > 2) {
                 error(
                     "Cannot resolve project dependency $src -> $target." +
                             "Dependency to project with multiple js compilation not supported yet."
                 )
             }
 
-            mainCompilations.single()
+            mainCompilations
         } else null
     }
 

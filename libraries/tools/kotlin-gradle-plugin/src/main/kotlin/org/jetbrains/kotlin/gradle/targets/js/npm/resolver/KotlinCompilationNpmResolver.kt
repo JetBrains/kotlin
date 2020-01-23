@@ -184,10 +184,10 @@ internal class KotlinCompilationNpmResolver(
                     val dependentProject = project.findProject(componentIdentifier.projectPath)
                         ?: error("Cannot find project ${componentIdentifier.projectPath}")
 
-                    val dependentResolver = resolver.findDependentResolver(project, dependentProject)
-                    if (dependentResolver != null) {
-                        internalDependencies.add(dependentResolver)
-                    }
+                    resolver.findDependentResolver(project, dependentProject)
+                        ?.forEach { dependentResolver ->
+                            internalDependencies.add(dependentResolver)
+                        }
                 } else {
                     externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
                 }
