@@ -52,6 +52,9 @@ class KotlinIDERenderLogTest : AbstractKotlinUastLightCodeInsightFixtureTest(), 
     fun testEnumValueMembers() = doTest("EnumValueMembers")
 
     @Test
+    fun testEnumValuesConstructors() = doTest("EnumValuesConstructors")
+
+    @Test
     fun testStringTemplate() = doTest("StringTemplate")
 
     @Test
