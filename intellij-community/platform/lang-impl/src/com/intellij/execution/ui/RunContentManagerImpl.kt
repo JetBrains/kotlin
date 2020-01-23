@@ -97,9 +97,6 @@ class RunContentManagerImpl(private val project: Project) : RunContentManager {
 
   // must be called on EDT
   private fun init() {
-    val dashboardManager = RunDashboardManager.getInstance(project)
-    dashboardManager.updateDashboard(true)
-    initToolWindow(null, dashboardManager.toolWindowId, dashboardManager.toolWindowIcon, dashboardManager.dashboardContentManager)
     project.messageBus.connect().subscribe(ToolWindowManagerListener.TOPIC, object : ToolWindowManagerListener {
       override fun stateChanged(toolWindowManager: ToolWindowManager) {
         toolWindowIdZBuffer.retainAll(toolWindowManager.toolWindowIdSet)
@@ -262,8 +259,8 @@ class RunContentManagerImpl(private val project: Project) : RunContentManager {
         }
 
         override fun processTerminated(event: ProcessEvent) {
-          ApplicationManager.getApplication().invokeLater {
-            val manager = getContentManagerByToolWindowId(toolWindowId) ?: return@invokeLater
+          AppUIUtil.invokeLaterIfProjectAlive(project) {
+            val manager = getContentManagerByToolWindowId(toolWindowId) ?: return@invokeLaterIfProjectAlive
             val alive = isAlive(manager)
             setToolWindowIcon(alive, toolWindow!!)
             val icon = descriptor.icon
@@ -306,6 +303,11 @@ class RunContentManagerImpl(private val project: Project) : RunContentManager {
   }
 
   private fun getContentManagerByToolWindowId(toolWindowId: String): ContentManager? {
+    project.serviceIfCreated<RunDashboardManager>()?.let {
+      if (it.toolWindowId == toolWindowId) {
+        return if (toolWindowIdToBaseIcon.contains(toolWindowId)) it.dashboardContentManager else null
+      }
+    }
     return getToolWindowManager().getToolWindow(toolWindowId)?.contentManagerIfCreated
   }
 
@@ -352,7 +354,15 @@ class RunContentManagerImpl(private val project: Project) : RunContentManager {
   }
 
   private fun getOrCreateContentManagerForToolWindow(id: String, executor: Executor): ContentManager {
-    return getContentManagerByToolWindowId(id) ?: return registerToolWindow(executor, getToolWindowManager())
+    val contentManager = getContentManagerByToolWindowId(id)
+    if (contentManager != null) return contentManager
+
+    val dashboardManager = RunDashboardManager.getInstance(project)
+    if (dashboardManager.toolWindowId == id) {
+      initToolWindow(null, dashboardManager.toolWindowId, dashboardManager.toolWindowIcon, dashboardManager.dashboardContentManager)
+      return dashboardManager.dashboardContentManager
+    }
+    return registerToolWindow(executor, getToolWindowManager())
   }
 
   override fun getToolWindowByDescriptor(descriptor: RunContentDescriptor): ToolWindow? {
@@ -368,21 +378,17 @@ class RunContentManagerImpl(private val project: Project) : RunContentManager {
   }
 
   private inline fun processToolWindowContentManagers(processor: (ToolWindow, ContentManager) -> Unit) {
-    processToolWindows { toolWindow ->
-      toolWindow.contentManagerIfCreated?.let {
-        processor(toolWindow, it)
-      }
-    }
-  }
-
-  private inline fun processToolWindows(processor: (ToolWindow) -> Unit) {
     val toolWindowManager = getToolWindowManager()
     for (executor in Executor.EXECUTOR_EXTENSION_NAME.extensionList) {
-      processor(toolWindowManager.getToolWindow(executor.id) ?: continue)
+      val toolWindow = toolWindowManager.getToolWindow(executor.id) ?: continue
+      processor(toolWindow, toolWindow.contentManagerIfCreated ?: continue)
     }
 
     project.serviceIfCreated<RunDashboardManager>()?.let {
-      processor(toolWindowManager.getToolWindow(it.toolWindowId) ?: return)
+      val toolWindowId = it.toolWindowId
+      if (toolWindowIdToBaseIcon.contains(toolWindowId)) {
+        processor(toolWindowManager.getToolWindow(toolWindowId) ?: return, it.dashboardContentManager)
+      }
     }
   }
 
@@ -470,11 +476,12 @@ class RunContentManagerImpl(private val project: Project) : RunContentManager {
     }
   }
 
-  private fun updateToolWindowIcon(contentManager: ContentManager, alive: Boolean) {
-    val dataProvider = DataManager.getDataProvider(contentManager.component) ?: return
-    val toolWindow = PlatformDataKeys.TOOL_WINDOW.getData(dataProvider) ?: return
-    if (toolWindow.contentManagerIfCreated == contentManager) {
-      setToolWindowIcon(alive, toolWindow)
+  private fun updateToolWindowIcon(contentManagerToUpdate: ContentManager, alive: Boolean) {
+    processToolWindowContentManagers { toolWindow, contentManager ->
+      if (contentManagerToUpdate == contentManager) {
+        setToolWindowIcon(alive, toolWindow)
+        return
+      }
     }
   }
 
@@ -591,12 +598,7 @@ private fun canReuseContent(c: Content, executionId: Long): Boolean {
 }
 
 private fun getToolWindowIdForRunner(executor: Executor, descriptor: RunContentDescriptor?): String {
-  return if (descriptor != null && descriptor.contentToolWindowId != null) {
-    descriptor.contentToolWindowId!!
-  }
-  else {
-    executor.toolWindowId
-  }
+  return descriptor?.contentToolWindowId ?: executor.toolWindowId
 }
 
 private fun createNewContent(descriptor: RunContentDescriptor, executor: Executor): Content {
