@@ -51,10 +51,9 @@ abstract class TrailingCommaVisitor : KtTreeVisitorVoid() {
     }
 
     override fun visitElement(element: PsiElement) {
-        if (recursively)
-            super.visitElement(element)
-        else
-            ProgressIndicatorProvider.checkCanceled()
+        ProgressIndicatorProvider.checkCanceled()
+
+        if (recursively) super.visitElement(element)
     }
 
     protected abstract fun process(commaOwner: KtElement)
