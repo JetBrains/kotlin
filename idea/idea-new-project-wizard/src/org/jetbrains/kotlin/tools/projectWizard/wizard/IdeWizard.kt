@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaWizardService
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -36,6 +38,8 @@ class IdeWizard(
     var groupId by setting(StructurePlugin::groupId.reference)
     var artifactId by setting(StructurePlugin::artifactId.reference)
     var buildSystemType by setting(BuildSystemPlugin::type.reference)
+
+    val projectTemplate by setting(ProjectTemplatesPlugin::template.reference)
 
     private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>) =
         object : ReadWriteProperty<Any?, V?> {

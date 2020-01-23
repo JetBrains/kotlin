@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
 import com.intellij.ui.JBColor
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ListSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
@@ -18,6 +19,7 @@ import javax.swing.JComponent
 
 class ModulesEditorComponent(
     valuesReadingContext: ValuesReadingContext,
+    uiEditorUsagesStats: UiEditorUsageStats,
     oneEntrySelected: (data: DisplayableSettingItem?) -> Unit
 ) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, valuesReadingContext) {
     private val tree: ModulesEditorTree =
@@ -37,7 +39,7 @@ class ModulesEditorComponent(
             }
         )
 
-    private val model = TargetsModel(tree, ::value, valuesReadingContext.context)
+    private val model = TargetsModel(tree, ::value, valuesReadingContext.context, uiEditorUsagesStats)
 
     override fun onInit() {
         super.onInit()

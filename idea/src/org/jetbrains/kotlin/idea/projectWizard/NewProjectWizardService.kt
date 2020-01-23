@@ -14,6 +14,9 @@ object NewProjectWizardService {
     var isEnabled
         get() = PropertiesComponent.getInstance().getBoolean(optionName, enabledByDefault)
         set(value) {
+            if (value != isEnabled) {
+                WizardStatsService.logWizardStatusChanged(isEnabled = value)
+            }
             PropertiesComponent.getInstance().setValue(optionName, value, enabledByDefault)
         }
 }
