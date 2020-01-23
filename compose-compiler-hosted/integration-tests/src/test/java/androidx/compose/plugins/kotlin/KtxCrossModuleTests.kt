@@ -88,6 +88,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
+                    "x/C.kt" to """
+                    fun ghi() {
+                        abc {}
+                    }
+                    """,
                     "x/A.kt" to """
                     inline fun abc(fn: () -> Unit) {
                         fn()
@@ -97,7 +102,125 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     fun def() {
                         abc {}
                     }
+                    """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
                 """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testNestedInlineIssue(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/C.kt" to """
+                    fun ghi() {
+                        abc {
+                            abc {
+
+                            }
+                        }
+                    }
+                    """,
+                    "x/A.kt" to """
+                    inline fun abc(fn: () -> Unit) {
+                        fn()
+                    }
+                    """,
+                    "x/B.kt" to """
+                    fun def() {
+                        abc {
+                            abc {
+
+                            }
+                        }
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testComposerIntrinsicInline(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/C.kt" to """
+                    import androidx.compose.Composable
+
+                    @Composable
+                    fun ghi() {
+                        val x = abc()
+                        print(x)
+                    }
+                    """,
+                    "x/A.kt" to """
+                    import androidx.compose.Composable
+                    import androidx.compose.currentComposerIntrinsic
+
+                    @Composable
+                    inline fun abc(): Any {
+                        return currentComposerIntrinsic
+                    }
+                    """,
+                    "x/B.kt" to """
+                    import androidx.compose.Composable
+
+                    @Composable
+                    fun def() {
+                        val x = abc()
+                        print(x)
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                """
+                )
+            )
+        )
+    }
+
+
+    @Test
+    fun testComposableOrderIssue(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "C.kt" to """
+                    import androidx.compose.*
+
+                    @Composable
+                    fun b() {
+                        a()
+                    }
+                    """,
+                    "A.kt" to """
+                    import androidx.compose.*
+
+                    @Composable
+                    fun a() {
+
+                    }
+                    """,
+                    "B.kt" to """
+                    import androidx.compose.*
+
+                    @Composable
+                    fun c() {
+                        a()
+                    }
+
+                    """
                 ),
                 "Main" to mapOf(
                     "b/B.kt" to """
@@ -132,6 +255,35 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     fun FromB() {
                         FromA()
                     }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testJvmFieldIssue(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/C.kt" to """
+                    fun Test2() {
+                      bar = 10
+                      print(bar)
+                    }
+                    """,
+                    "x/A.kt" to """
+                      @JvmField var bar: Int = 0
+                    """,
+                    "x/B.kt" to """
+                    fun Test() {
+                      bar = 10
+                      print(bar)
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
                 """
                 )
             )
@@ -196,6 +348,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             )
         )
     }
+
     @Test
     fun testXModuleInterface(): Unit = forComposerParam(true, false) {
         compile(
