@@ -1142,6 +1142,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/addMissingDestructuring"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("empty.kt")
+        public void testEmpty() throws Exception {
+            runTest("idea/testData/intentions/addMissingDestructuring/empty.kt");
+        }
+
         @TestMetadata("notAvailable.kt")
         public void testNotAvailable() throws Exception {
             runTest("idea/testData/intentions/addMissingDestructuring/notAvailable.kt");

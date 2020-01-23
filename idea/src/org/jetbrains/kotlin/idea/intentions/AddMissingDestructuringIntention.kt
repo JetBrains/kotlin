@@ -40,8 +40,9 @@ class AddMissingDestructuringIntention :
             filter = NewDeclarationNameValidator(element.parent.parent, null, NewDeclarationNameValidator.Target.VARIABLES)
         )
 
-        val newEntries = entries.joinToString(postfix = ", ") { it.text } +
-                primaryParameters.asSequence().drop(entries.size).joinToString {
+        val entriesSize = entries.size
+        val newEntries = entries.joinToString(postfix = if (entriesSize == 0) "" else ", ") { it.text } +
+                primaryParameters.asSequence().drop(entriesSize).joinToString {
                     KotlinNameSuggester.suggestNameByName(it.name.asString(), nameValidator)
                 }
         val initializer = element.initializer ?: return
