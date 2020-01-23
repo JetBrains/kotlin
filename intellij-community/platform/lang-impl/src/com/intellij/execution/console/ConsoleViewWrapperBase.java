@@ -30,6 +30,11 @@ public class ConsoleViewWrapperBase implements ConsoleView, ExecutionConsoleEx {
   }
 
   @Override
+  public void requestScrollingToEnd() {
+    myDelegate.requestScrollingToEnd();
+  }
+
+  @Override
   public void print(@NotNull String text, @NotNull ConsoleViewContentType contentType) {
     myDelegate.print(text, contentType);
   }

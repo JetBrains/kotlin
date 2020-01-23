@@ -5,7 +5,6 @@ package com.intellij.diagnostic.logging;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.impl.ConsoleBuffer;
-import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.AnsiEscapeDecoder;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -463,7 +462,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
       console.scrollTo(offset);
     }
     else {
-      ((ConsoleViewImpl)console).requestScrollingToEnd();
+      console.requestScrollingToEnd();
     }
   }
 

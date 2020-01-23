@@ -304,6 +304,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     addFlushRequest(0, new ScrollRunnable());
   }
 
+  @Override
   public void requestScrollingToEnd() {
     if (myEditor == null) {
       return;
