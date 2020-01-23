@@ -127,6 +127,7 @@ if (rootProject.extra.has("versions.LLDB.framework")) {
 }
 
 val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("dist/artifacts"))
+val cidrPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("cidrPlugin/Kotlin"))
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
 val mobileMppPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobileMppPlugin/mobile-mpp"))

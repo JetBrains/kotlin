@@ -15,7 +15,7 @@
   <change-notes/>
 
   <depends>com.intellij.modules.clion</depends>
-  <depends>org.jetbrains.kotlin.native.clion</depends>
+  <depends>org.jetbrains.kotlin.native.cidr</depends>
   <!--suppress PluginXmlValidity -->
   <depends optional="true" config-file="plugin-with-markdown.xml">org.intellij.plugins.markdown</depends>
 
