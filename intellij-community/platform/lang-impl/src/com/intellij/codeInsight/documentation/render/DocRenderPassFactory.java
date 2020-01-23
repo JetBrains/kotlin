@@ -120,24 +120,22 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
   }
 
   private static boolean isWhitespaceAndTags(@NotNull String text) {
-    int curPos = 0;
-    int tagStart;
-    while ((tagStart = text.indexOf('<', curPos)) >= 0) {
-      if (!isWhitespace(text, curPos, tagStart)) return false;
-      int tagEnd = text.indexOf('>', tagStart + 1);
-      if (tagEnd >= 0) {
-        curPos = tagEnd + 1;
+    boolean tag = false;
+    for (int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if (tag) {
+        if (c == '>') {
+          tag = false;
+        }
       }
       else {
-        return true;
+        if (c == '<') {
+          tag = true;
+        }
+        else {
+          if (c > ' ') return false;
+        }
       }
-    }
-    return isWhitespace(text, curPos, text.length());
-  }
-
-  private static boolean isWhitespace(@NotNull String text, int startPos, int endPos) {
-    for (int i = startPos; i < endPos; i++) {
-      if (text.charAt(i) > ' ') return false;
     }
     return true;
   }
