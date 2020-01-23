@@ -16,7 +16,7 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.elementType
+import com.intellij.psi.util.PsiUtil.getElementType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.findInvalidCommas
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.needComma
@@ -68,14 +68,14 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
 
         fun trailingCommaOrLastElement(commaOwner: KtElement): PsiElement? {
             val lastChild = commaOwner.lastSignificantChild ?: return null
-            val withSelf = when (lastChild.elementType) {
+            val withSelf = when (getElementType(lastChild)) {
                 KtTokens.COMMA -> return lastChild
                 in RIGHT_BARRIERS -> false
                 else -> true
             }
 
             return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)?.takeIf {
-                it.elementType !in LEFT_BARRIERS
+                getElementType(it) !in LEFT_BARRIERS
             }?.takeIfIsNotError()
         }
 
@@ -122,7 +122,7 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
 
     private fun processCommaOwner(parent: KtElement) {
         val lastElement = trailingCommaOrLastElement(parent) ?: return
-        val elementType = lastElement.elementType
+        val elementType = getElementType(lastElement)
         when {
             needComma(parent, settings, false) -> {
                 // add a missing comma
@@ -222,4 +222,4 @@ fun PsiElement.leaf(forward: Boolean = true, filter: (PsiElement) -> Boolean): P
     if (forward) nextLeaf(filter)
     else prevLeaf(filter)
 
-val PsiElement.isComma: Boolean get() = elementType == KtTokens.COMMA
+val PsiElement.isComma: Boolean get() = getElementType(this) == KtTokens.COMMA
