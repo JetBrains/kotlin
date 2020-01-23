@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -80,7 +81,8 @@ class FirClassSubstitutionScope(
         useSiteMemberScope.processClassifiersByName(name, processor)
     }
 
-    private val typeCalculator by lazy { ReturnTypeCalculatorWithJump(session, scopeSession) }
+    private val typeCalculator =
+        (scopeSession.returnTypeCalculator as ReturnTypeCalculator?) ?: ReturnTypeCalculatorWithJump(session, scopeSession)
 
     private fun ConeKotlinType.substitute(): ConeKotlinType? {
         return substitutor.substituteOrNull(this)
@@ -221,7 +223,7 @@ class FirClassSubstitutionScope(
                 FirSimpleFunctionImpl(
                     source,
                     session,
-                    baseFunction.returnTypeRef.withReplacedConeType(newReturnType),
+                    baseFunction.returnTypeRef.withReplacedReturnType(newReturnType),
                     baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType),
                     name,
                     baseFunction.status,
@@ -286,7 +288,7 @@ class FirClassSubstitutionScope(
                 FirPropertyImpl(
                     source,
                     session,
-                    baseProperty.returnTypeRef.withReplacedConeType(newReturnType),
+                    baseProperty.returnTypeRef.withReplacedReturnType(newReturnType),
                     baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType),
                     name,
                     null,
@@ -337,6 +339,16 @@ class FirClassSubstitutionScope(
     }
 }
 
+// Unlike other cases, return types may be implicit, i.e. unresolved
+// But in that cases newType should also be `null`
+fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
+    require(this is FirResolvedTypeRef || newType == null)
+    if (newType == null) return this
+
+    return FirResolvedTypeRefImpl(source, newType).apply {
+        annotations += this@withReplacedReturnType.annotations
+    }
+}
 
 fun FirTypeRef.withReplacedConeType(newType: ConeKotlinType?): FirResolvedTypeRef {
     require(this is FirResolvedTypeRef)
@@ -345,5 +357,4 @@ fun FirTypeRef.withReplacedConeType(newType: ConeKotlinType?): FirResolvedTypeRe
     return FirResolvedTypeRefImpl(source, newType).apply {
         annotations += this@withReplacedConeType.annotations
     }
-
 }

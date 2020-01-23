@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 class ScopeSession {
     private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, FirScope>>()
 
+    var returnTypeCalculator: Any? = null
+
     @Deprecated(level = DeprecationLevel.ERROR, message = "Only for getOrBuild")
     fun scopes() = scopes
 
