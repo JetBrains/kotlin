@@ -2,4 +2,4 @@
 // PROBLEM: none
 
 fun a(i: Int,
-    b: Boolea<caret>n) = Unit
+    b: Boole<caret>an) = Unit

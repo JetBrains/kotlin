@@ -2,4 +2,5 @@
 // PROBLEM: none
 
 fun a(i: Int,
-    b: Boolean) <caret>= Unit
+    b: Boolean <caret>
+) = Unit

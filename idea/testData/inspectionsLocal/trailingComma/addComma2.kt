@@ -2,4 +2,4 @@
 // FIX: Add trailing comma
 
 fun a(i: Int,
-    b: Boolean)<caret> = Unit
+    b: Boolea<caret>n) = Unit

@@ -31,8 +31,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>19</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -43,8 +43,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>43</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>42</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -67,8 +67,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -91,8 +91,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>11</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>10</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -115,8 +115,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -139,8 +139,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -151,8 +151,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -235,8 +235,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -271,8 +271,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>51</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>50</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -295,8 +295,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>43</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>42</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -331,8 +331,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -367,8 +367,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>42</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>41</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -391,8 +391,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>34</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>33</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -427,8 +427,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -463,8 +463,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>48</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -487,8 +487,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>40</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>39</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -523,8 +523,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -559,8 +559,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -595,8 +595,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>90</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>89</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -619,8 +619,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>82</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>81</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -643,8 +643,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -679,8 +679,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>19</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -715,8 +715,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -739,8 +739,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -763,8 +763,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>11</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>10</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -787,8 +787,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -811,8 +811,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -859,8 +859,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -883,8 +883,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -907,8 +907,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1027,8 +1027,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1087,8 +1087,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>12</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>11</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1123,8 +1123,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1147,8 +1147,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>51</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>50</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1304,7 +1304,7 @@
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
     <highlighted_element>)</highlighted_element>
-    <offset>16</offset>
+    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1339,8 +1339,8 @@
     <entry_point TYPE="file" FQNAME="ArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>25</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>24</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1471,8 +1471,8 @@
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>46</offset>
+    <highlighted_element>y</highlighted_element>
+    <offset>45</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1519,8 +1519,8 @@
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>46</offset>
+    <highlighted_element>y</highlighted_element>
+    <offset>45</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1711,8 +1711,8 @@
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>46</offset>
+    <highlighted_element>y</highlighted_element>
+    <offset>45</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1783,8 +1783,8 @@
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>46</offset>
+    <highlighted_element>y</highlighted_element>
+    <offset>45</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1855,8 +1855,8 @@
     <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>46</offset>
+    <highlighted_element>y</highlighted_element>
+    <offset>45</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1927,8 +1927,8 @@
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>21</offset>
+    <highlighted_element>s</highlighted_element>
+    <offset>20</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1975,8 +1975,8 @@
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>9</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -1999,8 +1999,8 @@
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>9</offset>
+    <highlighted_element>3</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2023,8 +2023,8 @@
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>9</offset>
+    <highlighted_element>3</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2035,8 +2035,8 @@
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>l</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2047,8 +2047,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>37</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>36</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2059,8 +2059,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>37</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>36</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2119,8 +2119,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>45</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>44</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2143,8 +2143,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>41</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>40</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2155,8 +2155,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>37</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>36</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2179,8 +2179,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>76</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>75</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2251,8 +2251,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>45</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>44</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2287,8 +2287,8 @@
     <entry_point TYPE="file" FQNAME="LambdaValueParameters.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>43</offset>
+    <highlighted_element>&gt;</highlighted_element>
+    <offset>42</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2299,8 +2299,8 @@
     <entry_point TYPE="file" FQNAME="Enum.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>9</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2311,8 +2311,8 @@
     <entry_point TYPE="file" FQNAME="Enum.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>9</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2323,8 +2323,8 @@
     <entry_point TYPE="file" FQNAME="Enum.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>9</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2335,8 +2335,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2383,8 +2383,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2503,8 +2503,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>28</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>27</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2515,8 +2515,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2563,8 +2563,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2611,8 +2611,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2659,8 +2659,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2731,8 +2731,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>47</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>46</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2743,8 +2743,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2755,8 +2755,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>5</offset>
+    <highlighted_element>y</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2767,8 +2767,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>5</offset>
+    <highlighted_element>x</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2803,8 +2803,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>t</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2815,8 +2815,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>t</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2875,8 +2875,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2923,8 +2923,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -2971,8 +2971,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3031,8 +3031,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3091,8 +3091,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3103,8 +3103,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3115,8 +3115,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>29</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>28</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3139,8 +3139,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>35</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>34</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3211,8 +3211,8 @@
     <entry_point TYPE="file" FQNAME="ParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>47</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>46</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3271,8 +3271,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3319,8 +3319,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3355,8 +3355,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>9</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3367,8 +3367,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>12</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>11</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3391,8 +3391,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>12</offset>
+    <highlighted_element>f</highlighted_element>
+    <offset>11</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3475,8 +3475,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>13</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3499,8 +3499,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>13</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3523,8 +3523,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3559,8 +3559,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>17</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3583,8 +3583,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>12</offset>
+    <highlighted_element>b</highlighted_element>
+    <offset>11</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3619,8 +3619,8 @@
     <entry_point TYPE="file" FQNAME="MultiVariableDeclaration.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>12</offset>
+    <highlighted_element>f</highlighted_element>
+    <offset>11</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3679,8 +3679,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>8</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3715,8 +3715,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3763,8 +3763,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3787,8 +3787,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>11</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>10</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3823,8 +3823,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>13</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3859,8 +3859,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>11</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>10</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3895,8 +3895,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3943,8 +3943,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>17</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -3967,8 +3967,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4003,8 +4003,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>16</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4039,8 +4039,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>&quot;</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4075,8 +4075,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4123,8 +4123,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4147,8 +4147,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4183,8 +4183,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>21</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>20</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4219,8 +4219,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>8</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4255,8 +4255,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4303,8 +4303,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4327,8 +4327,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>8</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4363,8 +4363,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4435,8 +4435,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>8</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4459,8 +4459,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>9</offset>
+    <highlighted_element>1</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4495,8 +4495,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>11</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>10</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4543,8 +4543,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>8</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4579,8 +4579,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>9</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4651,8 +4651,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4675,8 +4675,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4711,8 +4711,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4735,8 +4735,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>&quot;</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4771,8 +4771,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>7</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>6</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4819,8 +4819,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4843,8 +4843,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>15</offset>
+    <highlighted_element>2</highlighted_element>
+    <offset>14</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4879,8 +4879,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>)</highlighted_element>
-    <offset>8</offset>
+    <highlighted_element>]</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4891,8 +4891,8 @@
     <entry_point TYPE="file" FQNAME="CollectionLiteralInAnnotation.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>27</offset>
+    <highlighted_element>s</highlighted_element>
+    <offset>26</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4927,8 +4927,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>-</highlighted_element>
-    <offset>8</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4939,8 +4939,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -4987,8 +4987,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5035,8 +5035,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5083,8 +5083,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5155,8 +5155,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>35</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>34</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5179,8 +5179,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>t</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5203,8 +5203,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>21</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>20</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5227,8 +5227,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>26</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>25</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5299,8 +5299,8 @@
     <entry_point TYPE="file" FQNAME="LambdaParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>35</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>34</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5335,8 +5335,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>&gt;</highlighted_element>
-    <offset>8</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>7</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5347,8 +5347,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5395,8 +5395,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5443,8 +5443,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5491,8 +5491,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5563,8 +5563,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>35</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>34</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5575,8 +5575,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>16</offset>
+    <highlighted_element>v</highlighted_element>
+    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5611,8 +5611,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5659,8 +5659,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5707,8 +5707,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5767,8 +5767,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>13</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>12</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5827,8 +5827,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>5</offset>
+    <highlighted_element>x</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5863,8 +5863,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>&gt;</highlighted_element>
-    <offset>9</offset>
+    <highlighted_element>T</highlighted_element>
+    <offset>8</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5875,8 +5875,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>t</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5899,8 +5899,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>21</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>20</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5923,8 +5923,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>26</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>25</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -5995,8 +5995,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>35</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>34</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6007,8 +6007,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>10</offset>
+    <highlighted_element>t</highlighted_element>
+    <offset>9</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6031,8 +6031,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>21</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>20</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6139,8 +6139,8 @@
     <entry_point TYPE="file" FQNAME="TypeParameterList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>35</offset>
+    <highlighted_element>g</highlighted_element>
+    <offset>34</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6199,8 +6199,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>&gt;</highlighted_element>
-    <offset>24</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>23</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6211,8 +6211,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>43</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>42</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6235,8 +6235,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6259,8 +6259,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>16</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6283,8 +6283,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6307,8 +6307,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>&gt;</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6319,8 +6319,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6427,8 +6427,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6463,8 +6463,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>&gt;</highlighted_element>
-    <offset>17</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6499,8 +6499,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6523,8 +6523,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6547,8 +6547,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>16</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6571,8 +6571,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6595,8 +6595,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6643,8 +6643,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6667,8 +6667,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6691,8 +6691,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6847,8 +6847,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>&gt;</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6907,8 +6907,8 @@
     <entry_point TYPE="file" FQNAME="TypeArgumentList.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>&gt;</highlighted_element>
-    <offset>12</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>11</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6943,8 +6943,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>24</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>23</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6955,8 +6955,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>43</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>42</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -6979,8 +6979,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7003,8 +7003,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>16</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7027,8 +7027,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7051,8 +7051,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7063,8 +7063,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7159,8 +7159,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7219,8 +7219,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>51</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>50</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7243,8 +7243,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>43</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>42</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7279,8 +7279,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>17</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7351,8 +7351,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>42</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>41</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7375,8 +7375,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>34</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>33</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7411,8 +7411,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7459,8 +7459,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>90</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>89</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7483,8 +7483,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>82</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>81</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7507,8 +7507,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>17</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7543,8 +7543,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>17</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>16</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7579,8 +7579,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>/</highlighted_element>
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7603,8 +7603,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>48</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>47</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7627,8 +7627,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>16</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7651,8 +7651,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7675,8 +7675,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7723,8 +7723,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>r</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7747,8 +7747,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>19</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>18</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7771,8 +7771,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>14</offset>
+    <highlighted_element>o</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7891,8 +7891,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>14</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>13</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7951,8 +7951,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>12</offset>
+    <highlighted_element>a</highlighted_element>
+    <offset>11</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -7987,8 +7987,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element>]</highlighted_element>
-    <offset>5</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>4</offset>
     <length>1</length>
   </problem>
   <problem>
@@ -8011,8 +8011,8 @@
     <entry_point TYPE="file" FQNAME="IndicesAccess.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
-    <highlighted_element />
-    <offset>51</offset>
+    <highlighted_element>}</highlighted_element>
+    <offset>50</offset>
     <length>1</length>
   </problem>
 </problems>

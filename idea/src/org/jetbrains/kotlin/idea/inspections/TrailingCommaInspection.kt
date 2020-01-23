@@ -141,10 +141,9 @@ class TrailingCommaInspection(
                 val textRange = textRange
                 if (isComma) return textRange
 
-                val resultRange = nextLeaf()?.leafIgnoringWhitespaceAndComments(false)?.endOffset?.takeIf { it > 0 }?.let {
-                    TextRange.create(it - 1, it).intersection(parent.textRange)
+                return nextLeaf()?.leafIgnoringWhitespaceAndComments(false)?.endOffset?.takeIf { it > 0 }?.let {
+                    TextRange.create(it - 1, it).intersection(textRange)
                 } ?: TextRange.create(textRange.endOffset - 1, textRange.endOffset)
-                return resultRange.shiftRight(1)
             }
     }
 
