@@ -18,7 +18,7 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
   private val settings = InlayHintsSettings.instance()
   private val configurables: List<SingleLanguageInlayHintsConfigurable>
   private val panel: InlayHintsPanel
-  private val connection: MessageBusConnection
+  private var connection: MessageBusConnection? = null
 
   init {
     val allInlayLanguages = InlaySettingsProvider.EP.getExtensions()
@@ -26,9 +26,6 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
       .toSortedSet(compareBy { it.displayName })
     configurables = allInlayLanguages.map { SingleLanguageInlayHintsConfigurable(project, it) }
     panel = InlayHintsPanel(allInlayLanguages, settings)
-
-    connection = ApplicationManager.getApplication().messageBus.connect(project)
-    connection.subscribe(InlayHintsSettings.INLAY_SETTINGS_CHANGED, ConfigurationChangeListener(configurables))
   }
 
   override fun getConfigurables(): Array<Configurable> {
@@ -44,6 +41,9 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
   }
 
   override fun createComponent(): JComponent {
+    connection = ApplicationManager.getApplication().messageBus.connect(project)
+    connection?.subscribe(InlayHintsSettings.INLAY_SETTINGS_CHANGED, ConfigurationChangeListener(configurables))
+
     return panel
   }
 
@@ -56,7 +56,7 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
   }
 
   override fun disposeUIResources() {
-    connection.disconnect()
+    connection?.disconnect()
   }
 
   fun loadFromSettings() {
