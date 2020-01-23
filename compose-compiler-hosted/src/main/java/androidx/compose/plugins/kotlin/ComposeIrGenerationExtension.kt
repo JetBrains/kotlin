@@ -19,6 +19,7 @@ package androidx.compose.plugins.kotlin
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
+import androidx.compose.plugins.kotlin.compiler.lower.ComposeResolutionMetadataTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeSymbolPatcherTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
@@ -37,6 +38,7 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
         // TODO: refactor transformers to work with just BackendContext
         val jvmContext = backendContext as JvmBackendContext
         if (ComposeFlags.COMPOSER_PARAM) {
+            ComposeResolutionMetadataTransformer(jvmContext).lower(file)
             FrameIrTransformer(jvmContext).lower(file)
             ComposerParamTransformer(jvmContext).lower(file)
             ComposerIntrinsicTransformer(jvmContext).lower(file)

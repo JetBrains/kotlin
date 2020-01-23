@@ -16,7 +16,12 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
+import androidx.compose.plugins.kotlin.ComposableCallableDescriptor
+import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
 import androidx.compose.plugins.kotlin.ComposeFqNames
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.irTrace
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,7 +37,9 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
@@ -53,6 +60,7 @@ import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -136,5 +144,37 @@ class ComposerTypeRemapper(
             .defaultType
             .replace(newArguments)
             .toIrType()
+    }
+}
+
+class ComposeResolutionMetadataTransformer(val context: JvmBackendContext) :
+    IrElementTransformerVoid(),
+    FileLoweringPass {
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+
+        val descriptor = expression.descriptor
+
+        if (descriptor is ComposableCallableDescriptor) {
+            context.state.irTrace.record(
+                ComposeWritableSlices.COMPOSER_IR_METADATA,
+                expression,
+                descriptor.composerMetadata
+            )
+        }
+
+        if (descriptor is ComposableEmitDescriptor) {
+            context.state.irTrace.record(
+                ComposeWritableSlices.COMPOSABLE_EMIT_METADATA,
+                expression,
+                descriptor
+            )
+        }
+
+        return super.visitCall(expression)
     }
 }
