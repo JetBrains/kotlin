@@ -352,7 +352,7 @@ class ArrayDequeTest {
     }
 
     private fun testArrayDeque(test: (bufferSize: Int, dequeSize: Int, head: Int, tail: Int) -> Unit) {
-        for (bufferSize in listOf(0, 1, 2, 5, 8, 16)) {
+        for (bufferSize in listOf(0, 2, 8)) {
             for (dequeSize in 0..bufferSize) {
                 for (tail in 0 until bufferSize) {
                     val head = tail - dequeSize
@@ -462,7 +462,8 @@ class ArrayDequeTest {
 
     @Test
     fun insertAll() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
-        for (insertCollectionSize in 0..bufferSize) {
+        repeat(bufferSize.coerceAtMost(3)) {
+            val insertCollectionSize = Random.nextInt(0..bufferSize)
             val listToInsert = (0 until insertCollectionSize).map { 100 + it }
 
             for (index in 0..dequeSize) {
@@ -497,14 +498,18 @@ class ArrayDequeTest {
     @Test
     fun listIterator() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
 
-        for (index in 0..dequeSize) {
-            val expectedIterator = (head until tail).toMutableList().listIterator(index)
-            val actualIterator = generateArrayDeque(head, tail, bufferSize).listIterator(index)
+        val elements = (head until tail).toList()
+        val deque = generateArrayDeque(head, tail, bufferSize)
+        repeat(dequeSize.coerceAtMost(3)) {
+            val index = Random.nextInt(0..dequeSize)
+            val expectedIterator = elements.listIterator(index)
+            val actualIterator = deque.listIterator(index)
 
             compare(expectedIterator, actualIterator) { listIteratorBehavior() }
         }
 
-        for (index in 0..dequeSize) {
+        repeat(dequeSize.coerceAtMost(3)) {
+            val index = Random.nextInt(0..dequeSize)
             val expectedIterator = (head until tail).toMutableList().listIterator(index)
             val actualIterator = generateArrayDeque(head, tail, bufferSize).listIterator(index)
 
@@ -515,7 +520,8 @@ class ArrayDequeTest {
             }
         }
 
-        for (index in 0..dequeSize) {
+        repeat(dequeSize.coerceAtMost(3)) {
+            val index = Random.nextInt(0..dequeSize)
             val expectedIterator = (head until tail).toMutableList().listIterator(index)
             val actualIterator = generateArrayDeque(head, tail, bufferSize).listIterator(index)
 
