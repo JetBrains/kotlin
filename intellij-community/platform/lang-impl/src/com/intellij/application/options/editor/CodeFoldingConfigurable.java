@@ -10,8 +10,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.extensions.BaseExtensionPointName;
-import com.intellij.openapi.options.BeanConfigurable;
 import com.intellij.openapi.options.CompositeConfigurable;
+import com.intellij.openapi.options.ConfigurableBuilder;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
 import com.intellij.openapi.project.Project;
@@ -112,12 +112,8 @@ public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOp
 
   @NotNull
   private static String sortByTitle(@NotNull CodeFoldingOptionsProvider p) {
-    if (p instanceof BeanConfigurable) {
-      String title = ((BeanConfigurable)p).getTitle();
-      if (title != null) {
-        return ApplicationBundle.message("title.general").equals(title) ? "" : title;
-      }
-    }
-    return "z";
+    String title = ConfigurableBuilder.getConfigurableTitle(p);
+    if (ApplicationBundle.message("title.general").equals(title)) return "";
+    return title != null ? title : "z";
   }
 }

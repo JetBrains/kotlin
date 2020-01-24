@@ -4,7 +4,7 @@ package com.intellij.application.options.editor;
 import com.intellij.ide.ui.OptionsSearchTopHitProvider;
 import com.intellij.ide.ui.search.OptionDescription;
 import com.intellij.openapi.application.ApplicationBundle;
-import com.intellij.openapi.options.BeanConfigurable;
+import com.intellij.openapi.options.ConfigurableBuilder;
 import com.intellij.openapi.options.ConfigurableWithOptionDescriptors;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
@@ -35,7 +35,7 @@ final class CodeFoldingOptionsTopHitProvider implements OptionsSearchTopHitProvi
         return;
       }
 
-      String title = configurable instanceof BeanConfigurable ? ((BeanConfigurable<?>)configurable).getTitle() : null;
+      String title = ConfigurableBuilder.getConfigurableTitle(configurable);
       String prefix = title == null ? byDefault + " " : StringUtil.trimEnd(byDefault, ':') + " in " + title + ": ";
       result.addAll(((ConfigurableWithOptionDescriptors)configurable).getOptionDescriptors(CodeFoldingConfigurable.ID, s -> prefix + s));
     });
