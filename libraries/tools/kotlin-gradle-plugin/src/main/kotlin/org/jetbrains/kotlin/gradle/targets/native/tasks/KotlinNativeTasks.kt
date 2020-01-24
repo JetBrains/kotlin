@@ -288,7 +288,7 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
 
     @get:Internal
     override val baseName: String
-        get() = if (compilation.isMainCompilation) project.name else compilation.name
+        get() = if (compilation.isMainCompilation) project.name else "${project.name}_${compilation.name}"
 
     // Inputs and outputs.
     // region Sources.

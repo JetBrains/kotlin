@@ -2235,7 +2235,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertFileExists("build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js")
 
             // Native:
-            assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/integrationTest.klib")
+            assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/new-mpp-associate-compilations_integrationTest.klib")
         }
 
         gradleBuildScript().appendText(

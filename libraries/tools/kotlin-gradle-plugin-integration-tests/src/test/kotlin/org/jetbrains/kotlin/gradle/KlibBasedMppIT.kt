@@ -93,7 +93,7 @@ class KlibBasedMppIT : BaseGradleIT() {
             assertTasksExecuted(*tasksToExecute.toTypedArray())
 
             assertFileExists("build/classes/kotlin/metadata/jvmAndJsMain/manifest")
-            assertFileExists("build/classes/kotlin/metadata/iosMain/iosMain.klib")
+            assertFileExists("build/classes/kotlin/metadata/iosMain/${projectName}_iosMain.klib")
 
             // Check that the common and JVM+JS source sets don't receive the Kotlin/Native stdlib in the classpath:
             run {
