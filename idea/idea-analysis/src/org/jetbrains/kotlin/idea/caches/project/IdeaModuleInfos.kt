@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.getStableName
+import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -122,10 +123,14 @@ private fun ideaModelDependencies(
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
     fun TargetPlatform.canDependOn(other: TargetPlatform): Boolean {
-        return this.isJvm() && other.isJvm() ||
-                this.isJs() && other.isJs() ||
-                this.isNative() && other.isNative() ||
-                this.isCommon() && other.isCommon()
+        return if (module.isHMPPEnabled) {
+            other.componentPlatforms.containsAll(this.componentPlatforms)
+        } else {
+            this.isJvm() && other.isJvm() ||
+                    this.isJs() && other.isJs() ||
+                    this.isNative() && other.isNative() ||
+                    this.isCommon() && other.isCommon()
+        }
     }
 
     //NOTE: lib dependencies can be processed several times during recursive traversal
