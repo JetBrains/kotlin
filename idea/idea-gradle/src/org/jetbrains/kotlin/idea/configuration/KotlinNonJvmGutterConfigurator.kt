@@ -16,7 +16,7 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
             //language=Gradle
             """
             ({
-                if (GradleVersion.current() >= GradleVersion.version("4.0")) {
+                if (org.gradle.util.GradleVersion.current() >= org.gradle.util.GradleVersion.version("4.0")) {
                     Class kotlinTestClass = null
                     try {
                          kotlinTestClass = Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinTest")
