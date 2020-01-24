@@ -112,8 +112,6 @@ enum class LanguageFeature(
     ProperComputationOrderOfTailrecDefaultParameters(KOTLIN_1_4),
     AllowNullableArrayArgsInMain(KOTLIN_1_4),
     TrailingCommas(KOTLIN_1_4),
-    ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_4, kind = BUG_FIX),
-    ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitProtectedCallFromInline(KOTLIN_1_4, kind = BUG_FIX),
     ProperFinally(KOTLIN_1_4, kind = BUG_FIX),
     AllowAssigningArrayElementsToVarargsInNamedFormForFunctions(KOTLIN_1_4),
@@ -128,12 +126,12 @@ enum class LanguageFeature(
     FunctionalInterfaceConversion(KOTLIN_1_4, kind = UNSTABLE_FEATURE),
 
     ProhibitSpreadOnSignaturePolymorphicCall(KOTLIN_1_5, kind = BUG_FIX),
+    ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_5, kind = BUG_FIX),
+    ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_5, kind = BUG_FIX),
+    ProhibitVarargAsArrayAfterSamArgument(KOTLIN_1_5, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
-
-    // TODO: set `sinceVersion` to KOTLIN_1_5
-    ProhibitVarargAsArrayAfterSamArgument(sinceVersion = null, kind = BUG_FIX),
 
     // Experimental features
 

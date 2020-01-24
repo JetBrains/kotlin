@@ -218,8 +218,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
             context.callToSubstitutedDescriptorMap[irAdapteeCallInner] = resolvedDescriptor
 
-            val irDispatchReceiver = dispatchReceiverValue?.load()
-            val irExtensionReceiver = extensionReceiverValue?.load()
+            val irDispatchReceiver = dispatchReceiverValue?.loadIfExists()
+            val irExtensionReceiver = extensionReceiverValue?.loadIfExists()
 
             if (irDispatchReceiver != null) {
                 if (irDispatchReceiver.isSafeToUseWithoutCopying()) {
