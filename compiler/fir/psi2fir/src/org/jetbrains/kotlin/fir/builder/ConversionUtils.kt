@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirDelegateFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -396,8 +396,8 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
     }
 }
 
-fun FirTypeRef.convertToArrayType(): FirUserTypeRef =  FirUserTypeRefImpl(source, isMarkedNullable = false).apply {
-    qualifier += FirQualifierPartImpl(ARRAY_TYPE_NAME).apply {
+fun FirTypeRef.convertToArrayType(): FirUserTypeRef = FirUserTypeRefImpl(source, isMarkedNullable = false).apply {
+    qualifier += FirQualifierPartImpl(StandardClassIds.Array.shortClassName).apply {
         typeArguments += FirTypeProjectionWithVarianceImpl(
             source, this@convertToArrayType, Variance.OUT_VARIANCE
         )

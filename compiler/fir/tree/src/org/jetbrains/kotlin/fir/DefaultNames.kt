@@ -10,5 +10,3 @@ import org.jetbrains.kotlin.name.Name
 val NAME_FOR_BACKING_FIELD = Name.identifier("field")
 val NAME_FOR_DEFAULT_VALUE_PARAMETER = Name.identifier("value")
 val CONSTRUCTOR_NAME = Name.special("<init>")
-
-val ARRAY_TYPE_NAME = Name.identifier("Array")
