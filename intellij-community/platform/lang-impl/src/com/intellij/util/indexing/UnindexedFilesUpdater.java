@@ -4,6 +4,10 @@ package com.intellij.util.indexing;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.plugins.CannotUnloadPluginException;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.DynamicPlugins;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -39,6 +43,18 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     project.getMessageBus().connect(this).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
       public void rootsChanged(@NotNull ModuleRootEvent event) {
+        DumbService.getInstance(project).cancelTask(UnindexedFilesUpdater.this);
+      }
+    });
+
+    ApplicationManager.getApplication().getMessageBus().connect().subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+      @Override
+      public void beforePluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+        DumbService.getInstance(project).cancelTask(UnindexedFilesUpdater.this);
+      }
+
+      @Override
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         DumbService.getInstance(project).cancelTask(UnindexedFilesUpdater.this);
       }
     });
