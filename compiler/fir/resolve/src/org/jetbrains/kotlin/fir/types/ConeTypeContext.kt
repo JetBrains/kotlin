@@ -164,7 +164,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(this is ConeKotlinType)
 
         return this.typeArguments.getOrNull(index)
-            ?: StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), false) // TODO wtf
+            ?: session.builtinTypes.anyType
+                .type//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), false) // TODO wtf
     }
 
     override fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker {
@@ -301,19 +302,20 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
         require(type is ConeKotlinType)
-        val argumentsCount = type.argumentsCount()
+        val argumentsCount = type.typeArguments.size
         if (argumentsCount == 0) return null
 
         val typeConstructor = type.typeConstructor()
         if (argumentsCount != typeConstructor.parametersCount()) return null
 
-        if (type.asArgumentList().all(this) { !it.isStarProjection() && it.getVariance() == TypeVariance.INV }) return null
-        val newArguments = Array(argumentsCount) { index ->
-            val argument = type.getArgument(index)
-            if (!argument.isStarProjection() && argument.getVariance() == TypeVariance.INV) return@Array argument as ConeKotlinTypeProjection
+        if (type.typeArguments.all { it !is ConeStarProjection && it.kind == ProjectionKind.INVARIANT }) return null
 
-            val lowerType = if (!argument.isStarProjection() && argument.getVariance() == TypeVariance.IN) {
-                argument.getType() as ConeKotlinType
+        val newArguments = Array(argumentsCount) { index ->
+            val argument = type.typeArguments[index]
+            if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT) return@Array argument
+
+            val lowerType = if (argument !is ConeStarProjection && argument.getVariance() == TypeVariance.IN) {
+                (argument as ConeTypedProjection).type
             } else {
                 null
             }
@@ -322,10 +324,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
 
         for (index in 0 until argumentsCount) {
-            val oldArgument = type.getArgument(index)
+            val oldArgument = type.typeArguments[index]
             val newArgument = newArguments[index]
 
-            if (!oldArgument.isStarProjection() && oldArgument.getVariance() == TypeVariance.INV) continue
+            if (oldArgument !is ConeStarProjection && oldArgument.kind == ProjectionKind.INVARIANT) continue
 
             val parameter = typeConstructor.getParameter(index)
             val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
@@ -460,9 +462,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
         require(this is FirTypeParameterSymbol)
         return this.fir.bounds.getOrNull(0)?.let { (it as? FirResolvedTypeRef)?.type }
-            ?: ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe())), emptyArray(), true
-            )
+            ?: session.builtinTypes.nullableAnyType.type
     }
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
@@ -514,7 +514,8 @@ class ConeTypeCheckerContext(
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
                     parameter.symbol to ((argument as? ConeTypedProjection)?.type
-                        ?: StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
+                        ?: session.builtinTypes.nullableAnyType
+                            .type)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
             substitutorByMap(substitution)
         } else {

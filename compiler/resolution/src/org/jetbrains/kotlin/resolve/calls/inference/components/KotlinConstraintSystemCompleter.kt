@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
-    val variableFixationFinder: VariableFixationFinder,
+    val variableFixationFinder: VariableFixationFinder
 ) {
     enum class ConstraintSystemCompletionMode {
         FULL,
