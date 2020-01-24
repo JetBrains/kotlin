@@ -24,18 +24,26 @@ class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
     override fun getMetrics(project: Project): Set<MetricEvent> {
         val usedFormatter = getKotlinFormatterKind(project)
 
-        val settings = CodeStyle.getSettings(project)
-        val kotlinCommonSettings = settings.kotlinCommonSettings
-        val kotlinCustomSettings = settings.kotlinCustomSettings
-
         val data = FeatureUsageData()
             .addData("kind", usedFormatter.name)
-            .addData("defaults", kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: kotlinCommonSettings.CODE_STYLE_DEFAULTS)
+            .addData("defaults", getDefaultCodeStyle(project))
 
         return setOf(
             newMetric("settings", data)
         )
     }
+
+    private fun getDefaultCodeStyle(project: Project): String {
+
+        val settings = CodeStyle.getSettings(project)
+        val kotlinCommonSettings = settings.kotlinCommonSettings
+        val kotlinCustomSettings = settings.kotlinCustomSettings
+
+        val defaults = kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: kotlinCommonSettings.CODE_STYLE_DEFAULTS
+
+        return defaults ?: "ide_defaults"
+    }
+
 
     companion object {
 
