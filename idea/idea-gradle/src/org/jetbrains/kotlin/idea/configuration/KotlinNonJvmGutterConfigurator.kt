@@ -24,29 +24,31 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
                         // ignore, class not available
                     }
                     
-                    gradle.afterProject { project ->
-                        // Test task should have some parameters
-                        // Create dummy task to consume outputs by Test task
-                        project.tasks.create("nonJvmTestIdeSupportDummy")
-                        
-                        // IDEA now process filter parameters only for Test tasks
-                        project.tasks.create('nonJvmTestIdeSupport', Test) {
-                            testClassesDirs = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
-                            classpath = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
-                        }
-                        
-                        project.afterEvaluate {
-                            project.tasks.each { Task task ->
-                                if (kotlinTestClass != null) {
-                                    task.dependsOn('nonJvmTestIdeSupport')
+                    if (kotlinTestClass != null) {
+                        gradle.afterProject { project ->
+                            // Test task should have some parameters
+                            // Create dummy task to consume outputs by Test task
+                            project.tasks.create("nonJvmTestIdeSupportDummy")
+                            
+                            // IDEA now process filter parameters only for Test tasks
+                            project.tasks.create('nonJvmTestIdeSupport', Test) {
+                                testClassesDirs = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
+                                classpath = project.tasks["nonJvmTestIdeSupportDummy"].outputs.files
+                            }
+                            
+                            project.afterEvaluate {
+                                project.tasks.each { Task task ->
+                                    if (kotlinTestClass.isAssignableFrom(task.class)) {
+                                        task.dependsOn('nonJvmTestIdeSupport')
+                                    }
                                 }
                             }
                         }
-                    }
-                    
-                    gradle.taskGraph.beforeTask { Task task ->
-                        if (kotlinTestClass != null) {
-                            task.filter.includePatterns = task.project.tasks['nonJvmTestIdeSupport'].filter.includePatterns
+                        
+                        gradle.taskGraph.beforeTask { Task task ->
+                            if (kotlinTestClass.isAssignableFrom(task.class)) {
+                                task.filter.includePatterns = task.project.tasks['nonJvmTestIdeSupport'].filter.includePatterns
+                            }
                         }
                     }
                 }
