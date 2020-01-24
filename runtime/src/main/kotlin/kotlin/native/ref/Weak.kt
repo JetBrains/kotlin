@@ -37,5 +37,11 @@ public class WeakReference<T : Any> {
      */
     @Suppress("UNCHECKED_CAST")
     public fun get(): T? = pointer?.get() as T?
+
+    /**
+     * Returns either reference to an object or null, if it was collected.
+     */
+    public val value: T?
+        get() = this.get()
 }
 

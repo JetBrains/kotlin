@@ -49,10 +49,15 @@ extern "C" {
 
 OBJ_GETTER(makeWeakReferenceCounter, void*);
 OBJ_GETTER(makeObjCWeakReferenceImpl, void*);
+OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
 
 // See Weak.kt for implementation details.
 // Retrieve link on the counter object.
 OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
+  if (referred->container() == nullptr) {
+    RETURN_RESULT_OF(makePermanentWeakReferenceImpl, referred);
+  }
+
   MetaObjHeader* meta = referred->meta_object();
 
 #if KONAN_OBJC_INTEROP

@@ -10,11 +10,23 @@ import kotlin.native.ref.*
 
 class Node(var next: Node?)
 
-@Test fun runTest() {
+@Test fun runTest1() {
     val node1 = Node(null)
     val node2 = Node(node1)
     node1.next = node2
 
     kotlin.native.ref.WeakReference(node1)
     println("OK")
+}
+
+@Test fun runTest2() {
+    val string = "Hello"
+    val refString = WeakReference(string)
+    assertEquals(string, refString.value)
+    val zero = 0
+    val refZero = WeakReference(zero)
+    assertEquals(0, refZero.value)
+    val long = Long.MAX_VALUE
+    val refLong = WeakReference(long)
+    assertEquals(Long.MAX_VALUE, refLong.value)
 }

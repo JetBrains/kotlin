@@ -56,3 +56,10 @@ external internal fun getWeakReferenceImpl(referent: Any): WeakReferenceImpl
 @ExportForCppRuntime
 internal fun makeWeakReferenceCounter(referred: COpaquePointer) = WeakReferenceCounter(referred)
 
+internal class PermanentWeakReferenceImpl(val referred: Any): kotlin.native.ref.WeakReferenceImpl() {
+    override fun get(): Any? = referred
+}
+
+// Create a reference to the permanent object.
+@ExportForCppRuntime
+internal fun makePermanentWeakReferenceImpl(referred: Any) = PermanentWeakReferenceImpl(referred)
