@@ -684,6 +684,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/this.kt");
         }
 
+        @TestMetadata("topExtensionVsOuterMember.kt")
+        public void testTopExtensionVsOuterMember() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/topExtensionVsOuterMember.kt");
+        }
+
         @TestMetadata("typeAliasConstructor.kt")
         public void testTypeAliasConstructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/typeAliasConstructor.kt");
