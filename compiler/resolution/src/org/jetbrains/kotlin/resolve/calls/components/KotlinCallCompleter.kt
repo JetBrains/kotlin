@@ -17,14 +17,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empt
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
-import org.jetbrains.kotlin.types.model.isIntegerLiteralTypeConstructor
-import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -58,14 +53,18 @@ class KotlinCallCompleter(
             ConstraintSystemCompletionMode.FULL -> {
                 if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate)) {
                     candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
+                    candidate.asCallResolutionResult(completionMode, diagnosticHolder)
                 } else {
                     candidate.asCallResolutionResult(
                         ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder, forwardToInferenceSession = true
                     )
                 }
             }
-            ConstraintSystemCompletionMode.PARTIAL ->
+            ConstraintSystemCompletionMode.PARTIAL -> {
                 candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
+                candidate.asCallResolutionResult(completionMode, diagnosticHolder)
+            }
+
         }
     }
 
@@ -112,18 +111,11 @@ class KotlinCallCompleter(
     }
 
     private fun KotlinResolutionCandidate.runCompletion(
-        completionType: ConstraintSystemCompletionMode,
-        diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder,
-        resolutionCallbacks: KotlinResolutionCallbacks
-    ): CallResolutionResult {
-        if (isErrorCandidate()) {
-            runCompletion(resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, getSystem(), resolutionCallbacks)
-            return asCallResolutionResult(completionType, diagnosticHolder)
-        }
-
-        runCompletion(resolvedCall, completionType, diagnosticHolder, getSystem(), resolutionCallbacks)
-
-        return asCallResolutionResult(completionType, diagnosticHolder)
+        completionMode: ConstraintSystemCompletionMode,
+        diagnosticHolder: KotlinDiagnosticsHolder,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+    ) {
+        runCompletion(resolvedCall, completionMode, diagnosticHolder, getSystem(), resolutionCallbacks)
     }
 
     private fun runCompletion(
@@ -234,8 +226,8 @@ class KotlinCallCompleter(
             PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage, forwardToInferenceSession)
         }
     }
+}
 
-    private fun KotlinResolutionCandidate.isErrorCandidate(): Boolean {
-        return ErrorUtils.isError(resolvedCall.candidateDescriptor) || hasContradiction
-    }
+internal fun KotlinResolutionCandidate.isErrorCandidate(): Boolean {
+    return ErrorUtils.isError(resolvedCall.candidateDescriptor) || hasContradiction
 }
