@@ -2707,6 +2707,10 @@ public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin
 	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 }
 
+public abstract class kotlin/coroutines/AbstractCoroutineContextKey : kotlin/coroutines/CoroutineContext$Key {
+	public fun <init> (Lkotlin/coroutines/CoroutineContext$Key;Lkotlin/jvm/functions/Function1;)V
+}
+
 public abstract interface class kotlin/coroutines/Continuation {
 	public abstract fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public abstract fun resumeWith (Ljava/lang/Object;)V
@@ -2764,6 +2768,11 @@ public final class kotlin/coroutines/CoroutineContext$Element$DefaultImpls {
 }
 
 public abstract interface class kotlin/coroutines/CoroutineContext$Key {
+}
+
+public final class kotlin/coroutines/CoroutineContextImplKt {
+	public static final fun getPolymorphicElement (Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public static final fun minusPolymorphicKey (Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
 }
 
 public final class kotlin/coroutines/EmptyCoroutineContext : java/io/Serializable, kotlin/coroutines/CoroutineContext {

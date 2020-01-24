@@ -9,6 +9,12 @@ package kotlin.coroutines
  * Marks coroutine context element that intercepts coroutine continuations.
  * The coroutines framework uses [ContinuationInterceptor.Key] to retrieve the interceptor and
  * intercepts all coroutine continuations with [interceptContinuation] invocations.
+ *
+ * [ContinuationInterceptor] behaves like a [polymorphic element][AbstractCoroutineContextKey], meaning that
+ * its implementation delegates [get][CoroutineContext.Element.get] and [minusKey][CoroutineContext.Element.minusKey]
+ * to [getPolymorphicElement] and [minusPolymorphicKey] respectively.
+ * [ContinuationInterceptor] subtypes can be extracted from the coroutine context using either [ContinuationInterceptor.Key]
+ * or subtype key if it extends [AbstractCoroutineContextKey].
  */
 @SinceKotlin("1.3")
 public interface ContinuationInterceptor : CoroutineContext.Element {
@@ -43,12 +49,24 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
         /* do nothing by default */
     }
 
-    // Performance optimization for a singleton Key
-    public override operator fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? =
+    public override operator fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? {
+        // getPolymorphicKey specialized for ContinuationInterceptor key
+        @OptIn(ExperimentalStdlibApi::class)
+        if (key is AbstractCoroutineContextKey<*, *>) {
+            @Suppress("UNCHECKED_CAST")
+            return if (key.isSubKey(this.key)) key.tryCast(this) as? E else null
+        }
         @Suppress("UNCHECKED_CAST")
-        if (key === Key) this as E else null
+        return if (ContinuationInterceptor === key) this as E else null
+    }
 
-    // Performance optimization to a singleton Key
-    public override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext =
-        if (key === Key) EmptyCoroutineContext else this
+
+    public override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext {
+        // minusPolymorphicKey specialized for ContinuationInterceptor key
+        @OptIn(ExperimentalStdlibApi::class)
+        if (key is AbstractCoroutineContextKey<*, *>) {
+            return if (key.isSubKey(this.key) && key.tryCast(this) != null) EmptyCoroutineContext else this
+        }
+        return if (ContinuationInterceptor === key) EmptyCoroutineContext else this
+    }
 }
