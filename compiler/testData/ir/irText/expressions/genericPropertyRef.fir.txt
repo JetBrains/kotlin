@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
-          kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? [var]' field='FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<*>, kotlin.String?> origin=null
+          kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? [var]' field='FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <uninitialized parent>>, kotlin.String?> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
-          kmember: PROPERTY_REFERENCE 'public final value: kotlin.Any? [var]' field=null getter='public final fun <get-value> (): kotlin.Any? declared in <root>.Value' setter='public final fun <set-value> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<*>, kotlin.Any?> origin=null
+          kmember: PROPERTY_REFERENCE 'public final value: T of <uninitialized parent> [var]' field=null getter='public final fun <get-value> (): T of <uninitialized parent> declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <uninitialized parent>): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <uninitialized parent>>, T of <uninitialized parent>> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY

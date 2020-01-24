@@ -9,5 +9,5 @@ class A<T>(val t: T) {
 fun bar() {
     val x = A<String>::foo
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction1<A<String>, String>>(x)
+    checkSubtype<KFunction1<A<String>, String>>(x)
 }

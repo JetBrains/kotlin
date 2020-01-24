@@ -64,6 +64,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
         qualifiedAccessExpression.annotations.forEach { it.accept(this, data) }
+        qualifiedAccessExpression.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
+
         var result = when (val callee = qualifiedAccessExpression.calleeReference) {
             is FirExplicitThisReference -> {
                 val labelName = callee.labelName

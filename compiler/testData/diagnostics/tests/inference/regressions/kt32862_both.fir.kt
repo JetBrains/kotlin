@@ -12,5 +12,5 @@ fun <V, T : V?> G<T>.foo(vararg values: V2<V?>) = build()
 fun forReference(ref: Any?) {}
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>forReference<!>(<!UNRESOLVED_REFERENCE!>G<Int?>::foo<!>)
+    forReference(<!UNRESOLVED_REFERENCE!>G<Int?>::foo<!>)
 }

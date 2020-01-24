@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.types.Variance
 
 sealed class DoubleColonLHS(val type: ConeKotlinType) {
     /**
@@ -153,7 +152,22 @@ class FirDoubleColonExpressionResolver(
 
         val type = ConeClassLikeTypeImpl(
             firClass.symbol.toLookupTag(),
-            Array(firClass.typeParameters.size) { ConeStarProjection },
+            Array(firClass.typeParameters.size) { index ->
+                val typeArgument = expression.typeArguments.getOrNull(index)
+                if (typeArgument == null) ConeStarProjection
+                else when (typeArgument) {
+                    is FirTypeProjectionWithVariance -> {
+                        val coneType = typeArgument.typeRef.coneTypeSafe<ConeKotlinType>()
+                        if (coneType == null) ConeStarProjection
+                        else when (typeArgument.variance) {
+                            Variance.INVARIANT -> coneType
+                            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
+                            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
+                        }
+                    }
+                    else -> ConeStarProjection
+                }
+            },
             isNullable = false // TODO: Use org.jetbrains.kotlin.psi.KtDoubleColonExpression.getHasQuestionMarks
         )
 
