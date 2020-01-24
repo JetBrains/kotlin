@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
@@ -215,7 +216,8 @@ class FunctionInfo(
 class ClassWithPrimaryConstructorInfo(
     val classInfo: ClassInfo,
     expectedTypeInfo: TypeInfo,
-    modifierList: KtModifierList? = null
+    modifierList: KtModifierList? = null,
+    val primaryConstructorVisibility: Visibility? = null
 ) : CallableInfo(
     classInfo.name,
     TypeInfo.Empty,
