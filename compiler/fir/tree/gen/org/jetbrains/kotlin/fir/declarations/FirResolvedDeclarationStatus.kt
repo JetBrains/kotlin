@@ -34,6 +34,7 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isData: Boolean
     override val isSuspend: Boolean
     override val isStatic: Boolean
+    override val isNotSAM: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedDeclarationStatus(this, data)
 }

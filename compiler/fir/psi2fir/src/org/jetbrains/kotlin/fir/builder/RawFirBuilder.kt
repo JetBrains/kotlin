@@ -618,6 +618,7 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                     firClass.generateValuesFunction(session, context.packageFqName, context.className)
                     firClass.generateValueOfFunction(session, context.packageFqName, context.className)
                 }
+                firClass.calculateSAM()
 
                 firClass
             }

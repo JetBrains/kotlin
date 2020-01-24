@@ -244,6 +244,8 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
     scopeSession: ScopeSession,
     samCandidateNames: Set<Name>
 ): FirSimpleFunction? {
+    if (status.isNotSAM) return null
+
     var resultMethod: FirSimpleFunction? = null
     var metIncorrectMember = false
 

@@ -456,6 +456,7 @@ class DeclarationsConverter(
                 firClass.generateValuesFunction(session, context.packageFqName, context.className)
                 firClass.generateValueOfFunction(session, context.packageFqName, context.className)
             }
+            firClass.calculateSAM()
 
             return@withChildClassName firClass
         }
