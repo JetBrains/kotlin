@@ -24,7 +24,7 @@ public final class FileNameIndexServiceImpl implements FileNameIndexService {
   @Override
   public Collection<VirtualFile> getVirtualFilesByName(Project project, @NotNull String name, @NotNull GlobalSearchScope scope, IdFilter filter) {
     Set<VirtualFile> files = new THashSet<>();
-    myIndex.processValues(FilenameIndexImpl.NAME, name, null, (file, value) -> {
+    myIndex.processValues(FilenameIndex.NAME, name, null, (file, value) -> {
       files.add(file);
       return true;
     }, scope, filter);
@@ -33,17 +33,17 @@ public final class FileNameIndexServiceImpl implements FileNameIndexService {
 
   @Override
   public void processAllFileNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, IdFilter filter) {
-    myIndex.processAllKeys(FilenameIndexImpl.NAME, processor, scope, filter);
+    myIndex.processAllKeys(FilenameIndex.NAME, processor, scope, filter);
   }
 
   @NotNull
   @Override
   public Collection<VirtualFile> getFilesWithFileType(@NotNull FileType fileType, @NotNull GlobalSearchScope scope) {
-    return myIndex.getContainingFiles(FileTypeIndexImpl.NAME, fileType, scope);
+    return myIndex.getContainingFiles(FileTypeIndex.NAME, fileType, scope);
   }
 
   @Override
   public boolean processFilesWithFileType(@NotNull FileType fileType, @NotNull Processor<? super VirtualFile> processor, @NotNull GlobalSearchScope scope) {
-    return myIndex.processValues(FileTypeIndexImpl.NAME, fileType, null, (file, value) -> processor.process(file), scope);
+    return myIndex.processValues(FileTypeIndex.NAME, fileType, null, (file, value) -> processor.process(file), scope);
   }
 }
