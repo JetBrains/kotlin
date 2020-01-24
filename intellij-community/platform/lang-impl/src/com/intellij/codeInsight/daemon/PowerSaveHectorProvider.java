@@ -16,6 +16,7 @@
 package com.intellij.codeInsight.daemon;
 
 import com.intellij.ide.PowerSaveMode;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.editor.HectorComponentPanel;
 import com.intellij.openapi.editor.HectorComponentPanelsProvider;
 import com.intellij.psi.PsiFile;
@@ -30,7 +31,7 @@ public class PowerSaveHectorProvider implements HectorComponentPanelsProvider {
   @Override
   public HectorComponentPanel createConfigurable(@NotNull PsiFile file) {
     return new HectorComponentPanel() {
-      private final JCheckBox myCheckBox = new JCheckBox("Power Save Mode");
+      private final JCheckBox myCheckBox = new JCheckBox(EditorBundle.message("hector.power.save.mode.text"));
 
       @Override
       public JComponent createComponent() {

@@ -119,7 +119,7 @@ class HectorComponentImpl extends JPanel implements HectorComponent {
     gc.gridy = GridBagConstraints.RELATIVE;
     gc.weighty = 0;
 
-    final HyperlinkLabel configurator = new HyperlinkLabel("Configure inspections");
+    final HyperlinkLabel configurator = new HyperlinkLabel(EditorBundle.message("hector.configure.inspections"));
     gc.insets.right = 5;
     gc.insets.bottom = 10;
     gc.weightx = 0;
