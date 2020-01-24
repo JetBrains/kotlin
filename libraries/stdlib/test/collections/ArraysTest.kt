@@ -11,6 +11,7 @@ import test.assertStaticTypeIs
 import test.assertTypeEquals
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
+import test.text.isAsciiLetter
 import kotlin.test.*
 import kotlin.random.Random
 
@@ -1071,6 +1072,161 @@ class ArraysTest {
         expect(2.toShort()) { shortArrayOf(1, 2, 3).reduceRightOrNull { a, b -> (a - b).toShort() } }
 
         expect(null, { intArrayOf().reduceRightOrNull { a, b -> a + b } })
+    }
+
+    @Test
+    fun scan() {
+        for (size in 0 until 4) {
+            val expected = listOf("", "0", "01", "012", "0123").take(size + 1)
+            // Array<T>
+            assertEquals(expected, Array(size) { it }.scan("") { acc, e -> acc + e })
+            // Primitive Arrays
+            assertEquals(expected, ByteArray(size) { it.toByte() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, CharArray(size) { '0' + it }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, ShortArray(size) { it.toShort() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, IntArray(size) { it }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, LongArray(size) { it.toLong() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, FloatArray(size) { it.toFloat() }.scan("") { acc, e -> acc + e.toInt() })
+            assertEquals(expected, DoubleArray(size) { it.toDouble() }.scan("") { acc, e -> acc + e.toInt() })
+            assertEquals(
+                expected.map { it.map { c -> c.toInt() % 2 == 0 }.joinToString(separator = "") },
+                BooleanArray(size) { it % 2 == 0 }.scan("") { acc, e -> acc + e }
+            )
+        }
+    }
+
+    @Test
+    fun scanIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1)
+            // Array<T>
+            assertEquals(
+                expected,
+                Array(size) { 'a' + it }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
+            )
+            // Primitive Arrays
+            assertEquals(
+                expected,
+                ByteArray(size) { it.toByte() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                CharArray(size) { it.toChar() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                ShortArray(size) { it.toShort() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                IntArray(size) { it }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e}]" }
+            )
+            assertEquals(
+                expected,
+                LongArray(size) { it.toLong() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                FloatArray(size) { it.toFloat() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                DoubleArray(size) { it.toDouble() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected.map { it.map { c -> if (c.isAsciiLetter()) c.toInt() % 2 != 0 else c }.joinToString(separator = "") },
+                BooleanArray(size) { it % 2 == 0 }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduce() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 3, 6).take(size)
+            // Array<T>
+            assertEquals(
+                expected,
+                Array(size) { it }.scanReduce { acc, e -> acc + e }
+            )
+            // Primitive Arrays
+            assertEquals(
+                expected.map { it.toByte() },
+                ByteArray(size) { it.toByte() }.scanReduce { acc, e -> (acc + e).toByte() }
+            )
+            assertEquals(
+                expected.map { it.toChar() },
+                CharArray(size) { it.toChar() }.scanReduce { acc, e -> acc + e.toInt() }
+            )
+            assertEquals(
+                expected.map { it.toShort() },
+                ShortArray(size) { it.toShort() }.scanReduce { acc, e -> (acc + e).toShort() }
+            )
+            assertEquals(
+                expected,
+                IntArray(size) { it }.scanReduce { acc, e -> acc + e }
+            )
+            assertEquals(
+                expected.map { it.toLong() },
+                LongArray(size) { it.toLong() }.scanReduce { acc, e -> acc + e }
+            )
+            assertEquals(
+                expected.map { it.toFloat() },
+                FloatArray(size) { it.toFloat() }.scanReduce { acc, e -> acc + e.toInt() }
+            )
+            assertEquals(
+                expected.map { it.toDouble() },
+                DoubleArray(size) { it.toDouble() }.scanReduce { acc, e -> acc + e.toInt() }
+            )
+            assertEquals(
+                expected.indices.map { it % 2 == 0 },
+                BooleanArray(size) { true }.scanReduce { acc, e -> acc != e }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 6, 27).take(size)
+            // Array<T>
+            assertEquals(
+                expected,
+                Array(size) { it }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+            )
+            // Primitive Arrays
+            assertEquals(
+                expected.map { it.toByte() },
+                ByteArray(size) { it.toByte() }.scanReduceIndexed { index, acc, e -> (index * (acc + e)).toByte() })
+            assertEquals(
+                expected.map { it.toChar() },
+                CharArray(size) { it.toChar() }.scanReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
+            )
+            assertEquals(
+                expected.map { it.toShort() },
+                ShortArray(size) { it.toShort() }.scanReduceIndexed { index, acc, e -> (index * (acc + e)).toShort() }
+            )
+            assertEquals(
+                expected,
+                IntArray(size) { it }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+            )
+            assertEquals(
+                expected.map { it.toLong() },
+                LongArray(size) { it.toLong() }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+            )
+            assertEquals(
+                expected.map { it.toFloat() },
+                FloatArray(size) { it.toFloat() }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+            )
+            assertEquals(
+                expected.map { it.toDouble() },
+                DoubleArray(size) { it.toDouble() }.scanReduceIndexed { index, acc, e -> index * (acc + e) }
+            )
+            assertEquals(
+                expected.indices.map { it % 2 == 0 },
+                BooleanArray(size) { true }.scanReduceIndexed { index, acc, e -> acc != e && index % 2 == 0 }
+            )
+        }
     }
 
     @Test fun reverseInPlace() {

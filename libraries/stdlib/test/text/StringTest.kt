@@ -1311,6 +1311,47 @@ class StringTest {
         expect(null, { arg1("").reduceOrNull { _, _ -> '\n' } })
     }
 
+
+    @Test
+    fun scan() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf("", "0", "01", "012", "0123").take(size + 1),
+                arg1((0 until size).joinToString(separator = "")).scan("") { acc, e -> acc + e }
+            )
+        }
+    }
+
+    @Test
+    fun scanIndexed() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1),
+                arg1(('a' until 'a' + size).joinToString(separator = "")).scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduce() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf(0, 1, 3, 6).take(size).map { it.toChar() },
+                arg1((0.toChar() until size.toChar()).joinToString(separator = "")).scanReduce { acc, e -> acc + e.toInt() }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf(0, 1, 6, 27).take(size).map { it.toChar() },
+                arg1((0.toChar() until size.toChar()).joinToString(separator = "")).scanReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
+            )
+        }
+    }
+
     @Test fun groupBy() = withOneCharSequenceArg("abAbaABcD") { data ->
         // group characters by their case
         val result = data.groupBy { it.isAsciiUpperCase() }
