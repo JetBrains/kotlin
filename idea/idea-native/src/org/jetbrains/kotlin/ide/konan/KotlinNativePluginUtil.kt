@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCach
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
@@ -90,6 +87,11 @@ internal val VirtualFile.isKonanLibraryRoot: Boolean
         if (!extension.isNullOrEmpty() && extension != KLIB_FILE_EXTENSION) return false
 
         val manifestFile = findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
+
+        // this is a hacky way to determine whether this is a Kotlin/Native .klib or common .klib (common .klibs don't have ir)
+        // TODO(dsavvinov): introduce more robust way to detect library platform
+        val irFolder = findChild(KLIB_IR_FOLDER_NAME)
+        if (irFolder == null || irFolder.children.isEmpty()) return false
 
         val manifestProperties = try {
             manifestFile.inputStream.use { Properties().apply { load(it) } }
