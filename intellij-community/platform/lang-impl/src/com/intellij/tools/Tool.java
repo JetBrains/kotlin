@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.tools;
 
@@ -283,16 +283,17 @@ public class Tool implements SchemeElement {
         }
 
         environment.setExecutionId(executionId);
-        environment.getRunner().execute(environment, new ProgramRunner.Callback() {
+        environment.getRunner().execute(environment.withCallback(new ProgramRunner.Callback() {
           @Override
           public void processStarted(RunContentDescriptor descriptor) {
             ProcessHandler processHandler = descriptor.getProcessHandler();
             if (processHandler != null && processListener != null) {
-              LOG.assertTrue(!processHandler.isStartNotified(), "ProcessHandler is already startNotified, the listener won't be correctly notified");
+              LOG.assertTrue(!processHandler.isStartNotified(),
+                             "ProcessHandler is already startNotified, the listener won't be correctly notified");
               processHandler.addProcessListener(processListener);
             }
           }
-        });
+        }));
       }
       else {
         GeneralCommandLine commandLine = createCommandLine(dataContext);
