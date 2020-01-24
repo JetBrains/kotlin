@@ -547,6 +547,13 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
             return friendPaths.filter { filter(File(it)) }
         }
 
+    @Suppress("unused")
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val sourceMapBaseDirs: FileCollection?
+        get() = kotlinOptionsImpl.sourceMapBaseDirs
+
     private fun isHybridKotlinJsLibrary(file: File): Boolean =
         LibraryUtils.isKotlinJavascriptLibrary(file) && isKotlinLibrary(file)
 
