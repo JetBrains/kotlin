@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
 
 const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_MODULE_METADATA_FILE_NAME = "module"
+const val KLIB_IR_FOLDER_NAME = "ir"
 
 /**
  * This scheme describes the Kotlin/Native Library (KLIB) layout.
@@ -50,7 +51,7 @@ interface MetadataKotlinLibraryLayout : KotlinLibraryLayout {
 
 interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     val irDir
-        get() = File(libDir, "ir")
+        get() = File(libDir, KLIB_IR_FOLDER_NAME)
     val irDeclarations
         get() = File(irDir, "irDeclarations.knd")
     val irSymbols
