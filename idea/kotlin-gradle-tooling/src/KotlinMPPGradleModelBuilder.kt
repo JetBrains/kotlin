@@ -20,6 +20,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel.Companion.NO_KOTLIN_NATIVE_HOME
+import org.jetbrains.plugins.gradle.DefaultExternalDependencyId
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
@@ -170,13 +171,13 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
     }
 
-    private fun buildAndroidDeps(kotlinExt: Any, project: Project): Map<String, List<File>>? {
+    private fun buildAndroidDeps(kotlinExt: Any, project: Project): Map<String, List<Any>>? {
         val includeAndroidDeps = project.properties["kotlin.include.android.dependencies"]?.toString()?.toBoolean() == true
         if (includeAndroidDeps) {
             val getAndroidSourceSetDependencies =
                 kotlinExt.javaClass.getMethodOrNull("getAndroidSourceSetDependencies", Project::class.java)
             @Suppress("UNCHECKED_CAST")
-            return getAndroidSourceSetDependencies?.let { it(kotlinExt, project) } as Map<String, List<File>>?
+            return getAndroidSourceSetDependencies?.let { it(kotlinExt, project) } as Map<String, List<Any>>?
         } else {
             return emptyMap()
         }
@@ -187,7 +188,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         dependencyResolver: DependencyResolver,
         project: Project,
         dependencyMapper: KotlinDependencyMapper,
-        androidDeps: Map<String, List<File>>?
+        androidDeps: Map<String, List<Any>>?
     ): KotlinSourceSetProto? {
         val sourceSetClass = gradleSourceSet.javaClass
         val getLanguageSettings = sourceSetClass.getMethodOrNull("getLanguageSettings") ?: return null
@@ -607,7 +608,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         gradleSourceSet: Named,
         dependencyResolver: DependencyResolver,
         project: Project,
-        androidDeps: Map<String, List<File>>?
+        androidDeps: Map<String, List<Any>>?
     ): List<KotlinDependency> {
         return ArrayList<KotlinDependency>().apply {
             val transformationBuilder = MetadataDependencyTransformationBuilder(gradleSourceSet)
@@ -623,9 +624,31 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             this += buildDependencies(
                 gradleSourceSet, dependencyResolver, "getRuntimeOnlyMetadataConfigurationName", "RUNTIME", project, transformationBuilder
             )
-
-            androidDeps?.get(gradleSourceSet.name)?.let { this += DefaultFileCollectionDependency(it) }
+            this += buildAndroidSourceSetDependencies(androidDeps, gradleSourceSet)
         }
+    }
+
+    private fun buildAndroidSourceSetDependencies(
+        androidDeps: Map<String, List<Any>>?,
+        gradleSourceSet: Named
+    ): Collection<KotlinDependency> {
+        return androidDeps?.get(gradleSourceSet.name)?.map { it ->
+            @Suppress("UNCHECKED_CAST")
+            val collection = it["getCollection"] as Set<File>?
+            if (collection == null) {
+                DefaultExternalLibraryDependency().apply {
+                    (id as? DefaultExternalDependencyId)?.apply {
+                        name = it["getName"] as String?
+                        group = it["getGroup"] as String?
+                        version = it["getVersion"] as String?
+                    }
+                    file = it["getJar"] as File
+                    source = it["getSource"] as File?
+                }
+            } else {
+                DefaultFileCollectionDependency(collection)
+            }
+        } ?: emptyList()
     }
 
     @Suppress("UNCHECKED_CAST")
