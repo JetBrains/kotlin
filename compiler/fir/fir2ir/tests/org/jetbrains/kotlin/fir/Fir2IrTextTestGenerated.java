@@ -1349,6 +1349,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("boundInnerGenericConstructor.kt")
+            public void testBoundInnerGenericConstructor() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/boundInnerGenericConstructor.kt");
+            }
+
             @TestMetadata("constructorWithAdaptedArguments.kt")
             public void testConstructorWithAdaptedArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/constructorWithAdaptedArguments.kt");
