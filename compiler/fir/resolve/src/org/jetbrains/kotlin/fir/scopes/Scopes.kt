@@ -36,9 +36,5 @@ fun createImportingScopes(
     )
 }
 
-fun FirCompositeScope.addImportingScopes(file: FirFile, session: FirSession, scopeSession: ScopeSession) {
-    scopes.addImportingScopes(file, session, scopeSession)
-}
-
 private val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
 

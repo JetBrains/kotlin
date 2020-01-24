@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -41,7 +42,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
     override fun resolveToSymbol(
         typeRef: FirTypeRef,
-        scope: FirScope
+        scope: FirIterableScope
     ): FirClassifierSymbol<*>? {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag?.let(symbolProvider::getSymbolByLookupTag)
@@ -50,22 +51,25 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                 val qualifierResolver = FirQualifierResolver.getInstance(session)
 
                 var resolvedSymbol: FirClassifierSymbol<*>? = null
-                scope.processClassifiersByName(typeRef.qualifier.first().name) { symbol ->
-                    if (resolvedSymbol != null) return@processClassifiersByName
-                    resolvedSymbol = when (symbol) {
-                        is FirClassLikeSymbol<*> -> {
-                            if (typeRef.qualifier.size == 1) {
-                                symbol
-                            } else {
-                                qualifierResolver.resolveSymbolWithPrefix(typeRef.qualifier, symbol.classId)
+                for (typeScope in scope.scopes) {
+                    typeScope.processClassifiersByName(typeRef.qualifier.first().name) { symbol ->
+                        if (resolvedSymbol != null) return@processClassifiersByName
+                        resolvedSymbol = when (symbol) {
+                            is FirClassLikeSymbol<*> -> {
+                                if (typeRef.qualifier.size == 1) {
+                                    symbol
+                                } else {
+                                    qualifierResolver.resolveSymbolWithPrefix(typeRef.qualifier, symbol.classId)
+                                }
                             }
+                            is FirTypeParameterSymbol -> {
+                                assert(typeRef.qualifier.size == 1)
+                                symbol
+                            }
+                            else -> error("!")
                         }
-                        is FirTypeParameterSymbol -> {
-                            assert(typeRef.qualifier.size == 1)
-                            symbol
-                        }
-                        else -> error("!")
                     }
+                    if (resolvedSymbol != null) break
                 }
 
                 // TODO: Imports
@@ -89,7 +93,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
     private fun createFunctionalType(typeRef: FirFunctionTypeRef): ConeClassLikeType {
         val parameters =
             listOfNotNull((typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type) +
-                    typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>() } +
+                    typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe() } +
                     listOf(typeRef.returnTypeRef.coneTypeUnsafe())
         return ConeClassLikeTypeImpl(
             resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), session).toLookupTag(),
@@ -100,7 +104,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
     override fun resolveType(
         typeRef: FirTypeRef,
-        scope: FirScope
+        scope: FirIterableScope
     ): ConeKotlinType {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.type

@@ -5,50 +5,31 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 
 class FirCompositeScope(
-    val scopes: MutableList<FirScope>,
+    private val scopeList: MutableList<FirScope>,
     private val reversedPriority: Boolean = false
-) : FirScope() {
-    constructor(vararg scopes: FirScope) : this(scopes.toMutableList())
+) : FirIterableScope() {
+    override val scopes get() = if (reversedPriority) scopeList.asReversed() else scopeList
 
-    override fun processClassifiersByName(
-        name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
-    ) {
-        val scopes = if (reversedPriority) scopes.asReversed() else scopes
-        for (scope in scopes) {
-            scope.processClassifiersByName(name, processor)
+    fun addImportingScopes(file: FirFile, session: FirSession, scopeSession: ScopeSession) {
+        scopeList += createImportingScopes(file, session, scopeSession)
+    }
+
+    fun addScope(scope: FirScope) {
+        scopeList += scope
+    }
+
+    fun dropLastScopes(number: Int) {
+        repeat(number) {
+            scopeList.removeAt(scopeList.size - 1)
         }
-    }
-
-    private inline fun <T> processComposite(
-        process: FirScope.(Name, (T) -> Unit) -> Unit,
-        name: Name,
-        noinline processor: (T) -> Unit
-    ) {
-        val unique = mutableSetOf<T>()
-        val scopes = if (reversedPriority) scopes.asReversed() else scopes
-        for (scope in scopes) {
-            scope.process(name) {
-                if (unique.add(it)) {
-                    processor(it)
-                }
-            }
-        }
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        return processComposite(FirScope::processFunctionsByName, name, processor)
-    }
-
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
-        return processComposite(FirScope::processPropertiesByName, name, processor)
     }
 
 }
