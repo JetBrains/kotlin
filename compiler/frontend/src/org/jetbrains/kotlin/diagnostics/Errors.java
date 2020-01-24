@@ -867,6 +867,8 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> OPERATOR_MODIFIER_REQUIRED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> INFIX_MODIFIER_REQUIRED = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory2<PsiElement, FunctionDescriptor, String> PROPERTY_AS_OPERATOR = DiagnosticFactory2.create(ERROR);
+
     DiagnosticFactory2<PsiElement, KtModifierKeywordToken, String> INAPPLICABLE_MODIFIER = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory1<PsiElement, CallableDescriptor> DSL_SCOPE_VIOLATION = DiagnosticFactory1.create(ERROR);

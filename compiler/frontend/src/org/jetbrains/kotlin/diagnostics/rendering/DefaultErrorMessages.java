@@ -504,6 +504,8 @@ public class DefaultErrorMessages {
         MAP.put(OPERATOR_MODIFIER_REQUIRED, "''operator'' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
         MAP.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
 
+        MAP.put(PROPERTY_AS_OPERATOR, "Properties cannot be used in operator conventions: ''{0}'' in ''{1}''", NAME, STRING);
+
         MAP.put(INAPPLICABLE_MODIFIER, "''{0}'' modifier is inapplicable. The reason is that {1}", TO_STRING, STRING);
 
         MAP.put(DSL_SCOPE_VIOLATION, "''{0}'' can''t be called in this context by implicit receiver. " +
