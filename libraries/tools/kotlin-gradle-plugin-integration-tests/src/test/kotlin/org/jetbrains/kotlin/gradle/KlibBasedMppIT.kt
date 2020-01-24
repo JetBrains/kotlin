@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
+import org.junit.Ignore
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFalse
