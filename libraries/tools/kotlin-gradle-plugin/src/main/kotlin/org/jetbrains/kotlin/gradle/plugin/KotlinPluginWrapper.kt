@@ -56,6 +56,7 @@ abstract class KotlinBasePluginWrapper(
 
     override fun apply(project: Project) {
         val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project.gradle)
+        statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
 
         checkGradleCompatibility()
 

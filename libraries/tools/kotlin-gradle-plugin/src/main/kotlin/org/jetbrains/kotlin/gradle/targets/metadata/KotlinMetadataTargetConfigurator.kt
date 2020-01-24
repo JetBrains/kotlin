@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setArchiveAppendixCompatible
 import org.jetbrains.kotlin.gradle.utils.setArchiveClassifierCompatible
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -64,6 +66,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         super.configureTarget(target)
 
         if (target.project.isKotlinGranularMetadataEnabled) {
+            KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.ENABLED_HMPP, true)
             target as KotlinMetadataTarget
 
             createMergedAllSourceSetsConfigurations(target)
