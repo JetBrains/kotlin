@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Segment;
@@ -369,7 +370,7 @@ class DocRenderItem {
     }
   }
 
-  private static class ToggleRenderingAction extends AnAction {
+  private static class ToggleRenderingAction extends DumbAwareAction {
     private final DocRenderItem item;
 
     private ToggleRenderingAction(DocRenderItem item) {
@@ -384,7 +385,7 @@ class DocRenderItem {
     }
   }
 
-  static class ChangeFontSize extends AnAction {
+  static class ChangeFontSize extends DumbAwareAction {
     ChangeFontSize() {
       super(CodeInsightBundle.message("javadoc.adjust.font.size"));
     }
