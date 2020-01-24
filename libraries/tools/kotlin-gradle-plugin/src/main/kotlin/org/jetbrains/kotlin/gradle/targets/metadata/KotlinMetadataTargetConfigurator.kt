@@ -379,7 +379,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                         PropertiesProvider(project.rootProject).enableCommonKlibs == true &&
                                 singleOrNull() == KotlinPlatformType.native &&
                                 compilations.map { it.target }.distinct().size > 1 &&
-                                compilations.all { (it.target as? KotlinNativeTarget)?.konanTarget?.enabledOnCurrentHost == true }
+                                compilations.all { (it as AbstractKotlinNativeCompilation).konanTarget.enabledOnCurrentHost }
                         )
             }
         }
