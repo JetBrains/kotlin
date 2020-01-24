@@ -19,12 +19,11 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.provider.Provider
-import org.gradle.internal.component.external.model.DefaultModuleComponentIdentifier
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -73,7 +72,16 @@ open class KotlinMultiplatformExtension :
         KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
     }
 
-    private fun getAndroidSdkJar(project: Project): File? {
+    data class AndroidDependency(
+        val name: String? = null,
+        val jar: File? = null,
+        val source: File? = null,
+        val group: String? = null,
+        val version: String? = null,
+        val collection: Set<File>? = null
+    )
+
+    private fun getAndroidSdkJar(project: Project): AndroidDependency? {
         val androidExtension = project.extensions.findByName("android") as BaseExtension? ?: return null
         val sdkLocation = getClassOrNull("com.android.build.gradle.internal.SdkLocationSourceSet")?.let { sdkLocationSourceSetClass ->
             val sdkLocationSourceSet = sdkLocationSourceSetClass.kotlin.constructors.firstOrNull()?.let { callable ->
@@ -90,7 +98,11 @@ open class KotlinMultiplatformExtension :
         val sdkHandler = AndroidSdkHandler.getInstance(sdkLocation)
         val logger = LoggerProgressIndicatorWrapper(LoggerWrapper(project.logger))
         val androidTarget = sdkHandler.getAndroidTargetManager(logger).getTargetFromHashString(androidExtension.compileSdkVersion, logger)
-        return File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR))
+        return AndroidDependency(
+            androidTarget.fullName,
+            File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR)),
+            File(androidTarget.getPath(IAndroidTarget.SOURCES))
+        )
     }
 
     private fun getClassOrNull(s: String) =
@@ -118,7 +130,7 @@ open class KotlinMultiplatformExtension :
         return Version.parseVersion(version)?.isOrGreaterThan(3, 6) ?: false
     }
 
-    fun getAndroidSourceSetDependencies(project: Project): Map<String, List<File>?> {
+    fun getAndroidSourceSetDependencies(project: Project): Map<String, List<AndroidDependency>?> {
         if (!isAndroidPluginCompatible()) return emptyMap()
 
         data class SourceSetConfigs(val implConfig: Configuration, val compileConfig: Configuration)
@@ -139,8 +151,8 @@ open class KotlinMultiplatformExtension :
         return sourceSet2Impl.mapValues { entry ->
             val dependencies = findDependencies(allImplConfigs, entry.value.implConfig)
 
-            val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().flatMap { it.resolve() }
-            val resolvedExternal = dependencies.filterIsInstance<DefaultExternalModuleDependency>()
+            val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().map { AndroidDependency(collection = it.resolve()) }
+            val resolvedExternal = dependencies.filterIsInstance<ExternalModuleDependency>()
                 .flatMap { collectDependencies(it.module, entry.value.compileConfig) }
 
             val result = (selfResolved + resolvedExternal + androidSdkJar).toMutableList()
@@ -152,7 +164,7 @@ open class KotlinMultiplatformExtension :
                     @Suppress("UNCHECKED_CAST")
                     val rClassOutputJar =
                         linkAppClass.getMethodOrNull("getRClassOutputJar")?.invoke(task) as Provider<FileSystemLocation>?
-                    rClassOutputJar?.orNull?.asFile?.let { result += it }
+                    rClassOutputJar?.orNull?.asFile?.let { result += AndroidDependency("R.jar", it) }
                 }
             }
 
@@ -164,15 +176,16 @@ open class KotlinMultiplatformExtension :
     private fun collectDependencies(
         module: ModuleIdentifier,
         compileClasspathConf: Configuration
-    ): List<File> {
+    ): List<AndroidDependency> {
         val viewConfig: (ArtifactView.ViewConfiguration) -> Unit = { config ->
             config.attributes { it.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.JAR.type) }
             config.isLenient = true
         }
 
         val resolvedArtifacts = compileClasspathConf.incoming.artifactView(viewConfig).artifacts.mapNotNull {
-            val id = (it.id.componentIdentifier as? DefaultModuleComponentIdentifier)?.moduleIdentifier ?: return@mapNotNull null
-            id to it
+            val componentIdentifier = it.id.componentIdentifier as? ModuleComponentIdentifier ?: return@mapNotNull null
+            val id = componentIdentifier.moduleIdentifier ?: return@mapNotNull null
+            id to AndroidDependency(id.name, it.file, null, id.group, componentIdentifier.version)
         }.toMap()
 
         val resolutionResults = compileClasspathConf.incoming.resolutionResult.allComponents.mapNotNull {
@@ -181,7 +194,7 @@ open class KotlinMultiplatformExtension :
         }.toMap()
 
         val deps = HashSet<ModuleIdentifier>().also { doCollectDependencies(listOf(module), resolutionResults, it) }
-        return deps.mapNotNull { resolvedArtifacts[it] }.map { it.file }
+        return deps.mapNotNull { resolvedArtifacts[it] }
     }
 
     @Suppress("UnstableApiUsage")
