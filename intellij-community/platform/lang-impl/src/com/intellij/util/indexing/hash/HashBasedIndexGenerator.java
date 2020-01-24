@@ -11,6 +11,10 @@ import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.MapIndexStorage;
 import com.intellij.util.indexing.impl.MapReduceIndex;
+import com.intellij.util.indexing.impl.forward.ForwardIndex;
+import com.intellij.util.indexing.impl.forward.ForwardIndexAccessor;
+import com.intellij.util.indexing.impl.forward.MapForwardIndexAccessor;
+import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.KeyDescriptor;
@@ -100,13 +104,17 @@ public class HashBasedIndexGenerator<K, V> {
       }
     };
 
-    myIndex = new MapReduceIndex<K, V, FileContent>(myExtension, indexStorage, null, null) {
+    FileBasedIndexExtension<K, V> originalExtension = myExtension.myOriginalExtension;
+    boolean isSingleEntryIndex = originalExtension instanceof SingleEntryFileBasedIndexExtension;
+    Path forwardIndexPath = myStorageFile.getParent().resolve(myStorageFile.getFileName() + ".forward");
+    ForwardIndex forwardIndex = isSingleEntryIndex ? null : new PersistentMapBasedForwardIndex(forwardIndexPath, false);
+    ForwardIndexAccessor<K, V> forwardIndexAccessor = isSingleEntryIndex ? null : new MapForwardIndexAccessor<>(new InputMapExternalizer<>(originalExtension));
+    myIndex = new MapReduceIndex<K, V, FileContent>(myExtension, indexStorage, forwardIndex, forwardIndexAccessor) {
       @NotNull
       @Override
       protected Map<K, V> mapByIndexer(int inputId, @NotNull FileContent content) {
         Map<K, V> data = super.mapByIndexer(inputId, content);
-        boolean singleEntry = HashBasedIndexGenerator.this.myExtension.myOriginalExtension instanceof SingleEntryFileBasedIndexExtension;
-        if (singleEntry && !data.isEmpty()) {
+        if (isSingleEntryIndex && !data.isEmpty()) {
           data = Collections.singletonMap((K)(Integer)inputId, data.values().iterator().next());
         }
         return data;
