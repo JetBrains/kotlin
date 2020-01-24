@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import java.io.StringWriter
 
 
-fun ir2string(ir: IrElement?): String = ir2stringWhole(ir).takeWhile { it != '\n' }
+fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
 
 fun ir2stringWhole(ir: IrElement?, withDescriptors: Boolean = false): String {
     val strWriter = StringWriter()

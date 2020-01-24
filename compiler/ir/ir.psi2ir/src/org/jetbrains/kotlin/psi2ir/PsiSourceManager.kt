@@ -16,12 +16,21 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import java.util.*
+import kotlin.reflect.KClass
 
 class PsiSourceManager : SourceManager {
     class PsiFileEntry(psiFile: PsiFile) : SourceManager.FileEntry {
@@ -29,15 +38,12 @@ class PsiSourceManager : SourceManager {
 
         override val maxOffset: Int
         private val lineStartOffsets: IntArray
+        private val fileViewProvider = psiFile.viewProvider
 
         init {
-            val document = psiFile.viewProvider.document ?: throw AssertionError("No document for $psiFile")
-
+            val document = fileViewProvider.document ?: throw AssertionError("No document for $psiFile")
             maxOffset = document.textLength
-
-            lineStartOffsets = (0..document.lineCount - 1)
-                .map { document.getLineStartOffset(it) }
-                .toIntArray()
+            lineStartOffsets = IntArray(document.lineCount) { document.getLineStartOffset(it) }
         }
 
         override fun getLineNumber(offset: Int): Int {
@@ -68,6 +74,20 @@ class PsiSourceManager : SourceManager {
         override val name: String get() = getRecognizableName()
 
         override fun toString(): String = getRecognizableName()
+
+        fun findPsiElement(irElement: IrElement): PsiElement? {
+            var psiElement = fileViewProvider.findElementAt(irElement.startOffset)
+            while (psiElement != null) {
+                if (psiElement.endOffset == irElement.endOffset) break
+                psiElement = psiElement.parent
+            }
+            return psiElement
+        }
+
+        fun <E : PsiElement> findPsiElement(irElement: IrElement, psiElementClass: KClass<E>): E? =
+            findPsiElement(irElement)?.let {
+                PsiTreeUtil.getParentOfType(it, psiElementClass.java, false)
+            }
     }
 
     private val fileEntriesByKtFile = HashMap<KtFile, PsiFileEntry>()
@@ -97,4 +117,32 @@ class PsiSourceManager : SourceManager {
 
     override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry? =
         fileEntriesByIrFile[irFile]
+
+    fun <E : PsiElement> findPsiElement(irElement: IrElement, irFile: IrFile, psiElementClass: KClass<E>): E? {
+        val psiFileEntry = fileEntriesByIrFile[irFile]
+            ?: throw AssertionError("No PSI file for irFile $irFile")
+        return psiFileEntry.findPsiElement(irElement, psiElementClass)
+    }
+
+    fun findPsiElement(irElement: IrElement, irFile: IrFile): PsiElement? {
+        val psiFileEntry = fileEntriesByIrFile[irFile]
+            ?: throw AssertionError("No PSI file for irFile $irFile")
+        return psiFileEntry.findPsiElement(irElement)
+    }
+
+    fun <E : PsiElement> findPsiElement(irElement: IrElement, irDeclaration: IrDeclaration, psiElementClass: KClass<E>): E? {
+        val irFile = irDeclaration.fileOrNull ?: return null
+        return findPsiElement(irElement, irFile, psiElementClass)
+    }
+
+    fun findPsiElement(irElement: IrElement, irDeclaration: IrDeclaration): PsiElement? {
+        val irFile = irDeclaration.fileOrNull ?: return null
+        return findPsiElement(irElement, irFile)
+    }
+
+    fun <E : PsiElement> findPsiElement(irDeclaration: IrDeclaration, psiElementClass: KClass<E>): E? =
+        findPsiElement(irDeclaration, irDeclaration, psiElementClass)
+
+    fun findPsiElement(irDeclaration: IrDeclaration): PsiElement? =
+        findPsiElement(irDeclaration, irDeclaration)
 }
