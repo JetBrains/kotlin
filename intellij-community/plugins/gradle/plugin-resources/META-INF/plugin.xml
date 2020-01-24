@@ -4,19 +4,14 @@
   <vendor>JetBrains</vendor>
   <description>
       <![CDATA[
-      Provides integration with <a href="http://www.gradle.org">Gradle</a>, a build and automation system. Gradle can automate the building, testing, publishing, deployment and etc.
-      of software packages or other types of projects.
-      The following features are available:
+      Provides integration with <a href="http://www.gradle.org">Gradle</a> for automation of building, testing, publishing, and deployment of software packages.
       <ul>
-      <li>Ability to deduce Gradle home from the environment variables or configure Gradle home in a product.</li>
-      <li>Ability to create a new Gradle project or import the existing project with Gradle models.</li>
-      <li>Ability to edit .gradle files. The initial coding assistance is the same as for Groovy.</li>
-      <li>Dedicated Gradle tool window.</li>
-      <li>Ability to synchronize structures of Gradle and product's projects.</li>
-      <li>Running Gradle tasks with the Gradle run/debug configuration.</li>
-      <li>Ability to use Gradle wrapper and auto-import.</li>
+      <li>Create a new Gradle project or import an existing Gradle project.</li>
+      <li>Edit Gradle files with coding assistance (code completion, inspections, refactoring, and much more).</li>
+      <li>Synchronize the project structure with the Gradle model.</li>
+      <li>Run Gradle tasks with the Gradle run/debug configuration.</li>
       </ul>
-
+       To use the <b>Gradle</b> tool window, select <b>View | Tool Windows | Gradle</b>.
       ]]>
   </description>
 
