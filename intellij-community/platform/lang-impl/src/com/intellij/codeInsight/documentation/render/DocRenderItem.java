@@ -12,10 +12,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.event.EditorFactoryEvent;
-import com.intellij.openapi.editor.event.EditorFactoryListener;
-import com.intellij.openapi.editor.event.VisibleAreaEvent;
-import com.intellij.openapi.editor.event.VisibleAreaListener;
+import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
@@ -40,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 
 class DocRenderItem {
+  private static final Key<DocRenderItem> OUR_ITEM = Key.create("doc.render.item");
   private static final Key<Collection<DocRenderItem>> OUR_ITEMS = Key.create("doc.render.items");
   private static final Key<VisibleAreaListener> VISIBLE_AREA_LISTENER = Key.create("doc.render.visible.area.listener");
   private static final Key<Disposable> LISTENERS_DISPOSABLE = Key.create("doc.render.listeners.disposable");
@@ -133,6 +131,7 @@ class DocRenderItem {
             }
           }
         }, connection);
+        editor.getCaretModel().addCaretListener(new MyCaretListener(), connection);
         editor.putUserData(LISTENERS_DISPOSABLE, connection);
       }
     }
@@ -228,6 +227,7 @@ class DocRenderItem {
         Runnable foldingTask = () -> {
           // if this fails (setting 'foldRegion' to null), 'cleanup' method will fix the mess
           foldRegion = foldingModel.createFoldRegion(foldStartOffset, foldEndOffset, "", null, true);
+          if (foldRegion != null) foldRegion.putUserData(OUR_ITEM, this);
         };
         if (foldingTasks == null) {
           foldingModel.runBatchFoldingOperation(foldingTask, true, false);
@@ -270,6 +270,29 @@ class DocRenderItem {
       });
       return updated.get();
     });
+  }
+
+  private static class MyCaretListener implements CaretListener {
+    @Override
+    public void caretPositionChanged(@NotNull CaretEvent event) {
+      onCaretUpdate(event);
+    }
+
+    @Override
+    public void caretAdded(@NotNull CaretEvent event) {
+      onCaretUpdate(event);
+    }
+
+    private static void onCaretUpdate(@NotNull CaretEvent event) {
+      Caret caret = event.getCaret();
+      if (caret == null) return;
+      int caretOffset = caret.getOffset();
+      FoldRegion foldRegion = caret.getEditor().getFoldingModel().getCollapsedRegionAtOffset(caretOffset);
+      if (foldRegion != null && caretOffset > foldRegion.getStartOffset()) {
+        DocRenderItem item = foldRegion.getUserData(OUR_ITEM);
+        if (item != null) item.toggle(null);
+      }
+    }
   }
 
   private static class MyVisibleAreaListener implements VisibleAreaListener {
