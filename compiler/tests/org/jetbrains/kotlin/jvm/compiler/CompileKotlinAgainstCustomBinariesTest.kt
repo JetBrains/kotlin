@@ -476,21 +476,13 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testWrongInlineTarget() {
         val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", "1.8"))
-        compileKotlin(
-            "source.kt", tmpdir, listOf(library),
-            /*all warning here are erased by compiler cause or error presence, see next test for warnings*/
-            expectedFileName = "errorsAndErasedWarnings.txt"
-        )
+
+        compileKotlin("source.kt", tmpdir, listOf(library))
 
         compileKotlin(
-            "warningsOnly.kt", tmpdir, listOf(library),
-            expectedFileName = "warningsOnly.txt"
-        )
-
-        compileKotlin(
-            "source.kt", tmpdir, listOf(library),
-            additionalOptions = listOf("-XXLanguage:+ProperInlineFromHigherPlatformDiagnostic"),
-            expectedFileName = "properError.txt"
+            "warningsOnly_1_3.kt", tmpdir, listOf(library),
+            additionalOptions = listOf("-language-version", "1.3"),
+            expectedFileName = "warningsOnly_1_3.txt"
         )
     }
 
