@@ -564,6 +564,15 @@ abstract class KotlinIrLinker(
             return null
         }
 
+        val moduleOfOrigin = topLevelDescriptor.module
+
+        val moduleDeserializer = deserializersForModules[moduleOfOrigin] ?:
+        if (tolerateNonKlibDescriptors) {
+            return null
+        } else {
+            error("No module deserializer found for $moduleOfOrigin")
+        }
+
         val descriptorUniqId = topLevelDescriptor.getUniqId()
             ?: if (tolerateNonKlibDescriptors) {
                 return null
@@ -571,15 +580,6 @@ abstract class KotlinIrLinker(
                 error("Could not get descriptor uniq id for $topLevelDescriptor")
             }
         val topLevelKey = UniqId(descriptorUniqId)
-
-        val moduleOfOrigin = topLevelDescriptor.module
-
-        val moduleDeserializer = deserializersForModules[moduleOfOrigin] ?:
-            if (tolerateNonKlibDescriptors) {
-                return null
-            } else {
-                error("No module deserializer found for $moduleOfOrigin")
-            }
 
         moduleDeserializer.addModuleReachableTopLevel(topLevelKey)
 
