@@ -1,0 +1,18 @@
+FILE fqName:<root> fileName:/letArrayOf.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Array<kotlin.String> declared in <root>'
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+          <T>: kotlin.String
+          <R>: kotlin.Array<kotlin.String>
+          $receiver: CONST String type=kotlin.String value="OK"
+          block: BLOCK type=kotlin.reflect.KFunction1<kotlin.String, kotlin.Array<kotlin.String>> origin=null
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:arrayOf visibility:local modality:FINAL <> (p0:kotlin.String) returnType:kotlin.Array<kotlin.String> [inline]
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun arrayOf (p0: kotlin.String): kotlin.Array<kotlin.String> [inline] declared in <root>.test'
+                  CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+                    <T>: kotlin.String
+                    elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                      GET_VAR 'p0: kotlin.String declared in <root>.test.arrayOf' type=kotlin.String origin=null
+            FUNCTION_REFERENCE 'local final fun arrayOf (p0: kotlin.String): kotlin.Array<kotlin.String> [inline] declared in <root>.test' type=kotlin.reflect.KFunction1<kotlin.String, kotlin.Array<kotlin.String>> origin=null reflectionTarget=null

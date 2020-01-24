@@ -1,0 +1,6 @@
+FILE fqName:<root> fileName:/letArrayOf.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/let]>#' type=IrErrorType
+          FUNCTION_REFERENCE 'public final fun arrayOf <T> (elements: kotlin.Array<out T of kotlin.arrayOf>): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.reflect.KFunction1<kotlin.Array<out kotlin.Any?>, kotlin.Array<kotlin.Any?>> origin=null reflectionTarget=<same>

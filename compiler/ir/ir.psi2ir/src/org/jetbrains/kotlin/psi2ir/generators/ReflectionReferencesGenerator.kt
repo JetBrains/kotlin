@@ -275,9 +275,10 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
 
         for ((valueParameter, valueArgument) in adaptedArguments) {
+            val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
             irAdapteeCall.putValueArgument(
                 valueParameter.index,
-                adaptResolvedValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, valueParameter)
+                adaptResolvedValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, substitutedValueParameter)
             )
         }
     }
