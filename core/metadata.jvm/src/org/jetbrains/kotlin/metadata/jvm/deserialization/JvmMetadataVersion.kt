@@ -20,14 +20,13 @@ class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean)
                 if (isStrictSemantics) {
                     isCompatibleTo(INSTANCE)
                 } else {
-                    // In Kotlin 1.4, JVM metadata version is going to be advanced to 1.4.0.
-                    // Kotlin 1.3 is able to read metadata of versions up to Kotlin 1.4 (unless the version has strict semantics).
-                    major == 1 && minor <= 4
+                    // Kotlin 1.N is able to read metadata of versions up to Kotlin 1.{N+1} (unless the version has strict semantics).
+                    major == INSTANCE.major && minor <= INSTANCE.minor + 1
                 }
 
     companion object {
         @JvmField
-        val INSTANCE = JvmMetadataVersion(1, 1, 17)
+        val INSTANCE = JvmMetadataVersion(1, 4, 0)
 
         @JvmField
         val INVALID_VERSION = JvmMetadataVersion()

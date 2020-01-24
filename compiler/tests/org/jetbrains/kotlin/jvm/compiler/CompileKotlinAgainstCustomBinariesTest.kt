@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYS
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isObject
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -39,6 +42,8 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.io.ByteArrayInputStream
+import java.io.DataInputStream
 import java.io.File
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
@@ -364,8 +369,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
     }
 
-    fun testRequireKotlinInNestedClassesAgainst14() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
+    fun testRequireKotlinInNestedClassesAgainst13() {
+        val library = compileLibrary("library", additionalOptions = listOf("-language-version", "1.3"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
@@ -384,9 +389,21 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testStrictMetadataVersionSemanticsOldVersion() {
         val library = compileLibrary(
-            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=1.4.0")
+            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=1.5.0")
         )
         compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
+    fun testMetadataVersionDerivedFromLanguage() {
+        compileKotlin("source.kt", tmpdir, additionalOptions = listOf("-language-version", "1.3"), expectedFileName = null)
+
+        val expectedVersion = JvmMetadataVersion(1, 1, 18)
+        val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"))!!
+        assertEquals(expectedVersion, topLevelClass.classHeader.metadataVersion)
+
+        val moduleFile = File(tmpdir.absolutePath, "META-INF/main.kotlin_module").readBytes()
+        val versionNumber = ModuleMapping.readVersionNumber(DataInputStream(ByteArrayInputStream(moduleFile)))!!
+        assertEquals(expectedVersion, JvmMetadataVersion(*versionNumber))
     }
 
     /*test source mapping generation when source info is absent*/
