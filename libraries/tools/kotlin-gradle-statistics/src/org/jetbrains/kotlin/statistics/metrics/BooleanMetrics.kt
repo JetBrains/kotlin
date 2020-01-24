@@ -35,7 +35,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     KOTLIN_OFFICIAL_CODESTYLE(OVERRIDE, SAFE),
     KOTLIN_PROGRESSIVE_MODE(OVERRIDE, SAFE),
-    KOTLIN_KTS_USED(OVERRIDE, SAFE),
+    KOTLIN_KTS_USED(OR, SAFE),
 
     // User scenarios
     DEBUGGER_ENABLED(OVERRIDE, SAFE),
@@ -43,5 +43,4 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     TESTS_EXECUTED(OVERRIDE, SAFE),
     MAVEN_PUBLISH_EXECUTED(OVERRIDE, SAFE),
     BUILD_FAILED(OVERRIDE, SAFE)
-
 }

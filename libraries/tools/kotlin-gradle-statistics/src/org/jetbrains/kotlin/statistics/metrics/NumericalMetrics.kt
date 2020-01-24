@@ -45,7 +45,7 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     //duration of the execution gradle phase
     GRADLE_EXECUTION_DURATION(OVERRIDE, SAFE),
 
-    NUMBER_OF_SUBPROJECTS(OVERRIDE, RANDOM_10_PERCENT),
+    NUMBER_OF_SUBPROJECTS(SUM, RANDOM_10_PERCENT),
 
     STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD(SUM, RANDOM_10_PERCENT),
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
+import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
@@ -206,6 +207,26 @@ internal class DefaultKotlinBuildStatsService internal constructor(
                     StringMetrics.LIBRARY_HIBERNATE_VERSION,
                     dependency.version ?: "0.0.0"
                 )
+                dependency.group == "org.jetbrains.kotlin" && dependency.name.startsWith("kotlin-stdlib") -> sessionLogger.report(
+                    StringMetrics.KOTLIN_STDLIB_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+                dependency.group == "org.jetbrains.kotlinx" && dependency.name == "kotlinx-coroutines" -> sessionLogger.report(
+                    StringMetrics.KOTLIN_COROUTINES_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+                dependency.group == "org.jetbrains.kotlin" && dependency.name == "kotlin-reflect" -> sessionLogger.report(
+                    StringMetrics.KOTLIN_REFLECT_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+                dependency.group == "org.jetbrains.kotlinx" && dependency.name.startsWith("kotlinx-serialization-runtime") -> sessionLogger.report(
+                    StringMetrics.KOTLIN_SERIALIZATION_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
+                dependency.group == "com.android.tools.build" && dependency.name.startsWith("gradle") -> sessionLogger.report(
+                    StringMetrics.ANDROID_GRADLE_PLUGIN_VERSION,
+                    dependency.version ?: "0.0.0"
+                )
             }
         }
     }
@@ -217,7 +238,21 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
         sessionLogger.report(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
         sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
+        sessionLogger.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
+        sessionLogger.report(
+            BooleanMetrics.KOTLIN_OFFICIAL_CODESTYLE,
+            gradle.rootProject.properties["kotlin.code.style"] == "official"
+        ) // constants are saved in IDEA plugin and could not be accessed directly
 
+        val executedTaskNames = gradle.taskGraph.allTasks.map { it.name }.distinct()
+        report(BooleanMetrics.COMPILATION_STARTED, executedTaskNames.contains("compileKotlin"))
+        report(BooleanMetrics.TESTS_EXECUTED, executedTaskNames.contains("compileTestKotlin"))
+        report(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+
+        fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
+        if (buildSrcExists(gradle.rootProject)) {
+            sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, true)
+        }
         val statisticOverhead = measureTimeMillis {
             gradle.allprojects { project ->
                 for (configuration in project.configurations) {
@@ -252,6 +287,25 @@ internal class DefaultKotlinBuildStatsService internal constructor(
                         }
                     }
                 }
+
+                sessionLogger.report(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
+                sessionLogger.report(BooleanMetrics.KOTLIN_KTS_USED, project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false)
+                sessionLogger.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, project.tasks.names.size.toLong())
+                sessionLogger.report(
+                    NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
+                    project.tasks.names.count { name ->
+                        try {
+                            project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
+                        } catch (_: Exception) {
+                            true
+                        }
+                    }.toLong()
+                )
+
+                if (buildSrcExists(project)) {
+                    sessionLogger.report(NumericalMetrics.BUILD_SRC_COUNT, 1)
+                    sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, true)
+                }
             }
         }
         sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
@@ -264,7 +318,6 @@ internal class DefaultKotlinBuildStatsService internal constructor(
                     DaemonReuseCounter.incrementAndGetOrdinal(),
                     gradleBuildStartTime(gradle)
                 )
-                reportGlobalMetrics(gradle)
             }
         }
     }
@@ -273,7 +326,12 @@ internal class DefaultKotlinBuildStatsService internal constructor(
     override fun buildFinished(result: BuildResult) {
         runSafe("${DefaultKotlinBuildStatsService::class.java}.buildFinished") {
             try {
-                sessionLogger.finishBuildSession(result.action, result.failure)
+                try {
+                    val gradle = result.gradle
+                    if (gradle != null) reportGlobalMetrics(gradle)
+                } finally {
+                    sessionLogger.finishBuildSession(result.action, result.failure)
+                }
             } finally {
                 val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
                 if (mbs.isRegistered(beanName)) {

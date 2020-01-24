@@ -129,6 +129,8 @@ class BuildSessionLogger(
                     report(NumericalMetrics.GRADLE_BUILD_DURATION, finishTime - it.buildStartedTime)
                 }
                 report(NumericalMetrics.GRADLE_EXECUTION_DURATION, finishTime - it.projectEvaluatedTime)
+                report(NumericalMetrics.BUILD_FINISH_TIME, finishTime)
+                report(BooleanMetrics.BUILD_FAILED, failure != null)
             }
             buildSession = null
         } finally {
