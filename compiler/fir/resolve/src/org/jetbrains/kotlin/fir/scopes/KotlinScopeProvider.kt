@@ -32,7 +32,7 @@ class KotlinScopeProvider(
         return substitutorByMap(originalSubstitution)
     }
 
-    private fun buildRawUseSiteScope(
+    override fun getUseSiteMemberScope(
         klass: FirClass<*>,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
@@ -60,20 +60,6 @@ class KotlinScopeProvider(
         }
     }
 
-    override fun getUseSiteMemberScope(
-        klass: FirClass<*>,
-        substitutor: ConeSubstitutor,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ): FirScope {
-        if (substitutor == ConeSubstitutor.Empty) return buildRawUseSiteScope(klass, useSiteSession, scopeSession)
-        return scopeSession.getOrBuild(
-            klass, ConeSubstitutionScopeKey(substitutor)
-        ) {
-            FirClassSubstitutionScope(useSiteSession, buildRawUseSiteScope(klass, useSiteSession, scopeSession), scopeSession, substitutor)
-        }
-    }
-
     override fun getStaticMemberScopeForCallables(
         klass: FirClass<*>,
         useSiteSession: FirSession,
@@ -90,7 +76,14 @@ class KotlinScopeProvider(
 data class ConeSubstitutionScopeKey(val substitutor: ConeSubstitutor) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>()
 
 fun FirClass<*>.scope(substitutor: ConeSubstitutor, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
-    return scopeProvider.getUseSiteMemberScope(
-        this, substitutor, useSiteSession, scopeSession
+    val basicScope = scopeProvider.getUseSiteMemberScope(
+        this, useSiteSession, scopeSession
     )
+    if (substitutor == ConeSubstitutor.Empty) return basicScope
+
+    return scopeSession.getOrBuild(
+        this, ConeSubstitutionScopeKey(substitutor)
+    ) {
+        FirClassSubstitutionScope(useSiteSession, basicScope, scopeSession, substitutor)
+    }
 }

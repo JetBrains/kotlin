@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverrideChecker
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.ConeSubstitutionScopeKey
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -33,16 +31,10 @@ class JavaScopeProvider(
 ) : FirScopeProvider() {
     override fun getUseSiteMemberScope(
         klass: FirClass<*>,
-        substitutor: ConeSubstitutor,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope {
-        val baseScope = buildJavaEnhancementScope(useSiteSession, klass.symbol as FirRegularClassSymbol, scopeSession, mutableSetOf())
-        if (substitutor == ConeSubstitutor.Empty) return baseScope
-        return scopeSession.getOrBuild(klass, ConeSubstitutionScopeKey(substitutor)) {
-            FirClassSubstitutionScope(useSiteSession, baseScope, scopeSession, substitutor)
-        }
-    }
+    ): FirScope =
+        buildJavaEnhancementScope(useSiteSession, klass.symbol as FirRegularClassSymbol, scopeSession, mutableSetOf())
 
     private fun buildJavaEnhancementScope(
         useSiteSession: FirSession,
@@ -105,7 +97,7 @@ class JavaScopeProvider(
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope? {
-        return FirStaticScope(getUseSiteMemberScope(klass, ConeSubstitutor.Empty, useSiteSession, scopeSession))
+        return FirStaticScope(getUseSiteMemberScope(klass, useSiteSession, scopeSession))
     }
 }
 
