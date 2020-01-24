@@ -21,7 +21,7 @@ class CoroutineDebugConfigurationExtension : RunConfigurationExtension() {
     override fun <T : RunConfigurationBase<*>?> updateJavaParameters(
         configuration: T,
         params: JavaParameters,
-        runnerSettings: RunnerSettings
+        runnerSettings: RunnerSettings?
     ) {
         if (runnerSettings is DebuggingRunnerData && configuration is RunConfigurationBase<*>) {
             configuration.project.coroutineConnectionListener.configurationStarting(configuration, params, runnerSettings)
