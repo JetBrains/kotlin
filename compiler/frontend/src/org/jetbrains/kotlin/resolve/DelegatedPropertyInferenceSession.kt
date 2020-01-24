@@ -81,7 +81,8 @@ class DelegatedPropertyInferenceSession(
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
@@ -101,7 +102,8 @@ object InferenceSessionForExistingCandidates : InferenceSession {
     override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false

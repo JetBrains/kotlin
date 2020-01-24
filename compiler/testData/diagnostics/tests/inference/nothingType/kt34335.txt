@@ -1,0 +1,8 @@
+package
+
+public fun call(/*0*/ vararg x: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Unit
+public fun foo(/*0*/ action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun </*0*/ R> kotlin.Any.call(/*0*/ vararg args: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): R

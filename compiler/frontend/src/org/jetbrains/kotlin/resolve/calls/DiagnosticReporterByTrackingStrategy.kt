@@ -182,6 +182,20 @@ class DiagnosticReporterByTrackingStrategy(
             ResolvedToSamWithVarargDiagnostic::class.java -> {
                 trace.report(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG.on(callArgument.psiCallArgument.valueArgument.asElement()))
             }
+
+            NotEnoughInformationForLambdaParameter::class.java -> {
+                val unknownParameterTypeDiagnostic = diagnostic as NotEnoughInformationForLambdaParameter
+                val lambdaArgument = unknownParameterTypeDiagnostic.lambdaArgument
+                val parameterIndex = unknownParameterTypeDiagnostic.parameterIndex
+
+                val argumentExpression = KtPsiUtil.deparenthesize(lambdaArgument.psiCallArgument.valueArgument.getArgumentExpression())
+                if (argumentExpression !is KtLambdaExpression) return
+
+                val parameter = argumentExpression.valueParameters.getOrNull(parameterIndex)
+                reportIfNonNull(parameter) {
+                    trace.report(CANNOT_INFER_PARAMETER_TYPE.on(it))
+                }
+            }
         }
     }
 

@@ -131,7 +131,8 @@ class KotlinCallCompleter(
             constraintSystem.asConstraintSystemCompleterContext(),
             completionMode,
             listOf(resolvedCallAtom),
-            returnType
+            returnType,
+            diagnosticsHolder
         ) {
             if (collectAllCandidatesMode) {
                 it.setEmptyAnalyzedResults()

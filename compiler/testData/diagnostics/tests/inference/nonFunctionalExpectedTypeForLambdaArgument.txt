@@ -1,0 +1,9 @@
+package
+
+public fun callAny(/*0*/ arg: kotlin.Any?): kotlin.Unit
+public fun </*0*/ T> callParam(/*0*/ arg: T): kotlin.Unit
+public fun testAny(): kotlin.Unit
+public fun testAnyCall(): kotlin.Unit
+public fun testNoContext(): kotlin.Unit
+public fun testParam(): kotlin.Unit
+public fun testParamCall(): kotlin.Unit

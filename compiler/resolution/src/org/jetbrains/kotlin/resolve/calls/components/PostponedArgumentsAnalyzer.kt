@@ -51,7 +51,7 @@ class PostponedArgumentsAnalyzer(
 
             is LambdaWithTypeVariableAsExpectedTypeAtom ->
                 analyzeLambda(
-                    c, resolutionCallbacks, argument.transformToResolvedLambda(c.getBuilder()), diagnosticsHolder
+                    c, resolutionCallbacks, argument.transformToResolvedLambda(c.getBuilder(), diagnosticsHolder), diagnosticsHolder
                 )
 
             is ResolvedCallableReferenceAtom ->
@@ -147,7 +147,7 @@ class PostponedArgumentsAnalyzer(
         if (inferenceSession != null) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot)
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, diagnosticHolder)
 
             for ((constructor, resultType) in postponedVariables) {
                 val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue

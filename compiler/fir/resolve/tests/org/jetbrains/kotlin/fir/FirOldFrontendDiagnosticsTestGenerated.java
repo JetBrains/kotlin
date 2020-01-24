@@ -10126,6 +10126,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/noInformationForParameter.kt");
         }
 
+        @TestMetadata("nonFunctionalExpectedTypeForLambdaArgument.kt")
+        public void testNonFunctionalExpectedTypeForLambdaArgument() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/nonFunctionalExpectedTypeForLambdaArgument.kt");
+        }
+
         @TestMetadata("nullableTypeArgumentWithNotNullUpperBound.kt")
         public void testNullableTypeArgumentWithNotNullUpperBound() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/nullableTypeArgumentWithNotNullUpperBound.kt");
@@ -10899,6 +10904,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             @TestMetadata("kt32388.kt")
             public void testKt32388() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32388.kt");
+            }
+
+            @TestMetadata("kt34335.kt")
+            public void testKt34335() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt34335.kt");
             }
 
             @TestMetadata("lambdaNothingAndExpectedType.kt")

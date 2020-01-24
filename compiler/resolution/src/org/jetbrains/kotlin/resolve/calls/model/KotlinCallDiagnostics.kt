@@ -209,3 +209,12 @@ class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : Kotl
         reporter.onCallArgument(argument, this)
     }
 }
+
+class NotEnoughInformationForLambdaParameter(
+    val lambdaArgument: LambdaKotlinCallArgument,
+    val parameterIndex: Int
+) : KotlinCallDiagnostic(INAPPLICABLE) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(lambdaArgument, this)
+    }
+}

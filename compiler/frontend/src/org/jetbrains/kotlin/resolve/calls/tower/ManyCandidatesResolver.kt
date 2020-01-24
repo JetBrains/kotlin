@@ -85,7 +85,8 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
                 constraintSystem.asConstraintSystemCompleterContext(),
                 KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
                 atoms,
-                builtIns.unitType
+                builtIns.unitType,
+                diagnosticHolder
             ) {
                 postponedArgumentsAnalyzer.analyze(
                     constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder

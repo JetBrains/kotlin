@@ -49,13 +49,34 @@ class KotlinConstraintSystemCompleter(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
         analyze: (PostponedResolvedAtom) -> Unit
     ) {
-        runCompletion(c, completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext = false, analyze = analyze)
+        runCompletion(
+            c,
+            completionMode,
+            topLevelAtoms,
+            topLevelType,
+            diagnosticsHolder,
+            collectVariablesFromContext = false,
+            analyze = analyze
+        )
     }
 
-    fun completeConstraintSystem(c: Context, topLevelType: UnwrappedType, topLevelAtoms: List<ResolvedAtom>) {
-        runCompletion(c, ConstraintSystemCompletionMode.FULL, topLevelAtoms, topLevelType, collectVariablesFromContext = true) {
+    fun completeConstraintSystem(
+        c: Context,
+        topLevelType: UnwrappedType,
+        topLevelAtoms: List<ResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ) {
+        runCompletion(
+            c,
+            ConstraintSystemCompletionMode.FULL,
+            topLevelAtoms,
+            topLevelType,
+            diagnosticsHolder,
+            collectVariablesFromContext = true,
+        ) {
             error("Shouldn't be called in complete constraint system mode")
         }
     }
@@ -65,6 +86,7 @@ class KotlinConstraintSystemCompleter(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
         collectVariablesFromContext: Boolean,
         analyze: (PostponedResolvedAtom) -> Unit
     ) {
@@ -80,7 +102,13 @@ class KotlinConstraintSystemCompleter(
 
             if (
                 completionMode == ConstraintSystemCompletionMode.FULL &&
-                resolveLambdaOrCallableReferenceWithTypeVariableAsExpectedType(c, variableForFixation, topLevelAtoms, analyze)
+                resolveLambdaOrCallableReferenceWithTypeVariableAsExpectedType(
+                    c,
+                    variableForFixation,
+                    topLevelAtoms,
+                    diagnosticsHolder,
+                    analyze
+                )
             ) {
                 continue
             }
@@ -104,7 +132,7 @@ class KotlinConstraintSystemCompleter(
             getOrderedNotAnalyzedPostponedArguments(topLevelAtoms).forEach(analyze)
 
             if (c.notFixedTypeVariables.isNotEmpty() && c.postponedTypeVariables.isEmpty()) {
-                runCompletion(c, completionMode, topLevelAtoms, topLevelType, analyze)
+                runCompletion(c, completionMode, topLevelAtoms, topLevelType, diagnosticsHolder, analyze)
             }
         }
     }
@@ -116,6 +144,7 @@ class KotlinConstraintSystemCompleter(
         c: Context,
         variableForFixation: VariableFixationFinder.VariableForFixation,
         topLevelAtoms: List<ResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
         val variable = variableForFixation.variable as TypeConstructor
@@ -156,7 +185,7 @@ class KotlinConstraintSystemCompleter(
                 isSuitable = KotlinType::isBuiltinFunctionalType,
                 typeVariableCreator = { TypeVariableForLambdaReturnType(postponedAtom.atom, builtIns, "_R") },
                 newAtomCreator = { returnVariable, expectedType ->
-                    postponedAtom.transformToResolvedLambda(csBuilder, expectedType, returnVariable)
+                    postponedAtom.transformToResolvedLambda(csBuilder, diagnosticsHolder, expectedType, returnVariable)
                 }
             )
             else -> return false

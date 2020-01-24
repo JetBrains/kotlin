@@ -21,7 +21,8 @@ interface InferenceSession {
             override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
             override fun inferPostponedVariables(
                 lambda: ResolvedLambdaAtom,
-                initialStorage: ConstraintStorage
+                initialStorage: ConstraintStorage,
+                diagnosticsHolder: KotlinDiagnosticsHolder
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
             override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
@@ -35,7 +36,12 @@ interface InferenceSession {
     fun addCompletedCallInfo(callInfo: CompletedCallInfo)
     fun addErrorCallInfo(callInfo: ErrorCallInfo)
     fun currentConstraintSystem(): ConstraintStorage
-    fun inferPostponedVariables(lambda: ResolvedLambdaAtom, initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType>
+    fun inferPostponedVariables(
+        lambda: ResolvedLambdaAtom,
+        initialStorage: ConstraintStorage,
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ): Map<TypeConstructor, UnwrappedType>
+
     fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
     fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean

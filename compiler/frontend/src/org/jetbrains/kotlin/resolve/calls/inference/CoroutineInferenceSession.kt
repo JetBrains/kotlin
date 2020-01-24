@@ -102,7 +102,8 @@ class CoroutineInferenceSession(
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType> {
         val commonSystem = buildCommonSystem(initialStorage)
 
@@ -110,7 +111,8 @@ class CoroutineInferenceSession(
         kotlinConstraintSystemCompleter.completeConstraintSystem(
             context,
             builtIns.unitType,
-            partiallyResolvedCallsInfo.map { it.callResolutionResult.resultCallAtom }
+            partiallyResolvedCallsInfo.map { it.callResolutionResult.resultCallAtom },
+            diagnosticsHolder
         )
 
         updateCalls(lambda, commonSystem)
