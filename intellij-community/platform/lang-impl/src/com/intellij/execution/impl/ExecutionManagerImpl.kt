@@ -500,9 +500,61 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
         }
 
         val settings = environment.runnerAndConfigurationSettings
-        ProgramRunnerUtil.executeConfiguration(environment, settings != null && settings.isEditBeforeRun, /* assignNewId = */ true)
+        executeConfiguration(environment, settings != null && settings.isEditBeforeRun)
       }
     }, 50)
+  }
+
+  @ApiStatus.Internal
+  fun executeConfiguration(environment: ExecutionEnvironment,
+                           showSettings: Boolean,
+                           assignNewId: Boolean = true,
+                           callback: ProgramRunner.Callback? = null) {
+    val runnerAndConfigurationSettings = environment.runnerAndConfigurationSettings
+    val project = environment.project
+    var runner = environment.runner
+    if (runnerAndConfigurationSettings != null) {
+      val targetManager = ExecutionTargetManager.getInstance(project)
+      if (!targetManager.doCanRun(runnerAndConfigurationSettings.configuration, environment.executionTarget)) {
+        ExecutionUtil.handleExecutionError(environment, ExecutionException(ProgramRunnerUtil.getCannotRunOnErrorMessage(environment.runProfile, environment.executionTarget)))
+        return
+      }
+
+      if (((showSettings && runnerAndConfigurationSettings.isEditBeforeRun) || !RunManagerImpl.canRunConfiguration(environment)) && !DumbService.isDumb(project)) {
+        if (!RunDialog.editConfiguration(environment, "Edit configuration")) {
+          return
+        }
+
+        while (!RunManagerImpl.canRunConfiguration(environment)) {
+          val message = "Configuration is still incorrect. Do you want to edit it again?"
+          val title = "Change Configuration Settings"
+          if (Messages.showYesNoDialog(project, message, title, CommonBundle.message("button.edit"), ExecutionBundle.message("run.continue.anyway"), Messages.getErrorIcon()) != Messages.YES) {
+            break
+          }
+          if (!RunDialog.editConfiguration(environment, "Edit configuration")) {
+            return
+          }
+        }
+
+        // corresponding runner can be changed after configuration edit
+        runner = ProgramRunner.getRunner(environment.executor.id, runnerAndConfigurationSettings.configuration)
+                 ?: throw ExecutionException("Cannot find runner for ${environment.runProfile.name}")
+      }
+    }
+
+    try {
+      var effectiveEnvironment = environment
+      if (runner != effectiveEnvironment.runner) {
+        effectiveEnvironment = ExecutionEnvironmentBuilder(effectiveEnvironment).runner(runner).build()
+      }
+      if (assignNewId) {
+        effectiveEnvironment.assignNewExecutionId()
+      }
+      runner.execute(effectiveEnvironment, callback)
+    }
+    catch (e: ExecutionException) {
+      ProgramRunnerUtil.handleExecutionError(project, environment, e, runnerAndConfigurationSettings?.configuration)
+    }
   }
 
   override fun isStarting(executorId: String, runnerId: String): Boolean {
@@ -586,12 +638,12 @@ private fun createEnvironmentBuilder(project: Project,
                                      configuration: RunnerAndConfigurationSettings?): ExecutionEnvironmentBuilder {
   val builder = ExecutionEnvironmentBuilder(project, executor)
 
-  val runner = ProgramRunnerUtil.getRunner(executor.id, configuration)
+  val runner = configuration?.let { ProgramRunner.getRunner(executor.id, it.configuration) }
   if (runner == null && configuration != null) {
     LOG.error("Cannot find runner for ${configuration.name}")
   }
   else if (runner != null) {
-    builder.runnerAndSettings(runner, configuration!!)
+    builder.runnerAndSettings(runner, configuration)
   }
   return builder
 }

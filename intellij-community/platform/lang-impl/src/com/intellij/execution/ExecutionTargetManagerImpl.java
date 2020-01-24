@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
 import com.intellij.execution.compound.CompoundRunConfiguration;
@@ -194,7 +194,7 @@ public final class ExecutionTargetManagerImpl extends ExecutionTargetManager imp
   }
 
   @Override
-  protected boolean doCanRun(@Nullable RunConfiguration configuration, @NotNull ExecutionTarget target) {
+  public boolean doCanRun(@Nullable RunConfiguration configuration, @NotNull ExecutionTarget target) {
     if (configuration == null) {
       return false;
     }

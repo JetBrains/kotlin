@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.impl;
 
 import com.intellij.execution.*;
@@ -129,7 +129,7 @@ extends BeforeRunTaskProvider<RunConfigurationBeforeRunProvider.RunConfigurableB
     String executorId = DefaultRunExecutor.getRunExecutorInstance().getId();
     for (Iterator<RunnerAndConfigurationSettings> iterator = configurations.iterator(); iterator.hasNext();) {
       RunnerAndConfigurationSettings settings = iterator.next();
-      ProgramRunner runner = ProgramRunnerUtil.getRunner(executorId, settings);
+      ProgramRunner<?> runner = ProgramRunner.getRunner(executorId, settings.getConfiguration());
       if (runner == null || settings.getConfiguration() == runConfiguration) {
         iterator.remove();
       }
@@ -144,8 +144,9 @@ extends BeforeRunTaskProvider<RunConfigurationBeforeRunProvider.RunConfigurableB
     if (settings == null) {
       return false;
     }
+
     String executorId = DefaultRunExecutor.getRunExecutorInstance().getId();
-    final ProgramRunner runner = ProgramRunnerUtil.getRunner(executorId, settings);
+    ProgramRunner<?> runner = ProgramRunner.getRunner(executorId, settings.getConfiguration());
     return runner != null && runner.canRun(executorId, settings.getConfiguration());
   }
 

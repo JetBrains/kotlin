@@ -1,5 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.actions;
 
 import com.intellij.execution.*;
@@ -50,8 +49,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ChooseRunConfigurationPopup implements ExecutorProvider {
-
+public final class ChooseRunConfigurationPopup implements ExecutorProvider {
   private final Project myProject;
   @NotNull private final String myAddKey;
   @NotNull private final Executor myDefaultExecutor;
@@ -81,10 +79,6 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
     }
 
     myPopup.showCenteredInCurrentWindow(myProject);
-  }
-
-  protected static boolean canRun(@NotNull final Executor executor, final RunnerAndConfigurationSettings settings) {
-    return ProgramRunnerUtil.getRunner(executor.getId(), settings) != null;
   }
 
   @Nullable
@@ -385,8 +379,9 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
         }
 
         @Override
-        public boolean available(Executor executor) {
-          return ProgramRunnerUtil.getRunner(executor.getId(), getValue()) != null;
+        public boolean available(@NotNull Executor executor) {
+          RunnerAndConfigurationSettings value = getValue();
+          return value != null && ProgramRunner.getRunner(executor.getId(), value.getConfiguration()) != null;
         }
 
         @Override
@@ -1202,7 +1197,7 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
 
           @Override
           public boolean available(Executor executor) {
-            return canRun(executor, configuration);
+            return ProgramRunner.getRunner(executor.getId(), configuration.getConfiguration()) != null;
           }
 
           @Override

@@ -1,10 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.impl.RunDialog;
-import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.process.ProcessNotCreatedException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
@@ -14,9 +14,7 @@ import com.intellij.execution.ui.RunContentManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.LayeredIcon;
@@ -32,7 +30,11 @@ public final class ProgramRunnerUtil {
 
   private ProgramRunnerUtil() { }
 
+  /**
+   * @deprecated Use {@link ProgramRunner#getRunner(String, RunProfile)}
+   */
   @Nullable
+  @Deprecated
   public static ProgramRunner<?> getRunner(@NotNull String executorId, @Nullable RunnerAndConfigurationSettings configuration) {
     return configuration == null ? null : ProgramRunner.getRunner(executorId, configuration.getConfiguration());
   }
@@ -50,63 +52,9 @@ public final class ProgramRunnerUtil {
                                                boolean showSettings,
                                                boolean assignNewId,
                                                ProgramRunner.Callback callback) {
-    if (ExecutionManager.getInstance(environment.getProject()).isStarting(environment)) {
-      return;
-    }
-
-    RunnerAndConfigurationSettings runnerAndConfigurationSettings = environment.getRunnerAndConfigurationSettings();
-    Project project = environment.getProject();
-    ProgramRunner<?> runner = environment.getRunner();
-
-    if (runnerAndConfigurationSettings != null) {
-      ExecutionTargetManager targetManager = ExecutionTargetManager.getInstance(project);
-      if (!targetManager.doCanRun(runnerAndConfigurationSettings.getConfiguration(), environment.getExecutionTarget())) {
-        ExecutionUtil.handleExecutionError(environment, new ExecutionException(
-          getCannotRunOnErrorMessage(environment.getRunProfile(), environment.getExecutionTarget())));
-        return;
-      }
-
-      if ((!RunManagerImpl.canRunConfiguration(environment) || (showSettings && runnerAndConfigurationSettings.isEditBeforeRun())) &&
-          !DumbService.isDumb(project)) {
-        if (!RunDialog.editConfiguration(environment, "Edit configuration")) {
-          return;
-        }
-
-        while (!RunManagerImpl.canRunConfiguration(environment)) {
-          String message = "Configuration is still incorrect. Do you want to edit it again?";
-          String title = "Change Configuration Settings";
-          if (Messages.showYesNoDialog(project, message, title, "Edit", "Continue Anyway", Messages.getErrorIcon()) != Messages.YES) {
-            break;
-          }
-          if (!RunDialog.editConfiguration(environment, "Edit configuration")) {
-            return;
-          }
-        }
-
-        // corresponding runner can be changed after configuration edit
-        runner = getRunner(environment.getExecutor().getId(), runnerAndConfigurationSettings);
-      }
-    }
-
-    try {
-      if (runner == null) {
-        throw new ExecutionException("Cannot find runner for " + environment.getRunProfile().getName());
-      }
-      if (!runner.equals(environment.getRunner())) {
-        environment = new ExecutionEnvironmentBuilder(environment).runner(runner).build();
-      }
-      if (assignNewId) {
-        environment.assignNewExecutionId();
-      }
-      if (callback != null) {
-        environment.getRunner().execute(environment, callback);
-      }
-      else {
-        environment.getRunner().execute(environment);
-      }
-    }
-    catch (ExecutionException e) {
-      handleExecutionError(project, environment, e, runnerAndConfigurationSettings != null ? runnerAndConfigurationSettings.getConfiguration() : null);
+    ExecutionManagerImpl manager = (ExecutionManagerImpl)ExecutionManager.getInstance(environment.getProject());
+    if (!manager.isStarting(environment)) {
+      manager.executeConfiguration(environment, showSettings, assignNewId, callback);
     }
   }
 
