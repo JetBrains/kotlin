@@ -52,7 +52,7 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             LockBasedStorageManager("K2MetadataKlibSerializer")
         )
 
-        val analyzer = runCommonAnalysisForSerialization(environment, false, dependencyContainer)
+        val analyzer = runCommonAnalysisForSerialization(environment, true, dependencyContainer)
 
         if (analyzer == null || analyzer.hasErrors()) return
 

@@ -142,7 +142,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             project.kotlinExtension.sourceSets
                 .filter { it.isIntermediateNativeSourceSet() }
                 .forEach {
-                    it.dependencies { implementation(stdlib) }
+                    project.dependencies.add(it.implementationMetadataConfigurationName, stdlib)
                 }
         }
     }

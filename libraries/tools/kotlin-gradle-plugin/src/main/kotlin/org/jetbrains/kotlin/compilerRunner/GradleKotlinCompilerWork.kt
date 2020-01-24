@@ -126,7 +126,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         with(log) {
             kotlinDebug { "Kotlin compiler class: ${compilerClassName}" }
             kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.joinToString { it.canonicalPath }}" }
-            kotlinDebug { "Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
+            kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
         }
 
         val executionStrategy = kotlinCompilerExecutionStrategy()
