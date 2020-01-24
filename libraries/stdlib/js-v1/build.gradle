@@ -136,11 +136,11 @@ compileKotlin2Js {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
+        sourceMapBaseDirs = files(
+                [builtinsSrcDir, jsSrcDir, jsCommonSrcDir, commonSrcDir, commonSrcDir2, unsignedCommonSrcDir]
+                        .collect { file(it).absoluteFile }
+        )
         freeCompilerArgs += [
-            "-source-map-base-dirs",
-            [builtinsSrcDir, jsSrcDir, jsCommonSrcDir, commonSrcDir, commonSrcDir2, unsignedCommonSrcDir]
-                    .collect { file(it).absoluteFile }
-                    .join(File.pathSeparator),
             "-Xuse-experimental=kotlin.Experimental",
             "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
