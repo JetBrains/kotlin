@@ -18,8 +18,6 @@ import java.util.Objects;
 
 /**
  * This class is intended to combine all providers for batch usages.
- *
- * @author Sergey Malenkov
  */
 public final class CompoundTreeStructureProvider implements TreeStructureProvider {
   private static final Key<TreeStructureProvider> KEY = Key.create("TreeStructureProvider");
