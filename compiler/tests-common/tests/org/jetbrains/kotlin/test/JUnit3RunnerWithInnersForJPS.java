@@ -90,7 +90,7 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
         String compilerXmlSourcePath = "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml";
 
         String jpsTargetDirectory = "out/production/kotlin.idea.main";
-        String pillTargetDirectory = "out/production/idea.src";
+        String pillTargetDirectory = "out/production/idea.main";
 
         String baseDir = Files.exists(Paths.get(jpsTargetDirectory)) ? jpsTargetDirectory : pillTargetDirectory;
         String compilerXmlTargetPath = baseDir + "/META-INF/extensions/compiler.xml";

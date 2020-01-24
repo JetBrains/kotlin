@@ -1,14 +1,9 @@
 description = 'Kotlin Test JUnit'
 
 apply plugin: 'kotlin-platform-jvm'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
-
-pill {
-    importAsLibrary = true
-}
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')

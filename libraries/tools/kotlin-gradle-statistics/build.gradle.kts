@@ -2,6 +2,7 @@ description = "kotlin-gradle-statistics"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 dependencies {

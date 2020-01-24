@@ -1,15 +1,10 @@
 description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
 ext.javaHome = JDK_17
-
-pill {
-    importAsLibrary = true
-}
 
 sourceSets {
     main {

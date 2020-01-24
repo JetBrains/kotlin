@@ -1,4 +1,9 @@
-@file:Suppress("PackageDirectoryMismatch")
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+@file:Suppress("PackageDirectoryMismatch", "FunctionName")
 package org.jetbrains.kotlin.pill
 
 import java.io.File
@@ -49,12 +54,7 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
             xml("component", "name" to "TestModuleProperties", "production-module" to moduleForProductionSources.name)
         }
 
-        val kotlinCompileOptionsList = module.contentRoots.flatMap { it.sourceRoots }.mapNotNull { it.kotlinOptions }
-        var kotlinCompileOptions = kotlinCompileOptionsList.firstOrNull()
-        for (otherOptions in kotlinCompileOptionsList.drop(1)) {
-            kotlinCompileOptions = kotlinCompileOptions?.intersect(otherOptions)
-        }
-
+        val kotlinCompileOptions = module.kotlinOptions
         val pathContext = ModuleContext(project, module)
 
         val platformVersion = (kotlinCompileOptions?.jvmTarget ?: "1.8")
@@ -100,10 +100,10 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
         ) {
             xml("exclude-output")
 
-            for (contentRoot in module.contentRoots) {
+            for (contentRoot in module.contentRoots.filter { it.path.exists() }) {
                 xml("content", pathContext.url(contentRoot.path)) {
                     for (sourceRoot in contentRoot.sourceRoots) {
-                        var args = arrayOf(pathContext.url(sourceRoot.path))
+                        var args = arrayOf(pathContext.url(sourceRoot.directory))
 
                         args += when (sourceRoot.kind) {
                             PSourceRoot.Kind.PRODUCTION -> ("isTestSource" to "false")

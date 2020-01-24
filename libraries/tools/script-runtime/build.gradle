@@ -1,14 +1,9 @@
 description 'Kotlin Script Runtime'
 
 apply plugin: 'kotlin'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
-
-pill {
-    importAsLibrary = true
-}
 
 dependencies {
     compileOnly kotlinStdlib()

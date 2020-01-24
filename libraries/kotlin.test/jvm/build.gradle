@@ -1,14 +1,9 @@
 description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
-
-pill {
-    importAsLibrary = true
-}
 
 def includeJava9 = BuildPropertiesKt.getKotlinBuildProperties(project).includeJava9
 

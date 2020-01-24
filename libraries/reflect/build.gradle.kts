@@ -19,16 +19,11 @@ buildscript {
 
 plugins {
     java
-    id("pill-configurable")
 }
 
 callGroovy("configureJavaOnlyJvm6Project", project)
 
 publish()
-
-pill {
-    importAsLibrary = true
-}
 
 val core = "$rootDir/core"
 val relocatedCoreSrc = "$buildDir/core-relocated"

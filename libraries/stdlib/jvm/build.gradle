@@ -1,7 +1,6 @@
 description = 'Kotlin Standard Library for JVM'
 
 apply plugin: 'kotlin-platform-jvm'
-apply plugin: 'pill-configurable'
 
 archivesBaseName = 'kotlin-stdlib'
 
@@ -10,10 +9,6 @@ configurePublishing(project)
 
 configurations {
     distSources
-}
-
-pill {
-    importAsLibrary = true
 }
 
 sourceSets {

@@ -1,21 +1,19 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("PackageDirectoryMismatch")
 
 package org.jetbrains.kotlin.pill
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.internal.file.copy.SingleParentCopySpec
-import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.Copy
-import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.pill.ArtifactElement.*
-import org.jetbrains.kotlin.pill.POrderRoot.*
 import java.io.File
 
-class PArtifact(val artifactName: String, val outputDir: File, private val contents: ArtifactElement.Root) {
+class PArtifact(val artifactName: String, private val outputDir: File, private val contents: Root) {
     fun render(context: PathContext) = xml("component", "name" to "ArtifactManager") {
         xml("artifact", "name" to artifactName) {
             xml("output-path") {
@@ -25,6 +23,10 @@ class PArtifact(val artifactName: String, val outputDir: File, private val conte
             add(contents.renderRecursively(context))
         }
     }
+}
+
+interface OpaqueDependencyMapper {
+    fun map(dependency: PDependency): List<PDependency>
 }
 
 sealed class ArtifactElement {
@@ -45,25 +47,6 @@ sealed class ArtifactElement {
         return render(context).apply {
             children.forEach { add(it.renderRecursively(context)) }
         }
-    }
-
-    fun getDirectory(path: String): ArtifactElement {
-        if (path.isEmpty()) {
-            return this
-        }
-
-        var current: ArtifactElement = this
-        for (segment in path.split("/")) {
-            val existing = current.children.firstOrNull { it is Directory && it.name == segment }
-            if (existing != null) {
-                current = existing
-                continue
-            }
-
-            current = Directory(segment).also { current.add(it) }
-        }
-
-        return current
     }
 
     class Root : ArtifactElement() {
@@ -107,7 +90,7 @@ sealed class ArtifactElement {
     }
 }
 
-fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: List<DependencyMapper>): PFile {
+fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: OpaqueDependencyMapper): PFile {
     val root = Root()
 
     fun Project.getProject(name: String) = findProject(name) ?: error("Cannot find project $name")
@@ -121,13 +104,13 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: Li
 
     root.add(Directory("lib").apply {
         val librariesConfiguration = prepareIdeaPluginProject.configurations.getByName("libraries")
-        add(getArtifactElements(rootProject, librariesConfiguration, dependencyMappers, false))
+        add(getArtifactElements(rootProject, librariesConfiguration, dependencyMapper, false))
 
         add(Directory("jps").apply {
             val prepareJpsPluginProject = rootProject.getProject(":kotlin-jps-plugin")
             add(Archive(prepareJpsPluginProject.name + ".jar").apply {
                 val jpsPluginConfiguration = prepareIdeaPluginProject.configurations.getByName("jpsPlugin")
-                add(getArtifactElements(rootProject, jpsPluginConfiguration, dependencyMappers, true))
+                add(getArtifactElements(rootProject, jpsPluginConfiguration, dependencyMapper, true))
             })
         })
 
@@ -135,7 +118,7 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: Li
             add(FileCopy(File(rootProject.projectDir, "resources/kotlinManifest.properties")))
 
             val embeddedConfiguration = prepareIdeaPluginProject.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
-            add(getArtifactElements(rootProject, embeddedConfiguration, dependencyMappers, true))
+            add(getArtifactElements(rootProject, embeddedConfiguration, dependencyMapper, true))
         })
     })
 
@@ -149,10 +132,10 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: Li
 private fun getArtifactElements(
     rootProject: Project,
     configuration: Configuration,
-    dependencyMappers: List<DependencyMapper>,
+    dependencyMapper: OpaqueDependencyMapper,
     extractDependencies: Boolean
 ): List<ArtifactElement> {
-    val dependencies = rootProject.resolveDependencies(configuration, false, dependencyMappers, withEmbedded = true).join()
+    val dependencies = parseDependencies(configuration, dependencyMapper)
 
     val artifacts = mutableListOf<ArtifactElement>()
 
@@ -179,4 +162,13 @@ private fun getArtifactElements(
     }
 
     return artifacts
+}
+
+private fun parseDependencies(configuration: Configuration, dependencyMapper: OpaqueDependencyMapper): List<PDependency> {
+    val dependencies = mutableListOf<PDependency>()
+    for (file in configuration.resolve()) {
+        val library = PLibrary(file.name, listOf(file))
+        dependencies += dependencyMapper.map(PDependency.ModuleLibrary(library))
+    }
+    return dependencies
 }
