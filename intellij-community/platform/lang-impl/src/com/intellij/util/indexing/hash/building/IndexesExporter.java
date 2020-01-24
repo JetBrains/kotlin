@@ -125,6 +125,9 @@ public class IndexesExporter {
       writer.name("os");
       writer.value(getOsNameForIndexVersions());
 
+      writer.name("index_kind");
+      writer.value(indexChunk.getKind());
+
       writer.name("index_name");
       writer.value(indexChunk.getName());
 

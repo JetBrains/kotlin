@@ -11,6 +11,7 @@ import java.util.Set;
 public final class IndexChunk {
   private final Set<VirtualFile> myRoots;
   private final String myName;
+  private String myKind;
   private String myContentsHash;
 
   public IndexChunk(@NotNull Set<VirtualFile> roots,
@@ -36,6 +37,15 @@ public final class IndexChunk {
 
   public void setContentsHash(@Nullable String contentsHash) {
     myContentsHash = contentsHash;
+  }
+
+  @Nullable
+  public String getKind() {
+    return myKind;
+  }
+
+  public void setKind(@Nullable String kind) {
+    myKind = kind;
   }
 
   @Override
