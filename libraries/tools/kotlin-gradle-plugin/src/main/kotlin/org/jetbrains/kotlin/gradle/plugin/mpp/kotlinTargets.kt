@@ -184,7 +184,8 @@ abstract class AbstractKotlinTarget(
         return result
     }
 
-    private fun createUsageContexts(
+    // TODO[Ilya Goncharov] fix internal on public when we remove legacy js
+    internal fun createUsageContexts(
         producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
         // Here, the Java Usage values are used intentionally as Gradle needs this for

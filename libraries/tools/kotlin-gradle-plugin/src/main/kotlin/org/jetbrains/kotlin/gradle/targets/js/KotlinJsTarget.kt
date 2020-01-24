@@ -7,16 +7,19 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ConfigurablePublishArtifact
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Usage
+import org.gradle.api.attributes.AttributesSchema
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -26,7 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -46,46 +49,22 @@ constructor(
         if (irTarget == null)
             super.kotlinComponents
         else {
-            val usageContexts = mutableSetOf<DefaultKotlinUsageContext>()
-
-            // This usage value is only needed for Maven scope mapping. Don't replace it with a custom Kotlin Usage value
-            val javaApiUsage = project.usageByName(if (isGradleVersionAtLeast(5, 3)) "java-api-jars" else Usage.JAVA_API)
-
-            usageContexts += run {
-                DefaultKotlinUsageContext(
-                    compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
-                    javaApiUsage,
-                    apiElementsConfigurationName
-                )
-            }
-
-            usageContexts += run {
-                DefaultKotlinUsageContext(
-                    irTarget!!.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
-                    javaApiUsage,
-                    irTarget!!.apiElementsConfigurationName
-                )
-            }
+            val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            val usageContexts = createUsageContexts(mainCompilation) +
+                    irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME))
 
             val componentName =
                 if (project.kotlinExtension is KotlinMultiplatformExtension)
                     targetName
                 else PRIMARY_SINGLE_COMPONENT_NAME
 
-            val component =
-                createKotlinVariant(componentName, compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME), usageContexts)
+            val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
-            val sourcesJarTask =
-                sourcesJarTask(project, lazy { project.kotlinExtension.sourceSets.toSet() }, null, targetName.toLowerCase())
-
-            component.sourcesArtifacts = setOf(
-                project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, sourcesJarTask).apply {
-                    this as ConfigurablePublishArtifact
-                    classifier = "sources"
-                }
+            result.sourcesArtifacts = setOf(
+                sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
             )
 
-            setOf(component)
+            setOf(result)
         }
     }
 
@@ -178,5 +157,9 @@ constructor(
 
         const val LEGACY = "legacy"
         const val IR = "ir"
+
+        fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
+            attributesSchema.attribute(jsModeAttribute)
+        }
     }
 }

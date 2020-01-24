@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
@@ -102,6 +103,7 @@ abstract class KotlinBasePluginWrapper(
     private fun setupAttributeMatchingStrategy(project: Project) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(project, this)
+        KotlinJsTarget.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
     }
 
