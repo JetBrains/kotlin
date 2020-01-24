@@ -155,7 +155,6 @@ constructor(
             String::class.java
         )
 
-        const val LEGACY = "legacy"
         const val IR = "ir"
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
