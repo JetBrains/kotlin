@@ -264,7 +264,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
             jvmJar {
                 dependsOn(jsBrowserProductionWebpack)
-                from(new File(jsBrowserProductionWebpack.entry.name, jsBrowserProductionWebpack.outputPath))
+                from(new File(jsBrowserProductionWebpack.destinationDirectory, jsBrowserProductionWebpack.entry.name))
             }
             
             task run(type: JavaExec, dependsOn: [jvmJar]) {
