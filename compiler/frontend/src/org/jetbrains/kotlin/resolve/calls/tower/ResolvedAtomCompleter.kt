@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -370,6 +371,16 @@ class ResolvedAtomCompleter(
         if (callableReferenceAdaptation == null) return
 
         val callElement = resolvedCall.call.callElement
+        val isUnboundReference = resolvedCall.dispatchReceiver is TransientReceiver
+
+        fun makeFakeValueArgument(callArgument: KotlinCallArgument): ValueArgument {
+            val fakeCallArgument = callArgument as? FakeKotlinCallArgumentForCallableReference
+                ?: throw AssertionError("FakeKotlinCallArgumentForCallableReference expected: $callArgument")
+            return FakePositionalValueArgumentForCallableReferenceImpl(
+                callElement,
+                if (isUnboundReference) fakeCallArgument.index + 1 else fakeCallArgument.index
+            )
+        }
 
         for ((valueParameter, resolvedCallArgument) in callableReferenceAdaptation.mappedArguments) {
             resolvedCall.recordValueArgument(
@@ -378,7 +389,7 @@ class ResolvedAtomCompleter(
                     ResolvedCallArgument.DefaultArgument ->
                         DefaultValueArgument.DEFAULT
                     is ResolvedCallArgument.SimpleArgument -> {
-                        val valueArgument = makeFakeValueArgument(resolvedCallArgument.callArgument, callElement)
+                        val valueArgument = makeFakeValueArgument(resolvedCallArgument.callArgument)
                         if (valueParameter.isVararg)
                             VarargValueArgument(
                                 listOf(
@@ -391,21 +402,12 @@ class ResolvedAtomCompleter(
                     is ResolvedCallArgument.VarargArgument ->
                         VarargValueArgument(
                             resolvedCallArgument.arguments.map {
-                                makeFakeValueArgument(it, callElement)
+                                makeFakeValueArgument(it)
                             }
                         )
                 }
             )
         }
-    }
-
-    private fun makeFakeValueArgument(
-        callArgument: KotlinCallArgument,
-        callElement: KtElement
-    ): ValueArgument {
-        val fakeCallArgument = callArgument as? FakeKotlinCallArgumentForCallableReference
-            ?: throw AssertionError("FakeKotlinCallArgumentForCallableReference expected: $callArgument")
-        return FakePositionalValueArgumentForCallableReferenceImpl(callElement, fakeCallArgument.index)
     }
 
     private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -274,6 +275,13 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             throw AssertionError("Callable reference with adapted arguments expected: ${resolvedCall.call.callElement.text}")
         }
 
+        if (resolvedCall.dispatchReceiver is TransientReceiver) {
+            // Unbound callable reference 'A::foo', receiver is passed as a first parameter
+            val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
+            irAdapteeCall.dispatchReceiver =
+                IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
+        }
+
         for ((valueParameter, valueArgument) in adaptedArguments) {
             val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
             irAdapteeCall.putValueArgument(
@@ -289,8 +297,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         resolvedValueArgument: ResolvedValueArgument,
         irAdapterFun: IrSimpleFunction,
         valueParameter: ValueParameterDescriptor
-    ): IrExpression? =
-        when (resolvedValueArgument) {
+    ): IrExpression? {
+        return when (resolvedValueArgument) {
             is DefaultValueArgument ->
                 null
             is VarargValueArgument ->
@@ -309,8 +317,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             else ->
                 throw AssertionError("Unexpected ResolvedValueArgument: $resolvedValueArgument")
         }
+    }
 
-    private fun adaptValueArgument(
+    fun adaptValueArgument(
         startOffset: Int,
         endOffset: Int,
         valueArgument: ValueArgument,

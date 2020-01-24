@@ -1378,6 +1378,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/typeArguments.kt");
             }
 
+            @TestMetadata("unboundMemberReferenceWithAdaptedArguments.kt")
+            public void testUnboundMemberReferenceWithAdaptedArguments() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/unboundMemberReferenceWithAdaptedArguments.kt");
+            }
+
             @TestMetadata("withAdaptedArguments.kt")
             public void testWithAdaptedArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/withAdaptedArguments.kt");
