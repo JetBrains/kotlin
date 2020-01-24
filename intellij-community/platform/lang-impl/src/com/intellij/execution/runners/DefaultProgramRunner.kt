@@ -10,6 +10,7 @@ import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.jetbrains.concurrency.resolvedPromise
 
+@Deprecated(message = "Do not use")
 abstract class DefaultProgramRunner : ProgramRunner<RunnerSettings> {
   @Throws(ExecutionException::class)
   final override fun execute(environment: ExecutionEnvironment, callback: ProgramRunner.Callback?) {

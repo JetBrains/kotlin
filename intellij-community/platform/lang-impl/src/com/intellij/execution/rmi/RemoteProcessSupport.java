@@ -1,17 +1,20 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.rmi;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutputTypes;
-import com.intellij.execution.runners.DefaultProgramRunner;
+import com.intellij.execution.runners.DefaultProgramRunnerKt;
+import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
@@ -176,11 +179,18 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
   }
 
   private void startProcess(@NotNull Target target, @NotNull Parameters configuration, @NotNull Pair<Target, Parameters> key) {
-    ProgramRunner runner = new DefaultProgramRunner() {
+    ProgramRunner<?> runner = new ProgramRunner<RunnerSettings>() {
       @Override
       @NotNull
       public String getRunnerId() {
         return "MyRunner";
+      }
+
+      @Override
+      public void execute(@NotNull ExecutionEnvironment environment, @Nullable Callback callback) throws ExecutionException {
+        ExecutionManager.getInstance(environment.getProject()).startRunProfile(environment, callback, state -> {
+          return DefaultProgramRunnerKt.executeState(state, environment, this);
+        });
       }
 
       @Override
