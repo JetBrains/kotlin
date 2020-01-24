@@ -37,10 +37,8 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
                             }
                             
                             project.afterEvaluate {
-                                project.tasks.each { Task task ->
-                                    if (kotlinTestClass.isAssignableFrom(task.class)) {
-                                        task.dependsOn('nonJvmTestIdeSupport')
-                                    }
+                                project.tasks.withType(kotlinTestClass) { Task task ->
+                                    task.dependsOn('nonJvmTestIdeSupport')
                                 }
                             }
                         }
