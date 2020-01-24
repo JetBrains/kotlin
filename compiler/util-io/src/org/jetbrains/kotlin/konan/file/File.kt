@@ -28,6 +28,11 @@ data class File constructor(internal val javaPath: Path) {
         get() = javaPath.toAbsolutePath().toString()
     val absoluteFile: File
         get() = File(absolutePath)
+    val canonicalPath: String
+        get() = javaPath.toFile().canonicalPath
+    val canonicalFile: File
+        get() = File(canonicalPath)
+
     val name: String
         get() = javaPath.fileName.toString().removeSuffixIfPresent("/") // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8153248
     val extension: String
