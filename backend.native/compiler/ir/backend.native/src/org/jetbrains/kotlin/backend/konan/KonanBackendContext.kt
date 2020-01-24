@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.DefaultMapping
+import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.kotlinNativeInternal
@@ -60,6 +62,7 @@ internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBac
 
     override val internalPackageFqn = KonanFqNames.internalPackageName
 
+    override val mapping: Mapping = DefaultMapping()
 }
 
 internal fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =
