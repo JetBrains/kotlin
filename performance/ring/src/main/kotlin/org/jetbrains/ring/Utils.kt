@@ -28,3 +28,26 @@ expect class Random() {
     }
 }
 
+expect class AtomicRef<T> {
+    /**
+     * Reading/writing this property maps to read/write of volatile variable.
+     */
+    public var value: T
+
+    /**
+     * Maps to [AtomicReferenceFieldUpdater.lazySet].
+     */
+    public fun lazySet(value: T)
+
+    /**
+     * Maps to [AtomicReferenceFieldUpdater.compareAndSet].
+     */
+    public fun compareAndSet(expect: T, update: T): Boolean
+
+    /**
+     * Maps to [AtomicReferenceFieldUpdater.getAndSet].
+     */
+    public fun getAndSet(value: T): T
+}
+
+public expect fun <T> atomic(initial: T): AtomicRef<T>

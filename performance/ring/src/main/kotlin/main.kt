@@ -205,7 +205,8 @@ class RingLauncher : Launcher() {
                     "GraphSolver.solve" to BenchmarkEntryWithInit.create(::GraphSolverBenchmark, { solve() }),
                     "Casts.classCast" to BenchmarkEntryWithInit.create(::CastsBenchmark, { classCast() }),
                     "Casts.interfaceCast" to BenchmarkEntryWithInit.create(::CastsBenchmark, { interfaceCast() }),
-                    "LocalObjects.localArray" to BenchmarkEntryWithInit.create(::LocalObjectsBenchmark, { localArray() })
+                    "LocalObjects.localArray" to BenchmarkEntryWithInit.create(::LocalObjectsBenchmark, { localArray() }),
+                    "LinkedListWithAtomicsBenchmark" to BenchmarkEntryWithInit.create(::LinkedListWithAtomicsBenchmark, { ensureNext() })
             )
     )
 }
