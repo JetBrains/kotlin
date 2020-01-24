@@ -15,6 +15,7 @@ import com.intellij.ui.HintHint;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.components.panels.VerticalBox;
 import com.intellij.ui.components.panels.Wrapper;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,7 +122,7 @@ class TrafficProgressPanel extends JPanel {
     protected void paintComponent(@NotNull Graphics g) {
       Insets insets = getInsets();
       if (insets == null) {
-        insets = new Insets(0, 0, 0, 0);
+        insets = JBUI.emptyInsets();
       }
       g.setColor(myHintHint.getTextForeground());
       g.drawLine(insets.left, insets.top, getWidth() - insets.left - insets.right, insets.top);

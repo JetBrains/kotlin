@@ -12,6 +12,9 @@ import com.intellij.ide.PowerSaveMode;
 import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
+import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
@@ -35,7 +38,6 @@ import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import gnu.trove.TIntArrayList;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,6 +61,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   boolean progressBarsEnabled;
   Boolean progressBarsCompleted;
 
+  private final DefaultActionGroup actions;
+
   /**
    * array filled with number of highlighters with a given severity.
    * errorCount[idx] == number of highlighters of severity with index idx in this markup model.
@@ -79,6 +83,16 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     myDaemonCodeAnalyzer = project == null ? null : (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     myDocument = document;
     mySeverityRegistrar = SeverityRegistrar.getSeverityRegistrar(myProject);
+
+    ActionManager am = ActionManager.getInstance();
+    AnAction nextError = am.getAction("GotoNextError");
+    nextError.getTemplatePresentation().setIcon(AllIcons.General.ArrowDown);
+
+    AnAction prevError = am.getAction("GotoPreviousError");
+    prevError.getTemplatePresentation().setIcon(AllIcons.General.ArrowUp);
+
+    actions = new DefaultActionGroup(new StatusAction(), Separator.create(), nextError, prevError);
+
     refresh(null);
 
     if (project != null && document != null) {
@@ -150,13 +164,14 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public String toString() {
-      @NonNls String s = "DS: finished=" + errorAnalyzingFinished;
-      s += "; pass statuses: " + passStati.size() + "; ";
+      StringBuilder s = new StringBuilder("DS: finished=" + errorAnalyzingFinished);
+      s.append("; pass statuses: ").append(passStati.size()).append("; ");
       for (ProgressableTextEditorHighlightingPass passStatus : passStati) {
-        s += String.format("(%s %2.0f%% %b)", passStatus.getPresentableName(), passStatus.getProgress() *100, passStatus.isFinished());
+        s.append(
+          String.format("(%s %2.0f%% %b)", passStatus.getPresentableName(), passStatus.getProgress() * 100, passStatus.isFinished()));
       }
-      s += "; error count: "+errorCount.length + ": "+new TIntArrayList(errorCount);
-      return s;
+      s.append("; error count: ").append(errorCount.length).append(": ").append(new TIntArrayList(errorCount));
+      return s.toString();
     }
   }
 
@@ -360,6 +375,38 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       JLabel percentLabel = new JLabel();
       percentLabel.setText(TrafficProgressPanel.MAX_TEXT);
       passes.put(pass, Pair.create(progressBar, percentLabel));
+    }
+  }
+
+  @Override
+  public void refreshActions() {
+
+  }
+
+  @Override
+  public @Nullable ActionGroup getActions() {
+    return actions;
+  }
+
+  private static class StatusAction extends AnAction implements CustomComponentAction {
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      System.out.println("StatusAction");
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+    }
+
+    @Override
+    public @NotNull JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
+      return new StatusActionButton(this, presentation);
+    }
+  }
+
+  private static class StatusActionButton extends ActionButton {
+    private StatusActionButton(AnAction action, Presentation presentation) {
+      super(action, presentation, ActionPlaces.EDITOR_INSPECTIONS_POPUP, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
     }
   }
 }
