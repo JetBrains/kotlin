@@ -97,8 +97,9 @@ class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
 
     override val metadata: MetadataSource.File?
         get() = TODO("not implemented")
-    override val annotations: MutableList<IrConstructorCall>
+    override var annotations: List<IrConstructorCall>
         get() = TODO("not implemented")
+        set(_) = TODO("not implemented")
     override val fqName: FqName
         get() = TODO("not implemented")
     override val symbol: IrFileSymbol

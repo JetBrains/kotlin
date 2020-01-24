@@ -268,7 +268,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                 parent = functionReferenceClass
                 functionReferenceClass.declarations += this
 
-                boundFunctionParameters.mapIndexedTo(valueParameters) { index, parameter ->
+                valueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
                             type = parameter.type.substitute(typeArgumentsMap))
                 }
@@ -328,7 +328,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
 
                 this.createDispatchReceiverParameter()
 
-                superFunction.valueParameters.mapIndexedTo(valueParameters) { index, parameter ->
+                valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
                             type = parameter.type.substitute(typeArgumentsMap))
                 }

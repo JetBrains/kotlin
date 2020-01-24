@@ -44,7 +44,7 @@ internal fun makeEntryPoint(context: Context): IrFunction {
             isFakeOverride = false,
             isOperator = false
     ).also { function ->
-        function.valueParameters.add(WrappedValueParameterDescriptor().let {
+        function.valueParameters = listOf(WrappedValueParameterDescriptor().let {
             IrValueParameterImpl(
                     actualMain.startOffset, actualMain.startOffset,
                     IrDeclarationOrigin.DEFINED,

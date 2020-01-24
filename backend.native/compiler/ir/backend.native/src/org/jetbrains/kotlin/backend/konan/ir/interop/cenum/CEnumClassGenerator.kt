@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -119,14 +120,14 @@ internal class CEnumClassGenerator(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, entryDescriptor
         ).also { enumEntry ->
-            enumEntry.initializerExpression = IrEnumConstructorCallImpl(
+            enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     type = irBuiltIns.unitType,
                     symbol = symbolTable.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!),
                     typeArgumentsCount = 0 // enums can't be generic
             ).also {
                 it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
-            }
+            })
         }
     }
 

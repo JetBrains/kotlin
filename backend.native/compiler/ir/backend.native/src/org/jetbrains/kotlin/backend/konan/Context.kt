@@ -170,9 +170,9 @@ internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler 
 
             dispatchReceiverParameter = dispatchReceiver?.copyTo(this)
             extensionReceiverParameter = extensionReceiver?.copyTo(this)
-            function.valueParameters.mapTo(valueParameters) { it.copyTo(this, type = valueParameterTypes[it.index]) }
+            valueParameters += function.valueParameters.map { it.copyTo(this, type = valueParameterTypes[it.index]) }
 
-            function.typeParameters.mapIndexedTo(typeParameters) { index, parameter ->
+            typeParameters += function.typeParameters.mapIndexed { index, parameter ->
                 WrappedTypeParameterDescriptor().let {
                     IrTypeParameterImpl(
                             startOffset, endOffset,

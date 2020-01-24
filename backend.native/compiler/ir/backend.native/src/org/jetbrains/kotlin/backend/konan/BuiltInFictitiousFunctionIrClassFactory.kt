@@ -126,7 +126,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
             builtClassesMap.getOrPut(descriptor) {
                 createClass(descriptor).apply {
                     val functionClass = this
-                    descriptor.declaredTypeParameters.mapTo(typeParameters) { typeParameterDescriptor ->
+                    typeParameters += descriptor.declaredTypeParameters.map { typeParameterDescriptor ->
                         createTypeParameter(typeParameterDescriptor).also {
                             it.parent = this
                             it.superTypes += irBuiltIns.anyNType
@@ -134,7 +134,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                     }
 
                     val descriptorToIrParametersMap = typeParameters.map { it.descriptor to it }.toMap()
-                    descriptor.typeConstructor.supertypes.mapTo(superTypes) { superType ->
+                    superTypes += descriptor.typeConstructor.supertypes.map { superType ->
                         val arguments = superType.arguments.map { argument ->
                             val argumentClassifierDescriptor = argument.type.constructor.declarationDescriptor
                             val argumentClassifierSymbol = argumentClassifierDescriptor?.let { descriptorToIrParametersMap[it] }
@@ -165,7 +165,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                             typeParameters.last().defaultType
                     ).apply {
                         parent = functionClass
-                        invokeFunctionDescriptor.valueParameters.mapTo(valueParameters) {
+                        valueParameters += invokeFunctionDescriptor.valueParameters.map {
                             IrValueParameterImpl(
                                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                                     invokeFunctionOrigin,

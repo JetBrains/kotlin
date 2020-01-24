@@ -509,6 +509,6 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
     ).apply {
         descriptor.bind(this)
         parent = irConstructor.parent
-        irConstructor.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
+        valueParameters += irConstructor.valueParameters.map { it.copyTo(this) }
     }
 }

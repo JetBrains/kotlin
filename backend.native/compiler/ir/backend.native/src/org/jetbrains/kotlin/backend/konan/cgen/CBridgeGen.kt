@@ -1290,7 +1290,7 @@ private class ObjCBlockPointerValuePassing(
         irClass.addChild(invokeMethod)
         invokeMethod.createDispatchReceiverParameter()
 
-        (0 until parameterCount).mapTo(invokeMethod.valueParameters) { index ->
+        invokeMethod.valueParameters += (0 until parameterCount).map { index ->
             val parameterDescriptor = WrappedValueParameterDescriptor()
             val parameter = IrValueParameterImpl(
                     startOffset, endOffset,

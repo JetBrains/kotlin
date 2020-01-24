@@ -153,7 +153,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
 
             loweredConstructor.valueParameters += createSynthesizedValueParameter(0, "name", context.irBuiltIns.stringType)
             loweredConstructor.valueParameters += createSynthesizedValueParameter(1, "ordinal", context.irBuiltIns.intType)
-            constructor.valueParameters.mapTo(loweredConstructor.valueParameters) {
+            loweredConstructor.valueParameters += constructor.valueParameters.map {
                 it.copyTo(loweredConstructor, index = it.loweredIndex).apply {
                     loweredEnumConstructorParameters[it] = this
                 }

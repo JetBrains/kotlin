@@ -222,7 +222,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     enumEntries
                             .sortedBy { it.name }
                             .map {
-                                val initializer = it.initializerExpression
+                                val initializer = it.initializerExpression?.expression
                                 val entryConstructorCall = when {
                                     initializer is IrConstructorCall -> initializer
 
@@ -289,7 +289,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                                 dispatchReceiver = irGet(instances)
                                 putValueArgument(0, irInt(it.index))
                             }
-                            val initializer = it.value.initializerExpression!!
+                            val initializer = it.value.initializerExpression!!.expression
                             initializer.setDeclarationsParent(constructor)
                             when {
                                 initializer is IrConstructorCall -> +initInstanceCall(instance, initializer)

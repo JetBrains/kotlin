@@ -53,7 +53,7 @@ internal interface DescriptorToIrTranslationMixin {
                     descriptor = descriptor
             ).also { irClass ->
                 symbolTable.withScope(descriptor) {
-                    descriptor.typeConstructor.supertypes.mapTo(irClass.superTypes) {
+                    irClass.superTypes += descriptor.typeConstructor.supertypes.map {
                         it.toIrType()
                     }
                     irClass.generateAnnotations()

@@ -76,7 +76,7 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
             isFakeOverride = false,
             isOperator = false
     ).also { function ->
-        function.valueParameters.add(WrappedValueParameterDescriptor().let {
+        function.valueParameters = listOf(WrappedValueParameterDescriptor().let {
             IrValueParameterImpl(
                     startOffset, endOffset,
                     IrDeclarationOrigin.DEFINED,
@@ -130,7 +130,7 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
             isFakeOverride = false,
             isOperator = false
     ).also { function ->
-        function.valueParameters.add(WrappedValueParameterDescriptor().let {
+        function.valueParameters = listOf(WrappedValueParameterDescriptor().let {
             IrValueParameterImpl(
                     startOffset, endOffset,
                     IrDeclarationOrigin.DEFINED,
