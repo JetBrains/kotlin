@@ -11,19 +11,26 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations.Companion.EMPTY
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.contains
 import java.util.*
 
 class SamConversionResolverImpl(
-        storageManager: StorageManager,
-        private val samWithReceiverResolvers: Iterable<SamWithReceiverResolver>
-): SamConversionResolver {
+    storageManager: StorageManager,
+    private val samWithReceiverResolvers: Iterable<SamWithReceiverResolver>
+) : SamConversionResolver {
+    class SamConversionResolverWithoutReceiverConversion(storageManager: StorageManager) : SamConversionResolver {
+        val resolver = SamConversionResolverImpl(storageManager, emptyList())
+
+        override fun resolveFunctionTypeIfSamInterface(classDescriptor: ClassDescriptor): SimpleType? {
+            return resolver.resolveFunctionTypeIfSamInterface(classDescriptor)
+        }
+    }
+
     private val functionTypesForSamInterfaces = storageManager.createCacheWithNullableValues<ClassDescriptor, SimpleType>()
 
     override fun resolveFunctionTypeIfSamInterface(classDescriptor: ClassDescriptor): SimpleType? {
@@ -86,4 +93,71 @@ fun getFunctionTypeForAbstractMethod(
         function.builtIns, EMPTY, receiverType, parameterTypes,
         parameterNames, returnType, function.isSuspend
     )
+}
+
+fun SamConversionResolver.getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType? =
+    getFunctionTypeForSamType(possibleSamType, this)?.unwrap()
+
+fun getFunctionTypeForSamType(samType: KotlinType, samResolver: SamConversionResolver): KotlinType? {
+    val unwrappedType = samType.unwrap()
+    if (unwrappedType is FlexibleType) {
+        val lower = getFunctionTypeForSamType(unwrappedType.lowerBound, samResolver)
+        val upper = getFunctionTypeForSamType(unwrappedType.upperBound, samResolver)
+
+        assert((lower == null) == (upper == null)) { "Illegal flexible type: $unwrappedType" }
+
+        if (lower == null || upper == null) return null
+
+        return KotlinTypeFactory.flexibleType(lower, upper)
+    } else {
+        return getFunctionTypeForSamType(unwrappedType as SimpleType, samResolver)
+    }
+}
+
+private fun getFunctionTypeForSamType(samType: SimpleType, samResolver: SamConversionResolver): SimpleType? {
+    // e.g. samType == Comparator<String>?
+    val classifier = samType.constructor.declarationDescriptor
+    if (classifier !is ClassDescriptor) return null
+
+    // Function2<T, T, Int>
+    val functionTypeDefault = samResolver.resolveFunctionTypeIfSamInterface(classifier) ?: return null
+    val noProjectionsSamType = nonProjectionParametrization(samType) ?: return null
+
+    // Function2<String, String, Int>?
+    val type = TypeSubstitutor.create(noProjectionsSamType).substitute(functionTypeDefault, Variance.IN_VARIANCE)
+    assert(type != null) {
+        "Substitution based on type with no projections '$noProjectionsSamType' should not end with conflict"
+    }
+
+    val simpleType = type!!.asSimpleType()
+    return simpleType.makeNullableAsSpecified(samType.isMarkedNullable)
+}
+
+// If type 'samType' contains no projection, then it's non-projection parametrization is 'samType' itself
+// Else each projection type argument 'out/in A_i' (but star projections) is replaced with it's bound 'A_i'
+// Star projections are treated specially:
+// - If first upper bound of corresponding type parameter does not contain any type parameter of 'samType' class,
+//   then use this upper bound instead of star projection
+// - Otherwise no non-projection parametrization exists for such 'samType'
+//
+// See Non-wildcard parametrization in JLS 8 p.9.9 for clarification
+fun nonProjectionParametrization(samType: SimpleType): SimpleType? {
+    if (samType.arguments.none { it.projectionKind != Variance.INVARIANT }) return samType
+    val parameters = samType.constructor.parameters
+    val parametersSet = parameters.toSet()
+
+    return samType.replace(
+        newArguments = samType.arguments.zip(parameters).map {
+            val (projection, parameter) = it
+            when {
+                projection.projectionKind == Variance.INVARIANT -> projection
+
+                projection.isStarProjection ->
+                    parameter.upperBounds.first().takeUnless { t ->
+                        t.contains { it.constructor.declarationDescriptor in parametersSet }
+                    }?.asTypeProjection() ?: return@nonProjectionParametrization null
+
+                else -> projection.type.asTypeProjection()
+            }
+        })
 }

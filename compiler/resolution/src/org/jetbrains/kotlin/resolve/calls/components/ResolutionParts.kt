@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
+import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -311,7 +312,9 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
                 !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
     if (generatingAdditionalSamCandidateIsEnabled) return null
-    if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
+    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
+        if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
+    }
 
     val argumentIsFunctional = when (argument) {
         is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
@@ -321,11 +324,14 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     if (!argumentIsFunctional) return null
 
     val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
+
+    if (!callComponents.samConversionTransformer.isPossibleSamType(originalExpectedType)) return null
+
     val convertedTypeByOriginal =
-        callComponents.samConversionTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
+        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
 
     val candidateExpectedType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
-    val convertedTypeByCandidate = callComponents.samConversionTransformer.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    val convertedTypeByCandidate = callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
 
     assert(candidateExpectedType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
         "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +

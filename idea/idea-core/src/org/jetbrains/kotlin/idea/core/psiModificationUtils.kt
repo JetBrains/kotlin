@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParenthese
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
+import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -127,7 +129,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
         val referenceArgumentCount = valueArguments.count { it.getArgumentExpression() is KtCallableReferenceExpression }
 
         val resolutionFacade = getResolutionFacade()
-        val samConversionTransformer = resolutionFacade.frontendService<SamConversionTransformer>()
+        val samConversionTransformer = resolutionFacade.frontendService<SamConversionResolver>()
         val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
 
         val bindingContext = analyze(resolutionFacade, BodyResolveMode.PARTIAL)
@@ -154,7 +156,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
 
 private fun FunctionDescriptor.allowsMoveOfLastParameterOutsideParentheses(
     lambdaAndCallableReferencesInOriginalCallCount: Int,
-    samConversionTransformer: SamConversionTransformer,
+    samConversionTransformer: SamConversionResolver,
     newInferenceEnabled: Boolean
 ): Boolean {
     fun KotlinType.allowsMoveOutsideParentheses(): Boolean {

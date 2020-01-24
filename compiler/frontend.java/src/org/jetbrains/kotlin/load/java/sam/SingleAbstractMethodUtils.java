@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.kotlin.resolve.sam.SamConversionResolverImplKt.nonProjectionParametrization;
 import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 
 public class SingleAbstractMethodUtils {
@@ -73,7 +74,7 @@ public class SingleAbstractMethodUtils {
             SimpleType functionTypeDefault = samResolver.resolveFunctionTypeIfSamInterface(descriptor);
 
             if (functionTypeDefault != null) {
-                SimpleType noProjectionsSamType = SingleAbstractMethodUtilsKt.nonProjectionParametrization(samType);
+                SimpleType noProjectionsSamType = nonProjectionParametrization(samType);
                 if (noProjectionsSamType == null) return null;
 
                 // Function2<String, String, Int>?

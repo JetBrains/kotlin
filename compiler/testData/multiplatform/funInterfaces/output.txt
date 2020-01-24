@@ -1,0 +1,41 @@
+-- Common --
+Exit code: OK
+Output:
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+NewInference
+-XXLanguage:+SamConversionForKotlinFunctions
+-XXLanguage:+SamConversionPerArgument
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+-- JVM --
+Exit code: OK
+Output:
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+NewInference
+-XXLanguage:+SamConversionForKotlinFunctions
+-XXLanguage:+SamConversionPerArgument
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+-- JS --
+Exit code: OK
+Output:
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+NewInference
+-XXLanguage:+SamConversionForKotlinFunctions
+-XXLanguage:+SamConversionPerArgument
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!

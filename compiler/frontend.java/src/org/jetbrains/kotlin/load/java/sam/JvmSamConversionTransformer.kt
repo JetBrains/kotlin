@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.load.java.sam
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.synthetic.hasJavaOriginInHierarchy
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 class JvmSamConversionTransformer(
@@ -32,5 +35,10 @@ class JvmSamConversionTransformer(
             functionDescriptor.underlyingConstructorDescriptor is JavaClassConstructorDescriptor) return true
 
         return functionDescriptor.hasJavaOriginInHierarchy()
+    }
+
+    override fun isPossibleSamType(samType: KotlinType): Boolean {
+        val descriptor = samType.constructor.declarationDescriptor
+        return descriptor is ClassDescriptor && (descriptor.isFun || descriptor is JavaClassDescriptor)
     }
 }

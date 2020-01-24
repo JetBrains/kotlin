@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.types.SimpleType
 
-@DefaultImplementation(impl = SamConversionResolver.Empty::class)
+@DefaultImplementation(impl = SamConversionResolverImpl.SamConversionResolverWithoutReceiverConversion::class)
 interface SamConversionResolver : PlatformSpecificExtension<SamConversionResolver> {
     object Empty : SamConversionResolver {
         override fun resolveFunctionTypeIfSamInterface(classDescriptor: ClassDescriptor): SimpleType? = null
