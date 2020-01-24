@@ -32,5 +32,7 @@ fun executeState(state: RunProfileState, environment: ExecutionEnvironment, runn
 }
 
 fun showRunContent(executionResult: ExecutionResult?, environment: ExecutionEnvironment): RunContentDescriptor? {
-  return executionResult?.let { RunContentBuilder(it, environment).showRunContent(environment.contentToReuse) }
+  return executionResult?.let {
+    RunContentBuilder(it, environment).showRunContent(environment.contentToReuse)
+  }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.runners;
 
 import com.intellij.execution.ExecutionResult;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public class RunContentBuilder extends RunTab {
+public final class RunContentBuilder extends RunTab {
   private static final String JAVA_RUNNER = "JavaRunner";
 
   private final List<AnAction> myRunnerActions = new SmartList<>();

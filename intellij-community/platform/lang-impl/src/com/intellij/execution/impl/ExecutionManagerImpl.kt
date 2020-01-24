@@ -5,6 +5,7 @@ import com.intellij.CommonBundle
 import com.intellij.execution.*
 import com.intellij.execution.configuration.CompatibilityAwareRunProfile
 import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.RunConfiguration.RestartSingletonResult
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.impl.statistics.RunConfigurationUsageTriggerCollector
@@ -122,7 +123,6 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
   private val awaitingRunProfiles = HashMap<RunProfile, ExecutionEnvironment>()
   private val runningConfigurations: MutableList<RunningConfigurationEntry> = ContainerUtil.createLockFreeCopyOnWriteList()
 
-  // [Project, ExecutorId, RunnerId]
   private val inProgress = Collections.synchronizedSet(THashSet<InProgressEntry>())
 
   private fun processNotStarted(environment: ExecutionEnvironment) {
@@ -432,24 +432,25 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
     }
 
     val contentToReuse = environment.contentToReuse
-    var runningOfTheSameType = emptyList<RunContentDescriptor>()
-    if (configuration != null && !configuration.configuration.isAllowRunningInParallel) {
-      runningOfTheSameType = getRunningDescriptors(Condition { configuration === it })
+    val runningOfTheSameType = if (configuration != null && !configuration.configuration.isAllowRunningInParallel) {
+      getRunningDescriptors(Condition { configuration === it })
     }
     else if (isProcessRunning(contentToReuse)) {
-      runningOfTheSameType = listOf(contentToReuse!!)
+      listOf(contentToReuse!!)
+    }
+    else {
+      emptyList()
     }
 
     val runningToStop = ContainerUtil.concat(runningOfTheSameType, runningIncompatible)
     if (runningToStop.isNotEmpty()) {
       if (configuration != null) {
-        if (runningOfTheSameType.isNotEmpty() && (runningOfTheSameType.size > 1 || contentToReuse == null || runningOfTheSameType[0] !== contentToReuse)) {
+        if (runningOfTheSameType.isNotEmpty() && (runningOfTheSameType.size > 1 || contentToReuse == null || runningOfTheSameType.first() !== contentToReuse)) {
           val result = configuration.configuration.restartSingleton(environment)
-          if (result == RunConfiguration.RestartSingletonResult.NO_FURTHER_ACTION) {
+          if (result == RestartSingletonResult.NO_FURTHER_ACTION) {
             return
           }
-
-          if (result == RunConfiguration.RestartSingletonResult.ASK_AND_RESTART && !userApprovesStopForSameTypeConfigurations(environment.project, configuration.name, runningOfTheSameType.size)) {
+          if (result == RestartSingletonResult.ASK_AND_RESTART && !userApprovesStopForSameTypeConfigurations(environment.project, configuration.name, runningOfTheSameType.size)) {
             return
           }
         }
@@ -463,7 +464,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
       }
     }
 
-    if (awaitingRunProfiles[environment.runProfile] === environment) {
+    if (awaitingRunProfiles.get(environment.runProfile) === environment) {
       // defense from rerunning exactly the same ExecutionEnvironment
       return
     }
@@ -477,7 +478,7 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
           return
         }
 
-        if ((DumbService.getInstance(project).isDumb && configuration != null && !configuration.type.isDumbAware)
+        if ((configuration != null && !configuration.type.isDumbAware && DumbService.getInstance(project).isDumb)
             || inProgress.contains(InProgressEntry(environment.executor.id, environment.runner.runnerId))) {
           awaitTermination(this, 100)
           return
@@ -509,8 +510,9 @@ class ExecutionManagerImpl(private val project: Project) : ExecutionManager(), D
   }
 
   private fun awaitTermination(request: Runnable, delayMillis: Long) {
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-      ApplicationManager.getApplication().invokeLater(request, ModalityState.any())
+    val app = ApplicationManager.getApplication()
+    if (app.isUnitTestMode) {
+      app.invokeLater(request, ModalityState.any())
     }
     else {
       awaitingTerminationAlarm.addRequest(request, delayMillis)
