@@ -531,7 +531,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                     }
                     CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR -> {
-                        with((callableInfo as ClassWithPrimaryConstructorInfo).classInfo) {
+                        val classWithPrimaryConstructorInfo = callableInfo as ClassWithPrimaryConstructorInfo
+                        with(classWithPrimaryConstructorInfo.classInfo) {
                             val classBody = when (kind) {
                                 ClassKind.ANNOTATION_CLASS, ClassKind.ENUM_ENTRY -> ""
                                 else -> "{\n\n}"
@@ -551,8 +552,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                         ClassKind.PLAIN_CLASS, ClassKind.INTERFACE -> "<>"
                                         else -> ""
                                     }
+                                    val ctor =
+                                        classWithPrimaryConstructorInfo.primaryConstructorVisibility?.name?.let { " $it constructor" } ?: ""
                                     psiFactory.createDeclaration<KtClassOrObject>(
-                                        "$openMod$innerMod${kind.keyword} $safeName$typeParamList$paramList$returnTypeString $classBody"
+                                        "$openMod$innerMod${kind.keyword} $safeName$typeParamList$ctor$paramList$returnTypeString $classBody"
                                     )
                                 }
                             }

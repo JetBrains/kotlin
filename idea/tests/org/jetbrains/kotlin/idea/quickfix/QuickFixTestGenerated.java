@@ -3294,6 +3294,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/notApplicableInReturn.kt");
                 }
 
+                @TestMetadata("parameterClassIsInternal.kt")
+                public void testParameterClassIsInternal() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsInternal.kt");
+                }
+
+                @TestMetadata("parameterClassIsPrivate.kt")
+                public void testParameterClassIsPrivate() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPrivate.kt");
+                }
+
+                @TestMetadata("parameterClassIsPublic.kt")
+                public void testParameterClassIsPublic() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPublic.kt");
+                }
+
                 @TestMetadata("quotedName.kt")
                 public void testQuotedName() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/quotedName.kt");
