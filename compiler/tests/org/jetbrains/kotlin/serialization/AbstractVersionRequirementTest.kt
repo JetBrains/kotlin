@@ -77,21 +77,6 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
 
     fun testSuspendFun() {
         doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
-            customLanguageVersion = LanguageVersion.KOTLIN_1_2,
-            fqNames = listOf(
-                "test.topLevel",
-                "test.Foo.member",
-                "test.Foo.<init>",
-                "test.async1",
-                "test.async2",
-                "test.async3",
-                "test.async4",
-                "test.asyncVal"
-            )
-        )
-
-        doTest(
             VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             customLanguageVersion = LanguageVersion.KOTLIN_1_3,
             fqNames = listOf(
@@ -158,8 +143,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
 
     fun testNestedClassMembers() {
         doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
-            customLanguageVersion = LanguageVersion.KOTLIN_1_2,
+            VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_3,
             fqNames = listOf(
                 "test.Outer.Inner.Deep",
                 "test.Outer.Inner.Deep.<init>",
