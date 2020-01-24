@@ -697,6 +697,24 @@ class Collections {
 
             assertPrints(emptyList<String>().reduceRightOrNull { _, _ -> "" }, "null")
         }
+
+        @Sample
+        fun scan() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.scan("s") { acc, string -> acc + string }, "[s, sa, sab, sabc, sabcd]")
+            assertPrints(strings.scanIndexed("s") { index, acc, string -> acc + string + index }, "[s, sa0, sa0b1, sa0b1c2, sa0b1c2d3]")
+
+            assertPrints(emptyList<String>().scan("s") { _, _ -> "X" }, "[s]")
+        }
+
+        @Sample
+        fun scanReduce() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.scanReduce { acc, string -> acc + string }, "[a, ab, abc, abcd]")
+            assertPrints(strings.scanReduceIndexed { index, acc, string -> acc + string + index }, "[a, ab1, ab1c2, ab1c2d3]")
+
+            assertPrints(emptyList<String>().scanReduce { _, _ -> "X" }, "[]")
+        }
     }
 
     class Elements {

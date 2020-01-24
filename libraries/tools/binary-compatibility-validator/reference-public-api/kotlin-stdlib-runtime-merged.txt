@@ -1553,6 +1553,10 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun reversedArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public static final fun reversedArray ([S)[S
 	public static final fun reversedArray ([Z)[Z
+	public static final fun scan ([Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanIndexed ([Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun scanReduce ([Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanReduceIndexed ([Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun single ([B)B
 	public static final fun single ([BLkotlin/jvm/functions/Function1;)B
 	public static final fun single ([C)C
@@ -2145,6 +2149,10 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun retainAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun reverse (Ljava/util/List;)V
 	public static final fun reversed (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun scan (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanIndexed (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun scanReduce (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanReduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun shuffle (Ljava/util/List;Lkotlin/random/Random;)V
 	public static final fun shuffled (Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun shuffled (Ljava/lang/Iterable;Ljava/util/Random;)Ljava/util/List;
@@ -4605,6 +4613,10 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun reduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun reduceOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun requireNoNulls (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
+	public static final fun scan (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun scanIndexed (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
+	public static final fun scanReduce (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun scanReduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
 	public static final fun sequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun single (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
@@ -5047,6 +5059,10 @@ public final class kotlin/text/StringsKt {
 	public static final fun replaceRange (Ljava/lang/CharSequence;IILjava/lang/CharSequence;)Ljava/lang/CharSequence;
 	public static final fun replaceRange (Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;Ljava/lang/CharSequence;)Ljava/lang/CharSequence;
 	public static final fun reversed (Ljava/lang/CharSequence;)Ljava/lang/CharSequence;
+	public static final fun scan (Ljava/lang/CharSequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanIndexed (Ljava/lang/CharSequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun scanReduce (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanReduceIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun single (Ljava/lang/CharSequence;)C
 	public static final fun single (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)C
 	public static final fun singleOrNull (Ljava/lang/CharSequence;)Ljava/lang/Character;

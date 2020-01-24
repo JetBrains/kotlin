@@ -147,6 +147,10 @@ compileTestKotlin {
     }
 }
 
+compileLongRunningTestKotlin {
+    kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+}
+
 task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
     group = "verification"
     testClassesDirs = sourceSets.longRunningTest.output.classesDirs

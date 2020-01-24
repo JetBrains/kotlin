@@ -636,6 +636,86 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun scan() {
+        for (size in 0 until 4) {
+            val expected = listOf("", "0", "01", "012", "0123").subList(0, size + 1)
+            assertEquals(expected, UByteArray(size) { it.toUByte() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, UShortArray(size) { it.toUShort() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, UIntArray(size) { it.toUInt() }.scan("") { acc, e -> acc + e })
+            assertEquals(expected, ULongArray(size) { it.toULong() }.scan("") { acc, e -> acc + e })
+        }
+    }
+
+    @Test
+    fun scanIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").subList(0, size + 1)
+            assertEquals(
+                expected,
+                UByteArray(size) { it.toUByte() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                UShortArray(size) { it.toUShort() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                UIntArray(size) { it.toUInt() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+            assertEquals(
+                expected,
+                ULongArray(size) { it.toULong() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduce() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 3, 6).subList(0, size)
+            assertEquals(
+                expected.map { it.toUByte() },
+                UByteArray(size) { it.toUByte() }.scanReduce { acc, e -> (acc + e).toUByte() }
+            )
+            assertEquals(
+                expected.map { it.toUShort() },
+                UShortArray(size) { it.toUShort() }.scanReduce { acc, e -> (acc + e).toUShort() }
+            )
+            assertEquals(
+                expected.map { it.toUInt() },
+                UIntArray(size) { it.toUInt() }.scanReduce { acc, e -> acc + e }
+            )
+            assertEquals(
+                expected.map { it.toULong() },
+                ULongArray(size) { it.toULong() }.scanReduce { acc, e -> acc + e }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 6, 27).subList(0, size)
+            assertEquals(
+                expected.map { it.toUByte() },
+                UByteArray(size) { it.toUByte() }.scanReduceIndexed { index, acc, e -> (index.toUInt() * (acc + e)).toUByte() }
+            )
+            assertEquals(
+                expected.map { it.toUShort() },
+                UShortArray(size) { it.toUShort() }.scanReduceIndexed { index, acc, e -> (index.toUInt() * (acc + e)).toUShort() }
+            )
+            assertEquals(
+                expected.map { it.toUInt() },
+                UIntArray(size) { it.toUInt() }.scanReduceIndexed { index, acc, e -> index.toUInt() * (acc + e) }
+            )
+            assertEquals(
+                expected.map { it.toULong() },
+                ULongArray(size) { it.toULong() }.scanReduceIndexed { index, acc, e -> index.toULong() * (acc + e) }
+            )
+        }
+    }
+
+    @Test
     fun elementAt() {
         expect(0u) { ubyteArrayOf(0, 1, 2).elementAt(0) }
         expect(1u) { ushortArrayOf(0, 1, 2).elementAt(1) }

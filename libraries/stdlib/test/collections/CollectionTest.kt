@@ -344,6 +344,38 @@ class CollectionTest {
         expect(null, { arrayListOf<Int>().reduceRightOrNull { a, b -> a + b } })
     }
 
+    @Test
+    fun scan() {
+        for (size in 0 until 4) {
+            val expected = listOf("", "0", "01", "012", "0123").take(size + 1)
+            assertEquals(expected, List(size) { it }.scan("") { acc, e -> acc + e })
+        }
+    }
+
+    @Test
+    fun scanIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1)
+            assertEquals(expected, List(size) { 'a' + it }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" })
+        }
+    }
+
+    @Test
+    fun scanReduce() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 3, 6).take(size)
+            assertEquals(expected, List(size) { it }.scanReduce { acc, e -> acc + e })
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 6, 27).take(size)
+            assertEquals(expected, List(size) { it }.scanReduceIndexed { index, acc, e -> index * (acc + e) })
+        }
+    }
+
     @Test fun groupBy() {
         val words = listOf("a", "abc", "ab", "def", "abcd")
         val byLength = words.groupBy { it.length }
