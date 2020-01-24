@@ -635,11 +635,13 @@ val IrFunctionReference.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
 val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
     get() = getTypeSubstitutionMap(symbol.owner)
 
-fun SymbolTable.referenceMember(descriptor: DeclarationDescriptor): IrSymbol =
+// Note: there is not enough information in a descriptor to choose between an enum entry and its corresponding class,
+// so the entry itself is chosen in that case.
+fun SymbolTable.referenceMember(descriptor: DeclarationDescriptor, correspondingClassForEnum: Boolean = false): IrSymbol =
     descriptor.accept(
         object : DeclarationDescriptorVisitorEmptyBodies<IrSymbol, Unit?>() {
             override fun visitClassDescriptor(descriptor: ClassDescriptor, data: Unit?) =
-                if (DescriptorUtils.isEnumEntry(descriptor))
+                if (DescriptorUtils.isEnumEntry(descriptor) && !correspondingClassForEnum)
                     referenceEnumEntry(descriptor)
                 else
                     referenceClass(descriptor)

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.tryGetExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
@@ -60,7 +61,7 @@ class JvmDescriptorUniqIdAware(val symbolTable: SymbolTable, val stubGenerator: 
                 current.parent = symbolTable.findOrDeclareExternalPackageFragment(nextDescriptor)
                 break
             } else {
-                val next = referenceOrDeclare(nextDescriptor)
+                val next = referenceOrDeclare(nextDescriptor, correspondingClassForEnum = true)
                 current.parent = next as IrDeclarationParent
                 currentDescriptor = nextDescriptor
                 current = next
@@ -69,8 +70,8 @@ class JvmDescriptorUniqIdAware(val symbolTable: SymbolTable, val stubGenerator: 
         return result
     }
 
-    private fun referenceOrDeclare(descriptor: DeclarationDescriptor): IrDeclaration =
-        symbolTable.referenceMember(descriptor).also {
+    private fun referenceOrDeclare(descriptor: DeclarationDescriptor, correspondingClassForEnum: Boolean = false): IrDeclaration =
+        symbolTable.referenceMember(descriptor, correspondingClassForEnum).also {
             if (!it.isBound) {
                 stubGenerator.getDeclaration(it)
             }
