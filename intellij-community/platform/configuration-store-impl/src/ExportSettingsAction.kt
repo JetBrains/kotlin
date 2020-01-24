@@ -55,7 +55,7 @@ open class ExportSettingsAction : AnAction(), DumbAware {
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = isImportExportActionApplicable()
+    e.presentation.isEnabled = isImportExportActionApplicable()
   }
 
   override fun actionPerformed(e: AnActionEvent) {
