@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -250,18 +251,25 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                         }
 
                         val superTypes = when (kind) {
+                            FunctionClassDescriptor.Kind.Function ->
+                                listOf(
+                                    FirResolvedTypeRefImpl(
+                                        source = null,
+                                        ConeClassLikeLookupTagImpl(StandardClassIds.Function)
+                                            .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
+                                    )
+                                )
 
-                            FunctionClassDescriptor.Kind.Function,
                             FunctionClassDescriptor.Kind.SuspendFunction ->
                                 listOf(session.builtinTypes.anyType)
 
                             FunctionClassDescriptor.Kind.KFunction ->
                                 listOf(createSuperType(FunctionClassDescriptor.Kind.Function))
+
                             FunctionClassDescriptor.Kind.KSuspendFunction ->
                                 listOf(createSuperType(FunctionClassDescriptor.Kind.SuspendFunction))
                         }
                         replaceSuperTypeRefs(superTypes)
-
                     }
                 }
             }

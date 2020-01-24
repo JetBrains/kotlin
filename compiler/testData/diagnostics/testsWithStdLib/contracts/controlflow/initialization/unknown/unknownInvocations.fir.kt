@@ -6,7 +6,7 @@ import kotlin.contracts.*
 
 fun <T> inPlace(block: () -> T): T {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block)
+        callsInPlace(block)
     }
     return block()
 }

@@ -6,7 +6,7 @@ import kotlin.contracts.*
 
 fun callsAndInverts(b: Boolean, block: () -> Unit): Boolean {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         returns(true) implies (!b)
         returns(false) implies b
     }

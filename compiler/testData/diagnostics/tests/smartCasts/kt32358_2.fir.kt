@@ -7,7 +7,7 @@ inline fun <R> callIt(fn: () -> R): R = TODO()
 
 inline fun <R> callItContracted(fn: () -> R): R {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(fn, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(fn, InvocationKind.EXACTLY_ONCE)
     }
     TODO()
 }

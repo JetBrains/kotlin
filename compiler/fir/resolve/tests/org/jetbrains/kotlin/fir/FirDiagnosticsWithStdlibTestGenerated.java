@@ -83,6 +83,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/factoryFunctionOverloads.kt");
     }
 
+    @TestMetadata("functionAndFunctionN.kt")
+    public void testFunctionAndFunctionN() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/functionAndFunctionN.kt");
+    }
+
     @TestMetadata("functionX.kt")
     public void testFunctionX() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/functionX.kt");
@@ -605,11 +610,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("delegateTypeMismatch.kt")
         public void testDelegateTypeMismatch() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/delegateTypeMismatch.kt");
-        }
-
-        @TestMetadata("functionAndFunctionN.kt")
-        public void testFunctionAndFunctionN() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/functionAndFunctionN.kt");
         }
 
         @TestMetadata("inapplicableRemoveAll.kt")

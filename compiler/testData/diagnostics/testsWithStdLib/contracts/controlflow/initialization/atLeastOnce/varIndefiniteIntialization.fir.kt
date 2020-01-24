@@ -6,7 +6,7 @@ import kotlin.contracts.*
 
 fun <T> runTwice(block: () -> T): T {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(block, InvocationKind.AT_LEAST_ONCE)
     }
     block()
     return block();

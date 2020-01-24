@@ -7,7 +7,7 @@ import kotlin.contracts.*
 class Foo {
     fun myRun(block: () -> Unit) {
         contract {
-            <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
         block()
     }

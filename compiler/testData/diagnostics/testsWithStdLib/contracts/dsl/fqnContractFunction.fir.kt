@@ -6,7 +6,7 @@ import kotlin.contracts.InvocationKind
 
 inline fun foo(block: () -> Unit) {
     kotlin.contracts.contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     block()
 }
