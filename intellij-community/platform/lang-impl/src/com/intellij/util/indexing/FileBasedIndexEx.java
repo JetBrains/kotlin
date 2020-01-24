@@ -37,7 +37,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   public abstract IntPredicate getAccessibleFileIdFilter(@Nullable Project project);
 
   @ApiStatus.Internal
-  public abstract ProjectIndexableFilesFilter projectIndexableFiles(Project project);
+  public abstract ProjectIndexableFilesFilter projectIndexableFiles(@Nullable Project project);
 
   @ApiStatus.Internal
   abstract <K, V> UpdatableIndex<K, V, FileContent> getIndex(ID<K, V> indexId);
@@ -105,6 +105,9 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
         return true;
       }
       ensureUpToDate(indexId, scope.getProject(), scope);
+      if (idFilter == null) {
+        idFilter = projectIndexableFiles(scope.getProject());
+      }
       return index.processAllKeys(processor, scope, idFilter);
     }
     catch (StorageException e) {
