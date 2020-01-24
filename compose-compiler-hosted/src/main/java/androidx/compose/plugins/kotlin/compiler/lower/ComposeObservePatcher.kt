@@ -38,15 +38,12 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
 import androidx.compose.plugins.kotlin.ComposeFlags
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.ComposeUtils.generateComposePackageName
@@ -65,7 +62,6 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -75,6 +71,7 @@ import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -87,36 +84,24 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-class ComposeObservePatcher(val context: JvmBackendContext) :
-    IrElementTransformerVoid(),
-    FileLoweringPass {
+class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopySymbolRemapper) :
+    AbstractComposeLowering(context, symbolRemapper),
+    FileLoweringPass,
+    ModuleLoweringPass {
 
-    private val typeTranslator =
-        TypeTranslator(
-            context.ir.symbols.externalSymbolTable,
-            context.state.languageVersionSettings,
-            context.builtIns
-        ).apply {
-            constantValueGenerator = ConstantValueGenerator(
-                context.state.module,
-                context.ir.symbols.externalSymbolTable
-            )
-            constantValueGenerator.typeTranslator = this
-        }
-
-    private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
+    override fun lower(module: IrModuleFragment) {
+        module.transformChildrenVoid(this)
+    }
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -135,7 +120,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
         // Only insert observe scopes in non-empty composable function
         if (declaration.body == null)
             return declaration
-        if (!isComposable(declaration))
+        if (!declaration.isComposable())
             return declaration
 
         val descriptor = declaration.descriptor
@@ -246,10 +231,6 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
         return declaration
     }
 
-    private val composerTypeDescriptor = context.state.module.findClassAcrossModuleDependencies(
-        ClassId.topLevel(ComposeFqNames.Composer)
-    ) ?: error("Cannot find the Composer class")
-
     fun functionWithRestartGroup(
         original: IrFunction,
         getComposer: DeclarationIrBuilder.() -> IrExpression
@@ -267,9 +248,6 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
             .findFirstFunction(KtxNameConventions.ENDRESTARTGROUP.identifier) {
                 it.valueParameters.size == 0
             }
-
-        val symbols = context.ir.symbols
-        val symbolTable = symbols.externalSymbolTable
 
         // Create call to get the composer
         val unitType = context.irBuiltIns.unitType
@@ -418,8 +396,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
             UNDEFINED_OFFSET
         ) {
             val result = irTemporary(endRestartGroup)
-            val updateScopeSymbol =
-                symbolTable.referenceSimpleFunction(updateScopeDescriptor)
+            val updateScopeSymbol = referenceSimpleFunction(updateScopeDescriptor)
             +irIfThen(irNot(irEqeqeq(irGet(result.type, result.symbol), irNull())),
                 irCall(updateScopeSymbol).apply {
                     dispatchReceiver = irGet(result.type, result.symbol)
@@ -509,9 +486,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
                 NoLookupLocation.FROM_BACKEND
             ).single()
 
-        val symbolTable = context.ir.symbols.externalSymbolTable
-
-        val observeFunctionSymbol = symbolTable.referenceSimpleFunction(observeFunctionDescriptor)
+        val observeFunctionSymbol = referenceSimpleFunction(observeFunctionDescriptor)
 
         val type = observeFunctionDescriptor.valueParameters[0].type
 
@@ -600,7 +575,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
 
     fun irCall(descriptor: FunctionDescriptor): IrCall {
         val type = descriptor.returnType?.toIrType() ?: error("Expected a return type")
-        val symbol = context.ir.symbols.externalSymbolTable.referenceFunction(descriptor)
+        val symbol = referenceFunction(descriptor)
         return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -619,24 +594,6 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
     fun irMethodCall(target: IrExpression, descriptor: FunctionDescriptor): IrCall {
         return irCall(descriptor).apply {
             dispatchReceiver = target
-        }
-    }
-
-    private fun isComposable(declaration: IrFunction): Boolean {
-        val tmpTrace =
-            DelegatingBindingTrace(
-                context.state.bindingContext, "tmp for composable analysis"
-            )
-        val composability =
-            ComposableAnnotationChecker()
-                .analyze(
-                tmpTrace,
-                declaration.descriptor
-            )
-        return when (composability) {
-            ComposableAnnotationChecker.Composability.NOT_COMPOSABLE -> false
-            ComposableAnnotationChecker.Composability.MARKED -> true
-            ComposableAnnotationChecker.Composability.INFERRED -> true
         }
     }
 

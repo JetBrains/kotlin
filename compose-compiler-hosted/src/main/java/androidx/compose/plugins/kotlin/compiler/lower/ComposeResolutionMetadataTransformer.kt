@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright 2020 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
-import androidx.compose.plugins.kotlin.ComposeFqNames
+import androidx.compose.plugins.kotlin.ComposableCallableDescriptor
+import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -25,9 +28,8 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-class ComposerIntrinsicTransformer(val context: JvmBackendContext) :
+class ComposeResolutionMetadataTransformer(val context: JvmBackendContext) :
     IrElementTransformerVoid(),
     FileLoweringPass,
     ModuleLoweringPass {
@@ -41,15 +43,25 @@ class ComposerIntrinsicTransformer(val context: JvmBackendContext) :
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.descriptor.fqNameSafe == ComposeFqNames.CurrentComposerIntrinsic) {
-            // since this call was transformed by the ComposerParamTransformer, the first argument
-            // to this call is the composer itself. We just replace this expression with the
-            // argument expression and we are good.
-            assert(expression.valueArgumentsCount == 1)
-            val composerExpr = expression.getValueArgument(0)
-            if (composerExpr == null) error("Expected non-null composer argument")
-            return composerExpr
+
+        val descriptor = expression.descriptor
+
+        if (descriptor is ComposableCallableDescriptor) {
+            context.state.irTrace.record(
+                ComposeWritableSlices.COMPOSER_IR_METADATA,
+                expression,
+                descriptor.composerMetadata
+            )
         }
+
+        if (descriptor is ComposableEmitDescriptor) {
+            context.state.irTrace.record(
+                ComposeWritableSlices.COMPOSABLE_EMIT_METADATA,
+                expression,
+                descriptor
+            )
+        }
+
         return super.visitCall(expression)
     }
 }

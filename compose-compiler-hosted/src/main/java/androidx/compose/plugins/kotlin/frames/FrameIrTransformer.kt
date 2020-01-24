@@ -16,6 +16,7 @@
 
 package androidx.compose.plugins.kotlin.frames
 
+import androidx.compose.plugins.kotlin.compiler.lower.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -109,6 +110,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import androidx.compose.plugins.kotlin.frames.analysis.FrameMetadata
 import androidx.compose.plugins.kotlin.frames.analysis.FrameWritableSlices
 import androidx.compose.plugins.kotlin.frames.analysis.FrameWritableSlices.FRAMED_DESCRIPTOR
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -146,7 +148,12 @@ import org.jetbrains.kotlin.utils.Printer
  */
 class FrameIrTransformer(val context: JvmBackendContext) :
     IrElementTransformerVoidWithContext(),
-    FileLoweringPass {
+    FileLoweringPass,
+    ModuleLoweringPass {
+
+    override fun lower(module: IrModuleFragment) {
+        module.transformChildrenVoid(this)
+    }
 
     private class FieldRewriteInformation(
         val getter: IrSimpleFunction?,
