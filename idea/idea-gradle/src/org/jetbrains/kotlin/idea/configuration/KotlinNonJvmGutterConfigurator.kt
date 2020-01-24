@@ -17,17 +17,11 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
             """
             ({
                 if (GradleVersion.current() >= GradleVersion.version("4.0")) {
-                    def doIfInstance = { Task task, String fqn, Closure action ->
-                        def taskSuperClass = task.class
-                        while (taskSuperClass != Object.class) {
-                            if (taskSuperClass.canonicalName == fqn) {
-                                action()
-    
-                                return
-                            } else {
-                                taskSuperClass = taskSuperClass.superclass
-                            }
-                        }
+                    Class kotlinTestClass = null
+                    try {
+                         kotlinTestClass = Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinTest")
+                    } catch (ClassNotFoundException ex) {
+                        // ignore, class not available
                     }
                     
                     gradle.afterProject { project ->
@@ -43,7 +37,7 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
                         
                         project.afterEvaluate {
                             project.tasks.each { Task task ->
-                                doIfInstance(task, "org.jetbrains.kotlin.gradle.tasks.KotlinTest") {
+                                if (kotlinTestClass != null) {
                                     task.dependsOn('nonJvmTestIdeSupport')
                                 }
                             }
@@ -51,7 +45,7 @@ class KotlinNonJvmGutterConfigurator : AbstractProjectResolverExtension() {
                     }
                     
                     gradle.taskGraph.beforeTask { Task task ->
-                        doIfInstance(task, "org.jetbrains.kotlin.gradle.tasks.KotlinTest") {
+                        if (kotlinTestClass != null) {
                             task.filter.includePatterns = task.project.tasks['nonJvmTestIdeSupport'].filter.includePatterns
                         }
                     }
