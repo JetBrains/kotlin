@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -79,7 +80,7 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             abiVersion = KotlinAbiVersion.CURRENT,
             libraryVersion = null,
             compilerVersion = KotlinCompilerVersion.getVersion(),
-            metadataVersion = null,
+            metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
             irVersion = null
         )
 
