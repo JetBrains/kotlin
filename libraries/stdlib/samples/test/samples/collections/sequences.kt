@@ -228,6 +228,13 @@ class Sequences {
             val result = sequenceA.zip(sequenceB) { a, b -> "$a/$b" }
             assertPrints(result.take(4).toList(), "[a/1, b/3, c/7, d/15]")
         }
+
+        @Sample
+        fun partition() {
+            val sequence = sequenceOf(1, 2, 3, 4, 5)
+            val result = sequence.partition { it % 2 == 0 }
+            assertPrints(result, "([2, 4], [1, 3, 5])")
+        }
     }
 
 }

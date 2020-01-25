@@ -162,6 +162,13 @@ class Strings {
     }
 
     @Sample
+    fun partition() {
+        val string = "Hello"
+        val result = string.partition { it == 'l' }
+        assertPrints(result, "(ll, Heo)")
+    }
+
+    @Sample
     fun stringToByteArray() {
         val charset = Charsets.UTF_8
         val byteArray = "Hello".toByteArray(charset)
