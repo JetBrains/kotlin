@@ -72,3 +72,10 @@ actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
 @InlineOnly
 inline fun currentStackTrace() = @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") (java.lang.Exception() as java.lang.Throwable).stackTrace
 
+
+/** Platform-specific construction of AssertionError with cause */
+internal actual fun AssertionErrorWithCause(message: String?, cause: Throwable?): AssertionError {
+    val assertionError = if (message == null) AssertionError() else AssertionError(message)
+    assertionError.initCause(cause)
+    return assertionError
+}

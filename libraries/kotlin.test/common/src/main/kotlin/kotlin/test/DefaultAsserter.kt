@@ -15,6 +15,11 @@ object DefaultAsserter : Asserter {
         else
             throw AssertionError(message)
     }
+
+    @SinceKotlin("1.4")
+    override fun fail(message: String?, cause: Throwable?): Nothing {
+        throw AssertionErrorWithCause(message, cause)
+    }
 }
 
 @Deprecated("DefaultAsserter is an object now, constructor call is not required anymore",

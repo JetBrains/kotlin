@@ -148,7 +148,7 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertNotNullFails() {
-        checkFailedAssertion { assertNotNull(null) }
+        checkFailedAssertion { assertNotNull<Any>(null) }
     }
 
     @Test
@@ -178,7 +178,18 @@ class BasicAssertionsTest {
 
     @Test()
     fun testFail() {
-        checkFailedAssertion { fail("should fail") }
+        val message = "should fail"
+        val actual = checkFailedAssertion { fail(message) }
+        assertEquals(message, actual.message)
+    }
+
+    @Test
+    fun testFailWithCause() {
+        val message = "should fail due to"
+        val cause = IllegalStateException()
+        val actual = checkFailedAssertion { fail(message, cause) }
+        assertEquals(message, actual.message)
+        assertSame(cause, actual.cause)
     }
 
     @Test
@@ -193,8 +204,8 @@ class BasicAssertionsTest {
 }
 
 
-private fun checkFailedAssertion(assertion: () -> Unit) {
-    assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
+private fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
+    return assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
 }
 
 private fun withDefaultAsserter(block: () -> Unit) {

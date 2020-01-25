@@ -53,8 +53,15 @@ object JUnit5Asserter : Asserter {
     }
 
     override fun fail(message: String?): Nothing {
-        Assertions.fail<Any>(message)
+        Assertions.fail<Any?>(message)
         // should not get here
         throw AssertionError(message)
+    }
+
+    @SinceKotlin("1.4")
+    override fun fail(message: String?, cause: Throwable?): Nothing {
+        Assertions.fail<Any?>(message, cause)
+        // should not get here
+        throw AssertionError(message, cause)
     }
 }
