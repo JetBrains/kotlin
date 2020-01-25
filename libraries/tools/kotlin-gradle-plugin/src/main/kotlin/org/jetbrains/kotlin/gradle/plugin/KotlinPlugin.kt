@@ -101,24 +101,12 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
                     else null
                 }
 
-    private val defaultKotlinDestinationDir: File
-        get() {
-            val kotlinExt = project.kotlinExtension
-            val targetSubDirectory =
-                if (kotlinExt is KotlinSingleJavaTargetExtension)
-                    "" // In single-target projects, don't add the target name part to this path
-                else
-                    kotlinCompilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
-            return File(project.buildDir, "classes/kotlin/$targetSubDirectory${kotlinCompilation.compilationName}")
-        }
-
     private fun prepareKotlinCompileTask(name: String): TaskProvider<out T> =
         registerKotlinCompileTask(name).also { task ->
             kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }) }
         }
 
-    protected fun registerKotlinCompileTask(): TaskProvider<out T> {
-        val name = kotlinCompilation.compileKotlinTaskName
+    protected fun registerKotlinCompileTask(name: String = kotlinCompilation.compileKotlinTaskName): TaskProvider<out T> {
         logger.kotlinDebug("Creating kotlin compile task $name")
 
         KotlinCompileTaskData.register(name, kotlinCompilation).apply {
@@ -323,12 +311,11 @@ internal class Kotlin2JsSourceSetProcessor(
 }
 
 internal class KotlinJsIrSourceSetProcessor(
-    project: Project,
     tasksProvider: KotlinTasksProvider,
     kotlinCompilation: AbstractKotlinCompilation<*>,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
-    project, tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
+    tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
     kotlinCompilation = kotlinCompilation
 ) {
     override fun doRegisterTask(
