@@ -10,14 +10,18 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubUpdatingIndex;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileBasedIndexExtension;
+import com.intellij.util.indexing.IndexInfrastructureVersion;
 import com.intellij.util.indexing.hash.HashBasedIndexGenerator;
 import com.intellij.util.indexing.hash.StubHashBasedIndexGenerator;
 import com.intellij.util.io.PathKt;
@@ -32,6 +36,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 public class IndexesExporter {
@@ -48,6 +53,7 @@ public class IndexesExporter {
     return project.getService(IndexesExporter.class);
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   public void exportIndices(@NotNull List<IndexChunk> chunks,
                             @NotNull Path out,
                             @NotNull Path zipFile,
@@ -78,13 +84,13 @@ public class IndexesExporter {
   }
 
   private void processChunkUnderReadAction(@NotNull Path chunkRoot, @NotNull IndexChunk chunk) {
-    List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = FileBasedIndexExtension
+    List<FileBasedIndexExtension<?, ?>> exportableFileBasedIndexExtensions = FileBasedIndexExtension
       .EXTENSION_POINT_NAME
       .extensions()
       .filter(ex -> ex.dependsOnFileContent())
       .filter(ex -> !(ex instanceof StubUpdatingIndex))
-      .map(extension -> getGenerator(chunkRoot, extension))
       .collect(Collectors.toList());
+    List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = ContainerUtil.map(exportableFileBasedIndexExtensions, ex -> getGenerator(chunkRoot, ex));
 
     StubHashBasedIndexGenerator stubGenerator = new StubHashBasedIndexGenerator(chunkRoot);
 
@@ -96,7 +102,9 @@ public class IndexesExporter {
     deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
     deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot.resolve("empty-stub-indices.txt"));
 
-    writeIndexVersionsMetadata(chunkRoot, chunk, computeIndexVersions(allGenerators), computeIndexVersions(stubGenerator.getStubGenerators()));
+    IndexInfrastructureVersion indexInfrastructureVersion = new IndexInfrastructureVersion(exportableFileBasedIndexExtensions,
+                                                                                           StubIndexExtension.EP_NAME.getExtensionList());
+    writeIndexVersionsMetadata(chunkRoot, chunk, indexInfrastructureVersion);
     printStatistics(chunk, fileBasedGenerators, stubGenerator);
     printMetadata(chunkRoot);
   }
@@ -111,8 +119,7 @@ public class IndexesExporter {
 
   private static void writeIndexVersionsMetadata(@NotNull Path chunkRoot,
                                                  @NotNull IndexChunk indexChunk,
-                                                 @NotNull Map<String, String> fileIndexes,
-                                                 @NotNull Map<String, String> stubIndexes) {
+                                                 @NotNull IndexInfrastructureVersion infrastructureVersion) {
     Path metadata = chunkRoot.resolve("metadata.json");
 
     StringWriter sw = new StringWriter();
@@ -160,8 +167,8 @@ public class IndexesExporter {
       writer.name("versions");
       writer.beginObject();
       Map<String, String> allIndexVersions = new LinkedHashMap<>();
-      allIndexVersions.putAll(new TreeMap<>(fileIndexes));
-      allIndexVersions.putAll(new TreeMap<>(stubIndexes));
+      allIndexVersions.putAll(ContainerUtil.map2Map(infrastructureVersion.getFileBasedIndexVersions().entrySet(), e -> Pair.create(e.getKey(), String.valueOf(e.getValue()))));
+      allIndexVersions.putAll(ContainerUtil.map2Map(infrastructureVersion.getStubIndexVersions().entrySet(), e -> Pair.create(e.getKey(), String.valueOf(e.getValue()))));
       for (Map.Entry<String, String> e : allIndexVersions.entrySet()) {
         writer.name(e.getKey());
         writer.value(e.getValue());
@@ -179,24 +186,6 @@ public class IndexesExporter {
     } catch (IOException e) {
       throw new RuntimeException("Failed to write versions JSON to " + metadata + ". " + e.getMessage(), e);
     }
-  }
-
-  @NotNull
-  private static Map<String, String> computeIndexVersions(@NotNull List<HashBasedIndexGenerator<?, ?>> indexes) {
-    //we need sorted map here!
-    Map<String, String> result = new TreeMap<>();
-    for (HashBasedIndexGenerator<?, ?> generator : indexes) {
-      String name = generator.getSharedIndexName();
-      String version = generator.getSharedIndexVersion();
-
-      if (result.containsKey(name)) {
-        throw new RuntimeException("Duplicate index detected: " + name + ". The second generator is " + generator);
-      }
-
-      result.put(name, version);
-    }
-
-    return result;
   }
 
   @NotNull
