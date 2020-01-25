@@ -1486,6 +1486,8 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
  * while *second* char sequence contains characters for which [predicate] yielded `false`.
+ * 
+ * @sample samples.text.Strings.partition
  */
 public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<CharSequence, CharSequence> {
     val first = StringBuilder()
@@ -1504,6 +1506,8 @@ public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<Cha
  * Splits the original string into pair of strings,
  * where *first* string contains characters for which [predicate] yielded `true`,
  * while *second* string contains characters for which [predicate] yielded `false`.
+ * 
+ * @sample samples.text.Strings.partition
  */
 public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
     val first = StringBuilder()

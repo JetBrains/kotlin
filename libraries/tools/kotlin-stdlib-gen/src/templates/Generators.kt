@@ -580,6 +580,12 @@ object Generators : TemplateGroupBase() {
             while *second* list contains elements for which [predicate] yielded `false`.
             """
         }
+        sample(when (family) {
+                CharSequences, Strings -> "samples.text.Strings.partition"
+                ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.partitionArrayOfPrimitives"
+                Sequences -> "samples.collections.Sequences.Transformations.partition"
+                else -> "samples.collections.Iterables.Operations.partition"
+        })
         sequenceClassification(terminal)
         returns("Pair<List<T>, List<T>>")
         body {

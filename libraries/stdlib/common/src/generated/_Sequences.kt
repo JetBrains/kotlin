@@ -1698,6 +1698,8 @@ public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
  * while *second* list contains elements for which [predicate] yielded `false`.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Sequences.Transformations.partition
  */
 public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
