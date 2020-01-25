@@ -269,7 +269,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
 
   private static final class MyProjectNode extends ProjectViewNode<String> {
     MyProjectNode(Project project, ViewSettings settings) {
-      super(project, ScratchesNamedScope.NAME, settings);
+      super(project, ScratchesNamedScope.scratchesAndConsoles(), settings);
     }
 
     @Override
