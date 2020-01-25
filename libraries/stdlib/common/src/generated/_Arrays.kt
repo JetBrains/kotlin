@@ -15662,6 +15662,8 @@ public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
@@ -15680,6 +15682,8 @@ public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<Li
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<Byte>, List<Byte>> {
     val first = ArrayList<Byte>()
@@ -15698,6 +15702,8 @@ public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<B
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List<Short>, List<Short>> {
     val first = ArrayList<Short>()
@@ -15716,6 +15722,8 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int>, List<Int>> {
     val first = ArrayList<Int>()
@@ -15734,6 +15742,8 @@ public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<Long>, List<Long>> {
     val first = ArrayList<Long>()
@@ -15752,6 +15762,8 @@ public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<L
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List<Float>, List<Float>> {
     val first = ArrayList<Float>()
@@ -15770,6 +15782,8 @@ public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<List<Double>, List<Double>> {
     val first = ArrayList<Double>()
@@ -15788,6 +15802,8 @@ public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<Li
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<List<Boolean>, List<Boolean>> {
     val first = ArrayList<Boolean>()
@@ -15806,6 +15822,8 @@ public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<
  * Splits the original array into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionArrayOfPrimitives
  */
 public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<Char>, List<Char>> {
     val first = ArrayList<Char>()
