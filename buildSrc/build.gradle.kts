@@ -72,10 +72,11 @@ val intellijUltimateEnabled by extra(kotlinBuildProperties.intellijUltimateEnabl
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 val verifyDependencyOutput by extra( getBooleanProperty("kotlin.build.dependency.output.verification") ?: isTeamcityBuild)
 
-extra["intellijReleaseType"] = if (extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true)
-    "snapshots"
-else
-    "releases"
+extra["intellijReleaseType"] = when {
+    extra["versions.intellijSdk"]?.toString()?.contains("-EAP-") == true -> "snapshots"
+    extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true -> "nightly"
+    else -> "releases"
+}
 
 extra["versions.androidDxSources"] = "5.0.0_r2"
 
