@@ -22,8 +22,8 @@ rootProject.extensions.add("ultimateTools", ultimateTools)
 // --------------------------------------------------
 
 fun ijProductBranch(productVersion: String): Int {
-    return productVersion.substringBefore('.').toIntOrNull()
-        ?: error("Invalid product version format: $productVersion")
+    return productVersion.substringBefore(".", productVersion.substringBefore("-"))
+        .toIntOrNull() ?: error("Invalid product version format: $productVersion")
 }
 
 // disable anything but "clean" and tasks from "help" group

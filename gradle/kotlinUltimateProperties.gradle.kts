@@ -201,8 +201,8 @@ val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
 ))
 
 fun ijProductBranch(productVersion: String): Int {
-    return productVersion.substringBefore('.').toIntOrNull()
-            ?: error("Invalid product version format: $productVersion")
+    return productVersion.substringBefore(".", productVersion.substringBefore("-"))
+        .toIntOrNull() ?: error("Invalid product version format: $productVersion")
 }
 
 fun cidrProductFriendlyVersion(productName: String, productVersion: String): String {
