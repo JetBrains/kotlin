@@ -13,13 +13,11 @@ dependencies {
     compile(project(":kotlin-util-io"))
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-util-klib-metadata"))
-
-    testCompile(commonDep("junit:junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" { none() }
 }
 
 standardPublicJars()

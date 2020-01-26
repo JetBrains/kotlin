@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.*
+import com.intellij.openapi.externalSystem.model.project.LibraryData
+import com.intellij.openapi.externalSystem.model.project.LibraryDependencyData
+import com.intellij.openapi.externalSystem.model.project.LibraryLevel
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.IdeUIModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
@@ -25,15 +28,12 @@ import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.NoSubstitute
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.YesSubstitute
 import org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryNameUtil.buildIDELibraryName
+import org.jetbrains.kotlin.idea.configuration.klib.KlibInfoProvider
+import org.jetbrains.kotlin.idea.configuration.klib.NativeDistributionKlibInfo
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.konan.library.lite.LiteKonanLibraryFacade
 import org.jetbrains.plugins.gradle.ExternalDependencyId
-import org.jetbrains.plugins.gradle.model.DefaultExternalMultiLibraryDependency
-import org.jetbrains.plugins.gradle.model.ExternalDependency
-import org.jetbrains.plugins.gradle.model.ExternalLibraryDependency
-import org.jetbrains.plugins.gradle.model.ExternalMultiLibraryDependency
-import org.jetbrains.plugins.gradle.model.FileCollectionDependency
+import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
@@ -110,9 +110,22 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
     private val ProjectResolverContext.dependencySubstitutionCache
         get() = getUserData(KLIB_DEPENDENCY_SUBSTITUTION_CACHE) ?: putUserDataIfAbsent(KLIB_DEPENDENCY_SUBSTITUTION_CACHE, HashMap())
 
-    private val libraryProvider = LiteKonanLibraryFacade.getDistributionLibraryProvider(
-        mppModel.kotlinNativeHome.takeIf { it != KotlinMPPGradleModel.NO_KOTLIN_NATIVE_HOME }?.let { File(it) }
-    )
+    private val klibInfoProvider: KlibInfoProvider? by lazy {
+        val kotlinNativeHome = mppModel.kotlinNativeHome.takeIf { it != KotlinMPPGradleModel.NO_KOTLIN_NATIVE_HOME }?.let(::File)
+
+        if (kotlinNativeHome == null) {
+            LOG.warn(
+                """
+                    Can't obtain Kotlin/Native home path in Kotlin Gradle plugin.
+                    ${KotlinMPPGradleModel::class.java.simpleName} is $mppModel.
+                    ${KotlinNativeLibrariesDependencySubstitutor::class.java.simpleName} will run in idle mode. No dependencies will be substituted.
+                """.trimIndent()
+            )
+
+            null
+        } else
+            KlibInfoProvider(kotlinNativeHome = kotlinNativeHome)
+    }
 
     private val kotlinVersion: String? by lazy {
         // first, try to figure out Kotlin plugin version by classpath (the default approach)
@@ -159,17 +172,17 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
     private fun buildSubstituteIfNecessary(libraryFile: File): DependencySubstitute {
         // need to check whether `library` points to a real KLIB,
         // and if answer is yes then build a new dependency that will substitute original one
-        val library = libraryProvider.getLibrary(libraryFile) ?: return NoSubstitute
+        val klib = klibInfoProvider?.getKlibInfo(libraryFile) as? NativeDistributionKlibInfo ?: return NoSubstitute
         val nonNullKotlinVersion = kotlinVersion ?: return NoSubstitute
 
-        val newLibraryName = buildIDELibraryName(nonNullKotlinVersion, library.name, library.platform)
+        val newLibraryName = buildIDELibraryName(nonNullKotlinVersion, klib.name, klib.target?.name)
 
         val substitute = DefaultExternalMultiLibraryDependency().apply {
-            classpathOrder = if (library.name == KONAN_STDLIB_NAME) -1 else 0 // keep stdlib upper
+            classpathOrder = if (klib.name == KONAN_STDLIB_NAME) -1 else 0 // keep stdlib upper
             name = newLibraryName
             packaging = DEFAULT_PACKAGING
-            files += library.path
-            sources += library.sourcePaths
+            files += klib.path
+            sources += klib.sourcePaths
             scope = DependencyScope.PROVIDED.name
         }
 
