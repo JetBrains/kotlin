@@ -32,6 +32,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.actions.CloseAction;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.OccurenceNavigator;
 import com.intellij.ide.actions.PinActiveTabAction;
 import com.intellij.openapi.actionSystem.*;
@@ -298,7 +299,9 @@ public class BuildView extends CompositeView<ExecutionConsole>
     AnAction stopAction = null;
     StartBuildEvent startBuildEvent = myStartBuildEventRef.get();
     if (startBuildEvent != null && startBuildEvent.getProcessHandler() != null) {
-      stopAction = new StopProcessAction("Stop", "Stop", startBuildEvent.getProcessHandler());
+      stopAction = new StopProcessAction(() -> IdeBundle.message("action.DumbAware.BuildView.text.stop"),
+                                         () -> IdeBundle.message("action.DumbAware.CopyrightProfilesPanel.description.stop"),
+        startBuildEvent.getProcessHandler());
       ActionUtil.copyFrom(stopAction, IdeActions.ACTION_STOP_PROGRAM);
       stopAction.registerCustomShortcutSet(stopAction.getShortcutSet(), this);
     }

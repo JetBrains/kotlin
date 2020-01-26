@@ -726,7 +726,10 @@ public class TemplateListPanel extends JPanel implements Disposable {
         myTree.repaint();
       }
     };
-    final DumbAwareAction revert = new DumbAwareAction("Restore defaults", "Restore default setting for the selected templates", null) {
+    final DumbAwareAction revert =
+      new DumbAwareAction(() -> CodeInsightBundle.message("action.DumbAware.TemplateListPanel.text.restore.defaults"),
+                          () -> CodeInsightBundle.message("action.DumbAware.TemplateListPanel.description.restore.default.setting"),
+                          null) {
 
       @Override
       public void update(@NotNull AnActionEvent e) {
