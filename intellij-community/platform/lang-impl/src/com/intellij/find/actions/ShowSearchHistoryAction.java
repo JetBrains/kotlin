@@ -2,13 +2,15 @@
 package com.intellij.find.actions;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ShowSearchHistoryAction extends AnAction {
-  public ShowSearchHistoryAction() {
-    super("Search History", "Show search history popup", AllIcons.Actions.SearchWithHistory);
+  ShowSearchHistoryAction() {
+    super(() -> IdeBundle.message("action.AnAction.text.search.history"),
+          () -> IdeBundle.message("action.AnAction.description.search.history"), AllIcons.Actions.SearchWithHistory);
   }
 
   @Override
