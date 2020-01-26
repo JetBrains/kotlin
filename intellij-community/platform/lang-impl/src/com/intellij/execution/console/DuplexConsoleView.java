@@ -303,8 +303,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
   private class SwitchDuplexConsoleViewAction extends ToggleAction implements DumbAware {
 
     SwitchDuplexConsoleViewAction() {
-      super(ExecutionBundle.message("run.configuration.show.command.line.action.name"), null,
-            AllIcons.Debugger.Console);
+      super(() -> ExecutionBundle.message("run.configuration.show.command.line.action.name"), AllIcons.Debugger.Console);
     }
 
     @Override
