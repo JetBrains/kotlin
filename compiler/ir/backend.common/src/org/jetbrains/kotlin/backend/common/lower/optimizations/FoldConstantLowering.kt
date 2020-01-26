@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.lower.optimizations
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -39,7 +39,7 @@ val foldConstantLoweringPhase = makeIrFilePhase(
 class FoldConstantLowering(
     private val context: CommonBackendContext,
     // In K/JS Float and Double are the same so Float constant should be fold similar to Double
-    private val floatSpecial: Boolean = false) : IrElementTransformerVoid(), FileLoweringPass {
+    private val floatSpecial: Boolean = false) : IrElementTransformerVoid(), BodyLoweringPass {
     /**
      * ID of an binary operator / method.
      *
@@ -243,8 +243,8 @@ class FoldConstantLowering(
     }
 
     @ExperimentalUnsignedTypes
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
