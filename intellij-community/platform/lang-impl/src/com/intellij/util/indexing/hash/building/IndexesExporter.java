@@ -115,14 +115,6 @@ public class IndexesExporter {
     printMetadata(metadataFile);
   }
 
-  @NotNull
-  public static String getOsNameForIndexVersions() {
-    if (SystemInfo.isWindows) return "windows";
-    if (SystemInfo.isMac) return "mac";
-    if (SystemInfo.isLinux) return "linux";
-    throw new Error("Unknown OS. " + SystemInfo.getOsNameAndVersion());
-  }
-
   private static void writeIndexVersionsMetadata(@NotNull Path metadataFile,
                                                  @NotNull IndexChunk indexChunk,
                                                  @NotNull IndexInfrastructureVersion infrastructureVersion) {
@@ -135,7 +127,7 @@ public class IndexesExporter {
       writer.value("1");
 
       writer.name("os");
-      writer.value(getOsNameForIndexVersions());
+      writer.value(IndexInfrastructureVersion.getOs().getOsName());
 
       writer.name("index_kind");
       writer.value(indexChunk.getKind());
@@ -148,7 +140,7 @@ public class IndexesExporter {
       writer.name("hash");
       writer.value(indexChunk.getContentsHash());
       writer.name("os");
-      writer.value(getOsNameForIndexVersions());
+      writer.value(IndexInfrastructureVersion.getOs().getOsName());
       writer.endObject();
 
       writer.name("build");
@@ -167,7 +159,7 @@ public class IndexesExporter {
       writer.name("indexes");
       writer.beginObject();
       writer.name("os");
-      writer.value(getOsNameForIndexVersions());
+      writer.value(IndexInfrastructureVersion.getOs().getOsName());
       //what root indexes to be included here?
       writer.name("versions");
       writer.beginObject();

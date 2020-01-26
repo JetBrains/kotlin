@@ -20,9 +20,6 @@ public class IndexInfrastructureVersion {
   // file format version
   private final int myFormatVersion;
 
-  // OS version
-  private final OsName myOs;
-
   // vfs
   private final int myVfsVersion;
 
@@ -51,7 +48,6 @@ public class IndexInfrastructureVersion {
   public IndexInfrastructureVersion(@NotNull List<FileBasedIndexExtension<?, ?>> fileBasedIndexExtensions,
                                     @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
     myFormatVersion = 0;
-    myOs = getOsName();
     myVfsVersion = FSRecords.getVersion();
     myPersistentEnumeratorVersion = PersistentEnumeratorDelegate.getVersion();
     myUseBTree = PersistentEnumeratorDelegate.useBtree();
@@ -98,15 +94,32 @@ public class IndexInfrastructureVersion {
     }
   }
 
-  private enum OsName {
-    windows, mac, linux
+  public enum Os {
+    WINDOWS, MAC, LINUX;
+
+    @NotNull
+    public String getOsName() {
+      switch (this) {
+        case WINDOWS:
+          return "windows";
+        case MAC:
+          return "mac";
+        default:
+          return "linux";
+      }
+    }
+
+    @Override
+    public String toString() {
+      return getOsName();
+    }
   }
 
   @NotNull
-  public static OsName getOsName() {
-    if (SystemInfo.isWindows) return OsName.windows;
-    if (SystemInfo.isMac) return OsName.mac;
-    if (SystemInfo.isLinux) return OsName.linux;
+  public static IndexInfrastructureVersion.Os getOs() {
+    if (SystemInfo.isWindows) return Os.WINDOWS;
+    if (SystemInfo.isMac) return Os.MAC;
+    if (SystemInfo.isLinux) return Os.LINUX;
     throw new Error("Unknown OS. " + SystemInfo.getOsNameAndVersion());
   }
 }
