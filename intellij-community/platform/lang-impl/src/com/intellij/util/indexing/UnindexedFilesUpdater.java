@@ -47,7 +47,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       }
     });
 
-    ApplicationManager.getApplication().getMessageBus().connect().subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+    ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
       public void beforePluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
         DumbService.getInstance(project).cancelTask(UnindexedFilesUpdater.this);
