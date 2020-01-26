@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -53,7 +54,9 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
             if (TypeUtils.isNullableType(receiverTypeArgument)) return
             if (calleeExpression.text != "filterNotNull") {
                 // Also check last argument functional type to have not-null result
-                if (!resolvedCall.hasLastFunctionalParameterWithResult(context) { !TypeUtils.isNullableType(it) }) return
+                if (!resolvedCall.hasLastFunctionalParameterWithResult(context) {
+                        !TypeUtils.isNullableType(it) && it.constructor !is TypeVariableTypeConstructor
+                    }) return
             }
         }
 
