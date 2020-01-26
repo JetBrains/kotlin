@@ -588,7 +588,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
       })
       .disableDownAction()
       .disableUpAction()
-      .addExtraAction(new AnActionButton("Duplicate", AllIcons.Actions.Copy) {
+      .addExtraAction(new AnActionButton(() -> CodeInsightBundle.message("action.AnActionButton.Template.list.text.duplicate"), AllIcons.Actions.Copy) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           copyRow();
@@ -598,7 +598,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
         public void updateButton(@NotNull AnActionEvent e) {
           e.getPresentation().setEnabled(getTemplate(getSingleSelectedIndex()) != null);
         }
-      }).addExtraAction(new AnActionButton("Restore deleted defaults", AllIcons.Actions.Rollback) {
+      }).addExtraAction(new AnActionButton(() -> CodeInsightBundle.message("action.AnActionButton.text.restore.deleted.defaults"), AllIcons.Actions.Rollback) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           TemplateSettings.getInstance().reset();

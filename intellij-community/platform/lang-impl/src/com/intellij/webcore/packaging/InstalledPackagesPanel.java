@@ -3,6 +3,7 @@ package com.intellij.webcore.packaging;
 
 import com.google.common.collect.Lists;
 import com.intellij.ide.ActivityTracker;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
 import com.intellij.openapi.application.Application;
@@ -83,14 +84,14 @@ public class InstalledPackagesPanel extends JPanel {
     myPackagesTable.getTableHeader().setReorderingAllowed(false);
     new TableSpeedSearch(myPackagesTable);
 
-    myUpgradeButton = new DumbAwareActionButton("Upgrade", IconUtil.getMoveUpIcon()) {
+    myUpgradeButton = new DumbAwareActionButton(() -> IdeBundle.message("action.AnActionButton.text.upgrade"), IconUtil.getMoveUpIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         PackageManagementUsageCollector.triggerUpgradePerformed(myProject, myPackageManagementService);
         upgradeAction();
       }
     };
-    myInstallButton = new DumbAwareActionButton("Install", IconUtil.getAddIcon()) {
+    myInstallButton = new DumbAwareActionButton(() -> IdeBundle.message("action.AnActionButton.text.install"), IconUtil.getAddIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         PackageManagementUsageCollector.triggerBrowseAvailablePackagesPerformed(myProject, myPackageManagementService);
@@ -101,7 +102,7 @@ public class InstalledPackagesPanel extends JPanel {
       }
     };
     myInstallButton.setShortcut(CommonShortcuts.getNew());
-    myUninstallButton = new DumbAwareActionButton("Uninstall", IconUtil.getRemoveIcon()) {
+    myUninstallButton = new DumbAwareActionButton(() -> IdeBundle.message("action.AnActionButton.text.uninstall"), IconUtil.getRemoveIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         PackageManagementUsageCollector.triggerUninstallPerformed(myProject, myPackageManagementService);
