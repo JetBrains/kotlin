@@ -485,7 +485,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class CloseAction extends AnAction implements DumbAware {
     CloseAction() {
-      super(CommonBundle.message("action.close"), AnalysisScopeBundle.message("action.close.dependency.description"),
+      super(() -> CommonBundle.message("action.close"), () -> AnalysisScopeBundle.message("action.close.dependency.description"),
             AllIcons.Actions.Cancel);
     }
 
@@ -631,7 +631,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class EditDependencyRulesAction extends AnAction {
     EditDependencyRulesAction() {
-      super(AnalysisScopeBundle.message("action.edit.rules"), AnalysisScopeBundle.message("action.edit.rules.description"),
+      super(() -> AnalysisScopeBundle.message("action.edit.rules"), () -> AnalysisScopeBundle.message("action.edit.rules.description"),
             AllIcons.General.Settings);
     }
 
@@ -865,7 +865,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class SelectInLeftTreeAction extends AnAction {
     SelectInLeftTreeAction() {
-      super(AnalysisScopeBundle.message("action.select.in.left.tree"), AnalysisScopeBundle.message("action.select.in.left.tree.description"), null);
+      super(() -> AnalysisScopeBundle.message("action.select.in.left.tree"),
+            () -> AnalysisScopeBundle.message("action.select.in.left.tree.description"), null);
     }
 
     @Override
@@ -905,8 +906,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class MarkAsIllegalAction extends AnAction {
     MarkAsIllegalAction() {
-      super(AnalysisScopeBundle.message("mark.dependency.illegal.text"), AnalysisScopeBundle.message("mark.dependency.illegal.text"),
-            AllIcons.Actions.Lightning);
+      super(() -> AnalysisScopeBundle.message("mark.dependency.illegal.text"),
+            () -> AnalysisScopeBundle.message("mark.dependency.illegal.text"), AllIcons.Actions.Lightning);
     }
 
     @Override
