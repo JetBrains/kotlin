@@ -54,10 +54,10 @@ public class IndexesExporter {
 
   @SuppressWarnings("HardCodedStringLiteral")
   public void exportIndices(@NotNull List<IndexChunk> chunks,
-                            @NotNull Path out,
+                            @NotNull Path temp,
                             @NotNull Path zipFile,
                             @NotNull ProgressIndicator indicator) {
-    Path indexRoot = PathKt.createDirectories(out.resolve("unpacked"));
+    Path indexRoot = PathKt.createDirectories(temp.resolve("unpacked"));
 
     indicator.setIndeterminate(false);
     AtomicInteger idx = new AtomicInteger();

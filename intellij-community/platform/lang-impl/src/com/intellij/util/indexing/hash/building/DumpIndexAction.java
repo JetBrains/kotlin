@@ -42,9 +42,9 @@ public class DumpIndexAction extends AnAction {
       ProgressManager.getInstance().run(new Task.Modal(project, "Exporting Indexes..." , true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          File out = VfsUtilCore.virtualToIoFile(file);
-          FileUtil.delete(out);
-          exportIndices(project, out.toPath(), new File(out, "index.zip").toPath(), indicator);
+          File temp = VfsUtilCore.virtualToIoFile(file);
+          FileUtil.delete(temp);
+          exportIndices(project, temp.toPath(), new File(temp, "index.zip").toPath(), indicator);
         }
       });
     }
