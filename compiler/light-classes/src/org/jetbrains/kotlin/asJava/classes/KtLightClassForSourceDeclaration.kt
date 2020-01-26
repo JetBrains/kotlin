@@ -81,7 +81,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun getText() = kotlinOrigin.text ?: ""
 
-    override fun getTextRange(): TextRange = kotlinOrigin.textRange ?: TextRange.EMPTY_RANGE
+    override fun getTextRange(): TextRange? = kotlinOrigin.textRange ?: TextRange.EMPTY_RANGE
 
     override fun getTextOffset() = kotlinOrigin.textOffset
 
