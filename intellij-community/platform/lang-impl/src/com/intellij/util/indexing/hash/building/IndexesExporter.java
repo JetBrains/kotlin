@@ -103,6 +103,7 @@ public class IndexesExporter {
 
     generate(chunk, allGenerators, chunkRoot);
 
+    //TODO: recognize these files in FileBasedIndexImpl. Empty indices must not be rebuilt.
     deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
     deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot.resolve("empty-stub-indices.txt"));
 
