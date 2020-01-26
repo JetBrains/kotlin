@@ -11,23 +11,23 @@ import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.xdebugger.frame.XSuspendContext
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineAsyncStackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.AsyncStackTraceContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
-    override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<CoroutineAsyncStackFrameItem>? =
+    override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<CoroutineStackFrameItem>? =
         getAsyncStackTrace(stackFrame, suspendContext as XSuspendContext)
 
 
-    fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem>? {
+    fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: XSuspendContext): List<CoroutineStackFrameItem>? {
         val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) }
         return if (stackFrameList == null || stackFrameList.isEmpty()) null else stackFrameList
     }
 
-    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: XSuspendContext): List<CoroutineAsyncStackFrameItem> {
-        val defaultResult = emptyList<CoroutineAsyncStackFrameItem>()
+    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: XSuspendContext): MutableList<CoroutineStackFrameItem> {
+        val defaultResult = mutableListOf<CoroutineStackFrameItem>()
 
         val location = frameProxy.location()
         if (!location.isInKotlinSources())

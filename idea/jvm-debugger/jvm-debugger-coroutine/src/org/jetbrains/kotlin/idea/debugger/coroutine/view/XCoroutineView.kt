@@ -12,6 +12,7 @@ import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
+import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.ide.CommonActionsManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
@@ -47,8 +48,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo.Companion.XCOROUTINE_POPUP_ACTION_GROUP
 import org.jetbrains.kotlin.idea.debugger.coroutine.VersionedImplementationProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.command.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.SyntheticStackFrame
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParams
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParamsProvider
@@ -207,7 +207,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                 infoData.stackFrameList.forEach {
                     if (it is CreationCoroutineStackFrameItem)
                         creationStack.add(it)
-                    else
+                    else if (it is CoroutineStackFrameItem)
                         children.add(CoroutineFrameValue(it))
                 }
                 children.add(CreationFramesContainer(infoData, creationStack))
@@ -281,12 +281,12 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                     val threadSuspendContext = session.suspendContext as SuspendContextImpl
                     when (frame) {
                         is RunningCoroutineStackFrameItem -> {
-                            val threadProxy = valueContainer.frame.frame.threadProxy()
+                            val threadProxy = frame.frame.threadProxy()
                             val isCurrentContext = threadSuspendContext.thread == threadProxy
                             createStackAndSetFrame(threadProxy, { frame.stackFrame }, isCurrentContext)
                         }
                         is CreationCoroutineStackFrameItem -> {
-                            val position = getPosition(frame.stackTraceElement) ?: return false
+                            val position = getPosition(frame.stackTraceElement.className, frame.stackTraceElement.lineNumber) ?: return false
                             val threadProxy = threadSuspendContext.thread as ThreadReferenceProxyImpl
                             createStackAndSetFrame(threadProxy, { SyntheticStackFrame(frame.emptyDescriptor(), emptyList(), position) })
                         }
@@ -295,7 +295,11 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                             val executionContext = executionContext(threadSuspendContext, frame.frame)
                             createStackAndSetFrame(threadProxy, { createSyntheticStackFrame(executionContext, frame) })
                         }
-                        is AsyncCoroutineStackFrameItem -> {
+                        is RestoredCoroutineStackFrameItem -> {
+                            val threadProxy = frame.frame.threadProxy()
+                            val position = getPosition(frame.location.declaringType().name(), frame.location.lineNumber()) ?: return false
+                            createStackAndSetFrame(threadProxy, { SyntheticStackFrame(frame.emptyDescriptor(), frame.spilledVariables, position) })
+
                         }
                         else -> {
                         }
@@ -331,15 +335,15 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         JavaExecutionStack(threadReferenceProxy, debugProcess, isCurrentContext)
 
 
-    private fun getPosition(frame: StackTraceElement): XSourcePosition? {
+    private fun getPosition(className: String, lineNumber: Int): XSourcePosition? {
         val psiFacade = JavaPsiFacade.getInstance(project)
         val psiClass = psiFacade.findClass(
-            frame.className.substringBefore("$"), // find outer class, for which psi exists TODO
+            className.substringBefore("$"), // find outer class, for which psi exists TODO
             GlobalSearchScope.everythingScope(project)
         )
         val classFile = psiClass?.containingFile?.virtualFile
         // to convert to 0-based line number or '-1' to do not move
-        val lineNumber = if (frame.lineNumber > 0) frame.lineNumber - 1 else return null
+        val lineNumber = if (lineNumber > 0) lineNumber - 1 else return null
         return XDebuggerUtil.getInstance().createPosition(classFile, lineNumber)
     }
 
@@ -352,7 +356,8 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         executionContext: ExecutionContext,
         frame: SuspendCoroutineStackFrameItem
     ): SyntheticStackFrame? {
-        val position = getPosition(frame.stackTraceElement) ?: return null
+
+        val position = applicationThreadExecutor.readAction { getPosition(frame.stackTraceElement.className, frame.stackTraceElement.lineNumber) } ?: return null
         val lookupContinuation = LookupContinuation(executionContext, frame.stackTraceElement)
         val continuation = lookupContinuation.findContinuation(frame.lastObservedFrameFieldRef) ?: return null
 

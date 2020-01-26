@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.SUSPEND_LAMBDA_CLASSES
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineAsyncStackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.isSubtype
 import org.jetbrains.kotlin.idea.debugger.safeVisibleVariableByName
 
@@ -33,9 +33,9 @@ class AsyncStackTraceContext(
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
     }
 
-    fun getAsyncStackTraceIfAny() : List<CoroutineAsyncStackFrameItem> {
-        val continuation = locateContinuation() ?: return emptyList()
-        val frames = mutableListOf<CoroutineAsyncStackFrameItem>()
+    fun getAsyncStackTraceIfAny() : MutableList<CoroutineStackFrameItem> {
+        val continuation = locateContinuation() ?: return mutableListOf()
+        val frames = mutableListOf<CoroutineStackFrameItem>()
         try {
             collectFramesRecursively(continuation, frames)
         } catch (e: Exception) {
@@ -70,15 +70,15 @@ class AsyncStackTraceContext(
     private fun isSuspendLambda(referenceType: ReferenceType): Boolean =
         SUSPEND_LAMBDA_CLASSES.any { referenceType.isSubtype(it) }
 
-    private fun collectFramesRecursively(continuation: ObjectReference, consumer: MutableList<CoroutineAsyncStackFrameItem>) {
+    private fun collectFramesRecursively(continuation: ObjectReference, consumer: MutableList<CoroutineStackFrameItem>) {
         val continuationType = continuation.referenceType() as? ClassType ?: return
         val baseContinuationSupertype = findBaseContinuationSuperSupertype(continuationType) ?: return
 
         val location = createLocation(continuation)
 
         location?.let {
-            val spilledVariables = getSpilledVariables(continuation) ?: emptyList()
-            consumer.add(CoroutineAsyncStackFrameItem(location, spilledVariables))
+            val spilledVariables = getSpilledVariables(continuation) ?: mutableListOf()
+            consumer.add(CoroutineStackFrameItem(location, spilledVariables))
         }
 
         val completionField = baseContinuationSupertype.fieldByName("completion") ?: return
@@ -107,10 +107,10 @@ class AsyncStackTraceContext(
         return stackTraceElement
     }
 
-    fun getSpilledVariables(continuation: ObjectReference): List<XNamedValue>? {
+    fun getSpilledVariables(continuation: ObjectReference): MutableList<XNamedValue>? {
 
         val rawSpilledVariables =
-            context.invokeMethodAsArray(debugMetadataKtType, "getSpilledVariableFieldMapping", "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;", continuation)  ?: return null
+            context.invokeMethodAsArray(debugMetadataKtType, "getSpilledVariableFieldMapping", "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;", continuation) ?: return null
 
         context.keepReference(rawSpilledVariables)
 

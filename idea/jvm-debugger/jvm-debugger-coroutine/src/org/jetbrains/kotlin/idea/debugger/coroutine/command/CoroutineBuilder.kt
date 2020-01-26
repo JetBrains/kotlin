@@ -11,9 +11,7 @@ import com.intellij.debugger.jdi.ClassesByNameProvider
 import com.intellij.debugger.jdi.GeneratedLocation
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
-import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.debugger.ui.impl.watch.MethodsTracker
-import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.xdebugger.XSourcePosition
@@ -23,12 +21,8 @@ import com.intellij.xdebugger.frame.XSuspendContext
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.SuspendStackFrameDescriptor
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.SyntheticStackFrame
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.AsyncStackTraceContext
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.EmptyStackFrameDescriptor
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 
@@ -54,32 +48,44 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
             val executionStack = JavaExecutionStack(threadReferenceProxyImpl, debugProcess, suspendedSameThread(coroutine.activeThread))
 
             val frames = threadReferenceProxyImpl.forceFrames()
-            var resumeMethodIndex = findResumeMethodIndex(frames)
-            for (frameIndex in 0..frames.lastIndex) {
-                val runningStackFrameProxy = frames[frameIndex]
-                if (frameIndex == resumeMethodIndex) {
-                    val previousFrame = frames[resumeMethodIndex - 1]
-                    val previousJavaFrame = JavaStackFrame(StackFrameDescriptorImpl(previousFrame, methodsTracker), true)
-                    val asyncStackTrace = coroutineStackFrameProvider
-                        .getAsyncStackTrace(previousJavaFrame, suspendContext)
-                    asyncStackTrace?.forEach { asyncFrame ->
-                        val xStackFrame = JavaStackFrame(StackFrameDescriptorImpl(previousFrame, methodsTracker), true)
-                        coroutineStackFrameList.add(AsyncCoroutineStackFrameItem(runningStackFrameProxy, asyncFrame, xStackFrame))
+            var coroutineStackInserted = false;
+            for (runningStackFrameProxy in frames) {
+                val jStackFrame = executionStack.createStackFrame(runningStackFrameProxy)
+                val coroutineStack = coroutineStackFrameProvider.getAsyncStackTraceSafe(runningStackFrameProxy, suspendContext)
+                if (coroutineStack != null && !coroutineStack.isEmpty()) {
+                    // clue coroutine stack into the thread's real stack
+                    val runningCoroutineStackFrameItem = RunningCoroutineStackFrameItem(runningStackFrameProxy, jStackFrame)
+                    coroutineStackFrameList.add(runningCoroutineStackFrameItem)
+
+                    if (mergeRunningFirstFrameVars(coroutineStack.first(), runningStackFrameProxy, runningCoroutineStackFrameItem))
+                        coroutineStack.removeAt(0)
+                    for (asyncFrame in coroutineStack) {
+                        coroutineStackFrameList.add(
+                            RestoredCoroutineStackFrameItem(
+                                runningStackFrameProxy,
+                                asyncFrame.location,
+                                asyncFrame.spilledVariables
+                            )
+                        )
+                        coroutineStackInserted = true
                     }
                 } else {
-                    val xStackFrame = executionStack.createStackFrame(runningStackFrameProxy)
-                    coroutineStackFrameList.add(RunningCoroutineStackFrameItem(runningStackFrameProxy, xStackFrame))
+                    if (coroutineStackInserted && isInvokeSuspendNegativeLineMethodFrame(runningStackFrameProxy)) {
+                        coroutineStackInserted = false
+                    } else
+                        coroutineStackFrameList.add(RunningCoroutineStackFrameItem(runningStackFrameProxy, jStackFrame))
                 }
             }
-        } else if ((coroutine.state == CoroutineInfoData.State.SUSPENDED || coroutine.activeThread == null) && coroutine.lastObservedFrameFieldRef is ObjectReference) {
+        } else if ((coroutine.state == CoroutineInfoData.State
+                .SUSPENDED || coroutine.activeThread == null) && coroutine.lastObservedFrameFieldRef is ObjectReference
+        ) {
             // to get frames from CoroutineInfo anyway
             // the thread is paused on breakpoint - it has at least one frame
             val suspendedStackTrace = coroutine.stackTrace.take(creationFrameSeparatorIndex)
             for (suspendedFrame in suspendedStackTrace) {
-                val suspendedXStackFrame = stackFrame(positionManager, firstSuspendedStackFrameProxyImpl, suspendedFrame)
-
+                val location = createLocation(suspendedFrame)
                 coroutineStackFrameList.add(
-                    SuspendCoroutineStackFrameItem(firstSuspendedStackFrameProxyImpl, suspendedFrame, suspendedXStackFrame, coroutine.lastObservedFrameFieldRef)
+                    SuspendCoroutineStackFrameItem(firstSuspendedStackFrameProxyImpl, suspendedFrame, coroutine.lastObservedFrameFieldRef, location)
                 )
             }
         }
@@ -89,10 +95,30 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
 
         coroutine.stackTrace.subList(creationFrameSeparatorIndex + 1, coroutine.stackTrace.size).forEach {
             var location = createLocation(it)
-            coroutineStackFrameList.add(CreationCoroutineStackFrameItem(firstSuspendedStackFrameProxyImpl, it, xStackFrame, location))
+            coroutineStackFrameList.add(CreationCoroutineStackFrameItem(firstSuspendedStackFrameProxyImpl, it, location))
         }
         coroutine.stackFrameList.addAll(coroutineStackFrameList)
         return coroutineStackFrameList
+    }
+
+    /**
+     * First frames need to be merged as real frame has accurate line number but lacks local variables from coroutine-restored frame.
+     */
+    private fun mergeRunningFirstFrameVars(
+        restoredFrame: CoroutineStackFrameItem,
+        runningStackFrameProxy: StackFrameProxyImpl,
+        runningCoroutineStackFrameItem: RunningCoroutineStackFrameItem
+    ): Boolean {
+        if (restoredFrame.location is GeneratedLocation) {
+            val restoredMethod = restoredFrame.location.method()
+            val realMethod = runningStackFrameProxy.location().method()
+            // if refers to the same method - proceed with merge, otherwise do nothing
+            if (restoredMethod == realMethod) {
+                runningCoroutineStackFrameItem.spilledVariables.addAll(restoredFrame.spilledVariables)
+                return true
+            }
+        }
+        return false
     }
 
     private fun suspendedSameThread(activeThread: ThreadReference) =
@@ -127,7 +153,11 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
         return positionManager.createStackFrame(runningStackFrameProxy, debugProcess, location)!!
     }
 
-    fun stackFrame(positionManager: CompoundPositionManager, runningStackFrameProxy: StackFrameProxyImpl, stackTraceElement: StackTraceElement) : XStackFrame {
+    fun stackFrame(
+        positionManager: CompoundPositionManager,
+        runningStackFrameProxy: StackFrameProxyImpl,
+        stackTraceElement: StackTraceElement
+    ): XStackFrame {
         val location = createLocation(stackTraceElement)
         return positionManager.createStackFrame(runningStackFrameProxy, debugProcess, location)!!
     }
@@ -168,6 +198,9 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
     private fun isResumeMethodFrame(frame: StackFrameProxyImpl) =
         frame.safeLocation()?.safeMethod()?.name() == "resumeWith"
 
+    private fun isInvokeSuspendNegativeLineMethodFrame(frame: StackFrameProxyImpl) =
+        frame.safeLocation()?.safeMethod()?.name() == "invokeSuspend" && frame.safeLocation()?.safeLineNumber() ?: 0 < 0
+
     private fun createSyntheticStackFrame(
         descriptor: SuspendStackFrameDescriptor,
         pos: XSourcePosition,
@@ -196,49 +229,3 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
     }
 }
 
-class CreationCoroutineStackFrameItem(
-    frame: StackFrameProxyImpl,
-    val stackTraceElement: StackTraceElement,
-    stackFrame: XStackFrame,
-    location: Location
-) : CoroutineStackFrameItem(frame, stackFrame, location) {
-    fun emptyDescriptor() =
-        EmptyStackFrameDescriptor(stackTraceElement, frame)
-}
-
-class SuspendCoroutineStackFrameItem(
-    frame: StackFrameProxyImpl,
-    val stackTraceElement: StackTraceElement,
-    stackFrame: XStackFrame,
-    val lastObservedFrameFieldRef: ObjectReference
-) : CoroutineStackFrameItem(frame, stackFrame, frame.location()) {
-    fun emptyDescriptor() =
-        EmptyStackFrameDescriptor(stackTraceElement, frame)
-}
-
-class AsyncCoroutineStackFrameItem(
-    frame: StackFrameProxyImpl,
-    val frameItem: StackFrameItem,
-    stackFrame: XStackFrame
-) : CoroutineStackFrameItem(frame, stackFrame, frame.location())
-
-class RunningCoroutineStackFrameItem(
-    frame: StackFrameProxyImpl,
-    stackFrame: XStackFrame
-) : CoroutineStackFrameItem(frame, stackFrame, frame.location())
-
-abstract class CoroutineStackFrameItem(val frame: StackFrameProxyImpl, val stackFrame: XStackFrame, val location: Location) {
-    val log by logger
-
-    fun sourcePosition() : XSourcePosition? = stackFrame.sourcePosition
-
-    fun uniqueId(): String {
-        try {
-            return location.safeSourceName() + ":" + location.safeMethod().toString() + ":" +
-                    location.safeLineNumber() + ":" + location.safeSourceLineNumber()
-        } catch (e: Exception) {
-            log.error(e)
-            return location.method().toString() + ":" + location.lineNumber()
-        }
-    }
-}

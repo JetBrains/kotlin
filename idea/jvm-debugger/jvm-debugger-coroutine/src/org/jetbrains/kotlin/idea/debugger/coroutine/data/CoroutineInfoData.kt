@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
+import com.intellij.debugger.memory.utils.StackFrameItem
 import com.sun.jdi.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineStackFrameItem
 
 /**
  * Represents state of a coroutine.
