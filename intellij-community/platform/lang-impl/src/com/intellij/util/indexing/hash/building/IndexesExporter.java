@@ -105,9 +105,10 @@ public class IndexesExporter {
 
     IndexInfrastructureVersion indexInfrastructureVersion = new IndexInfrastructureVersion(exportableFileBasedIndexExtensions,
                                                                                            exportableStubIndexExtensions);
-    writeIndexVersionsMetadata(chunkRoot, chunk, indexInfrastructureVersion);
+    Path metadataFile = chunkRoot.resolve("metadata.json");
+    writeIndexVersionsMetadata(metadataFile, chunk, indexInfrastructureVersion);
     printStatistics(chunk, fileBasedGenerators, stubGenerator);
-    printMetadata(chunkRoot);
+    printMetadata(metadataFile);
   }
 
   @NotNull
@@ -118,10 +119,9 @@ public class IndexesExporter {
     throw new Error("Unknown OS. " + SystemInfo.getOsNameAndVersion());
   }
 
-  private static void writeIndexVersionsMetadata(@NotNull Path chunkRoot,
+  private static void writeIndexVersionsMetadata(@NotNull Path metadataFile,
                                                  @NotNull IndexChunk indexChunk,
                                                  @NotNull IndexInfrastructureVersion infrastructureVersion) {
-    Path metadata = chunkRoot.resolve("metadata.json");
 
     StringWriter sw = new StringWriter();
     try(JsonWriter writer = new Gson().newBuilder().setPrettyPrinting().create().newJsonWriter(sw)) {
@@ -183,9 +183,9 @@ public class IndexesExporter {
     }
 
     try {
-      PathKt.write(metadata, sw.toString());
+      PathKt.write(metadataFile, sw.toString());
     } catch (IOException e) {
-      throw new RuntimeException("Failed to write versions JSON to " + metadata + ". " + e.getMessage(), e);
+      throw new RuntimeException("Failed to write versions JSON to " + metadataFile + ". " + e.getMessage(), e);
     }
   }
 
@@ -282,12 +282,12 @@ public class IndexesExporter {
     }
   }
 
-  private static void printMetadata(@NotNull Path chunkDir) {
+  private static void printMetadata(@NotNull Path metadataFile) {
     try {
-      String text = PathKt.readText(chunkDir.resolve("metadata.json"));
+      String text = PathKt.readText(metadataFile);
       LOG.warn("metadata.json:\n" + text + "\n\n");
     } catch (IOException e){
-      throw new RuntimeException("Failed to read metadata.json: " + chunkDir + ". " + e.getMessage(), e);
+      throw new RuntimeException("Failed to read metadata.json: " + metadataFile + ". " + e.getMessage(), e);
     }
   }
 
