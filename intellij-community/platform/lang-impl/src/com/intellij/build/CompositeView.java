@@ -2,6 +2,7 @@
 package com.intellij.build;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -149,7 +150,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
 
   private final class SwitchViewAction extends ToggleAction implements DumbAware {
     SwitchViewAction() {
-      super("Toggle view", null, AllIcons.Actions.ChangeView);
+      super(() -> IdeBundle.message("action.ToggleAction.text.toggle.view"), Presentation.NULL_STRING, AllIcons.Actions.ChangeView);
     }
 
     @Override

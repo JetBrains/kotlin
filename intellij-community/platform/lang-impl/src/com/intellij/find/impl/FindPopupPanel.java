@@ -6,6 +6,7 @@ import com.intellij.find.*;
 import com.intellij.find.actions.ShowUsagesAction;
 import com.intellij.find.replaceInProject.ReplaceInProjectManager;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
@@ -1756,7 +1757,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   private class MyPinAction extends ToggleAction {
-    private MyPinAction() {super("Pin Window", "Pin Window", AllIcons.General.Pin_tab);}
+    private MyPinAction() {super(() -> IdeBundle.message("action.ToggleAction.text.pin.window"),
+                                 () -> IdeBundle.message("action.ToggleAction.description.pin.window"), AllIcons.General.Pin_tab);}
 
     @Override
     public boolean isDumbAware() {
