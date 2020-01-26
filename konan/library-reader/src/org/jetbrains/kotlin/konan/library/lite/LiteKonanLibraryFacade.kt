@@ -40,12 +40,10 @@ private object DefaultLiteKonanLibraryProvider : LiteKonanLibraryProvider {
         val manifest = loadManifest(libraryPath) ?: return null
 
         val name = manifest.getProperty(KLIB_PROPERTY_UNIQUE_NAME) ?: return null
-        val compilerVersion = manifest.getProperty(KLIB_PROPERTY_COMPILER_VERSION) ?: return null
 
         return LiteKonanLibraryImpl(
             path = libraryPath,
-            name = name,
-            compilerVersion = compilerVersion
+            name = name
         )
     }
 
@@ -129,8 +127,7 @@ private class FromDistributionLiteKonanLibraryProvider(customKonanHomeDir: File?
 
 internal class LiteKonanLibraryImpl(
     override val path: File,
-    override val name: String,
-    internal val compilerVersion: String
+    override val name: String
 ) : LiteKonanLibrary {
     override var platform: String? = null
     override var sourcePaths: Collection<File> = emptyList()
