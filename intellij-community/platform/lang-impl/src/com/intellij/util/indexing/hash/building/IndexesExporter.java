@@ -36,7 +36,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 public class IndexesExporter {
@@ -92,7 +91,9 @@ public class IndexesExporter {
       .collect(Collectors.toList());
     List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = ContainerUtil.map(exportableFileBasedIndexExtensions, ex -> getGenerator(chunkRoot, ex));
 
-    StubHashBasedIndexGenerator stubGenerator = new StubHashBasedIndexGenerator(chunkRoot);
+    List<StubIndexExtension<?, ?>> exportableStubIndexExtensions = StubIndexExtension.EP_NAME.getExtensionList();
+
+    StubHashBasedIndexGenerator stubGenerator = new StubHashBasedIndexGenerator(chunkRoot, exportableStubIndexExtensions);
 
     List<HashBasedIndexGenerator<?, ?>> allGenerators = new ArrayList<>(fileBasedGenerators);
     allGenerators.add(stubGenerator);
@@ -103,7 +104,7 @@ public class IndexesExporter {
     deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot.resolve("empty-stub-indices.txt"));
 
     IndexInfrastructureVersion indexInfrastructureVersion = new IndexInfrastructureVersion(exportableFileBasedIndexExtensions,
-                                                                                           StubIndexExtension.EP_NAME.getExtensionList());
+                                                                                           exportableStubIndexExtensions);
     writeIndexVersionsMetadata(chunkRoot, chunk, indexInfrastructureVersion);
     printStatistics(chunk, fileBasedGenerators, stubGenerator);
     printMetadata(chunkRoot);
