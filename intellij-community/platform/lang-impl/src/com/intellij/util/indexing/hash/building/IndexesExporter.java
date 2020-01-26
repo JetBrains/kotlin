@@ -10,7 +10,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -164,8 +163,15 @@ public class IndexesExporter {
       writer.name("versions");
       writer.beginObject();
       Map<String, String> allIndexVersions = new LinkedHashMap<>();
-      allIndexVersions.putAll(ContainerUtil.map2Map(infrastructureVersion.getFileBasedIndexVersions().entrySet(), e -> Pair.create(e.getKey(), String.valueOf(e.getValue()))));
-      allIndexVersions.putAll(ContainerUtil.map2Map(infrastructureVersion.getStubIndexVersions().entrySet(), e -> Pair.create(e.getKey(), String.valueOf(e.getValue()))));
+
+      infrastructureVersion.getFileBasedIndexVersions().entrySet().stream()
+        .sorted(Map.Entry.comparingByKey())
+        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().toString(), (a, b) -> a, () -> allIndexVersions));
+
+      infrastructureVersion.getStubIndexVersions().entrySet().stream()
+        .sorted(Map.Entry.comparingByKey())
+        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().toString(), (a, b) -> a, () -> allIndexVersions));
+
       for (Map.Entry<String, String> e : allIndexVersions.entrySet()) {
         writer.name(e.getKey());
         writer.value(e.getValue());
