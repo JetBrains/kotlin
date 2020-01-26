@@ -54,10 +54,9 @@ public class IndexesExporter {
 
   @SuppressWarnings("HardCodedStringLiteral")
   public void exportIndices(@NotNull List<IndexChunk> chunks,
-                            @NotNull Path temp,
                             @NotNull Path zipFile,
                             @NotNull ProgressIndicator indicator) {
-    Path indexRoot = PathKt.createDirectories(temp.resolve("unpacked"));
+    Path indexRoot = getUnpackedIndexRoot(zipFile);
 
     indicator.setIndeterminate(false);
     AtomicInteger idx = new AtomicInteger();
@@ -74,12 +73,17 @@ public class IndexesExporter {
     zipIndexOut(indexRoot, zipFile, indicator);
   }
 
-  public void exportIndexesChunk(@NotNull IndexChunk chunk,
-                                 @NotNull Path temp,
-                                 @NotNull Path zipFile) {
-    Path chunkRoot = PathKt.createDirectories(temp.resolve("unpacked"));
+  public void exportIndexesChunk(@NotNull IndexChunk chunk, @NotNull Path zipFile) {
+    Path chunkRoot = getUnpackedIndexRoot(zipFile);
     ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk));
     zipIndexOut(chunkRoot, zipFile, new EmptyProgressIndicator());
+  }
+
+  @NotNull
+  private static Path getUnpackedIndexRoot(@NotNull Path indexZipFile) {
+    Path indexRoot = indexZipFile.resolveSibling(indexZipFile.getFileName().toString() + ".unpacked");
+    PathKt.delete(indexRoot);
+    return PathKt.createDirectories(indexRoot);
   }
 
   private void processChunkUnderReadAction(@NotNull Path chunkRoot, @NotNull IndexChunk chunk) {

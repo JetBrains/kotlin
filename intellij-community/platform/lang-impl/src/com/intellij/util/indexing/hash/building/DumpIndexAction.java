@@ -14,16 +14,15 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.IndexableSetContributor;
+import com.intellij.util.io.PathKt;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,20 +41,21 @@ public class DumpIndexAction extends AnAction {
       ProgressManager.getInstance().run(new Task.Modal(project, "Exporting Indexes..." , true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          File temp = VfsUtilCore.virtualToIoFile(file);
-          FileUtil.delete(temp);
-          exportIndices(project, temp.toPath(), new File(temp, "index.zip").toPath(), indicator);
+          Path outputDirectory = VfsUtilCore.virtualToIoFile(file).toPath();
+          PathKt.delete(outputDirectory);
+          Path indexZipFile = outputDirectory.resolve("index.zip");
+
+          exportIndices(project, indexZipFile, indicator);
         }
       });
     }
   }
 
   private static void exportIndices(@NotNull Project project,
-                                    @NotNull Path temp,
                                     @NotNull Path outZipFile,
                                     @NotNull ProgressIndicator indicator) {
     List<IndexChunk> chunks = ReadAction.compute(() -> buildChunks(project));
-    IndexesExporter.getInstance(project).exportIndices(chunks, temp, outZipFile, indicator);
+    IndexesExporter.getInstance(project).exportIndices(chunks, outZipFile, indicator);
   }
 
   @NotNull
