@@ -36,7 +36,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.augment.PsiAugmentProvider;
 import com.intellij.psi.augment.TypeAnnotationModifier;
 import com.intellij.psi.compiled.ClassFileDecompilers;
-import com.intellij.psi.impl.EmptySubstitutorImpl;
+import com.intellij.psi.impl.PsiSubstitutorFactoryImpl;
 import com.intellij.psi.impl.LanguageConstantExpressionEvaluator;
 import com.intellij.psi.impl.PsiExpressionEvaluator;
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder;
@@ -112,13 +112,7 @@ public class KotlinCoreApplicationEnvironment extends CoreApplicationEnvironment
     addExtension(ContainerProvider.EP_NAME, new JavaContainerProvider());
 
     myApplication.registerService(PsiPackageImplementationHelper.class, new CorePsiPackageImplementationHelper());
-
-    EmptySubstitutorImpl emptySubstitutor = new EmptySubstitutorImpl();
-    myApplication.registerService(EmptySubstitutor.class, emptySubstitutor);
-
-    // Patch null values obtained because of cyclic dependency during initialization
-    updateInterfaceField(PsiSubstitutor.class, "EMPTY", emptySubstitutor);
-    updateInterfaceField(PsiSubstitutor.class, "UNKNOWN", PsiSubstitutor.EMPTY);
+    myApplication.registerService(PsiSubstitutorFactory.class, new PsiSubstitutorFactoryImpl());
 
     myApplication.registerService(JavaDirectoryService.class, createJavaDirectoryService());
     myApplication.registerService(JavaVersionService.class, new JavaVersionService());
@@ -156,42 +150,5 @@ public class KotlinCoreApplicationEnvironment extends CoreApplicationEnvironment
   @Override
   protected VirtualFileSystem createJrtFileSystem() {
     return new CoreJrtFileSystem();
-  }
-
-  private static void updateInterfaceField(Class<?> klass, String name, Object value) {
-    try {
-      Field field = klass.getDeclaredField(name);
-
-      boolean wasAccessible = field.isAccessible();
-
-      try {
-        if (!wasAccessible) {
-          field.setAccessible(true);
-        }
-
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-
-        int modifiers = field.getModifiers();
-
-        try {
-          modifiersField.setAccessible(true);
-          modifiersField.setInt(field, modifiers & ~Modifier.FINAL);
-
-          field.set(null, value);
-        }
-        finally {
-          modifiersField.setInt(field, modifiers);
-          modifiersField.setAccessible(false);
-        }
-      }
-      finally {
-        if (!wasAccessible) {
-          field.setAccessible(false);
-        }
-      }
-    }
-    catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new IllegalStateException(e);
-    }
   }
 }
