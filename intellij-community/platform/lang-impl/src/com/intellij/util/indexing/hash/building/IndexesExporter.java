@@ -285,9 +285,9 @@ public class IndexesExporter {
   private static void printMetadata(@NotNull Path metadataFile) {
     try {
       String text = PathKt.readText(metadataFile);
-      LOG.warn("metadata.json:\n" + text + "\n\n");
+      LOG.warn(metadataFile.getFileName().toString() + ":\n" + text + "\n\n");
     } catch (IOException e){
-      throw new RuntimeException("Failed to read metadata.json: " + metadataFile + ". " + e.getMessage(), e);
+      throw new RuntimeException("Failed to read " + metadataFile + ". " + e.getMessage(), e);
     }
   }
 
