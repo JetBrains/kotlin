@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
 import com.sun.jdi.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineStackFrameItem
 
 /**
  * Represents state of a coroutine.
@@ -23,7 +22,7 @@ data class CoroutineInfoData(
 ) {
     var stackFrameList = mutableListOf<CoroutineStackFrameItem>()
 
-    // @TODO for refactoring/removal
+    // @TODO for refactoring/removal along with DumpPanel
     val stringStackTrace: String by lazy {
         buildString {
             appendln("\"$name\", state: $state")

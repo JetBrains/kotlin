@@ -27,7 +27,7 @@ import kotlin.reflect.KProperty
 
 class CoroutineProjectConnectionListener(val project: Project) : XDebuggerManagerListener {
     var connection: MessageBusConnection? = null
-    val processCounter = AtomicInteger(0)
+    private val processCounter = AtomicInteger(0)
     private val log by logger
 
     private fun connect() {
@@ -40,7 +40,7 @@ class CoroutineProjectConnectionListener(val project: Project) : XDebuggerManage
         params: JavaParameters?,
         runnerSettings: RunnerSettings?
     ) {
-        if(coroutineDebuggerEnabled()) {
+        if (coroutineDebuggerEnabled()) {
             val configurationName = configuration.type.id
             try {
                 if (!gradleConfiguration(configurationName)) { // gradle test logic in KotlinGradleCoroutineDebugProjectResolver
@@ -63,7 +63,7 @@ class CoroutineProjectConnectionListener(val project: Project) : XDebuggerManage
     }
 
     private fun gradleConfiguration(configurationName: String) =
-        "GradleRunConfiguration".equals(configurationName) || "KotlinGradleRunConfiguration".equals(configurationName)
+        "GradleRunConfiguration" == configurationName || "KotlinGradleRunConfiguration" == configurationName
 
     override fun processStarted(debugProcess: XDebugProcess) =
         DebuggerInvocationUtil.swingInvokeLater(project) {
@@ -102,9 +102,9 @@ val projectListener
     get() = object : ReadOnlyProperty<Project, CoroutineProjectConnectionListener> {
         lateinit var listenerProject: CoroutineProjectConnectionListener
 
-        override fun getValue(project: Project, property: KProperty<*>): CoroutineProjectConnectionListener {
+        override fun getValue(thisRef: Project, property: KProperty<*>): CoroutineProjectConnectionListener {
             if (!::listenerProject.isInitialized)
-                listenerProject = CoroutineProjectConnectionListener(project)
+                listenerProject = CoroutineProjectConnectionListener(thisRef)
             return listenerProject
         }
     }

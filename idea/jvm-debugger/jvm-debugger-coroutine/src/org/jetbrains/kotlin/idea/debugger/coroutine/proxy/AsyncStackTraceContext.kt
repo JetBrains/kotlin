@@ -17,13 +17,15 @@ import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.SUSPEND_LAMBDA_CLASSES
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineAsyncStackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.DefaultCoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.isSubtype
 import org.jetbrains.kotlin.idea.debugger.safeVisibleVariableByName
 
 class AsyncStackTraceContext(
     val context: ExecutionContext,
-    val method: Method) {
+    val method: Method
+) {
     val log by logger
     val debugMetadataKtType = context.findClassSafe(
         DEBUG_METADATA_KT
@@ -33,9 +35,9 @@ class AsyncStackTraceContext(
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
     }
 
-    fun getAsyncStackTraceIfAny() : List<CoroutineAsyncStackFrameItem> {
+    fun getAsyncStackTraceIfAny(): List<CoroutineStackFrameItem> {
         val continuation = locateContinuation() ?: return emptyList()
-        val frames = mutableListOf<CoroutineAsyncStackFrameItem>()
+        val frames = mutableListOf<CoroutineStackFrameItem>()
         try {
             collectFramesRecursively(continuation, frames)
         } catch (e: Exception) {
@@ -44,8 +46,8 @@ class AsyncStackTraceContext(
         return frames
     }
 
-    private fun locateContinuation() : ObjectReference? {
-        val continuation : ObjectReference?
+    private fun locateContinuation(): ObjectReference? {
+        val continuation: ObjectReference?
         if (isInvokeSuspendMethod(method)) {
             continuation = context.frameProxy.thisObject() ?: return null
             if (!isSuspendLambda(continuation.referenceType()))
@@ -70,7 +72,7 @@ class AsyncStackTraceContext(
     private fun isSuspendLambda(referenceType: ReferenceType): Boolean =
         SUSPEND_LAMBDA_CLASSES.any { referenceType.isSubtype(it) }
 
-    private fun collectFramesRecursively(continuation: ObjectReference, consumer: MutableList<CoroutineAsyncStackFrameItem>) {
+    private fun collectFramesRecursively(continuation: ObjectReference, consumer: MutableList<CoroutineStackFrameItem>) {
         val continuationType = continuation.referenceType() as? ClassType ?: return
         val baseContinuationSupertype = findBaseContinuationSuperSupertype(continuationType) ?: return
 
@@ -78,7 +80,7 @@ class AsyncStackTraceContext(
 
         location?.let {
             val spilledVariables = getSpilledVariables(continuation) ?: emptyList()
-            consumer.add(CoroutineAsyncStackFrameItem(location, spilledVariables))
+            consumer.add(DefaultCoroutineStackFrameItem(location, spilledVariables))
         }
 
         val completionField = baseContinuationSupertype.fieldByName("completion") ?: return
@@ -86,11 +88,11 @@ class AsyncStackTraceContext(
         collectFramesRecursively(completion, consumer)
     }
 
-    private fun createLocation(continuation: ObjectReference) : GeneratedLocation? {
+    private fun createLocation(continuation: ObjectReference): GeneratedLocation? {
         val instance = invokeGetStackTraceElement(continuation) ?: return null
         val className = context.invokeMethodAsString(instance, "getClassName") ?: return null
         val methodName = context.invokeMethodAsString(instance, "getMethodName") ?: return null
-        val lineNumber = context.invokeMethodAsInt(instance,"getLineNumber")?.takeIf {
+        val lineNumber = context.invokeMethodAsInt(instance, "getLineNumber")?.takeIf {
             it >= 0
         } ?: return null
         val locationClass = context.findClassSafe(className) ?: return null
@@ -110,7 +112,12 @@ class AsyncStackTraceContext(
     fun getSpilledVariables(continuation: ObjectReference): List<XNamedValue>? {
 
         val rawSpilledVariables =
-            context.invokeMethodAsArray(debugMetadataKtType, "getSpilledVariableFieldMapping", "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;", continuation)  ?: return null
+            context.invokeMethodAsArray(
+                debugMetadataKtType,
+                "getSpilledVariableFieldMapping",
+                "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;",
+                continuation
+            ) ?: return null
 
         context.keepReference(rawSpilledVariables)
 

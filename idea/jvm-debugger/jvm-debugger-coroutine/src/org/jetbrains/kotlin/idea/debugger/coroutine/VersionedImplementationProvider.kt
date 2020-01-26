@@ -9,9 +9,9 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.SimpleListCellRenderer
 import javax.swing.ListCellRenderer
 
-class VersionedImplementationProvider() {
+class VersionedImplementationProvider {
     fun comboboxListCellRenderer(): ListCellRenderer<in String>? =
-        SimpleListCellRenderer.create<String> { label: JBLabel, value: String?, index: Int ->
+        SimpleListCellRenderer.create { label: JBLabel, value: String?, index: Int ->
             if (value != null) {
                 label.text = value
             } else if (index >= 0) {
