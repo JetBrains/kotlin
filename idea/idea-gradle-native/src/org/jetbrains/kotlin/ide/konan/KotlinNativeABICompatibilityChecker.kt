@@ -21,7 +21,7 @@ import com.intellij.util.PathUtilRt
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
-import org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryNameUtil
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME

@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.configuration
+package org.jetbrains.kotlin.idea.configuration.klib
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryNameUtil.buildIDELibraryName
-import org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryNameUtil.isGradleLibraryName
-import org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryNameUtil.parseIDELibraryName
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.buildIDELibraryName
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.isGradleLibraryName
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
 
 class KotlinNativeLibraryNameUtilTest : TestCase() {
 
