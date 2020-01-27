@@ -213,7 +213,8 @@ class PropertyStub(
         val modality: MemberStubModality = MemberStubModality.FINAL,
         val receiverType: StubType? = null,
         override val annotations: List<AnnotationStub> = emptyList(),
-        val origin: StubOrigin
+        val origin: StubOrigin,
+        val isOverride: Boolean = false
 ) : StubIrElement, AnnotationHolder {
     sealed class Kind {
         class Val(
@@ -332,7 +333,6 @@ class FunctionParameterStub(
 ) : AnnotationHolder
 
 enum class MemberStubModality {
-    OVERRIDE,
     OPEN,
     FINAL,
     ABSTRACT
@@ -430,7 +430,8 @@ class FunctionStub(
         val external: Boolean = false,
         val receiver: ReceiverParameterStub?,
         val modality: MemberStubModality,
-        val typeParameters: List<TypeParameterStub> = emptyList()
+        val typeParameters: List<TypeParameterStub> = emptyList(),
+        val isOverride: Boolean = false
 ) : StubElementWithOrigin, FunctionalStub {
 
     override fun <T, R> accept(visitor: StubIrVisitor<T, R>, data: T) =

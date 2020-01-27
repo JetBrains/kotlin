@@ -214,8 +214,9 @@ internal class EnumStubBuilder(
                 name = "value",
                 type = baseType,
                 kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.GetConstructorParameter(constructorParameter)),
-                modality = MemberStubModality.OVERRIDE,
-                origin = StubOrigin.Synthetic)
+                modality = MemberStubModality.OPEN,
+                origin = StubOrigin.Synthetic,
+                isOverride = true)
 
         val canonicalsByValue = enumDef.constants
                 .groupingBy { it.value }

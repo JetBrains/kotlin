@@ -185,8 +185,9 @@ class StubIrTextEmitter(
                 val parameters = element.parameters.joinToString(prefix = "(", postfix = ")") { renderFunctionParameter(it) }
                 val receiver = element.receiver?.let { renderFunctionReceiver(it) + "." } ?: ""
                 val typeParameters = renderTypeParameters(element.typeParameters)
+                val override = if (element.isOverride) "override " else ""
                 val modality = renderMemberModality(element.modality, owner)
-                "${modality}fun$typeParameters $receiver${element.name.asSimpleName()}$parameters: ${renderStubType(element.returnType)}"
+                "$override${modality}fun$typeParameters $receiver${element.name.asSimpleName()}$parameters: ${renderStubType(element.returnType)}"
             }
             if (!nativeBridges.isSupported(element)) {
                 sequenceOf(
@@ -302,7 +303,8 @@ class StubIrTextEmitter(
     private fun emitProperty(element: PropertyStub, owner: StubContainer?) {
         if (element in bridgeBuilderResult.excludedStubs) return
 
-        val modality = renderMemberModality(element.modality, owner)
+        val override = if (element.isOverride) "override " else ""
+        val modality = "$override${renderMemberModality(element.modality, owner)}"
         val receiver = if (element.receiverType != null) "${renderStubType(element.receiverType)}." else ""
         val name = if (owner?.isTopLevelContainer == true) {
             getTopLevelPropertyDeclarationName(kotlinFile, element.name)
@@ -374,7 +376,6 @@ class StubIrTextEmitter(
                 ""
             } else
                 when (modality) {
-                    MemberStubModality.OVERRIDE -> "override "
                     MemberStubModality.OPEN -> "open "
                     MemberStubModality.FINAL -> "final "
                     MemberStubModality.ABSTRACT -> "abstract "

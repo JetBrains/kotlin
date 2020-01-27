@@ -109,6 +109,8 @@ private class ObjCMethodStubBuilder(
     private val name: String = method.kotlinName
     private val origin = StubOrigin.ObjCMethod(method, container)
     private val modality: MemberStubModality
+    private val isOverride: Boolean =
+            container is ObjCClassOrProtocol && method.isOverride(container)
 
     init {
         val returnType = method.getReturnType(container.classOrProtocol)
@@ -127,14 +129,8 @@ private class ObjCMethodStubBuilder(
         kotlinMethodParameters = method.getKotlinParameters(context, forConstructorOrFactory = false)
         external = (container !is ObjCProtocol)
         modality = when (container) {
-            is ObjCClassOrProtocol -> {
-                if (method.isOverride(container)) {
-                    MemberStubModality.OVERRIDE
-                } else when (container) {
-                    is ObjCClass -> MemberStubModality.OPEN
-                    is ObjCProtocol -> MemberStubModality.ABSTRACT
-                }
-            }
+            is ObjCClass -> MemberStubModality.OPEN
+            is ObjCProtocol -> if (method.isOptional) MemberStubModality.OPEN else MemberStubModality.ABSTRACT
             is ObjCCategory -> MemberStubModality.FINAL
         }
         receiver = if (container is ObjCCategory) {
@@ -226,7 +222,9 @@ private class ObjCMethodStubBuilder(
                         annotations.toList(),
                         external,
                         receiver,
-                        modality),
+                        modality,
+                        emptyList(),
+                        isOverride),
                 replacement
         )
     }
