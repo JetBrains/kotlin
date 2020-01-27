@@ -534,8 +534,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             );
             classFileFactory = generationState.getFactory();
 
-            if (verifyWithDex() && DxChecker.RUN_DX_CHECKER) {
+            // Some names are not allowed in the dex file format and the VM will reject the program
+            // if they are used. Therefore, a few tests cannot be dexed as they use such names that
+            // are valid on the JVM but not on the Android Runtime.
+            boolean ignoreDexing = myFiles.getPsiFiles().stream().anyMatch(
+                it -> InTextDirectivesUtils.isDirectiveDefined(it.getText(), "IGNORE_DEXING")
+            );
+            if (verifyWithDex() && DxChecker.RUN_DX_CHECKER && !ignoreDexing) {
                 DxChecker.check(classFileFactory);
+                D8Checker.check(classFileFactory);
             }
         }
         catch (TestsCompiletimeError e) {
