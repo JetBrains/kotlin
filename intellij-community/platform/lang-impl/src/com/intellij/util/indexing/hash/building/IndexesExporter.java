@@ -10,7 +10,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,6 +28,7 @@ import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
+@SuppressWarnings("HardCodedStringLiteral")
 public class IndexesExporter {
   private static final Logger LOG = Logger.getInstance(IndexesExporter.class);
 
@@ -65,7 +66,7 @@ public class IndexesExporter {
     if (!JobLauncher.getInstance().invokeConcurrentlyUnderProgress(chunks, indicator, chunk -> {
       indicator.setText("Indexing chunk " + chunk.getName());
       Path chunkRoot = indexRoot.resolve(chunk.getName());
-      ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk));
+      ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
       indicator.setFraction(((double) idx.incrementAndGet()) / chunks.size());
       return true;
     })) {
@@ -77,8 +78,9 @@ public class IndexesExporter {
 
   public void exportIndexesChunk(@NotNull IndexChunk chunk, @NotNull Path zipFile) {
     Path chunkRoot = getUnpackedIndexRoot(zipFile);
-    ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk));
-    zipIndexOut(chunkRoot, zipFile, new EmptyProgressIndicator());
+    EmptyProgressIndicator indicator = new EmptyProgressIndicator();
+    ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
+    zipIndexOut(chunkRoot, zipFile, indicator);
   }
 
   @NotNull
@@ -88,7 +90,7 @@ public class IndexesExporter {
     return PathKt.createDirectories(indexRoot);
   }
 
-  private void processChunkUnderReadAction(@NotNull Path chunkRoot, @NotNull IndexChunk chunk) {
+  private void processChunkUnderReadAction(@NotNull Path chunkRoot, @NotNull IndexChunk chunk, @NotNull ProgressIndicator indicator) {
     List<FileBasedIndexExtension<?, ?>> exportableFileBasedIndexExtensions = FileBasedIndexExtension
       .EXTENSION_POINT_NAME
       .extensions()
@@ -104,7 +106,7 @@ public class IndexesExporter {
     List<HashBasedIndexGenerator<?, ?>> allGenerators = new ArrayList<>(fileBasedGenerators);
     allGenerators.add(stubGenerator);
 
-    generate(chunk, allGenerators, chunkRoot);
+    generate(chunk, allGenerators, chunkRoot, indicator);
 
     //TODO: recognize these files in FileBasedIndexImpl. Empty indices must not be rebuilt.
     deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
@@ -245,7 +247,8 @@ public class IndexesExporter {
 
   private void generate(@NotNull IndexChunk chunk,
                         @NotNull Collection<HashBasedIndexGenerator<?, ?>> generators,
-                        @NotNull Path chunkOut) {
+                        @NotNull Path chunkOut,
+                        @NotNull ProgressIndicator indicator) {
     try {
       ContentHashEnumerator hashEnumerator = new ContentHashEnumerator(chunkOut.resolve("hashes"));
       try {
@@ -253,18 +256,26 @@ public class IndexesExporter {
           generator.openIndex();
         }
 
+        Set<VirtualFile> files = new THashSet<>();
         for (VirtualFile root : chunk.getRoots()) {
           VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Boolean>() {
             @Override
             public boolean visitFile(@NotNull VirtualFile file) {
               if (!file.isDirectory() && !SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
-                generateIndexesForFile(file, generators, hashEnumerator);
+                files.add(file);
               }
               return true;
             }
-
           });
         }
+
+        boolean isOk = JobLauncher.getInstance().invokeConcurrentlyUnderProgress(new ArrayList<>(files),
+                                                                                 indicator,
+                                                                                 f -> {
+                                                                                   generateIndexesForFile(f, generators, hashEnumerator);
+                                                                                   return true;
+                                                                                 });
+        LOG.assertTrue(isOk, "indexes generation is failed");
       }
       finally {
         hashEnumerator.close();
