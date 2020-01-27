@@ -312,9 +312,7 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
                 !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
     if (generatingAdditionalSamCandidateIsEnabled) return null
-    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
-        if (!callComponents.samConversionOracle.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
-    }
+    if (!callComponents.samConversionOracle.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
 
     val argumentIsFunctional = when (argument) {
         is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -76,17 +77,19 @@ interface KotlinResolutionCallbacks {
     fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 }
 
-@DefaultImplementation(impl = SamConversionOracle.Empty::class)
+@DefaultImplementation(impl = SamConversionOracleDefault::class)
 interface SamConversionOracle {
     fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean
-
     fun isPossibleSamType(samType: KotlinType): Boolean
+}
 
-    object Empty : SamConversionOracle {
-        override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean = false
-        override fun isPossibleSamType(samType: KotlinType): Boolean {
-            val descriptor = samType.constructor.declarationDescriptor
-            return descriptor is ClassDescriptor && descriptor.isFun
-        }
+class SamConversionOracleDefault(private val languageVersionSettings: LanguageVersionSettings) : SamConversionOracle {
+    override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean {
+        return languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)
+    }
+
+    override fun isPossibleSamType(samType: KotlinType): Boolean {
+        val descriptor = samType.constructor.declarationDescriptor
+        return descriptor is ClassDescriptor && descriptor.isFun
     }
 }
