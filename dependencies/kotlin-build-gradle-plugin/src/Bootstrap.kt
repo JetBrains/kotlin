@@ -1,20 +1,20 @@
-@file:Suppress("unused") // usages in build scripts are not tracked properly
-
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
 import java.net.URI
 
-
 var Project.bootstrapKotlinVersion: String
-    get() = this.property("bootstrapKotlinVersion") as String
+    get() = property("bootstrapKotlinVersion") as String
     private set(value) {
-        this.extra["bootstrapKotlinVersion"] = value
+        extensions.extraProperties.set("bootstrapKotlinVersion", value)
     }
 
 var Project.bootstrapKotlinRepo: String?
-    get() = this.property("bootstrapKotlinRepo") as String?
+    get() = property("bootstrapKotlinRepo") as String?
     private set(value) {
-        this.extra["bootstrapKotlinRepo"] = value
+        extensions.extraProperties.set("bootstrapKotlinRepo", value)
     }
 
 val Project.internalKotlinRepo: String?
@@ -22,16 +22,16 @@ val Project.internalKotlinRepo: String?
             "branch:default:any/artifacts/content/internal/repo"
 
 fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
-    val customVersion = project.findProperty("bootstrap.kotlin.version") as String?
-    val customRepo = project.findProperty("bootstrap.kotlin.repo") as String?
-    val teamCityVersion = project.findProperty("bootstrap.teamcity.kotlin.version") as String?
-    val teamCityBuild = project.findProperty("bootstrap.teamcity.build.number") as String?
-    val teamCityProject = project.findProperty("bootstrap.teamcity.project") as String?
+    val customVersion = findProperty("bootstrap.kotlin.version") as String?
+    val customRepo = findProperty("bootstrap.kotlin.repo") as String?
+    val teamCityVersion = findProperty("bootstrap.teamcity.kotlin.version") as String?
+    val teamCityBuild = findProperty("bootstrap.teamcity.build.number") as String?
+    val teamCityProject = findProperty("bootstrap.teamcity.project") as String?
 
     val bootstrapSource = when {
-        project.hasProperty("bootstrap.local") -> BootstrapOption.Local(
-            project.findProperty("bootstrap.local.version") as String?,
-            project.findProperty("bootstrap.local.path") as String?
+        hasProperty("bootstrap.local") -> BootstrapOption.Local(
+            findProperty("bootstrap.local.version") as String?,
+            findProperty("bootstrap.local.path") as String?
         )
         teamCityVersion != null -> BootstrapOption.TeamCity(
             teamCityVersion,
@@ -43,8 +43,8 @@ fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
         else -> defaultSource
     }
 
-    bootstrapSource.applyToProject(project)
-    project.logger.lifecycle("Using kotlin bootstrap version $bootstrapKotlinVersion from repo $bootstrapKotlinRepo")
+    bootstrapSource.applyToProject(this)
+    logger.lifecycle("Using kotlin bootstrap version $bootstrapKotlinVersion from repo $bootstrapKotlinRepo")
 }
 
 sealed class BootstrapOption {
