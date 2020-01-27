@@ -19,8 +19,19 @@ fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession,
 
 private object FirDefaultStarImportingScopeKey : ScopeSessionKey<DefaultImportPriority, FirScope>()
 private object FirDefaultSimpleImportingScopeKey : ScopeSessionKey<DefaultImportPriority, FirScope>()
+private object FileImportingScopeKey : ScopeSessionKey<FirFile, ListStorageFirScope>()
+
+private class ListStorageFirScope(val result: List<FirScope>) : FirScope()
 
 fun createImportingScopes(
+    file: FirFile,
+    session: FirSession,
+    scopeSession: ScopeSession
+): List<FirScope> = scopeSession.getOrBuild(file, FileImportingScopeKey) {
+    ListStorageFirScope(doCreateImportingScopes(file, session, scopeSession))
+}.result
+
+private fun doCreateImportingScopes(
     file: FirFile,
     session: FirSession,
     scopeSession: ScopeSession
