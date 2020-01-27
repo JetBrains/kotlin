@@ -2345,6 +2345,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("constant.kt")
+        public void testConstant() throws Exception {
+            runTest("testData/inspectionsLocal/constantConditionIf/constant.kt");
+        }
+
         @TestMetadata("delete.kt")
         public void testDelete() throws Exception {
             runTest("testData/inspectionsLocal/constantConditionIf/delete.kt");
