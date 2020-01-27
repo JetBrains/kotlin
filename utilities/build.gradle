@@ -14,6 +14,13 @@ repositories {
     }
 }
 
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xskip-metadata-version-check']
+    }
+}
+
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile project(':backend.native')

@@ -44,6 +44,6 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xuse-experimental=kotlin.ExperimentalUnsignedTypes']
+        freeCompilerArgs = ['-Xuse-experimental=kotlin.ExperimentalUnsignedTypes', '-Xskip-metadata-version-check']
     }
 }
