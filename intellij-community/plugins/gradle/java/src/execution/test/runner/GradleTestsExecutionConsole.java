@@ -52,13 +52,13 @@ public class GradleTestsExecutionConsole extends SMTRunnerConsoleView implements
 
   @Override
   public void print(@NotNull String s, @NotNull ConsoleViewContentType contentType) {
-    if (isUnwantedEmptyLineCandidate(s)) return;
+    if (detectUnwantedEmptyLine(s)) return;
     super.print(s, contentType);
   }
 
   // IJ Gradle test runner xml events protocol produces many unwanted empty strings
   // this is a workaround to avoid the trash in the console
-  private boolean isUnwantedEmptyLineCandidate(@NotNull String s) {
+  private boolean detectUnwantedEmptyLine(@NotNull String s) {
     if (s.length() == 1 && StringUtil.isLineBreak(s.charAt(0))) {
       if (lastMessageWasEmptyLine) return true;
       lastMessageWasEmptyLine = true;
