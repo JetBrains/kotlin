@@ -110,13 +110,6 @@ internal val lowerAfterInlinePhase = makeKonanModuleOpPhase(
         description = "Special operations processing after inlining"
 )
 
-internal val interopPart1Phase = makeKonanModuleLoweringPhase(
-        ::InteropLoweringPart1,
-        name = "InteropPart1",
-        description = "Interop lowering, part 1",
-        prerequisite = setOf(inlinePhase)
-)
-
 /* IrFile phases */
 
 internal val lateinitPhase = makeKonanFileLoweringPhase(
@@ -244,6 +237,13 @@ internal val callableReferencePhase = makeKonanFileLoweringPhase(
         name = "CallableReference",
         description = "Callable references lowering",
         prerequisite = setOf(delegationPhase) // TODO: make weak dependency on `testProcessorPhase`
+)
+
+internal val interopPart1Phase = makeKonanFileLoweringPhase(
+        ::InteropLoweringPart1,
+        name = "InteropPart1",
+        description = "Interop lowering, part 1",
+        prerequisite = setOf(inlinePhase)
 )
 
 internal val interopPart2Phase = makeKonanFileLoweringPhase(

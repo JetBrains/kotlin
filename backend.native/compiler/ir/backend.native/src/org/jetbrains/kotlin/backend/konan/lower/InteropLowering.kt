@@ -649,9 +649,24 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
         val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
         return builder.at(expression).run {
             val classPtr = getObjCClass(constructedClass.symbol)
-            irForceNotNull(callAllocAndInit(classPtr, initMethodInfo, arguments, expression, initMethod))
+            ensureObjCReferenceNotNull(callAllocAndInit(classPtr, initMethodInfo, arguments, expression, initMethod))
         }
     }
+
+    private fun IrBuilderWithScope.ensureObjCReferenceNotNull(expression: IrExpression): IrExpression =
+            if (!expression.type.containsNull()) {
+                expression
+            } else {
+                irBlock(resultType = expression.type) {
+                    val temp = irTemporary(expression)
+                    +irIfThen(
+                            context.irBuiltIns.unitType,
+                            irEqeqeq(irGet(temp), irNull()),
+                            irCall(symbols.ThrowNullPointerException)
+                    )
+                    +irGet(temp)
+                }
+            }
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()

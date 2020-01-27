@@ -315,7 +315,6 @@ internal val allLoweringsPhase = namedIrModulePhase(
                 inlinePhase then
                 provisionalFunctionExpressionPhase then
                 lowerAfterInlinePhase then
-                interopPart1Phase then
                 performByIrFile(
                         name = "IrLowerByFile",
                         description = "IR Lowering by file",
@@ -336,6 +335,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
                                 enumClassPhase then
                                 delegationPhase then
                                 callableReferencePhase then
+                                interopPart1Phase then
                                 interopPart2Phase then
                                 varargPhase then
                                 compileTimeEvaluatePhase then

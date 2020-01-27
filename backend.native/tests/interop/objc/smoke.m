@@ -320,3 +320,19 @@ BOOL customStringDeallocated = NO;
     customStringDeallocated = YES;
 }
 @end;
+
+@implementation TestConstructorReturnsNull
+- (instancetype)init {
+    return nil;
+}
+@end;
+
+@implementation TestCallableReferences
+- (int)instanceMethod {
+    return self.value;
+}
+
++ (int)classMethod:(int)first :(int)second {
+    return first + second;
+}
+@end;

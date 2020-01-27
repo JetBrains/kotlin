@@ -166,16 +166,6 @@ internal fun KonanBackendContext.report(declaration: IrDeclaration, message: Str
     if (isError) throw KonanCompilationException()
 }
 
-fun IrBuilderWithScope.irForceNotNull(expression: IrExpression): IrExpression {
-    if (!expression.type.containsNull()) {
-        return expression
-    }
-
-    return irCall(context.irBuiltIns.checkNotNullSymbol, expression.type.makeNotNull()).apply {
-        putValueArgument(0, expression)
-    }
-}
-
 fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpression>) {
     val unhandledParameters = args.keys.toMutableSet()
     fun getArg(parameter: IrValueParameter) = args[parameter]?.also { unhandledParameters -= parameter }

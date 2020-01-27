@@ -239,3 +239,13 @@ int getCustomStringValue(CustomString* str) {
 }
 
 extern BOOL customStringDeallocated;
+
+@interface TestConstructorReturnsNull : NSObject
+- (instancetype)init;
+@end;
+
+@interface TestCallableReferences : NSObject
+@property int value;
+- (int)instanceMethod;
++ (int)classMethod:(int)first :(int)second;
+@end;
