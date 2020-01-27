@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
+import org.jetbrains.kotlin.resolve.calls.components.SamConversionOracle
 import org.jetbrains.kotlin.synthetic.hasJavaOriginInHierarchy
 import org.jetbrains.kotlin.types.KotlinType
 
-class JvmSamConversionTransformer(
+class JvmSamConversionOracle(
     private val languageVersionSettings: LanguageVersionSettings
-) : SamConversionTransformer {
+) : SamConversionOracle {
 
     override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean {
         if (languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) return true

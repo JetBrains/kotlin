@@ -76,13 +76,13 @@ interface KotlinResolutionCallbacks {
     fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 }
 
-@DefaultImplementation(impl = SamConversionTransformer.Empty::class)
-interface SamConversionTransformer {
+@DefaultImplementation(impl = SamConversionOracle.Empty::class)
+interface SamConversionOracle {
     fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean
 
     fun isPossibleSamType(samType: KotlinType): Boolean
 
-    object Empty : SamConversionTransformer {
+    object Empty : SamConversionOracle {
         override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean = false
         override fun isPossibleSamType(samType: KotlinType): Boolean {
             val descriptor = samType.constructor.declarationDescriptor

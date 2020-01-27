@@ -44,7 +44,7 @@ class KotlinCallComponents(
     val reflectionTypes: ReflectionTypes,
     val builtIns: KotlinBuiltIns,
     val languageVersionSettings: LanguageVersionSettings,
-    val samConversionTransformer: SamConversionTransformer,
+    val samConversionOracle: SamConversionOracle,
     val samConversionResolver: SamConversionResolver,
     val kotlinTypeChecker: NewKotlinTypeChecker
 )

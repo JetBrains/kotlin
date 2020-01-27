@@ -313,7 +313,7 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
 
     if (generatingAdditionalSamCandidateIsEnabled) return null
     if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
-        if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
+        if (!callComponents.samConversionOracle.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
     }
 
     val argumentIsFunctional = when (argument) {
@@ -325,7 +325,7 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
 
     val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
 
-    if (!callComponents.samConversionTransformer.isPossibleSamType(originalExpectedType)) return null
+    if (!callComponents.samConversionOracle.isPossibleSamType(originalExpectedType)) return null
 
     val convertedTypeByOriginal =
         callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
