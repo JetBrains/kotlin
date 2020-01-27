@@ -55,9 +55,6 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.toC
 public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProviderImpl implements IdeModifiableModelsProvider {
   private static final Logger LOG = Logger.getInstance(AbstractIdeModifiableModelsProvider.class);
 
-  private final static ExtensionPointName<ModifiableModelsProviderExtension<ModifiableModel>> EP_NAME =
-    ExtensionPointName.create("com.intellij.externalSystem.modifiableModelsProvider");
-
   private ModifiableModuleModel myModifiableModuleModel;
   private final Map<Module, ModifiableRootModel> myModifiableRootModels = new THashMap<>();
   private final Map<Module, ModifiableFacetModel> myModifiableFacetModels = new THashMap<>();
