@@ -17,13 +17,6 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val runTaskName = disambiguateCamelCased("run")
 
-    override fun configure() {
-        super.configure()
-        nodejsProducingConfiguredHandlers.forEach { handler ->
-            handler(this)
-        }
-    }
-
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
     }
@@ -46,13 +39,5 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureBuildVariants() {
-    }
-
-    fun whenProducingConfigured(body: KotlinNodeJsIr.() -> Unit) {
-        if (producingConfigured) {
-            this.body()
-        } else {
-            nodejsProducingConfiguredHandlers += body
-        }
     }
 }

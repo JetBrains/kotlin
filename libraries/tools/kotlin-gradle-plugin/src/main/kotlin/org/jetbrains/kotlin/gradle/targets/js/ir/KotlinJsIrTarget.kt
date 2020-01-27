@@ -42,10 +42,9 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
 
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJsIr::class.java, this).also {
+            it.configure()
             browserConfiguredHandlers.forEach { handler ->
-                it.whenProducingConfigured {
-                    handler(this)
-                }
+                handler(it)
             }
             browserConfiguredHandlers.clear()
         }
@@ -63,10 +62,9 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
 
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
+            it.configure()
             nodejsConfiguredHandlers.forEach { handler ->
-                it.whenProducingConfigured {
-                    handler(this)
-                }
+                handler(it)
             }
 
             nodejsConfiguredHandlers.clear()
@@ -81,6 +79,26 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
 
     override fun nodejs(body: KotlinJsIrNodeDsl.() -> Unit) {
         body(nodejs)
+    }
+
+    override fun produceKotlinLibrary() {
+        whenBrowserConfigured {
+            (this as KotlinJsIrSubTarget).produceKotlinLibrary()
+        }
+
+        whenNodejsConfigured {
+            (this as KotlinJsIrSubTarget).produceKotlinLibrary()
+        }
+    }
+
+    override fun produceExecutable() {
+        whenBrowserConfigured {
+            (this as KotlinJsIrSubTarget).produceExecutable()
+        }
+
+        whenNodejsConfigured {
+            (this as KotlinJsIrSubTarget).produceExecutable()
+        }
     }
 
     fun whenBrowserConfigured(body: KotlinJsIrBrowserDsl.() -> Unit) {

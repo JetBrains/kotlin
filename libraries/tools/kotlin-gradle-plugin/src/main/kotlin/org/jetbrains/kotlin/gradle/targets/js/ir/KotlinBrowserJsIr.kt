@@ -33,13 +33,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
-    override fun configure() {
-        super.configure()
-        browserProducingConfiguredHandlers.forEach { handler ->
-            handler(this)
-        }
-    }
-
     override fun configureDefaultTestFramework(it: KotlinJsIrTest) {
         it.useKarma {
             useChromeHeadless()
@@ -221,14 +214,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
         buildVariants.create(DEVELOPMENT) {
             it.kind = BuildVariantKind.DEVELOPMENT
-        }
-    }
-
-    fun whenProducingConfigured(body: KotlinBrowserJsIr.() -> Unit) {
-        if (producingConfigured) {
-            this.body()
-        } else {
-            browserProducingConfiguredHandlers += body
         }
     }
 

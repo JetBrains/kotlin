@@ -45,7 +45,7 @@ abstract class KotlinJsSubTarget(
         configureMain()
     }
 
-    internal open fun configure() {
+    internal fun configure() {
         NpmResolverPlugin.apply(project)
 
         configureTests()
