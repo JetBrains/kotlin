@@ -30,6 +30,7 @@ import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -76,11 +77,13 @@ public class IndexesExporter {
     zipIndexOut(indexRoot, zipFile, indicator);
   }
 
-  public void exportIndexesChunk(@NotNull IndexChunk chunk, @NotNull Path zipFile) {
+  @NotNull
+  public IndexInfrastructureVersion exportIndexesChunk(@NotNull IndexChunk chunk, @NotNull Path zipFile) {
     Path chunkRoot = getUnpackedIndexRoot(zipFile);
     EmptyProgressIndicator indicator = new EmptyProgressIndicator();
-    ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
+    IndexInfrastructureVersion version = ReadAction.compute(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
     zipIndexOut(chunkRoot, zipFile, indicator);
+    return version;
   }
 
   @NotNull
@@ -90,7 +93,10 @@ public class IndexesExporter {
     return PathKt.createDirectories(indexRoot);
   }
 
-  private void processChunkUnderReadAction(@NotNull Path chunkRoot, @NotNull IndexChunk chunk, @NotNull ProgressIndicator indicator) {
+  @NotNull
+  private IndexInfrastructureVersion processChunkUnderReadAction(@NotNull Path chunkRoot,
+                                                                 @NotNull IndexChunk chunk,
+                                                                 @NotNull ProgressIndicator indicator) {
     List<FileBasedIndexExtension<?, ?>> exportableFileBasedIndexExtensions = FileBasedIndexExtension
       .EXTENSION_POINT_NAME
       .extensions()
@@ -112,12 +118,13 @@ public class IndexesExporter {
     deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
     deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot.resolve("empty-stub-indices.txt"));
 
-    IndexInfrastructureVersion indexInfrastructureVersion = new IndexInfrastructureVersion(exportableFileBasedIndexExtensions,
-                                                                                           exportableStubIndexExtensions);
+    IndexInfrastructureVersion indexInfrastructureVersion = IndexInfrastructureVersion.fromExtensions(exportableFileBasedIndexExtensions,
+                                                                                                      exportableStubIndexExtensions);
     Path metadataFile = chunkRoot.resolve("metadata.json");
     writeIndexVersionsMetadata(metadataFile, chunk, indexInfrastructureVersion);
     printStatistics(chunk, fileBasedGenerators, stubGenerator);
-    printMetadata(metadataFile);
+    //printMetadata(metadataFile);
+    return indexInfrastructureVersion;
   }
 
   private static void writeIndexVersionsMetadata(@NotNull Path metadataFile,
@@ -128,60 +135,38 @@ public class IndexesExporter {
     try(JsonWriter writer = new Gson().newBuilder().setPrettyPrinting().create().newJsonWriter(sw)) {
       writer.beginObject();
 
-      writer.name("metadata_version");
-      writer.value("1");
+      writeNamedValue(writer, "metadata_version", "1");
 
-      writer.name("os");
-      writer.value(IndexInfrastructureVersion.getOs().getOsName());
-
-      writer.name("index_kind");
-      writer.value(indexChunk.getKind());
-
-      writer.name("index_name");
-      writer.value(indexChunk.getName());
+      writer.name("chunk");
+      writer.beginObject();
+      writeNamedValue(writer, "os", IndexInfrastructureVersion.getOs().getOsName());
+      writeNamedValue(writer, "kind", indexChunk.getKind());
+      writeNamedValue(writer, "name", indexChunk.getName());
+      writer.endObject();
 
       writer.name("sources");
       writer.beginObject();
-      writer.name("hash");
-      writer.value(indexChunk.getContentsHash());
-      writer.name("os");
-      writer.value(IndexInfrastructureVersion.getOs().getOsName());
+      writeNamedValue(writer, "hash", indexChunk.getContentsHash());
+      writeNamedValue(writer, "os", IndexInfrastructureVersion.getOs().getOsName());
       writer.endObject();
 
       writer.name("build");
       writer.beginObject();
-      writer.name("os");
-      writer.value(SystemInfo.getOsNameAndVersion());
-      writer.name("intellij_version");
-      writer.value(ApplicationInfo.getInstance().getFullVersion());
-      writer.name("intellij_build");
-      writer.value(ApplicationInfo.getInstance().getBuild().toString());
-      writer.name("intellij_product_code");
-      writer.value(ApplicationInfo.getInstance().getBuild().getProductCode());
+      writeNamedValue(writer, "os", IndexInfrastructureVersion.getOs().getOsName());
+      writeNamedValue(writer, "os_name", SystemInfo.getOsNameAndVersion());
+      writeNamedValue(writer, "intellij_version", ApplicationInfo.getInstance().getFullVersion());
+      writeNamedValue(writer, "intellij_build", ApplicationInfo.getInstance().getBuild().toString());
+      writeNamedValue(writer, "intellij_product_code",ApplicationInfo.getInstance().getBuild().getProductCode());
       writer.endObject();
-
 
       writer.name("indexes");
       writer.beginObject();
-      writer.name("os");
-      writer.value(IndexInfrastructureVersion.getOs().getOsName());
-      //what root indexes to be included here?
+      writeNamedValue(writer, "weak_hash", infrastructureVersion.getWeakVersionHash());
       writer.name("versions");
       writer.beginObject();
-      Map<String, String> allIndexVersions = new LinkedHashMap<>();
-
-      infrastructureVersion.getFileBasedIndexVersions().entrySet().stream()
-        .sorted(Map.Entry.comparingByKey())
-        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().toString(), (a, b) -> a, () -> allIndexVersions));
-
-      infrastructureVersion.getStubIndexVersions().entrySet().stream()
-        .sorted(Map.Entry.comparingByKey())
-        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().toString(), (a, b) -> a, () -> allIndexVersions));
-
-      for (Map.Entry<String, String> e : allIndexVersions.entrySet()) {
-        writer.name(e.getKey());
-        writer.value(e.getValue());
-      }
+      writeNamedMap(writer, "base_versions", infrastructureVersion.getBaseIndexes());
+      writeNamedMap(writer, "file_index_versions", infrastructureVersion.getFileBasedIndexVersions());
+      writeNamedMap(writer, "stub_index_versions", infrastructureVersion.getStubIndexVersions());
       writer.endObject();
       writer.endObject();
 
@@ -195,6 +180,25 @@ public class IndexesExporter {
     } catch (IOException e) {
       throw new RuntimeException("Failed to write versions JSON to " + metadataFile + ". " + e.getMessage(), e);
     }
+  }
+
+  private static void writeNamedValue(@NotNull JsonWriter writer,
+                                      @NotNull String name,
+                                      @Nullable String value) throws IOException {
+    writer.name(name);
+    writer.value(value);
+  }
+
+  private static void writeNamedMap(@NotNull JsonWriter writer,
+                                    @NotNull String name,
+                                    @NotNull Map<String, String> map) throws IOException {
+    writer.name(name);
+    writer.beginObject();
+    for (Map.Entry<String, String> e : map.entrySet()) {
+      writer.name(e.getKey());
+      writer.value(e.getValue());
+    }
+    writer.endObject();
   }
 
   @NotNull
@@ -256,6 +260,7 @@ public class IndexesExporter {
           generator.openIndex();
         }
 
+        indicator.setText("Collecting files to index...");
         Set<VirtualFile> files = new THashSet<>();
         for (VirtualFile root : chunk.getRoots()) {
           VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Boolean>() {
@@ -269,13 +274,19 @@ public class IndexesExporter {
           });
         }
 
+        LOG.warn("Collected " + files.size() + " files to index");
+        indicator.setText("Indexing files...");
+
         boolean isOk = JobLauncher.getInstance().invokeConcurrentlyUnderProgress(new ArrayList<>(files),
                                                                                  indicator,
                                                                                  f -> {
                                                                                    generateIndexesForFile(f, generators, hashEnumerator);
                                                                                    return true;
                                                                                  });
-        LOG.assertTrue(isOk, "indexes generation is failed");
+
+        if (!isOk) {
+          throw new RuntimeException("Failed to generate indexes in parallel. JobLauncher returned false");
+        }
       }
       finally {
         hashEnumerator.close();
@@ -329,17 +340,30 @@ public class IndexesExporter {
                                       @NotNull List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators,
                                       @NotNull StubHashBasedIndexGenerator stubGenerator) {
     StringBuilder stats = new StringBuilder();
-    stats.append("Statistics for index chunk ").append(chunk.getName()).append("\n");
 
-    stats.append("File based indices (").append(fileBasedGenerators.size()).append(")").append("\n");
-    for (HashBasedIndexGenerator<?, ?> generator : fileBasedGenerators) {
-      appendGeneratorStatistics(stats, generator);
-    }
+    for (Boolean mustBeEmpty : Arrays.asList(true, false)) {
+      stats.append("Statistics for index chunk ").append(chunk.getName());
+      if (mustBeEmpty) {
+        stats.append(" EMPTY ONLY INDEXES ");
+      } else {
+        stats.append(" NON EMPTY ONLY INDEXES ");
+      }
+      stats.append("\n");
 
-    Collection<HashBasedIndexGenerator<?, ?>> stubGenerators = stubGenerator.getStubGenerators();
-    stats.append("Stub indices (").append(stubGenerators.size()).append(")").append("\n");
-    for (HashBasedIndexGenerator<?, ?> generator : stubGenerators) {
-      appendGeneratorStatistics(stats, generator);
+      stats.append("File based indices (").append(fileBasedGenerators.size()).append("):").append("\n");
+      for (HashBasedIndexGenerator<?, ?> generator : fileBasedGenerators) {
+        if (mustBeEmpty != (generator.getIndexedFilesNumber() == 0)) continue;
+        appendGeneratorStatistics(stats, generator);
+      }
+
+      Collection<HashBasedIndexGenerator<?, ?>> stubGenerators = stubGenerator.getStubGenerators();
+      stats.append("Stub indices (").append(stubGenerators.size()).append("):").append("\n");
+      for (HashBasedIndexGenerator<?, ?> generator : stubGenerators) {
+        if (mustBeEmpty != (generator.getIndexedFilesNumber() == 0)) continue;
+        appendGeneratorStatistics(stats, generator);
+      }
+
+      stats.append("\n\n");
     }
 
     LOG.warn("Statistics\n" + stats);
