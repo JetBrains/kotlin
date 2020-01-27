@@ -14,13 +14,15 @@ import org.jetbrains.kotlin.name.Name
 class FirLocalScope : FirScope() {
 
     val properties = mutableMapOf<Name, FirVariableSymbol<*>>()
-    val functions = mutableMapOf<Name, FirFunctionSymbol<*>>()
+    val functions = mutableMapOf<Name, MutableList<FirFunctionSymbol<*>>>()
     val classes = mutableMapOf<Name, FirRegularClassSymbol>()
 
     fun storeDeclaration(declaration: FirNamedDeclaration) {
         when (declaration) {
             is FirVariable<*> -> properties[declaration.name] = declaration.symbol
-            is FirSimpleFunction -> functions[declaration.name] = declaration.symbol as FirNamedFunctionSymbol
+            is FirSimpleFunction -> functions.getOrPut(declaration.name) {
+                mutableListOf()
+            }.add(declaration.symbol as FirNamedFunctionSymbol)
             is FirRegularClass -> classes[declaration.name] = declaration.symbol
         }
     }
@@ -30,11 +32,9 @@ class FirLocalScope : FirScope() {
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        val function = functions[name]
-        if (function != null) {
+        for (function in functions[name].orEmpty()) {
             processor(function)
         }
-
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {

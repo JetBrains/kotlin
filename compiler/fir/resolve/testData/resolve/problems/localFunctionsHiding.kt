@@ -5,11 +5,11 @@ interface A {
 fun test_1() {
     fun Int.transform(): Int = 1
     fun A.transform(): Int {
-        return x.<!INAPPLICABLE_CANDIDATE!>transform<!>()
+        return x.transform()
     }
 
     val y = 1
-    y.<!INAPPLICABLE_CANDIDATE!>transform<!>()
+    y.transform()
 }
 
 fun test_2() {
