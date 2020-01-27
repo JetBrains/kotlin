@@ -41,7 +41,7 @@ FILE: delegateTypeMismatch.kt
                 D|/A.classifierNamePolicy|.<Inapplicable(INAPPLICABLE): [kotlin/properties/ReadWriteProperty.setValue]>#(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
             }
 
-        public final var typeNormalizer: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by <Inapplicable(INAPPLICABLE): [/A.property]>#<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(): R|class error: Unresolved name: it| {
+        public final var typeNormalizer: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by <Inapplicable(INAPPLICABLE): [/A.property]>#<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(): R|ERROR CLASS: Unresolved name: it| {
             <Unresolved name: it>#
         }
         )

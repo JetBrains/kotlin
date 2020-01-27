@@ -66,7 +66,7 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(),
 
     abstract val nullability: ConeNullability
 
-    override fun toString(): String {
+    final override fun toString(): String {
         return render()
     }
 }
@@ -90,10 +90,6 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
 
     override val nullability: ConeNullability
         get() = ConeNullability.UNKNOWN
-
-    override fun toString(): String {
-        return "<ERROR CLASS: $reason>"
-    }
 }
 
 abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
@@ -221,6 +217,10 @@ class ConeStubType(val variable: ConeTypeVariable, override val nullability: Con
 open class ConeTypeVariable(name: String) : TypeVariableMarker {
     val typeConstructor = ConeTypeVariableTypeConstructor(name)
     val defaultType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
+
+    override fun toString(): String {
+        return defaultType.toString()
+    }
 }
 
 class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {

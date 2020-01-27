@@ -28,7 +28,7 @@ digraph complex_kt {
           14 [label="Access variable R|<local>/url|"];
           15 [label="Access variable R|<local>/url|"];
           16 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|)"];
-          17 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <anonymous>(): R|class error: Unresolved name: fromJson| {
+          17 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <anonymous>(): R|ERROR CLASS: Unresolved name: fromJson| {
     <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(Q|kotlin/Array|).R|kotlin/jvm/java|)
 }
 )"];
@@ -71,7 +71,7 @@ digraph complex_kt {
       }
       41 [label="Try expression exit"];
     }
-    42 [label="Variable declaration: lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>|"];
+    42 [label="Variable declaration: lval pluginDTOs: R|kotlin/Array<ERROR CLASS: Symbol not found, for `PluginDTO`>|"];
     43 [label="Exit function fetchPluginReleaseDate" style="filled" fillcolor=red];
   }
   subgraph cluster_8 {

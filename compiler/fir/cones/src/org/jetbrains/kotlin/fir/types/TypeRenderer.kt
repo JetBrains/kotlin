@@ -13,8 +13,8 @@ fun ConeKotlinType.render(): String {
     val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
-        is ConeDefinitelyNotNullType -> "${original.render()}!"
-        is ConeClassErrorType -> "class error: $reason"
+        is ConeDefinitelyNotNullType -> "${original.render()}!!"
+        is ConeClassErrorType -> "ERROR CLASS: $reason"
         is ConeCapturedType -> "captured type: lowerType = ${lowerType?.render()}"
         is ConeClassLikeType -> {
             buildString {
