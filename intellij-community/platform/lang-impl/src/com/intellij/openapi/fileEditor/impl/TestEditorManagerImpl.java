@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.fileEditor.impl;
 
 import com.intellij.ide.highlighter.HighlighterFactory;
@@ -21,10 +21,7 @@ import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
-import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -450,18 +447,26 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
 
   @NotNull
   private Editor doOpenTextEditor(@NotNull OpenFileDescriptor descriptor) {
-    final VirtualFile file = descriptor.getFile();
+    VirtualFile file = descriptor.getFile();
     Editor editor = myVirtualFile2Editor.get(file);
 
     if (editor == null) {
       Document document = FileDocumentManager.getInstance().getDocument(file);
       LOG.assertTrue(document != null, file);
-      editor = EditorFactory.getInstance().createEditor(document, myProject);
-      final EditorHighlighter highlighter = HighlighterFactory.createHighlighter(myProject, file);
-      Language language = TextEditorImpl.getDocumentLanguage(editor);
-      editor.getSettings().setLanguageSupplier(() -> language);
-      ((EditorEx) editor).setHighlighter(highlighter);
-      ((EditorEx) editor).setFile(file);
+      EditorFactory editorFactory = EditorFactory.getInstance();
+      editor = editorFactory.createEditor(document, myProject);
+      try {
+        EditorHighlighter highlighter = HighlighterFactory.createHighlighter(myProject, file);
+        Language language = TextEditorImpl.getDocumentLanguage(editor);
+        editor.getSettings().setLanguageSupplier(() -> language);
+        EditorEx editorEx = (EditorEx)editor;
+        editorEx.setHighlighter(highlighter);
+        editorEx.setFile(file);
+      }
+      catch (Throwable e) {
+        editorFactory.releaseEditor(editor);
+        throw e;
+      }
 
       myVirtualFile2Editor.put(file, editor);
     }
