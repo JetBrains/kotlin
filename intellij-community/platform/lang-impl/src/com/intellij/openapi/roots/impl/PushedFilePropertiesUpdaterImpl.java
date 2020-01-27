@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.impl;
 
 import com.intellij.ProjectTopics;
@@ -144,20 +144,9 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
 
   @Override
   public void initializeProperties() {
-    for (FilePropertyPusher<?> pusher : FilePropertyPusher.EP_NAME.getExtensionList()) {
-      pusher.initExtra(myProject, myProject.getMessageBus(), new FilePropertyPusher.Engine() {
-        @Override
-        public void pushAll() {
-          PushedFilePropertiesUpdaterImpl.this.pushAll(pusher);
-        }
-
-        @Override
-        public void pushRecursively(@NotNull VirtualFile file, @NotNull Project project) {
-          queueTasks(ContainerUtil.createMaybeSingletonList(
-            createRecursivePushTask(new VFileContentChangeEvent(this, file, 0, 0, false), Collections.singletonList(pusher))));
-        }
-      });
-    }
+    FilePropertyPusher.EP_NAME.forEachExtensionSafe(pusher -> {
+      pusher.initExtra(myProject, myProject.getMessageBus());
+    });
   }
 
   @Override
