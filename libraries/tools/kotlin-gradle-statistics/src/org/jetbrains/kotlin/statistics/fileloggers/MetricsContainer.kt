@@ -43,9 +43,9 @@ class MetricsContainer : IStatisticsValuesConsumer {
 
         private val numericalMetricsMap = NumericalMetrics.values().associateBy(NumericalMetrics::name)
 
-        fun readFromFile(file: File, consumer: (MetricsContainer) -> Unit) {
+        fun readFromFile(file: File, consumer: (MetricsContainer) -> Unit): Boolean {
             val channel = FileChannel.open(Paths.get(file.toURI()), StandardOpenOption.WRITE, StandardOpenOption.READ)
-            channel.lock()
+            channel.tryLock() ?: return false
 
             val inputStream = Channels.newInputStream(channel)
             try {
@@ -86,6 +86,7 @@ class MetricsContainer : IStatisticsValuesConsumer {
             } finally {
                 channel.close()
             }
+            return true
         }
     }
 

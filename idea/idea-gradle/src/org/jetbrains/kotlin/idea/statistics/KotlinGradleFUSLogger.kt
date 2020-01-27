@@ -175,9 +175,10 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
                 try {
                     for (gradleUserHome in gradleUserDirs) {
                         BuildSessionLogger.listProfileFiles(File(gradleUserHome, STATISTICS_FOLDER_NAME))?.forEach { statisticFile ->
+                            var fileWasRead = true
                             try {
                                 var previousEvent: MetricsContainer? = null
-                                MetricsContainer.readFromFile(statisticFile) { metricContainer ->
+                                fileWasRead = MetricsContainer.readFromFile(statisticFile) { metricContainer ->
                                     processMetricsContainer(metricContainer, previousEvent)
                                     previousEvent = metricContainer
                                 }
@@ -185,7 +186,7 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
                                 Logger.getInstance(KotlinFUSLogger::class.java)
                                     .info("Failed to process file ${statisticFile.absolutePath}: ${e.message}", e)
                             } finally {
-                                if (!statisticFile.delete()) {
+                                if (fileWasRead && !statisticFile.delete()) {
                                     Logger.getInstance(KotlinFUSLogger::class.java)
                                         .warn("[FUS] Failed to delete file ${statisticFile.absolutePath}")
                                 }

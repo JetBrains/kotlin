@@ -24,7 +24,7 @@ class FileRecordLogger(file: File) : IRecordLogger {
 
     init {
         lock = try {
-            channel.lock()
+            channel.tryLock() ?: throw IOException("Could not acquire an exclusive lock of file ${file.name}")
         } catch (e: Exception) {
             channel.close()
             // wrap in order to unify with FileOverlappingException
