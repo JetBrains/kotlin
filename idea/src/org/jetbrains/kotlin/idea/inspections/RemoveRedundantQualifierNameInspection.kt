@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.hasNotReceiver
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 
 class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+    companion object {
+        private val ENUM_STATIC_METHODS = listOf("values", "valueOf")
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         object : KtVisitorVoid() {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
@@ -44,12 +48,16 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 else
                     expressionForAnalyze
 
+                val receiverReference = expressionForAnalyze.receiverExpression.mainReference?.resolve()
                 val parentEnumEntry = expressionForAnalyze.getStrictParentOfType<KtEnumEntry>()
                 if (parentEnumEntry != null) {
-                    val companionObject = (expressionForAnalyze.receiverExpression.mainReference?.resolve() as? KtObjectDeclaration)
-                        ?.takeIf { it.isCompanion() }
+                    val companionObject = (receiverReference as? KtObjectDeclaration)?.takeIf { it.isCompanion() }
                     if (companionObject?.containingClass() == parentEnumEntry.getStrictParentOfType<KtClass>()) return
                 }
+                if ((receiverReference as? KtClass)?.isEnum() == true
+                    && expressionForAnalyze.getParentOfTypesAndPredicate(true, KtClass::class.java) { it.isEnum() } != receiverReference
+                    && expressionForAnalyze.isEnumStaticMethodCall()
+                ) return
 
                 val context = originalExpression.analyze()
 
@@ -77,6 +85,8 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 reportProblem(holder, applicableExpression)
             }
         }
+
+    private fun KtDotQualifiedExpression.isEnumStaticMethodCall() = callExpression?.calleeExpression?.text in ENUM_STATIC_METHODS
 }
 
 private tailrec fun KtDotQualifiedExpression.firstExpressionWithoutReceiver(): KtDotQualifiedExpression? = if (hasNotReceiver())
