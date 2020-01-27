@@ -69,6 +69,8 @@ constructor(
         }
     }
 
+    var producingType: KotlinJsProducingType? = null
+
     var irTarget: KotlinJsIrTarget? = null
 
     val testTaskName get() = testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).testTaskName
@@ -124,18 +126,27 @@ constructor(
     }
 
     override fun produceKotlinLibrary() {
-        produce {
+        produce(KotlinJsProducingType.KOTLIN_LIBRARY) {
             produceKotlinLibrary()
         }
     }
 
     override fun produceExecutable() {
-        produce {
+        produce(KotlinJsProducingType.EXECUTABLE) {
             produceExecutable()
         }
     }
 
-    private fun produce(producer: KotlinJsSubTarget.() -> Unit) {
+    private fun produce(
+        producingType: KotlinJsProducingType,
+        producer: KotlinJsSubTarget.() -> Unit
+    ) {
+        check(this.producingType == null || this.producingType == producingType) {
+            "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
+        }
+
+        this.producingType = producingType
+
         whenBrowserConfigured {
             (this as KotlinJsSubTarget).producer()
         }

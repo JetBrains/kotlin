@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.JsIrAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrTargetDsl
@@ -30,6 +31,8 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
     KotlinJsIrTargetDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsIrReportAggregatingTestRun>
         internal set
+
+    var producingType: KotlinJsProducingType? = null
 
     val testTaskName get() = testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).testTaskName
     val testTask: TaskProvider<KotlinTestReport>
@@ -83,18 +86,27 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
     }
 
     override fun produceKotlinLibrary() {
-        produce {
+        produce(KotlinJsProducingType.KOTLIN_LIBRARY) {
             produceKotlinLibrary()
         }
     }
 
     override fun produceExecutable() {
-        produce {
+        produce(KotlinJsProducingType.EXECUTABLE) {
             produceExecutable()
         }
     }
 
-    private fun produce(producer: KotlinJsSubTarget.() -> Unit) {
+    private fun produce(
+        producingType: KotlinJsProducingType,
+        producer: KotlinJsSubTarget.() -> Unit
+    ) {
+        check(this.producingType == null || this.producingType == producingType) {
+            "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
+        }
+
+        this.producingType = producingType
+
         whenBrowserConfigured {
             (this as KotlinJsSubTarget).producer()
         }
