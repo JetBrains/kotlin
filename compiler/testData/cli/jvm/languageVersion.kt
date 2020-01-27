@@ -1,5 +1,9 @@
 package test
 
-annotation class Outer {
-    class Nested
+fun test() {
+    while (true) {
+        when {
+            true -> break
+        }
+    }
 }

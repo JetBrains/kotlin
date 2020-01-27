@@ -248,6 +248,12 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     val isStable: Boolean
         get() = this <= LATEST_STABLE
 
+    val isDeprecated: Boolean
+        get() = this >= OLDEST_DEPRECATED && this < FIRST_SUPPORTED
+
+    val isUnsupported: Boolean
+        get() = this < OLDEST_DEPRECATED
+
     val versionString: String
         get() = "$major.$minor"
 
@@ -265,7 +271,10 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         @JvmField
-        val FIRST_SUPPORTED = KOTLIN_1_2
+        val OLDEST_DEPRECATED = KOTLIN_1_2
+
+        @JvmField
+        val FIRST_SUPPORTED = KOTLIN_1_3
 
         @JvmField
         val LATEST_STABLE = KOTLIN_1_4

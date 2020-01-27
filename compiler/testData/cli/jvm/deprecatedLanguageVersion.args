@@ -2,4 +2,4 @@ $TESTDATA_DIR$/simple.kt
 -d
 $TEMP_DIR$
 -language-version
-1.1
+1.2

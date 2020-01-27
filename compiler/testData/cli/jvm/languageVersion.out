@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/languageVersion.kt:4:5: error: members are not allowed in annotation class
-    class Nested
-    ^
+compiler/testData/cli/jvm/languageVersion.kt:6:21: error: 'break' and 'continue' are not allowed in 'when' statements. Consider using labels to continue/break from the outer loop
+            true -> break
+                    ^
 COMPILATION_ERROR

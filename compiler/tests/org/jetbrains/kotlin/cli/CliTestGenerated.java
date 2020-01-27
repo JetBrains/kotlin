@@ -30,14 +30,14 @@ public class CliTestGenerated extends AbstractCliTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
+        @TestMetadata("apiAndLanguageVersionsUnsupported.args")
+        public void testApiAndLanguageVersionsUnsupported() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiAndLanguageVersionsUnsupported.args");
+        }
+
         @TestMetadata("apiVersion.args")
         public void testApiVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/apiVersion.args");
-        }
-
-        @TestMetadata("apiVersion1.0.args")
-        public void testApiVersion1_0() throws Exception {
-            runTest("compiler/testData/cli/jvm/apiVersion1.0.args");
         }
 
         @TestMetadata("apiVersionAndSinceNewerKotlin.args")
@@ -63,6 +63,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("apiVersionLessThanLanguageUsingArgfile.args")
         public void testApiVersionLessThanLanguageUsingArgfile() throws Exception {
             runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguageUsingArgfile.args");
+        }
+
+        @TestMetadata("apiVersionUnsupported.args")
+        public void testApiVersionUnsupported() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiVersionUnsupported.args");
         }
 
         @TestMetadata("argfileWithEmptyArgument.args")
@@ -160,6 +165,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/deprecatedApiVersion.args");
         }
 
+        @TestMetadata("deprecatedLanguageUnsupportedApi.args")
+        public void testDeprecatedLanguageUnsupportedApi() throws Exception {
+            runTest("compiler/testData/cli/jvm/deprecatedLanguageUnsupportedApi.args");
+        }
+
         @TestMetadata("deprecatedLanguageVersion.args")
         public void testDeprecatedLanguageVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/deprecatedLanguageVersion.args");
@@ -168,6 +178,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("diagnosticsOrder.args")
         public void testDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/diagnosticsOrder.args");
+        }
+
+        @TestMetadata("disabledFeatureFromUnsupportedVersion.args")
+        public void testDisabledFeatureFromUnsupportedVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/disabledFeatureFromUnsupportedVersion.args");
         }
 
         @TestMetadata("duplicateSources.args")
@@ -480,6 +495,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/languageVersionInvalid.args");
         }
 
+        @TestMetadata("languageVersionUnsupported.args")
+        public void testLanguageVersionUnsupported() throws Exception {
+            runTest("compiler/testData/cli/jvm/languageVersionUnsupported.args");
+        }
+
         @TestMetadata("legacySmartCastsAfterTry.args")
         public void testLegacySmartCastsAfterTry() throws Exception {
             runTest("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
@@ -645,14 +665,14 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/unknownExtraFlags.args");
         }
 
-        @TestMetadata("unsupportedTypeAlias.args")
-        public void testUnsupportedTypeAlias() throws Exception {
-            runTest("compiler/testData/cli/jvm/unsupportedTypeAlias.args");
-        }
-
         @TestMetadata("useMixedNamedArgumentsFlag.args")
         public void testUseMixedNamedArgumentsFlag() throws Exception {
             runTest("compiler/testData/cli/jvm/useMixedNamedArgumentsFlag.args");
+        }
+
+        @TestMetadata("variableInWhenSubject.args")
+        public void testVariableInWhenSubject() throws Exception {
+            runTest("compiler/testData/cli/jvm/variableInWhenSubject.args");
         }
 
         @TestMetadata("warningJdkWithNoJdk.args")
