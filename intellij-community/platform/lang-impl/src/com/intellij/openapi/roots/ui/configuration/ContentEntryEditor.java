@@ -136,7 +136,8 @@ public abstract class ContentEntryEditor implements ContentRootPanel.ActionCallb
   }
 
   @Override
-  public void deleteContentFolder(ContentEntry contentEntry, ContentFolder folder) {
+  public void deleteContentFolder(ContentEntry contentEntry, ContentFolderRef folderRef) {
+    ContentFolder folder = folderRef.getContentFolder();
     if (folder instanceof SourceFolder) {
       removeSourceFolder((SourceFolder)folder);
       update();
@@ -149,8 +150,8 @@ public abstract class ContentEntryEditor implements ContentRootPanel.ActionCallb
   }
 
   @Override
-  public void navigateFolder(ContentEntry contentEntry, ContentFolder contentFolder) {
-    final VirtualFile file = contentFolder.getFile();
+  public void navigateFolder(ContentEntry contentEntry, ContentFolderRef contentFolderRef) {
+    final VirtualFile file = contentFolderRef.getFile();
     if (file != null) { // file can be deleted externally
       myEventDispatcher.getMulticaster().navigationRequested(this, file);
     }
