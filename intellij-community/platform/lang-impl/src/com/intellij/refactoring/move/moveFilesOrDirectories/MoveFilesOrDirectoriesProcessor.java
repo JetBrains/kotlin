@@ -164,9 +164,14 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
           }
         }
       }
-      for (final PsiElement element : myElementsToMove) {
-        final RefactoringElementListener elementListener = getTransaction().getElementListener(element);
 
+     RefactoringElementListener[] listeners =
+       Arrays.stream(myElementsToMove)
+         .map(item -> getTransaction().getElementListener(item))
+         .toArray(RefactoringElementListener[]::new);
+
+      for (int i = 0; i < myElementsToMove.length; i++) {
+        PsiElement element = myElementsToMove[i];
         if (element instanceof PsiDirectory) {
           MoveFilesOrDirectoriesUtil.doMoveDirectory((PsiDirectory)element, myNewParent);
           for (PsiElement psiElement : element.getChildren()) {
@@ -189,7 +194,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
           }
         }
 
-        elementListener.elementMoved(element);
+        listeners[i].elementMoved(element);
       }
       // sort by offset descending to process correctly several usages in one PsiElement [IDEADEV-33013]
       CommonRefactoringUtil.sortDepthFirstRightLeftOrder(usages);
