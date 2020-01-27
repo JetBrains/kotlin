@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
-import org.jetbrains.kotlin.backend.konan.ir.IrProviderForInteropStubs
+import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForInteropStubs
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
@@ -201,7 +201,8 @@ internal val psiToIrPhase = konanUnitPhase(
 
             val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(
                     symbolTable, generatorContext.irBuiltIns, reflectionTypes)
-            val irProviderForInteropStubs = IrProviderForInteropStubs()
+            // TODO: Add special handling for enums and structs.
+            val irProviderForInteropStubs = IrProviderForInteropStubs { false }
             val symbols = KonanSymbols(this, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
             val stubGenerator = DeclarationStubGenerator(
                     moduleDescriptor, symbolTable,
