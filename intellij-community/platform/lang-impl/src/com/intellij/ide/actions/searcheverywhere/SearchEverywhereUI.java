@@ -1332,8 +1332,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   private class ShowInFindToolWindowAction extends DumbAwareAction {
 
     ShowInFindToolWindowAction() {
-      super(IdeBundle.message("show.in.find.window.button.name"),
-            IdeBundle.message("show.in.find.window.button.description"), AllIcons.General.Pin_tab);
+      super(() -> IdeBundle.message("show.in.find.window.button.name"),
+            () -> IdeBundle.message("show.in.find.window.button.description"), AllIcons.General.Pin_tab);
     }
 
     @Override
