@@ -260,6 +260,8 @@ fun createKotlinLibraryComponents(
     }
 }
 
+fun createKotlinLibrary(libraryFile: File): KotlinLibrary = resolveSingleFileKlib(libraryFile)
+
 val File.isPre_1_4_Library: Boolean
     get() {
         val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(this, null)
