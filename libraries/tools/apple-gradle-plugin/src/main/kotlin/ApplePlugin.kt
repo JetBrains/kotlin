@@ -24,7 +24,7 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.nativeplatform.internal.Names
@@ -45,23 +45,23 @@ private class DefaultAppleSourceSet(@Suppress("ACCIDENTAL_OVERRIDE") override va
     override val apple: SourceDirectorySet = objects.sourceDirectorySet("$name Apple source", name)
 }
 
-private open class AppleBuildTask @Inject constructor(
-    protected val target: AppleTarget,
-    protected val execActionFactory: ExecActionFactory
+private open class AppleGenerateXcodeProjectTask @Inject constructor(
+    private val target: AppleTarget,
+    private val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
-    init {
-        group = BasePlugin.BUILD_GROUP
-    }
+    var baseDir: File = project.buildDir.resolve("tmp/apple/${target.name}")
+        @OutputDirectory get
 
-    private fun getQualifiedName(targetName: String): String = listOfNotNull(
-            project.group.toString().takeIf { it.isNotBlank() },
-            project.name.takeIf { it.isNotBlank() },
-            targetName
-    ).joinToString(".")
+    var configName: String = "Debug"
+        @Input get
 
-    fun generateXcodeproj(baseDir: File, projectDir: File, configName: String) {
-        if (projectDir.exists()) return
-        println("GENERATING XCODEPROJ")
+    @TaskAction
+    fun execute() {
+        val projectDir = baseDir.resolve("${target.name}.xcodeproj")
+
+        if (projectDir.exists()) {
+            projectDir.delete()
+        }
         projectDir.mkdirs()
 
         val projectFile = projectDir.resolve("project.pbxproj")
@@ -240,13 +240,27 @@ private open class AppleBuildTask @Inject constructor(
         }
     }
 
+    private fun getQualifiedName(targetName: String): String = listOfNotNull(
+        project.group.toString().takeIf { it.isNotBlank() },
+        project.name.takeIf { it.isNotBlank() },
+        targetName
+    ).joinToString(".")
+}
+
+private open class AppleBuildTask @Inject constructor(
+    protected val target: AppleTarget,
+    protected val execActionFactory: ExecActionFactory
+) : DefaultTask() {
+    init {
+        group = BasePlugin.BUILD_GROUP
+    }
+
     @TaskAction
     fun build() {
         val configName = "Debug"
 
         val baseDir = project.buildDir.resolve("tmp/apple/${target.name}")
         val projectDir = baseDir.resolve("${target.name}.xcodeproj")
-        generateXcodeproj(baseDir, projectDir, configName)
 
         println("RUNNING XCODEBUILD")
 
@@ -297,9 +311,15 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
         apple.outputDir = project.buildDir.resolve("bin/$name")
     }
 
+    val generateXcodeprojTask: AppleGenerateXcodeProjectTask by project.tasks.register("generateXcodeproj", AppleGenerateXcodeProjectTask::class.java, this).also {
+        it.configure {
+            dependsOn(configuration.incoming.files)
+        }
+    }
     override val buildTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Main", AppleBuildTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
+            dependsOn(generateXcodeprojTask)
         }
 
         project.tasks.named(BasePlugin.ASSEMBLE_TASK_NAME) {
@@ -309,6 +329,7 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
     override val buildTestTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Test", AppleBuildTestTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
+            dependsOn(generateXcodeprojTask)
         }
     }
 
