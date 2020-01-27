@@ -277,23 +277,24 @@ public class Tool implements SchemeElement {
       if (isUseConsole()) {
         ExecutionEnvironment environment = ExecutionEnvironmentBuilder.create(project,
                                                                               DefaultRunExecutor.getRunExecutorInstance(),
-                                                                              new ToolRunProfile(this, dataContext)).build();
+                                                                              new ToolRunProfile(this, dataContext))
+          .build(new ProgramRunner.Callback() {
+            @Override
+            public void processStarted(RunContentDescriptor descriptor) {
+              ProcessHandler processHandler = descriptor.getProcessHandler();
+              if (processHandler != null && processListener != null) {
+                LOG.assertTrue(!processHandler.isStartNotified(),
+                               "ProcessHandler is already startNotified, the listener won't be correctly notified");
+                processHandler.addProcessListener(processListener);
+              }
+            }
+          });
         if (environment.getState() == null) {
           return false;
         }
 
         environment.setExecutionId(executionId);
-        environment.getRunner().execute(environment.withCallback(new ProgramRunner.Callback() {
-          @Override
-          public void processStarted(RunContentDescriptor descriptor) {
-            ProcessHandler processHandler = descriptor.getProcessHandler();
-            if (processHandler != null && processListener != null) {
-              LOG.assertTrue(!processHandler.isStartNotified(),
-                             "ProcessHandler is already startNotified, the listener won't be correctly notified");
-              processHandler.addProcessListener(processListener);
-            }
-          }
-        }));
+        environment.getRunner().execute(environment);
       }
       else {
         GeneralCommandLine commandLine = createCommandLine(dataContext);
