@@ -42,21 +42,6 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun js(name: String, configure: Closure<*>) = js(name) { ConfigureUtil.configure(configure, this) }
     fun js(configure: Closure<*>) = js { ConfigureUtil.configure(configure, this) }
 
-//    fun jsIr(
-//        name: String = "jsIr",
-//        configure: KotlinJsIrTarget.() -> Unit = { }
-//    ): KotlinJsIrTarget =
-//        configureOrCreate(
-//            name,
-//            presets.getByName("jsIr") as KotlinJsIrTargetPreset,
-//            configure
-//        )
-//
-//    fun jsIr() = jsIr("jsIr") { }
-//    fun jsIr(name: String) = jsIr(name) { }
-//    fun jsIr(name: String, configure: Closure<*>) = jsIr(name) { ConfigureUtil.configure(configure, this) }
-//    fun jsIr(configure: Closure<*>) = jsIr { ConfigureUtil.configure(configure, this) }
-
     fun android(
         name: String = "android",
         configure: KotlinAndroidTarget.() -> Unit = { }

@@ -20,7 +20,6 @@ internal class KotlinPresetEntry(
 internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, targetType)
 
 internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
-internal const val JS_IR_PACKAGE = "org.jetbrains.kotlin.gradle.targets.js.ir"
 
 internal object NativeFQNames {
     object Targets {
@@ -44,14 +43,9 @@ internal val jvmPresetEntry = KotlinPresetEntry(
 
 internal val jsPresetEntry = KotlinPresetEntry(
     "js",
-    typeName("$MPP_PACKAGE.KotlinJsTargetPreset"),
-    typeName("org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget")
-)
-
-internal val jsIrPresetEntry = KotlinPresetEntry(
-    "jsIr",
-    typeName("$JS_IR_PACKAGE.KotlinJsIrTargetPreset"),
-    typeName("$JS_IR_PACKAGE.KotlinJsIrTarget")
+    // need for commonization KotlinJsTargetPreset and KotlinJsIrTargetPreser
+    typeName("org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset", "org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl"),
+    typeName("org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl")
 )
 
 internal val androidPresetEntry = KotlinPresetEntry(
@@ -84,6 +78,5 @@ internal val nativePresetEntries = HostManager().targets
 internal val allPresetEntries = listOf(
     jvmPresetEntry,
     jsPresetEntry,
-    jsIrPresetEntry,
     androidPresetEntry
 ) + nativePresetEntries

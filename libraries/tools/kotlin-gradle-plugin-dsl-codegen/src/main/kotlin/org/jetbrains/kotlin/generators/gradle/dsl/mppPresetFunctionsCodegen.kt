@@ -69,7 +69,7 @@ private fun generatePresetFunctions(
     ): ${presetEntry.targetType.renderShort()} =
         $configureOrCreateFunctionName(
             name,
-            $getPresetsExpression.getByName("$presetName") as ${presetEntry.presetType.renderErased()},
+            $getPresetsExpression.getByName("$presetName") as ${presetEntry.presetType.renderShort()},
             configure
         )
 
