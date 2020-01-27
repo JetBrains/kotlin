@@ -49,13 +49,16 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         if (expression.valueArgumentsCount < FunctionInvokeDescriptor.BIG_ARITY ||
             !expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
-            expression.symbol.owner.name.asString() != "invoke")
-            return super.visitFunctionAccess(expression)
+            expression.symbol.owner.name.asString() != "invoke"
+        ) return super.visitFunctionAccess(expression)
 
         return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             at(expression)
             irCall(functionNInvokeFun).apply {
-                dispatchReceiver = expression.dispatchReceiver
+                dispatchReceiver = irImplicitCast(
+                    expression.dispatchReceiver!!,
+                    this@FunctionNVarargBridgeLowering.context.ir.symbols.functionN.defaultType
+                )
                 putValueArgument(0, irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
                     (0 until expression.valueArgumentsCount).forEach { +expression.getValueArgument(it)!! }
                 })
