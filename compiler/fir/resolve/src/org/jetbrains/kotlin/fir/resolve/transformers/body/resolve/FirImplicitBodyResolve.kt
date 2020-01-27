@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
 @Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
-class FirImplicitTypeBodyResolveTransformerAdapter2 : FirTransformer<Nothing?>() {
+class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
     private val scopeSession = ScopeSession()
     private val implicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession()
 
@@ -39,8 +39,8 @@ class FirImplicitTypeBodyResolveTransformerAdapter2 : FirTransformer<Nothing?>()
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         val session = file.session
-        scopeSession.returnTypeCalculator = MyReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
-        val transformer = MyFirBodyResolveTransformer(
+        scopeSession.returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
+        val transformer = FirImplicitBodyResolveTransformer(
             session,
             scopeSession,
             implicitBodyResolveComputationSession
@@ -84,7 +84,7 @@ private class FirApplyInferredDeclarationTypesTransformer(
     }
 }
 
-private open class MyFirBodyResolveTransformer(
+private open class FirImplicitBodyResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
@@ -93,7 +93,7 @@ private open class MyFirBodyResolveTransformer(
     phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
     implicitTypeOnly = true,
     scopeSession = scopeSession,
-    returnTypeCalculator = MyReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
+    returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
 ) {
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
@@ -139,7 +139,7 @@ private open class MyFirBodyResolveTransformer(
     }
 }
 
-private class MyReturnTypeCalculatorWithJump(
+private class ReturnTypeCalculatorWithJump(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
@@ -192,7 +192,7 @@ private class MyReturnTypeCalculatorWithJump(
             )
         }
         val designation = (listOf(file) + outerClasses.filterNotNull().asReversed() + listOf(declaration))
-        val transformer = MyFirDesignatedBodyResolveTransformer(
+        val transformer = FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
             designation.iterator(),
             file.session,
             scopeSession,
@@ -210,12 +210,12 @@ private class MyReturnTypeCalculatorWithJump(
     }
 }
 
-private class MyFirDesignatedBodyResolveTransformer(
+private class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
     private val designation: Iterator<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
-) : MyFirBodyResolveTransformer(
+) : FirImplicitBodyResolveTransformer(
     session,
     scopeSession,
     implicitBodyResolveComputationSession
