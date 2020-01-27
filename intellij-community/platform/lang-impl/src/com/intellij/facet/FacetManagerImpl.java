@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.facet;
 
@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBus;
 import org.jdom.Element;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -42,15 +41,13 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
   private final Module myModule;
   private final FacetManagerModel myModel = new FacetManagerModel();
   private boolean myInsideCommit;
-  private final MessageBus myMessageBus;
   private boolean myModuleAdded;
   private final FacetFromExternalSourcesStorage myExternalSourcesStorage;
 
-  public FacetManagerImpl(final Module module, MessageBus messageBus, FacetFromExternalSourcesStorage externalSourcesStorage) {
+  public FacetManagerImpl(@NotNull Module module) {
     myModule = module;
-    myMessageBus = messageBus;
     //explicit dependency on FacetFromExternalSourcesStorage is required to ensure that it'll initialized and its settings will be stored on save
-    myExternalSourcesStorage = externalSourcesStorage;
+    myExternalSourcesStorage = FacetFromExternalSourcesStorage.getInstance(module);
   }
 
   @Override
@@ -304,7 +301,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     List<Facet<?>> toAdd = new ArrayList<>();
     List<FacetRenameInfo> toRename = new ArrayList<>();
 
-    final FacetManagerListener publisher = myMessageBus.syncPublisher(FACETS_TOPIC);
+    final FacetManagerListener publisher = myModule.getMessageBus().syncPublisher(FACETS_TOPIC);
 
     try {
       myInsideCommit = true;

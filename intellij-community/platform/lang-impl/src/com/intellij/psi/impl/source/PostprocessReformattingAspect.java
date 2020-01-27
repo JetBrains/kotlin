@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source;
 
 import com.intellij.application.options.CodeStyle;
@@ -51,7 +51,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
-public class PostprocessReformattingAspect implements PomModelAspect {
+public final class PostprocessReformattingAspect implements PomModelAspect {
   private static final Logger LOG = Logger.getInstance(PostprocessReformattingAspect.class);
   private final Project myProject;
   private final PsiManager myPsiManager;
@@ -65,16 +65,16 @@ public class PostprocessReformattingAspect implements PomModelAspect {
 
   private final ThreadLocal<Context> myContext = ThreadLocal.withInitial(Context::new);
 
-  public PostprocessReformattingAspect(Project project, PsiManager psiManager, TreeAspect treeAspect, CommandProcessor processor) {
+  public PostprocessReformattingAspect(Project project) {
     myProject = project;
-    myPsiManager = psiManager;
-    myTreeAspect = treeAspect;
-    PomManager.getModel(psiManager.getProject())
-      .registerAspect(PostprocessReformattingAspect.class, this, Collections.singleton(treeAspect));
+    myPsiManager = PsiManager.getInstance(project);
+    myTreeAspect = TreeAspect.getInstance(project);
+    PomManager.getModel(project).registerAspect(PostprocessReformattingAspect.class, this, Collections.singleton(myTreeAspect));
 
     ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
       @Override
-      public void writeActionStarted(@NotNull final Object action) {
+      public void writeActionStarted(@NotNull Object action) {
+        CommandProcessor processor = CommandProcessor.getInstance();
         if (processor != null) {
           final Project project1 = processor.getCurrentCommandProject();
           if (project1 == myProject) {
@@ -85,6 +85,7 @@ public class PostprocessReformattingAspect implements PomModelAspect {
 
       @Override
       public void writeActionFinished(@NotNull final Object action) {
+        CommandProcessor processor = CommandProcessor.getInstance();
         if (processor != null) {
           final Project project1 = processor.getCurrentCommandProject();
           if (project1 == myProject) {

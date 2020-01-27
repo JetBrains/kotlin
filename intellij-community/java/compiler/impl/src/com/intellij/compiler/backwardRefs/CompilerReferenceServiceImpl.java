@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.backwardRefs;
 
 import com.intellij.compiler.CompilerReferenceService;
@@ -12,11 +12,9 @@ import com.intellij.compiler.server.BuildManagerListener;
 import com.intellij.compiler.server.CustomBuilderMessageHandler;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.compiler.*;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.TIntHashSet;
 import one.util.streamex.StreamEx;
@@ -30,12 +28,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<BackwardReferenceReader>
+public final class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<BackwardReferenceReader>
   implements CompilerReferenceServiceEx {
-  public CompilerReferenceServiceImpl(Project project,
-                                      FileDocumentManager fileDocumentManager,
-                                      PsiDocumentManager psiDocumentManager) {
-    super(project, fileDocumentManager, psiDocumentManager, JavaBackwardReferenceIndexReaderFactory.INSTANCE,
+  public CompilerReferenceServiceImpl(Project project) {
+    super(project, JavaBackwardReferenceIndexReaderFactory.INSTANCE,
           (connection, compilationAffectedModules) -> connection
             .subscribe(CustomBuilderMessageHandler.TOPIC, (builderId, messageType, messageText) -> {
               if (JavaBackwardReferenceIndexBuilder.BUILDER_ID.equals(builderId)) {

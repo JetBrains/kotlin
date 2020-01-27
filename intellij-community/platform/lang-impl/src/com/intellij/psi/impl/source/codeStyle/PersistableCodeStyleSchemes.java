@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source.codeStyle;
 
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -6,12 +6,13 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.SchemeManagerFactory;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
+import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.SerializationFilter;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 /**
  * @author Rustam Vishnyakov
@@ -21,14 +22,20 @@ import org.jetbrains.annotations.Nullable;
   storages = @Storage("code.style.schemes.xml"),
   additionalExportFile = CodeStyleSchemesImpl.CODE_STYLES_DIR_PATH
 )
-public class PersistableCodeStyleSchemes extends CodeStyleSchemesImpl implements PersistentStateComponent<Element> {
+public final class PersistableCodeStyleSchemes extends CodeStyleSchemesImpl implements PersistentStateComponent<Element> {
   public String CURRENT_SCHEME_NAME = CodeStyleScheme.DEFAULT_SCHEME_NAME;
 
+  public PersistableCodeStyleSchemes() {
+    this(SchemeManagerFactory.getInstance());
+  }
+
+  @NonInjectable
+  @TestOnly
   public PersistableCodeStyleSchemes(@NotNull SchemeManagerFactory schemeManagerFactory) {
     super(schemeManagerFactory);
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Element getState() {
     CodeStyleScheme currentScheme = getCurrentScheme();
