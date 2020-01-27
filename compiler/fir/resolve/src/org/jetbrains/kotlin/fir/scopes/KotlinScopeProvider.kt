@@ -75,6 +75,10 @@ class KotlinScopeProvider(
 
 data class ConeSubstitutionScopeKey(val substitutor: ConeSubstitutor) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>()
 
+fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
+    return scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)
+}
+
 fun FirClass<*>.scope(substitutor: ConeSubstitutor, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
     val basicScope = scopeProvider.getUseSiteMemberScope(
         this, useSiteSession, scopeSession

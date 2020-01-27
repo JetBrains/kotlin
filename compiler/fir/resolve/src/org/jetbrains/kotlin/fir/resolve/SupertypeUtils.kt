@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.inferenceContext
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class SupertypeSupplier {
@@ -53,7 +51,7 @@ fun FirClassSymbol<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builde
 }
 
 fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
-    return this.scope(ConeSubstitutor.Empty, useSiteSession, builder)
+    return this.unsubstitutedScope(useSiteSession, builder)
 }
 
 /* TODO REMOVE */

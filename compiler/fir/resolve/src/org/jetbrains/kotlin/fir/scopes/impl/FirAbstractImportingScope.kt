@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.scope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
@@ -35,7 +34,7 @@ abstract class FirAbstractImportingScope(
                 return getStaticsScope(expansionSymbol.classId)
             }
         } else {
-            return (symbol as FirClassSymbol<*>).fir.scope(ConeSubstitutor.Empty, session, scopeSession)
+            return (symbol as FirClassSymbol<*>).fir.unsubstitutedScope(session, scopeSession)
         }
 
         return null
