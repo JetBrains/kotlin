@@ -15,10 +15,10 @@ val IrDeclaration.isExpect
 // The original isExpect represents what user has written.
 // This predicate means "there can possibly exist an 'actual' for the given declaration".
 // Shouldn't it be incorporated to descriptor -> ir declaration psi2ir translation phase?
-val IrDeclaration.isProperExpect
+val IrDeclaration.isProperExpect: Boolean
     get() = this is IrClass && isExpect ||
             this is IrFunction && isExpect ||
             this is IrProperty && isExpect ||
             (this is IrClass || this is IrFunction || this is IrProperty || this is IrConstructor || this is IrEnumEntry)
-            && (this.parent as? IrDeclaration)?.isExpect ?: false
+            && (this.parent as? IrDeclaration)?.isProperExpect ?: false
 
