@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -80,6 +79,37 @@ class ClasspathAnalyzerTest {
 
         assertEquals(emptySet<String>(), data.classDependencies["test/B"]!!.abiTypes)
         assertEquals(emptySet<String>(), data.classDependencies["test/B"]!!.privateTypes)
+    }
+
+    @Test
+    fun testJarWithEntriesShuffled() {
+        val jarA = tmp.newFile("inputA.jar").also { jar ->
+            ZipOutputStream(jar.outputStream()).use {
+                it.putNextEntry(ZipEntry("test/A.class"))
+                it.write(emptyClass("test/A"))
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("test/B.class"))
+                it.write(emptyClass("test/B"))
+                it.closeEntry()
+            }
+        }
+        val outputA = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }.transform(jarA).single()
+
+        val jarB = tmp.newFile("inputB.jar").also { jar ->
+            ZipOutputStream(jar.outputStream()).use {
+                it.putNextEntry(ZipEntry("test/B.class"))
+                it.write(emptyClass("test/B"))
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("test/A.class"))
+                it.write(emptyClass("test/A"))
+                it.closeEntry()
+            }
+        }
+        val outputB = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }.transform(jarB).single()
+
+        assertArrayEquals(outputA.readBytes(), outputB.readBytes())
     }
 
     @Test
