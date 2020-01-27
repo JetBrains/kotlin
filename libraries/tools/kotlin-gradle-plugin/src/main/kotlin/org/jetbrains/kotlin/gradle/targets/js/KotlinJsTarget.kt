@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
@@ -82,10 +83,10 @@ constructor(
 
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
+            it.configure()
+
             browserConfiguredHandlers.forEach { handler ->
-                it.whenProducingConfigured {
-                    handler(this)
-                }
+                handler(it)
             }
             browserConfiguredHandlers.clear()
         }
@@ -103,10 +104,9 @@ constructor(
 
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
+            it.configure()
             nodejsConfiguredHandlers.forEach { handler ->
-                it.whenProducingConfigured {
-                    handler(this)
-                }
+                handler(it)
             }
 
             nodejsConfiguredHandlers.clear()
@@ -121,6 +121,26 @@ constructor(
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
+    }
+
+    override fun produceKotlinLibrary() {
+        whenBrowserConfigured {
+            (this as KotlinJsSubTarget).produceKotlinLibrary()
+        }
+
+        whenNodejsConfigured {
+            (this as KotlinJsSubTarget).produceKotlinLibrary()
+        }
+    }
+
+    override fun produceExecutable() {
+        whenBrowserConfigured {
+            (this as KotlinJsSubTarget).produceExecutable()
+        }
+
+        whenNodejsConfigured {
+            (this as KotlinJsSubTarget).produceExecutable()
+        }
     }
 
     fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {

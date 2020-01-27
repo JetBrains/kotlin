@@ -30,13 +30,6 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         target.irTarget?.nodejs?.produceExecutable()
     }
 
-    override fun configure() {
-        super.configure()
-        nodejsProducingConfiguredHandlers.forEach { handler ->
-            handler(this)
-        }
-    }
-
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
     }
@@ -59,13 +52,5 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     override fun configureBuildVariants() {
-    }
-
-    fun whenProducingConfigured(body: KotlinNodeJs.() -> Unit) {
-        if (producingConfigured) {
-            this.body()
-        } else {
-            nodejsProducingConfiguredHandlers += body
-        }
     }
 }

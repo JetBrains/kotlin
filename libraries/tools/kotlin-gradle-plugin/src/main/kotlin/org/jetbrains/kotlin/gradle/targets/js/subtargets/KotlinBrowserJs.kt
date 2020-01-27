@@ -53,13 +53,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         target.irTarget?.browser?.produceExecutable()
     }
 
-    override fun configure() {
-        super.configure()
-        browserProducingConfiguredHandlers.forEach { handler ->
-            handler(this)
-        }
-    }
-
     override fun configureDefaultTestFramework(testTask: KotlinJsTest) {
         testTask.useKarma {
             useChromeHeadless()
@@ -301,14 +294,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
         buildVariants.create(DEVELOPMENT) {
             it.kind = BuildVariantKind.DEVELOPMENT
-        }
-    }
-
-    fun whenProducingConfigured(body: KotlinBrowserJs.() -> Unit) {
-        if (producingConfigured) {
-            this.body()
-        } else {
-            browserProducingConfiguredHandlers += body
         }
     }
 

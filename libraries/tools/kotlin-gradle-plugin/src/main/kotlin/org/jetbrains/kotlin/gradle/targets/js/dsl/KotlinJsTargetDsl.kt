@@ -55,6 +55,10 @@ interface KotlinJsTargetDsl {
         }
     }
 
+    fun produceKotlinLibrary()
+
+    fun produceExecutable()
+
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 }
 
@@ -65,10 +69,6 @@ interface KotlinJsSubTargetDsl {
             ConfigureUtil.configure(fn, this)
         }
     }
-
-    fun produceKotlinLibrary()
-
-    fun produceExecutable()
 
     val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }

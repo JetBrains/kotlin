@@ -37,23 +37,15 @@ abstract class KotlinJsSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
-    protected val producingConfigured: Boolean = false
-
-    protected val browserProducingConfiguredHandlers: MutableList<KotlinBrowserJs.() -> Unit> = mutableListOf()
-    protected val nodejsProducingConfiguredHandlers: MutableList<KotlinNodeJs.() -> Unit> = mutableListOf()
-
-    override fun produceKotlinLibrary() {
-        configure()
+    internal open fun produceKotlinLibrary() {
     }
 
-    override fun produceExecutable() {
-        configure()
-
+    internal open fun produceExecutable() {
         configureBuildVariants()
         configureMain()
     }
 
-    protected open fun configure() {
+    internal open fun configure() {
         NpmResolverPlugin.apply(project)
 
         configureTests()
