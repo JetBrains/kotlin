@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
+package org.jetbrains.kotlin.backend.common.serialization.mangle
 
-class JsKlibMetadataModuleDescriptor<out T>(
-    val name: String,
-    val imported: List<String>,
-    val data: T
-)
+interface KotlinMangleComputer<D : Any> {
+    fun computeMangle(declaration: D): String
+}
