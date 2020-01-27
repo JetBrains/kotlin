@@ -148,7 +148,6 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     private val _constantInitializer by lazyPub {
         if (declaration !is KtProperty) return@lazyPub null
-        if (!declaration.hasModifier(KtTokens.CONST_KEYWORD)) return@lazyPub null
         if (!declaration.hasInitializer()) return@lazyPub null
         if (!hasModifierProperty(PsiModifier.FINAL)) return@lazyPub null
         if (!TypeConversionUtil.isPrimitiveAndNotNull(_type) && !_type.equalsToText(CommonClassNames.JAVA_LANG_STRING)) return@lazyPub null
