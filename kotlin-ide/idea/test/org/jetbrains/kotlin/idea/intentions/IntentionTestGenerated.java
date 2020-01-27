@@ -12565,6 +12565,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testSimple() throws Exception {
             runTest("testData/intentions/removeEmptyParenthesesFromLambdaCall/simple.kt");
         }
+
+        @TestMetadata("suspend.kt")
+        public void testSuspend() throws Exception {
+            runTest("testData/intentions/removeEmptyParenthesesFromLambdaCall/suspend.kt");
+        }
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
