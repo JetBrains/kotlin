@@ -201,7 +201,7 @@ class BuildSessionLoggerTest {
                 assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
             }
             for (metric in BooleanMetrics.values()) {
-                assertTrue(it.getMetric(metric)?.getValue() ?: false, "Could not find metric ${metric.name}")
+                assertTrue(it.getMetric(metric)?.getValue() != null, "Could not find metric ${metric.name}")
             }
             for (metric in NumericalMetrics.values()) {
                 assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
