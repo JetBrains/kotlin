@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -38,7 +36,8 @@ class GeneratorContext(
     val bindingContext: BindingContext,
     val languageVersionSettings: LanguageVersionSettings,
     val symbolTable: SymbolTable,
-    val extensions: GeneratorExtensions
+    val extensions: GeneratorExtensions,
+    signaturer: IdSignatureComposer
 ) : IrGeneratorContext() {
 
     val constantValueGenerator: ConstantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
@@ -50,7 +49,7 @@ class GeneratorContext(
         constantValueGenerator.typeTranslator = typeTranslator
     }
 
-    override val irBuiltIns: IrBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+    override val irBuiltIns: IrBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
 
     val sourceManager = PsiSourceManager()
 

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -27,8 +26,7 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.withHasQuestionMark
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -37,6 +35,7 @@ import org.jetbrains.kotlin.types.*
 class IrBuiltIns(
     val builtIns: KotlinBuiltIns,
     private val typeTranslator: TypeTranslator,
+    signaturer: IdSignatureComposer,
     outerSymbolTable: SymbolTable? = null
 ) {
     val languageVersionSettings = typeTranslator.languageVersionSettings
@@ -45,7 +44,7 @@ class IrBuiltIns(
 
     val irBuiltInsSymbols = mutableListOf<IrBuiltinWithMangle>()
 
-    private val symbolTable = outerSymbolTable ?: SymbolTable()
+    private val symbolTable = outerSymbolTable ?: SymbolTable(signaturer)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
     private val packageFragment =
@@ -56,8 +55,9 @@ class IrBuiltIns(
 
     fun defineOperator(name: String, returnType: IrType, valueParameterTypes: List<IrType>): IrSimpleFunctionSymbol {
         val descriptor = WrappedSimpleFunctionDescriptor()
-        val symbol = symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, descriptor) {
-            val suffix = valueParameterTypes.joinToString(":", "[", "]") { t -> t.originalKotlinType?.toString() ?: "T" }
+        val suffix = valueParameterTypes.joinToString(":", "[", "]") { t -> t.originalKotlinType?.toString() ?: "T" }
+        val mangle = "operator#$name@$suffix"
+        val symbol = symbolTable.declareBuiltInOperator(descriptor, mangle) {
             val operator = IrBuiltInOperator(it, Name.identifier(name), returnType, suffix)
             operator.parent = packageFragment
             packageFragment.declarations += operator
@@ -135,7 +135,8 @@ class IrBuiltIns(
             buildSimpleType()
         }
 
-        return symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, descriptor) {
+        val mangle = "operator#$name@:!!"
+        return symbolTable.declareBuiltInOperator(descriptor, mangle) {
             val operator = IrBuiltInOperator(it, name, returnIrType, ":!!")
             operator.parent = packageFragment
             packageFragment.declarations += operator

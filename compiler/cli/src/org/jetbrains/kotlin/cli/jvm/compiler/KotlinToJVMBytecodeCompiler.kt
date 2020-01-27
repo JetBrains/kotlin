@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
@@ -339,8 +341,11 @@ object KotlinToJVMBytecodeCompiler {
                     throw e
                 }
             }
+
+            val signaturer = IdSignatureDescriptor(JvmManglerDesc())
+
             val (moduleFragment, symbolTable, sourceManager) =
-                Fir2IrConverter.createModuleFragment(session, firFiles, moduleConfiguration.languageVersionSettings)
+                Fir2IrConverter.createModuleFragment(session, firFiles, moduleConfiguration.languageVersionSettings, signaturer = signaturer)
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
             val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))

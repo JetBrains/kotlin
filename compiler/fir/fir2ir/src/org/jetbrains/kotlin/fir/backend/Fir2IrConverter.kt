@@ -24,15 +24,16 @@ object Fir2IrConverter {
         session: FirSession,
         firFiles: List<FirFile>,
         languageVersionSettings: LanguageVersionSettings,
-        fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL
+        fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL,
+        signaturer: IdSignatureComposer
     ): Fir2IrResult {
         val moduleDescriptor = FirModuleDescriptor(session)
-        val symbolTable = SymbolTable()
+        val symbolTable = SymbolTable(signaturer)
         val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns)
         constantValueGenerator.typeTranslator = typeTranslator
         typeTranslator.constantValueGenerator = constantValueGenerator
-        val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+        val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
         val sourceManager = PsiSourceManager()
         val fir2irTransformer = Fir2IrVisitor(session, moduleDescriptor, symbolTable, sourceManager, builtIns, fakeOverrideMode)
         val irFiles = mutableListOf<IrFile>()

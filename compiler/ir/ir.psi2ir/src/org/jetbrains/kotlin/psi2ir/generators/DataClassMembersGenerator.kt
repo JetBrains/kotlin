@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
@@ -200,16 +202,16 @@ class DataClassMembersGenerator(
                 .let { context.symbolTable.referenceFunction(it) }
 
 
-        private fun getHashCodeFunction(type: KotlinType): FunctionDescriptor =
+        private fun getHashCodeFunction(type: KotlinType, symbolResolve: (FunctionDescriptor) -> IrSimpleFunctionSymbol): IrSimpleFunctionSymbol =
             when (val typeConstructorDescriptor = type.constructor.declarationDescriptor) {
                 is ClassDescriptor ->
                     if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
-                        context.irBuiltIns.dataClassArrayMemberHashCode
+                        context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
                     else
-                        type.memberScope.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
+                        symbolResolve(type.memberScope.findFirstFunction("hashCode") { it.valueParameters.isEmpty() })
 
                 is TypeParameterDescriptor ->
-                    getHashCodeFunction(typeConstructorDescriptor.representativeUpperBound)
+                    getHashCodeFunction(typeConstructorDescriptor.representativeUpperBound, symbolResolve)
 
                 else ->
                     throw AssertionError("Unexpected type: $type")
@@ -255,10 +257,12 @@ class DataClassMembersGenerator(
         }
 
         private fun MemberFunctionBuilder.getHashCodeOf(kotlinType: KotlinType, irValue: IrExpression): IrExpression {
-            val hashCodeFunctionDescriptor = getHashCodeFunction(kotlinType)
-            val hashCodeFunctionSymbol = declarationGenerator.context.symbolTable.referenceFunction(hashCodeFunctionDescriptor.original)
+            val hashCodeFunctionSymbol = getHashCodeFunction(kotlinType) {
+                declarationGenerator.context.symbolTable.referenceSimpleFunction(it.original)
+            }
+
             return irCall(hashCodeFunctionSymbol, context.irBuiltIns.intType).apply {
-                if (hashCodeFunctionDescriptor.dispatchReceiverParameter != null) {
+                if (hashCodeFunctionSymbol.descriptor.dispatchReceiverParameter != null) {
                     dispatchReceiver = irValue
                 } else {
                     putValueArgument(0, irValue)
