@@ -9107,6 +9107,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumInEnum2.kt");
         }
 
+        @TestMetadata("notApplicableEnumValueOf.kt")
+        public void testNotApplicableEnumValueOf() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumValueOf.kt");
+        }
+
+        @TestMetadata("notApplicableEnumValues.kt")
+        public void testNotApplicableEnumValues() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumValues.kt");
+        }
+
         @TestMetadata("notApplicableExpression.kt")
         public void testNotApplicableExpression() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableExpression.kt");
