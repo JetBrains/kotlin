@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.psi2ir.generators.getSubstitutedFunctionTypeForSamType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -250,9 +251,6 @@ internal class InsertImplicitCasts(
 
             finallyExpression = finallyExpression?.coerceToUnit()
         }
-
-    private fun KotlinType.getSubstitutedFunctionTypeForSamType() =
-        generatorExtensions.samConversion.getSubstitutedFunctionTypeForSamType(this)
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
         when (expression.operator) {

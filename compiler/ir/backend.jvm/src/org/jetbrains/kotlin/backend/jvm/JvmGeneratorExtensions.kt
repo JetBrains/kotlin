@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.codegen.SamType
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -15,8 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
-import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
@@ -24,12 +25,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForAbstractMethod
-import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
-import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : GeneratorExtensions() {
@@ -39,33 +35,12 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
         get() = JvmSamConversion
 
     open class JvmSamConversion : SamConversion() {
-        override fun getOriginalForSamAdapter(descriptor: CallableDescriptor): CallableDescriptor? =
-            when (descriptor) {
-                is SamAdapterDescriptor<*> -> descriptor.baseDescriptorForSynthetic
-                is SamAdapterExtensionFunctionDescriptor -> descriptor.baseDescriptorForSynthetic
-                else -> null
-            }
 
-        override fun isSamConstructor(descriptor: CallableDescriptor): Boolean =
-            descriptor is SamConstructorDescriptor
-
-        override fun isSamType(type: KotlinType): Boolean =
+        override fun isPlatformSamType(type: KotlinType): Boolean =
             JavaSingleAbstractMethodUtils.isSamType(type)
 
-        override fun getSamTypeInfoForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? {
-            val samType = SamType.createByValueParameter(valueParameter) ?: return null
-            return samType.type
-        }
-
-        override fun getSubstitutedFunctionTypeForSamType(samType: KotlinType): KotlinType {
-            val descriptor = samType.constructor.declarationDescriptor as? ClassDescriptor
-                ?: throw AssertionError("SAM should be represented by a class: $samType")
-            val singleAbstractMethod = getSingleAbstractMethodOrNull(descriptor)
-                ?: throw AssertionError("$descriptor should have a single abstract method")
-            val unsubstitutedFunctionType = getFunctionTypeForAbstractMethod(singleAbstractMethod, false)
-            return TypeSubstitutor.create(samType).substitute(unsubstitutedFunctionType, Variance.INVARIANT)
-                ?: throw AssertionError("Failed to substitute function type $unsubstitutedFunctionType corresponding to $samType")
-        }
+        override fun getSamTypeForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? =
+            SamType.createByValueParameter(valueParameter)?.type
 
         companion object Instance : JvmSamConversion()
     }

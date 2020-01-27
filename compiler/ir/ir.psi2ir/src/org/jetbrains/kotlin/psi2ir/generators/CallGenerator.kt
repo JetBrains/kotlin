@@ -42,7 +42,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     fun generateCall(startOffset: Int, endOffset: Int, call: CallBuilder, origin: IrStatementOrigin? = null): IrExpression {
         val descriptor = call.descriptor
 
-        if (context.extensions.samConversion.isSamConstructor(descriptor.original)) {
+        if (descriptor.original.isSamConstructor()) {
             return generateSamConstructorCall(descriptor, startOffset, endOffset, call)
         }
 

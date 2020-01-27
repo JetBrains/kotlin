@@ -297,7 +297,7 @@ fun StatementGenerator.generateValueArgumentUsing(
     }
 
 fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(irExpression: IrExpression, samType: KotlinType): IrExpression {
-    val kotlinFunctionType = context.extensions.samConversion.getSubstitutedFunctionTypeForSamType(samType)
+    val kotlinFunctionType = samType.getSubstitutedFunctionTypeForSamType()
     val irFunctionType = context.typeTranslator.translateType(kotlinFunctionType)
     return irExpression.implicitCastTo(irFunctionType)
 }
@@ -408,7 +408,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
     val samConversion = context.extensions.samConversion
 
     val originalDescriptor = resolvedCall.resultingDescriptor
-    val underlyingDescriptor = samConversion.getOriginalForSamAdapter(originalDescriptor) ?: originalDescriptor
+    val underlyingDescriptor = originalDescriptor.getOriginalForFunctionInterfaceAdapter() ?: originalDescriptor
 
     val originalValueParameters = originalDescriptor.valueParameters
     val underlyingValueParameters = underlyingDescriptor.valueParameters
@@ -446,7 +446,8 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
             if (!originalValueParameters[i].type.isFunctionTypeOrSubtype) continue
         }
 
-        val samKotlinType = samConversion.getSamTypeInfoForValueParameter(underlyingValueParameter) ?: continue
+        val samKotlinType = samConversion.getSamTypeForValueParameter(underlyingValueParameter)
+            ?: underlyingValueParameter.type
 
         val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
 
@@ -497,24 +498,21 @@ fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): 
     return call
 }
 
-private fun unwrapSpecialDescriptor(
-    descriptor: CallableDescriptor,
-    samConversion: GeneratorExtensions.SamConversion
-): CallableDescriptor =
+private fun unwrapSpecialDescriptor(descriptor: CallableDescriptor): CallableDescriptor =
     when (descriptor) {
         is ImportedFromObjectCallableDescriptor<*> ->
-            unwrapSpecialDescriptor(descriptor.callableFromObject, samConversion)
+            unwrapSpecialDescriptor(descriptor.callableFromObject)
         is TypeAliasConstructorDescriptor ->
             descriptor.underlyingConstructorDescriptor
         else ->
-            samConversion.getOriginalForSamAdapter(descriptor)?.let { unwrapSpecialDescriptor(it, samConversion) } ?: descriptor
+            descriptor.getOriginalForFunctionInterfaceAdapter()?.let { unwrapSpecialDescriptor(it) } ?: descriptor
     }
 
 fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>, samConversion: GeneratorExtensions.SamConversion): CallBuilder {
     val originalDescriptor = resolvedCall.resultingDescriptor
     val candidateDescriptor = resolvedCall.candidateDescriptor
 
-    val unwrappedDescriptor = unwrapSpecialDescriptor(originalDescriptor, samConversion)
+    val unwrappedDescriptor = unwrapSpecialDescriptor(originalDescriptor)
 
     val originalTypeArguments = resolvedCall.typeArguments
     val unsubstitutedUnwrappedDescriptor = unwrappedDescriptor.original

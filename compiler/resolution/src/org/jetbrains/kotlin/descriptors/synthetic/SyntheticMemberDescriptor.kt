@@ -16,8 +16,16 @@
 
 package org.jetbrains.kotlin.descriptors.synthetic
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 interface SyntheticMemberDescriptor<out T : DeclarationDescriptor> {
     val baseDescriptorForSynthetic: T
 }
+
+interface FunctionInterfaceConstructorDescriptor : SyntheticMemberDescriptor<ClassDescriptor>
+
+interface FunctionInterfaceAdapterDescriptor<out T : FunctionDescriptor> : SyntheticMemberDescriptor<T>
+
+interface FunctionInterfaceAdapterExtensionFunctionDescriptor : SyntheticMemberDescriptor<FunctionDescriptor>
