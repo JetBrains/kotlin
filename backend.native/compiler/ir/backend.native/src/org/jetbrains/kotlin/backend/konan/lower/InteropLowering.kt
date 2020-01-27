@@ -815,7 +815,17 @@ private class InteropLoweringPart2(val context: Context) : FileLoweringPass {
         val transformer = InteropTransformer(context, irFile)
         irFile.transformChildrenVoid(transformer)
 
-        irFile.addChildren(transformer.newTopLevelDeclarations)
+        while (transformer.newTopLevelDeclarations.isNotEmpty()) {
+            val newTopLevelDeclarations = transformer.newTopLevelDeclarations.toList()
+            transformer.newTopLevelDeclarations.clear()
+
+            // Assuming these declarations contain only new IR (i.e. existing lowered IR has not been moved there).
+            // TODO: make this more reliable.
+            val loweredNewTopLevelDeclarations =
+                    newTopLevelDeclarations.map { it.transform(transformer, null) as IrDeclaration }
+
+            irFile.addChildren(loweredNewTopLevelDeclarations)
+        }
     }
 }
 

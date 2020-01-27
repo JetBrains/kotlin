@@ -72,3 +72,7 @@ static struct Args getVarargs(int ignore, ...) {
 
     return result;
 }
+
+static int sum(int first, int second) {
+    return first + second;
+}

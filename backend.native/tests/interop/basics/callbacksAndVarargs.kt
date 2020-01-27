@@ -7,13 +7,22 @@ import kotlin.test.*
 import kotlinx.cinterop.*
 import ccallbacksAndVarargs.*
 
-fun main(args: Array<String>) {
+fun main() {
+    testStructCallbacks()
+    testVarargs()
+    testCallableReferences()
+}
+
+fun testStructCallbacks() {
     assertEquals(42, getX(staticCFunction { -> cValue<S> { x = 42 } }))
     applyCallback(cValue { x = 17 }, staticCFunction { it: CValue<S> ->
         assertEquals(17, it.useContents { x })
     })
 
     assertEquals(66, makeS(66, 111).useContents { x })
+}
+
+fun testVarargs() {
     assertEquals(E.ONE, makeE(1))
 
     getVarargs(
@@ -50,4 +59,12 @@ fun main(args: Array<String>) {
         assertEquals(15, a14.x)
         assertEquals(null, a15)
     }
+}
+
+fun testCallableReferences() {
+    val sumRef = ::sum
+    assertEquals(3, sumRef(1, 2))
+
+    val sumPtr = staticCFunction(::sum)
+    assertEquals(7, sumPtr(3, 4))
 }
