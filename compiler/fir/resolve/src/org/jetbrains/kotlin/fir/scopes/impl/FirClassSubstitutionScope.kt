@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -82,7 +82,7 @@ class FirClassSubstitutionScope(
     }
 
     private val typeCalculator =
-        (scopeSession.returnTypeCalculator as ReturnTypeCalculator?) ?: ReturnTypeCalculatorWithJump(session, scopeSession)
+        (scopeSession.returnTypeCalculator as ReturnTypeCalculator?) ?: ReturnTypeCalculatorForFullBodyResolve()
 
     private fun ConeKotlinType.substitute(): ConeKotlinType? {
         return substitutor.substituteOrNull(this)

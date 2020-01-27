@@ -43,27 +43,6 @@ class FirDesignatedBodyResolveTransformer(
     }
 }
 
-
-@Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
-class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
-    private val scopeSession = ScopeSession()
-
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return element.compose()
-    }
-
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val transformer = FirBodyResolveTransformer(
-            file.session,
-            phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-            implicitTypeOnly = true,
-            scopeSession = scopeSession
-        )
-        return file.transform(transformer, ResolutionMode.ContextIndependent)
-    }
-}
-
-
 @Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
 class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
     private val scopeSession = ScopeSession()

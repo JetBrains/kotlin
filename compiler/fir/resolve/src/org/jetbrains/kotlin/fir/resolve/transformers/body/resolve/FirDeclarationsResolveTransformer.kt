@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer.Companion.resolveStatus
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirComputingImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -92,9 +90,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 return@withScopeCleanup property.compose()
             }
             dataFlowAnalyzer.enterProperty(property)
-            if (returnTypeRef is FirImplicitTypeRef) {
-                property.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
-            }
             withFullBodyResolve {
                 withScopeCleanup(localScopes) {
                     localScopes.addIfNotNull(primaryConstructorParametersScope)
@@ -167,9 +162,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             transformFunction(accessor, withExpectedType(enhancedTypeRef))
         }
         val returnTypeRef = accessor.returnTypeRef
-        if (returnTypeRef is FirImplicitTypeRef && enhancedTypeRef !is FirResolvedTypeRef) {
-            accessor.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
-        }
         val expectedReturnTypeRef = if (enhancedTypeRef is FirResolvedTypeRef && returnTypeRef !is FirResolvedTypeRef) {
             enhancedTypeRef
         } else {
@@ -318,10 +310,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             }
 
             withFullBodyResolve {
-                if (returnTypeRef is FirImplicitTypeRef) {
-                    simpleFunction.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
-                }
-
                 val receiverTypeRef = simpleFunction.receiverTypeRef
                 if (receiverTypeRef != null) {
                     withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef.coneTypeUnsafe()) {
