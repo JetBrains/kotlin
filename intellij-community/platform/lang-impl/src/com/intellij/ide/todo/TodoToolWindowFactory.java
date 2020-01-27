@@ -17,6 +17,7 @@
 package com.intellij.ide.todo;
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -26,9 +27,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author yole
  */
-public class TodoToolWindowFactory implements ToolWindowFactory {
+public class TodoToolWindowFactory implements ToolWindowFactory, DumbAware {
   @Override
   public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-    DumbService.getInstance(project).runWhenSmart(() -> ServiceManager.getService(project, TodoView.class).initToolWindow(toolWindow));
+    ServiceManager.getService(project, TodoView.class).initToolWindow(toolWindow);
   }
 }

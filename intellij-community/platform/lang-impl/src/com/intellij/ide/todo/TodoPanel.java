@@ -16,10 +16,10 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.Splitter;
@@ -465,20 +465,19 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
   protected void rebuildWithAlarm(final Alarm alarm) {
     alarm.cancelAllRequests();
     alarm.addRequest(() -> {
-      final Set<VirtualFile> files = new HashSet<>();
-      DumbService.getInstance(myProject).runReadActionInSmartMode(() -> {
+      ReadAction.nonBlocking(() -> {
+        final Set<VirtualFile> files = new HashSet<>();
         if (myTodoTreeBuilder.isDisposed()) return;
         myTodoTreeBuilder.collectFiles(virtualFile -> {
           files.add(virtualFile);
           return true;
         });
-        final Runnable runnable = () -> {
+        ApplicationManager.getApplication().invokeLater(() -> {
           if (myTodoTreeBuilder.isDisposed()) return;
           myTodoTreeBuilder.rebuildCache(files);
           updateTree();
-        };
-        ApplicationManager.getApplication().invokeLater(runnable);
-      });
+        });
+      }).executeSynchronously();
     }, 300);
   }
 
