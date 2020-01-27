@@ -42,7 +42,6 @@ class DocRenderer implements EditorCustomElementRenderer {
   private static final int LEFT_INSET = 12;
   private static final int RIGHT_INSET = 20;
   private static final int TOP_BOTTOM_INSETS = 8;
-  private static final int BOTTOM_MARGIN = 10;
 
   private final DocRenderItem myItem;
   private JEditorPane myPane;
@@ -62,31 +61,34 @@ class DocRenderer implements EditorCustomElementRenderer {
     JComponent component = getRendererComponent(inlay);
     AppUIUtil.targetToDevice(component, editor.getContentComponent());
     component.setSize(Math.max(0, calcInlayWidth(editor) - calcInlayStartX() - scale(LEFT_INSET) - scale(RIGHT_INSET)), Integer.MAX_VALUE);
-    return component.getPreferredSize().height + scale(TOP_BOTTOM_INSETS) * 2 + scale(BOTTOM_MARGIN);
+    return component.getPreferredSize().height + scale(TOP_BOTTOM_INSETS) * 2 + scale(getTopMargin()) + scale(getBottomMargin());
   }
 
   @Override
   public void paint(@NotNull Inlay inlay, @NotNull Graphics g, @NotNull Rectangle targetRegion, @NotNull TextAttributes textAttributes) {
     int startX = calcInlayStartX();
     if (startX >= targetRegion.width) return;
-    int bottomMargin = scale(BOTTOM_MARGIN);
-    if (bottomMargin >= targetRegion.height) return;
+    int topMargin = scale(getTopMargin());
+    int bottomMargin = scale(getBottomMargin());
+    int filledHeight = targetRegion.height - topMargin - bottomMargin;
+    if (filledHeight <= 0) return;
+    int filledStartY = targetRegion.y + topMargin;
     int arcSize = scale(ARC_WIDTH);
     Color bgColor = getColorFromRegistry("editor.render.doc.comments.bg");
 
     g.setColor(bgColor);
     Object savedAntiAliasing = ((Graphics2D)g).getRenderingHint(RenderingHints.KEY_ANTIALIASING);
     ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    g.fillRoundRect(startX, targetRegion.y, targetRegion.width - startX, targetRegion.height - bottomMargin, arcSize, arcSize);
+    g.fillRoundRect(startX, filledStartY, targetRegion.width - startX, filledHeight, arcSize, arcSize);
     ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedAntiAliasing);
 
     JComponent component = getRendererComponent(inlay);
     component.setBackground(bgColor);
     int componentWidth = targetRegion.width - startX - scale(LEFT_INSET) - scale(RIGHT_INSET);
-    int componentHeight = targetRegion.height - scale(TOP_BOTTOM_INSETS) * 2 - bottomMargin;
+    int componentHeight = filledHeight - scale(TOP_BOTTOM_INSETS) * 2;
     if (componentWidth > 0 && componentHeight > 0) {
       component.setSize(componentWidth, componentHeight);
-      Graphics dg = g.create(startX + scale(LEFT_INSET), targetRegion.y + arcSize, componentWidth, componentHeight);
+      Graphics dg = g.create(startX + scale(LEFT_INSET), filledStartY + arcSize, componentWidth, componentHeight);
       GraphicsUtil.setupAntialiasing(dg);
       component.paint(dg);
       dg.dispose();
@@ -102,6 +104,14 @@ class DocRenderer implements EditorCustomElementRenderer {
   public ActionGroup getContextMenuGroup(@NotNull Inlay inlay) {
     return new DefaultActionGroup(Objects.requireNonNull(myItem.highlighter.getGutterIconRenderer()).getClickAction(),
                                   new DocRenderItem.ChangeFontSize());
+  }
+
+  private static int getTopMargin() {
+    return Registry.intValue("editor.render.doc.comments.top.margin");
+  }
+
+  private static int getBottomMargin() {
+    return Registry.intValue("editor.render.doc.comments.bottom.margin");
   }
 
   private static int scale(int value) {
@@ -166,7 +176,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   private static Color getColorFromRegistry(String key) {
-    String[] values = Registry.get(key).asString().split(",");
+    String[] values = Registry.stringValue(key).split(",");
     try {
       return new JBColor(ColorUtil.fromHex(values[0]), ColorUtil.fromHex(values[1]));
     }
