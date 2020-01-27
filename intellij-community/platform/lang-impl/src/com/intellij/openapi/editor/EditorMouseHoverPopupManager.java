@@ -482,6 +482,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       if (info != null && (info.getDescription() == null || info.getToolTip() == null)) {
         info = null;
       }
+      TooltipAction tooltipAction = info == null ? null : TooltipActionProvider.calcTooltipAction(info, editor);
 
       String quickDocMessage = null;
       PsiElement targetElement = null;
@@ -516,7 +517,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
           LOG.warn(e);
         }
       }
-      return info == null && quickDocMessage == null ? null : new Info(info, quickDocMessage, targetElement);
+      return info == null && quickDocMessage == null ? null : new Info(info, tooltipAction, quickDocMessage, targetElement);
     }
 
     private enum Relation {
@@ -528,14 +529,16 @@ public final class EditorMouseHoverPopupManager implements Disposable {
 
   private static class Info {
     private final HighlightInfo highlightInfo;
+    private final TooltipAction tooltipAction;
 
     private final String quickDocMessage;
     private final WeakReference<PsiElement> quickDocElement;
 
 
-    private Info(HighlightInfo highlightInfo, String quickDocMessage, PsiElement quickDocElement) {
+    private Info(HighlightInfo highlightInfo, TooltipAction tooltipAction, String quickDocMessage, PsiElement quickDocElement) {
       assert highlightInfo != null || quickDocMessage != null;
       this.highlightInfo = highlightInfo;
+      this.tooltipAction = tooltipAction;
       this.quickDocMessage = quickDocMessage;
       this.quickDocElement = new WeakReference<>(quickDocElement);
     }
@@ -560,9 +563,8 @@ public final class EditorMouseHoverPopupManager implements Disposable {
                                                     PopupBridge popupBridge,
                                                     boolean requestFocus) {
       if (highlightInfo == null) return null;
-      TooltipAction action = TooltipActionProvider.calcTooltipAction(highlightInfo, editor);
       ErrorStripTooltipRendererProvider provider = ((EditorMarkupModel)editor.getMarkupModel()).getErrorStripTooltipRendererProvider();
-      TooltipRenderer tooltipRenderer = provider.calcTooltipRenderer(Objects.requireNonNull(highlightInfo.getToolTip()), action, -1);
+      TooltipRenderer tooltipRenderer = provider.calcTooltipRenderer(Objects.requireNonNull(highlightInfo.getToolTip()), tooltipAction, -1);
       if (!(tooltipRenderer instanceof LineTooltipRenderer)) return null;
       return createHighlightInfoComponent(editor, (LineTooltipRenderer)tooltipRenderer, highlightActions, popupBridge, requestFocus);
     }
