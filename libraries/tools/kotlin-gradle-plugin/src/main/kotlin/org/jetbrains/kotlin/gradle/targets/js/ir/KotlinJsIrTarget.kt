@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -99,7 +98,7 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
 
     private fun produce(
         producingType: KotlinJsProducingType,
-        producer: KotlinJsSubTarget.() -> Unit
+        producer: KotlinJsIrSubTarget.() -> Unit
     ) {
         check(this.producingType == null || this.producingType == producingType) {
             "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
@@ -108,11 +107,11 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
         this.producingType = producingType
 
         whenBrowserConfigured {
-            (this as KotlinJsSubTarget).producer()
+            (this as KotlinJsIrSubTarget).producer()
         }
 
         whenNodejsConfigured {
-            (this as KotlinJsSubTarget).producer()
+            (this as KotlinJsIrSubTarget).producer()
         }
     }
 
