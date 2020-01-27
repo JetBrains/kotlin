@@ -288,9 +288,7 @@ class CallableReferencesCandidateFactory(
 
                     when (newVarargMappingState) {
                         VarargMappingState.MAPPED_WITH_ARRAY -> {
-                            if (valueParameter in mappedArguments.keys) {
-                                throw AssertionError("Vararg parameter already mapped: $valueParameter, fakeArgument: $fakeArgument")
-                            }
+                            // If we've already mapped an argument to this value parameter, it'll always be a type mismatch.
                             mappedArguments[valueParameter] = ResolvedCallArgument.SimpleArgument(fakeArgument)
                         }
 
