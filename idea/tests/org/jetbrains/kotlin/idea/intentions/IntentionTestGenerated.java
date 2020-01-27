@@ -4974,6 +4974,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/suspendFun.kt");
         }
 
+        @TestMetadata("suspendFunctionParameter.kt")
+        public void testSuspendFunctionParameter() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/suspendFunctionParameter.kt");
+        }
+
         @TestMetadata("syntheticProperty.kt")
         public void testSyntheticProperty() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/syntheticProperty.kt");
