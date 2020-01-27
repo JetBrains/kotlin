@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND_FIR: ANY
 
 expect enum class MyEnum {
     FOO,

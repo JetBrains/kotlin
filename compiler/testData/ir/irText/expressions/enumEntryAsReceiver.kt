@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 enum class X {
 
     B {

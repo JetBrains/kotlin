@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 // WITH_RUNTIME
 
 enum class TestEnum1 {

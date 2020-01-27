@@ -8,13 +8,13 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
     ENUM_ENTRY name:Y
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.Y'
-      class: CLASS ENUM_ENTRY name:Y modality:FINAL visibility:public superTypes:[<root>.A]
+      class: CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Y
         CONSTRUCTOR visibility:private <> () returnType:<root>.A.Y [primary]
           BLOCK_BODY
             TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:public superTypes:[<root>.A]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]'
         FUN name:f visibility:public modality:OPEN <> ($this:<root>.A.Y) returnType:kotlin.String
           overridden:
             public open fun f (): kotlin.String declared in <root>.A

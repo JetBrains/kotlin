@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 annotation class TestAnn(val x: String)
 
 enum class TestEnum {

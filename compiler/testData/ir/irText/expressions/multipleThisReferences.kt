@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 class Outer {
     open inner class Inner(val x: Int)
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 object A
 
 enum class En { X }

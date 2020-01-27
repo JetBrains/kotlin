@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 interface IBase {
     fun foo(x: Int, s: String)
     fun bar(): Int

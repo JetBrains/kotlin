@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: ANY
 object Z {
     var counter = 0
     fun foo() {}
