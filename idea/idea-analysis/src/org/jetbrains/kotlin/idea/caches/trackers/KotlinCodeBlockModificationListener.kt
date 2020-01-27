@@ -103,7 +103,7 @@ class KotlinCodeBlockModificationListener(
                 if (inBlockElements.isEmpty()) {
                     messageBusConnection.deliverImmediately()
 
-                    if (physical && !isReplLine(ktFile.virtualFile)) {
+                    if (physical && !isReplLine(ktFile.virtualFile) && ktFile !is KtTypeCodeFragment) {
                         if (isLanguageTrackerEnabled) {
                             kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
                             perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile, true)
