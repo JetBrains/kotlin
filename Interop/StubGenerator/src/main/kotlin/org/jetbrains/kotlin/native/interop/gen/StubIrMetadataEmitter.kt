@@ -118,6 +118,7 @@ internal class ModuleMetadataEmitter(
         override fun visitFunction(element: FunctionStub, data: VisitingContext) =
                 with (MappingExtensions(data.typeParametersInterner)) {
                     KmFunction(element.flags, element.name).also { km ->
+                        km.receiverParameterType = element.receiver?.type?.map()
                         element.typeParameters.mapTo(km.typeParameters) { it.map() }
                         element.parameters.mapTo(km.valueParameters) { it.map() }
                         element.annotations.mapTo(km.annotations) { it.map() }
@@ -200,7 +201,7 @@ private class MappingExtensions(
     val FunctionStub.flags: Flags
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC,
-                Flag.Function.IS_EXTERNAL,
+                Flag.Function.IS_EXTERNAL.takeIf { this.external },
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
         ) or modality.flags
 
@@ -219,20 +220,13 @@ private class MappingExtensions(
                 Flag.IS_PUBLIC,
                 Flag.Property.IS_DECLARATION,
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
+                Flag.Property.HAS_CONSTANT.takeIf { kind is PropertyStub.Kind.Constant },
+                Flag.Property.HAS_GETTER.takeIf { kind !is PropertyStub.Kind.Constant },
+                Flag.Property.HAS_SETTER.takeIf { kind is PropertyStub.Kind.Var },
                 when (kind) {
                     is PropertyStub.Kind.Val -> null
                     is PropertyStub.Kind.Var -> Flag.Property.IS_VAR
                     is PropertyStub.Kind.Constant -> Flag.Property.IS_CONST
-                },
-                when (kind) {
-                    is PropertyStub.Kind.Constant -> null
-                    is PropertyStub.Kind.Val,
-                    is PropertyStub.Kind.Var -> Flag.Property.HAS_GETTER
-                },
-                when (kind) {
-                    is PropertyStub.Kind.Constant -> null
-                    is PropertyStub.Kind.Val -> null
-                    is PropertyStub.Kind.Var -> Flag.Property.HAS_SETTER
                 }
         ) or modality.flags
 
@@ -282,10 +276,13 @@ private class MappingExtensions(
         get() = flagsOfNotNull(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
                 Flag.IS_PUBLIC,
-                Flag.IS_OPEN.takeIf { this is ClassStub.Simple && this.modality == ClassStubModality.OPEN },
-                Flag.IS_FINAL.takeIf { this is ClassStub.Simple && this.modality == ClassStubModality.NONE },
+                Flag.IS_OPEN.takeIf { this is ClassStub.Simple && modality == ClassStubModality.OPEN },
+                Flag.IS_FINAL.takeIf { this is ClassStub.Simple && modality == ClassStubModality.NONE },
+                Flag.IS_ABSTRACT.takeIf { this is ClassStub.Simple
+                        && (modality == ClassStubModality.ABSTRACT || modality == ClassStubModality.INTERFACE) },
+                Flag.Class.IS_INTERFACE.takeIf { this is ClassStub.Simple && modality == ClassStubModality.INTERFACE },
                 Flag.Class.IS_COMPANION_OBJECT.takeIf { this is ClassStub.Companion },
-                Flag.Class.IS_CLASS.takeIf { this is ClassStub.Simple },
+                Flag.Class.IS_CLASS.takeIf { this is ClassStub.Simple && modality != ClassStubModality.INTERFACE },
                 Flag.Class.IS_ENUM_CLASS.takeIf { this is ClassStub.Enum }
         )
 
@@ -390,7 +387,10 @@ private class MappingExtensions(
             if (shouldExpandTypeAliases) {
                 // Abbreviated and expanded types have the same nullability.
                 KmType(flags).also { km ->
-                    km.abbreviatedType = KmType(flags).also { it.classifier = typeAliasClassifier }
+                    km.abbreviatedType = KmType(flags).also { abbreviatedType ->
+                        abbreviatedType.classifier = typeAliasClassifier
+                        typeArguments.mapTo(abbreviatedType.arguments) { it.map(shouldExpandTypeAliases) }
+                    }
                     val kmUnderlyingType = underlyingType.map(true)
                     km.arguments += kmUnderlyingType.arguments
                     km.classifier = kmUnderlyingType.classifier
@@ -417,6 +417,10 @@ private class MappingExtensions(
                 val kmType = type.map()
                 if (isVararg) {
                     km.varargElementType = kmType
+                    km.type = ClassifierStubType(
+                            Classifier.topLevel("kotlin", "Array"),
+                            listOf(TypeArgumentStub(type))
+                    ).map()
                 } else {
                     km.type = kmType
                 }
