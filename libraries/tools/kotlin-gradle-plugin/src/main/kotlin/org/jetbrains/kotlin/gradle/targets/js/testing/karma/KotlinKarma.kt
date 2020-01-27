@@ -20,12 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTest
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.LoadNpmModules
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -35,8 +31,7 @@ import org.slf4j.Logger
 import java.io.File
 
 class KotlinKarma(override val compilation: KotlinJsCompilation) :
-    KotlinJsTestFramework,
-    KotlinJsIrTestFramework {
+    KotlinJsTestFramework {
     private val project: Project = compilation.target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
@@ -277,40 +272,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 
     override fun createTestExecutionSpec(
-        task: KotlinJsIrTest,
-        forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>,
-        debug: Boolean
-    ): TCServiceMessagesTestExecutionSpec =
-        createTestExecutionSpecPrivate(
-            task = task,
-            forkOptions = forkOptions,
-            nodeJsArgs = nodeJsArgs,
-            debug = debug
-        )
-
-    override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>,
         debug: Boolean
-    ): TCServiceMessagesTestExecutionSpec =
-        createTestExecutionSpecPrivate(
-            task = task,
-            forkOptions = forkOptions,
-            nodeJsArgs = nodeJsArgs,
-            debug = debug
-        )
-
-    private fun <T> createTestExecutionSpecPrivate(
-        task: T,
-        forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>,
-        debug: Boolean
-    ): TCServiceMessagesTestExecutionSpec
-            where T : KotlinTest,
-                  T : RequiresNpmDependencies,
-                  T : LoadNpmModules {
+    ): TCServiceMessagesTestExecutionSpec {
         val npmProject = compilation.npmProject
 
         val file = task.nodeModulesToLoad

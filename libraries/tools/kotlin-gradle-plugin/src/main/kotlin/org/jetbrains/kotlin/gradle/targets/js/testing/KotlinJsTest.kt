@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.LoadNpmModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
@@ -28,8 +27,7 @@ import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 open class KotlinJsTest :
     KotlinTest(),
-    RequiresNpmDependencies,
-    LoadNpmModules {
+    RequiresNpmDependencies {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
@@ -63,7 +61,7 @@ open class KotlinJsTest :
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
 
-    override val nodeModulesToLoad: List<String>
+    val nodeModulesToLoad: List<String>
         @Internal get() = listOf("./" + compilation.npmProject.main)
 
     override val nodeModulesRequired: Boolean

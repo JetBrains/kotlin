@@ -43,7 +43,8 @@ constructor(
 ) :
     KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
-    KotlinJsTargetDsl, KotlinJsSubtargetContainerDsl {
+    KotlinJsTargetDsl,
+    KotlinJsSubtargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 

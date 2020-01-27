@@ -187,18 +187,6 @@ open class KotlinJsPluginWrapper @Inject constructor(
     override fun createTestRegistry(project: Project) = KotlinTestsRegistry(project, "test")
 }
 
-open class KotlinJsIrPluginWrapper @Inject constructor(
-    fileResolver: FileResolver
-) : KotlinBasePluginWrapper(fileResolver) {
-    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinJsIrPlugin(kotlinPluginVersion)
-
-    override val projectExtensionClass: KClass<out KotlinJsIrProjectExtension>
-        get() = KotlinJsIrProjectExtension::class
-
-    override fun createTestRegistry(project: Project) = KotlinTestsRegistry(project, "test")
-}
-
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     private val featurePreviews: FeaturePreviews

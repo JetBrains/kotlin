@@ -30,30 +30,6 @@ interface KotlinJsSubtargetContainerDsl : KotlinTarget {
     fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
 }
 
-interface KotlinJsIrTargetDsl {
-    fun browser() = browser { }
-    fun browser(body: KotlinJsIrBrowserDsl.() -> Unit)
-    fun browser(fn: Closure<*>) {
-        browser {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    fun nodejs() = nodejs { }
-    fun nodejs(body: KotlinJsIrNodeDsl.() -> Unit)
-    fun nodejs(fn: Closure<*>) {
-        nodejs {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    fun produceKotlinLibrary()
-
-    fun produceExecutable()
-
-    val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
-}
-
 interface KotlinJsTargetDsl : KotlinTarget {
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)

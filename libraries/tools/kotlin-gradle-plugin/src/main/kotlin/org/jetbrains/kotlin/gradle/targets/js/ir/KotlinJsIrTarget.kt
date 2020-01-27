@@ -28,7 +28,8 @@ import javax.inject.Inject
 open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: KotlinPlatformType) :
     KotlinOnlyTarget<KotlinJsIrCompilation>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
-    KotlinJsTargetDsl, KotlinJsSubtargetContainerDsl {
+    KotlinJsTargetDsl,
+    KotlinJsSubtargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
