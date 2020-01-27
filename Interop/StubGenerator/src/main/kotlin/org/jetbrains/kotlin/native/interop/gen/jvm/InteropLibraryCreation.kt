@@ -88,6 +88,14 @@ class ChunkingWriteStrategy(
                         }
                     }
                 }
-        return classFragments + packageFragments
+        val result = classFragments + packageFragments
+        return if (result.isEmpty()) {
+            // We still need to emit empty packages because they may
+            // represent parts of package declaration (e.g. platform.[]).
+            // Tooling (e.g. `klib contents`) expects this kind of behavior.
+            parts
+        } else {
+            result
+        }
     }
 }
