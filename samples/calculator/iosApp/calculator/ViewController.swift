@@ -26,7 +26,10 @@ class ViewController: UIViewController, UITextViewDelegate, UICollectionViewData
     @IBOutlet var input: UITextView!
     @IBOutlet var numpad: UICollectionView!
 
-    private let parser = PartialParser(composer: Calculator(), partialComposer: PartialRenderer())
+    private let parser = PartialParser<KotlinDouble, NSAttributedString>(
+        composer: Calculator(),
+        partialComposer: PartialRenderer()
+    )
 
     @IBAction func numpadButtonPressed(_ sender: UIButton) {
         let title = sender.currentTitle!
@@ -63,7 +66,7 @@ class ViewController: UIViewController, UITextViewDelegate, UICollectionViewData
             result.text = ""
         }
 
-        let attributedText = parsed.partialExpression as! NSAttributedString
+        let attributedText = parsed.partialExpression
 
         if let remainder = parsed.remainder {
             partialResult.attributedText = attributedText +
