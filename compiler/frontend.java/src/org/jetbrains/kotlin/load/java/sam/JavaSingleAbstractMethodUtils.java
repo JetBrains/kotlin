@@ -41,8 +41,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class SingleAbstractMethodUtils {
-    private SingleAbstractMethodUtils() {
+public class JavaSingleAbstractMethodUtils {
+    private JavaSingleAbstractMethodUtils() {
     }
 
     @NotNull

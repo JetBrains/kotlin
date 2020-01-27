@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -50,7 +50,7 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
             descriptor is SamConstructorDescriptor
 
         override fun isSamType(type: KotlinType): Boolean =
-            SingleAbstractMethodUtils.isSamType(type)
+            JavaSingleAbstractMethodUtils.isSamType(type)
 
         override fun getSamTypeInfoForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? {
             val samType = SamType.createByValueParameter(valueParameter) ?: return null

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -65,7 +65,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
     override fun applicabilityRange(element: KtObjectLiteralExpression): TextRange? {
         val (baseTypeRef, baseType, singleFunction) = extractData(element) ?: return null
 
-        if (!SingleAbstractMethodUtils.isSamType(baseType)) return null
+        if (!JavaSingleAbstractMethodUtils.isSamType(baseType)) return null
 
         val functionDescriptor = singleFunction.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
         val overridden = functionDescriptor.overriddenDescriptors.singleOrNull() ?: return null

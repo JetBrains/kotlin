@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -246,7 +246,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val samAdapterOriginalFunction = SamCodegenUtil.getOriginalIfSamAdapter(samAdapter)?.original
             if (samAdapterOriginalFunction != originalFunction) return false
 
-            val parametersWithSamTypeCount = originalFunction.valueParameters.count { SingleAbstractMethodUtils.isSamType(it.type) }
+            val parametersWithSamTypeCount = originalFunction.valueParameters.count { JavaSingleAbstractMethodUtils.isSamType(it.type) }
             return parametersWithSamTypeCount == samConstructorsCount
         }
 

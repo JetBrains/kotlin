@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -71,7 +71,7 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
 
     private fun KtCallExpression.getSingleAbstractMethod(context: BindingContext): FunctionDescriptor? {
         val type = getType(context) ?: return null
-        if (!SingleAbstractMethodUtils.isSamType(type)) return null
+        if (!JavaSingleAbstractMethodUtils.isSamType(type)) return null
         val javaClass = type.constructor.declarationDescriptor as? JavaClassDescriptor ?: return null
         return getSingleAbstractMethodOrNull(javaClass)
     }
