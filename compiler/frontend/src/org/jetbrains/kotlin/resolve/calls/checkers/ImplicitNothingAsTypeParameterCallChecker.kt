@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -44,7 +44,7 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
             return
         if (resultingDescriptor.name !in SPECIAL_FUNCTION_NAMES && resolvedCall.call.typeArguments.isEmpty()) {
             val lambdasFromArgumentsReturnTypes =
-                resolvedCall.candidateDescriptor.valueParameters.filter { it.type.isFunctionType }
+                resolvedCall.candidateDescriptor.valueParameters.filter { it.type.isFunctionOrSuspendFunctionType }
                     .map { it.returnType?.arguments?.last()?.type }.toSet()
             val unsubstitutedReturnType = resultingDescriptor.original.returnType
             val expectedType = context.resolutionContext.expectedType

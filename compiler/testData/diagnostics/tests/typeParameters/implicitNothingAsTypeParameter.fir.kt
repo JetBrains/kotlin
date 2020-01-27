@@ -101,3 +101,13 @@ fun test1() {
 fun test2() {
     errorCompletion.invoke(Exception("fail"))
 }
+
+fun test3() {
+    foo {
+        produceNothing()
+    }
+}
+
+fun produceNothing(): Nothing = TODO()
+
+fun <R> foo(block: suspend String.() -> R) = null as R
