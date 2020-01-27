@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
-import org.junit.Ignore
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -20,18 +19,22 @@ import kotlin.test.assertFalse
 class KlibBasedMppIT : BaseGradleIT() {
     override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.0")
 
+    companion object {
+        private const val MODULE_GROUP = "com.example"
+    }
+
     @Test
     fun testBuildWithProjectDependency() = testBuildWithDependency {
         gradleBuildScript().appendText("\n" + """
             dependencies {
-                commonMainImplementation(project("$embeddedModuleName"))
+                commonMainImplementation(project("$dependencyModuleName"))
             }
         """.trimIndent())
     }
 
     @Test
     fun testBuildWithPublishedDependency() = testBuildWithDependency {
-        build(":$embeddedModuleName:publish") {
+        build(":$dependencyModuleName:publish") {
             assertSuccessful()
         }
 
@@ -40,23 +43,23 @@ class KlibBasedMppIT : BaseGradleIT() {
                 maven("${'$'}rootDir/repo")
             }
             dependencies {
-                commonMainImplementation("com.example:$embeddedModuleName:1.0")
+                commonMainImplementation("$MODULE_GROUP:$dependencyModuleName:1.0")
             }
         """.trimIndent())
 
         // prevent Gradle from linking the above dependency to the project:
-        gradleBuildScript(embeddedModuleName).appendText("\ngroup = \"some.other.group\"")
+        gradleBuildScript(dependencyModuleName).appendText("\ngroup = \"some.other.group\"")
     }
 
-    private val embeddedModuleName = "project-dep"
+    private val dependencyModuleName = "project-dep"
 
     private fun testBuildWithDependency(configureDependency: Project.() -> Unit) = with(Project("common-klib-lib-and-app")) {
         Assume.assumeTrue(HostManager.hostIsMac)
 
-        embedProject(Project("common-klib-lib-and-app"), renameTo = embeddedModuleName)
+        embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName)
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        projectDir.resolve(embeddedModuleName + "/src").walkTopDown().filter { it.extension == "kt" }.forEach { file ->
+        projectDir.resolve(dependencyModuleName + "/src").walkTopDown().filter { it.extension == "kt" }.forEach { file ->
             file.modify { it.replace("package com.h0tk3y.hmpp.klib.demo", "package com.projectdep") }
         }
 
@@ -108,6 +111,53 @@ class KlibBasedMppIT : BaseGradleIT() {
                 assertFalse(classpathHasKNStdlib(getClasspath(":compileKotlinMetadata")))
                 assertFalse(classpathHasKNStdlib(getClasspath(":compileJvmAndJsMainKotlinMetadata")))
             }
+        }
+    }
+
+    private val transitiveDepModuleName = "transitive-dep"
+
+    @Test
+    fun testKotlinNativeImplPublishedDeps() =
+        testKotlinNativeImplementationDependencies {
+            build(":$transitiveDepModuleName:publish", ":$dependencyModuleName:publish") {
+                assertSuccessful()
+            }
+
+            gradleBuildScript().appendText("\n" + """
+                repositories {
+                    maven("${'$'}rootDir/repo")
+                }
+                dependencies {
+                    commonMainImplementation("$MODULE_GROUP:$dependencyModuleName:1.0")
+                }
+                """.trimIndent()
+            )
+
+            listOf(transitiveDepModuleName, dependencyModuleName).forEach {
+                // prevent Gradle from linking the above dependency to the project:
+                gradleBuildScript(it).appendText("\ngroup = \"com.some.other.group\"")
+            }
+        }
+
+    @Test
+    fun testKotlinNativeImplProjectDeps() =
+        testKotlinNativeImplementationDependencies {
+            gradleBuildScript().appendText("\ndependencies { \"commonMainImplementation\"(project(\":$dependencyModuleName\")) }")
+        }
+
+    private fun testKotlinNativeImplementationDependencies(
+        setupDependencies: Project.() -> Unit
+    ) = with(Project("common-klib-lib-and-app")) {
+        embedProject(Project("common-klib-lib-and-app"), renameTo = transitiveDepModuleName)
+        embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName)
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleBuildScript(dependencyModuleName).appendText("\ndependencies { \"commonMainImplementation\"(project(\":$transitiveDepModuleName\")) }")
+
+        setupDependencies(this@with)
+
+        val compileNativeMetadataTaskName = "compileIosMainKotlinMetadata"
+        build(":$compileNativeMetadataTaskName") {
+            assertSuccessful()
         }
     }
 }

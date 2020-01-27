@@ -177,12 +177,45 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             )
         }
 
+        sourceSetsWithMetadataCompilations.values.forEach { compilation ->
+            exportDependenciesForPublishing(compilation)
+        }
+
         val generateMetadata = createGenerateProjectStructureMetadataTask()
 
         allMetadataJar.from(project.files(Callable {
             generateMetadata.get().resultXmlFile
         }).builtBy(generateMetadata)) { spec ->
             spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+        }
+    }
+
+    private fun exportDependenciesForPublishing(
+        compilation: AbstractKotlinCompilation<*>
+    ) {
+        val sourceSet = compilation.defaultSourceSet
+        val isSharedNativeCompilation = compilation is KotlinSharedNativeCompilation
+        val target = compilation.target
+        with(target.project) {
+            val apiElementsConfiguration = configurations.getByName(target.apiElementsConfigurationName)
+
+            // With the metadata target, we publish all API dependencies of all the published source sets together:
+            apiElementsConfiguration.extendsFrom(sourceSetDependencyConfigurationByScope(sourceSet, KotlinDependencyScope.API_SCOPE))
+
+            /** For Kotlin/Native-shared source sets, we also add the implementation dependencies to apiElements, because Kotlin/Native
+             * can't have any implementation dependencies, all dependencies used for compilation must be shipped along with the klib.
+             * It's OK that they are exposed as API dependencies here, because at the consumer side, they are dispatched to the
+             * consumer's source sets in a granular way, so they will only be visible in the source sets that see the sharedn-Native
+             * source set.
+             * See also: [buildKotlinProjectStructureMetadata], where these dependencies must be included into the source set exported deps.
+             */
+            if (isSharedNativeCompilation) {
+                sourceSet.getSourceSetHierarchy().forEach { hierarchySourceSet ->
+                    apiElementsConfiguration.extendsFrom(
+                        sourceSetDependencyConfigurationByScope(hierarchySourceSet, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
+                    )
+                }
+            }
         }
     }
 
