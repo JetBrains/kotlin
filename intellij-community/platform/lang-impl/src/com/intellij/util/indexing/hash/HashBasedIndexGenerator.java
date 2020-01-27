@@ -153,23 +153,15 @@ public class HashBasedIndexGenerator<K, V> {
     }
   }
 
-  public void indexFile(@NotNull VirtualFile f, @NotNull Project project, @NotNull ContentHashEnumerator hashEnumerator) {
-    if (!myInputFilter.acceptInput(f)) {
+  public void indexFile(int hashId, @NotNull FileContent fileContent) {
+    if (!myInputFilter.acceptInput(fileContent.getFile())) {
       return;
     }
     myIndexedFilesNumber.incrementAndGet();
-    try {
-      FileContentImpl fc = (FileContentImpl)FileContentImpl.createByFile(f, project);
-      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
-      int hashId = Math.abs(hashEnumerator.enumerate(hash));
-      if (!myIndex.update(hashId, fc).compute()) {
-        throw new RuntimeException("Index computation returned false for hashId = " + hashId + ", " +
-                                   "file = " + f.getPath() + ", " +
-                                   "index = " + myExtension.getName().getName());
-      }
-    }
-    catch (IOException e) {
-      throw new RuntimeException("Can't index " + f.getPath() + " for " + myExtension.getName().getName(), e);
+    if (!myIndex.update(hashId, fileContent).compute()) {
+      throw new RuntimeException("Index computation returned false for hashId = " + hashId + ", " +
+                                 "file = " + fileContent.getFile().getPath() + ", " +
+                                 "index = " + myExtension.getName().getName());
     }
   }
 

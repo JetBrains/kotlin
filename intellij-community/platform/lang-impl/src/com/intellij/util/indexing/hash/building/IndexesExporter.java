@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,9 +21,11 @@ import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileBasedIndexExtension;
+import com.intellij.util.indexing.FileContentImpl;
 import com.intellij.util.indexing.IndexInfrastructureVersion;
 import com.intellij.util.indexing.hash.HashBasedIndexGenerator;
 import com.intellij.util.indexing.hash.StubHashBasedIndexGenerator;
+import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
@@ -254,15 +257,12 @@ public class IndexesExporter {
           VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Boolean>() {
             @Override
             public boolean visitFile(@NotNull VirtualFile file) {
-
               if (!file.isDirectory() && !SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
-                for (HashBasedIndexGenerator<?, ?> generator : generators) {
-                  generator.indexFile(file, myProject, hashEnumerator);
-                }
+                generateIndexesForFile(file, generators, hashEnumerator);
               }
-
               return true;
             }
+
           });
         }
       }
@@ -282,6 +282,26 @@ public class IndexesExporter {
       catch (IOException e) {
         throw new RuntimeException(e);
       }
+    }
+  }
+
+  private void generateIndexesForFile(@NotNull VirtualFile file,
+                                      @NotNull Collection<HashBasedIndexGenerator<?, ?>> generators,
+                                      @NotNull ContentHashEnumerator hashEnumerator) {
+    try {
+      FileContentImpl fc = (FileContentImpl)FileContentImpl.createByFile(file, myProject);
+      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
+      int hashId;
+      synchronized (hashEnumerator) {
+        hashId = Math.abs(hashEnumerator.enumerate(hash));
+      }
+
+      for (HashBasedIndexGenerator<?, ?> generator : generators) {
+        generator.indexFile(hashId, fc);
+      }
+    }
+    catch (Exception e) {
+      throw new RuntimeException("Can't index " + file.getPath(), e);
     }
   }
 
