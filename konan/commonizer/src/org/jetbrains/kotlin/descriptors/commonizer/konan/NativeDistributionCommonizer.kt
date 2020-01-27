@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.KoltinLibraryWriterImpl
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -143,7 +143,7 @@ class NativeDistributionCommonizer(
         if (!location.isDirectory)
             handleError("library not found: $location")
 
-        val library = resolveSingleFileKlib(KFile(location.path))
+        val library = createKotlinLibrary(KFile(location.path))
 
         if (library.versions.metadataVersion == null)
             handleError("library does not have metadata version specified in manifest: $location")

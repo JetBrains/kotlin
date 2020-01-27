@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.konan.library.KonanFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.library.isInterop
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
@@ -189,7 +188,7 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
         }
     }
 
-    private val nativeLibrary = resolveSingleFileKlib(File(libraryRoot))
+    private val nativeLibrary = createKotlinLibrary(File(libraryRoot))
 
     val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
     val metadataInfo by lazy {

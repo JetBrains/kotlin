@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -74,10 +73,8 @@ val KotlinLibrary.isBuiltIns: Boolean
         .propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
         .isEmpty()
 
-// TODO: The only place loadKlib() is used now is Wasm backend.
-// Need to move it to SearchPathResolver too.
 fun loadKlib(klibPath: String) =
-    resolveSingleFileKlib(KFile(KFile(klibPath).absolutePath))
+    createKotlinLibrary(KFile(KFile(klibPath).absolutePath))
 
 val emptyLoggingContext = object : LoggingContext {
     override var inVerbosePhase = false

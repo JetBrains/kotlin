@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
@@ -38,7 +37,7 @@ class JsLibraryResolver(
     emptyList()
 ) {
     // Stick with the default KotlinLibrary for now.
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
+    override fun libraryBuilder(file: File, isDefault: Boolean) = createKotlinLibrary(file, isDefault)
 }
 
 // TODO: This is a temporary set of library resolver policies for js compiler.
