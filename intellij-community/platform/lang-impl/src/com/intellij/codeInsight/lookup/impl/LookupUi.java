@@ -11,6 +11,7 @@ import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
@@ -330,7 +331,7 @@ class LookupUi {
   private class ChangeSortingAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
     private boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
     private ChangeSortingAction() {
-      super("Sort by Name");
+      super(() -> ActionsBundle.message("action.ChangeSortingAction.text"));
     }
 
     @Override

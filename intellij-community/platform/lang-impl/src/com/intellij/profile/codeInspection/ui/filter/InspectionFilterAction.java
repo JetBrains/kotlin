@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.ScopeToolState;
 import com.intellij.icons.AllIcons;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.MetaLanguage;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -110,7 +111,7 @@ public class InspectionFilterAction extends DefaultActionGroup implements Toggle
 
   private class ResetFilterAction extends DumbAwareAction {
     ResetFilterAction() {
-      super("Reset Filter");
+      super(() -> ActionsBundle.message("action.ResetFilterAction.text"));
     }
 
     @Override
