@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -82,22 +83,24 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
     }
 
     override fun produceKotlinLibrary() {
-        whenBrowserConfigured {
-            (this as KotlinJsIrSubTarget).produceKotlinLibrary()
-        }
-
-        whenNodejsConfigured {
-            (this as KotlinJsIrSubTarget).produceKotlinLibrary()
+        produce {
+            produceKotlinLibrary()
         }
     }
 
     override fun produceExecutable() {
+        produce {
+            produceExecutable()
+        }
+    }
+
+    private fun produce(producer: KotlinJsSubTarget.() -> Unit) {
         whenBrowserConfigured {
-            (this as KotlinJsIrSubTarget).produceExecutable()
+            (this as KotlinJsSubTarget).producer()
         }
 
         whenNodejsConfigured {
-            (this as KotlinJsIrSubTarget).produceExecutable()
+            (this as KotlinJsSubTarget).producer()
         }
     }
 

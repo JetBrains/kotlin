@@ -124,22 +124,24 @@ constructor(
     }
 
     override fun produceKotlinLibrary() {
-        whenBrowserConfigured {
-            (this as KotlinJsSubTarget).produceKotlinLibrary()
-        }
-
-        whenNodejsConfigured {
-            (this as KotlinJsSubTarget).produceKotlinLibrary()
+        produce {
+            produceKotlinLibrary()
         }
     }
 
     override fun produceExecutable() {
+        produce {
+            produceExecutable()
+        }
+    }
+
+    private fun produce(producer: KotlinJsSubTarget.() -> Unit) {
         whenBrowserConfigured {
-            (this as KotlinJsSubTarget).produceExecutable()
+            (this as KotlinJsSubTarget).producer()
         }
 
         whenNodejsConfigured {
-            (this as KotlinJsSubTarget).produceExecutable()
+            (this as KotlinJsSubTarget).producer()
         }
     }
 
