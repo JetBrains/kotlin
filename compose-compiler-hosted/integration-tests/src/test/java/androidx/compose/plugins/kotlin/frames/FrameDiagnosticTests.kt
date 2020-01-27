@@ -40,7 +40,7 @@ class FrameDiagnosticTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    // Ensure @Model is not used on a class that specifies a base class
+    // Ensure @Model supports inheriting from a non-model class
     fun testModel_Report_Inheritance() = doTest(
         """
         import androidx.compose.Model
@@ -48,12 +48,13 @@ class FrameDiagnosticTests : AbstractComposeDiagnosticsTest() {
         open class NonModel { }
 
         @Model
-        class <!UNSUPPORTED_MODEL_INHERITANCE!>MyModel<!> : NonModel() {
+        class MyModel : NonModel() {
           var strValue = "default"
         }
         """
     )
 
+    // Ensure errors are reported when the class is nested.
     fun testModel_Report_Nested_Inheritance() = doTest(
         """
         import androidx.compose.Model
@@ -62,7 +63,7 @@ class FrameDiagnosticTests : AbstractComposeDiagnosticsTest() {
 
         class Tests {
             @Model
-            class <!UNSUPPORTED_MODEL_INHERITANCE!>MyModel<!> : NonModel() {
+            open class <!OPEN_MODEL!>MyModel<!> : NonModel() {
               var strValue = "default"
             }
         }

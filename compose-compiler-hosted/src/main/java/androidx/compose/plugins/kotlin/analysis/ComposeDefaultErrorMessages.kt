@@ -27,10 +27,6 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
             "Model objects cannot be open or abstract"
         )
         MAP.put(
-            ComposeErrors.UNSUPPORTED_MODEL_INHERITANCE,
-            "Model objects do not support inheritance"
-        )
-        MAP.put(
             ComposeErrors.INVALID_COMPOSER_IMPLEMENTATION,
             "Composer of type ''{0}'' was found to be an invalid Composer implementation. " +
                     "Reason: {1}",

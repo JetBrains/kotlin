@@ -336,6 +336,57 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
         }
     """)
 
+    fun testModel_NonModelInheritance() = testFile("""
+        import androidx.compose.Model
+
+        open class NonModel(var nonTransactedValue: String = "default")
+
+        @Model
+        class MyModel : NonModel() {
+          var value: String = "default"
+        }
+
+        class Test {
+          fun test() {
+            val instance = frame { MyModel() }
+
+            frame {
+              // Ensure the fields have their default values
+              instance.nonTransactedValue.expectEqual("default")
+              instance.value.expectEqual("default")
+            }
+
+            val frame1 = suspended {
+              instance.nonTransactedValue = "modified in suspended transaction"
+              instance.value = "modified in suspended transaction"
+            }
+
+            frame {
+              // Transacted field should still be the default value.
+              instance.value.expectEqual("default")
+
+              // Inherited non-transacted field is not isolated and is expected to be modified
+              instance.nonTransactedValue.expectEqual("modified in suspended transaction")
+            }
+
+            restored(frame1) {
+              // Now both fields should appear modified.
+              instance.value.expectEqual("modified in suspended transaction")
+              instance.nonTransactedValue.expectEqual("modified in suspended transaction")
+            }
+
+            // Non-transacted values should be accessible outside a frame
+            instance.nonTransactedValue.expectEqual("modified in suspended transaction")
+
+            frame {
+              // New frames should see both fields as modified.
+              instance.value.expectEqual("modified in suspended transaction")
+              instance.nonTransactedValue.expectEqual("modified in suspended transaction")
+            }
+          }
+        }
+    """)
+
     override fun helperFiles(): List<KtFile> = listOf(sourceFile("Helpers.kt",
         HELPERS
     ))

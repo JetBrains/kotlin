@@ -16,12 +16,10 @@
 package androidx.compose.plugins.kotlin.analysis;
 
 import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
-import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 import com.intellij.psi.PsiElement;
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtElement;
@@ -35,7 +33,6 @@ import java.util.Collection;
  */
 public interface ComposeErrors {
     DiagnosticFactory0<PsiElement> OPEN_MODEL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> UNSUPPORTED_MODEL_INHERITANCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement>
             SUSPEND_FUNCTION_USED_AS_SFC = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
