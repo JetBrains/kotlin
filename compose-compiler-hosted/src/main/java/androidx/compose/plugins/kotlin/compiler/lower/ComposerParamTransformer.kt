@@ -23,12 +23,23 @@ import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyGetterDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertySetterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
+import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -38,31 +49,40 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.properties
@@ -70,11 +90,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private const val DEBUG_LOG = false
@@ -343,15 +371,32 @@ class ComposerParamTransformer(
         }
     }
 
-    private fun IrFunction.copy(isInline: Boolean = this.isInline): IrSimpleFunction {
+    private fun wrapDescriptor(descriptor: FunctionDescriptor) : WrappedSimpleFunctionDescriptor {
+        return when (descriptor) {
+            is PropertyGetterDescriptor ->
+                WrappedPropertyGetterDescriptor(
+                    descriptor.annotations,
+                    descriptor.source
+                )
+            is PropertySetterDescriptor ->
+                WrappedPropertySetterDescriptor(
+                    descriptor.annotations,
+                    descriptor.source
+                )
+            is DescriptorWithContainerSource ->
+                WrappedFunctionDescriptorWithContainerSource(descriptor.containerSource)
+            else ->
+                WrappedSimpleFunctionDescriptor(sourceElement = descriptor.source)
+        }
+    }
+
+    private fun IrFunction.copy(
+        isInline: Boolean = this.isInline,
+        modality: Modality = descriptor.modality
+    ): IrSimpleFunction {
         // TODO(lmr): use deepCopy instead?
         val descriptor = descriptor
-
-        val containerSource = (descriptor as? DescriptorWithContainerSource)?.containerSource
-        val newDescriptor = if (containerSource != null)
-                WrappedFunctionDescriptorWithContainerSource(containerSource)
-            else
-                WrappedSimpleFunctionDescriptor(sourceElement = descriptor.source)
+        val newDescriptor = wrapDescriptor(descriptor)
 
         return IrFunctionImpl(
             startOffset,
@@ -360,7 +405,7 @@ class ComposerParamTransformer(
             IrSimpleFunctionSymbolImpl(newDescriptor),
             name,
             visibility,
-            descriptor.modality,
+            modality,
             returnType,
             isInline,
             isExternal,
@@ -368,6 +413,9 @@ class ComposerParamTransformer(
             descriptor.isSuspend
         ).also { fn ->
             newDescriptor.bind(fn)
+            if (this is IrSimpleFunction) {
+                fn.correspondingPropertySymbol = correspondingPropertySymbol
+            }
             fn.parent = parent
             fn.copyTypeParametersFrom(this)
             fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
@@ -375,6 +423,27 @@ class ComposerParamTransformer(
             valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn) }
             annotations.mapTo(fn.annotations) { a -> a }
             fn.body = body?.deepCopyWithSymbols(this)
+        }
+    }
+
+    private fun jvmNameAnnotation(name: String): IrConstructorCall {
+        val jvmName = getTopLevelClass(DescriptorUtils.JVM_NAME)
+        val type = jvmName.createType(false, emptyList())
+        val ctor = jvmName.constructors.first()
+        return IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type,
+            ctor,
+            ctor.descriptor,
+            0, 0, 1
+        ).also {
+            it.putValueArgument(0, IrConstImpl.string(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                builtIns.stringType,
+                name
+            ))
         }
     }
 
@@ -389,6 +458,39 @@ class ComposerParamTransformer(
             // order to avoid an infinite loop on circular/recursive calls
             transformedFunctionSet.add(fn)
             transformedFunctions[oldFn] = fn
+
+            // The overridden symbols might also be composable functions, so we want to make sure
+            // and transform them as well
+            if (this is IrOverridableDeclaration<*>) {
+                overriddenSymbols.mapTo(fn.overriddenSymbols) {
+                    it as IrSimpleFunctionSymbol
+                    val owner = it.owner
+                    val newOwner = owner.withComposerParamIfNeeded()
+                    newOwner.symbol as IrSimpleFunctionSymbol
+                }
+            }
+
+            // if we are transforming a composable property, the jvm signature of the
+            // corresponding getters and setters have a composer parameter. Since Kotlin uses the
+            // lack of a parameter to determine if it is a getter, this breaks inlining for
+            // composable property getters since it ends up looking for the wrong jvmSignature.
+            // In this case, we manually add the appropriate "@JvmName" annotation so that the
+            // inliner doesn't get confused.
+            val descriptor = descriptor
+            if (descriptor is PropertyGetterDescriptor &&
+                fn.annotations.findAnnotation(DescriptorUtils.JVM_NAME) == null
+            ) {
+                val name = JvmAbi.getterName(descriptor.correspondingProperty.name.identifier)
+                fn.annotations.add(jvmNameAnnotation(name))
+            }
+
+            // same thing for the setter
+            if (descriptor is PropertySetterDescriptor &&
+                fn.annotations.findAnnotation(DescriptorUtils.JVM_NAME) == null
+            ) {
+                val name = JvmAbi.setterName(descriptor.correspondingProperty.name.identifier)
+                fn.annotations.add(jvmNameAnnotation(name))
+            }
 
             val valueParametersMapping = explicitParameters
                 .zip(fn.explicitParameters)
