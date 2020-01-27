@@ -179,6 +179,12 @@ private object PredefinedTypesHandler {
         return AbbreviatedType(underlyingType, nativePtrClassifier, listOf(), nullable)
     }
 
+    private fun expandObjCObjectMeta(typeArguments: List<TypeArgument>, nullable: Boolean): AbbreviatedType {
+        require(typeArguments.isEmpty())
+        val objCClass = ClassifierStubType(KotlinTypes.objCClass, emptyList(), nullable)
+        return AbbreviatedType(objCClass, KotlinTypes.objCObjectMeta, emptyList(), nullable)
+    }
+
     /**
      * @return [ClassifierStubType] if [classifier] is a typealias from [kotlinx.cinterop] package.
      */
@@ -188,6 +194,7 @@ private object PredefinedTypesHandler {
                 KotlinTypes.cOpaquePointer.classifier -> expandCOpaquePointer(nullable)
                 KotlinTypes.cOpaquePointerVar.classifier -> expandCOpaquePointerVar(nullable)
                 KotlinTypes.cPointerVar -> expandCPointerVar(typeArguments, nullable)
+                KotlinTypes.objCObjectMeta -> expandObjCObjectMeta(typeArguments, nullable)
                 else -> null
             }
 
