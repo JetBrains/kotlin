@@ -13520,6 +13520,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testSimple() throws Exception {
             runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/simple.kt");
         }
+
+        @TestMetadata("suspend.kt")
+        public void testSuspend() throws Exception {
+            runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/suspend.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor")
