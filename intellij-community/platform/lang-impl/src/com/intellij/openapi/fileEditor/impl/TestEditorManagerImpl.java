@@ -479,18 +479,6 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
   }
 
   @Override
-  public void addFileEditorManagerListener(@NotNull FileEditorManagerListener listener) {
-  }
-
-  @Override
-  public void addFileEditorManagerListener(@NotNull FileEditorManagerListener listener, @NotNull Disposable parentDisposable) {
-  }
-
-  @Override
-  public void removeFileEditorManagerListener(@NotNull FileEditorManagerListener listener) {
-  }
-
-  @Override
   @NotNull
   public List<FileEditor> openEditor(@NotNull OpenFileDescriptor descriptor, boolean focusEditor) {
     final Ref<Pair<FileEditor[], FileEditorProvider[]>> result = new Ref<>();
