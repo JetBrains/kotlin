@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.UniqId
+import org.jetbrains.kotlin.ir.util.IdSignature
 
-abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D, override var uniqId: UniqId = UniqId.NONE) : IrSymbol
+abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D) : IrSymbol
 
-abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbol<D, B>, IrSymbolBase<D>(descriptor, uniqId) {
+abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D) :
+    IrBindableSymbol<D, B>, IrSymbolBase<D>(descriptor) {
 
     init {
         assert(isOriginalDescriptor(descriptor)) {
@@ -58,6 +58,11 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         }
     }
 
+    override val isPublicApi: Boolean = false
+
+    override val signature: IdSignature
+        get() = error("IdSignature is allowed only for PublicApi symbols")
+
     override val isBound: Boolean
         get() = _owner != null
 }
@@ -76,70 +81,63 @@ class IrAnonymousInitializerSymbolImpl(descriptor: ClassDescriptor) :
     constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor) {}
 }
 
-class IrClassSymbolImpl(descriptor: ClassDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<ClassDescriptor, IrClass>(descriptor, uniqId),
+class IrClassSymbolImpl(descriptor: ClassDescriptor) :
+    IrBindableSymbolBase<ClassDescriptor, IrClass>(descriptor),
     IrClassSymbol {
-    constructor(uniqId: UniqId) : this(WrappedClassDescriptor(), uniqId)
 }
 
-class IrEnumEntrySymbolImpl(descriptor: ClassDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor, uniqId),
+class IrEnumEntrySymbolImpl(descriptor: ClassDescriptor) :
+    IrBindableSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor),
     IrEnumEntrySymbol {
-    constructor(uniqId: UniqId) : this(WrappedEnumEntryDescriptor(), uniqId)
 }
 
-class IrFieldSymbolImpl(descriptor: PropertyDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<PropertyDescriptor, IrField>(descriptor, uniqId),
+class IrFieldSymbolImpl(descriptor: PropertyDescriptor) :
+    IrBindableSymbolBase<PropertyDescriptor, IrField>(descriptor),
     IrFieldSymbol {
-    constructor(uniqId: UniqId) : this(WrappedFieldDescriptor(), uniqId)
 }
 
-class IrTypeParameterSymbolImpl(descriptor: TypeParameterDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<TypeParameterDescriptor, IrTypeParameter>(descriptor, uniqId),
+class IrTypeParameterSymbolImpl(descriptor: TypeParameterDescriptor) :
+    IrBindableSymbolBase<TypeParameterDescriptor, IrTypeParameter>(descriptor),
     IrTypeParameterSymbol {
-    constructor(uniqId: UniqId) : this(WrappedTypeParameterDescriptor(), uniqId)
 }
 
-class IrValueParameterSymbolImpl(descriptor: ParameterDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<ParameterDescriptor, IrValueParameter>(descriptor, uniqId),
+class IrValueParameterSymbolImpl(descriptor: ParameterDescriptor) :
+    IrBindableSymbolBase<ParameterDescriptor, IrValueParameter>(descriptor),
     IrValueParameterSymbol {
-    constructor(uniqId: UniqId) : this(WrappedValueParameterDescriptor(), uniqId)
 }
 
-class IrVariableSymbolImpl(descriptor: VariableDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<VariableDescriptor, IrVariable>(descriptor, uniqId),
+class IrVariableSymbolImpl(descriptor: VariableDescriptor) :
+    IrBindableSymbolBase<VariableDescriptor, IrVariable>(descriptor),
     IrVariableSymbol {
-    constructor(uniqId: UniqId) : this(WrappedVariableDescriptor(), uniqId)
 }
 
-class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor, uniqId),
+class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor) :
+    IrBindableSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor),
     IrSimpleFunctionSymbol {
-    constructor(uniqId: UniqId) : this(WrappedSimpleFunctionDescriptor(), uniqId)
 }
 
-class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor, uniqId),
+class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor) :
+    IrBindableSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor),
     IrConstructorSymbol {
-    constructor(uniqId: UniqId) : this(WrappedClassConstructorDescriptor(), uniqId)
 }
 
 class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
     IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
     IrReturnableBlockSymbol
 
-class IrPropertySymbolImpl(descriptor: PropertyDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<PropertyDescriptor, IrProperty>(descriptor, uniqId),
+class IrPropertySymbolImpl(descriptor: PropertyDescriptor) :
+    IrBindableSymbolBase<PropertyDescriptor, IrProperty>(descriptor),
     IrPropertySymbol {
-    constructor(uniqId: UniqId) : this(WrappedPropertyDescriptor(), uniqId)
 }
 
 class IrLocalDelegatedPropertySymbolImpl(descriptor: VariableDescriptorWithAccessors) :
     IrBindableSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor),
     IrLocalDelegatedPropertySymbol
 
-class IrTypeAliasSymbolImpl(descriptor: TypeAliasDescriptor, uniqId: UniqId = UniqId.NONE) :
-    IrBindableSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor, uniqId),
+class IrTypeAliasSymbolImpl(descriptor: TypeAliasDescriptor) :
+    IrBindableSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor),
     IrTypeAliasSymbol {
-    constructor(uniqId: UniqId) : this(WrappedTypeAliasDescriptor(), uniqId)
 }
+
+class IrScriptSymbolImpl(descriptor: ScriptDescriptor) :
+    IrScriptSymbol, IrBindableSymbolBase<ScriptDescriptor, IrScript>(descriptor)
