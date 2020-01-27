@@ -59,12 +59,13 @@ class IrClassImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         symbol: IrClassSymbol,
-        modality: Modality = symbol.descriptor.modality
+        modality: Modality = symbol.descriptor.modality,
+        visibility: Visibility = symbol.descriptor.visibility
     ) :
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, symbol.descriptor.kind,
-                symbol.descriptor.visibility,
+                visibility,
                 modality = modality,
                 isCompanion = symbol.descriptor.isCompanionObject,
                 isInner = symbol.descriptor.isInner,

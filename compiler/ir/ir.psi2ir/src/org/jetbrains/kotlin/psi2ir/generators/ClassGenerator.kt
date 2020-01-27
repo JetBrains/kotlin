@@ -75,14 +75,15 @@ class ClassGenerator(
         }
     }
 
-    fun generateClass(ktClassOrObject: KtPureClassOrObject): IrClass {
+    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: Visibility? = null): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
+        val visibility = visibility_ ?: classDescriptor.visibility
 
         return context.symbolTable.declareClass(
             startOffset, endOffset, IrDeclarationOrigin.DEFINED, classDescriptor,
-            getEffectiveModality(ktClassOrObject, classDescriptor)
+            getEffectiveModality(ktClassOrObject, classDescriptor), visibility
         ).buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
@@ -492,7 +493,7 @@ class ClassGenerator(
             }
 
             if (ktEnumEntry.hasMemberDeclarations()) {
-                irEnumEntry.correspondingClass = generateClass(ktEnumEntry)
+                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, Visibilities.PRIVATE)
             }
         }
 
