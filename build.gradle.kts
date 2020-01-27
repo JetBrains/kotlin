@@ -173,6 +173,7 @@ extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.completion-ranking-kotlin"] = "0.0.2"
+extra["versions.r8"] = "1.5.70"
 
 // NOTE: please, also change KTOR_NAME in pathUtil.kt and all versions in corresponding jar names in daemon tests.
 extra["versions.ktor-network"] = "1.0.1"
@@ -337,6 +338,7 @@ allprojects {
         maven("https://dl.bintray.com/kotlin/ktor")
         maven("https://kotlin.bintray.com/kotlin-dependencies")
         maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
+        maven("https://dl.google.com/dl/android/maven2")
         bootstrapKotlinRepo?.let(::maven)
         internalKotlinRepo?.let(::maven)
     }

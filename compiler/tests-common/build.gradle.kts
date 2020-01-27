@@ -41,6 +41,7 @@ dependencies {
     testCompile(project(":kotlin-scripting-compiler-impl"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
+    testCompile(commonDep("com.android.tools:r8"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) {
         includeJars(
