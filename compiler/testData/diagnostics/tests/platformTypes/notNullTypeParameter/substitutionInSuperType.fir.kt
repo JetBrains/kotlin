@@ -36,6 +36,6 @@ fun test() {
     B1().bar(null)
     B2().bar(null)
 
-    C1().<!AMBIGUITY!>bar<!>(null)
+    C1().bar(null)
 }
 

@@ -173,18 +173,13 @@ data class ConeTypeVariableType(
     override val typeArguments: Array<out ConeKotlinTypeProjection> get() = emptyArray()
 }
 
-class ConeDefinitelyNotNullType private constructor(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
+data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = original.typeArguments
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
 
-    companion object {
-        fun create(original: ConeKotlinType): ConeDefinitelyNotNullType {
-            if (original is ConeFlexibleType) return create(original.lowerBound)
-            return ConeDefinitelyNotNullType(original)
-        }
-    }
+    companion object
 }
 
 class ConeRawType(lowerBound: ConeKotlinType, upperBound: ConeKotlinType) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker

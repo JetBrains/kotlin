@@ -28,9 +28,12 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
         return wrapProjection(projection, newType)
     }
 
-    fun makeNullableIfNeed(isNullable: Boolean, type: ConeKotlinType?): ConeKotlinType? {
-        if (!isNullable) return type
-        return type?.withNullability(ConeNullability.NULLABLE)
+    fun ConeKotlinType?.updateNullabilityIfNeeded(originalType: ConeKotlinType): ConeKotlinType? {
+        return when {
+            originalType is ConeDefinitelyNotNullType -> this?.withNullability(ConeNullability.NOT_NULL)
+            originalType.isMarkedNullable -> this?.withNullability(ConeNullability.NULLABLE)
+            else -> this
+        }
     }
 
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
@@ -65,8 +68,9 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
         return ConeIntersectionType(substitutedTypes)
     }
 
-    private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
-        return ConeDefinitelyNotNullType.create(substituteOrNull(original)?.withNullability(ConeNullability.NOT_NULL) ?: original)
+    private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
+        val substituted = substituteOrNull(original)?.withNullability(ConeNullability.NOT_NULL) ?: return null
+        return ConeDefinitelyNotNullType.create(substituted) ?: substituted
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
@@ -128,6 +132,6 @@ data class ChainedSubstitutor(private val first: ConeSubstitutor, private val se
 data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
-        return makeNullableIfNeed(type.isMarkedNullable, substitution[type.lookupTag.symbol])
+        return substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
     }
 }

@@ -6,7 +6,7 @@ FILE: test.kt
 
     }
     public final fun create(d: R|Diagnostic<DerivedElement>|): R|kotlin/Unit| {
-        lval element: R|DerivedElement!!| = R|<local>/d|.R|/Diagnostic.element|
+        lval element: R|DerivedElement| = R|<local>/d|.R|/Diagnostic.element|
         R|/Fix.Fix|(R|<local>/element|)
     }
     public final fun <DE : R|DerivedElement|> createGeneric(d: R|Diagnostic<DE>|): R|kotlin/Unit| {
@@ -16,7 +16,7 @@ FILE: test.kt
     private final val DERIVED_FACTORY: R|DiagnosticFactory0<DerivedElement>| = R|/DiagnosticFactory0.DiagnosticFactory0|<R|DerivedElement|>()
         private get(): R|DiagnosticFactory0<DerivedElement>|
     public final fun createViaFactory(d: R|EmptyDiagnostic|): R|kotlin/Unit| {
-        lval casted: R|Diagnostic<DerivedElement>!!| = R|/DERIVED_FACTORY|.R|FakeOverride</DiagnosticFactory.cast: R|Diagnostic<DerivedElement>!!|>|(R|<local>/d|)
-        lval element: R|DerivedElement!!| = R|<local>/casted|.R|/Diagnostic.element|
+        lval casted: R|Diagnostic<DerivedElement>| = R|/DERIVED_FACTORY|.R|FakeOverride</DiagnosticFactory.cast: R|Diagnostic<DerivedElement>|>|(R|<local>/d|)
+        lval element: R|DerivedElement| = R|<local>/casted|.R|/Diagnostic.element|
         R|/Fix.Fix|(R|<local>/element|)
     }

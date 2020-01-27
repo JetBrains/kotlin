@@ -13,6 +13,6 @@ fun <T : String?> foo(x: T) {
     bar1(x)
     bar2(x)
 
-    <!INAPPLICABLE_CANDIDATE!>bar3<!>(x)
+    bar3(x)
     bar4(x)
 }

@@ -1,5 +1,5 @@
 fun <S : Any> foo(x: Array<out S?>, y: Array<in S?>) {
-    val xo = <!INAPPLICABLE_CANDIDATE!>outA<!>(x)
+    val xo = outA(x)
     val yo = inA(y)
 
     var f: Array<S> = xo

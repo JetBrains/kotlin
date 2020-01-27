@@ -38,3 +38,19 @@ fun ConeInferenceContext.intersectTypesOrNull(types: List<ConeKotlinType>): Cone
         else -> ConeTypeIntersector.intersectTypes(this, types)
     }
 }
+
+fun ConeDefinitelyNotNullType.Companion.create(original: ConeKotlinType): ConeDefinitelyNotNullType? {
+    return when {
+        original is ConeDefinitelyNotNullType -> original
+        makesSenseToBeDefinitelyNotNull(original) -> ConeDefinitelyNotNullType(original.lowerBoundIfFlexible())
+        else -> null
+    }
+}
+
+fun makesSenseToBeDefinitelyNotNull(type: ConeKotlinType): Boolean =
+    type.canHaveUndefinedNullability() // TODO: also check nullability
+
+fun ConeKotlinType.canHaveUndefinedNullability(): Boolean =
+    this is ConeTypeVariableType ||
+            this is ConeTypeParameterType ||
+            this is ConeCapturedType

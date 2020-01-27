@@ -1,0 +1,4 @@
+FILE: arrayFilterCapturedType.kt
+    public final fun test(elements: R|kotlin/Array<out kotlin/String?>|): R|kotlin/Unit| {
+        lval filtered: R|kotlin/collections/List<kotlin/String>| = R|<local>/elements|.R|kotlin/collections/filterNotNull|<R|kotlin/String|>()
+    }

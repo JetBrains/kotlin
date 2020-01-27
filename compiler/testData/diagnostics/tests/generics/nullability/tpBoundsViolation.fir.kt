@@ -38,7 +38,7 @@ class A<F> {
         x4.checkType { _<Z>() }
 
         <!INAPPLICABLE_CANDIDATE!>foo1<!><W>(w)
-        <!INAPPLICABLE_CANDIDATE!>foo1<!>(w)
+        foo1(w)
         foo2<W>(w)
 
         val x6 = foo2(w)

@@ -138,7 +138,7 @@ private fun coneFlexibleOrSimpleType(
                     type is ConeTypeParameterType || type.isNullable
                 }
             ) {
-                return ConeDefinitelyNotNullType.create(lowerBound)
+                return ConeDefinitelyNotNullType.create(lowerBound) ?: lowerBound
             }
         }
         return lowerBound

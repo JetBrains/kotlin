@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -144,8 +143,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         }
 
 
-        if (this is DefinitelyNotNullTypeMarker
-            && this.original().containsInternal(predicate, visited)
+        if (this is ConeDefinitelyNotNullType
+            && this.original.containsInternal(predicate, visited)
         ) {
             return true
         }
@@ -198,11 +197,18 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
-        return this.withNullability(false) //TODO("not implemented")
+        require(this is ConeKotlinType)
+        return makeDefinitelyNotNullOrNotNull()
     }
 
     override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
-        return this.withNullability(false) //TODO("not implemented")
+        require(this is ConeKotlinType)
+        return makeDefinitelyNotNullOrNotNull() as SimpleTypeMarker
+    }
+
+    private fun ConeKotlinType.makeDefinitelyNotNullOrNotNull(): ConeKotlinType {
+        // TODO: add intersection types, see fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull() in SpecialTypes.kt
+        return ConeDefinitelyNotNullType.create(this) ?: this.withNullability(false) as ConeKotlinType
     }
 
     override fun createCapturedType(
@@ -273,7 +279,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             TypeSubstitutorMarker {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 val new = map[type.typeConstructor()] ?: return null
-                return makeNullableIfNeed(type.isMarkedNullable, (new as ConeKotlinType).approximateIntegerLiteralType())
+                return (new as ConeKotlinType).approximateIntegerLiteralType().updateNullabilityIfNeeded(type)
             }
         }
     }
@@ -297,7 +303,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
         return type
     }
-
 
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
         return ConeKotlinErrorType("$debugName c: $constructor")

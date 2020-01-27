@@ -227,6 +227,7 @@ class FirClassSubstitutionScope(
                     baseFunction.status,
                     fakeOverrideSymbol
                 ).apply {
+                    annotations += baseFunction.annotations
                     resolvePhase = baseFunction.resolvePhase
                     valueParameters += baseFunction.valueParameters.zip(
                         newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
@@ -296,6 +297,7 @@ class FirClassSubstitutionScope(
                     baseProperty.status
                 ).apply {
                     resolvePhase = baseProperty.resolvePhase
+                    annotations += baseProperty.annotations
                 }
             }
             return symbol
@@ -315,6 +317,7 @@ class FirClassSubstitutionScope(
                     name, symbol, isVar, baseField.status
                 ).apply {
                     resolvePhase = baseField.resolvePhase
+                    annotations += baseField.annotations
                 }
             }
             return symbol
