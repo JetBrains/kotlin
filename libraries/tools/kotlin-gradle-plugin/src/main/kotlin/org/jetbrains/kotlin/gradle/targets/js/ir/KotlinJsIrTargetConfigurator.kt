@@ -11,23 +11,22 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
 open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
-    KotlinTargetWithTestsConfigurator<KotlinJsIrReportAggregatingTestRun, KotlinJsIrTarget> {
+    KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsIrTarget> {
 
-    override val testRunClass: Class<KotlinJsIrReportAggregatingTestRun> get() = KotlinJsIrReportAggregatingTestRun::class.java
+    override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
 
     override fun createTestRun(
         name: String,
         target: KotlinJsIrTarget
-    ): KotlinJsIrReportAggregatingTestRun {
-        val result = KotlinJsIrReportAggregatingTestRun(name, target)
+    ): KotlinJsReportAggregatingTestRun {
+        val result = KotlinJsReportAggregatingTestRun(name, target)
 
         val testTask = target.project.kotlinTestRegistry.getOrCreateAggregatedTestTask(
             name = result.testTaskName,

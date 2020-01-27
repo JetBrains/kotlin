@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import javax.inject.Inject
 
 open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "node"),
-    KotlinJsIrNodeDsl {
+    KotlinJsNodeDsl {
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
@@ -21,7 +22,7 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
     }
 
-    override fun configureDefaultTestFramework(it: KotlinJsIrTest) {
+    override fun configureDefaultTestFramework(it: KotlinJsTest) {
         it.useMocha { }
     }
 

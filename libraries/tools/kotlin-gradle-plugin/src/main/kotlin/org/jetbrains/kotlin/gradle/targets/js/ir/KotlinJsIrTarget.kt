@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Compa
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.JsIrAggregatingExecutionSource
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrNodeDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubtargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -26,9 +27,9 @@ import javax.inject.Inject
 
 open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: KotlinPlatformType) :
     KotlinOnlyTarget<KotlinJsIrCompilation>(project, platformType),
-    KotlinTargetWithTests<JsIrAggregatingExecutionSource, KotlinJsIrReportAggregatingTestRun>,
-    KotlinJsIrTargetDsl {
-    override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsIrReportAggregatingTestRun>
+    KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
+    KotlinJsTargetDsl, KotlinJsSubtargetContainerDsl {
+    override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
     var producingType: KotlinJsProducingType? = null
@@ -53,13 +54,13 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
         }
     }
 
-    private val browserConfiguredHandlers = mutableListOf<KotlinJsIrBrowserDsl.() -> Unit>()
+    private val browserConfiguredHandlers = mutableListOf<KotlinJsBrowserDsl.() -> Unit>()
 
-    val browser by browserLazyDelegate
+    override val browser by browserLazyDelegate
 
-    internal val isBrowserConfigured: Boolean = browserLazyDelegate.isInitialized()
+    override val isBrowserConfigured: Boolean = browserLazyDelegate.isInitialized()
 
-    override fun browser(body: KotlinJsIrBrowserDsl.() -> Unit) {
+    override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
     }
 
@@ -74,13 +75,13 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
         }
     }
 
-    private val nodejsConfiguredHandlers = mutableListOf<KotlinJsIrNodeDsl.() -> Unit>()
+    private val nodejsConfiguredHandlers = mutableListOf<KotlinJsNodeDsl.() -> Unit>()
 
-    val nodejs by nodejsLazyDelegate
+    override val nodejs by nodejsLazyDelegate
 
-    internal val isNodejsConfigured: Boolean = nodejsLazyDelegate.isInitialized()
+    override val isNodejsConfigured: Boolean = nodejsLazyDelegate.isInitialized()
 
-    override fun nodejs(body: KotlinJsIrNodeDsl.() -> Unit) {
+    override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
     }
 
@@ -115,7 +116,7 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
         }
     }
 
-    fun whenBrowserConfigured(body: KotlinJsIrBrowserDsl.() -> Unit) {
+    override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
         if (browserLazyDelegate.isInitialized()) {
             browser(body)
         } else {
@@ -123,7 +124,7 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
         }
     }
 
-    fun whenNodejsConfigured(body: KotlinJsIrNodeDsl.() -> Unit) {
+    override fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
         if (nodejsLazyDelegate.isInitialized()) {
             nodejs(body)
         } else {

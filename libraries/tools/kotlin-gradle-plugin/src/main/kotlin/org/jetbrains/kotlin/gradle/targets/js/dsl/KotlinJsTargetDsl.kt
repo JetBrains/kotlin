@@ -9,14 +9,26 @@ import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrPlatformTestRun
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTest
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
+interface KotlinJsSubtargetContainerDsl : KotlinTarget {
+    val nodejs: KotlinJsNodeDsl
+
+    val browser: KotlinJsBrowserDsl
+
+    val isNodejsConfigured: Boolean
+
+    val isBrowserConfigured: Boolean
+
+    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit)
+
+    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
+}
 
 interface KotlinJsIrTargetDsl {
     fun browser() = browser { }
@@ -39,10 +51,10 @@ interface KotlinJsIrTargetDsl {
 
     fun produceExecutable()
 
-    val testRuns: NamedDomainObjectContainer<KotlinJsIrReportAggregatingTestRun>
+    val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 }
 
-interface KotlinJsTargetDsl {
+interface KotlinJsTargetDsl : KotlinTarget {
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
     fun browser(fn: Closure<*>) {
@@ -78,14 +90,14 @@ interface KotlinJsSubTargetDsl {
 }
 
 interface KotlinJsIrSubTargetDsl {
-    fun testTask(body: KotlinJsIrTest.() -> Unit)
+    fun testTask(body: KotlinJsTest.() -> Unit)
     fun testTask(fn: Closure<*>) {
         testTask {
             ConfigureUtil.configure(fn, this)
         }
     }
 
-    val testRuns: NamedDomainObjectContainer<KotlinJsIrPlatformTestRun>
+    val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }
 
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {

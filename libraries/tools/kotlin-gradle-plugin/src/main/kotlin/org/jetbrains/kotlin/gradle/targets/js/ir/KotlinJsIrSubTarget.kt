@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsIrPlatformTestRun
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsIrSubTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -25,13 +26,13 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
     private val disambiguationClassifier: String
-) : KotlinJsIrSubTargetDsl {
+) : KotlinJsSubTargetDsl {
     val project get() = target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     abstract val testTaskDescription: String
 
-    final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsIrPlatformTestRun>
+    final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
     internal fun configure() {
@@ -79,7 +80,7 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    override fun testTask(body: KotlinJsIrTest.() -> Unit) {
+    override fun testTask(body: KotlinJsTest.() -> Unit) {
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
@@ -89,7 +90,7 @@ abstract class KotlinJsIrSubTarget(
     abstract fun configureBuildVariants()
 
     private fun configureTests() {
-        testRuns = project.container(KotlinJsIrPlatformTestRun::class.java) { name -> KotlinJsIrPlatformTestRun(name, this) }.also {
+        testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {
             (this as ExtensionAware).extensions.add(this::testRuns.name, it)
         }
 
@@ -97,21 +98,21 @@ abstract class KotlinJsIrSubTarget(
         testRuns.create(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
     }
 
-    protected open fun configureTestRunDefaults(testRun: KotlinJsIrPlatformTestRun) {
+    protected open fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
         target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }.all { compilation ->
             configureTestsRun(testRun, compilation)
         }
     }
 
-    private fun configureTestsRun(testRun: KotlinJsIrPlatformTestRun, compilation: KotlinJsIrCompilation) {
-        fun KotlinJsIrPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
+    private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsIrCompilation) {
+        fun KotlinJsPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
             lowerCamelCaseName(
                 name.takeIf { it != KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME },
                 AbstractKotlinTargetConfigurator.testTaskNameSuffix
             )
         )
 
-        val testJs = project.registerTask<KotlinJsIrTest>(testRun.subtargetTestTaskName()) { testJs ->
+        val testJs = project.registerTask<KotlinJsTest>(testRun.subtargetTestTaskName()) { testJs ->
             val compileTask = compilation.compileKotlinTask
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
@@ -151,7 +152,7 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    protected abstract fun configureDefaultTestFramework(it: KotlinJsIrTest)
+    protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
 
     private fun configureMain() {
         target.compilations.all { compilation ->

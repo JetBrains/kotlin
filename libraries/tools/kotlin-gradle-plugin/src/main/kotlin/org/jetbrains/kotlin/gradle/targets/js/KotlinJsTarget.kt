@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubtargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
@@ -42,7 +43,7 @@ constructor(
 ) :
     KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
-    KotlinJsTargetDsl {
+    KotlinJsTargetDsl, KotlinJsSubtargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
@@ -96,9 +97,9 @@ constructor(
 
     private val browserConfiguredHandlers = mutableListOf<KotlinJsBrowserDsl.() -> Unit>()
 
-    val browser by browserLazyDelegate
+    override val browser by browserLazyDelegate
 
-    internal val isBrowserConfigured: Boolean = browserLazyDelegate.isInitialized()
+    override val isBrowserConfigured: Boolean = browserLazyDelegate.isInitialized()
 
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
@@ -117,9 +118,9 @@ constructor(
 
     private val nodejsConfiguredHandlers = mutableListOf<KotlinJsNodeDsl.() -> Unit>()
 
-    val nodejs by nodejsLazyDelegate
+    override val nodejs by nodejsLazyDelegate
 
-    internal val isNodejsConfigured: Boolean = nodejsLazyDelegate.isInitialized()
+    override val isNodejsConfigured: Boolean = nodejsLazyDelegate.isInitialized()
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
@@ -156,7 +157,7 @@ constructor(
         }
     }
 
-    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
+    override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
         if (browserLazyDelegate.isInitialized()) {
             browser(body)
         } else {
@@ -164,7 +165,7 @@ constructor(
         }
     }
 
-    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
+    override fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
         if (nodejsLazyDelegate.isInitialized()) {
             nodejs(body)
         } else {

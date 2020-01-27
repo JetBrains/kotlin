@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 abstract class KotlinJsSubTarget(
     val target: KotlinJsTarget,
@@ -66,7 +67,7 @@ abstract class KotlinJsSubTarget(
     abstract fun configureBuildVariants()
 
     private fun configureTests() {
-        testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, this) }.also {
+        testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {
             (this as ExtensionAware).extensions.add(this::testRuns.name, it)
         }
 
@@ -93,6 +94,10 @@ abstract class KotlinJsSubTarget(
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
+
+            testJs.inputFileProperty.set(project.newFileProperty {
+                compileTask.outputFile
+            })
 
             testJs.dependsOn(nodeJs.npmInstallTask, compileTask, nodeJs.nodeJsSetupTask)
 

@@ -10,9 +10,11 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
@@ -22,7 +24,7 @@ import javax.inject.Inject
 
 open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
-    KotlinJsIrBrowserDsl {
+    KotlinJsBrowserDsl {
 
     private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
@@ -33,7 +35,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
-    override fun configureDefaultTestFramework(it: KotlinJsIrTest) {
+    override fun configureDefaultTestFramework(it: KotlinJsTest) {
         it.useKarma {
             useChromeHeadless()
         }
@@ -50,6 +52,11 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
         commonWebpackConfigurations.add(body)
+    }
+
+    @ExperimentalDceDsl
+    override fun dceTask(body: KotlinJsDce.() -> Unit) {
+        TODO("Not yet implemented")
     }
 
     override fun configureMain(compilation: KotlinJsIrCompilation) {
