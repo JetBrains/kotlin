@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.InteropConfiguration
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.*
@@ -100,6 +101,13 @@ interface StubsBuildingContext {
 
     val platform: KotlinPlatform
 
+    /**
+     * In some cases StubIr should be different for metadata and sourcecode modes.
+     * For example, it is impossible to represent call to superclass constructor in
+     * metadata directly and arguments should be passed via annotations instead.
+     */
+    val generationMode: GenerationMode
+
     fun isStrictEnum(enumDef: EnumDef): Boolean
 
     val macroConstantsByName: Map<String, MacroDef>
@@ -132,6 +140,7 @@ class StubsBuildingContextImpl(
 
     override val configuration: InteropConfiguration = stubIrContext.configuration
     override val platform: KotlinPlatform = stubIrContext.platform
+    override val generationMode: GenerationMode = stubIrContext.generationMode
     val imports: Imports = stubIrContext.imports
     private val nativeIndex: NativeIndex = stubIrContext.nativeIndex
 

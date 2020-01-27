@@ -18,6 +18,7 @@ class StubIrContext(
         val nativeIndex: NativeIndex,
         val imports: Imports,
         val platform: KotlinPlatform,
+        val generationMode: GenerationMode,
         val libName: String
 ) {
     val libraryForCStubs = configuration.library.copy(
@@ -102,7 +103,6 @@ class StubIrDriver(
         private val options: DriverOptions
 ) {
     data class DriverOptions(
-            val mode: GenerationMode,
             val entryPoint: String?,
             val moduleName: String,
             val outCFile: File,
@@ -116,7 +116,7 @@ class StubIrDriver(
     }
 
     fun run(): Result {
-        val (mode, entryPoint, moduleName, outCFile, outKtFile) = options
+        val (entryPoint, moduleName, outCFile, outKtFile) = options
 
         val builderResult = StubIrBuilder(context).build()
         val bridgeBuilderResult = StubIrBridgeBuilder(context, builderResult).build()
@@ -125,7 +125,7 @@ class StubIrDriver(
             emitCFile(context, it, entryPoint, bridgeBuilderResult.nativeBridges)
         }
 
-        return when (mode) {
+        return when (context.generationMode) {
             GenerationMode.SOURCE_CODE -> {
                 emitSourceCode(outKtFile(), builderResult, bridgeBuilderResult)
             }

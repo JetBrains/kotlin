@@ -261,7 +261,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
         {}
     }
 
-    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, libName)
+    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName)
     val stubIrOutput = run {
         val outKtFileCreator = {
             val outKtFileName = fqParts.last() + ".kt"
@@ -270,7 +270,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             file.parentFile.mkdirs()
             file
         }
-        val driverOptions = StubIrDriver.DriverOptions(mode, entryPoint, moduleName, File(outCFile.absolutePath), outKtFileCreator)
+        val driverOptions = StubIrDriver.DriverOptions(entryPoint, moduleName, File(outCFile.absolutePath), outKtFileCreator)
         val stubIrDriver = StubIrDriver(stubIrContext, driverOptions)
         stubIrDriver.run()
     }
