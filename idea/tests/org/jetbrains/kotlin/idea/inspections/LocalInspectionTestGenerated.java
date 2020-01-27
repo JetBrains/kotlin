@@ -2460,6 +2460,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/constantConditionIf"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("constant.kt")
+        public void testConstant() throws Exception {
+            runTest("idea/testData/inspectionsLocal/constantConditionIf/constant.kt");
+        }
+
         @TestMetadata("delete.kt")
         public void testDelete() throws Exception {
             runTest("idea/testData/inspectionsLocal/constantConditionIf/delete.kt");
