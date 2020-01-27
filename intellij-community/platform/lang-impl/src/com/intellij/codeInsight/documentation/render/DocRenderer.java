@@ -9,15 +9,15 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorCustomElementRenderer;
 import com.intellij.openapi.editor.Inlay;
-import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsUtil;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.ColorUtil;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.GraphicsUtil;
@@ -72,7 +72,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     int bottomMargin = scale(BOTTOM_MARGIN);
     if (bottomMargin >= targetRegion.height) return;
     int arcSize = scale(ARC_WIDTH);
-    Color bgColor = EditorColorsUtil.getGlobalOrDefaultColor(EditorColors.DOCUMENTATION_COLOR);
+    Color bgColor = getColorFromRegistry("editor.render.doc.comments.bg");
 
     g.setColor(bgColor);
     Object savedAntiAliasing = ((Graphics2D)g).getRenderingHint(RenderingHints.KEY_ANTIALIASING);
@@ -138,6 +138,7 @@ class DocRenderer implements EditorCustomElementRenderer {
       // disable kerning for now - laying out all fragments in a file with it takes too much time
       fontAttributes.put(TextAttribute.KERNING, 0);
       myPane.setFont(myPane.getFont().deriveFont(fontAttributes));
+      myPane.setForeground(getColorFromRegistry("editor.render.doc.comments.fg"));
       myPane.setText(myItem.textToRender);
       inlay.putUserData(RECREATE_COMPONENT, null);
     }
@@ -162,5 +163,15 @@ class DocRenderer implements EditorCustomElementRenderer {
     editorKit.getStyleSheet().addRule(".section { color: " + ColorUtil.toHtmlColor(DocumentationComponent.SECTION_COLOR) +
                                       "; padding-right: 4px}");
     return editorKit;
+  }
+
+  private static Color getColorFromRegistry(String key) {
+    String[] values = Registry.get(key).asString().split(",");
+    try {
+      return new JBColor(ColorUtil.fromHex(values[0]), ColorUtil.fromHex(values[1]));
+    }
+    catch (Exception e) {
+      return null;
+    }
   }
 }
