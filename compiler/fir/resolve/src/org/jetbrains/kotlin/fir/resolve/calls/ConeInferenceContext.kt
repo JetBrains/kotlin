@@ -134,10 +134,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
         if (predicate(this)) return true
 
-        val flexibleType = this.asFlexibleType()
+        val flexibleType = this as? ConeFlexibleType
         if (flexibleType != null
-            && (flexibleType.lowerBound().containsInternal(predicate, visited)
-                    || flexibleType.upperBound().containsInternal(predicate, visited))
+            && (flexibleType.lowerBound.containsInternal(predicate, visited)
+                    || flexibleType.upperBound.containsInternal(predicate, visited))
         ) {
             return true
         }
@@ -148,18 +148,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         ) {
             return true
         }
-        /*
-        TODO:
 
-        TypeConstructor typeConstructor = type.getConstructor();
-        if (typeConstructor instanceof IntersectionTypeConstructor) {
-            IntersectionTypeConstructor intersectionTypeConstructor = (IntersectionTypeConstructor) typeConstructor;
-            for (KotlinType supertype : intersectionTypeConstructor.getSupertypes()) {
-                if (contains(supertype, isSpecialType, visited)) return true;
-            }
-            return false;
+        if (this is ConeIntersectionType) {
+            return this.intersectedTypes.any { it.containsInternal(predicate, visited) }
         }
-         */
 
         repeat(argumentsCount()) { index ->
             val argument = getArgument(index)

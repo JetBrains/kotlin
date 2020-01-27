@@ -417,7 +417,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this is ConeTypeParameterType /* || is TypeVariable */)
             return hasNullableSuperType(type)
 
-        // TODO: Intersection types
+        if (this is ConeIntersectionType && intersectedTypes.any { it.isNullableType() }) {
+            return true
+        }
+
         return false
     }
 
