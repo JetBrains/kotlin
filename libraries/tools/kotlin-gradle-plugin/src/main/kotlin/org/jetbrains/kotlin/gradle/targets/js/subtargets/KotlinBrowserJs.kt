@@ -94,7 +94,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    target.project.tasks.getByName(compilation.processResourcesTaskName)
+                    target.project.tasks.named(compilation.processResourcesTaskName)
                 )
 
                 it.configureOptimization(kind)
@@ -153,7 +153,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
         distribution.directory = distribution.directory ?: baseDist
 
-        val processResourcesTask = target.project.tasks.getByName(compilation.processResourcesTaskName)
+        val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
         val distributionTask = project.registerTask<Copy>(
             disambiguateCamelCased(
@@ -161,7 +161,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             )
         ) {
             it.dependsOn(processResourcesTask)
-            
+
             it.from(compilation.output.resourcesDir)
             it.into(distribution.directory ?: baseDist)
         }
