@@ -89,11 +89,11 @@ class IJTestEventLogger {
 
   static def wrap(String s) {
     if(!s) return s;
-    s.replaceAll("\r\n|\n\r|\n|\r","<ijLogEol/>\n")
+    s.replaceAll("\r\n|\n\r|\n|\r","<ijLogEol/>")
   }
 
   static def writeLog(s) {
-    println String.format("\n<ijLog>%s</ijLog>", wrap(s))
+    println String.format("<ijLog>%s</ijLog>", wrap(s))
   }
 
   static def logTestReportLocation(def report) {

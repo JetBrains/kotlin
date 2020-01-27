@@ -6,7 +6,10 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -18,6 +21,7 @@ import java.util.Map;
 public class GradleTestsExecutionConsole extends SMTRunnerConsoleView implements BuildViewSettingsProvider {
   private final Map<String, SMTestProxy> testsMap = new HashMap<>();
   private final StringBuilder myBuffer = new StringBuilder();
+  private boolean lastMessageWasEmptyLine;
 
   public GradleTestsExecutionConsole(TestConsoleProperties consoleProperties, @Nullable String splitterProperty) {
     super(consoleProperties, splitterProperty);
@@ -44,5 +48,24 @@ public class GradleTestsExecutionConsole extends SMTRunnerConsoleView implements
   @Override
   public boolean isExecutionViewHidden() {
     return Registry.is("build.view.side-by-side", true);
+  }
+
+  @Override
+  public void print(@NotNull String s, @NotNull ConsoleViewContentType contentType) {
+    if (isUnwantedEmptyLineCandidate(s)) return;
+    super.print(s, contentType);
+  }
+
+  // IJ Gradle test runner xml events protocol produces many unwanted empty strings
+  // this is a workaround to avoid the trash in the console
+  private boolean isUnwantedEmptyLineCandidate(@NotNull String s) {
+    if (s.length() == 1 && StringUtil.isLineBreak(s.charAt(0))) {
+      if (lastMessageWasEmptyLine) return true;
+      lastMessageWasEmptyLine = true;
+    }
+    else {
+      lastMessageWasEmptyLine = false;
+    }
+    return false;
   }
 }

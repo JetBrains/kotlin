@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.execution.test.runner.events.*;
 
 /**
@@ -27,30 +28,21 @@ import org.jetbrains.plugins.gradle.execution.test.runner.events.*;
  */
 public class GradleTestsExecutionConsoleOutputProcessor {
   private static final Logger LOG = Logger.getInstance(GradleTestsExecutionConsoleOutputProcessor.class);
+  @SuppressWarnings("HardCodedStringLiteral")
+  private static final String LOG_EOL = "<ijLogEol/>";
+  @SuppressWarnings("HardCodedStringLiteral")
+  private static final String LOG_START = "<ijLog>";
+  @SuppressWarnings("HardCodedStringLiteral")
+  private static final String LOG_END = "</ijLog>";
 
   public static void onOutput(@NotNull GradleTestsExecutionConsole executionConsole,
                               @NotNull String text,
-                              @NotNull Key processOutputType) {
-    final StringBuilder consoleBuffer = executionConsole.getBuffer();
-    if (StringUtil.endsWith(text, "<ijLogEol/>\n")) {
-      consoleBuffer.append(StringUtil.trimEnd(text, "<ijLogEol/>\n")).append('\n');
-      return;
-    }
-    else {
-      consoleBuffer.append(text);
-    }
-
-    String trimmedText = consoleBuffer.toString().trim();
-    consoleBuffer.setLength(0);
-
-    if (!StringUtil.startsWith(trimmedText, "<ijLog>") || !StringUtil.endsWith(trimmedText, "</ijLog>")) {
-      if (text.trim().isEmpty()) return;
-      executionConsole.print(text, ConsoleViewContentType.getConsoleViewType(processOutputType));
-      return;
-    }
+                              @NotNull Key<?> processOutputType) {
+    String eventMessage = getEventMessage(executionConsole, text, processOutputType);
+    if (eventMessage == null) return;
 
     try {
-      final TestEventXmlView xml = new TestEventXPPXmlView(trimmedText);
+      final TestEventXmlView xml = new TestEventXPPXmlView(eventMessage);
 
       final TestEventType eventType = TestEventType.fromValue(xml.getTestEventType());
       TestEvent testEvent = null;
@@ -86,5 +78,45 @@ public class GradleTestsExecutionConsoleOutputProcessor {
     catch (TestEventXmlView.XmlParserException e) {
       LOG.error("Gradle test events parser error", e);
     }
+  }
+
+  @Nullable
+  private static String getEventMessage(@NotNull GradleTestsExecutionConsole executionConsole,
+                                        @NotNull String text,
+                                        @NotNull Key<?> processOutputType) {
+    String eventMessage = null;
+    final StringBuilder consoleBuffer = executionConsole.getBuffer();
+    String trimmedText = text.trim();
+    if (StringUtil.endsWith(trimmedText, LOG_EOL)) {
+      consoleBuffer.append(StringUtil.trimEnd(trimmedText, LOG_EOL));
+      return null;
+    }
+    else {
+      if (consoleBuffer.length() == 0) {
+        if (StringUtil.startsWith(trimmedText, LOG_START) && StringUtil.endsWith(trimmedText, LOG_END)) {
+          eventMessage = text;
+        }
+        else {
+          executionConsole.print(text, ConsoleViewContentType.getConsoleViewType(processOutputType));
+          return null;
+        }
+      }
+      else {
+        consoleBuffer.append(text);
+        if (trimmedText.isEmpty()) return null;
+      }
+    }
+
+    if (eventMessage == null) {
+      String bufferText = consoleBuffer.toString().trim();
+      consoleBuffer.setLength(0);
+      if (!StringUtil.startsWith(bufferText, LOG_START) || !StringUtil.endsWith(bufferText, LOG_END)) {
+        executionConsole.print(bufferText, ConsoleViewContentType.getConsoleViewType(processOutputType));
+        return null;
+      }
+      eventMessage = bufferText;
+    }
+    assert consoleBuffer.length() == 0;
+    return eventMessage;
   }
 }
