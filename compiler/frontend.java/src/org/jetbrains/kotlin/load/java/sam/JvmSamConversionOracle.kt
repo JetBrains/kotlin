@@ -8,13 +8,7 @@ package org.jetbrains.kotlin.load.java.sam
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
-import org.jetbrains.kotlin.synthetic.hasJavaOriginInHierarchy
 import org.jetbrains.kotlin.types.KotlinType
 
 class JvmSamConversionOracle(
@@ -23,16 +17,9 @@ class JvmSamConversionOracle(
 
     override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean {
         if (languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) return true
-
-        val functionDescriptor = candidate.original as? FunctionDescriptor ?: return false
-        if (functionDescriptor is TypeAliasConstructorDescriptor &&
-            functionDescriptor.underlyingConstructorDescriptor is JavaClassConstructorDescriptor) return true
-
-        return functionDescriptor.hasJavaOriginInHierarchy()
+        return JavaBasedSamConversionOracle.shouldRunSamConversionForFunction(candidate)
     }
 
-    override fun isPossibleSamType(samType: KotlinType): Boolean {
-        val descriptor = samType.constructor.declarationDescriptor
-        return descriptor is ClassDescriptor && (descriptor.isFun || descriptor is JavaClassDescriptor)
-    }
+    override fun isPossibleSamType(samType: KotlinType): Boolean =
+        JavaBasedSamConversionOracle.isPossibleSamType(samType)
 }

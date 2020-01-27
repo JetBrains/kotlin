@@ -312,7 +312,10 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
                 !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
     if (generatingAdditionalSamCandidateIsEnabled) return null
-    if (!callComponents.samConversionOracle.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
+    val samConversionOracle = callComponents.samConversionOracle
+    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
+        if (!samConversionOracle.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
+    }
 
     val argumentIsFunctional = when (argument) {
         is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
@@ -323,13 +326,12 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
 
     val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
 
-    if (!callComponents.samConversionOracle.isPossibleSamType(originalExpectedType)) return null
-
     val convertedTypeByOriginal =
-        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
+        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(originalExpectedType, samConversionOracle) ?: return null
 
     val candidateExpectedType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
-    val convertedTypeByCandidate = callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    val convertedTypeByCandidate =
+        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(candidateExpectedType, samConversionOracle)
 
     assert(candidateExpectedType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
         "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +

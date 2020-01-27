@@ -95,14 +95,20 @@ fun getFunctionTypeForAbstractMethod(
     )
 }
 
-fun SamConversionResolver.getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType? =
-    getFunctionTypeForSamType(possibleSamType, this)?.unwrap()
+fun SamConversionResolver.getFunctionTypeForPossibleSamType(
+    possibleSamType: UnwrappedType,
+    samConversionOracle: SamConversionOracle
+): UnwrappedType? = getFunctionTypeForSamType(possibleSamType, this, samConversionOracle)?.unwrap()
 
-fun getFunctionTypeForSamType(samType: KotlinType, samResolver: SamConversionResolver): KotlinType? {
+fun getFunctionTypeForSamType(
+    samType: KotlinType,
+    samResolver: SamConversionResolver,
+    samConversionOracle: SamConversionOracle
+): KotlinType? {
     val unwrappedType = samType.unwrap()
     if (unwrappedType is FlexibleType) {
-        val lower = getFunctionTypeForSamType(unwrappedType.lowerBound, samResolver)
-        val upper = getFunctionTypeForSamType(unwrappedType.upperBound, samResolver)
+        val lower = getFunctionTypeForSamType(unwrappedType.lowerBound, samResolver, samConversionOracle)
+        val upper = getFunctionTypeForSamType(unwrappedType.upperBound, samResolver, samConversionOracle)
 
         assert((lower == null) == (upper == null)) { "Illegal flexible type: $unwrappedType" }
 
@@ -110,14 +116,20 @@ fun getFunctionTypeForSamType(samType: KotlinType, samResolver: SamConversionRes
 
         return KotlinTypeFactory.flexibleType(lower, upper)
     } else {
-        return getFunctionTypeForSamType(unwrappedType as SimpleType, samResolver)
+        return getFunctionTypeForSamType(unwrappedType as SimpleType, samResolver, samConversionOracle)
     }
 }
 
-private fun getFunctionTypeForSamType(samType: SimpleType, samResolver: SamConversionResolver): SimpleType? {
+private fun getFunctionTypeForSamType(
+    samType: SimpleType,
+    samResolver: SamConversionResolver,
+    samConversionOracle: SamConversionOracle
+): SimpleType? {
     // e.g. samType == Comparator<String>?
     val classifier = samType.constructor.declarationDescriptor
     if (classifier !is ClassDescriptor) return null
+
+    if (!samConversionOracle.isPossibleSamType(samType)) return null
 
     // Function2<T, T, Int>
     val functionTypeDefault = samResolver.resolveFunctionTypeIfSamInterface(classifier) ?: return null

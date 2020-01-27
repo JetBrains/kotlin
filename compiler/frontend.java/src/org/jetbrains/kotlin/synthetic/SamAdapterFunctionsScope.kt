@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
@@ -54,6 +55,7 @@ val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")
 class SamAdapterFunctionsScope(
     storageManager: StorageManager,
     private val samResolver: SamConversionResolver,
+    private val samConversionOracle: SamConversionOracle,
     private val deprecationResolver: DeprecationResolver,
     private val lookupTracker: LookupTracker,
     private val samViaSyntheticScopeDisabled: Boolean,
@@ -68,17 +70,17 @@ class SamAdapterFunctionsScope(
 
     private val samAdapterForStaticFunction =
             storageManager.createMemoizedFunction<JavaMethodDescriptor, SamAdapterDescriptor<JavaMethodDescriptor>> { function ->
-                SingleAbstractMethodUtils.createSamAdapterFunction(function, samResolver)
+                SingleAbstractMethodUtils.createSamAdapterFunction(function, samResolver, samConversionOracle)
             }
 
     private val samConstructorForClassifier =
             storageManager.createMemoizedFunction<ClassDescriptor, SamConstructorDescriptor> { classifier ->
-                SingleAbstractMethodUtils.createSamConstructorFunction(classifier.containingDeclaration, classifier, samResolver)
+                SingleAbstractMethodUtils.createSamConstructorFunction(classifier.containingDeclaration, classifier, samResolver, samConversionOracle)
             }
 
     private val samConstructorForJavaConstructor =
             storageManager.createMemoizedFunction<JavaClassConstructorDescriptor, ClassConstructorDescriptor> { constructor ->
-                SingleAbstractMethodUtils.createSamAdapterConstructor(constructor, samResolver) as ClassConstructorDescriptor
+                SingleAbstractMethodUtils.createSamAdapterConstructor(constructor, samResolver, samConversionOracle) as ClassConstructorDescriptor
             }
 
     private val samConstructorForTypeAliasConstructor =
@@ -93,7 +95,7 @@ class SamAdapterFunctionsScope(
         if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return null
         if (function.returnType == null) return null
         if (deprecationResolver.isHiddenInResolution(function)) return null
-        return SamAdapterExtensionFunctionDescriptorImpl.create(function, samResolver)
+        return SamAdapterExtensionFunctionDescriptorImpl.create(function, samResolver, samConversionOracle)
     }
 
     override fun getSyntheticMemberFunctions(
@@ -269,7 +271,8 @@ class SamAdapterFunctionsScope(
         if (!SingleAbstractMethodUtils.isSamClassDescriptor(classDescriptor)) return null
 
         return SingleAbstractMethodUtils.createTypeAliasSamConstructorFunction(
-                classifier, samConstructorForClassifier(classDescriptor), samResolver)
+                classifier, samConstructorForClassifier(classDescriptor), samResolver, samConversionOracle
+        )
     }
 
     private class SamAdapterExtensionFunctionDescriptorImpl(
@@ -289,7 +292,11 @@ class SamAdapterFunctionsScope(
         }
 
         companion object {
-            fun create(sourceFunction: FunctionDescriptor, samResolver: SamConversionResolver): SamAdapterExtensionFunctionDescriptorImpl {
+            fun create(
+                sourceFunction: FunctionDescriptor,
+                samResolver: SamConversionResolver,
+                samConversionOracle: SamConversionOracle
+            ): SamAdapterExtensionFunctionDescriptorImpl {
                 val descriptor = SamAdapterExtensionFunctionDescriptorImpl(
                         sourceFunction.containingDeclaration,
                         null,
@@ -307,7 +314,8 @@ class SamAdapterFunctionsScope(
 
                 val returnType = typeSubstitutor.safeSubstitute(sourceFunction.returnType!!, Variance.INVARIANT)
                 val valueParameters = SingleAbstractMethodUtils.createValueParametersForSamAdapter(
-                        sourceFunction, descriptor, typeSubstitutor, samResolver)
+                        sourceFunction, descriptor, typeSubstitutor, samResolver, samConversionOracle
+                )
 
                 val visibility = syntheticVisibility(sourceFunction, isUsedForExtension = false)
 

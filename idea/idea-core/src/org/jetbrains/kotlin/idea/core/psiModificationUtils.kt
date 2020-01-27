@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
 import org.jetbrains.kotlin.types.KotlinType
@@ -129,6 +130,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
 
         val resolutionFacade = getResolutionFacade()
         val samConversionTransformer = resolutionFacade.frontendService<SamConversionResolver>()
+        val samConversionOracle = resolutionFacade.frontendService<SamConversionOracle>()
         val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
 
         val bindingContext = analyze(resolutionFacade, BodyResolveMode.PARTIAL)
@@ -143,6 +145,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
             it.allowsMoveOfLastParameterOutsideParentheses(
                 lambdaArgumentCount + referenceArgumentCount,
                 samConversionTransformer,
+                samConversionOracle,
                 languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
             )
         }
@@ -156,6 +159,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
 private fun FunctionDescriptor.allowsMoveOfLastParameterOutsideParentheses(
     lambdaAndCallableReferencesInOriginalCallCount: Int,
     samConversionTransformer: SamConversionResolver,
+    samConversionOracle: SamConversionOracle,
     newInferenceEnabled: Boolean
 ): Boolean {
     fun KotlinType.allowsMoveOutsideParentheses(): Boolean {
@@ -167,7 +171,7 @@ private fun FunctionDescriptor.allowsMoveOfLastParameterOutsideParentheses(
         // converted types, but in NI it is performed by conversions, so we check it explicitly
         // Also note that 'newInferenceEnabled' is essentially a micro-optimization, as there are no
         // harm in just calling 'samConversionTransformer' on all candidates.
-        return newInferenceEnabled && samConversionTransformer.getFunctionTypeForPossibleSamType(this.unwrap()) != null
+        return newInferenceEnabled && samConversionTransformer.getFunctionTypeForPossibleSamType(this.unwrap(), samConversionOracle) != null
     }
 
     val params = valueParameters
