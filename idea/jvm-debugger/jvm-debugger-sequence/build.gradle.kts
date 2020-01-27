@@ -23,6 +23,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
-
-val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
-compileKotlin.kotlinOptions.freeCompilerArgs += "-Xno-use-ir"

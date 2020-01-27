@@ -163,6 +163,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/innerClassConstructor.kt");
     }
 
+    @TestMetadata("interfaceDelegationAndBridgesProcessing.kt")
+    public void testInterfaceDelegationAndBridgesProcessing() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/interfaceDelegationAndBridgesProcessing.kt");
+    }
+
     @TestMetadata("internalSetterOverridden.kt")
     public void testInternalSetterOverridden() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalSetterOverridden.kt");

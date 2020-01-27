@@ -454,7 +454,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
 
 
     private inner class FunctionHandleForIrFunction(val irFunction: IrSimpleFunction) : FunctionHandle {
-        override val isDeclaration get() = irFunction.origin != IrDeclarationOrigin.FAKE_OVERRIDE
+        override val isDeclaration get() = irFunction.origin != IrDeclarationOrigin.FAKE_OVERRIDE || irFunction.findInterfaceImplementation() != null
         override val isAbstract get() = irFunction.modality == Modality.ABSTRACT
         override val mayBeUsedAsSuperImplementation get() = !irFunction.parentAsClass.isInterface || irFunction.hasJvmDefault()
 

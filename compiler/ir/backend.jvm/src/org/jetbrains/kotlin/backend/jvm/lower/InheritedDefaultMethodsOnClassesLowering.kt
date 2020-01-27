@@ -58,7 +58,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
 
     private fun generateInterfaceMethods(irClass: IrClass) {
         irClass.declarations.transform { declaration ->
-            (declaration as? IrSimpleFunction)?.getTargetForRedirection()?.let { implementation ->
+            (declaration as? IrSimpleFunction)?.findInterfaceImplementation()?.let { implementation ->
                 generateDelegationToDefaultImpl(implementation, declaration)
             } ?: declaration
         }
@@ -69,35 +69,11 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
     // if the overriden symbol has been, or will be, replaced and patch it accordingly.
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         declaration.overriddenSymbols.replaceAll { symbol ->
-            if (symbol.owner.getTargetForRedirection() != null)
+            if (symbol.owner.findInterfaceImplementation() != null)
                 context.declarationFactory.getDefaultImplsRedirection(symbol.owner).symbol
             else symbol
         }
         super.visitSimpleFunction(declaration)
-    }
-
-    private fun IrSimpleFunction.getTargetForRedirection(): IrSimpleFunction? {
-        if (origin != IrDeclarationOrigin.FAKE_OVERRIDE) return null
-        parent.let { if (it is IrClass && it.isJvmInterface) return null }
-
-        val implementation = resolveFakeOverride() ?: return null
-
-        // Only generate interface delegation for functions immediately inherited from an interface.
-        // (Otherwise, delegation will be present in the parent class)
-        if (overriddenSymbols.any { !it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT && it.owner.resolveFakeOverride() == implementation }) {
-            return null
-        }
-
-        if (!implementation.hasInterfaceParent()
-            || Visibilities.isPrivate(implementation.visibility)
-            || implementation.isDefinitelyNotDefaultImplsMethod()
-            || implementation.isMethodOfAny()
-            || implementation.hasJvmDefault()
-        ) {
-            return null
-        }
-
-        return implementation
     }
 
     private fun generateDelegationToDefaultImpl(
@@ -216,4 +192,33 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
         val newSuperQualifierSymbol = context.irBuiltIns.anyClass.takeIf { expression.superQualifierSymbol != null }
         return super.visitCall(irCall(expression, resolved, newSuperQualifierSymbol = newSuperQualifierSymbol))
     }
+}
+
+/**
+ * Given a fake override in a class, returns an overridden declaration with implementation in interface, such that a method delegating to that
+ * interface implementation should be generated into the class containing the fake override; or null if the given function is not a fake
+ * override of any interface implementation or such method was already generated into the superclass or is a method from Any.
+ */
+internal fun IrSimpleFunction.findInterfaceImplementation(): IrSimpleFunction? {
+    if (!isFakeOverride) return null
+    parent.let { if (it is IrClass && it.isJvmInterface) return null }
+
+    val implementation = resolveFakeOverride() ?: return null
+
+    // Only generate interface delegation for functions immediately inherited from an interface.
+    // (Otherwise, delegation will be present in the parent class)
+    if (overriddenSymbols.any { !it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT && it.owner.resolveFakeOverride() == implementation }) {
+        return null
+    }
+
+    if (!implementation.hasInterfaceParent()
+        || Visibilities.isPrivate(implementation.visibility)
+        || implementation.isDefinitelyNotDefaultImplsMethod()
+        || implementation.isMethodOfAny()
+        || implementation.hasJvmDefault()
+    ) {
+        return null
+    }
+
+    return implementation
 }
