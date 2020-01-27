@@ -78,14 +78,11 @@ interface KotlinResolutionCallbacks {
 
 @DefaultImplementation(impl = SamConversionTransformer.Empty::class)
 interface SamConversionTransformer {
-    fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType?
-
     fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean
 
     fun isPossibleSamType(samType: KotlinType): Boolean
 
     object Empty : SamConversionTransformer {
-        override fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType? = null
         override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean = false
         override fun isPossibleSamType(samType: KotlinType): Boolean {
             val descriptor = samType.constructor.declarationDescriptor

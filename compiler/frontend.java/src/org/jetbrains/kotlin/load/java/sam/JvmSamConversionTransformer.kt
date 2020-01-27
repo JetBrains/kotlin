@@ -11,21 +11,15 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.synthetic.hasJavaOriginInHierarchy
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
 
 class JvmSamConversionTransformer(
-    private val samResolver: SamConversionResolver,
     private val languageVersionSettings: LanguageVersionSettings
 ) : SamConversionTransformer {
-
-    override fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType? =
-        SingleAbstractMethodUtils.getFunctionTypeForSamType(possibleSamType, samResolver)?.unwrap()
 
     override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean {
         if (languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) return true
