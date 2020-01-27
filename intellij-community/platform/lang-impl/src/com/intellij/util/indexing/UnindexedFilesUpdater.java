@@ -110,7 +110,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     Application app = ApplicationManager.getApplication();
     if (!app.isCommandLine()) {
       long sessionId = VirtualFileManager.getInstance().asyncRefresh(null);
-      MessageBusConnection connection = app.getMessageBus().connect(this);
+      MessageBusConnection connection = app.getMessageBus().connect();
       connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
         @Override
         public void projectClosed(@NotNull Project project) {
