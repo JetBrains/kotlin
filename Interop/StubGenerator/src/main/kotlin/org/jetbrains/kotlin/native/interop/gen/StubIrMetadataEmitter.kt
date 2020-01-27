@@ -83,7 +83,7 @@ internal class ModuleMetadataEmitter(
                     typeParametersInterner = Interner(data.typeParametersInterner)
             )
             val children = element.children + if (element is ClassStub.Companion) {
-                listOf(ConstructorStub(isPrimary = true, visibility = VisibilityModifier.PRIVATE, origin = StubOrigin.SyntheticDefaultConstructor))
+                listOf(ConstructorStub(isPrimary = true, visibility = VisibilityModifier.PRIVATE, origin = StubOrigin.Synthetic.DefaultConstructor))
             } else emptyList()
             val elements = KmElements(children.map { it.accept(this, classVisitingContext) })
             val kmClass = with (MappingExtensions(data.typeParametersInterner)) {

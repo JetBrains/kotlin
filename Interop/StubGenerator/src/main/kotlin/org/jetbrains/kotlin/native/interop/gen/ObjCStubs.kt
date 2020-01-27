@@ -435,7 +435,7 @@ internal abstract class ObjCContainerStubBuilder(
             ConstructorStub(
                     isPrimary = false,
                     visibility = VisibilityModifier.PROTECTED,
-                    origin = StubOrigin.SyntheticDefaultConstructor)
+                    origin = StubOrigin.Synthetic.DefaultConstructor)
         } else null
 
         return Pair(

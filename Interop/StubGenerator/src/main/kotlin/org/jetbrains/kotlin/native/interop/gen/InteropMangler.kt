@@ -37,6 +37,7 @@ sealed class ManglingContext {
 interface InteropMangler {
     val StructDecl.uniqueSymbolName: String
     val EnumDef.uniqueSymbolName: String
+    val EnumConstant.uniqSymbolName: String
     val ObjCClass.uniqueSymbolName: String
     val ObjCClass.metaClassUniqueSymbolName: String
     val ObjCProtocol.uniqueSymbolName: String
@@ -62,6 +63,9 @@ class KotlinLikeInteropMangler(context: ManglingContext = ManglingContext.Empty)
 
     override val EnumDef.uniqueSymbolName: String
         get() = "enumdef:$prefix$spelling"
+
+    override val EnumConstant.uniqSymbolName: String
+        get() = "enumconstant:$prefix$name"
 
     override val ObjCClass.uniqueSymbolName: String
         get() = "objcclass:$prefix$name"
