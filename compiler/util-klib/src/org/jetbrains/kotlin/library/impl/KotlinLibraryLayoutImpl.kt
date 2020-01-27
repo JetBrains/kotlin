@@ -136,8 +136,6 @@ class ExtractingIrLibraryImpl(val zipped: IrLibraryLayoutImpl) :
 
     override val irDeclarations: File by lazy { zipped.extract(zipped.irDeclarations) }
 
-    override val irSymbols: File by lazy { zipped.extract(zipped.irSymbols) }
-
     override val irTypes: File by lazy { zipped.extract(zipped.irTypes) }
 
     override val irStrings: File by lazy { zipped.extract(zipped.irStrings) }

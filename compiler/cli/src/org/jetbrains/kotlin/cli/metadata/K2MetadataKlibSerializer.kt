@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.metadata
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -68,7 +67,6 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
         val serializedMetadata: SerializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
             metadataVersion,
-            DescriptorTable.createDefault(),
             skipExpects = false,
             includeOnlyModuleContent = true
         ).serializeModule(module)

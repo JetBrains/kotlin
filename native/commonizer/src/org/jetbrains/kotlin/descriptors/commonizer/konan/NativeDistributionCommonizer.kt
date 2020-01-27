@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeModuleForCommonization.DeserializedModule
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeModuleForCommonization.SyntheticModule
-import org.jetbrains.kotlin.descriptors.commonizer.utils.EmptyDescriptorTable
 import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
@@ -212,7 +211,6 @@ class NativeDistributionCommonizer(
         val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             metadataVersion = KlibMetadataVersion.INSTANCE,
-            descriptorTable = EmptyDescriptorTable,
             skipExpects = false
         )
 

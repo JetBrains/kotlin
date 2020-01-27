@@ -21,8 +21,8 @@ data class TranslationResultValue(val metadata: ByteArray, val binaryAst: ByteAr
 
 data class IrTranslationResultValue(
     val fileData: ByteArray,
-    val symbols: ByteArray,
     val types: ByteArray,
+    val signatures: ByteArray,
     val strings: ByteArray,
     val declarations: ByteArray,
     val bodies: ByteArray,

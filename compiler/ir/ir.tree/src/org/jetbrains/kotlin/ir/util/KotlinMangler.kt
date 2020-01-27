@@ -16,8 +16,12 @@ interface KotlinMangler<D : Any> {
 
     fun D.isExported(): Boolean
     val D.mangleString: String
+    val D.signatureString: String
+    val D.fqnString: String
 
     val D.hashedMangle: Long get() = mangleString.hashMangle
+    val D.signatureMangle: Long get() = signatureString.hashMangle
+    val D.fqnMangle: Long get() = fqnString.hashMangle
 
     val manglerName: String
 

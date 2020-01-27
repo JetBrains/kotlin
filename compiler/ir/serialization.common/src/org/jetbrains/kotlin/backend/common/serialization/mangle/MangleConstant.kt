@@ -19,6 +19,7 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val EXPECT_MARK = "#expect"
         const val UNKNOWN_MARK = "<unknown>"
         const val DYNAMIC_MARK = "<dynamic>"
+        const val STATIC_MEMBER_MARK = "#static"
 
         const val VARIANCE_SEPARATOR = '|'
         const val UPPER_BOUND_SEPARATOR = '§'
@@ -32,6 +33,8 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val EXTENSION_RECEIVER_PREFIX = '@'
         const val FUNCTION_NAME_PREFIX = '#'
         const val TYPE_PARAM_INDEX_PREFIX = '@'
+
+        const val JAVA_FIELD_SUFFIX = "#jf"
 
         const val EMPTY_PREFIX = ""
 

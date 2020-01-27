@@ -12,6 +12,16 @@ import org.jetbrains.kotlin.name.FqName
 
 sealed class IdSignature {
 
+    enum class Flags(val recursive: Boolean) {
+        IS_EXPECT(true),
+        IS_JAVA_FOR_KOTLIN_OVERRIDE_PROPERTY(false),
+        IS_NATIVE_INTEROP_LIBRARY(true);
+
+        fun encode(isSet: Boolean): Long = if (isSet) 1L shl ordinal else 0L
+        fun decode(flags: Long): Boolean = (flags and (1L shl ordinal) != 0L)
+    }
+
+
     abstract val isPublic: Boolean
 
     open fun isPackageSignature() = false
@@ -21,7 +31,13 @@ sealed class IdSignature {
 
     abstract fun packageFqName(): FqName
 
+    open fun asPublic(): PublicSignature? = null
+
     abstract fun render(): String
+
+    fun Flags.test(): Boolean = decode(flags())
+
+    protected open fun flags(): Long = 0
 
     open val hasTopLevel: Boolean get() = !isPackageSignature()
 
@@ -37,8 +53,10 @@ sealed class IdSignature {
         override fun packageFqName() = packageFqn
 
         private fun adaptMask(old: Long): Long {
-            // TODO: design the way flags are being mutated up to declaration tree
-            return old
+            return old xor Flags.values().fold(0L) { a, f ->
+                if (!f.recursive) a or (old and (1L shl f.ordinal))
+                else a
+            }
         }
 
         override fun topLevelSignature(): IdSignature {
@@ -59,9 +77,13 @@ sealed class IdSignature {
 
         override fun nearestPublicSig(): PublicSignature = this
 
+        override fun flags(): Long = mask
+
         override fun render(): String = "${packageFqn.asString()}/${classFqn.asString()}|$id[${mask.toString(2)}]"
 
         override fun toString() = super.toString()
+
+        override fun asPublic(): PublicSignature? = this
     }
 
     class AccessorSignature(val propertySignature: IdSignature, val accessorSignature: PublicSignature) : IdSignature() {
@@ -80,7 +102,11 @@ sealed class IdSignature {
             return accessorSignature == other
         }
 
+        override fun flags(): Long = accessorSignature.mask
+
         override fun hashCode(): Int = accessorSignature.hashCode()
+
+        override fun asPublic(): PublicSignature? = accessorSignature
     }
 
     data class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
@@ -104,24 +130,6 @@ sealed class IdSignature {
         override fun render(): String = "${container.render()}:$id"
 
         override fun toString() = super.toString()
-    }
-
-    class BuiltInSignature(val mangle: String, val id: Long) : IdSignature() {
-        constructor(id: Long) : this("", id)
-
-        override fun topLevelSignature(): IdSignature = this // built ins are always top level
-        override fun nearestPublicSig(): IdSignature = this
-
-        override fun packageFqName(): FqName = IrBuiltIns.KOTLIN_INTERNAL_IR_FQN
-
-        override val isPublic: Boolean = true
-        override fun render(): String = "<ß|$mangle>"
-
-        override fun equals(other: Any?): Boolean {
-            return this === other || other is BuiltInSignature && id == other.id
-        }
-
-        override fun hashCode(): Int = id.toInt() xor (id shr 32).toInt()
     }
 
     // Used to reference local variable and value parameters in function
@@ -149,6 +157,4 @@ sealed class IdSignature {
 interface IdSignatureComposer {
     fun composeSignature(descriptor: DeclarationDescriptor): IdSignature?
     fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature?
-
-    fun string2Hash(s: String): Long
 }

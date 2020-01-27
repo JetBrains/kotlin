@@ -17,29 +17,29 @@ public interface IrEnumEntryOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>optional int32 initializer = 2;</code>
+   * <code>required int32 name = 2;</code>
+   */
+  boolean hasName();
+  /**
+   * <code>required int32 name = 2;</code>
+   */
+  int getName();
+
+  /**
+   * <code>optional int32 initializer = 3;</code>
    */
   boolean hasInitializer();
   /**
-   * <code>optional int32 initializer = 2;</code>
+   * <code>optional int32 initializer = 3;</code>
    */
   int getInitializer();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClass corresponding_class = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClass corresponding_class = 4;</code>
    */
   boolean hasCorrespondingClass();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClass corresponding_class = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClass corresponding_class = 4;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrClass getCorrespondingClass();
-
-  /**
-   * <code>required int32 name = 4;</code>
-   */
-  boolean hasName();
-  /**
-   * <code>required int32 name = 4;</code>
-   */
-  int getName();
 }

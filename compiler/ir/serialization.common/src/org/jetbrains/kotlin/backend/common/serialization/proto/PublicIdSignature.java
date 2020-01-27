@@ -4,30 +4,30 @@
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference}
+ * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature}
  */
-public final class DescriptorReference extends
+public final class PublicIdSignature extends
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference)
-    DescriptorReferenceOrBuilder {
-  // Use DescriptorReference.newBuilder() to construct.
-  private DescriptorReference(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
+    PublicIdSignatureOrBuilder {
+  // Use PublicIdSignature.newBuilder() to construct.
+  private PublicIdSignature(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
     super(builder);
     this.unknownFields = builder.getUnknownFields();
   }
-  private DescriptorReference(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+  private PublicIdSignature(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-  private static final DescriptorReference defaultInstance;
-  public static DescriptorReference getDefaultInstance() {
+  private static final PublicIdSignature defaultInstance;
+  public static PublicIdSignature getDefaultInstance() {
     return defaultInstance;
   }
 
-  public DescriptorReference getDefaultInstanceForType() {
+  public PublicIdSignature getDefaultInstanceForType() {
     return defaultInstance;
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private DescriptorReference(
+  private PublicIdSignature(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -97,17 +97,12 @@ public final class DescriptorReference extends
           }
           case 24: {
             bitField0_ |= 0x00000001;
-            name_ = input.readInt32();
+            memberUniqId_ = input.readInt64();
             break;
           }
           case 32: {
             bitField0_ |= 0x00000002;
-            flags_ = input.readInt32();
-            break;
-          }
-          case 40: {
-            bitField0_ |= 0x00000004;
-            uniqIdIndex_ = input.readInt64();
+            flags_ = input.readInt64();
             break;
           }
         }
@@ -134,18 +129,18 @@ public final class DescriptorReference extends
       makeExtensionsImmutable();
     }
   }
-  public static org.jetbrains.kotlin.protobuf.Parser<DescriptorReference> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<DescriptorReference>() {
-    public DescriptorReference parsePartialFrom(
+  public static org.jetbrains.kotlin.protobuf.Parser<PublicIdSignature> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<PublicIdSignature>() {
+    public PublicIdSignature parsePartialFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new DescriptorReference(input, extensionRegistry);
+      return new PublicIdSignature(input, extensionRegistry);
     }
   };
 
   @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<DescriptorReference> getParserForType() {
+  public org.jetbrains.kotlin.protobuf.Parser<PublicIdSignature> getParserForType() {
     return PARSER;
   }
 
@@ -153,98 +148,84 @@ public final class DescriptorReference extends
   public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 1;
   private java.util.List<java.lang.Integer> packageFqName_;
   /**
-   * <code>repeated int32 package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
       getPackageFqNameList() {
     return packageFqName_;
   }
   /**
-   * <code>repeated int32 package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
    */
   public int getPackageFqNameCount() {
     return packageFqName_.size();
   }
   /**
-   * <code>repeated int32 package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
    */
   public int getPackageFqName(int index) {
     return packageFqName_.get(index);
   }
+  private int packageFqNameMemoizedSerializedSize = -1;
 
   public static final int CLASS_FQ_NAME_FIELD_NUMBER = 2;
   private java.util.List<java.lang.Integer> classFqName_;
   /**
-   * <code>repeated int32 class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
       getClassFqNameList() {
     return classFqName_;
   }
   /**
-   * <code>repeated int32 class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
   public int getClassFqNameCount() {
     return classFqName_.size();
   }
   /**
-   * <code>repeated int32 class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
   public int getClassFqName(int index) {
     return classFqName_.get(index);
   }
+  private int classFqNameMemoizedSerializedSize = -1;
 
-  public static final int NAME_FIELD_NUMBER = 3;
-  private int name_;
+  public static final int MEMBER_UNIQ_ID_FIELD_NUMBER = 3;
+  private long memberUniqId_;
   /**
-   * <code>required int32 name = 3;</code>
+   * <code>optional int64 member_uniq_id = 3;</code>
    */
-  public boolean hasName() {
+  public boolean hasMemberUniqId() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 name = 3;</code>
+   * <code>optional int64 member_uniq_id = 3;</code>
    */
-  public int getName() {
-    return name_;
+  public long getMemberUniqId() {
+    return memberUniqId_;
   }
 
   public static final int FLAGS_FIELD_NUMBER = 4;
-  private int flags_;
+  private long flags_;
   /**
-   * <code>required int32 flags = 4;</code>
+   * <code>optional int64 flags = 4 [default = 0];</code>
    */
   public boolean hasFlags() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required int32 flags = 4;</code>
+   * <code>optional int64 flags = 4 [default = 0];</code>
    */
-  public int getFlags() {
+  public long getFlags() {
     return flags_;
-  }
-
-  public static final int UNIQ_ID_INDEX_FIELD_NUMBER = 5;
-  private long uniqIdIndex_;
-  /**
-   * <code>optional int64 uniq_id_index = 5;</code>
-   */
-  public boolean hasUniqIdIndex() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
-  }
-  /**
-   * <code>optional int64 uniq_id_index = 5;</code>
-   */
-  public long getUniqIdIndex() {
-    return uniqIdIndex_;
   }
 
   private void initFields() {
     packageFqName_ = java.util.Collections.emptyList();
     classFqName_ = java.util.Collections.emptyList();
-    name_ = 0;
-    flags_ = 0;
-    uniqIdIndex_ = 0L;
+    memberUniqId_ = 0L;
+    flags_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -252,14 +233,6 @@ public final class DescriptorReference extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasFlags()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -267,20 +240,25 @@ public final class DescriptorReference extends
   public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
+    if (getPackageFqNameList().size() > 0) {
+      output.writeRawVarint32(10);
+      output.writeRawVarint32(packageFqNameMemoizedSerializedSize);
+    }
     for (int i = 0; i < packageFqName_.size(); i++) {
-      output.writeInt32(1, packageFqName_.get(i));
+      output.writeInt32NoTag(packageFqName_.get(i));
+    }
+    if (getClassFqNameList().size() > 0) {
+      output.writeRawVarint32(18);
+      output.writeRawVarint32(classFqNameMemoizedSerializedSize);
     }
     for (int i = 0; i < classFqName_.size(); i++) {
-      output.writeInt32(2, classFqName_.get(i));
+      output.writeInt32NoTag(classFqName_.get(i));
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(3, name_);
+      output.writeInt64(3, memberUniqId_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(4, flags_);
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt64(5, uniqIdIndex_);
+      output.writeInt64(4, flags_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -298,7 +276,12 @@ public final class DescriptorReference extends
           .computeInt32SizeNoTag(packageFqName_.get(i));
       }
       size += dataSize;
-      size += 1 * getPackageFqNameList().size();
+      if (!getPackageFqNameList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      packageFqNameMemoizedSerializedSize = dataSize;
     }
     {
       int dataSize = 0;
@@ -307,19 +290,20 @@ public final class DescriptorReference extends
           .computeInt32SizeNoTag(classFqName_.get(i));
       }
       size += dataSize;
-      size += 1 * getClassFqNameList().size();
+      if (!getClassFqNameList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      classFqNameMemoizedSerializedSize = dataSize;
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(3, name_);
+        .computeInt64Size(3, memberUniqId_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(4, flags_);
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(5, uniqIdIndex_);
+        .computeInt64Size(4, flags_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -333,53 +317,53 @@ public final class DescriptorReference extends
     return super.writeReplace();
   }
 
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseDelimitedFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -388,21 +372,21 @@ public final class DescriptorReference extends
 
   public static Builder newBuilder() { return Builder.create(); }
   public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature prototype) {
     return newBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() { return newBuilder(this); }
 
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference}
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature}
    */
   public static final class Builder extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference, Builder>
+        org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature, Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference)
-      org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReferenceOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.newBuilder()
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
+      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignatureOrBuilder {
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -419,12 +403,10 @@ public final class DescriptorReference extends
       bitField0_ = (bitField0_ & ~0x00000001);
       classFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
-      name_ = 0;
+      memberUniqId_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000004);
-      flags_ = 0;
+      flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
-      uniqIdIndex_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -432,20 +414,20 @@ public final class DescriptorReference extends
       return create().mergeFrom(buildPartial());
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature.getDefaultInstance();
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference build() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference result = buildPartial();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference buildPartial() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference result = new org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference(this);
+    public org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -461,21 +443,17 @@ public final class DescriptorReference extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000001;
       }
-      result.name_ = name_;
+      result.memberUniqId_ = memberUniqId_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000002;
       }
       result.flags_ = flags_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000004;
-      }
-      result.uniqIdIndex_ = uniqIdIndex_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature.getDefaultInstance()) return this;
       if (!other.packageFqName_.isEmpty()) {
         if (packageFqName_.isEmpty()) {
           packageFqName_ = other.packageFqName_;
@@ -496,14 +474,11 @@ public final class DescriptorReference extends
         }
         
       }
-      if (other.hasName()) {
-        setName(other.getName());
+      if (other.hasMemberUniqId()) {
+        setMemberUniqId(other.getMemberUniqId());
       }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
-      }
-      if (other.hasUniqIdIndex()) {
-        setUniqIdIndex(other.getUniqIdIndex());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -511,14 +486,6 @@ public final class DescriptorReference extends
     }
 
     public final boolean isInitialized() {
-      if (!hasName()) {
-        
-        return false;
-      }
-      if (!hasFlags()) {
-        
-        return false;
-      }
       return true;
     }
 
@@ -526,11 +493,11 @@ public final class DescriptorReference extends
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference parsedMessage = null;
+      org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference) e.getUnfinishedMessage();
+        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature) e.getUnfinishedMessage();
         throw e;
       } finally {
         if (parsedMessage != null) {
@@ -549,26 +516,26 @@ public final class DescriptorReference extends
        }
     }
     /**
-     * <code>repeated int32 package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getPackageFqNameList() {
       return java.util.Collections.unmodifiableList(packageFqName_);
     }
     /**
-     * <code>repeated int32 package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
      */
     public int getPackageFqNameCount() {
       return packageFqName_.size();
     }
     /**
-     * <code>repeated int32 package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
      */
     public int getPackageFqName(int index) {
       return packageFqName_.get(index);
     }
     /**
-     * <code>repeated int32 package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
      */
     public Builder setPackageFqName(
         int index, int value) {
@@ -578,7 +545,7 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>repeated int32 package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
      */
     public Builder addPackageFqName(int value) {
       ensurePackageFqNameIsMutable();
@@ -587,7 +554,7 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>repeated int32 package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
      */
     public Builder addAllPackageFqName(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -598,7 +565,7 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>repeated int32 package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1 [packed = true];</code>
      */
     public Builder clearPackageFqName() {
       packageFqName_ = java.util.Collections.emptyList();
@@ -615,26 +582,26 @@ public final class DescriptorReference extends
        }
     }
     /**
-     * <code>repeated int32 class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getClassFqNameList() {
       return java.util.Collections.unmodifiableList(classFqName_);
     }
     /**
-     * <code>repeated int32 class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public int getClassFqNameCount() {
       return classFqName_.size();
     }
     /**
-     * <code>repeated int32 class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public int getClassFqName(int index) {
       return classFqName_.get(index);
     }
     /**
-     * <code>repeated int32 class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public Builder setClassFqName(
         int index, int value) {
@@ -644,7 +611,7 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>repeated int32 class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public Builder addClassFqName(int value) {
       ensureClassFqNameIsMutable();
@@ -653,7 +620,7 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>repeated int32 class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public Builder addAllClassFqName(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -664,7 +631,7 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>repeated int32 class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public Builder clearClassFqName() {
       classFqName_ = java.util.Collections.emptyList();
@@ -673,109 +640,77 @@ public final class DescriptorReference extends
       return this;
     }
 
-    private int name_ ;
+    private long memberUniqId_ ;
     /**
-     * <code>required int32 name = 3;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
-    public boolean hasName() {
+    public boolean hasMemberUniqId() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required int32 name = 3;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
-    public int getName() {
-      return name_;
+    public long getMemberUniqId() {
+      return memberUniqId_;
     }
     /**
-     * <code>required int32 name = 3;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
-    public Builder setName(int value) {
+    public Builder setMemberUniqId(long value) {
       bitField0_ |= 0x00000004;
-      name_ = value;
+      memberUniqId_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 name = 3;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
-    public Builder clearName() {
+    public Builder clearMemberUniqId() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      name_ = 0;
+      memberUniqId_ = 0L;
       
       return this;
     }
 
-    private int flags_ ;
+    private long flags_ ;
     /**
-     * <code>required int32 flags = 4;</code>
+     * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public boolean hasFlags() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required int32 flags = 4;</code>
+     * <code>optional int64 flags = 4 [default = 0];</code>
      */
-    public int getFlags() {
+    public long getFlags() {
       return flags_;
     }
     /**
-     * <code>required int32 flags = 4;</code>
+     * <code>optional int64 flags = 4 [default = 0];</code>
      */
-    public Builder setFlags(int value) {
+    public Builder setFlags(long value) {
       bitField0_ |= 0x00000008;
       flags_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 flags = 4;</code>
+     * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public Builder clearFlags() {
       bitField0_ = (bitField0_ & ~0x00000008);
-      flags_ = 0;
+      flags_ = 0L;
       
       return this;
     }
 
-    private long uniqIdIndex_ ;
-    /**
-     * <code>optional int64 uniq_id_index = 5;</code>
-     */
-    public boolean hasUniqIdIndex() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>optional int64 uniq_id_index = 5;</code>
-     */
-    public long getUniqIdIndex() {
-      return uniqIdIndex_;
-    }
-    /**
-     * <code>optional int64 uniq_id_index = 5;</code>
-     */
-    public Builder setUniqIdIndex(long value) {
-      bitField0_ |= 0x00000010;
-      uniqIdIndex_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional int64 uniq_id_index = 5;</code>
-     */
-    public Builder clearUniqIdIndex() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      uniqIdIndex_ = 0L;
-      
-      return this;
-    }
-
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
   }
 
   static {
-    defaultInstance = new DescriptorReference(true);
+    defaultInstance = new PublicIdSignature(true);
     defaultInstance.initFields();
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference)
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature)
 }

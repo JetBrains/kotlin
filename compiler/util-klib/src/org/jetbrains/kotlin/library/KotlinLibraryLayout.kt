@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
 
 const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_MODULE_METADATA_FILE_NAME = "module"
@@ -59,10 +58,10 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(componentDir, KLIB_IR_FOLDER_NAME)
     val irDeclarations
         get() = File(irDir, "irDeclarations.knd")
-    val irSymbols
-        get() = File(irDir, "symbols.knt")
     val irTypes
         get() = File(irDir, "types.knt")
+    val irSignatures
+        get() = File(irDir, "signatures.knt")
     val irStrings
         get() = File(irDir, "strings.knt")
     val irBodies
@@ -73,8 +72,8 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(irDir, "module_data_flow_graph")
 
     fun irDeclarations(file: File): File = File(file, "irCombined.knd")
-    fun irSymbols(file: File): File = File(file, "symbols.knt")
     fun irTypes(file: File): File = File(file, "types.knt")
+    fun irSignatures(file: File): File = File(file, "signatures.knt")
     fun irStrings(file: File): File = File(file, "strings.knt")
     fun irBodies(file: File): File = File(file, "body.knb")
     fun irFile(file: File): File = File(file, "file.knf")

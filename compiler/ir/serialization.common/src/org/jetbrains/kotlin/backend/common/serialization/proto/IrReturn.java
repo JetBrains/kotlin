@@ -55,7 +55,7 @@ public final class IrReturn extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            returnTarget_ = input.readInt32();
+            returnTarget_ = input.readInt64();
             break;
           }
           case 18: {
@@ -106,17 +106,17 @@ public final class IrReturn extends
 
   private int bitField0_;
   public static final int RETURN_TARGET_FIELD_NUMBER = 1;
-  private int returnTarget_;
+  private long returnTarget_;
   /**
-   * <code>required int32 return_target = 1;</code>
+   * <code>required int64 return_target = 1;</code>
    */
   public boolean hasReturnTarget() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 return_target = 1;</code>
+   * <code>required int64 return_target = 1;</code>
    */
-  public int getReturnTarget() {
+  public long getReturnTarget() {
     return returnTarget_;
   }
 
@@ -136,7 +136,7 @@ public final class IrReturn extends
   }
 
   private void initFields() {
-    returnTarget_ = 0;
+    returnTarget_ = 0L;
     value_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -165,7 +165,7 @@ public final class IrReturn extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(1, returnTarget_);
+      output.writeInt64(1, returnTarget_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeMessage(2, value_);
@@ -181,7 +181,7 @@ public final class IrReturn extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(1, returnTarget_);
+        .computeInt64Size(1, returnTarget_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -281,7 +281,7 @@ public final class IrReturn extends
 
     public Builder clear() {
       super.clear();
-      returnTarget_ = 0;
+      returnTarget_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
       value_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -368,34 +368,34 @@ public final class IrReturn extends
     }
     private int bitField0_;
 
-    private int returnTarget_ ;
+    private long returnTarget_ ;
     /**
-     * <code>required int32 return_target = 1;</code>
+     * <code>required int64 return_target = 1;</code>
      */
     public boolean hasReturnTarget() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 return_target = 1;</code>
+     * <code>required int64 return_target = 1;</code>
      */
-    public int getReturnTarget() {
+    public long getReturnTarget() {
       return returnTarget_;
     }
     /**
-     * <code>required int32 return_target = 1;</code>
+     * <code>required int64 return_target = 1;</code>
      */
-    public Builder setReturnTarget(int value) {
+    public Builder setReturnTarget(long value) {
       bitField0_ |= 0x00000001;
       returnTarget_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 return_target = 1;</code>
+     * <code>required int64 return_target = 1;</code>
      */
     public Builder clearReturnTarget() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      returnTarget_ = 0;
+      returnTarget_ = 0L;
       
       return this;
     }

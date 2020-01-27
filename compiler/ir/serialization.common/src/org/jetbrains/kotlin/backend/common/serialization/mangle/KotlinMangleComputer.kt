@@ -6,5 +6,8 @@
 package org.jetbrains.kotlin.backend.common.serialization.mangle
 
 interface KotlinMangleComputer<D : Any> {
+
     fun computeMangle(declaration: D): String
+
+    fun copy(newMode: MangleMode): KotlinMangleComputer<D>
 }

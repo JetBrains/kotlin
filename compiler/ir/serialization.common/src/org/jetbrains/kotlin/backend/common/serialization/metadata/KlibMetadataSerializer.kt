@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
-import org.jetbrains.kotlin.backend.common.serialization.newDescriptorUniqId
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -33,7 +31,6 @@ internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) ->
 abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
-    val descriptorTable: DescriptorTable,
     val skipExpects: Boolean = false,
     val includeOnlyModuleContent: Boolean = false
 ) {
@@ -46,17 +43,11 @@ abstract class KlibMetadataSerializer(
         var classSerializer: DescriptorSerializer = topSerializer
     )
 
-    private fun declarationTableHandler(declarationDescriptor: DeclarationDescriptor): KlibMetadataProtoBuf.DescriptorUniqId? {
-        val index = descriptorTable.get(declarationDescriptor) ?: return null
-        return newDescriptorUniqId(index)
-    }
-
     protected fun createNewContext(): SerializerContext {
 
         val extension = KlibMetadataSerializerExtension(
             languageVersionSettings,
             metadataVersion,
-            ::declarationTableHandler,
             KlibMetadataStringTable()
         )
         return SerializerContext(

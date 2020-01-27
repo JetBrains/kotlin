@@ -389,19 +389,6 @@ open class SymbolTable(private val signaturer: IdSignatureComposer) : ReferenceS
     override fun referenceClass(descriptor: ClassDescriptor) =
         classSymbolTable.referenced(descriptor) { createClassSymbol(descriptor) }
 
-    private fun createBuiltInClassSymbol(descriptor: ClassDescriptor, sig: IdSignature): IrClassSymbol {
-        return IrClassPublicSymbolImpl(descriptor, sig)
-    }
-
-    fun declareBuiltInClass(
-        descriptor: ClassDescriptor,
-        mangle: String,
-        classFactory: (IrClassSymbol) -> IrClass
-    ): IrClass {
-        val sig = IdSignature.BuiltInSignature(mangle, signaturer.string2Hash(mangle))
-        return classSymbolTable.declare(sig, descriptor, { createBuiltInClassSymbol(descriptor, sig) }, classFactory)
-    }
-
     override fun referenceClassFromLinker(descriptor: ClassDescriptor, sig: IdSignature): IrClassSymbol =
         classSymbolTable.run {
             if (sig.isPublic) referenced(sig) { IrClassPublicSymbolImpl(descriptor, sig) }
@@ -672,29 +659,6 @@ open class SymbolTable(private val signaturer: IdSignatureComposer) : ReferenceS
                 declare(descriptor, { IrSimpleFunctionSymbolImpl(descriptor) }, functionFactory)
             }
         }
-    }
-
-    private fun createBuiltInOperatorSymbol(descriptor: FunctionDescriptor, sig: IdSignature): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionPublicSymbolImpl(descriptor, sig)
-    }
-
-    fun declareBuiltInOperator(
-        descriptor: FunctionDescriptor,
-        mangle: String,
-        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
-    ): IrSimpleFunction {
-        val sig = IdSignature.BuiltInSignature(mangle, signaturer.string2Hash(mangle))
-        return simpleFunctionSymbolTable.declare(
-            sig,
-            descriptor,
-            { createBuiltInOperatorSymbol(descriptor, sig) },
-            functionFactory
-        )
-    }
-
-    fun referenceBuiltInOperator(descriptor: FunctionDescriptor, mangle: String): IrSimpleFunctionSymbol {
-        val sig = IdSignature.BuiltInSignature(mangle, signaturer.string2Hash(mangle))
-        return simpleFunctionSymbolTable.referenced(sig) { createBuiltInOperatorSymbol(descriptor, sig) }
     }
 
     override fun referenceSimpleFunction(descriptor: FunctionDescriptor) =

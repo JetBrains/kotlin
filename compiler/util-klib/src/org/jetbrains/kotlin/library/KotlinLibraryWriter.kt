@@ -33,22 +33,20 @@ class SerializedMetadata(
 )
 
 sealed class SerializedDeclaration {
-    abstract val id: Long
-    abstract val local: Int
+    abstract val id: Int
     abstract val size: Int
     abstract val bytes: ByteArray
 
     abstract val declarationName: String
 }
 
-class TopLevelDeclaration(override val id: Long, isLocal: Boolean, override val declarationName: String, override val bytes: ByteArray) : SerializedDeclaration() {
-    override val local = if (isLocal) 1 else 0
+class TopLevelDeclaration(override val id: Int, override val declarationName: String, override val bytes: ByteArray) :
+    SerializedDeclaration() {
     override val size = bytes.size
 }
 
 object SkippedDeclaration : SerializedDeclaration() {
-    override val id = -1L
-    override val local = -1
+    override val id = -1
     override val size = 0
     override val bytes = ByteArray(0)
     override val declarationName: String = "<SKIPPED>"
@@ -58,8 +56,8 @@ class SerializedIrFile(
     val fileData: ByteArray,
     val fqName: String,
     val path: String,
-    val symbols: ByteArray,
     val types: ByteArray,
+    val signatures: ByteArray,
     val strings: ByteArray,
     val bodies: ByteArray,
     val declarations: ByteArray

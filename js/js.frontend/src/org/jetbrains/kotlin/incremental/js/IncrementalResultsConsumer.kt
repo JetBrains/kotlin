@@ -45,8 +45,8 @@ interface IncrementalResultsConsumer {
     fun processIrFile(
         sourceFile: File,
         fileData: ByteArray,
-        symbols: ByteArray,
         types: ByteArray,
+        signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
         bodies: ByteArray,
@@ -132,14 +132,14 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     override fun processIrFile(
         sourceFile: File,
         fileData: ByteArray,
-        symbols: ByteArray,
         types: ByteArray,
+        signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
         bodies: ByteArray,
         fqn: ByteArray
     ) {
-        _irFileData[sourceFile] = IrTranslationResultValue(fileData, symbols, types, strings, declarations, bodies, fqn)
+        _irFileData[sourceFile] = IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn)
     }
 }
 

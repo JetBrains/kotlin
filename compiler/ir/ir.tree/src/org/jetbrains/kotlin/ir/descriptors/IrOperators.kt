@@ -23,10 +23,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.reflect.KProperty
 
-interface IrBuiltinWithMangle : IrDeclaration, IrSymbolOwner {
-    val mangle: String
-}
-
 abstract class IrBuiltInOperatorBase : IrDeclaration {
     override val startOffset: Int get() = UNDEFINED_OFFSET
     override val endOffset: Int get() = UNDEFINED_OFFSET
@@ -57,11 +53,9 @@ private class NullValueDelegate<T> {
 class IrBuiltInOperator(
     override val symbol: IrSimpleFunctionSymbol,
     override val name: Name,
-    override var returnType: IrType,
-    val suffix: String
+    override var returnType: IrType
 ) :
     IrSimpleFunction,
-    IrBuiltinWithMangle,
     IrFunction,
     IrBuiltInOperatorBase() {
 
@@ -95,7 +89,6 @@ class IrBuiltInOperator(
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
     override var attributeOwnerId: IrAttributeContainer = this
-    override val mangle: String get() = "operator#$name@$suffix"
 
     init {
         symbol.bind(this)

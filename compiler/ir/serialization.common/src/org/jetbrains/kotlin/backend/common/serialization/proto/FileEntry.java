@@ -162,24 +162,25 @@ public final class FileEntry extends
   public static final int LINE_START_OFFSETS_FIELD_NUMBER = 2;
   private java.util.List<java.lang.Integer> lineStartOffsets_;
   /**
-   * <code>repeated int32 line_start_offsets = 2;</code>
+   * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
       getLineStartOffsetsList() {
     return lineStartOffsets_;
   }
   /**
-   * <code>repeated int32 line_start_offsets = 2;</code>
+   * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
    */
   public int getLineStartOffsetsCount() {
     return lineStartOffsets_.size();
   }
   /**
-   * <code>repeated int32 line_start_offsets = 2;</code>
+   * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
    */
   public int getLineStartOffsets(int index) {
     return lineStartOffsets_.get(index);
   }
+  private int lineStartOffsetsMemoizedSerializedSize = -1;
 
   private void initFields() {
     name_ = "";
@@ -205,8 +206,12 @@ public final class FileEntry extends
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       output.writeBytes(1, getNameBytes());
     }
+    if (getLineStartOffsetsList().size() > 0) {
+      output.writeRawVarint32(18);
+      output.writeRawVarint32(lineStartOffsetsMemoizedSerializedSize);
+    }
     for (int i = 0; i < lineStartOffsets_.size(); i++) {
-      output.writeInt32(2, lineStartOffsets_.get(i));
+      output.writeInt32NoTag(lineStartOffsets_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -228,7 +233,12 @@ public final class FileEntry extends
           .computeInt32SizeNoTag(lineStartOffsets_.get(i));
       }
       size += dataSize;
-      size += 1 * getLineStartOffsetsList().size();
+      if (!getLineStartOffsetsList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      lineStartOffsetsMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -497,26 +507,26 @@ public final class FileEntry extends
        }
     }
     /**
-     * <code>repeated int32 line_start_offsets = 2;</code>
+     * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getLineStartOffsetsList() {
       return java.util.Collections.unmodifiableList(lineStartOffsets_);
     }
     /**
-     * <code>repeated int32 line_start_offsets = 2;</code>
+     * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
      */
     public int getLineStartOffsetsCount() {
       return lineStartOffsets_.size();
     }
     /**
-     * <code>repeated int32 line_start_offsets = 2;</code>
+     * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
      */
     public int getLineStartOffsets(int index) {
       return lineStartOffsets_.get(index);
     }
     /**
-     * <code>repeated int32 line_start_offsets = 2;</code>
+     * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
      */
     public Builder setLineStartOffsets(
         int index, int value) {
@@ -526,7 +536,7 @@ public final class FileEntry extends
       return this;
     }
     /**
-     * <code>repeated int32 line_start_offsets = 2;</code>
+     * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
      */
     public Builder addLineStartOffsets(int value) {
       ensureLineStartOffsetsIsMutable();
@@ -535,7 +545,7 @@ public final class FileEntry extends
       return this;
     }
     /**
-     * <code>repeated int32 line_start_offsets = 2;</code>
+     * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
      */
     public Builder addAllLineStartOffsets(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -546,7 +556,7 @@ public final class FileEntry extends
       return this;
     }
     /**
-     * <code>repeated int32 line_start_offsets = 2;</code>
+     * <code>repeated int32 line_start_offsets = 2 [packed = true];</code>
      */
     public Builder clearLineStartOffsets() {
       lineStartOffsets_ = java.util.Collections.emptyList();

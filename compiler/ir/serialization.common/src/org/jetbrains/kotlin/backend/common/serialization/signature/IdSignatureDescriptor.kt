@@ -13,10 +13,6 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMangler) : IdSignatureComposer {
 
-    override fun string2Hash(s: String): Long {
-        return mangler.run { s.hashMangle }
-    }
-
     protected open fun createSignatureBuilder(): DescriptorBasedSignatureBuilder = DescriptorBasedSignatureBuilder(mangler)
 
     protected open class DescriptorBasedSignatureBuilder(private val mangler: KotlinMangler.DescriptorMangler) :
@@ -33,11 +29,12 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
 
         private fun collectFqNames(descriptor: DeclarationDescriptorNonRoot) {
             descriptor.containingDeclaration.accept(this, null)
-            classFanSegments.add(descriptor.name.asString())
+            classFqnSegments.add(descriptor.name.asString())
         }
 
         override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: Nothing?) {
             packageFqn = descriptor.fqName
+            platformSpecificPackage(descriptor)
         }
 
         override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, data: Nothing?) {
@@ -47,7 +44,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
         override fun visitVariableDescriptor(descriptor: VariableDescriptor, data: Nothing?) = reportUnexpectedDescriptor(descriptor)
 
         override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Nothing?) {
-            hashId = mangler.run { descriptor.hashedMangle }
+            hashId = mangler.run { descriptor.signatureMangle }
             collectFqNames(descriptor)
             setExpected(descriptor.isExpect)
             platformSpecificFunction(descriptor)
@@ -71,7 +68,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
         override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Nothing?) = reportUnexpectedDescriptor(descriptor)
 
         override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Nothing?) {
-            hashId = mangler.run { constructorDescriptor.hashedMangle }
+            hashId = mangler.run { constructorDescriptor.signatureMangle }
             collectFqNames(constructorDescriptor)
             platformSpecificConstructor(constructorDescriptor)
         }
@@ -80,7 +77,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             reportUnexpectedDescriptor(scriptDescriptor)
 
         override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Nothing?) {
-            hashId = mangler.run { descriptor.hashedMangle }
+            hashId = mangler.run { descriptor.signatureMangle }
             collectFqNames(descriptor)
             setExpected(descriptor.isExpect)
             platformSpecificProperty(descriptor)
@@ -90,17 +87,17 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             reportUnexpectedDescriptor(descriptor)
 
         override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, data: Nothing?) {
-            hashIdAcc = mangler.run { descriptor.hashedMangle }
+            hashIdAcc = mangler.run { descriptor.signatureMangle }
             descriptor.correspondingProperty.accept(this, null)
-            classFanSegments.add(descriptor.name.asString())
+            classFqnSegments.add(descriptor.name.asString())
             setExpected(descriptor.isExpect)
             platformSpecificGetter(descriptor)
         }
 
         override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, data: Nothing?) {
-            hashIdAcc = mangler.run { descriptor.hashedMangle }
+            hashIdAcc = mangler.run { descriptor.signatureMangle }
             descriptor.correspondingProperty.accept(this, null)
-            classFanSegments.add(descriptor.name.asString())
+            classFqnSegments.add(descriptor.name.asString())
             setExpected(descriptor.isExpect)
             platformSpecificSetter(descriptor)
         }
@@ -119,6 +116,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
     }
 
     override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? {
+        if (descriptor is WrappedDeclarationDescriptor<*>) return null
         return if (mangler.run { descriptor.isExportEnumEntry() }) {
             composer.buildSignature(descriptor)
         } else null

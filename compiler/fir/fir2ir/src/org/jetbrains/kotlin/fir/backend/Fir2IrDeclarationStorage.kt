@@ -166,8 +166,9 @@ class Fir2IrDeclarationStorage(
             val descriptor = WrappedClassDescriptor()
             val origin = IrDeclarationOrigin.DEFINED
             val modality = regularClass?.modality ?: Modality.FINAL
+            val visibility = regularClass?.visibility ?: Visibilities.PUBLIC
             return klass.convertWithOffsets { startOffset, endOffset ->
-                irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
+                irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                     IrClassImpl(
                         startOffset,
                         endOffset,

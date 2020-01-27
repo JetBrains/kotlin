@@ -8,43 +8,52 @@ public interface IrDeclarationBaseOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
-  int getSymbol();
+  long getSymbol();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrigin origin = 2;</code>
+   * <code>required int32 origin_name = 2;</code>
    */
-  boolean hasOrigin();
+  boolean hasOriginName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrigin origin = 2;</code>
+   * <code>required int32 origin_name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrigin getOrigin();
+  int getOriginName();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 3;</code>
+   * <code>required int64 coordinates = 3;</code>
    */
   boolean hasCoordinates();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 3;</code>
+   * <code>required int64 coordinates = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates getCoordinates();
+  long getCoordinates();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   * <code>optional int64 flags = 4 [default = 0];</code>
+   */
+  boolean hasFlags();
+  /**
+   * <code>optional int64 flags = 4 [default = 0];</code>
+   */
+  long getFlags();
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 5;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
       getAnnotationList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 5;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 5;</code>
    */
   int getAnnotationCount();
 }

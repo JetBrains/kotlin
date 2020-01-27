@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 
 abstract class IdSignatureBuilder<D> {
     protected var packageFqn: FqName = FqName.ROOT
-    protected val classFanSegments = mutableListOf<String>()
+    protected val classFqnSegments = mutableListOf<String>()
     protected var hashId: Long? = null
     protected var hashIdAcc: Long? = null
     protected var mask = 0L
@@ -20,18 +20,18 @@ abstract class IdSignatureBuilder<D> {
 
     protected fun reset() {
         this.packageFqn = FqName.ROOT
-        this.classFanSegments.clear()
+        this.classFqnSegments.clear()
         this.hashId = null
         this.mask = 0L
     }
 
     protected fun build(): IdSignature {
         return if (hashIdAcc == null) {
-            IdSignature.PublicSignature(packageFqn, FqName.fromSegments(classFanSegments), hashId, mask)
+            IdSignature.PublicSignature(packageFqn, FqName.fromSegments(classFqnSegments), hashId, mask)
         } else {
-            val accessorSignature = IdSignature.PublicSignature(packageFqn, FqName.fromSegments(classFanSegments), hashIdAcc, mask)
+            val accessorSignature = IdSignature.PublicSignature(packageFqn, FqName.fromSegments(classFqnSegments), hashIdAcc, mask)
             hashIdAcc = null
-            classFanSegments.run { removeAt(lastIndex) }
+            classFqnSegments.run { removeAt(lastIndex) }
             val propertySignature = build()
             IdSignature.AccessorSignature(propertySignature, accessorSignature)
         }
@@ -39,11 +39,11 @@ abstract class IdSignatureBuilder<D> {
 
 
     protected fun setExpected(f: Boolean) {
-        mask = mask or IdSignatureFlags.IS_EXPECT.encode(f)
+        mask = mask or IdSignature.Flags.IS_EXPECT.encode(f)
     }
 
     protected fun setSpecialJavaProperty(f: Boolean) {
-        mask = mask or IdSignatureFlags.IS_JAVA_FOR_KOTLIN_OVERRIDE_PPROPERTY.encode(f)
+        mask = mask or IdSignature.Flags.IS_JAVA_FOR_KOTLIN_OVERRIDE_PROPERTY.encode(f)
     }
 
     protected open fun platformSpecificProperty(descriptor: PropertyDescriptor) {}
@@ -53,6 +53,7 @@ abstract class IdSignatureBuilder<D> {
     protected open fun platformSpecificConstructor(descriptor: ConstructorDescriptor) {}
     protected open fun platformSpecificClass(descriptor: ClassDescriptor) {}
     protected open fun platformSpecificAlias(descriptor: TypeAliasDescriptor) {}
+    protected open fun platformSpecificPackage(descriptor: PackageFragmentDescriptor) {}
 
     fun buildSignature(declaration: D): IdSignature {
         reset()

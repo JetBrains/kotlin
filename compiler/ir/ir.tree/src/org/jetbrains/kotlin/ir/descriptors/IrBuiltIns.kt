@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -42,37 +43,36 @@ class IrBuiltIns(
 
     private val builtInsModule = builtIns.builtInsModule
 
-    val irBuiltInsSymbols = mutableListOf<IrBuiltinWithMangle>()
-
     private val symbolTable = outerSymbolTable ?: SymbolTable(signaturer)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
-    private val packageFragment =
+    val packageFragment =
         IrExternalPackageFragmentImpl(symbolTable.referenceExternalPackageFragment(packageFragmentDescriptor), KOTLIN_INTERNAL_IR_FQN)
 
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun defineOperator(name: String, returnType: IrType, valueParameterTypes: List<IrType>): IrSimpleFunctionSymbol {
-        val descriptor = WrappedSimpleFunctionDescriptor()
-        val suffix = valueParameterTypes.joinToString(":", "[", "]") { t -> t.originalKotlinType?.toString() ?: "T" }
-        val mangle = "operator#$name@$suffix"
-        val symbol = symbolTable.declareBuiltInOperator(descriptor, mangle) {
-            val operator = IrBuiltInOperator(it, Name.identifier(name), returnType, suffix)
+        val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.originalKotlinType!!)
+
+        for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
+            val valueParameterDescriptor =
+                IrBuiltinValueParameterDescriptorImpl(operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType.originalKotlinType!!)
+            operatorDescriptor.addValueParameter(valueParameterDescriptor)
+        }
+
+        val symbol = symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, operatorDescriptor) {
+            val operator = IrBuiltInOperator(it, Name.identifier(name), returnType)
             operator.parent = packageFragment
             packageFragment.declarations += operator
-            descriptor.bind(operator)
 
-            operator.valueParameters = valueParameterTypes.mapIndexed { i, t ->
-                val valueParameterDescriptor = WrappedValueParameterDescriptor()
+            operator.valueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
+                val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
-                IrBuiltInOperatorValueParameter(valueParameterSymbol, i, t).apply {
-                    valueParameterDescriptor.bind(this)
+                IrBuiltInOperatorValueParameter(valueParameterSymbol, i, valueParameterType).apply {
                     parent = operator
                 }
             }
-
-            irBuiltInsSymbols += operator
 
             operator
         }
@@ -89,7 +89,7 @@ class IrBuiltIns(
         val valueKotlinType: SimpleType
 
         // Note: We still need a complete function descriptor here because `CHECK_NOT_NULL` is being substituted by psi2ir
-        val descriptor = SimpleFunctionDescriptorImpl.create(
+        val operatorDescriptor = SimpleFunctionDescriptorImpl.create(
             packageFragmentDescriptor,
             Annotations.EMPTY,
             name,
@@ -135,9 +135,8 @@ class IrBuiltIns(
             buildSimpleType()
         }
 
-        val mangle = "operator#$name@:!!"
-        return symbolTable.declareBuiltInOperator(descriptor, mangle) {
-            val operator = IrBuiltInOperator(it, name, returnIrType, ":!!")
+        return symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, operatorDescriptor) {
+            val operator = IrBuiltInOperator(it, name, returnIrType)
             operator.parent = packageFragment
             packageFragment.declarations += operator
 
@@ -149,8 +148,6 @@ class IrBuiltIns(
 
             operator.valueParameters += valueParameter
             operator.typeParameters += typeParameter
-
-            irBuiltInsSymbols += operator
 
             operator
         }.symbol
@@ -235,6 +232,9 @@ class IrBuiltIns(
     private val kMutableProperty0Class = builtIns.kMutableProperty0.toIrSymbol()
     private val kMutableProperty1Class = builtIns.kMutableProperty1.toIrSymbol()
     private val kMutableProperty2Class = builtIns.kMutableProperty2.toIrSymbol()
+
+    val functionClass = builtIns.getBuiltInClassByFqName(FqName("kotlin.Function")).toIrSymbol()
+    val kFunctionClass = builtIns.getBuiltInClassByFqName(FqName("kotlin.reflect.KFunction")).toIrSymbol()
 
     fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
         0 -> if (mutable) kMutableProperty0Class else kProperty0Class

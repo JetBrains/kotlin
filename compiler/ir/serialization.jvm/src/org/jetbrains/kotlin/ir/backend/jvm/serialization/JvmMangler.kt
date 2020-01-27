@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.classic.ClassicExportChecker
-import org.jetbrains.kotlin.backend.common.serialization.mangle.classic.ClassicKotlinManglerImpl
-import org.jetbrains.kotlin.backend.common.serialization.mangle.classic.ClassicMangleComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorBasedKotlinManglerImpl
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorExportCheckerVisitor
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorMangleComputer
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheck
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
@@ -32,14 +32,14 @@ abstract class AbstractJvmManglerIr : IrBasedKotlinManglerImpl() {
         override fun IrDeclaration.isPlatformSpecificExported() = false
     }
 
-    private class JvmIrManglerComputer(builder: StringBuilder) : IrMangleComputer(builder) {
-        override fun copy(): IrMangleComputer = JvmIrManglerComputer(builder)
+    private class JvmIrManglerComputer(builder: StringBuilder, mode: MangleMode) : IrMangleComputer(builder, mode) {
+        override fun copy(newMode: MangleMode): IrMangleComputer = JvmIrManglerComputer(builder, newMode)
     }
 
     override fun getExportChecker(): KotlinExportChecker<IrDeclaration> = exportChecker
 
-    override fun getMangleComputer(prefix: String): KotlinMangleComputer<IrDeclaration> {
-        return JvmIrManglerComputer(StringBuilder(256))
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> {
+        return JvmIrManglerComputer(StringBuilder(256), mode)
     }
 }
 
@@ -55,9 +55,10 @@ abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFuncti
         override fun DeclarationDescriptor.isPlatformSpecificExported() = false
     }
 
-    private class JvmDescriptorManglerComputer(builder: StringBuilder, prefix: String, private val mainDetector: MainFunctionDetector?) :
-        DescriptorMangleComputer(builder, prefix) {
-        override fun copy(): DescriptorMangleComputer = JvmDescriptorManglerComputer(builder, specialPrefix, mainDetector)
+    private class JvmDescriptorManglerComputer(builder: StringBuilder, private val mainDetector: MainFunctionDetector?, mode: MangleMode) :
+        DescriptorMangleComputer(builder, mode) {
+        override fun copy(newMode: MangleMode): DescriptorMangleComputer =
+            JvmDescriptorManglerComputer(builder, mainDetector, newMode)
 
         private fun isMainFunction(descriptor: FunctionDescriptor): Boolean = mainDetector?.isMain(descriptor) ?: false
 
@@ -66,12 +67,19 @@ abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFuncti
                 return source.containingFile.name
             } else null
         }
+
+        override fun PropertyDescriptor.platformSpecificSuffix(): String? {
+            // Since LV 1.4 there is a feature PreferJavaFieldOverload which allows to have java and kotlin
+            // properties with the same signature on the same level.
+            // For more details see JvmPlatformOverloadsSpecificityComparator.kt
+            return if (isJavaField) MangleConstant.JAVA_FIELD_SUFFIX else null
+        }
     }
 
     override fun getExportChecker(): KotlinExportChecker<DeclarationDescriptor> = exportChecker
 
-    override fun getMangleComputer(prefix: String): KotlinMangleComputer<DeclarationDescriptor> {
-        return JvmDescriptorManglerComputer(StringBuilder(256), prefix, mainDetector)
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<DeclarationDescriptor> {
+        return JvmDescriptorManglerComputer(StringBuilder(256), mainDetector, mode)
     }
 }
 

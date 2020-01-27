@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.AbstractKotlinMangler
-import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
-import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
+import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -19,10 +16,10 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 abstract class DescriptorBasedKotlinManglerImpl : AbstractKotlinMangler<DeclarationDescriptor>(), KotlinMangler.DescriptorMangler {
-    private fun withPrefix(prefix: String, descriptor: DeclarationDescriptor): String =
-        getMangleComputer(prefix).computeMangle(descriptor)
+    private fun withMode(mode: MangleMode, descriptor: DeclarationDescriptor): String =
+        getMangleComputer(mode).computeMangle(descriptor)
 
-    override fun ClassDescriptor.mangleEnumEntryString(): String = withPrefix(MangleConstant.ENUM_ENTRY_PREFIX, this)
+    override fun ClassDescriptor.mangleEnumEntryString(): String = withMode(MangleMode.FQNAME, this)
 
     override fun ClassDescriptor.isExportEnumEntry(): Boolean =
         getExportChecker().check(this, SpecialDeclarationType.ENUM_ENTRY)
@@ -32,7 +29,13 @@ abstract class DescriptorBasedKotlinManglerImpl : AbstractKotlinMangler<Declarat
     override fun PropertyDescriptor.mangleFieldString(): String = error("Fields supposed to be non-exporting")
 
     override val DeclarationDescriptor.mangleString: String
-        get() = withPrefix(MangleConstant.EMPTY_PREFIX, this)
+        get() = withMode(MangleMode.FULL, this)
+
+    override val DeclarationDescriptor.signatureString: String
+        get() = withMode(MangleMode.SIGNATURE, this)
+
+    override val DeclarationDescriptor.fqnString: String
+        get() = withMode(MangleMode.FQNAME, this)
 
     override fun DeclarationDescriptor.isExported(): Boolean = getExportChecker().check(this, SpecialDeclarationType.REGULAR)
 }
@@ -60,7 +63,13 @@ class Ir2DescriptorManglerAdapter(private val delegate: DescriptorBasedKotlinMan
             }
         }
 
+    override val IrDeclaration.signatureString: String
+        get() = delegate.run { descriptor.signatureString }
+
+    override val IrDeclaration.fqnString: String
+        get() = delegate.run { descriptor.fqnString }
+
     override fun getExportChecker() = error("Should not have been reached")
 
-    override fun getMangleComputer(prefix: String): KotlinMangleComputer<IrDeclaration> = error("Should not have been reached")
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> = error("Should not have been reached")
 }

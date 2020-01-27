@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.protobuf.Internal;
 
 public class Flags {
-    private Flags() {}
+    protected Flags() {}
 
     // Types
     public static final BooleanFlagField SUSPEND_TYPE = FlagField.booleanFirst();

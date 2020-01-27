@@ -69,9 +69,11 @@ class JsIrBackendContext(
             private var _owner: IrExternalPackageFragment? = null
             override val owner get() = _owner!!
 
-            override var uniqId: UniqId
-                get() = error("Operation is unsupported")
-                set(value) { error("Operation is unsupported") }
+            override val isPublicApi: Boolean
+                get() = TODO("Not yet implemented")
+
+            override val signature: IdSignature
+                get() = TODO("Not yet implemented")
 
             override val isBound get() = _owner != null
 
