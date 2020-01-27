@@ -5,23 +5,27 @@ plugins {
 val artifactsForCidrDir: File by rootProject.extra
 val clionCocoaCommonBinariesDir: File by rootProject.extra
 val mobileMppPluginDir: File by rootProject.extra
+val lldbFrontendMacosDir: File by rootProject.extra
+val lldbFrameworkDir: File by rootProject.extra
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val handleSymlink: (FileCopyDetails, File) -> Boolean by ultimateTools
 
 val mainModule = ":kotlin-ultimate:ide:android-studio-native"
+val binariesDir = "bin"
 
 dependencies {
     embedded(project(mainModule)) { isTransitive = false }
 }
 
 val copyAppCodeBinaries: Task by tasks.creating(Copy::class) {
-    val targetDir = File(mobileMppPluginDir, "native")
-    into(targetDir)
+    val targetDir = File(mobileMppPluginDir, binariesDir)
+
     from(clionCocoaCommonBinariesDir)
     eachFile {
         handleSymlink(this, targetDir)
     }
+    into(targetDir)
 }
 
 val copyAppCodeModules: Task by tasks.creating(Copy::class) {
@@ -33,17 +37,32 @@ val copyAppCodeModules: Task by tasks.creating(Copy::class) {
     }
 }
 
-val mobileMppPluginTask: Copy = task<Copy>("mobileMppPlugin") {
-    into(File(mobileMppPluginDir, "lib"))
+val copyLLDBFrontend: Task by tasks.creating(Copy::class) {
+    from(lldbFrontendMacosDir)
+    into(File(mobileMppPluginDir, binariesDir))
+}
 
+val copyLLDBFramework: Task by tasks.creating(Copy::class) {
+    from(lldbFrameworkDir)
+    into(File(mobileMppPluginDir, binariesDir))
+}
+
+val mobileMppPluginTask: Copy = task<Copy>("mobileMppPlugin") {
+    dependsOn(
+        copyLLDBFramework,
+        copyLLDBFrontend,
+        copyAppCodeBinaries,
+        copyAppCodeModules
+    )
     val jarTask = project("$mainModule").tasks.findByName("jar")!!
     dependsOn(jarTask)
-    from(jarTask.outputs.files.singleFile)
 
-    dependsOn(copyAppCodeBinaries, copyAppCodeModules)
+    from(jarTask.outputs.files.singleFile)
+    into(File(mobileMppPluginDir, "lib"))
 }
 
 val zipMobileMppPluginTask: Zip = task<Zip>("zipMobileMppPlugin") {
+    dependsOn(mobileMppPluginTask)
     val pluginNumber: String = findProperty("mobileMppPluginNumber")?.toString() ?: "SNAPSHOT"
     val destinationFile: File = artifactsForCidrDir.resolve("mobile-mpp-plugin-$pluginNumber.zip").canonicalFile
 

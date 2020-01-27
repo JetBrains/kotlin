@@ -12,7 +12,7 @@ import java.io.File
 
 class PathManagerCustomization : OCPathManagerCustomization() {
     override fun getBinFile(relativePath: String): File =
-        File(FileUtil.join(PathManager.getPluginsPath(), "mobile-mpp", "native", relativePath)).also {
+        File(FileUtil.join(PathManager.getPluginsPath(), "mobile-mpp", "bin", relativePath)).also {
             FileUtil.setExecutable(it) // FIXME omit when CLion build script is corrected
         }
 }

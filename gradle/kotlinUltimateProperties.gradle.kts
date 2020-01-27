@@ -118,6 +118,13 @@ if (rootProject.extra.has("versions.nativeDebug")) {
     rootProject.extra["lldbFrontendWindowsDir"] = externalDepsDir("lldb-frontend", "windows-$lldbFrontendHash")
 }
 
+if (rootProject.extra.has("versions.LLDB.framework")) {
+    val lldbFrameworkVersion: String = rootProject.extra["versions.LLDB.framework"] as String
+    rootProject.extra["lldbFrameworkVersion"] = rootProject.extra["versions.LLDB.framework"] as String
+    rootProject.extra["lldbFrameworkRepo"] = rootProject.extra["versions.LLDB.framework.repo"] as String
+    rootProject.extra["lldbFrameworkDir"] = externalDepsDir("lldb-framework", "lldb-framework-$lldbFrameworkVersion")
+}
+
 val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("dist/artifacts"))
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
