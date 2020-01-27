@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.name.FqName
@@ -16,6 +17,9 @@ fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession,
     this += createImportingScopes(file, session, scopeSession)
 }
 
+private object FirDefaultStarImportingScopeKey : ScopeSessionKey<DefaultImportPriority, FirScope>()
+private object FirDefaultSimpleImportingScopeKey : ScopeSessionKey<DefaultImportPriority, FirScope>()
+
 fun createImportingScopes(
     file: FirFile,
     session: FirSession,
@@ -23,11 +27,19 @@ fun createImportingScopes(
 ): List<FirScope> {
     return listOf(
         // from low priority to high priority
-        FirDefaultStarImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW),
-        FirDefaultStarImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH),
+        scopeSession.getOrBuild(DefaultImportPriority.LOW, FirDefaultStarImportingScopeKey) {
+            FirDefaultStarImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW)
+        },
+        scopeSession.getOrBuild(DefaultImportPriority.HIGH, FirDefaultStarImportingScopeKey) {
+            FirDefaultStarImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH)
+        },
         FirExplicitStarImportingScope(file.imports, session, scopeSession),
-        FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW),
-        FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH),
+        scopeSession.getOrBuild(DefaultImportPriority.LOW, FirDefaultSimpleImportingScopeKey) {
+            FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW)
+        },
+        scopeSession.getOrBuild(DefaultImportPriority.HIGH, FirDefaultSimpleImportingScopeKey) {
+            FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH)
+        },
         scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
             FirPackageMemberScope(file.packageFqName, session)
         },
