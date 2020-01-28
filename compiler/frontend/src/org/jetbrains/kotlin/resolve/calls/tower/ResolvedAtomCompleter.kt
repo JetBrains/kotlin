@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -314,15 +315,18 @@ class ResolvedAtomCompleter(
             else -> null
         }
 
-        val explicitReceiver = explicitCallableReceiver?.receiver
-        val psiCall = CallMaker.makeCall(reference, explicitReceiver?.receiverValue, null, reference, emptyList())
+        val explicitReceiver = explicitCallableReceiver?.receiver?.receiverValue?.updateReceiverValue(resultSubstitutor)
+        val psiCall = CallMaker.makeCall(reference, explicitReceiver, null, reference, emptyList())
 
         val tracing = TracingStrategyImpl.create(reference, psiCall)
         val temporaryTrace = TemporaryBindingTrace.create(topLevelTrace, "callable reference fake call")
 
+        val dispatchReceiver = callableCandidate.dispatchReceiver?.receiver?.receiverValue?.updateReceiverValue(resultSubstitutor)
+        val extensionReceiver = callableCandidate.extensionReceiver?.receiver?.receiverValue?.updateReceiverValue(resultSubstitutor)
+
         val resolvedCall = ResolvedCallImpl(
-            psiCall, callableCandidate.candidate, callableCandidate.dispatchReceiver?.receiver?.receiverValue,
-            callableCandidate.extensionReceiver?.receiver?.receiverValue, callableCandidate.explicitReceiverKind,
+            psiCall, callableCandidate.candidate, dispatchReceiver,
+            extensionReceiver, callableCandidate.explicitReceiverKind,
             null, temporaryTrace, tracing, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
         )
         resolvedCall.setResultingSubstitutor(resultSubstitutor)
@@ -362,6 +366,11 @@ class ResolvedAtomCompleter(
         )
 
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
+    }
+
+    private fun ReceiverValue.updateReceiverValue(substitutor: TypeSubstitutor): ReceiverValue {
+        val newType = substitutor.safeSubstitute(type, Variance.INVARIANT)
+        return if (type != newType) replaceType(newType) else this
     }
 
     private fun recordArgumentAdaptationForCallableReference(
